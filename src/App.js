@@ -1,28 +1,55 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Component} from 'react';
+import {Layout} from "antd";
+import {Route, Switch} from "react-router-dom";
+import {loggedInUser, logInUser, logOutUser} from "./app/utils/auth";
+import AppBase from "./app/components/core/AppBase";
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            user: loggedInUser(),
+            redirect: false,
+        };
+        this.login = this.login.bind(this);
+        this.logout = this.logout.bind(this);
+    }
+
+    login(data) {
+        let that = this;
+        let successFn = function () {
+            let user = loggedInUser();
+            that.setState({
+                user: user,
+                // redirect: true
+            });
+        };
+        let errorFn = function () {
+
+        };
+        logInUser(data, successFn, errorFn);
+    }
+
+    logout() {
+        let that = this;
+        let successFn = function () {
+            that.setState({
+                user: null
+            });
+        };
+        let errorFn = function () {
+        };
+        logOutUser(successFn, errorFn);
+
+    }
+
+    render() {
+        return <Layout style={{height: '100px'}}>
+                <Switch>
+                    <Route component={AppBase}/>
+                </Switch>
+            </Layout>
+    }
 }
 
 export default App;
