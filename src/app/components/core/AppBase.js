@@ -4,6 +4,7 @@ import AppHeader from "./AppHeader";
 import {Layout} from "antd";
 import AppFooter from "./AppFooter";
 import AppSider from "./AppSider";
+import TestFile from "./testfile"
 
 
 const Content = Layout.Content;
@@ -29,9 +30,12 @@ class AppBase extends React.Component {
             <Layout>
                 <AppHeader {...this.props} toggleSider={this.toggle} {...this.state}/>
                 <Content className="main-container" style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
+                <TestFile/>
+
                     {/*<Switch>*/}
                     {/*<Route>Hello World</Route>*/}
                     {/*</Switch>*/}
+
                 </Content>
                 <AppFooter/>
             </Layout>
