@@ -3,26 +3,40 @@ import {Route, Switch} from "react-router-dom";
 import AppHeader from "./AppHeader";
 import {Layout} from "antd";
 import AppFooter from "./AppFooter";
+import AppSider from "./AppSider";
 
+
+const Content = Layout.Content;
 
 class AppBase extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            collapsed: false,
+        };
+    }
+
+
+    toggle = () => {
+        this.setState({
+            collapsed: !this.state.collapsed,
+        });
     }
 
     render() {
         return <Layout style={{minHeight: '100vh'}}>
-            <AppHeader {...this.props}/>
-            {/*  <AppSider/>*/}
-            <Layout style={{padding: '24px 24px',}}>
-                <div className="main-container" style={{minHeight: 'calc(100vh - 200px)'}}>
+            <AppSider {...this.state}/>
+            <Layout>
+                <AppHeader {...this.props} toggleSider={this.toggle} {...this.state}/>
+                <Content className="main-container" style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
                     {/*<Switch>*/}
-                        {/*<Route>Hello World</Route>*/}
+                    {/*<Route>Hello World</Route>*/}
                     {/*</Switch>*/}
-                </div>
+                </Content>
                 <AppFooter/>
             </Layout>
         </Layout>;
     }
 }
+
 export default AppBase;

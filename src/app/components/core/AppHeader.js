@@ -29,6 +29,7 @@ class AppHeader extends React.Component {
         return <Header style={{ background: '#fff', padding: 0 }}>
             <Menu mode="horizontal"
                   style={{lineHeight: '64px'}}>
+
                 <Menu.Item key="4">
                     <Link to="/">
                         <div className="logo"/>
@@ -40,7 +41,13 @@ class AppHeader extends React.Component {
                 {/*onSearch={value => console.log(value)}*/}
                 {/*style={{width: 200}}*/}
                 {/*/></Menu.Item>*/}
+
                 <div style={{float: 'right', margin: '0px 20px'}}>
+                    <Icon
+                        className="trigger"
+                        type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}
+                        onClick={this.props.toggleSider}
+                    />
                     <Dropdown overlay={userMenu} placement="bottomRight">
                         <Avatar style={{backgroundColor: '#87d068'}} icon="user"/>
                     </Dropdown>
