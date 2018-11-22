@@ -2,12 +2,13 @@ import { Form, Input, Button, Checkbox, Select } from 'antd';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import '../../assets/form.css';
+//import '../../assets/form.css';
 
 export default  class DynamicForm extends React.Component {
-    state ={};
+
     constructor(props) {
         super(props);
+        this.state ={};
     }
     static getDerivedStateFromProps(nextProps, prevState) {
         if (nextProps.defaultValues && Object.keys(nextProps.defaultValues).length) {
