@@ -1,6 +1,6 @@
 import React from "react";
 import {Avatar, Dropdown, Icon, Layout, Menu} from "antd";
-import {Link} from "react-router-dom";
+import {Route, Link, Switch} from 'react-router-dom';
 
 const {Header} = Layout;
 

@@ -1,7 +1,6 @@
 
 import React, { Component } from 'react';
 import DynamicForm from '../common/DynamicForm';
-import '../../assets/App.css';
 
 class TestFile extends Component {
   state = {

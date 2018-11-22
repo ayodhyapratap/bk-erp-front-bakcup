@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom';
 
 const Sider = Layout.Sider;
 
-class AppSider extends React.Component {
+class SettingSider extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -18,22 +18,25 @@ class AppSider extends React.Component {
             <div className="logo"/>
             <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
                 <Menu.Item key="1">
-
+                  <Link to="/settings/practicedetails">
                     <Icon type="user"/>
                     <span className="nav-text">nav 1</span>
+                    </Link>
                 </Menu.Item>
                 <Menu.Item key="2">
+                  <Link to="/settings/practicedetails">
                     <Icon type="video-camera"/>
                     <span className="nav-text">nav 2</span>
+                    </Link>
                 </Menu.Item>
                 <Menu.Item key="3">
-                  <Link to="/upload">
+                  <Link to="/settings/practicedetails">
                     <Icon type="upload"/>
                     <span className="nav-text">nav 3</span>
                     </Link>
                 </Menu.Item>
                 <Menu.Item key="4">
-                  <Link to="/settings">
+                  <Link to="/settings/practicedetails">
                     <Icon type="setting"/>
                     <span className="nav-text">nav 4</span>
                       </Link>
@@ -59,4 +62,4 @@ class AppSider extends React.Component {
     }
 }
 
-export default AppSider;
+export default SettingSider;

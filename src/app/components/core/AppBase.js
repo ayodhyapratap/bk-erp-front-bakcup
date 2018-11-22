@@ -4,8 +4,8 @@ import AppHeader from "./AppHeader";
 import {Layout} from "antd";
 import AppFooter from "./AppFooter";
 import AppSider from "./AppSider";
-import TestFile from "./testfile"
 import TestForm from "./TestForm";
+import SettingsDash from "../settings/SettingsDash"
 
 
 const Content = Layout.Content;
@@ -38,8 +38,12 @@ class AppBase extends React.Component {
                              minHeight: 280,
                              marginLeft: '200px'
                          }}>
-                    {/*<TestFile/>*/}
-                    <TestForm />
+
+                    <Switch>
+                      <Route exact path="/" component={TestForm} />
+                      <Route exact path="/settings"  component={SettingsDash} />
+                    </Switch>
+
                     {/*<Switch>*/}
                     {/*<Route>Hello World</Route>*/}
                     {/*</Switch>*/}
