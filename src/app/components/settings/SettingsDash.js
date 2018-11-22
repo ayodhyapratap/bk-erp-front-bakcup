@@ -14,7 +14,7 @@ class SettingsDash extends React.Component {
       };
   }
   render() {
-      return  <Content className="main-container"
+      return  <Layout className="main-container"
                  style={{
                      margin: '24px 16px',
                      padding: 24,
@@ -28,7 +28,7 @@ class SettingsDash extends React.Component {
         <Route exact path="/settings/communicationsettings" component={CommunicationSettings} />
 
       </Switch>
-      </Content>
+      </Layout>
     }
 
 }

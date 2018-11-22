@@ -20,33 +20,76 @@ class PracticeDetails extends React.Component {
                 initialValue: "My Name",
                 type: INPUT_FIELD
             },{
-                label: "Practice Name",
-                key: "practiceName",
-                required: true,
-                initialValue: "My Name",
-                type: INPUT_FIELD
-            }, {
-                label: "Name 2",
-                key: "name2",
-                required: true,
-                initialValue: "My Name",
-                type: RADIO_FIELD,
-                options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
-            },{
-                label: "Name 3",
-                key: "name3",
-                required: true,
-                initialValue: "My Name",
-                type: CHECKBOX_FIELD,
-                options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
-            }, {
-                label: "Name 4",
+                label: "Practice Specialisation",
                 key: "name4",
                 required: true,
                 initialValue: "My Name",
                 type: SELECT_FIELD,
                 options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
-            },]
+            },{
+                label: "Practice Street Address",
+                key: "practiceName",
+                required: true,
+                initialValue: "My Name",
+                type: INPUT_FIELD
+            },{
+                label: "Practice City",
+                key: "practiceName",
+                required: true,
+                initialValue: "My Name",
+                type: INPUT_FIELD
+            },{
+               label: "Practice state",
+               key: "name4",
+               required: true,
+               initialValue: "My Name",
+               type: SELECT_FIELD,
+               options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
+           },{
+               label: "Practice Country",
+               key: "name4",
+               required: true,
+               initialValue: "My Name",
+               type: SELECT_FIELD,
+               options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
+           },{
+               label: "Practice PINCODE",
+               key: "practiceName",
+               required: true,
+               initialValue: "My Name",
+               type: INPUT_FIELD
+           },{
+               label: "Practice Contact Number",
+               key: "practiceName",
+               required: true,
+               initialValue: "My Name",
+               type: INPUT_FIELD
+           },{
+               label: "Practice Email",
+               key: "practiceName",
+               required: true,
+               initialValue: "My Name",
+               type: INPUT_FIELD
+           },{
+               label: "Practice website",
+               key: "practiceName",
+               required: true,
+               initialValue: "My Name",
+               type: INPUT_FIELD
+           },{
+               label: "Timezone",
+               key: "name4",
+               required: true,
+               initialValue: "My Name",
+               type: SELECT_FIELD,
+               options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
+           },{
+               label: "GSTIN",
+               key: "practiceName",
+               required: true,
+               initialValue: "My Name",
+               type: INPUT_FIELD
+           },]
         }
     }
 
