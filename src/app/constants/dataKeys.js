@@ -20,3 +20,12 @@ export const FIRST_NAME = 'firstname';
 export const LAST_NAME = 'lastname';
 export const AUTH_TOKEN = 'token';
 export const ROLE = 'role';
+
+/***
+ * Form Data Types
+ * */
+export const INPUT_FIELD = 'input';
+export const RADIO_FIELD = 'radio';
+export const SELECT_FIELD = 'select';
+export const CHECKBOX_FIELD = 'checkbox';
+export const NUMBER_FIELD = 'number';

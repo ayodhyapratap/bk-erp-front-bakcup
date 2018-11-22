@@ -24,7 +24,7 @@ export const INPUTPHNO= 'Please input your phone number!';
 export const INPUTPASS= 'Please input your password!';
 export const INPUTCITY= 'Please input your City!';
 export const INPUTCOMPANY= 'Please input your Company Name!';
-
+export const REQUIRED_FIELD_MESSAGE = 'This field is required!'
 
 export const ERROR_INTERNET_CONNECTIVITY = 'Connection Failed';
 export const ERROR_MESSAGE_500 = 'Internal Server Error';

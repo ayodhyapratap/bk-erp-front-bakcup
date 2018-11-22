@@ -5,6 +5,7 @@ import {Layout} from "antd";
 import AppFooter from "./AppFooter";
 import AppSider from "./AppSider";
 import TestFile from "./testfile"
+import TestForm from "./TestForm";
 
 
 const Content = Layout.Content;
@@ -29,9 +30,16 @@ class AppBase extends React.Component {
             <AppSider {...this.state}/>
             <Layout>
                 <AppHeader {...this.props} toggleSider={this.toggle} {...this.state}/>
-                <Content className="main-container" style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
-                <TestFile/>
-
+                <Content className="main-container"
+                         style={{
+                             margin: '24px 16px',
+                             padding: 24,
+                             background: '#fff',
+                             minHeight: 280,
+                             marginLeft: '200px'
+                         }}>
+                    {/*<TestFile/>*/}
+                    <TestForm />
                     {/*<Switch>*/}
                     {/*<Route>Hello World</Route>*/}
                     {/*</Switch>*/}
