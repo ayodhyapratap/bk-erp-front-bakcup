@@ -27,6 +27,13 @@ class AppHeader extends React.Component {
             </Menu>
         );
         return <Header style={{ background: '#fff', padding: 0 }}>
+            {/*<div style={{float: 'left', margin: '0px 20px'}}>*/}
+                {/*<Icon*/}
+                    {/*className="trigger"*/}
+                    {/*type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}*/}
+                    {/*onClick={this.props.toggleSider}*/}
+                {/*/>*/}
+            {/*</div>*/}
             <Menu mode="horizontal"
                   style={{lineHeight: '64px'}}>
 
@@ -43,11 +50,11 @@ class AppHeader extends React.Component {
                 {/*/></Menu.Item>*/}
 
                 <div style={{float: 'right', margin: '0px 20px'}}>
-                    <Icon
-                        className="trigger"
-                        type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}
-                        onClick={this.props.toggleSider}
-                    />
+                    {/*<Icon*/}
+                        {/*className="trigger"*/}
+                        {/*type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}*/}
+                        {/*onClick={this.props.toggleSider}*/}
+                    {/*/>*/}
                     <Dropdown overlay={userMenu} placement="bottomRight">
                         <Avatar style={{backgroundColor: '#87d068'}} icon="user"/>
                     </Dropdown>

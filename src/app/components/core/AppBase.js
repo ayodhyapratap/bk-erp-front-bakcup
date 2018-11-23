@@ -27,6 +27,7 @@ class AppBase extends React.Component {
 
     render() {
         return <Layout style={{minHeight: '100vh'}}>
+
             <AppSider {...this.state}/>
             <Layout>
                 <AppHeader {...this.props} toggleSider={this.toggle} {...this.state}/>
@@ -34,23 +35,23 @@ class AppBase extends React.Component {
                          style={{
                              margin: '24px 16px',
                              padding: 24,
-                             background: '#fff',
                              minHeight: 280,
-                             marginLeft: '200px'
+                             // marginLeft: '200px'
                          }}>
 
                     <Switch>
-                      <Route exact path="/" component={TestForm} />
-                      <Route exact path="/settings"  component={SettingsDash} />
+                        <Route exact path="/" component={TestForm}/>
+                        <Route exact path="/settings" component={SettingsDash}/>
                     </Switch>
 
                     {/*<Switch>*/}
                     {/*<Route>Hello World</Route>*/}
                     {/*</Switch>*/}
-
+                    <AppFooter/>
                 </Content>
-                <AppFooter/>
+
             </Layout>
+
         </Layout>;
     }
 }

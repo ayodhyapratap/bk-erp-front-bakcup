@@ -1,6 +1,6 @@
 import React from "react";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
-import {Form} from "antd";
+import {Card, Form} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../constants/dataKeys";
 
 class PracticeDetails extends React.Component {
@@ -95,9 +95,9 @@ class PracticeDetails extends React.Component {
 
     render() {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>
+        return <Card>
             <TestFormLayout title="Practice Details" fields={this.state.fields}/>
-        </div>
+        </Card>
     }
 }
 
