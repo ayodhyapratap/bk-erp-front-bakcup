@@ -3,6 +3,7 @@ import {Layout} from "antd";
 import {Route, Switch} from "react-router-dom";
 import {loggedInUser, logInUser, logOutUser} from "./app/utils/auth";
 import AppBase from "./app/components/core/AppBase";
+import LoginForm from "./app/components/auth/LoginForm";
 
 class App extends Component {
     constructor(props) {
@@ -46,6 +47,7 @@ class App extends Component {
     render() {
         return <Layout style={{height: '100px'}}>
                 <Switch>
+                <Route exact path="/login" render={() => <LoginForm {...this.state} login={this.login}/>}/>
                     <Route component={AppBase}/>
                 </Switch>
             </Layout>

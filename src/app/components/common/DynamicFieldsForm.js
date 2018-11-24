@@ -51,13 +51,14 @@ class DynamicFieldsForm extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
+              console.log(values);
                 that.submitForm(values);
             }
         });
     }
 
     submitForm(data) {
-        let successFn = function(){
+        let successFn = function(data){
 
         };
         let errorFn = function(){
