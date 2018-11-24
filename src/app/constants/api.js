@@ -6,4 +6,4 @@ import {BACKEND_BASE_URL} from "../config/connect";
  export const API_URL = BACKEND_BASE_URL + 'api';
 
 export const SIGNUP_URL = '';
-export const LOGIN_URL = '';
+export const LOGIN_URL = 'login/';

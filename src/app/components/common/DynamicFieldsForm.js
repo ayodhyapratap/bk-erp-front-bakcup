@@ -21,8 +21,9 @@ class DynamicFieldsForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            fields: this.props.fields,     //Fields data to create the form
-            formData: {}        //Form data to send on form submission
+            fields: this.props.fields, //Fields data to create the form
+            formData: {},
+            formProp: this.props.formProp    //Form data to send on form submission
         }
         this.resetFormData = this.resetFormData.bind(this);
         this.submitForm = this.submitForm.bind(this);
@@ -51,20 +52,21 @@ class DynamicFieldsForm extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-              console.log(values);
+                console.log(values);
                 that.submitForm(values);
             }
         });
     }
 
     submitForm(data) {
-        let successFn = function(data){
-
+        let that = this;
+        let successFn = function (data) {
+            that.state.formProp.successFn(data);
         };
-        let errorFn = function(){
-
+        let errorFn = function () {
+            that.state.formProp.errorFn();
         };
-      //  postAPI(,data,successFn,errorFn);
+        postAPI(this.props.formProp.action, data, successFn, errorFn);
     }
 
     render() {

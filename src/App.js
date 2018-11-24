@@ -46,11 +46,12 @@ class App extends Component {
 
     render() {
         return <Layout style={{height: '100px'}}>
-                <Switch>
+            <Switch>
                 <Route exact path="/login" render={() => <Auth {...this.state} login={this.login}/>}/>
-                    <Route component={AppBase}/>
-                </Switch>
-            </Layout>
+                <Route render={() => (this.user || 1==1 ? <AppBase {...this.state} logout={this.logout}/> :
+                    <LoginForm {...this.state} login={this.login}/>)}/>
+            </Switch>
+        </Layout>
     }
 }
 
