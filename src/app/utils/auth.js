@@ -1,6 +1,6 @@
 import lockr from 'lockr';
 import axios from 'axios';
-import {AUTH_TOKEN, PASSWORD, ROLE, USERNAME} from "../constants/dataKeys";
+import {AUTH_TOKEN, PASSWORD, ROLE, EMAIL} from "../constants/dataKeys";
 import {handleErrorResponse, makeURL} from "./common";
 import {LOGIN_URL} from "../constants/api";
 
@@ -15,19 +15,20 @@ export const loggedInUser = function () {
 };
 
 export const logInUser = function (data, successFn, errorFn) {
+  console.log("workign");
     // lockr.set(USER, {
     //   [USERNAME]: 'username',
     //   [USER_TYPE]: [ADMIN_ABBREV, MANAGER_ABBREV, ANALYST_ABBREV]
     // });
     // successFn();
     var data = {
-        [USERNAME]: data.username,
+        [EMAIL]: data.email,
         [PASSWORD]: data.password
     };
     axios.post(makeURL(LOGIN_URL), data).then(function (response) {
         // console.log(response);
         let data = response.data;
-        lockr.set(ROLE, data.role);
+        lockr.set(ROLE, data.id);
         lockr.set(AUTH_TOKEN, data.token);
         successFn()
     }).catch(function (error) {
@@ -38,15 +39,9 @@ export const logInUser = function (data, successFn, errorFn) {
 };
 export const saveAuthToken = function(response,successFn){
     let data = response;
-    lockr.set(ROLE, data.role);
+    lockr.set(ROLE, data.id);
     lockr.set(AUTH_TOKEN, data.token);
     successFn()
-}
-export const setGoogleLogin = function (data){
-    if(data.role && data.token){
-        lockr.set(ROLE, data.role);
-        lockr.set(AUTH_TOKEN, data.token);
-    }
 }
 
 export const logOutUser = function (successFn, errorFn) {

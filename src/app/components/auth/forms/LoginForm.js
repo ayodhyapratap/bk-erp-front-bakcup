@@ -2,7 +2,7 @@ import {Form, Icon, Input, Button, Checkbox, Modal, Divider} from 'antd';
 import React from 'react';
 import 'antd/dist/antd.css';
 import {Link} from "react-router-dom";
-import {USERNAME, PASSWORD, SOCIAL_TOKEN} from "../../../constants/formLabels";
+import {EMAIL, PASSWORD} from "../../../constants/formLabels";
 import {Redirect} from 'react-router';
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
 const FormItem = Form.Item;
@@ -14,12 +14,10 @@ class LoginForm extends React.Component {
     this.state = {
       isLoading: false,
       username: null,
-      resetModalVisible: false,
       userMail: '',
       redirect : null
     };
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.showResetModal = this.showResetModal.bind(this);
   }
 
   handleSubmit(e) {
@@ -28,7 +26,7 @@ class LoginForm extends React.Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         let data = {
-          [USERNAME]: values.userName,
+          [EMAIL]: values.email,
           [PASSWORD]: values.password
         };
         that.props.login(data)
@@ -36,21 +34,16 @@ class LoginForm extends React.Component {
     });
   }
 
-  showResetModal() {
-    this.setState({
-      resetModalVisible: true
-    });
-  }
+
 
   render() {
-    const username = this.state.username;
     const {getFieldDecorator} = this.props.form;
     if(this.state.redirect)
       return <Redirect to={this.state.redirect}/>
     return (
       <Form onSubmit={this.handleSubmit} className="login-form">
         <FormItem>
-          {getFieldDecorator('userName', {
+          {getFieldDecorator('email', {
             rules: [{required: true, message: 'Please input your username!'}],
           })(
             <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>} placeholder="Username or Email"/>
@@ -66,27 +59,13 @@ class LoginForm extends React.Component {
         </FormItem>
 
         <FormItem>
-          {/*{getFieldDecorator('remember', {*/}
-          {/*valuePropName: 'checked',*/}
-          {/*initialValue: true,*/}
-          {/*})(*/}
-          {/*<Checkbox>Remember me</Checkbox>*/}
-          {/*)}*/}
-          {/*<a className="login-form-forgot" href="">Forgot password</a>*/}
-          <a style={{float: 'right'}} type="primary" onClick={this.showResetModal}>
-            Forgot Password ?
-          </a>
+
           <Button loading={this.state.changePassLoading} type="primary" htmlType="submit"
                   className="login-form-button">
             Log in
           </Button>
-
-          <h4> Dont have an account?<Link to="/register"> Register Now! </Link>
-
-          </h4>
         </FormItem>
         {this.props.redirect == true && <Redirect push to="/"/>}
-
       </Form>
     );
   }

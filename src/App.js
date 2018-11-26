@@ -49,7 +49,7 @@ class App extends Component {
             <Switch>
                 <Route exact path="/login" render={() => <Auth {...this.state} login={this.login}/>}/>
                 <Route render={() => (this.user || 1==1 ? <AppBase {...this.state} logout={this.logout}/> :
-                    <LoginForm {...this.state} login={this.login}/>)}/>
+                    <Auth {...this.state} login={this.login}/>)}/>
             </Switch>
         </Layout>
     }

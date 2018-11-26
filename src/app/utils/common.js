@@ -2,12 +2,13 @@ import axios from "axios/index";
 import {message} from 'antd';
 import {getAuthToken} from "./auth";
 import CONFIG from "../../app.config";
+import {API_URL} from "../constants/api";
+
 import {ERROR_MESSAGE_404, ERROR_MESSAGE_500} from "../constants/messages";
 import {ERROR_MSG_TYPE, INFO_MSG_TYPE, SUCCESS_MSG_TYPE, WARNING_MSG_TYPE} from "../constants/dataKeys";
 
-
 export const makeURL = function (URL) {
-    return CONFIG.backend + '/' + URL;
+  return API_URL + '/' + URL;
 };
 
 export const putAPI = function (URL, data, successFn, errorFn) {
@@ -140,4 +141,3 @@ export const parseQueryString = function (query) {
     }
     return obj;
 }
-
