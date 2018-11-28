@@ -6,6 +6,10 @@ import AppFooter from "./AppFooter";
 import AppSider from "./AppSider";
 import TestForm from "./TestForm";
 import SettingsDash from "../settings/SettingsDash"
+import PracticeDetails from "../settings/options/practice-detail/PracticeDetails";
+import PracticeStaff from "../settings/options/PracticeStaff";
+import AddPracticeDetails from "../settings/options/practice-detail/AddPracticeDetails";
+import Error404 from "../common/errors/Error404";
 
 
 const Content = Layout.Content;
@@ -42,11 +46,11 @@ class AppBase extends React.Component {
                     <Switch>
                         <Route exact path="/" component={TestForm}/>
                         <Route exact path="/settings" component={SettingsDash}/>
+                        <Route exact path="/settings/clinics-staff" component={PracticeStaff}/>
+                        <Route exact path="/settings/clinics" component={PracticeDetails}/>
+                        <Route exact path="/settings/clinics/add" component={AddPracticeDetails}/>
+                        <Route component={Error404}/>
                     </Switch>
-
-                    {/*<Switch>*/}
-                    {/*<Route>Hello World</Route>*/}
-                    {/*</Switch>*/}
                     <AppFooter/>
                 </Content>
 

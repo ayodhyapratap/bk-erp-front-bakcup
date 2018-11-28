@@ -96,7 +96,7 @@ class PracticeStaff extends React.Component {
     render() {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <Card>
-            <TestFormLayout title="Practice Details" fields={this.state.fields} formProp={{action:}}/>
+            <TestFormLayout title="Practice Details" fields={this.state.fields} formProp={{action:''}}/>
         </Card>
     }
 }

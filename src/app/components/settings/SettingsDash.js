@@ -1,5 +1,5 @@
 import React from "react";
-import PracticeDetails from "./options/PracticeDetails"
+import PracticeDetails from "./options/practice-detail/PracticeDetails"
 import CommunicationSettings from "./options/CommunicationSettings"
 import {Route, Link, Switch} from 'react-router-dom';
 import {Avatar, Dropdown, Icon, Layout, Menu} from "antd";
