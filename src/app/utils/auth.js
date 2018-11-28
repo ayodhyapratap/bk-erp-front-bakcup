@@ -28,7 +28,7 @@ export const logInUser = function (data, successFn, errorFn) {
     axios.post(makeURL(LOGIN_URL), data).then(function (response) {
         // console.log(response);
         let data = response.data;
-        lockr.set(ROLE, data.id);
+        lockr.set(ROLE, data.user);
         lockr.set(AUTH_TOKEN, data.token);
         successFn()
     }).catch(function (error) {

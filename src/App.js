@@ -22,7 +22,7 @@ class App extends Component {
             let user = loggedInUser();
             that.setState({
                 user: user,
-                 redirect: true
+                 // redirect: true
             });
         };
         let errorFn = function () {
@@ -48,7 +48,7 @@ class App extends Component {
         return <Layout style={{height: '100px'}}>
             <Switch>
                 <Route exact path="/login" render={() => <Auth {...this.state} login={this.login}/>}/>
-                <Route render={() => (this.user || 1==1 ? <AppBase {...this.state} logout={this.logout}/> :
+                <Route render={() => (this.state.user ? <AppBase {...this.state} logout={this.logout}/> :
                     <Auth {...this.state} login={this.login}/>)}/>
             </Switch>
         </Layout>
