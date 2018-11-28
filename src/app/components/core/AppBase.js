@@ -7,7 +7,8 @@ import AppSider from "./AppSider";
 import TestForm from "./TestForm";
 import SettingsDash from "../settings/SettingsDash"
 import PracticeDetails from "../settings/options/practice-detail/PracticeDetails";
-import PracticeStaff from "../settings/options/PracticeStaff";
+import PracticeStaff from "../settings/options/practice-staff/PracticeStaff";
+import AddStaffDoctor from "../settings/options/practice-staff/AddStaffDoctor";
 import AddPracticeDetails from "../settings/options/practice-detail/AddPracticeDetails";
 import Error404 from "../common/errors/Error404";
 
@@ -47,6 +48,7 @@ class AppBase extends React.Component {
                         <Route exact path="/" component={TestForm}/>
                         <Route exact path="/settings" component={SettingsDash}/>
                         <Route exact path="/settings/clinics-staff" component={PracticeStaff}/>
+                        <Route exact path="/settings/clinics-staff/adddoctor" component={AddStaffDoctor}/>
                         <Route exact path="/settings/clinics" component={PracticeDetails}/>
                         <Route exact path="/settings/clinics/add" component={AddPracticeDetails}/>
                         <Route component={Error404}/>

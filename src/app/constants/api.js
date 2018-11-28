@@ -7,3 +7,4 @@ import {BACKEND_BASE_URL} from "../config/connect";
 
 export const SIGNUP_URL = '';
 export const LOGIN_URL = 'users/login/';
+export const PRACTICESTAFF='clinics/35/practice_staff';
