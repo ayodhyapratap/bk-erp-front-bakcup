@@ -1,12 +1,13 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Card, Form, Icon,Menu, Divider, Tag , Row, Table} from "antd";
+import {Button, Card, Form, Icon,Tabs, Divider, Tag , Row, Table} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {PRACTICESTAFF} from "../../../../constants/api"
 import {Link} from "react-router-dom";
 import {getAPI} from "../../../../utils/common"
 
 const { Column, ColumnGroup } = Table;
+const TabPane = Tabs.TabPane;
 
 class PracticeDetails extends React.Component {
     constructor(props) {
@@ -44,13 +45,9 @@ class PracticeDetails extends React.Component {
                 </Link>
             </h2>
             <Card>
-            <Menu
-               onClick={this.handleClick}
-               selectedKeys={[this.state.current]}
-               mode="horizontal"
-             >
-              <Menu.Item key="staff">
-                 <Icon type="mail" />Manage Staff
+            <Tabs defaultActiveKey="1" >
+
+              <TabPane tab={<span><Icon type="android" />Manage Staff</span>} key="staff">
                 <Table>
                   <Column
                     title="Name"
@@ -91,9 +88,8 @@ class PracticeDetails extends React.Component {
                     />
 
                 </Table>
-              </Menu.Item>
-              <Menu.Item key="notification">
-                   <Icon type="mail" />Staff Notification
+                </TabPane>
+                <TabPane tab={<span><Icon type="android" />Staff Notification</span>} key="notification">
                   <Table>
                     <Column
                       title="Name"
@@ -124,9 +120,8 @@ class PracticeDetails extends React.Component {
                       />
 
                   </Table>
-                </Menu.Item>
-                <Menu.Item key="timing">
-                     <Icon type="mail" />Doctors visit Timing
+                </TabPane>
+                <TabPane tab={<span><Icon type="android" />Doctors visit Timing</span>} key="timing">
                     <Table>
                       <Column
                         title="Name"
@@ -151,8 +146,8 @@ class PracticeDetails extends React.Component {
                         />
 
                     </Table>
-                  </Menu.Item>
-                </Menu>
+                  </TabPane>
+                </Tabs>
 
             </Card>
         </Row>
