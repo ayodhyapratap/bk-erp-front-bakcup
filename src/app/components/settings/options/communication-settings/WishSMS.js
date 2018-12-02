@@ -1,9 +1,9 @@
 import React from "react";
-import DynamicFieldsForm from "../../common/DynamicFieldsForm";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../constants/dataKeys";
+import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 
-class CommunicationSettings extends React.Component {
+class WishSMS extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -46,4 +46,4 @@ class CommunicationSettings extends React.Component {
     }
 }
 
-export default CommunicationSettings;
+export default WishSMS;

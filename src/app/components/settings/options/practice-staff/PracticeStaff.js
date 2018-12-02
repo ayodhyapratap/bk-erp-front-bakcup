@@ -4,7 +4,7 @@ import {Button, Card, Form, Icon,Tabs, Divider, Tag , Row, Table} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {PRACTICESTAFF} from "../../../../constants/api"
 import {Link} from "react-router-dom";
-import {getAPI} from "../../../../utils/common"
+import {getAPI} from "../../../../utils/common";
 
 const { Column, ColumnGroup } = Table;
 const TabPane = Tabs.TabPane;

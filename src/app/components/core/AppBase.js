@@ -10,6 +10,9 @@ import PracticeDetails from "../settings/options/practice-detail/PracticeDetails
 import PracticeStaff from "../settings/options/practice-staff/PracticeStaff";
 import AddStaffDoctor from "../settings/options/practice-staff/AddStaffDoctor";
 import AddPracticeDetails from "../settings/options/practice-detail/AddPracticeDetails";
+import CommunicationSettings from "../settings/options/communication-settings/CommunicationSettings";
+import RecentProcedure from "../settings/options/procedure-catalog/RecentProcedure";
+import AddProcedure from "../settings/options/procedure-catalog/AddProcedure";
 import Error404 from "../common/errors/Error404";
 
 
@@ -51,6 +54,10 @@ class AppBase extends React.Component {
                         <Route exact path="/settings/clinics-staff/adddoctor" component={AddStaffDoctor}/>
                         <Route exact path="/settings/clinics" component={PracticeDetails}/>
                         <Route exact path="/settings/clinics/add" component={AddPracticeDetails}/>
+                        <Route exact path="/settings/communication-settings" component={CommunicationSettings}/>
+                        <Route exact path="/settings/procedures" component={RecentProcedure}/>
+                        <Route exact path="/settings/procedures/addprocedure" component={AddProcedure}/>
+
                         <Route component={Error404}/>
                     </Switch>
                     <AppFooter/>

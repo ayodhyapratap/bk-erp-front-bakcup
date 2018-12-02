@@ -1,6 +1,5 @@
 import React from "react";
 import PracticeDetails from "./options/practice-detail/PracticeDetails"
-import CommunicationSettings from "./options/CommunicationSettings"
 import {Route, Link, Switch} from 'react-router-dom';
 import {Avatar, Dropdown, Icon, Layout, Menu} from "antd";
 import SettingSider from "./SettingSider"
@@ -20,8 +19,6 @@ class SettingsDash extends React.Component {
             {/*      <SettingSider/>*/}
             <Switch>
                 <Route exact path="/settings" component={PracticeDetails}/>
-                <Route exact path="/settings/communicationsettings" component={CommunicationSettings}/>
-
             </Switch>
         </div>
     }
