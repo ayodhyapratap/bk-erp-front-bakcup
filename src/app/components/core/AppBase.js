@@ -13,6 +13,9 @@ import AddPracticeDetails from "../settings/options/practice-detail/AddPracticeD
 import CommunicationSettings from "../settings/options/communication-settings/CommunicationSettings";
 import RecentProcedure from "../settings/options/procedure-catalog/RecentProcedure";
 import AddProcedure from "../settings/options/procedure-catalog/AddProcedure";
+import BillingSettings from "../settings/options/billing/BillingSettings";
+import Offers from "../settings/options/loyalty/Offers";
+import AddOffer from "../settings/options/loyalty/AddOffer";
 import Error404 from "../common/errors/Error404";
 
 
@@ -57,6 +60,9 @@ class AppBase extends React.Component {
                         <Route exact path="/settings/communication-settings" component={CommunicationSettings}/>
                         <Route exact path="/settings/procedures" component={RecentProcedure}/>
                         <Route exact path="/settings/procedures/addprocedure" component={AddProcedure}/>
+                        <Route exact path="/settings/billing" component={BillingSettings}/>
+                        <Route exact path="/settings/loyalty" component={Offers}/>
+                        <Route exact path="/settings/loyalty/add" component={AddOffer}/>
 
                         <Route component={Error404}/>
                     </Switch>
