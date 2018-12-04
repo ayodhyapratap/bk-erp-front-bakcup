@@ -68,6 +68,24 @@ export const getAPI = function (URL, successFn, errorFn) {
         errorFn();
     });
 };
+export const deleteAPI = function (URL, successFn, errorFn) {
+    // console.log(getAuthToken());
+    axios({
+        method: 'delete',
+        url: makeURL(URL),
+        headers: {
+            Authorization: 'Bearer ' + getAuthToken()
+        }
+    }).then(function (response) {
+        console.log(response);
+        let data = response.data;
+        successFn(data);
+    }).catch(function (error) {
+        console.log("Error aa rhi ", error);
+        handleErrorResponse(error);
+        errorFn();
+    });
+};
 
 export const handleErrorResponse = function (error) {
     let response = error.response;

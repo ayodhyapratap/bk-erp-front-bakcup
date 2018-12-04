@@ -17,7 +17,7 @@ import BillingSettings from "../settings/options/billing/BillingSettings";
 import Offers from "../settings/options/loyalty/Offers";
 import AddOffer from "../settings/options/loyalty/AddOffer";
 import Error404 from "../common/errors/Error404";
-
+import EditPracticeDetail from "../settings/options/practice-detail/EditPracticeDetail"
 
 const Content = Layout.Content;
 
@@ -63,6 +63,8 @@ class AppBase extends React.Component {
                         <Route exact path="/settings/billing" component={BillingSettings}/>
                         <Route exact path="/settings/loyalty" component={Offers}/>
                         <Route exact path="/settings/loyalty/add" component={AddOffer}/>
+                        <Route exact path="/settings/clinics/:id/edit"
+                              render={(route) => <EditPracticeDetail practiceId={route.match.params.id}/>}/>
 
                         <Route component={Error404}/>
                     </Switch>

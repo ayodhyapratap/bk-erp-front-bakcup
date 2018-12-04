@@ -2,7 +2,7 @@ import React from "react";
 import {Button, Form, Icon, Input, InputNumber, Radio, Select, Checkbox} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, NUMBER_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
-import {postAPI} from "../../utils/common";
+import {postAPI, putAPI} from "../../utils/common";
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -62,11 +62,19 @@ class DynamicFieldsForm extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.state.formProp.successFn(data);
+            if(that.props.changeRedirect!==null){
+              that.props.changeRedirect();
+            }
         };
         let errorFn = function () {
             that.state.formProp.errorFn();
         };
-        postAPI(this.props.formProp.action, data, successFn, errorFn);
+        if(this.props.formProp.method=="post"){
+          postAPI(this.props.formProp.action, data, successFn, errorFn);
+        }
+        else if(this.props.formProp.method=="put"){
+          putAPI(this.props.formProp.action, data, successFn, errorFn);
+        }
     }
 
     render() {

@@ -4,7 +4,7 @@ import {Button, Card, Form, Icon,Tabs, Divider, Tag , Row, Table} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {PRACTICESTAFF} from "../../../../constants/api"
 import {Link} from "react-router-dom";
-import {getAPI} from "../../../../utils/common";
+import {getAPI, interpolate} from "../../../../utils/common";
 
 const { Column, ColumnGroup } = Table;
 const TabPane = Tabs.TabPane;
@@ -14,6 +14,8 @@ class PracticeDetails extends React.Component {
         super(props);
         this.state = {
           current: 'staff',
+          practice_staff:null,
+
         }
     }
 
@@ -21,10 +23,13 @@ class PracticeDetails extends React.Component {
       var that = this;
         let successFn = function (data) {
           console.log("get table");
+          that.setState({
+            practice_staff:data.staff,
+          })
         };
         let errorFn = function () {
         };
-        getAPI(PRACTICESTAFF, successFn, errorFn);
+        getAPI(interpolate( PRACTICESTAFF, [2]), successFn, errorFn);
       }
 
     handleClick = (e) => {
@@ -36,6 +41,7 @@ class PracticeDetails extends React.Component {
 
 
     render() {
+      console.log(this.state.practice_staff);
         return <Row>
             <h2>Practice Staff
                 <Link to="/settings/clinics-staff/adddoctor">
@@ -45,34 +51,30 @@ class PracticeDetails extends React.Component {
                 </Link>
             </h2>
             <Card>
-            <Tabs defaultActiveKey="1" >
+            <Tabs defaultActiveKey="staff" >
 
               <TabPane tab={<span><Icon type="android" />Manage Staff</span>} key="staff">
-                <Table>
+                <Table dataSource={this.state.practice_staff}>
                   <Column
                     title="Name"
                     dataIndex="name"
                     key="name"
                     />
                     <Column
-                    title="Roles"
-                    dataIndex="role"
-                    key="role"
-                    render={tags => (
-                      <span>
-                        {tags.map(tag => <Tag color="blue" key={tag}>{tag}</Tag>)}
-                      </span>
-                    )}
+                    title="Email"
+                    dataIndex="email"
+                    key="email"
+
                     />
                     <Column
-                    title="Login Status"
-                    dataIndex="loginstatus"
-                    key="loginstatus"
+                    title="mobile"
+                    dataIndex="mobile"
+                    key="mobile"
                     />
                     <Column
-                    title="Last Logged in"
-                    dataIndex="lastloggedin"
-                    key="lastloggedin"
+                    title="registration_number"
+                    dataIndex="registration_number"
+                    key="registration_number"
                     />
                     <Column
                     title="Action	"
@@ -100,6 +102,7 @@ class PracticeDetails extends React.Component {
                       title="Confirmation SMS"
                       dataIndex="loginstatus"
                       key="confirmationSms"
+                      
                       />
                       <Column
                       title="Schedule SMS"
