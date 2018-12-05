@@ -1,47 +1,54 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Form, Card} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {Form, Card, message} from "antd";
+import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import { OFFERS} from "../../../../constants/api";
+import {getAPI, deleteAPI, interpolate} from "../../../../utils/common";
 
 class AddOffer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             fields: [{
-                label: "Name 1",
+                label: "practice ",
+                key: "practice",
+                initialValue:"2",
+                required: true,
+                type: INPUT_FIELD
+            },{
+                label: "Offer Name ",
+                key: "code",
+                required: true,
+                type: INPUT_FIELD
+            },{
+                label: "Description ",
                 key: "name1",
                 required: true,
-                initialValue: "My Name",
                 type: INPUT_FIELD
-            }, {
-                label: "Name 2",
-                key: "name2",
-                required: true,
-                initialValue: "My Name",
-                type: RADIO_FIELD,
-                options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
             },{
-                label: "Name 3",
-                key: "name3",
-                required: true,
-                initialValue: "My Name",
-                type: CHECKBOX_FIELD,
-                options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
-            }, {
-                label: "Name 4",
+                label: "Discount",
                 key: "name4",
                 required: true,
-                initialValue: "My Name",
-                type: SELECT_FIELD,
-                options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
+                type: NUMBER_FIELD,
             },]
         }
     }
 
     render() {
+      const formProp={
+        successFn:function(data){
+           message.success(data);
+          console.log(data);
+        },
+        errorFn:function(){
+
+        },
+        action: interpolate(OFFERS,[2]),
+        method: "post",
+      }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div><Card>
-            <TestFormLayout title="Add Offer"  fields={this.state.fields}/>
+            <TestFormLayout title="Add Offer" formProp={formProp} fields={this.state.fields}/>
             </Card>
         </div>
     }

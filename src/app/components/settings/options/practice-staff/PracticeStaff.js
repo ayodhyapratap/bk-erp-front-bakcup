@@ -1,6 +1,6 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Card, Form, Icon,Tabs, Divider, Tag , Row, Table} from "antd";
+import {Button, Checkbox, Card, Form, Icon,Tabs, Divider, Tag , Row, Table} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {PRACTICESTAFF} from "../../../../constants/api"
 import {Link} from "react-router-dom";
@@ -92,34 +92,54 @@ class PracticeDetails extends React.Component {
                 </Table>
                 </TabPane>
                 <TabPane tab={<span><Icon type="android" />Staff Notification</span>} key="notification">
-                  <Table>
+                  <Table dataSource={this.state.practice_staff}>
                     <Column
                       title="Name"
                       dataIndex="name"
                       key="name"
+
                       />
                       <Column
                       title="Confirmation SMS"
-                      dataIndex="loginstatus"
-                      key="confirmationSms"
-                      
+                      dataIndex="confirmation_sms"
+                      key="confirmation_sms"
+                      render={ confirmation_sms => (
+                        <span>
+                        <Checkbox checked={confirmation_sms} />
+                        </span>
+                      )}
                       />
                       <Column
                       title="Schedule SMS"
-                      dataIndex="lastloggedin"
-                      key="ScheduleSMS"
+                      dataIndex="schedule_sms"
+                      key="schedule_sms"
+                      render={ schedule_sms => (
+                        <span>
+                        <Checkbox checked={schedule_sms} />
+                        </span>
+                      )}
                       />
                       />
                       <Column
                       title="Confirmation EMAIL"
-                      dataIndex="loginstatus"
-                      key="ConfirmationEMAIL"
+                      dataIndex="confirmation_email"
+                      key="confirmation_email"
+                      render={ confirmation_email => (
+                        <span>
+                        <Checkbox checked={confirmation_email} />
+                        </span>
+                      )}
                       />
                       />
                       <Column
-                      title="Schedule EMAIL"
-                      dataIndex="loginstatus"
-                      key="ScheduleEMAIL"
+                      title="online_appointment_sms"
+                      dataIndex="online_appointment_sms"
+                      key="online_appointment_sms"
+                      render={online_appointment_sms => (
+                        <span>
+                        <Checkbox checked={online_appointment_sms}/>
+                        </span>
+                      )}
                       />
 
                   </Table>

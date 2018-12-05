@@ -1,6 +1,6 @@
 import lockr from 'lockr';
 import axios from 'axios';
-import {AUTH_TOKEN, PASSWORD, ROLE, EMAIL} from "../constants/dataKeys";
+import {AUTH_TOKEN, PASSWORD, ROLE, EMAIL, GROUP} from "../constants/dataKeys";
 import {handleErrorResponse, makeURL} from "./common";
 import {LOGIN_URL} from "../constants/api";
 
@@ -13,6 +13,28 @@ export const loggedInUser = function () {
     }
     return null;
 };
+
+export const loggedInUserGroup = function () {
+    let role = lockr.get(ROLE);
+    let token = lockr.get(AUTH_TOKEN);
+    let group = lockr.get(GROUP);
+    if (role && token&& group) {
+        return group;
+    }
+    return null;
+};
+
+export const loggedInPermissions = function (){
+  let  groups= lockr.get(GROUP);
+  let permissions ={}
+  groups.forEach(function(group){
+  group.permissions.forEach(function(permission){
+    permissions[permission.codename] = true
+  });
+})
+  return permissions;
+}
+
 
 export const logInUser = function (data, successFn, errorFn) {
   console.log("workign");
@@ -30,6 +52,7 @@ export const logInUser = function (data, successFn, errorFn) {
         let data = response.data;
         lockr.set(ROLE, data.user);
         lockr.set(AUTH_TOKEN, data.token);
+        lockr.set(GROUP, data.group)
         successFn()
     }).catch(function (error) {
         console.log(error);

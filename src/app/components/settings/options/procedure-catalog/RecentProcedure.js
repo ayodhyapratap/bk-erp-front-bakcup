@@ -2,9 +2,9 @@ import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon,Tabs, Divider, Tag , Row, Table} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
-import {PRACTICESTAFF} from "../../../../constants/api"
+import {PROCEDURE_CATEGORY} from "../../../../constants/api"
 import {Link} from "react-router-dom";
-import {getAPI} from "../../../../utils/common";
+import {getAPI, interpolate} from "../../../../utils/common";
 
 const { Column, ColumnGroup } = Table;
 const TabPane = Tabs.TabPane;
@@ -14,8 +14,22 @@ class RecentProcedure extends React.Component {
         super(props);
         this.state = {
           current: 'staff',
+          procedure_category: null,
         }
     }
+
+    componentDidMount() {
+      var that = this;
+        let successFn = function (data) {
+          console.log("get table");
+          that.setState({
+            procedure_category:data,
+          })
+        };
+        let errorFn = function () {
+        };
+        getAPI(interpolate( PROCEDURE_CATEGORY, [2]), successFn, errorFn);
+      }
 
 
     handleClick = (e) => {
@@ -39,7 +53,7 @@ class RecentProcedure extends React.Component {
             <Tabs defaultActiveKey="procedurecatalog" >
 
               <TabPane tab={<span><Icon type="android" />Procedure Catalog</span>} key="procedurecatalog">
-                <Table>
+                <Table dataSource={this.state.procedure_category}>
                   <Column
                     title="Procedure Name"
                     dataIndex="name"
@@ -47,20 +61,24 @@ class RecentProcedure extends React.Component {
                     />
                   <Column
                     title="Procedure Unit Cost"
-                    dataIndex="name"
+                    dataIndex="cost"
                     key="cost"
                     />
                     <Column
                     title="Applicable Taxes"
-                    dataIndex="role"
-                    key="role"
-                    render={tags => (
+                    dataIndex="taxes"
+                    key="taxes"
+                    render={taxes => (
                       <span>
-                        {tags.map(tag => <Tag color="blue" key={tag}>{tag}</Tag>)}
+                        {taxes.map(tag => <Tag color="blue" key={taxes}>{taxes}</Tag>)}
                       </span>
                     )}
                     />
-
+                    <Column
+                      title="Standard Notes	"
+                      dataIndex="default_notes"
+                      key="default_notes"
+                      />
                     <Column
                     title="Action	"
                     key="action"

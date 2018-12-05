@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Layout} from "antd";
 import {Route, Switch} from "react-router-dom";
-import {loggedInUser, logInUser, logOutUser} from "./app/utils/auth";
+import {loggedInUser, loggedInPermissions,logInUser, logOutUser} from "./app/utils/auth";
 import AppBase from "./app/components/core/AppBase";
 import Auth from "./app/components/auth/Auth";
 
@@ -10,6 +10,7 @@ class App extends Component {
         super(props);
         this.state = {
             user: loggedInUser(),
+            permissions:loggedInPermissions(),
             redirect: false,
         };
         this.login = this.login.bind(this);
@@ -22,8 +23,10 @@ class App extends Component {
             let user = loggedInUser();
             that.setState({
                 user: user,
+                permissions:loggedInPermissions()
                  // redirect: true
             });
+
         };
         let errorFn = function () {
 
@@ -41,10 +44,9 @@ class App extends Component {
         let errorFn = function () {
         };
         logOutUser(successFn, errorFn);
-
     }
 
-    render() {
+    render() {console.log(this.state.permissions);
         return <Layout style={{height: '100px'}}>
             <Switch>
                 <Route exact path="/login" render={() => <Auth {...this.state} login={this.login}/>}/>

@@ -1,7 +1,9 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Form, Card  } from "antd";
+import {Form, Card, message  } from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD, NUMBER_FIELD} from "../../../../constants/dataKeys";
+import {PROCEDURE_CATEGORY} from "../../../../constants/api"
+import {getAPI, interpolate} from "../../../../utils/common";
 
 class AddProcedure extends React.Component {
     constructor(props) {
@@ -37,10 +39,22 @@ class AddProcedure extends React.Component {
     }
 
     render() {
+      const formProp={
+        successFn:function(data){
+           message.success(data);
+          console.log(data);
+        },
+        errorFn:function(){
+
+        },
+        action: interpolate(PROCEDURE_CATEGORY,[2]),
+        method: "post",
+      }
+
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
           <Card>
-            <TestFormLayout title="Add Procedure" fields={this.state.fields}/>
+            <TestFormLayout title="Add Procedure"  formProp={formProp} fields={this.state.fields}/>
           </Card>
         </div>
     }

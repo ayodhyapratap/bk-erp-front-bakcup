@@ -126,7 +126,7 @@ class DynamicFieldsForm extends React.Component {
                                 {...formItemLayout}
                                 label={field.label}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <InputNumber min={1} max={10}/>
+                                    <InputNumber min={1} />
                                 )}
                                 <span className="ant-form-text">{field.follow}</span>
                             </FormItem>;

@@ -20,6 +20,7 @@ export const FIRST_NAME = 'firstname';
 export const LAST_NAME = 'lastname';
 export const AUTH_TOKEN = 'token';
 export const ROLE = 'role';
+export const GROUP = 'group';
 
 /***
  * Form Data Types

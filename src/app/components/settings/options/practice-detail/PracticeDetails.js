@@ -6,39 +6,6 @@ import {Link} from "react-router-dom";
 import {ALL_PRACTICE, PRACTICE} from "../../../../constants/api";
 import {getAPI, deleteAPI, interpolate} from "../../../../utils/common";
 
-const columns = [{
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: text => <a href="javascript:;">{text}</a>,
-    }, {
-      title: 'Tagline',
-      dataIndex: 'tagline',
-      key: 'tagline',
-    }, {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-    }, {
-      title: 'specialisation',
-      key: 'specialisation',
-      dataIndex: 'specialisation',
-      render: specialisation => (
-        <span>
-           <Tag color="blue" key={specialisation}>{specialisation}</Tag>
-        </span>
-      ),
-    }, {
-      title: 'Action',
-      key: 'action',
-      render: (text, record) => (
-        <span>
-          <Link to={'/settings/clinics/' + record.id + '/edit'}>Edit</Link>
-          <Divider type="vertical" />
-          <a onClick={this.deletePractice}>Delete</a>
-        </span>
-      ),
-    }];
 
 class PracticeDetails extends React.Component {
     constructor(props) {

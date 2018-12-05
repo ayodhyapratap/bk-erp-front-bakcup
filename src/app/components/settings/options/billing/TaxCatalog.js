@@ -1,34 +1,113 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Card, Form, Icon, Row, Table, Divider} from "antd";
+import {Button, Modal, Card, Form, Icon, Row, Table, Divider} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {TAXES} from "../../../../constants/api"
+import {Link} from "react-router-dom";
+import {getAPI, interpolate} from "../../../../utils/common";
 
 class TaxCatalog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            fields: [{
-                label: "Tax name",
-                key: "tax_name",
-                required: true,
-                type: INPUT_FIELD
-            },{
-                label: "Tax Value",
-                key: "tax_value",
-                follow: "INR",
-                required: true,
-                type: NUMBER_FIELD
-          },]
+          redirect: false,
+          visible: false,
         }
     }
 
+    changeRedirect(){
+      var redirectVar=this.state.redirect;
+    this.setState({
+      redirect:  !redirectVar,
+    })  ;
+    }
+    editTax(value){
+      this.setState({
+        editingId:value,
+        visible: true,
+      })
+    }
+    handleCancel = () => {
+        this.setState({ visible: false });
+    }
+
+
     render() {
+      const columns = [{
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+          }, {
+            title: 'tax value',
+            dataIndex: 'tax_value',
+            key: 'tax_value',
+          },{
+            title: 'Action',
+            key: 'action',
+            render: (text, record) => (
+              <span>
+              <a onClick={()=>this.editTax(record.id)}>  Edit</a>
+                <Divider type="vertical" />
+              </span>
+            ),
+          }];
+      const   fields= [{
+            label: "Tax name",
+            key: "name",
+            required: true,
+            type: INPUT_FIELD
+        },{
+            label: "Tax Value",
+            key: "tax_value",
+            follow: "INR",
+            required: true,
+            type: NUMBER_FIELD
+      },];
+      const   editfields= [{
+            label: "id",
+            key: "id",
+            required: true,
+            initialValue: this.state.editingId,
+            type: NUMBER_FIELD
+        },
+        {
+              label: "Tax name",
+              key: "name",
+              required: true,
+              type: INPUT_FIELD
+          },{
+            label: "Tax Value",
+            key: "tax_value",
+            follow: "INR",
+            required: true,
+            type: NUMBER_FIELD
+      },];
+      const formProp={
+        successFn:function(data){
+
+          console.log(data);
+          console.log("sucess");
+        },
+        errorFn:function(){
+
+        },
+        action: interpolate(TAXES,[2]),
+        method: "post",
+      }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
-            <TestFormLayout  fields={this.state.fields}/>
+            <TestFormLayout formProp={formProp}  fields={fields}/>
             <Divider/>
-            <Table>
-            </Table>
+            <Table columns={columns}  dataSource={this.props.taxes}/>
+            <Modal
+             title="Basic Modal"
+             visible={this.state.visible}
+             footer={null}
+             >
+              <TestFormLayout formProp={formProp}  fields={editfields}/>
+              <Button key="back" onClick={this.handleCancel}>Return</Button>,
+
+           </Modal>
         </div>
     }
 }
