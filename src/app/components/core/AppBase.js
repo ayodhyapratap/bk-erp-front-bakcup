@@ -18,6 +18,7 @@ import Offers from "../settings/options/loyalty/Offers";
 import AddOffer from "../settings/options/loyalty/AddOffer";
 import Error404 from "../common/errors/Error404";
 import EditPracticeDetail from "../settings/options/practice-detail/EditPracticeDetail"
+import EMRSettings from "../settings/options/emr/EMRSettings"
 
 const Content = Layout.Content;
 
@@ -62,6 +63,7 @@ class AppBase extends React.Component {
                         {this.props.permissions.add_procedurecatalog  ?<Route exact path="/settings/procedures/addprocedure" component={AddProcedure}/>:<Route component={Error404}/>}
                         {this.props.permissions.view_taxes  ?<Route exact path="/settings/billing" component={BillingSettings}/>:<Route component={Error404}/>}
                         {this.props.permissions.view_practiceoffers  ?<Route exact path="/settings/loyalty" component={Offers}/>:<Route component={Error404}/>}
+                        {this.props.permissions.view_practiceoffers  ?<Route exact path="/settings/emr" component={EMRSettings}/>:<Route component={Error404}/>}
                         {this.props.permissions.add_practiceoffers  ?<Route exact path="/settings/loyalty/add" component={AddOffer}/>:<Route component={Error404}/>}
                         {this.props.permissions.change_practice  ?<Route exact path="/settings/clinics/:id/edit"
                               render={(route) => <EditPracticeDetail practiceId={route.match.params.id}/>}/>:<Route component={Error404}/>}

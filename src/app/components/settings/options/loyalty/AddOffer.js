@@ -4,11 +4,14 @@ import {Form, Card, message} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import { OFFERS} from "../../../../constants/api";
 import {getAPI, deleteAPI, interpolate} from "../../../../utils/common";
+import { Redirect } from 'react-router-dom'
+
 
 class AddOffer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+          redirect:false,
             fields: [{
                 label: "practice ",
                 key: "practice",
@@ -22,22 +25,30 @@ class AddOffer extends React.Component {
                 type: INPUT_FIELD
             },{
                 label: "Description ",
-                key: "name1",
+                key: "description",
                 required: true,
                 type: INPUT_FIELD
             },{
                 label: "Discount",
-                key: "name4",
+                key: "discount",
                 required: true,
                 type: NUMBER_FIELD,
             },]
         }
+        this.changeRedirect= this.changeRedirect.bind(this);
+
     }
+
+        changeRedirect(){
+          var redirectVar=this.state.redirect;
+        this.setState({
+          redirect:  !redirectVar,
+        })  ;
+        }
 
     render() {
       const formProp={
         successFn:function(data){
-           message.success(data);
           console.log(data);
         },
         errorFn:function(){
@@ -48,7 +59,9 @@ class AddOffer extends React.Component {
       }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div><Card>
-            <TestFormLayout title="Add Offer" formProp={formProp} fields={this.state.fields}/>
+            <TestFormLayout title="Add Offer" formProp={formProp}  changeRedirect={this.changeRedirect} fields={this.state.fields}/>
+            {this.state.redirect&&    <Redirect to='/settings/loyalty' />}
+
             </Card>
         </div>
     }

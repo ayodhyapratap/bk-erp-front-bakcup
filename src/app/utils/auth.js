@@ -1,6 +1,6 @@
 import lockr from 'lockr';
 import axios from 'axios';
-import {AUTH_TOKEN, PASSWORD, ROLE, EMAIL, GROUP} from "../constants/dataKeys";
+import {AUTH_TOKEN, PASSWORD, ROLE, EMAIL, PRACTICE, GROUP} from "../constants/dataKeys";
 import {handleErrorResponse, makeURL} from "./common";
 import {LOGIN_URL} from "../constants/api";
 
@@ -23,10 +23,25 @@ export const loggedInUserGroup = function () {
     }
     return null;
 };
+export const loggedInUserPractices = function () {
+    let role = lockr.get(ROLE);
+    let token = lockr.get(AUTH_TOKEN);
+    let practice = lockr.get(PRACTICE);
+    let practices={};
+    practice.forEach(function(clinic){
+      practices[clinic.practice.id]=clinic.practice
+    })
+    if (role && token&&practice) {
+        return practices ;
+    }
+    return null;
+};
+
 
 export const loggedInPermissions = function (){
   let  groups= lockr.get(GROUP);
   let permissions ={}
+  if(groups)
   groups.forEach(function(group){
   group.permissions.forEach(function(permission){
     permissions[permission.codename] = true
@@ -53,6 +68,7 @@ export const logInUser = function (data, successFn, errorFn) {
         lockr.set(ROLE, data.user);
         lockr.set(AUTH_TOKEN, data.token);
         lockr.set(GROUP, data.group)
+        lockr.set(PRACTICE, data.practice)
         successFn()
     }).catch(function (error) {
         console.log(error);
@@ -83,6 +99,8 @@ export const logOutUser = function (successFn, errorFn) {
     // })
     lockr.rm(ROLE);
     lockr.rm(AUTH_TOKEN);
+    lockr.rm(PRACTICE);
+    lockr.rm(GROUP);
     successFn();
 };
 export const getAuthToken = function () {

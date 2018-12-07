@@ -5,6 +5,7 @@ import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../.
 import {Link} from "react-router-dom";
 import {ALL_PRACTICE, PRACTICE} from "../../../../constants/api";
 import {getAPI, deleteAPI, interpolate} from "../../../../utils/common";
+import {loggedInUserGroup,loggedInUserPractices} from "../../../../../app/utils/auth";
 
 
 class PracticeDetails extends React.Component {
@@ -16,9 +17,15 @@ class PracticeDetails extends React.Component {
     }
 
     componentDidMount() {
-    this.practiceData();
+      let group=loggedInUserGroup();
+      if(group[0].name=="Admin"){
+        this.admin_practiceData();
+      }
+      else {
+        this.clinicData();
+      }
     }
-    practiceData(){
+    admin_practiceData(){
       var that = this;
       let successFn = function (data) {
         let specialisations = {};
@@ -35,6 +42,20 @@ class PracticeDetails extends React.Component {
       let errorFn = function () {
       };
       getAPI(ALL_PRACTICE, successFn, errorFn);
+
+    }
+
+    clinicData(){
+      let  practice=loggedInUserPractices();
+      console.log(practice);
+      var practiceKeys = Object.keys(practice);
+      let practiceArray = [];
+      practiceKeys.forEach(function(key){
+        practiceArray.push(practice[key]);
+      });
+      this.setState({
+        practiceList:practiceArray
+      })
 
     }
 
