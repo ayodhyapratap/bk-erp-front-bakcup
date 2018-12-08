@@ -44,7 +44,7 @@ class AppHeader extends React.Component {
 
                 </Menu.Item>
                 <Menu.Item key="3">
-                <Select   onChange={this.props.switchPractice} defaultValue={this.props.active_practiceId} style={{width:'300px',maxWidth:'70vw'}}>
+                <Select  onChange={this.props.switchPractice} defaultValue={this.props.active_practiceId} style={{width:'300px',maxWidth:'70vw'}}>
                      {this.props.practiceList.map((option) => <Select.Option
                          value={option.id}>{option.name}</Select.Option>)}
                  </Select>

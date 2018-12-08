@@ -3,6 +3,7 @@ import axios from 'axios';
 import {AUTH_TOKEN, PASSWORD, ROLE, EMAIL, PRACTICE, GROUP} from "../constants/dataKeys";
 import {handleErrorResponse, makeURL} from "./common";
 import {LOGIN_URL} from "../constants/api";
+import {CURRENT_PRACTICE} from "../constants/formLabels";
 
 
 export const loggedInUser = function () {
@@ -14,11 +15,17 @@ export const loggedInUser = function () {
     return null;
 };
 
+export const currentPractice = function () {
+
+}
+export const setCurrentPractice = function (practice) {
+    lockr.set(CURRENT_PRACTICE, practice);
+}
 export const loggedInUserGroup = function () {
     let role = lockr.get(ROLE);
     let token = lockr.get(AUTH_TOKEN);
     let group = lockr.get(GROUP);
-    if (role && token&& group) {
+    if (role && token && group) {
         return group;
     }
     return null;
@@ -28,40 +35,38 @@ export const loggedInUserPractices = function () {
     let token = lockr.get(AUTH_TOKEN);
     let practice = lockr.get(PRACTICE);
     console.log(practice)
-    let practices={};
-    practice.forEach(function(clinic){
-      practices[clinic.practice]=clinic
-    })
-    console.log(practices);
-    if (role && token&&practice) {
-        return practices ;
+    let practices = {};
+    if (role && token && practice) {
+        practice.forEach(function (clinic) {
+            practices[clinic.practice] = clinic
+        })
+        return practices;
     }
     return null;
 };
 export const loggedInactivePractice = function () {
-   let firstPractice= lockr.get(PRACTICE);
-   if(firstPractice){
-   console.log(firstPractice[0].practice);
-   return firstPractice[0].practice;}
-   else return null
+    let practice = lockr.get(CURRENT_PRACTICE);
+    if (practice)
+        return practice;
+    return null
 }
 
 
-export const loggedInPermissions = function (){
-  let  groups= lockr.get(GROUP);
-  let permissions ={}
-  if(groups)
-  groups.forEach(function(group){
-  group.permissions.forEach(function(permission){
-    permissions[permission.codename] = true
-  });
-})
-  return permissions;
+export const loggedInPermissions = function () {
+    let groups = lockr.get(GROUP);
+    let permissions = {}
+    if (groups)
+        groups.forEach(function (group) {
+            group.permissions.forEach(function (permission) {
+                permissions[permission.codename] = true
+            });
+        })
+    return permissions;
 }
 
 
 export const logInUser = function (data, successFn, errorFn) {
-  console.log("workign");
+    console.log("workign");
     // lockr.set(USER, {
     //   [USERNAME]: 'username',
     //   [USER_TYPE]: [ADMIN_ABBREV, MANAGER_ABBREV, ANALYST_ABBREV]
@@ -86,7 +91,7 @@ export const logInUser = function (data, successFn, errorFn) {
         errorFn();
     })
 };
-export const saveAuthToken = function(response,successFn){
+export const saveAuthToken = function (response, successFn) {
     let data = response;
     lockr.set(ROLE, data.id);
     lockr.set(AUTH_TOKEN, data.token);

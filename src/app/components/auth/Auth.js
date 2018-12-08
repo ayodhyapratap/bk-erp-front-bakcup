@@ -8,7 +8,7 @@ import '../../assets/auth.css';
 // import PrivacyPolicy from "../common/PrivacyPolicy";
 // import VerifyEmail from "./VerifyEmail";
 // import ForgotPass from "./ForgotPass";
-
+import AppLogo from '../../assets/img/app_logo.png';
 class Auth extends React.Component {
   constructor(props) {
     super(props);
@@ -18,6 +18,7 @@ class Auth extends React.Component {
     const LoginFormLayout = Form.create()(LoginForm);
   //  const RegisterFormLayout = Form.create()(RegisterForm);
     return <Layout className="loginLayout">
+
       <Switch>
       <Route exact path="/register" >
           <Row>
@@ -45,6 +46,7 @@ class Auth extends React.Component {
             <Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}
                  lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>
               <div className="loginFormWrapper">
+                  <img src={AppLogo} alt="" style={{maxWidth:'100%'}}/>
                 <LoginFormLayout {...this.props} login={this.props.login}/>
                 <Divider/>
                 <h4>
