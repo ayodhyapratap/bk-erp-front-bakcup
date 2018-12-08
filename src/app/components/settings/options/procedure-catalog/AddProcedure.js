@@ -47,7 +47,7 @@ class AddProcedure extends React.Component {
         errorFn:function(){
 
         },
-        action: interpolate(PROCEDURE_CATEGORY,[2]),
+        action: interpolate(PROCEDURE_CATEGORY,[this.props.active_practiceId]),
         method: "post",
       }
 

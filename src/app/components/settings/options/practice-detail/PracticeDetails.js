@@ -45,26 +45,26 @@ class PracticeDetails extends React.Component {
     //
     // }
 
-    clinicData(){
-      let  practice=loggedInUserPractices();
-      console.log(practice);
-      var practiceKeys = Object.keys(practice);
-      let practiceArray = [];
-      practiceKeys.forEach(function(key){
-        let successFn = function (data) {
-          practiceArray.push(data)
-          console.log(practiceArray);
-        }
-        let errorFn = function () {
-        };
-        getAPI(interpolate(PRACTICE,[key]), successFn, errorFn);
-
-      });
-      this.setState({
-        practiceList:practiceArray
-      })
-
-    }
+    // clinicData(){
+    //   let  practice=loggedInUserPractices();
+    //   console.log(practice);
+    //   var practiceKeys = Object.keys(practice);
+    //   let practiceArray = [];
+    //   practiceKeys.forEach(function(key){
+    //     let successFn = function (data) {
+    //       practiceArray.push(data)
+    //       console.log(practiceArray);
+    //     }
+    //     let errorFn = function () {
+    //     };
+    //     getAPI(interpolate(PRACTICE,[key]), successFn, errorFn);
+    //
+    //   });
+    //   this.setState({
+    //     practiceList:practiceArray
+    //   })
+    //
+    // }
 
     deletePractice(value){
       var that = this;

@@ -24,7 +24,6 @@ class PracticeDetails extends React.Component {
       let group=loggedInUserGroup();
       if(group[0].name=="Admin"){
         this.admin_StaffData();
-        this.adminDoctorsData();
       }
       else{
           this.clinicData();
@@ -43,42 +42,43 @@ class PracticeDetails extends React.Component {
         getAPI(ALL_PRACTICE_STAFF, successFn, errorFn);
       }
 
-    adminDoctorsData() {
-      var that = this;
-        let successFn = function (data) {
-          that.setState({
-            practice_doctors:data,
-          })
-        };
-        let errorFn = function () {
-        };
-        getAPI(ALL_PRACTICE_DOCTORS, successFn, errorFn);
-      }
+
 
     clinicData(){
       let  practice=loggedInUserPractices();
       var practiceKeys = Object.keys(practice);
-  var that = this;
-      practiceKeys.forEach(function(key){
-          let successFn = function (data) {
-            that.setState(function(prevState){
-              let doctors = prevState.practice_doctors;
-              let staff= prevState.practice_staff;
-              // if(doctors==null){doctors=[];}
-              // if(staff==null){staff=[];}
-              data.doctors.concat(doctors);
-              data.staff.concat(staff);
-              return{
-                practice_staff:data.staff,
-                practice_doctors:data.doctors,
-              }
-            })
-          }
-          let errorFn = function () {
-          };
-          getAPI(interpolate(PRACTICESTAFF,[key]), successFn, errorFn);
+      var that = this;
+      // practiceKeys.forEach(function(key){
+      //     let successFn = function (data) {
+      //       that.setState(function(prevState){
+      //         let doctors = prevState.practice_doctors;
+      //         let staff= prevState.practice_staff;
+      //         // if(doctors==null){doctors=[];}
+      //         // if(staff==null){staff=[];}
+      //         data.doctors.concat(doctors);
+      //         data.staff.concat(staff);
+      //         return{
+      //           practice_staff:data.staff,
+      //           practice_doctors:data.doctors,
+      //         }
+      //       })
+      //     }
+      //     let errorFn = function () {
+      //     };
+      //     getAPI(interpolate(PRACTICESTAFF,[key]), successFn, errorFn);
+      //
+      // });
+        let successFn = function(data){
+          that.setState({
+            practice_staff:data.staff,
+            practice_doctors:data.doctors,
+          })
+        }
+        let errorFn = function(){
+        };
+      getAPI(interpolate(PRACTICESTAFF,[this.props.active_practiceId]), successFn, errorFn);
 
-      });
+
     }
 
     handleClick = (e) => {

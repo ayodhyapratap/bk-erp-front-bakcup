@@ -23,7 +23,7 @@ class Offers extends React.Component {
         };
         let errorFn = function () {
         };
-        getAPI(interpolate( OFFERS, [2]), successFn, errorFn);
+        getAPI(interpolate( OFFERS, [this.props.active_practiceId]), successFn, errorFn);
       }
     render() {
       const columns = [{

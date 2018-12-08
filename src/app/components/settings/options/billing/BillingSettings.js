@@ -29,7 +29,7 @@ class BillingSettings extends React.Component {
         };
         let errorFn = function () {
         };
-        getAPI(interpolate( TAXES, [2]), successFn, errorFn);
+        getAPI(interpolate( TAXES, [this.props.active_practiceId]), successFn, errorFn);
       }
 
     render() {
@@ -38,10 +38,10 @@ class BillingSettings extends React.Component {
           <Card>
             <Tabs defaultActiveKey="taxcatalog" >
               <TabPane tab={<span><Icon type="android" />Tax Catalog</span>} key="taxcatalog">
-               <TaxCatalog {...this.state}/>
+               <TaxCatalog {...this.state} {...this.props}/>
               </TabPane>
               <TabPane tab={<span><Icon type="android" />Accepted Modes of payment </span>} key="paymentmodes">
-                <PaymentModes/>
+                <PaymentModes {...this.props}/>
               </TabPane>
               {/*<TabPane tab={<span><Icon type="android" />Emails</span>} key="cancelledinvoice">
                 <CancelledInvoice/>
