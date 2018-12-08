@@ -87,8 +87,8 @@ class App extends Component {
             getAPI(ALL_PRACTICE, successFn, errorFn);
         } else {
             let practice = loggedInUserPractices();
-            if(!Array.isArray(practice) || !practice.length)
-                return true
+            // if(!Array.isArray(practice) || !practice.length)
+            //     return true
             console.log(practice);
             var practiceKeys = Object.keys(practice);
             console.log(practiceKeys);

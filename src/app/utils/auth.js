@@ -40,9 +40,9 @@ export const loggedInUserPractices = function () {
         practice.forEach(function (clinic) {
             practices[clinic.practice] = clinic
         })
-        return practices;
+
     }
-    return null;
+    return practices;
 };
 export const loggedInactivePractice = function () {
     let practice = lockr.get(CURRENT_PRACTICE);
