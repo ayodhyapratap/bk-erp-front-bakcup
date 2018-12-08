@@ -91,7 +91,7 @@ class TaxCatalog extends React.Component {
         errorFn:function(){
 
         },
-        action: interpolate(TAXES,[2]),
+        action: interpolate(TAXES,[this.props.active_practiceId]),
         method: "post",
       }
         const TestFormLayout = Form.create()(DynamicFieldsForm);

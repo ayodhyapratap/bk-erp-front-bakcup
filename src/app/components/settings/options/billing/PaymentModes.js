@@ -6,7 +6,7 @@ import {PAYMENT_MODES} from "../../../../constants/api"
 import {Link} from "react-router-dom";
 import {getAPI, interpolate} from "../../../../utils/common";
 
-class TaxCatalog extends React.Component {
+class PaymentModes extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -25,7 +25,7 @@ class TaxCatalog extends React.Component {
         };
         let errorFn = function () {
         };
-        getAPI(interpolate( PAYMENT_MODES, [2]), successFn, errorFn);
+        getAPI(interpolate( PAYMENT_MODES, [this.props.active_practiceId]), successFn, errorFn);
       }
     changeRedirect(){
       var redirectVar=this.state.redirect;
@@ -117,7 +117,7 @@ class TaxCatalog extends React.Component {
         errorFn:function(){
 
         },
-        action: interpolate(PAYMENT_MODES,[2]),
+        action: interpolate(PAYMENT_MODES,[this.props.active_practiceId]),
         method: "post",
       }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
@@ -137,4 +137,4 @@ class TaxCatalog extends React.Component {
     }
 }
 
-export default TaxCatalog;
+export default PaymentModes;

@@ -13,7 +13,7 @@ class AddStaffDoctor extends React.Component {
                   label: "clinic Name",
                   key: "practice",
                   required: true,
-                  initialValue:2,
+                  initialValue:this.props.active_practiceId,
                   type: INPUT_FIELD
               },{
                 label: "Doctor Name",

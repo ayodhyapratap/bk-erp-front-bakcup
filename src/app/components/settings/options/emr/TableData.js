@@ -25,7 +25,7 @@ class TableData extends React.Component {
         };
         let errorFn = function () {
         };
-        getAPI(interpolate(this.props.id, [2]), successFn, errorFn);
+        getAPI(interpolate(this.props.id, [this.props.active_practiceId]), successFn, errorFn);
       }
 
     changeRedirect(){
@@ -69,7 +69,7 @@ class TableData extends React.Component {
             label: "Practice Number ",
             key: "practice",
             required: true,
-            initialValue:"2",
+            initialValue:this.props.active_practiceId,
             type: NUMBER_FIELD
       },];
       const   editfields= [{
@@ -88,7 +88,7 @@ class TableData extends React.Component {
               label: "Practice Number ",
               key: "practice",
               required: true,
-              initialValue:"2",
+              initialValue:this.props.active_practiceId,
               type: NUMBER_FIELD
         },];
       const formProp={
@@ -100,7 +100,7 @@ class TableData extends React.Component {
         errorFn:function(){
 
         },
-        action: interpolate(this.props.id,[2]),
+        action: interpolate(this.props.id,[this.props.active_practiceId]),
         method: "post",
       }
         const TestFormLayout = Form.create()(DynamicFieldsForm);

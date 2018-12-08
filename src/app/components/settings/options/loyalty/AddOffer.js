@@ -15,7 +15,7 @@ class AddOffer extends React.Component {
             fields: [{
                 label: "practice ",
                 key: "practice",
-                initialValue:"2",
+                initialValue:this.props.active_practiceId,
                 required: true,
                 type: INPUT_FIELD
             },{
@@ -54,7 +54,7 @@ class AddOffer extends React.Component {
         errorFn:function(){
 
         },
-        action: interpolate(OFFERS,[2]),
+        action: interpolate(OFFERS,[this.props.active_practiceId]),
         method: "post",
       }
         const TestFormLayout = Form.create()(DynamicFieldsForm);

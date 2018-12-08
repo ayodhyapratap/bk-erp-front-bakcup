@@ -20,22 +20,22 @@ class EMRSettings extends React.Component {
           <Card>
             <Tabs defaultActiveKey="Complaints" >
               <TabPane tab={<span><Icon type="android" />Complaints</span>} key="Complaints">
-                <TableData  id={EMR_COMPLAINTS} name="Complaints"/>
+                <TableData {...this.props} id={EMR_COMPLAINTS} name="Complaints"/>
               </TabPane>
               <TabPane tab={<span><Icon type="android" />Observations</span>} key="observations">
-              <TableData  id={EMR_OBSERVATIONS} name="Observations"/>
+              <TableData {...this.props} id={EMR_OBSERVATIONS} name="Observations"/>
               </TabPane>
               <TabPane tab={<span><Icon type="android" />Diagnoses</span>} key="diagnoses">
-              <TableData  id={EMR_DIAGNOSES} name="Diagnoses"/>
+              <TableData {...this.props} id={EMR_DIAGNOSES} name="Diagnoses"/>
               </TabPane>
               <TabPane tab={<span><Icon type="android" />Investigations</span>} key="investigations">
-              <TableData  id={EMR_INVESTIGATIONS} name="Investigations"/>
+              <TableData {...this.props} id={EMR_INVESTIGATIONS} name="Investigations"/>
               </TabPane>
               <TabPane tab={<span><Icon type="android" />Notes</span>} key="treatmentnotes">
-              <TableData  id={EMR_TREATMENTNOTES} name="treatment notes"/>
+              <TableData {...this.props} id={EMR_TREATMENTNOTES} name="treatment notes"/>
               </TabPane>
               <TabPane tab={<span><Icon type="android" />FIle Labels</span>} key="filetags">
-              <TableData  id={EMR_FILETAGS} name="File Labels"/>
+              <TableData {...this.props} id={EMR_FILETAGS} name="File Labels"/>
               </TabPane>
             </Tabs>
 
