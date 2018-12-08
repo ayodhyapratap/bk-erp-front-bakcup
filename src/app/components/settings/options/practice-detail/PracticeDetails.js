@@ -17,33 +17,33 @@ class PracticeDetails extends React.Component {
     }
 
     componentDidMount() {
-      let group=loggedInUserGroup();
-      if(group[0].name=="Admin"){
-        this.admin_practiceData();
-      }
-      else {
-        this.clinicData();
-      }
+      // let group=loggedInUserGroup();
+      // if(group[0].name=="Admin"){
+      //   this.admin_practiceData();
+      // }
+      // else {
+      //   this.clinicData();
+      // }
     }
-    admin_practiceData(){
-      var that = this;
-      let successFn = function (data) {
-        let specialisations = {};
-        data[0].specialisations.forEach(function(speciality){
-          specialisations[speciality.id] = speciality
-        });
-        console.log(specialisations);
-
-        that.setState({
-        practiceList: data,
-        specialisations:specialisations,
-        })
-      };
-      let errorFn = function () {
-      };
-      getAPI(ALL_PRACTICE, successFn, errorFn);
-
-    }
+    // admin_practiceData(){
+    //   var that = this;
+    //   let successFn = function (data) {
+    //     let specialisations = {};
+    //     data[0].specialisations.forEach(function(speciality){
+    //       specialisations[speciality.id] = speciality
+    //     });
+    //     console.log(specialisations);
+    //
+    //     that.setState({
+    //     practiceList: data,
+    //     specialisations:specialisations,
+    //     })
+    //   };
+    //   let errorFn = function () {
+    //   };
+    //   getAPI(ALL_PRACTICE, successFn, errorFn);
+    //
+    // }
 
     clinicData(){
       let  practice=loggedInUserPractices();
@@ -51,7 +51,14 @@ class PracticeDetails extends React.Component {
       var practiceKeys = Object.keys(practice);
       let practiceArray = [];
       practiceKeys.forEach(function(key){
-        practiceArray.push(practice[key]);
+        let successFn = function (data) {
+          practiceArray.push(data)
+          console.log(practiceArray);
+        }
+        let errorFn = function () {
+        };
+        getAPI(interpolate(PRACTICE,[key]), successFn, errorFn);
+
       });
       this.setState({
         practiceList:practiceArray
@@ -115,7 +122,7 @@ class PracticeDetails extends React.Component {
                 </Link>
             </h2>
             <Card>
-                <Table columns={columns} dataSource={this.state.practiceList} />
+                <Table columns={columns} dataSource={this.props.practiceList} />
             </Card>
         </Row>
     }

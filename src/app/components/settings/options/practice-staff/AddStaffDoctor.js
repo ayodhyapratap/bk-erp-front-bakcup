@@ -9,17 +9,11 @@ class AddStaffDoctor extends React.Component {
         super(props);
         this.state = {
             fields: [
-              {
-                  label: "clinic admin",
-                  key: "user",
-                  required: true,
-                  initialValue: 3,
-                  type: INPUT_FIELD
-              },{
+            {
                   label: "clinic Name",
                   key: "practice",
                   required: true,
-                  initialValue: 2,
+                  initialValue:2,
                   type: INPUT_FIELD
               },{
                 label: "Doctor Name",

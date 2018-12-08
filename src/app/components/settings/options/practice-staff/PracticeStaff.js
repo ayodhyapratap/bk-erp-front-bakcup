@@ -46,7 +46,6 @@ class PracticeDetails extends React.Component {
     adminDoctorsData() {
       var that = this;
         let successFn = function (data) {
-          console.log("get table");
           that.setState({
             practice_doctors:data,
           })
@@ -83,7 +82,6 @@ class PracticeDetails extends React.Component {
     }
 
     handleClick = (e) => {
-        console.log('click ', e);
         this.setState({
           current: e.key,
         });
@@ -91,8 +89,7 @@ class PracticeDetails extends React.Component {
 
 
     render() {
-      console.log(this.state.practice_staff);
-      console.log(this.state.practice_doctors);
+
       const columns=[{
           title:"Name",
           dataIndex:"name",

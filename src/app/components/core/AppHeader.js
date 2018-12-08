@@ -1,5 +1,5 @@
 import React from "react";
-import {Avatar, Dropdown, Icon, Layout, Menu} from "antd";
+import {Avatar, Dropdown, Icon,Select, Layout, Menu} from "antd";
 import {Route, Link, Switch} from 'react-router-dom';
 
 const {Header} = Layout;
@@ -42,6 +42,12 @@ class AppHeader extends React.Component {
                         <div className="logo"/>
                     </Link>
 
+                </Menu.Item>
+                <Menu.Item key="3">
+                <Select   onChange={this.props.switchPractice} defaultValue={this.props.active_practiceId} style={{width:'300px',maxWidth:'70vw'}}>
+                     {this.props.practiceList.map((option) => <Select.Option
+                         value={option.id}>{option.name}</Select.Option>)}
+                 </Select>
                 </Menu.Item>
                 {/*<Menu.Item key="3"><Search*/}
                 {/*placeholder="Search"*/}
