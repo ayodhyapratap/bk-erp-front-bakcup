@@ -44,6 +44,8 @@ class AppSider extends React.Component {
                     <Menu.Item key="15"><Link to="/settings/medical-history"> Medical History</Link></Menu.Item>
                     <Menu.Item key="16"><Link to="/settings/expense-types"> Expense Types</Link></Menu.Item>
                 </SubMenu>
+                <SubMenu key="sub2" title={<span><Icon type=""/><span>Paitients</span></span>}>
+
 
             </Menu>
         </Sider>
