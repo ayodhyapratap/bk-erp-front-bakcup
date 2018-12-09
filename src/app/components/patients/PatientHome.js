@@ -1,9 +1,8 @@
 import React from "react";
 import PatientHeader from "./PatientHeader";
 import {Layout} from "antd";
-import {getAPI, deleteAPI, interpolate} from "../../utils/common";
-import {ALL_PATIENTS} from "../../constants/api";
-
+import {Route} from "react-router";
+import PatientProfile from "./patient/PatientProfile";
 
 const {Header, Content, Sider} = Layout;
 
@@ -14,26 +13,12 @@ class PatientHome extends React.Component {
             currentPatient: null
         }
         this.setCurrentPatient = this.setCurrentPatient.bind(this);
-        this.loadPatients = this.loadPatients.bind(this);
-    }
-    componentDidMount(){
-    this.loadPatients();
     }
 
-    loadPatients(){
-      let that = this;
-      let successFn = function (data){
-        console.log(data);
-      }
-      let errorFn = function () {
-
-      }
-      getAPI(ALL_PATIENTS, successFn, errorFn);
-    }
 
     setCurrentPatient(patientObj) {
         this.setState({
-            currentPatient:patientObj
+            currentPatient: patientObj
         });
     }
 
@@ -50,7 +35,8 @@ class PatientHome extends React.Component {
                              minHeight: 280,
                              // marginLeft: '200px'
                          }}>
-
+                    <Route exact path='/patients/profile'
+                           render={() => <PatientProfile {...this.state} setCurrentPatient={this.setCurrentPatient}/>}/>
                 </Content>
             </Layout>
         </Layout>
