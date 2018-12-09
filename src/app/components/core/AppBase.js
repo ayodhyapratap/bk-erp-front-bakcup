@@ -35,6 +35,7 @@ import Error404 from "../common/errors/Error404";
 import EditPracticeDetail from "../settings/options/practice-detail/EditPracticeDetail"
 import EMRSettings from "../settings/options/emr/EMRSettings"
 import Application from "./Calender";
+
 const Content = Layout.Content;
 
 class AppBase extends React.Component {
@@ -52,6 +53,7 @@ class AppBase extends React.Component {
         this.switchPractice = this.switchPractice.bind(this);
 
     }
+
     activeData() {
         let that = this;
         that.state.practiceList.forEach(function (practice) {
@@ -140,7 +142,6 @@ class AppBase extends React.Component {
     }
 
 
-
     toggle = () => {
         this.setState({
             collapsed: !this.state.collapsed,
@@ -152,7 +153,8 @@ class AppBase extends React.Component {
 
             <AppSider {...this.state}/>
             <Layout>
-                <AppHeader  switchPractice={this.switchPractice} {...this.state} {...this.state} toggleSider={this.toggle} {...this.state}/>
+                <AppHeader switchPractice={this.switchPractice} {...this.state}
+                           toggleSider={this.toggle}/>
                 <Content className="main-container"
                          style={{
                              margin: '24px 16px',
@@ -164,20 +166,54 @@ class AppBase extends React.Component {
                     <Switch>
                         <Route exact path="/" component={Application}/>
                         <Route exact path="/settings" component={SettingsDash}/>
-                        {this.props.permissions.view_practicestaff  ?<Route exact path="/settings/clinics-staff" render={(route) => <PracticeStaff  {...this.state}/>}/>:<Route component={Error404}/>}
-                        {this.props.permissions.add_practicestaff  ?<Route exact path="/settings/clinics-staff/adddoctor" render={(route) => <AddStaffDoctor  {...this.state}/>}/>:<Route component={Error404}/>}
-                        {this.props.permissions.view_practice  ?<Route exact path="/settings/clinics"   render={(route) => <PracticeDetails  {...this.state}/>}/>:<Route component={Error404}/>}
-                        {this.props.permissions.add_practice   ?<Route exact path="/settings/clinics/add"  render={(route) => <AddPracticeDetails  {...this.state}/>}/>:<Route component={Error404}/>}
-                        {this.props.permissions.view_practice  ?<Route exact path="/settings/communication-settings" render={(route) => <CommunicationSettings  {...this.state}/>}/>:<Route component={Error404}/>}
-                        {this.props.permissions.view_procedurecatalog  ?<Route exact path="/settings/procedures" render={(route) => <RecentProcedure  {...this.state}/>}/>:<Route component={Error404}/>}
-                        {this.props.permissions.add_procedurecatalog  ?<Route exact path="/settings/procedures/addprocedure" render={(route) => <AddProcedure  {...this.state}/>}/> :<Route component={Error404}/>}
-                        {this.props.permissions.view_taxes  ?<Route exact path="/settings/billing" render={(route) => <BillingSettings  {...this.state}/>}/> :<Route component={Error404}/>}
-                        {this.props.permissions.view_practiceoffers  ?<Route exact path="/settings/loyalty" render={(route) => <Offers  {...this.state}/>}/> :<Route component={Error404}/>}
-                        {this.props.permissions.view_practiceoffers  ?<Route exact path="/settings/emr" render={(route) => <EMRSettings  {...this.state}/>}/> :<Route component={Error404}/>}
-                        {this.props.permissions.add_practiceoffers  ?<Route exact path="/settings/loyalty/add" render={(route) => <AddOffer  {...this.state}/>}/> :<Route component={Error404}/>}
-                        {this.props.permissions.change_practice  ?<Route exact path="/settings/clinics/:id/edit"
-                              render={(route) => <EditPracticeDetail practiceId={route.match.params.id}/>}/>:<Route component={Error404}/>}
-
+                        <Route exact path="/settings/clinics-staff"
+                               render={(route) => (this.props.permissions.view_practicestaff ?
+                                       <PracticeStaff  {...this.state}/> : <Error404/>
+                               )}/>
+                        <Route exact path="/settings/clinics-staff/adddoctor"
+                               render={(route) => (this.props.permissions.add_practicestaff ?
+                                       <AddStaffDoctor  {...this.state}/> : <Error404/>
+                               )}/>
+                        <Route exact path="/settings/clinics"
+                               render={(route) => (this.props.permissions.view_practice ?
+                                       <PracticeDetails  {...this.state}/> : <Error404/>
+                               )}/>
+                        <Route exact path="/settings/clinics/add"
+                               render={(route) => (this.props.permissions.add_practice ?
+                                       <AddPracticeDetails  {...this.state}/> : <Error404/>
+                               )}/>
+                        <Route exact path="/settings/communication-settings"
+                               render={(route) => (this.props.permissions.view_practice ?
+                                       <CommunicationSettings  {...this.state}/> : <Error404/>
+                               )}/>
+                        <Route exact path="/settings/procedures"
+                               render={(route) => (this.props.permissions.view_procedurecatalog ?
+                                       <RecentProcedure  {...this.state}/> : <Error404/>
+                               )}/>
+                        <Route exact path="/settings/procedures/addprocedure"
+                               render={(route) => (this.props.permissions.add_procedurecatalog ?
+                                       <AddProcedure  {...this.state}/> : <Error404/>
+                               )}/>
+                        <Route exact path="/settings/billing"
+                               render={(route) => (this.props.permissions.view_taxes ?
+                                       <BillingSettings  {...this.state}/> : <Error404/>
+                               )}/>
+                        <Route exact path="/settings/loyalty"
+                               render={(route) => (this.props.permissions.view_practiceoffers ?
+                                       <Offers  {...this.state}/> : <Error404/>
+                               )}/>
+                        <Route exact path="/settings/emr"
+                               render={(route) => (this.props.permissions.view_practiceoffers ?
+                                       <EMRSettings  {...this.state}/> : <Error404/>
+                               )}/>
+                        <Route exact path="/settings/loyalty/add"
+                               render={(route) => (this.props.permissions.add_practiceoffers ?
+                                       <AddOffer  {...this.state}/> : <Error404/>
+                               )}/>
+                        <Route exact path="/settings/clinics/:id/edit"
+                               render={(route) => (this.props.permissions.change_practice ?
+                                   <EditPracticeDetail practiceId={route.match.params.id}/> : <Error404/>)
+                               }/>
                         <Route component={Error404}/>
                     </Switch>
                     <AppFooter/>
