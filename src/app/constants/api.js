@@ -22,3 +22,7 @@ export const EMR_INVESTIGATIONS= 'clinics/%s/investigations/';
 export const EMR_FILETAGS= 'clinics/%s/filetags/';
 export const ALL_PRACTICE_STAFF='staff/';
 export const ALL_PRACTICE_DOCTORS='doctor/';
+
+//Paitients
+
+export const ALL_PATIENTS = 'patients/'

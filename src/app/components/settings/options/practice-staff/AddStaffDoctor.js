@@ -1,8 +1,9 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon, Row} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {CHECKBOX_FIELD,SUCCESS_MSG_TYPE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {ALL_PRACTICE_STAFF} from "../../../../constants/api";
+import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
 
 class AddStaffDoctor extends React.Component {
     constructor(props) {
@@ -53,7 +54,7 @@ class AddStaffDoctor extends React.Component {
     render() {
               const formProp={
                 successFn:function(data){
-
+                  displayMessage(SUCCESS_MSG_TYPE, "success");
                   console.log(data);
                 },
                 errorFn:function(){

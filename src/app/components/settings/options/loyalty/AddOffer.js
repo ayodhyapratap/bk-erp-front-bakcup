@@ -1,9 +1,9 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form, Card, message} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {CHECKBOX_FIELD, SUCCESS_MSG_TYPE, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import { OFFERS} from "../../../../constants/api";
-import {getAPI, deleteAPI, interpolate} from "../../../../utils/common";
+import {getAPI, displayMessage, deleteAPI, interpolate} from "../../../../utils/common";
 import { Redirect } from 'react-router-dom'
 
 
@@ -50,6 +50,8 @@ class AddOffer extends React.Component {
       const formProp={
         successFn:function(data){
           console.log(data);
+          displayMessage(SUCCESS_MSG_TYPE, "success")
+
         },
         errorFn:function(){
 

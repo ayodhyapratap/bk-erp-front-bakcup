@@ -1,9 +1,9 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form, Card, message  } from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD, NUMBER_FIELD} from "../../../../constants/dataKeys";
+import {CHECKBOX_FIELD, SUCCESS_MSG_TYPE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD, NUMBER_FIELD} from "../../../../constants/dataKeys";
 import {PROCEDURE_CATEGORY} from "../../../../constants/api"
-import {getAPI, interpolate} from "../../../../utils/common";
+import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
 
 class AddProcedure extends React.Component {
     constructor(props) {
@@ -41,6 +41,7 @@ class AddProcedure extends React.Component {
     render() {
       const formProp={
         successFn:function(data){
+          displayMessage(SUCCESS_MSG_TYPE,'success');
            message.success(data);
           console.log(data);
         },

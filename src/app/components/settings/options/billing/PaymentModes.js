@@ -1,10 +1,10 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Modal, Card, Form, Icon, Row, Table, Divider} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {CHECKBOX_FIELD, SUCCESS_MSG_TYPE, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {PAYMENT_MODES} from "../../../../constants/api"
 import {Link} from "react-router-dom";
-import {getAPI, interpolate} from "../../../../utils/common";
+import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
 
 class PaymentModes extends React.Component {
     constructor(props) {
@@ -118,6 +118,7 @@ class PaymentModes extends React.Component {
           that.loadData();
           console.log(data);
           console.log("sucess");
+          displayMessage(SUCCESS_MSG_TYPE, "sucess")
         },
         errorFn:function(){
 

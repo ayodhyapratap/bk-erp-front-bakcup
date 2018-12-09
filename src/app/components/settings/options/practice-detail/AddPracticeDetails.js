@@ -1,9 +1,9 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon, Row} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {CHECKBOX_FIELD, SUCCESS_MSG_TYPE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {ALL_PRACTICE} from "../../../../constants/api";
-import {getAPI} from "../../../../utils/common";
+import {getAPI, displayMessage} from "../../../../utils/common";
 import { Redirect } from 'react-router-dom'
 
 
@@ -111,6 +111,7 @@ class AddPracticeDetails extends React.Component {
 
         const formProp={
           successFn:function(data){
+            displayMessage(SUCCESS_MSG_TYPE, "success")
 
             console.log(data);
           },
