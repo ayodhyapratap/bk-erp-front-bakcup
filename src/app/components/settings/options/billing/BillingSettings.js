@@ -16,20 +16,10 @@ class BillingSettings extends React.Component {
     constructor(props) {
         super(props);
         this.state={
-          taxes:null
         }
     }
     componentDidMount() {
-      var that = this;
-        let successFn = function (data) {
-          console.log("get table");
-          that.setState({
-            taxes:data,
-          })
-        };
-        let errorFn = function () {
-        };
-        getAPI(interpolate( TAXES, [this.props.active_practiceId]), successFn, errorFn);
+
       }
 
     render() {

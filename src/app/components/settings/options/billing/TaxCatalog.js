@@ -12,9 +12,26 @@ class TaxCatalog extends React.Component {
         this.state = {
           redirect: false,
           visible: false,
-        }
-    }
+          taxes:null
+        };
+        this.loadData = this.loadData.bind(this);
 
+    }
+    componentDidMount(){
+      this.loadData();
+    }
+    loadData(){
+      var that = this;
+        let successFn = function (data) {
+          console.log("get table");
+          that.setState({
+            taxes:data,
+          })
+        };
+        let errorFn = function () {
+        };
+        getAPI(interpolate( TAXES, [this.props.active_practiceId]), successFn, errorFn);
+    }
     changeRedirect(){
       var redirectVar=this.state.redirect;
     this.setState({
@@ -23,7 +40,10 @@ class TaxCatalog extends React.Component {
     }
     editTax(value){
       this.setState({
-        editingId:value,
+        editingId:value.id,
+        editingName: value.name,
+        editingValue:value.tax_value,
+
         visible: true,
       })
     }
@@ -33,6 +53,7 @@ class TaxCatalog extends React.Component {
 
 
     render() {
+      let that =this;
       const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -46,7 +67,7 @@ class TaxCatalog extends React.Component {
             key: 'action',
             render: (text, record) => (
               <span>
-              <a onClick={()=>this.editTax(record.id)}>  Edit</a>
+              <a onClick={()=>this.editTax(record)}>  Edit</a>
                 <Divider type="vertical" />
               </span>
             ),
@@ -64,27 +85,24 @@ class TaxCatalog extends React.Component {
             type: NUMBER_FIELD
       },];
       const   editfields= [{
-            label: "id",
-            key: "id",
-            required: true,
-            initialValue: this.state.editingId,
-            type: NUMBER_FIELD
-        },
-        {
               label: "Tax name",
               key: "name",
               required: true,
+              initialValue:this.state.editingName,
               type: INPUT_FIELD
           },{
             label: "Tax Value",
             key: "tax_value",
             follow: "INR",
             required: true,
+            initialValue:this.state.editingValue,
+
             type: NUMBER_FIELD
       },];
       const formProp={
         successFn:function(data){
-
+          that.handleCancel();
+          that.loadData();
           console.log(data);
           console.log("sucess");
         },
@@ -94,18 +112,19 @@ class TaxCatalog extends React.Component {
         action: interpolate(TAXES,[this.props.active_practiceId]),
         method: "post",
       }
-      const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}]
+      const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}];
+      const editFormDefaultValues = [{"key":"practice", "value":this.props.active_practiceId}, {"key":"id", "value":this.state.editingId}];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
             <TestFormLayout defaultValues={defaultValues} formProp={formProp}  fields={fields}/>
             <Divider/>
-            <Table columns={columns}  dataSource={this.props.taxes}/>
+            <Table columns={columns}  dataSource={this.state.taxes}/>
             <Modal
              title="Basic Modal"
              visible={this.state.visible}
              footer={null}
              >
-              <TestFormLayout defaultValues={defaultValues} formProp={formProp}  fields={editfields}/>
+              <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp}  fields={editfields}/>
               <Button key="back" onClick={this.handleCancel}>Return</Button>,
 
            </Modal>
