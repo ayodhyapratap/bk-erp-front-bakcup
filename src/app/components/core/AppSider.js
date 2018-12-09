@@ -44,7 +44,24 @@ class AppSider extends React.Component {
                     <Menu.Item key="15"><Link to="/settings/medical-history"> Medical History</Link></Menu.Item>
                     <Menu.Item key="16"><Link to="/settings/expense-types"> Expense Types</Link></Menu.Item>
                 </SubMenu>
-                <SubMenu key="sub2" title={<span><Icon type=""/><span>Paitients</span></span>}>
+                <SubMenu key="sub2" title={<span><Icon type="user"/><span>Paitients</span></span>}>
+                  <Menu.Item key="17"><Link to="/patients/profile">Profile</Link></Menu.Item>
+                  <Menu.Item key="18"><Link to="/patients/appointments">Appointments</Link></Menu.Item>
+                  <Menu.Item key="19"><Link to="/patients/communications">Communications</Link></Menu.Item>
+                  <SubMenu key="nestedsub1" title={<span>EMR</span>}>
+                    <Menu.Item key="20"><Link to="emr/patients/vitalsigns">Vitalsings</Link></Menu.Item>
+                    <Menu.Item key="21"><Link to="emr/patients/clinicnotes">Profile</Link></Menu.Item>
+                    <Menu.Item key="22"><Link to="emr/patients/workdone">Profile</Link></Menu.Item>
+                    <Menu.Item key="23"><Link to="emr/patients/files">Profile</Link></Menu.Item>
+                    <Menu.Item key="24"><Link to="emr/patients/prescriptions">Profile</Link></Menu.Item>
+                  </SubMenu>
+                  <SubMenu key="nestedsub2" title={<span>Billing</span>}>
+                  <Menu.Item key="25"><Link to="billing/patients/invoices">Invoices</Link></Menu.Item>
+                  <Menu.Item key="26"><Link to="billing/patients/payments">Payments</Link></Menu.Item>
+
+                  </SubMenu>
+
+                </SubMenu>
 
 
             </Menu>
