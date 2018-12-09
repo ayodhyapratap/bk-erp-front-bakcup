@@ -31,8 +31,8 @@ class PatientHome extends React.Component {
             <Layout>
                 <Content className="main-container"
                          style={{
-                             margin: '24px 16px',
-                             padding: 24,
+                             // margin: '24px 16px',
+                             // padding: 24,
                              minHeight: 280,
                              // marginLeft: '200px'
                          }}>

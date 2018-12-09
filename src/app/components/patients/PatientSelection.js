@@ -34,10 +34,9 @@ class PatientSelection extends React.Component {
     render() {
         let that = this;
         return <Row>
-            <Col
-                span={8}
+            <Col span={8}
                 style={{
-                    height: 'calc(100% - 55px)',
+                    height: 'calc(100vh - 55px)',
                     overflow: 'auto',
                     paddingBottom: 53,
                     backgroundColor: '#ccc'
@@ -60,7 +59,7 @@ export default PatientSelection;
 
 function PatientCard(patient) {
     return <Col span={12}>
-        <Card onClick={() => patient.setCurrentPatient(patient)}>
+        <Card onClick={() => patient.setCurrentPatient(patient)} style={{margin:'5px'}}>
             <Meta
                 avatar={(patient.image ? <Avatar src={patient.image}/> :
                     <Avatar style={{backgroundColor: '#87d068'}}>
