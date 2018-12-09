@@ -94,9 +94,10 @@ class TaxCatalog extends React.Component {
         action: interpolate(TAXES,[this.props.active_practiceId]),
         method: "post",
       }
+      const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}]
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
-            <TestFormLayout formProp={formProp}  fields={fields}/>
+            <TestFormLayout defaultValues={defaultValues} formProp={formProp}  fields={fields}/>
             <Divider/>
             <Table columns={columns}  dataSource={this.props.taxes}/>
             <Modal
@@ -104,7 +105,7 @@ class TaxCatalog extends React.Component {
              visible={this.state.visible}
              footer={null}
              >
-              <TestFormLayout formProp={formProp}  fields={editfields}/>
+              <TestFormLayout defaultValues={defaultValues} formProp={formProp}  fields={editfields}/>
               <Button key="back" onClick={this.handleCancel}>Return</Button>,
 
            </Modal>

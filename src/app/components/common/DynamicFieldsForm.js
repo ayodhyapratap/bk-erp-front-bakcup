@@ -53,6 +53,9 @@ class DynamicFieldsForm extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log(values);
+                this.props.defaultValues.forEach(function (object){
+                  values[object.key]= object.value;
+                })
                 that.submitForm(values);
             }
         });
