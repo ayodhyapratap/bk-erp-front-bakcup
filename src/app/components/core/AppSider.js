@@ -13,6 +13,7 @@ class AppSider extends React.Component {
 
     render() {
         return <Sider
+            style={{ background: '#fff' }}
             // collapsible
             // collapsed={this.props.collapsed}
             // style={{overflow: 'auto', height: '100vh', position: 'fixed', left: 0}}
@@ -25,7 +26,7 @@ class AppSider extends React.Component {
                 console.log(collapsed, type);
             }}>
             <img src={Applogo} alt="" style={{width: '100%'}}/>
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
+            <Menu mode="inline" defaultSelectedKeys={['4']}>
                 <Menu.Item key="1">
                     <Link to="/calender">
                         <Icon type="schedule"/>

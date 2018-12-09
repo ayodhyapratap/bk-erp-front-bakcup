@@ -21,20 +21,10 @@ import {ALL_PRACTICE, PRACTICE} from "../../constants/api";
 //settings
 import TestForm from "./TestForm";
 import SettingsDash from "../settings/SettingsDash"
-import PracticeDetails from "../settings/options/practice-detail/PracticeDetails";
-import PracticeStaff from "../settings/options/practice-staff/PracticeStaff";
-import AddStaffDoctor from "../settings/options/practice-staff/AddStaffDoctor";
-import AddPracticeDetails from "../settings/options/practice-detail/AddPracticeDetails";
-import CommunicationSettings from "../settings/options/communication-settings/CommunicationSettings";
-import RecentProcedure from "../settings/options/procedure-catalog/RecentProcedure";
-import AddProcedure from "../settings/options/procedure-catalog/AddProcedure";
-import BillingSettings from "../settings/options/billing/BillingSettings";
-import Offers from "../settings/options/loyalty/Offers";
-import AddOffer from "../settings/options/loyalty/AddOffer";
-import Error404 from "../common/errors/Error404";
-import EditPracticeDetail from "../settings/options/practice-detail/EditPracticeDetail"
-import EMRSettings from "../settings/options/emr/EMRSettings"
+
 import Application from "./Calender";
+import PatientHome from "../patients/PatentHome";
+import Error404 from "../common/errors/Error404";
 
 const Content = Layout.Content;
 
@@ -155,70 +145,14 @@ class AppBase extends React.Component {
             <Layout>
                 <AppHeader switchPractice={this.switchPractice} {...this.state}
                            toggleSider={this.toggle}/>
-                <Content className="main-container"
-                         style={{
-                             margin: '24px 16px',
-                             padding: 24,
-                             minHeight: 280,
-                             // marginLeft: '200px'
-                         }}>
-
-                    <Switch>
-                        <Route exact path="/" component={Application}/>
-                        <Route exact path="/settings" component={SettingsDash}/>
-                        <Route exact path="/settings/clinics-staff"
-                               render={(route) => (this.props.permissions.view_practicestaff ?
-                                       <PracticeStaff  {...this.state}/> : <Error404/>
-                               )}/>
-                        <Route exact path="/settings/clinics-staff/adddoctor"
-                               render={(route) => (this.props.permissions.add_practicestaff ?
-                                       <AddStaffDoctor  {...this.state}/> : <Error404/>
-                               )}/>
-                        <Route exact path="/settings/clinics"
-                               render={(route) => (this.props.permissions.view_practice ?
-                                       <PracticeDetails  {...this.state}/> : <Error404/>
-                               )}/>
-                        <Route exact path="/settings/clinics/add"
-                               render={(route) => (this.props.permissions.add_practice ?
-                                       <AddPracticeDetails  {...this.state}/> : <Error404/>
-                               )}/>
-                        <Route exact path="/settings/communication-settings"
-                               render={(route) => (this.props.permissions.view_practice ?
-                                       <CommunicationSettings  {...this.state}/> : <Error404/>
-                               )}/>
-                        <Route exact path="/settings/procedures"
-                               render={(route) => (this.props.permissions.view_procedurecatalog ?
-                                       <RecentProcedure  {...this.state}/> : <Error404/>
-                               )}/>
-                        <Route exact path="/settings/procedures/addprocedure"
-                               render={(route) => (this.props.permissions.add_procedurecatalog ?
-                                       <AddProcedure  {...this.state}/> : <Error404/>
-                               )}/>
-                        <Route exact path="/settings/billing"
-                               render={(route) => (this.props.permissions.view_taxes ?
-                                       <BillingSettings  {...this.state}/> : <Error404/>
-                               )}/>
-                        <Route exact path="/settings/loyalty"
-                               render={(route) => (this.props.permissions.view_practiceoffers ?
-                                       <Offers  {...this.state}/> : <Error404/>
-                               )}/>
-                        <Route exact path="/settings/emr"
-                               render={(route) => (this.props.permissions.view_practiceoffers ?
-                                       <EMRSettings  {...this.state}/> : <Error404/>
-                               )}/>
-                        <Route exact path="/settings/loyalty/add"
-                               render={(route) => (this.props.permissions.add_practiceoffers ?
-                                       <AddOffer  {...this.state}/> : <Error404/>
-                               )}/>
-                        <Route exact path="/settings/clinics/:id/edit"
-                               render={(route) => (this.props.permissions.change_practice ?
-                                   <EditPracticeDetail practiceId={route.match.params.id}/> : <Error404/>)
-                               }/>
-                        <Route component={Error404}/>
-                    </Switch>
+                <Switch>
+                    <Route exact path="/" component={Application}/>
+                    <Route path="/patients" component={PatientHome}/>
+                    <Route path="/settings" render={(route) => <SettingsDash {...this.state} {...this.props}/>}/>
+                    <Route component={Error404}/>
                     <AppFooter/>
-                </Content>
 
+                </Switch>
             </Layout>
 
         </Layout>;
