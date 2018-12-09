@@ -42,7 +42,8 @@ class TableData extends React.Component {
 
     editFunction(value) {
         this.setState({
-            editingId: value,
+            editingId: value.id,
+            editingName: value.name,
             visible: true,
         })
     }
@@ -63,7 +64,7 @@ class TableData extends React.Component {
             key: 'action',
             render: (text, record) => (
                 <span>
-              <a onClick={() => this.editFunction(record.id)}>  Edit</a>
+              <a onClick={() => this.editFunction(record)}>  Edit</a>
                 <Divider type="vertical"/>
               </span>
             ),
@@ -73,32 +74,15 @@ class TableData extends React.Component {
             key: "name",
             required: true,
             type: INPUT_FIELD
-        }, {
-            label: "Practice Number ",
-            key: "practice",
-            required: true,
-            initialValue: this.props.active_practiceId,
-            type: NUMBER_FIELD
         },];
         const editfields = [
-            {
-                label: "id",
-                key: "id",
-                required: true,
-                initialValue: this.state.editingId,
-                type: NUMBER_FIELD
-            },
+
             {
                 label: this.props.name,
                 key: "name",
                 required: true,
+                initialValue:this.state.editingName,
                 type: INPUT_FIELD
-            }, {
-                label: "Practice Number ",
-                key: "practice",
-                required: true,
-                initialValue: this.props.active_practiceId,
-                type: NUMBER_FIELD
             },];
         const formProp = {
             successFn: function (data) {
@@ -113,9 +97,12 @@ class TableData extends React.Component {
             action: interpolate(this.props.id, [this.props.active_practiceId]),
             method: "post",
         };
+        const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}]
+        const editFormDefaultValues = [{"key":"practice", "value":this.props.active_practiceId}, {"key":"id" , "value": this.state.editingId}]
+
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
-            <TestFormLayout formProp={formProp} fields={fields}/>
+            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
             <Divider/>
             <Table columns={columns} dataSource={this.state.data}/>
             <Modal
@@ -123,7 +110,7 @@ class TableData extends React.Component {
                 visible={this.state.visible}
                 footer={null}
             >
-                <TestFormLayout formProp={formProp} fields={editfields}/>
+                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields}/>
                 <Button key="back" onClick={this.handleCancel}>Return</Button>,
 
             </Modal>
