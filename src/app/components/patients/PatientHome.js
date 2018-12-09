@@ -1,6 +1,8 @@
 import React from "react";
 import PatientHeader from "./PatientHeader";
 import {Layout} from "antd";
+import {Route} from "react-router";
+import PatientProfile from "./patient/PatientProfile";
 
 const {Header, Content, Sider} = Layout;
 
@@ -15,7 +17,7 @@ class PatientHome extends React.Component {
 
     setCurrentPatient(patientObj) {
         this.setState({
-            currentPatient:patientObj
+            currentPatient: patientObj
         });
     }
 
@@ -30,6 +32,8 @@ class PatientHome extends React.Component {
                              minHeight: 280,
                              // marginLeft: '200px'
                          }}>
+                    <Route exact path='/patients/profile'
+                           render={() => <PatientProfile {...this.state} setCurrentPatient={this.setCurrentPatient}/>}/>
                 </Content>
             </Layout>
         </Layout>

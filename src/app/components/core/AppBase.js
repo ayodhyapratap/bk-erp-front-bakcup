@@ -23,7 +23,7 @@ import TestForm from "./TestForm";
 import SettingsDash from "../settings/SettingsDash"
 
 import Application from "./Calender";
-import PatientHome from "../patients/PatentHome";
+import PatientHome from "../patients/PatientHome";
 import Error404 from "../common/errors/Error404";
 
 const Content = Layout.Content;

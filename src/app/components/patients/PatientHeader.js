@@ -2,42 +2,28 @@ import React from "react";
 import {Avatar, Button, Card, Col, Divider, Drawer, Icon, Layout, Row, Tooltip} from "antd";
 import {getAPI} from "../../utils/common";
 import {PATIENTS_LIST} from "../../constants/api";
+import PatientSelection from "./PatientSelection";
 
 const {Header, Content, Sider} = Layout;
-const {Meta} = Card;
+
 
 class PatientHeader extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             listModalVisible: false,
-            patientListData: []
+
         };
         this.togglePatientListModal = this.togglePatientListModal.bind(this);
-        this.getPatientListData = this.getPatientListData.bind(this);
     }
 
     togglePatientListModal(option) {
         this.setState({
             listModalVisible: !!option
         });
-        if (option) {
-            this.getPatientListData();
-        }
     }
 
-    getPatientListData() {
-        let that = this;
-        let successFn = function (data) {
-            that.setState({
-                patientListData: data
-            })
-        };
-        let errorFn = function () {
 
-        };
-        getAPI(PATIENTS_LIST, successFn, errorFn);
-    }
 
     render() {
         let that = this;
@@ -82,45 +68,12 @@ class PatientHeader extends React.Component {
                     overflow: 'auto',
                     paddingBottom: 53,
                 }}>
-                <Row>
-                    <Col
-                        span={8}
-                        style={{
-                            height: 'calc(100% - 55px)',
-                            overflow: 'auto',
-                            paddingBottom: 53,
-                            backgroundColor: '#ccc'
-                        }}>
-                    </Col>
-
-                    <Col span={16} style={{overflow: 'scroll'}}>
-
-                        {this.state.patientListData.length ?
-                            this.state.patientListData.map((patient) => <PatientCard {...patient}
-                                                                                     setCurrentPatient={that.props.setCurrentPatient}/>) :
-                            <p style={{textAlign: 'center'}}>No Data Found</p>
-                        }
-                    </Col>
-                    <
-                    /Row>
+                <PatientSelection {...this.props}/>
             </Drawer>
         </Header>
     }
-    }
+}
 
-    export default PatientHeader;
+export default PatientHeader;
 
-    function PatientCard(patient) {
-        return <Col span={12}>
-        <Card onClick={() => patient.setCurrentPatient(patient)}>
-        <Meta
-        avatar={(patient.image ? <Avatar src={patient.image}/> :
-            <Avatar style={{backgroundColor: '#87d068'}}>
-                {patient.name ? patient.name.charAt(0) :
-                    <Icon type="user"/>}
-            </Avatar>)}
-        title={patient.name}
-        description="This is the description"/>
-        </Card>
-        </Col>;
-    }
+
