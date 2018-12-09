@@ -3,6 +3,7 @@ import PatientHeader from "./PatientHeader";
 import {Layout} from "antd";
 import {Route} from "react-router";
 import PatientProfile from "./patient/PatientProfile";
+import EditPatientDetails from "./patient/EditPatientDetails";
 
 const {Header, Content, Sider} = Layout;
 
@@ -37,6 +38,10 @@ class PatientHome extends React.Component {
                          }}>
                     <Route exact path='/patients/profile'
                            render={() => <PatientProfile {...this.state} setCurrentPatient={this.setCurrentPatient}/>}/>
+                    <Route exact path='/patients/editprofile'
+                            render={() => <EditPatientDetails {...this.state} />}/>
+
+
                 </Content>
             </Layout>
         </Layout>

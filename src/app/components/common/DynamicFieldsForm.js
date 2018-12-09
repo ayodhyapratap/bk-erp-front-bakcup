@@ -1,6 +1,6 @@
 import React from "react";
-import {Button, Form, Icon, Input, InputNumber, Radio, Select, Checkbox} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, NUMBER_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../constants/dataKeys";
+import {Button, Form, Icon, DatePicker, Input, InputNumber, Radio, Select, Checkbox} from "antd";
+import {CHECKBOX_FIELD, INPUT_FIELD, DATE_PICKER, NUMBER_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {postAPI, putAPI} from "../../utils/common";
 
@@ -134,6 +134,12 @@ class DynamicFieldsForm extends React.Component {
                                     <InputNumber min={1} />
                                 )}
                                 <span className="ant-form-text">{field.follow}</span>
+                            </FormItem>;
+                        case DATE_PICKER:
+                            return <FormItem label={field.label} {...formItemLayout}>
+                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                  <DatePicker />
+                                )}
                             </FormItem>;
                         default:
                             return null;
