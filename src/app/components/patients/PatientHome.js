@@ -38,9 +38,10 @@ class PatientHome extends React.Component {
                          }}>
                     <Route exact path='/patients/profile'
                            render={() => <PatientProfile {...this.state} setCurrentPatient={this.setCurrentPatient}/>}/>
-                    <Route exact path='/patients/editprofile'
+                    <Route exact path='/patients/profile/edit'
                             render={() => <EditPatientDetails {...this.state} />}/>
-
+                    <Route exact path='/patients/profile/add'
+                            render={() => <EditPatientDetails/>}/>
 
                 </Content>
             </Layout>

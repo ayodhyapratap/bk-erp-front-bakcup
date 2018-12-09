@@ -23,3 +23,4 @@ export const EMR_FILETAGS= 'clinics/%s/filetags/';
 export const ALL_PRACTICE_STAFF='staff/';
 export const ALL_PRACTICE_DOCTORS='doctor/';
 export const PATIENTS_LIST = 'patients/'
+export const PATIENT_PROFILE = 'patients/%s/'
