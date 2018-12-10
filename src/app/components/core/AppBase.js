@@ -64,6 +64,7 @@ class AppBase extends React.Component {
             active_practiceId: practiceId,
         }, function () {
             setCurrentPractice(practiceId);
+            window.location.reload();
             that.activeData();
         });
 

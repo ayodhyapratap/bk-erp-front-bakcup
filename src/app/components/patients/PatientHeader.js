@@ -27,19 +27,19 @@ class PatientHeader extends React.Component {
 
     render() {
         let that = this;
-        return <Header className="header">
+        return <Header className="header" style={{background:'#e4e4e4'}}>
             <div>
                 {this.props.currentPatient ?
                     <div style={{display: 'inline'}}>
                         <div style={{display: 'inline', textSize: '25px'}}>
                             <Tooltip title="Switch Back to All Patients">
-                                <Button onClick={() => this.props.setCurrentPatient(null)}>
+                                <Button onClick={() => this.props.setCurrentPatient(null)} type="primary" ghost>
                                     <Icon type="solution"/> &nbsp;
                                     Back
                                 </Button>
                             </Tooltip>
                         </div>
-                        <a style={{color: 'white', padding: '8px', fontSize: '20px'}}
+                        <a style={{ padding: '8px', fontSize: '20px'}}
                            onClick={() => this.togglePatientListModal(true)}>
                             {(this.props.currentPatient.image ? <Avatar src={this.props.currentPatient.image}/> :
                                 <Avatar style={{backgroundColor: '#87d068'}}>
@@ -49,7 +49,7 @@ class PatientHeader extends React.Component {
                             &nbsp;&nbsp;{that.props.currentPatient.name}
                         </a>
                     </div> :
-                    <a style={{color: 'white', padding: '8px', fontSize: '20px'}}
+                    <a style={{ padding: '8px', fontSize: '20px'}}
                        onClick={() => this.togglePatientListModal(true)}>
                         <div style={{display: 'inline'}}><Icon type="solution"/> &nbsp; All Patient</div>
                     </a>}

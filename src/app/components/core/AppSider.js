@@ -9,11 +9,26 @@ const SubMenu = Menu.SubMenu;
 class AppSider extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            openKeys: ['sub1'],
+        }
+    }
+
+    onOpenChange = (openKeys) => {
+        const rootSubmenuKeys = ['sub1', 'sub2'];
+        const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1);
+        if (rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+            this.setState({openKeys});
+        } else {
+            this.setState({
+                openKeys: latestOpenKey ? [latestOpenKey] : [],
+            });
+        }
     }
 
     render() {
         return <Sider
-            style={{ background: '#fff' }}
+            // style={{background: '#fff'}}
             // collapsible
             // collapsed={this.props.collapsed}
             // style={{overflow: 'auto', height: '100vh', position: 'fixed', left: 0}}
@@ -26,14 +41,17 @@ class AppSider extends React.Component {
                 console.log(collapsed, type);
             }}>
             <img src={Applogo} alt="" style={{width: '100%'}}/>
-            <Menu mode="inline" defaultSelectedKeys={['4']}>
+            <Menu mode="inline" defaultSelectedKeys={['4']}
+                  openKeys={this.state.openKeys}
+                  onOpenChange={this.onOpenChange}
+                  theme="dark">
                 <Menu.Item key="1">
                     <Link to="/calender">
                         <Icon type="schedule"/>
                         <span className="nav-text">Calender</span>
                     </Link>
                 </Menu.Item>
-                <SubMenu key="sub2" title={<span><Icon type="user"/><span>Paitients</span></span>}>
+                <SubMenu key="sub2" title={<span><Icon type="user"/><span>Patients</span></span>}>
                     <Menu.ItemGroup key="g1" title="Patient">
                         <Menu.Item key="17"><Link to="/patients/profile">Profile</Link></Menu.Item>
                         <Menu.Item key="18"><Link to="/patients/appointments">Appointments</Link></Menu.Item>
@@ -54,6 +72,12 @@ class AppSider extends React.Component {
 
                     </Menu.ItemGroup>
                 </SubMenu>
+                <Menu.Item key="27">
+                    <Link to="/reports">
+                        <Icon type="bar-chart"/>
+                        <span className="nav-text">Reports</span>
+                    </Link>
+                </Menu.Item>
                 <SubMenu key="sub1" title={<span><Icon type="setting"/><span>Settings</span></span>}>
                     <Menu.Item key="5"><Link to="/settings/clinics">Practice Details</Link></Menu.Item>
                     <Menu.Item key="6"><Link to="/settings/clinics-staff">Practice Staff</Link></Menu.Item>
@@ -61,7 +85,7 @@ class AppSider extends React.Component {
                     <Menu.Item key="8"><Link to="/settings/procedures">Procedure Catalog</Link></Menu.Item>
                     <Menu.Item key="9"><Link to="/settings/billing">Billing</Link></Menu.Item>
                     <Menu.Item key="10"><Link to="/settings/loyalty">Loyalty</Link></Menu.Item>
-                    <Menu.Item key="11"><Link to="/settings/contacts"> Contacts</Link></Menu.Item>
+                    {/*<Menu.Item key="11"><Link to="/settings/contacts"> Contacts</Link></Menu.Item>*/}
                     <Menu.Item key="12"><Link to="/settings/emr"> EMR</Link></Menu.Item>
                     <Menu.Item key="13"><Link to="/settings/prescriptions"> Prescriptions</Link></Menu.Item>
                     <Menu.Item key="14"><Link to="/settings/labs">Labs</Link> </Menu.Item>
