@@ -19,7 +19,6 @@ export const EMR_COMPLAINTS= 'clinics/%s/complaints/';
 export const EMR_OBSERVATIONS= 'clinics/%s/observations/';
 export const EMR_TREATMENTNOTES= 'clinics/%s/treatmentnotes/';
 export const EMR_INVESTIGATIONS= 'clinics/%s/investigations/';
-export const EXPENSE_TYPE= 'clinics/%s/expense_type/';
 export const EMR_FILETAGS= 'clinics/%s/filetags/';
 export const ALL_PRACTICE_STAFF='staff/';
 export const ALL_PRACTICE_DOCTORS='doctor/';
@@ -27,3 +26,5 @@ export const PATIENTS_LIST = 'patients/'
 export const PATIENT_PROFILE = 'patients/%s/'
 export const STAFF_ROLES = 'staff/roles/'
 export const MEDICAL_HISTORY = 'patients/history/?id=%s'
+export const EXPENSE_TYPE= 'clinics/%s/expense_type/';
+export const DRUG_CATALOG= 'clinics/%s/drugcatalog/';
