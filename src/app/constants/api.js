@@ -25,6 +25,7 @@ export const ALL_PRACTICE_DOCTORS='doctor/';
 export const PATIENTS_LIST = 'patients/'
 export const PATIENT_PROFILE = 'patients/%s/'
 export const STAFF_ROLES = 'staff/roles/'
-export const MEDICAL_HISTORY = 'patients/history/?id=%s'
+export const MEDICAL_HISTORY = 'patients/history/?id=%s/'
 export const EXPENSE_TYPE= 'clinics/%s/expense_type/';
 export const DRUG_CATALOG= 'clinics/%s/drugcatalog/';
+export const LABTEST_API= 'clinics/%s/labtest/';

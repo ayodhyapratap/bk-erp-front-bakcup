@@ -10,23 +10,7 @@ class Prescriptions extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          catalog: [{
-            name: 'Mike',
-            dosage: 32,
-            instructions: '10 Downing Street'
-          },{
-            name: 'Mike',
-            dosage: 32,
-            instructions: '10 Downing Street'
-          },{
-            name: 'Mike',
-            dosage: 32,
-            instructions: '10 Downing Street'
-          },{
-            name: 'Mike',
-            dosage: 32,
-            instructions: '10 Downing Street'
-          },]
+          catalog: null
         }
     }
     componentDidMount(){
