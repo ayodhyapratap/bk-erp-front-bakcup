@@ -47,9 +47,23 @@ class PracticeDetails extends React.Component {
     admin_StaffData() {
       var that = this;
         let successFn = function (data) {
-          that.setState({
-            practice_staff:data,
+          data.forEach(function(usersdata){
+            if(usersdata.role ==  1){
+              let doctor=that.state.practice_doctors;
+               doctor.push(usersdata);
+              that.setState({
+                practice_doctors:doctor,
+              })
+            }
+            else{
+              let doctor=that.state.practice_staff;
+               doctor.push(usersdata);
+              that.setState({
+                practice_staff:doctor,
+              })
+            }
           })
+
         };
         let errorFn = function () {
         };
@@ -83,10 +97,23 @@ class PracticeDetails extends React.Component {
       //
       // });
         let successFn = function(data){
-          that.setState({
-            practice_staff:data.staff,
-            practice_doctors:data.doctors,
+          data.staff.forEach(function(usersdata){
+            if(usersdata.role ==  1){
+              let doctor=that.state.practice_doctors;
+               doctor.push(usersdata);
+              that.setState({
+                practice_doctors:doctor,
+              })
+            }
+            else{
+              let doctor=that.state.practice_staff;
+               doctor.push(usersdata);
+              that.setState({
+                practice_staff:doctor,
+              })
+            }
           })
+
         }
         let errorFn = function(){
         };
