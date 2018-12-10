@@ -2,7 +2,7 @@ import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Checkbox, Card, Form, Icon,Tabs, Divider, Tag , Row, Table} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
-import {PRACTICESTAFF, ALL_PRACTICE_STAFF, ALL_PRACTICE_DOCTORS} from "../../../../constants/api"
+import {PRACTICESTAFF, STAFF_ROLES, ALL_PRACTICE_STAFF, ALL_PRACTICE_DOCTORS} from "../../../../constants/api"
 import {Link} from "react-router-dom";
 import {getAPI, interpolate} from "../../../../utils/common";
 import {loggedInUserGroup, loggedInUserPractices} from "../../../../../app/utils/auth";
@@ -17,8 +17,9 @@ class PracticeDetails extends React.Component {
           current: 'staff',
           practice_staff:[],
           practice_doctors:[],
-
+          roles:null
         }
+        this.staffRoles();
     }
     componentDidMount(){
       let group=loggedInUserGroup();
@@ -28,6 +29,19 @@ class PracticeDetails extends React.Component {
       else{
           this.clinicData();
       }
+
+    }
+
+    staffRoles(){
+      let that = this;
+      let successFn  = function (data){
+        that.setState({
+          roles:data,
+        })
+      }
+      let errorFn = function (){
+      }
+      getAPI(STAFF_ROLES, successFn, errorFn)
     }
 
     admin_StaffData() {

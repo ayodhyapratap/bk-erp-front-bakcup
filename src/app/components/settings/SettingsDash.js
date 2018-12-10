@@ -13,6 +13,11 @@ import Offers from "./options/loyalty/Offers";
 import EMRSettings from "./options/emr/EMRSettings";
 import AddOffer from "./options/loyalty/AddOffer";
 import EditPracticeDetail from "./options/practice-detail/EditPracticeDetail";
+import Prescriptions from "./options/prescriptions/Prescriptions";
+import AddPrescription from "./options/prescriptions/AddPrescription";
+import ExpensesTypes from "./options/expenses-types/ExpensesTypes";
+import LabTest from "./options/labs/LabTest";
+import MedicalHistory from "./options/medical-history/MedicalHistory";
 import Error404 from "../common/errors/Error404";
 const Content = Layout.Content;
 
@@ -84,6 +89,16 @@ class SettingsDash extends React.Component {
                            render={(route) => (this.props.permissions.change_practice ?
                                <EditPracticeDetail {...this.props} practiceId={route.match.params.id}/> : <Error404/>)
                            }/>
+                    <Route exact path="/settings/prescriptions"
+                           render={() => <Prescriptions  {...this.props}/>}/>
+                     <Route exact path="/settings/prescriptions/add"
+                            render={() => <AddPrescription  {...this.props}/>}/>
+                     <Route exact path="/settings/expense-types"
+                            render={() => <ExpensesTypes  {...this.props}/>}/>
+                     <Route exact path="/settings/labs"
+                            render={() => <LabTest  {...this.props}/>}/>
+                     <Route exact path="/settings/medical-history"
+                            render={() => <MedicalHistory  {...this.props}/>}/>
                     <Route component={Error404}/>
                 </Switch>
             </Content>
