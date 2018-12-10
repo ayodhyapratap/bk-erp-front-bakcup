@@ -114,7 +114,7 @@ class PracticeDetails extends React.Component {
           }];
 
         return <Row>
-            <h2>Title
+            <h2>Practice Details
                 <Link to="/settings/clinics/add">
                     <Button type="primary" style={{float: 'right'}}>
                         <Icon type="plus"/>&nbsp;Add

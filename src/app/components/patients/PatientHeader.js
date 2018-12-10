@@ -3,6 +3,7 @@ import {Avatar, Button, Card, Col, Divider, Drawer, Icon, Layout, Row, Tooltip} 
 import {getAPI} from "../../utils/common";
 import {PATIENTS_LIST} from "../../constants/api";
 import PatientSelection from "./PatientSelection";
+import {Link} from "react-router-dom";
 
 const {Header, Content, Sider} = Layout;
 
@@ -53,11 +54,12 @@ class PatientHeader extends React.Component {
                        onClick={() => this.togglePatientListModal(true)}>
                         <div style={{display: 'inline'}}><Icon type="solution"/> &nbsp; All Patient</div>
                     </a>}
+                <Link to="/patients/profile/add" ><Button type="primary" style={{float:'right',marginTop:'10px'}}><Icon type="plus"/> Add Patient</Button></Link>
             </div>
             <Drawer
                 title="Select Patient"
                 width={720}
-                placement="left"
+                placement="left"s
                 onClose={() =>
                     this.togglePatientListModal(false)
                 }

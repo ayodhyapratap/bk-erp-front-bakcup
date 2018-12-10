@@ -46,7 +46,7 @@ class AppSider extends React.Component {
                   onOpenChange={this.onOpenChange}
                   theme="dark">
                 <Menu.Item key="1">
-                    <Link to="/calender">
+                    <Link to="/">
                         <Icon type="schedule"/>
                         <span className="nav-text">Calender</span>
                     </Link>

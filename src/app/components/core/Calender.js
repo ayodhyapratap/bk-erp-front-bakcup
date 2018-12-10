@@ -6,13 +6,14 @@ import {draggable, droppable, editable} from 'jqueryui'
 import 'fullcalendar/dist/fullcalendar.css';
 import 'fullcalendar/dist/fullcalendar.print.min.css';
 import 'fullcalendar/dist/fullcalendar.js';
+import {Card} from "antd";
 //import './app.css';
 
 
 class Application extends React.Component {
   render() {
-    return <div><External />
-      <Calendar /></div>;
+    return <div style={{padding:'20px'}}><Card> <External />
+     <Calendar /></Card></div>;
   }
 }
 

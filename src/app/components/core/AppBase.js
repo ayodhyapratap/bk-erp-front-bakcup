@@ -144,7 +144,7 @@ class AppBase extends React.Component {
 
             <AppSider {...this.state}/>
             <Layout>
-                <AppHeader switchPractice={this.switchPractice} {...this.state}
+                <AppHeader {...this.props} switchPractice={this.switchPractice} {...this.state}
                            toggleSider={this.toggle}/>
                 <Switch>
                     <Route exact path="/" component={Application}/>
