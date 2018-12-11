@@ -1,81 +1,63 @@
-import React from "react";
-import $ from 'jquery';
-import fullCalendar from 'fullcalendar';
-import {draggable, droppable, editable} from 'jqueryui'
-//// export for others scripts to use
-import 'fullcalendar/dist/fullcalendar.css';
-import 'fullcalendar/dist/fullcalendar.print.min.css';
-import 'fullcalendar/dist/fullcalendar.js';
-import {Card} from "antd";
-//import './app.css';
+import React, { Component } from "react";
+import Calendar from "react-big-calendar";
+import moment from "moment";
+import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
+import BigCalendar from 'react-big-calendar'
+import {Card} from "antd"
+import "./app.css";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 
+// Calendar.setLocalizer(Calendar.momentLocalizer(moment));
+const localizer = BigCalendar.momentLocalizer(moment)
 
-class Application extends React.Component {
+const DnDCalendar = withDragAndDrop(Calendar);
+
+class App extends Component {
+  state = {
+    events: [
+      {
+        start: new Date(),
+        end: new Date(moment().add(1, "hour")),
+        title: "Some title"
+      }
+    ]
+  };
+
+  onEventResize = ({ event, start, end, allDay }) => {
+
+    this.setState(function(state) {
+      state.events[0].start = start;
+      state.events[0].end = end;
+      return { events: state.events };
+    });
+  };
+
+  onEventDrop = ({ event, start, end, allDay }) => {
+    this.setState(function(state) {
+      state.events[0].start = start;
+      state.events[0].end = end;
+      return { events: state.events };
+    });
+    console.log(start);
+  };
+
   render() {
-    return <div style={{padding:'20px'}}><Card> <External />
-     <Calendar /></Card></div>;
+    return (
+      <Card>
+        <DnDCalendar
+          defaultDate={new Date()}
+          localizer={localizer}
+          defaultView="week"
+          events={this.state.events}
+          onEventDrop={this.onEventDrop}
+          onEventResize={this.onEventResize}
+          resizable
+          style={{ height: "100vh" }}
+        />
+        </Card>
+    );
   }
 }
 
-/*
- * A simple React component
- */
-class Calendar extends React.Component {
-  render() {
-    return <div id="calendar"></div>;
-  }
-  componentDidMount() {
-    $('#calendar').fullCalendar({
-			header: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'month,agendaWeek,agendaDay'
-			},
-			editable: true,
-			droppable: true, // this allows things to be dropped onto the calendar
-			drop: function() {
-				// is the "remove after drop" checkbox checked?
-				if ($('#drop-remove').is(':checked')) {
-					// if so, remove the element from the "Draggable Events" list
-					$(this).remove();
-				}
-			}
-    })
-  }
-}
-
-class External extends React.Component {
-  render() {
-    return <div id='external-events'>
-			<h4>Draggable Events</h4>
-			<div className='fc-event'>My Event 1</div>
-			<div className='fc-event'>My Event 2</div>
-			<div className='fc-event'>My Event 3</div>
-			<div className='fc-event'>My Event 4</div>
-			<div className='fc-event'>My Event 5</div>
-			<p>
-				<input type='checkbox' id='drop-remove' />
-				<label for='drop-remove'>remove after drop</label>
-			</p>
-		</div>;
-  }
-  componentDidMount() {
-		$('#external-events .fc-event').each(function() {
-
-			// store data so the calendar knows to render an event upon drop
-			$(this).data('event', {
-				title: $.trim($(this).text()), // use the element's text as the event title
-				stick: true // maintain when user navigates (see docs on the renderEvent method)
-			});
-
-			// make the event draggable using jQuery UI
-			$(this).draggable({
-				zIndex: 999,
-				revert: true,      // will cause the event to go back to its
-				revertDuration: 0  //  original position after the drag
-			});
-		});
-  }
-}
-
-export default Application;
+export default App;
