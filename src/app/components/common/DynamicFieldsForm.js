@@ -1,9 +1,10 @@
 import React from "react";
-import {Button, Form, Icon, DatePicker, Input, InputNumber, Radio, Select, Checkbox} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, DATE_PICKER, NUMBER_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../constants/dataKeys";
+import {Button, Divider, Form, Icon, DatePicker, Input, InputNumber, Radio, Select, Checkbox} from "antd";
+import {CHECKBOX_FIELD, TEXT_FIELD, INPUT_FIELD, DATE_PICKER, NUMBER_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {postAPI, putAPI} from "../../utils/common";
 
+const { TextArea } = Input;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
@@ -97,50 +98,56 @@ class DynamicFieldsForm extends React.Component {
                         case INPUT_FIELD:
                             return <FormItem label={field.label}  {...formItemLayout}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <Input placeholder={field.placeholder} onChange={that.inputChange}/>
+                                    <Input placeholder={field.placeholder} disabled={field.disabled} onChange={that.inputChange}/>
                                 )}
                             </FormItem>;
 
                         case SELECT_FIELD:
-                            return <FormItem {...formItemLayout} label={field.label}>
+                            return <FormItem {...formItemLayout} label={field.label} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <Select placeholder={field.placeholder}>
+                                    <Select placeholder={field.placeholder} disabled={field.disabled}>
                                         {field.options.map((option) => <Select.Option
                                             value={option.value}>{option.label}</Select.Option>)}
-                                    </Select>
+                                    </Select >
                                 )}
                             </FormItem>;
 
                         case RADIO_FIELD:
-                            return <FormItem label={field.label} {...formItemLayout}>
+                            return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <RadioGroup>
+                                    <RadioGroup  disabled={field.disabled}>
                                         {field.options.map((option) => <Radio
                                             value={option.value}>{option.label}</Radio>)}
                                     </RadioGroup>
                                 )}
                             </FormItem>;
                         case CHECKBOX_FIELD:
-                            return <FormItem label={field.label} {...formItemLayout}>
+                            return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <CheckboxGroup options={field.options}/>
+                                    <CheckboxGroup options={field.options} disabled={field.disabled}/>
                                 )}
                             </FormItem>;
                         case NUMBER_FIELD:
                             return <FormItem
                                 {...formItemLayout}
-                                label={field.label}>
+                                label={field.label} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <InputNumber min={1} />
+                                    <InputNumber min={1}  disabled={field.disabled}/>
                                 )}
                                 <span className="ant-form-text">{field.follow}</span>
                             </FormItem>;
                         case DATE_PICKER:
-                            return <FormItem label={field.label} {...formItemLayout}>
+                            return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                   <DatePicker />
                                 )}
                             </FormItem>;
+                        case TEXT_FIELD:
+                        return <div> <Divider/><FormItem label={field.label}  {...formItemLayout} extra={field.extra}>
+                            {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                <TextArea autosize={{ minRows: field.minRows, maxRows: field.maxRows }} placeholder={field.placeholder} disabled={field.disabled} onChange={that.inputChange}/>
+                            )}
+                            </FormItem>   </div>;
                         default:
                             return null;
                     }

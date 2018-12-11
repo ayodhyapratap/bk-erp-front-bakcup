@@ -32,3 +32,4 @@ export const SELECT_FIELD = 'select';
 export const CHECKBOX_FIELD = 'checkbox';
 export const NUMBER_FIELD = 'number';
 export const DATE_PICKER = 'datepicker';
+export const TEXT_FIELD = 'textfield';
