@@ -41,12 +41,12 @@ class AppSider extends React.Component {
                 console.log(collapsed, type);
             }}>
             <img src={Applogo} alt="" style={{width: '100%'}}/>
-            <Menu mode="inline" defaultSelectedKeys={['4']}
+            <Menu mode="inline" defaultSelectedKeys={['1']}
                   openKeys={this.state.openKeys}
                   onOpenChange={this.onOpenChange}
                   theme="dark">
                 <Menu.Item key="1">
-                    <Link to="/">
+                    <Link to="/calendar">
                         <Icon type="schedule"/>
                         <span className="nav-text">Calender</span>
                     </Link>

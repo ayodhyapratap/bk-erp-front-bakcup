@@ -22,7 +22,7 @@ import {ALL_PRACTICE, PRACTICE} from "../../constants/api";
 import TestForm from "./TestForm";
 import SettingsDash from "../settings/SettingsDash"
 
-import Application from "./Calender";
+import Calendar from "../calendar/Calendar";
 import PatientHome from "../patients/PatientHome";
 import Error404 from "../common/errors/Error404";
 
@@ -147,8 +147,8 @@ class AppBase extends React.Component {
                 <AppHeader {...this.props} switchPractice={this.switchPractice} {...this.state}
                            toggleSider={this.toggle}/>
                 <Switch>
-                    <Route exact path="/" component={Application}/>
-                    <Route path="/patients" component={PatientHome}/>
+                    <Route path="/calendar" render={(route) => <Calendar {...this.state} {...this.props} {...route}/>}/>
+                    <Route path="/patients" render={(route) => <PatientHome {...this.state} {...this.props}/>}/>
                     <Route path="/settings" render={(route) => <SettingsDash {...this.state} {...this.props}/>}/>
                     <Route component={Error404}/>
                     <AppFooter/>

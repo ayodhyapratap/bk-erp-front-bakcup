@@ -30,6 +30,7 @@ export const INPUT_FIELD = 'input';
 export const RADIO_FIELD = 'radio';
 export const SELECT_FIELD = 'select';
 export const CHECKBOX_FIELD = 'checkbox';
+export const SINGLE_CHECKBOX_FIELD = 'singlecheckbox';
 export const NUMBER_FIELD = 'number';
 export const DATE_PICKER = 'datepicker';
 export const TEXT_FIELD = 'textfield';

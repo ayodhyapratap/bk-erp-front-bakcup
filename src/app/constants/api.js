@@ -30,3 +30,4 @@ export const EXPENSE_TYPE= 'clinics/%s/expense_type/';
 export const DRUG_CATALOG= 'clinics/%s/drugcatalog/';
 export const LABTEST_API= 'clinics/%s/labtest/';
 export const COMMUNICATONS_API= 'clinics/%s/communications/';
+export const APPOINTMENT_API= 'appointment/';

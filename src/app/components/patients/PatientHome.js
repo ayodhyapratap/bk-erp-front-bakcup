@@ -4,7 +4,8 @@ import {Layout} from "antd";
 import {Route} from "react-router";
 import PatientProfile from "./patient/PatientProfile";
 import EditPatientDetails from "./patient/EditPatientDetails";
-
+import Appointment from "./appointment/Appointment"
+// import CreateAppointment from "./appointment/CreateAppointment"
 const {Header, Content, Sider} = Layout;
 
 class PatientHome extends React.Component {
@@ -42,6 +43,10 @@ class PatientHome extends React.Component {
                             render={() => <EditPatientDetails {...this.state} />}/>
                     <Route exact path='/patients/profile/add'
                             render={() => <EditPatientDetails/>}/>
+                    <Route exact path='/patients/appointments'
+                           render={() => <Appointment />}/>
+              {/*      <Route exact path='/patients/appointments/create'
+                           render={() => <CreateAppointment {...this.props} />}/>*/}
 
                 </Content>
             </Layout>

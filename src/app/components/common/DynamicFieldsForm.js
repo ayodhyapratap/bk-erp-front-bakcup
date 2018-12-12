@@ -1,8 +1,9 @@
 import React from "react";
 import {Button, Divider, Form, Icon, DatePicker, Input, InputNumber, Radio, Select, Checkbox} from "antd";
-import {CHECKBOX_FIELD, TEXT_FIELD, INPUT_FIELD, DATE_PICKER, NUMBER_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../constants/dataKeys";
+import {CHECKBOX_FIELD, SINGLE_CHECKBOX_FIELD, TEXT_FIELD, INPUT_FIELD, DATE_PICKER, NUMBER_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {postAPI, putAPI} from "../../utils/common";
+import moment from "moment";
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -96,7 +97,7 @@ class DynamicFieldsForm extends React.Component {
                 {this.state.fields ? this.state.fields.map(function (field) {
                     switch (field.type) {
                         case INPUT_FIELD:
-                            return <FormItem label={field.label}  {...formItemLayout}>
+                            return <FormItem label={field.label}  {...formItemLayout}  extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <Input placeholder={field.placeholder} disabled={field.disabled} onChange={that.inputChange}/>
                                 )}
@@ -127,6 +128,12 @@ class DynamicFieldsForm extends React.Component {
                                     <CheckboxGroup options={field.options} disabled={field.disabled}/>
                                 )}
                             </FormItem>;
+                        case SINGLE_CHECKBOX_FIELD:
+                            return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
+                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                    <Checkbox  disabled={field.disabled}>{field.follow}</Checkbox>
+                                )}
+                            </FormItem>;
                         case NUMBER_FIELD:
                             return <FormItem
                                 {...formItemLayout}
@@ -138,8 +145,12 @@ class DynamicFieldsForm extends React.Component {
                             </FormItem>;
                         case DATE_PICKER:
                             return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                  <DatePicker />
+                                {getFieldDecorator(field.key,
+                                    { initialValue:field.initialValue?moment(field.initialValue):null},
+                                    {
+                                      rules: [{ required:  field.required, message:REQUIRED_FIELD_MESSAGE  }],
+                                    } )(
+                                  <DatePicker  format={field.format}/>
                                 )}
                             </FormItem>;
                         case TEXT_FIELD:
