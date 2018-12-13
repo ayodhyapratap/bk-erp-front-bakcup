@@ -14,49 +14,36 @@ class SettingSider extends React.Component {
         return <Sider trigger={null}
                       collapsible
                       collapsed={this.props.collapsed}
-                      style={{overflow: 'auto', height: '100vh', position: 'fixed', left: 0}}>
-            <div className="logo"/>
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
-                <Menu.Item key="1">
-                  <Link to="/settings/practicedetails">
-                    <Icon type="user"/>
-                    <span className="nav-text">nav 1</span>
-                    </Link>
-                </Menu.Item>
-                <Menu.Item key="2">
-                  <Link to="/settings/practicedetails">
-                    <Icon type="video-camera"/>
-                    <span className="nav-text">nav 2</span>
-                    </Link>
-                </Menu.Item>
-                <Menu.Item key="3">
-                  <Link to="/settings/practicedetails">
-                    <Icon type="upload"/>
-                    <span className="nav-text">nav 3</span>
-                    </Link>
-                </Menu.Item>
-                <Menu.Item key="4">
-                  <Link to="/settings/practicedetails">
-                    <Icon type="setting"/>
-                    <span className="nav-text">nav 4</span>
-                      </Link>
-                </Menu.Item>
-                <Menu.Item key="5">
-                    <Icon type="cloud-o"/>
-                    <span className="nav-text">nav 5</span>
-                </Menu.Item>
-                <Menu.Item key="6">
-                    <Icon type="appstore-o"/>
-                    <span className="nav-text">nav 6</span>
-                </Menu.Item>
-                <Menu.Item key="7">
+                      style={{overflow: 'auto', height: '100vh', background: '#fff'}}>
+            {/*<div className="logo"/>*/}
+            <Menu mode="inline" defaultSelectedKeys={['5']}>
+                <Menu.Item key="5"><Link to="/settings/clinics">
+                    <Icon type="shop"/>Practice Details</Link></Menu.Item>
+                <Menu.Item key="6"><Link to="/settings/clinics-staff">
                     <Icon type="team"/>
-                    <span className="nav-text">nav 7</span>
-                </Menu.Item>
-                <Menu.Item key="8">
-                    <Icon type="shop"/>
-                    <span className="nav-text">nav 8</span>
-                </Menu.Item>
+                    Practice Staff</Link></Menu.Item>
+                <Menu.Item key="7"><Link to="/settings/communication-settings">
+                    <Icon type="message"/>Communication
+                    Settings</Link></Menu.Item>
+                <Menu.Item key="8"><Link to="/settings/procedures">
+                    <Icon type="folder-open"/>Procedure
+                    Catalog</Link></Menu.Item>
+                <Menu.Item key="9"><Link to="/settings/billing">
+                    <Icon type="audit"/>Billing</Link></Menu.Item>
+                <Menu.Item key="10"><Link to="/settings/loyalty">
+                    <Icon type="trophy"/>Loyalty</Link></Menu.Item>
+                {/*<Menu.Item key="11"><Link to="/settings/contacts"> Contacts</Link></Menu.Item>*/}
+                <Menu.Item key="12"><Link to="/settings/emr">
+                    <Icon type="file-text"/> EMR</Link></Menu.Item>
+                <Menu.Item key="13"><Link to="/settings/prescriptions">
+                    <Icon type="file-text"/> Prescriptions</Link></Menu.Item>
+                <Menu.Item key="14"><Link to="/settings/labs">
+                    <Icon type="experiment"/>Labs</Link> </Menu.Item>
+                <Menu.Item key="15"><Link to="/settings/medical-history">
+                    <Icon type="file-text"/> Medical History</Link></Menu.Item>
+                <Menu.Item key="16"><Link to="/settings/expense-types">
+                    <Icon type="dollar"/>
+                    Expense Types</Link></Menu.Item>
             </Menu>
         </Sider>
     }
