@@ -1,6 +1,6 @@
 import React from "react";
-import {Button, Divider, Form, Icon, DatePicker, Input, InputNumber, Radio, Select, Checkbox} from "antd";
-import {CHECKBOX_FIELD, SINGLE_CHECKBOX_FIELD, TEXT_FIELD, INPUT_FIELD, DATE_PICKER, NUMBER_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../constants/dataKeys";
+import {Button, Divider, Form, TimePicker, Icon, DatePicker, Input, InputNumber, Radio, Select, Checkbox} from "antd";
+import {CHECKBOX_FIELD ,TIME_PICKER, SINGLE_CHECKBOX_FIELD, TEXT_FIELD, INPUT_FIELD, DATE_PICKER, NUMBER_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {postAPI, putAPI} from "../../utils/common";
 import moment from "moment";
@@ -130,7 +130,11 @@ class DynamicFieldsForm extends React.Component {
                             </FormItem>;
                         case SINGLE_CHECKBOX_FIELD:
                             return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                {getFieldDecorator(field.key,  { valuePropName: 'checked',
+                                 initialValue:field.initialValue},
+                                  {
+                                    rules: [{ required:  field.required, message:REQUIRED_FIELD_MESSAGE  }],
+                                  } )(
                                     <Checkbox  disabled={field.disabled}>{field.follow}</Checkbox>
                                 )}
                             </FormItem>;
@@ -159,6 +163,16 @@ class DynamicFieldsForm extends React.Component {
                                 <TextArea autosize={{ minRows: field.minRows, maxRows: field.maxRows }} placeholder={field.placeholder} disabled={field.disabled} onChange={that.inputChange}/>
                             )}
                             </FormItem>   </div>;
+                        case TIME_PICKER:
+                            return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
+                                {getFieldDecorator(field.key,
+                                    { initialValue:field.initialValue?moment(field.initialValue ,field.format):null},
+                                    {
+                                      rules: [{ required:  field.required, message:REQUIRED_FIELD_MESSAGE  }],
+                                    } )(
+                                  <TimePicker  format={field.format}/>
+                                )}
+                            </FormItem>;
                         default:
                             return null;
                     }

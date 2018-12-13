@@ -34,3 +34,4 @@ export const SINGLE_CHECKBOX_FIELD = 'singlecheckbox';
 export const NUMBER_FIELD = 'number';
 export const DATE_PICKER = 'datepicker';
 export const TEXT_FIELD = 'textfield';
+export const TIME_PICKER = 'timepicker';

@@ -82,6 +82,7 @@ class AppSider extends React.Component {
                     <Menu.Item key="5"><Link to="/settings/clinics">Practice Details</Link></Menu.Item>
                     <Menu.Item key="6"><Link to="/settings/clinics-staff">Practice Staff</Link></Menu.Item>
                     <Menu.Item key="7"><Link to="/settings/communication-settings">Communication Settings</Link></Menu.Item>
+                    <Menu.Item key="27"><Link to="/settings/calendarsettings">Calendar Settings</Link></Menu.Item>
                     <Menu.Item key="8"><Link to="/settings/procedures">Procedure Catalog</Link></Menu.Item>
                     <Menu.Item key="9"><Link to="/settings/billing">Billing</Link></Menu.Item>
                     <Menu.Item key="10"><Link to="/settings/loyalty">Loyalty</Link></Menu.Item>

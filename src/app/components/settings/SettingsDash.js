@@ -19,6 +19,7 @@ import ExpensesTypes from "./options/expenses-types/ExpensesTypes";
 import LabTest from "./options/labs/LabTest";
 import MedicalHistory from "./options/medical-history/MedicalHistory";
 import Error404 from "../common/errors/Error404";
+import CalendarSettings from "./options/calendar/CalendarSettings"
 const Content = Layout.Content;
 
 class SettingsDash extends React.Component {
@@ -61,6 +62,10 @@ class SettingsDash extends React.Component {
                            render={(route) => (this.props.permissions.view_practice ?
                                    <CommunicationSettings  {...this.props}/> : <Error404/>
                            )}/>
+                   <Route exact path="/settings/calendarsettings"
+                          render={(route) => (this.props.permissions.view_practicestaff ?
+                                  <CalendarSettings  {...this.props}/> : <Error404/>
+                          )}/>
                     <Route exact path="/settings/procedures"
                            render={(route) => (this.props.permissions.view_procedurecatalog ?
                                    <RecentProcedure  {...this.props}/> : <Error404/>
