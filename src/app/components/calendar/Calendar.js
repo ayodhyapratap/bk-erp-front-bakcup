@@ -12,6 +12,9 @@ import CreateAppointment from "./CreateAppointment";
 import { Redirect } from 'react-router-dom';
 import TimeGrid from 'react-big-calendar/lib/TimeGrid'
 import dates from 'date-arithmetic'
+import {getAPI,interpolate, displayMessage} from "../../utils/common";
+import { ALL_APPOINTMENT_API} from "../../constants/api";
+
 
 
 
@@ -34,6 +37,7 @@ class App extends Component {
       ]
     };
     this.onSelectSlot= this.onSelectSlot.bind(this);
+    this.appointmentList();
   }
   onEventResize = ({ event, start, end, allDay }) => {
 
@@ -43,6 +47,7 @@ class App extends Component {
       return { events: state.events };
     });
   };
+
 
   onEventDrop = ({ event, start, end, allDay }) => {
     this.setState(function(state) {
@@ -75,7 +80,51 @@ class App extends Component {
    console.log(event);
   }
 
-  render() {console.log(this.state.startTime);
+  appointmentList(){
+   let that = this;
+   let successFn = function(data){
+     that.setState(function(prevState){
+       let previousEvent = prevState.events;
+       let newEvents = [];
+       newEvents.concat(previousEvent);
+       data.forEach(function (appointment){
+         let endtime=new moment(appointment.shedule_at).add( appointment.slot, 'minutes')
+         console.log(moment(appointment.shedule_at).format('LLL'));
+         console.log(endtime.format('LLL'));
+         // let event= that.state.events;
+         newEvents.push({
+           start:new Date(moment(appointment.shedule_at)),
+           end:  new Date(endtime),
+           title: appointment.patient_name
+         })
+       });
+       return {events:newEvents}
+     })
+    // data.forEach(function (appointment){
+    //   let endtime=new moment(appointment.shedule_at).add( appointment.slot, 'minutes')
+    //   console.log(moment(appointment.shedule_at).format('LLL'));
+    //   console.log(endtime.format('LLL'));
+      // let event= that.state.events;
+      // event.push({
+      //   start:moment(appointment.shedule_at),
+      //   end:  endtime,
+      //   title: appointment.patient_name
+      // })
+      // that.setState({
+      //   events:event,
+      //
+      // })
+
+    }
+
+   let errorFn = function (){
+
+   }
+   getAPI (ALL_APPOINTMENT_API , successFn,errorFn);
+  }
+
+
+  render() {console.log(this.state.events);
     return (
 
       <Card>
@@ -84,8 +133,8 @@ class App extends Component {
           defaultDate={new Date()}
           localizer={localizer}
           defaultView="week"
-          step="10"
-          timeslots="1"
+          step={10}
+          timeslots={1}
           events={this.state.events}
           onEventDrop={this.onEventDrop}
           onEventResize={this.onEventResize}

@@ -31,5 +31,5 @@ export const DRUG_CATALOG= 'clinics/%s/drugcatalog/';
 export const LABTEST_API= 'clinics/%s/labtest/';
 export const COMMUNICATONS_API= 'clinics/%s/communications/';
 export const CALENDER_SETTINGS= 'clinics/%s/calender_settings/';
-export const All_APPOINTMENT_API= 'appointment/';
+export const ALL_APPOINTMENT_API= 'appointment/';
 export const APPOINTMENT_API= 'appointment/%s';

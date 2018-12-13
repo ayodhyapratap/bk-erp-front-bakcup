@@ -71,7 +71,7 @@ class PracticeTimings extends React.Component {
           key: "end_time",
           type: TIME_PICKER,
           initialValue:this.state.timings?this.state.timings.end_time:null,
-          format:"HH:mm:ss Z"
+          format:"HH:mm:ssZ"
       },
       {
          key: "update_profile_online",

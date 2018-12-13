@@ -4,7 +4,7 @@ import {Route} from "react-router";
 import DynamicFieldsForm from "../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon, Row} from "antd";
 import {CHECKBOX_FIELD, SINGLE_CHECKBOX_FIELD, DATE_PICKER, NUMBER_FIELD,  SUCCESS_MSG_TYPE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../constants/dataKeys";
-import {PATIENTS_LIST, APPOINTMENT_API} from "../../constants/api";
+import {PATIENTS_LIST,  ALL_APPOINTMENT_API} from "../../constants/api";
 import {getAPI,interpolate, displayMessage} from "../../utils/common";
 import { Redirect } from 'react-router-dom'
 import moment from 'moment';
@@ -107,7 +107,7 @@ class CreateAppointment extends React.Component{
       errorFn:function(){
 
       },
-      action: APPOINTMENT_API,
+      action: ALL_APPOINTMENT_API,
       method: "post",
     };
     const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}];
