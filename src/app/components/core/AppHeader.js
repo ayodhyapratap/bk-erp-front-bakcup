@@ -27,13 +27,13 @@ class AppHeader extends React.Component {
             </Menu>
         );
         return <Header style={{background: '#fff', padding: 0, boxShadow: '0 2px 4px 0 rgba(38,50,69,.2)', zIndex: 1}}>
-            {/*<div style={{float: 'left', margin: '0px 20px'}}>*/}
-            {/*<Icon*/}
-            {/*className="trigger"*/}
-            {/*type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}*/}
-            {/*onClick={this.props.toggleSider}*/}
-            {/*/>*/}
-            {/*</div>*/}
+            <div style={{float: 'left', margin: '0px 20px'}}>
+                <Icon
+                    className="trigger"
+                    type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}
+                    onClick={()=>this.props.toggleSider(!this.props.collapsed)}
+                />
+            </div>
             <Menu mode="horizontal"
                   style={{lineHeight: '64px'}}>
 

@@ -156,7 +156,7 @@ class App extends Component {
     render() {
 
         // console.log(this.state.active_practiceId);
-        return <Layout style={{height: '100px'}}>
+        return <Layout >
             <Switch>
                 <Route exact path="/login" render={() => <Auth {...this.state} login={this.login}/>}/>
                 <Route render={() => (this.state.user ?

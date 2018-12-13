@@ -27,15 +27,18 @@ class AppSider extends React.Component {
     }
 
     render() {
+        let that = this;
         return <Sider
             // style={{background: '#fff'}}
-            // collapsible
-            // collapsed={this.props.collapsed}
-            // style={{overflow: 'auto', height: '100vh', position: 'fixed', left: 0}}
+            trigger={null}
+            collapsible
+            collapsed={this.props.collapsed}
+            style={{zIndex:1}}
             breakpoint="lg"
-            collapsedWidth="0"
+            // collapsedWidth="0"
             onBreakpoint={(broken) => {
                 console.log(broken);
+                that.props.toggleSider(broken);
             }}
             onCollapse={(collapsed, type) => {
                 console.log(collapsed, type);

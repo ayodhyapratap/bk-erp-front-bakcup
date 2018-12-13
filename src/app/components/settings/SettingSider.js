@@ -14,7 +14,7 @@ class SettingSider extends React.Component {
         return <Sider trigger={null}
                       collapsible
                       collapsed={this.props.collapsed}
-                      style={{overflow: 'auto', height: '100vh', background: '#fff'}}>
+                      style={{overflow: 'auto', minHeight: '100vh', background: '#fff'}}>
             {/*<div className="logo"/>*/}
             <Menu mode="inline" defaultSelectedKeys={['5']}>
                 <Menu.Item key="5"><Link to="/settings/clinics">

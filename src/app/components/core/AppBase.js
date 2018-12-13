@@ -43,7 +43,11 @@ class AppBase extends React.Component {
         this.switchPractice = this.switchPractice.bind(this);
 
     }
-
+    toggleSider = (option) => {
+        this.setState({
+            collapsed: !!option,
+        });
+    }
     activeData() {
         let that = this;
         that.state.practiceList.forEach(function (practice) {
@@ -133,19 +137,14 @@ class AppBase extends React.Component {
     }
 
 
-    toggle = () => {
-        this.setState({
-            collapsed: !this.state.collapsed,
-        });
-    }
 
     render() {
         return <Layout style={{minHeight: '100vh'}}>
 
-            <AppSider {...this.state}/>
+            <AppSider toggleSider={this.toggleSider} {...this.state}/>
             <Layout>
                 <AppHeader {...this.props} switchPractice={this.switchPractice} {...this.state}
-                           toggleSider={this.toggle}/>
+                           toggleSider={this.toggleSider}/>
                 <Switch>
                     <Route path="/calendar" render={(route) => <Calendar {...this.state} {...this.props} {...route}/>}/>
                     <Route path="/patients" render={(route) => <PatientHome {...this.state} {...this.props}/>}/>
