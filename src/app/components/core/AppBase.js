@@ -147,6 +147,7 @@ class AppBase extends React.Component {
                            toggleSider={this.toggleSider}/>
                 <Switch>
                     <Route path="/calendar" render={(route) => <Calendar {...this.state} {...this.props} {...route}/>}/>
+                    <Route path="/patient/:id" render={(route) => <PatientHome {...this.state} {...this.props}/>}/>
                     <Route path="/patients" render={(route) => <PatientHome {...this.state} {...this.props}/>}/>
                     <Route path="/settings" render={(route) => <SettingsDash {...this.state} {...this.props}/>}/>
                     <Route component={Error404}/>

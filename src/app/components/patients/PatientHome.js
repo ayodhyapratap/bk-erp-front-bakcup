@@ -1,13 +1,15 @@
 import React from "react";
-import PatientHeader from "./PatientHeader";
+
 import {Layout} from "antd";
-import {Route} from "react-router";
+import {Redirect, Route} from "react-router";
 import PatientProfile from "./patient/PatientProfile";
 import EditPatientDetails from "./patient/EditPatientDetails";
 import Appointment from "./appointment/Appointment"
 import PatientSider from "./PatientSider";
 import PatientTimeline from "./timeline/PatientTimeline";
 import PatientFiles from "./files/PatientFiles";
+import PatientClinicNotes from "./clinicNotes/PatientClinicNotes";
+import PatientHeader from "./PatientHeader";
 // import CreateAppointment from "./appointment/CreateAppointment"
 const {Header, Content, Sider} = Layout;
 
@@ -43,6 +45,11 @@ class PatientHome extends React.Component {
                                  // marginLeft: '200px'
                              }}>
                         <Route exact path='/patients/profile'
+                               render={() =>
+                                   (this.state.currentPatient ?
+                                       <Redirect to={"/patient/" + this.state.currentPatient.id + "/profile"}/> :
+                                       <PatientProfile {...this.state} setCurrentPatient={this.setCurrentPatient}/>)}/>
+                        <Route exact path='/patient/:id/profile'
                                render={() => <PatientProfile {...this.state}
                                                              setCurrentPatient={this.setCurrentPatient}/>}/>
                         <Route exact path='/patients/profile/edit'
@@ -53,7 +60,13 @@ class PatientHome extends React.Component {
                                render={() => <Appointment/>}/>
                         {/*      <Route exact path='/patients/appointments/create'
                            render={() => <CreateAppointment {...this.props} />}/>*/}
-                        <Route path={"/patients/emr/:id/timeline"} component={PatientTimeline}/>
+                        <Route path={"/patients/emr/clinicnotes"}
+                               render={(route) => <PatientClinicNotes {...this.props} {...route}/>}/>
+                        <Route path={"/patient/:id/emr/clinicnotes"}
+                               render={(route) => <PatientClinicNotes {...this.state} {...this.props} {...route}/>}/>
+                        <Route path={"/patients/emr/timeline"} component={PatientTimeline}/>
+                        <Route path={"/patient/:id/emr/timeline"} component={PatientTimeline}/>
+
                         <Route path={"/patients/emr/:id/files"} component={PatientFiles}/>
 
                     </Content>
