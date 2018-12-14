@@ -33,3 +33,4 @@ export const COMMUNICATONS_API= 'clinics/%s/communications/';
 export const CALENDER_SETTINGS= 'clinics/%s/calender_settings/';
 export const ALL_APPOINTMENT_API= 'appointment/';
 export const APPOINTMENT_API= 'appointment/%s';
+export const APPOINTMENT_PERPRACTICE_API= 'appointment/?id=%s';
