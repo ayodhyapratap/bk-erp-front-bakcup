@@ -14,7 +14,7 @@ import { Redirect } from 'react-router-dom';
 import TimeGrid from 'react-big-calendar/lib/TimeGrid'
 import dates from 'date-arithmetic'
 import {getAPI,interpolate, displayMessage} from "../../utils/common";
-import { ALL_APPOINTMENT_API} from "../../constants/api";
+import { APPOINTMENT_PERPRACTICE_API} from "../../constants/api";
 
 
 
@@ -121,7 +121,7 @@ class App extends Component {
    let errorFn = function (){
 
    }
-   getAPI (ALL_APPOINTMENT_API , successFn,errorFn);
+   getAPI (interpolate(APPOINTMENT_PERPRACTICE_API,[this.props.active_practiceId])  , successFn,errorFn);
   }
 
 
@@ -129,7 +129,7 @@ class App extends Component {
     return (
 
       <Card>
-      <Route exact path="/calendar/create-appointment" render={(route) => <CreateAppointment startTime={this.state.startTime}/>}/>
+      <Route exact path="/calendar/create-appointment" render={(route) => <CreateAppointment {...this.props} startTime={this.state.startTime}/>}/>
         <DnDCalendar
           defaultDate={new Date()}
           localizer={localizer}
