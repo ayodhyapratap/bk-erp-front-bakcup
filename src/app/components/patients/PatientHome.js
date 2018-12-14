@@ -18,6 +18,7 @@ import PatientLabOrders from "./labOrders/PatientLabOrders";
 import PatientInvoices from "./invoices/PatientInvoices";
 import PatientPayments from "./payments/PatientPayments";
 import PatientLedgers from "./ledgers/PatientLedgers";
+import {Switch} from "react-router-dom";
 // import CreateAppointment from "./appointment/CreateAppointment"
 const {Header, Content, Sider} = Layout;
 
@@ -52,6 +53,7 @@ class PatientHome extends React.Component {
                                  minHeight: 280,
                                  // marginLeft: '200px'
                              }}>
+                        <Switch>
                         {/*** Patient Profile Routes*/}
                         <Route exact path='/patients/profile'
                                render={() =>
@@ -125,7 +127,7 @@ class PatientHome extends React.Component {
                         <Route path={"/patient/:id/emr/timeline"} component={PatientTimeline}/>
 
                         {/*** Patient Lab Order Routes*/}
-                        <Route path={"/patient/:id/emr/timeline"} component={PatientLabOrders}/>
+                        <Route path={"/patient/:id/emr/labtrackings"} component={PatientLabOrders}/>
 
                         {/*** Patient Invoices Routes*/}
                         <Route exact path='/patients/billing/invoices'
@@ -146,6 +148,7 @@ class PatientHome extends React.Component {
                         {/*** Patient Ledger Routes*/}
                         <Route exact path='/patient/:id/billing/ledger'
                                render={() => <PatientLedgers/>}/>
+                        </Switch>
                     </Content>
                 </Layout>
             </Layout>

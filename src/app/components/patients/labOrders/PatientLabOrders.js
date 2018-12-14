@@ -6,7 +6,7 @@ class PatientLabOrders extends React.Component{
         super(props);
     }
     render(){
-        return <Card title="Patient Communications"></Card>
+        return <Card title="Patient Lab Orders"></Card>
     }
 }
 export default PatientLabOrders;
