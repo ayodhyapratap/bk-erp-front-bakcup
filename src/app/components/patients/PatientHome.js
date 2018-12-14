@@ -12,6 +12,7 @@ import PatientClinicNotes from "./clinicNotes/PatientClinicNotes";
 import PatientHeader from "./PatientHeader";
 import PatientCommunication from "./communication/PatientCommunication";
 import PatientVitalSign from "./vitalSign/PatientVitalSign";
+import AddorEditPatientVitalSigns from "./vitalSign/AddorEditPatientVitalSigns";
 import PatientCompletedProcedures from "./completedProcedures/PatientCompletedProcedures";
 import PatientPrescriptions from "./prescriptions/PatientPrescriptions";
 import PatientLabOrders from "./labOrders/PatientLabOrders";
@@ -93,6 +94,8 @@ class PatientHome extends React.Component {
                                    <PatientVitalSign/>)}/>
                         <Route exact path='/patient/:id/emr/vitalsigns'
                                render={() => <PatientVitalSign/>}/>
+                         <Route exact path='/patients/emr/vitalsigns/add'
+                                render={() => <AddorEditPatientVitalSigns/>}/>
 
                         {/*** Patient Clinic Notes Routes*/}
                         <Route path={"/patients/emr/clinicnotes"}

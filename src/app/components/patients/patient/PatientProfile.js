@@ -52,7 +52,7 @@ class PatientProfile extends React.Component {
             if (!patient)
                 return <Card loading={true}/>;
             return <Card title="Patient Profile"
-                         extra={<Link to="/patients/profile/edit">
+                         extra={<Link to={"/patient/"+this.state.currentPatient.id+"/profile/edit"}>
                              <Button type="primary" >
                                  <Icon type="edit"/>&nbsp;Edit Patient Profile</Button>
                          </Link>}>

@@ -160,7 +160,7 @@ class EditPatientDetails extends React.Component {
 
           return <Row>
                 <Card>
-                  <Route exact path='/patients/profile/edit'
+                  <Route exact path='/patient/:id/profile/edit'
                         render={() => (this.props.currentPatient? <TestFormLayout title="Edit Patient" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>:<Redirect to='/patients/profile' />)}/>
                   <Route exact path='/patients/profile/add'
                         render={() =><TestFormLayout title="Add Patient" changeRedirect= {this.changeRedirect} formProp= {newformProp} fields={fields}/>}/>
