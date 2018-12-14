@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import Calendar from "react-big-calendar";
 import moment from "moment";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import BigCalendar from 'react-big-calendar'
-import {Card} from "antd"
+import {Card, Popover,Button} from "antd"
 
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -22,13 +21,14 @@ import { APPOINTMENT_PERPRACTICE_API} from "../../constants/api";
 // Calendar.setLocalizer(Calendar.momentLocalizer(moment));
 const localizer = BigCalendar.momentLocalizer(moment)
 
-const DnDCalendar = withDragAndDrop(Calendar);
+const DragAndDropCalendar = withDragAndDrop(BigCalendar)
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       startTime:null,
+      visiblePopover: false,
       events: [
         {
           start: new Date(),
@@ -38,26 +38,41 @@ class App extends Component {
       ]
     };
     this.onSelectSlot= this.onSelectSlot.bind(this);
+    this.onSelectEvent = this.onSelectEvent.bind(this);
+    this.moveEvent = this.moveEvent.bind(this)
+   this.newEvent = this.newEvent.bind(this)
     this.appointmentList();
   }
-  onEventResize = ({ event, start, end, allDay }) => {
 
-    this.setState(function(state) {
-      state.events[0].start = start;
-      state.events[0].end = end;
-      return { events: state.events };
-    });
+  onEventResize = ({ event, start, end }) => {
+    const { events } = this.state
+
+    const nextEvents = events.map(existingEvent => {
+      return existingEvent.id == event.id
+        ? { ...existingEvent, start, end }
+        : existingEvent
+    })
+
+    this.setState({
+      events: nextEvents,
+    })
+
+    //alert(`${event.title} was resized to ${start}-${end}`)
+
+  }
+
+  onEventDrop = ({ event, start, end, isAllDay: droppedOnAllDaySlot }) => {
+    const { events } = this.state
+
+     const idx = events.indexOf(event)
+     let allDay = event.allDay
+
+     if (!event.allDay && droppedOnAllDaySlot) {
+       allDay = true
+     } else if (event.allDay && !droppedOnAllDaySlot) {
+       allDay = false
   };
-
-
-  onEventDrop = ({ event, start, end, allDay }) => {
-    this.setState(function(state) {
-      state.events[0].start = start;
-      state.events[0].end = end;
-      return { events: state.events };
-    });
-    console.log(start);
-  };
+}
 
   onSelectSlot(value){
    console.log(value);
@@ -75,10 +90,77 @@ class App extends Component {
 
   }
 
+
+  moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
+      const { events } = this.state
+
+      const idx = events.indexOf(event)
+      let allDay = event.allDay
+
+      if (!event.allDay && droppedOnAllDaySlot) {
+        allDay = true
+      } else if (event.allDay && !droppedOnAllDaySlot) {
+        allDay = false
+      }
+
+      const updatedEvent = { ...event, start, end, allDay }
+
+      const nextEvents = [...events]
+      nextEvents.splice(idx, 1, updatedEvent)
+
+      this.setState({
+        events: nextEvents,
+      })
+
+      // alert(`${event.title} was dropped onto ${updatedEvent.start}`)
+    }
+
+    resizeEvent = ({ event, start, end }) => {
+      const { events } = this.state
+
+      const nextEvents = events.map(existingEvent => {
+        return existingEvent.id == event.id
+          ? { ...existingEvent, start, end }
+          : existingEvent
+      })
+
+      this.setState({
+        events: nextEvents,
+      })
+
+      //alert(`${event.title} was resized to ${start}-${end}`)
+    }
+
+    newEvent(event) {
+      // let idList = this.state.events.map(a => a.id)
+      // let newId = Math.max(...idList) + 1
+      // let hour = {
+      //   id: newId,
+      //   title: 'New Event',
+      //   allDay: event.slots.length == 1,
+      //   start: event.start,
+      //   end: event.end,
+      // }
+      // this.setState({
+      //   events: this.state.events.concat([hour]),
+      // })
+    }
+
+
+
+
+
+
+
+
+
   onSelectEvent(event, e){
    console.log("wokring");
    console.log(e);
    console.log(event);
+   this.setState({
+     visiblePopover:true
+   })
   }
 
   appointmentList(){
@@ -130,23 +212,33 @@ class App extends Component {
 
       <Card>
       <Route exact path="/calendar/create-appointment" render={(route) => <CreateAppointment {...this.props} startTime={this.state.startTime}/>}/>
-        <DnDCalendar
+
+      <Popover
+      content={<a onClick={this.hide}>Close</a>}
+      title="Title"
+      trigger="click"
+      visible={this.state.visiblePopover}
+      onVisibleChange={this.handleVisibleChange}
+      >
+
+      <DragAndDropCalendar
           defaultDate={new Date()}
           localizer={localizer}
           defaultView="week"
           step={10}
           timeslots={1}
           events={this.state.events}
-          onEventDrop={this.onEventDrop}
-          onEventResize={this.onEventResize}
+          onEventDrop={this.moveEvent}
+          onEventResize={this.resizeEvent}
           resizable
           selectable
+          popup={this.onSelectEvent}
           onSelectSlot={this.onSelectSlot}
           onSelectEvent={this.onSelectEvent}
           views={{ month: true, week: MyWeek, day: true, agenda:true }}
           style={{ height: "100vh" }}
         />
-
+      </Popover>
 
         </Card>
     );

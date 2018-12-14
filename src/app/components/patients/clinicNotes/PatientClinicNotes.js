@@ -31,7 +31,7 @@ class PatientClinicNotes extends React.Component {
                 notes: []
             })
         }
-        getAPI(interpolate(PATIENT_CLINIC_NOTES, [this.state.patient.id]), successFn, errorFn)
+        //getAPI(interpolate(PATIENT_CLINIC_NOTES, [this.state.patient.id]), successFn, errorFn)
     }
 
     render() {

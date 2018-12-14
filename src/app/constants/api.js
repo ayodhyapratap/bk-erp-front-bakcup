@@ -33,6 +33,6 @@ export const COMMUNICATONS_API= 'clinics/%s/communications/';
 export const CALENDER_SETTINGS= 'clinics/%s/calender_settings/';
 export const ALL_APPOINTMENT_API= 'appointment/';
 export const APPOINTMENT_API= 'appointment/%s';
-export const PATIENT_CLINIC_NOTES = 'patients/clinic_notes/?id=%s';
 export const APPOINTMENT_PERPRACTICE_API= 'appointment/?id=%s';
 export const PATIENT_GROUPS = 'patients/group/?id=%s';
+export const ADD_VITAL_SIGN='patients/vital_sign/?id=%s';
