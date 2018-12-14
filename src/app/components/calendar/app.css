@@ -26,3 +26,12 @@ App {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+.rbc-timeslot-group{
+  min-height:30px;
+}
+.rbc-day-slot .rbc-event-content{
+  font-size: 90%;
+}
+.rbc-event-label{
+  font-size:60%;
+}

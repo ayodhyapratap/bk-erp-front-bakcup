@@ -6,6 +6,8 @@ import PatientProfile from "./patient/PatientProfile";
 import EditPatientDetails from "./patient/EditPatientDetails";
 import Appointment from "./appointment/Appointment"
 import PatientSider from "./PatientSider";
+import PatientTimeline from "./timeline/PatientTimeline";
+import PatientFiles from "./files/PatientFiles";
 // import CreateAppointment from "./appointment/CreateAppointment"
 const {Header, Content, Sider} = Layout;
 
@@ -31,7 +33,7 @@ class PatientHome extends React.Component {
             <PatientHeader {...this.state} setCurrentPatient={this.setCurrentPatient}/>
 
             <Layout>
-                <PatientSider/>
+                <PatientSider {...this.state}/>
                 <Layout>
                     <Content className="main-container"
                              style={{
@@ -51,6 +53,8 @@ class PatientHome extends React.Component {
                                render={() => <Appointment/>}/>
                         {/*      <Route exact path='/patients/appointments/create'
                            render={() => <CreateAppointment {...this.props} />}/>*/}
+                        <Route path={"/patients/emr/:id/timeline"} component={PatientTimeline}/>
+                        <Route path={"/patients/emr/:id/files"} component={PatientFiles}/>
 
                     </Content>
                 </Layout>

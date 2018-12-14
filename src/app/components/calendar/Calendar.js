@@ -4,9 +4,10 @@ import moment from "moment";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import BigCalendar from 'react-big-calendar'
 import {Card} from "antd"
-import "./app.css";
+
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import "./app.css";
 import {Route, Switch} from "react-router-dom";
 import CreateAppointment from "./CreateAppointment";
 import { Redirect } from 'react-router-dom';
