@@ -70,9 +70,7 @@ class PatientHome extends React.Component {
                                render={(route) => <PatientClinicNotes {...this.state} {...this.props} {...route}/>}/>
                         <Route path={"/patients/emr/timeline"} component={PatientTimeline}/>
                         <Route path={"/patient/:id/emr/timeline"} component={PatientTimeline}/>
-
-                        <Route path={"/patients/emr/:id/files"} component={PatientFiles}/>
-
+                        <Route path={"/patient/:id/emr/files"} component={PatientFiles}/>
                     </Content>
                 </Layout>
             </Layout>

@@ -11,7 +11,7 @@ class PatientSider extends React.Component {
                       collapsed={this.props.collapsed}
                       style={{overflow: 'auto', minHeight: '100vh', background: '#fff'}}>
             {/*<div className="logo"/>*/}
-            <Menu mode="inline" defaultSelectedKeys={['5']}>
+            <Menu mode="inline">
                 <Menu.ItemGroup key="g1" title="Patient">
                     <Menu.Item key="17">
                         <Link
@@ -64,12 +64,14 @@ class PatientSider extends React.Component {
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="25" disabled={!this.props.currentPatient}>
-                        <Link to={"/patients/emr/" + this.props.currentPatient.id + "/timeline"}>
+                        <Link
+                            to={this.props.currentPatient ? "/patients/" + this.props.currentPatient.id + "/emr/timeline" : "/patients/profile"}>
                             <Icon type="clock-circle"/>Timeline
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="26" disabled={!this.props.currentPatient}>
-                        <Link to={"/patients/emr/" + this.props.currentPatient.id + "/labtrackings"}>
+                        <Link
+                            to={this.props.currentPatient ? "/patients/" + this.props.currentPatient.id + "/emr/labtrackings" : "/patients/profile"}>
                             <Icon type="solution"/>Lab Orders
                         </Link>
                     </Menu.Item>
@@ -89,7 +91,8 @@ class PatientSider extends React.Component {
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="29" disabled={!this.props.currentPatient}>
-                        <Link to={"/patients/billing/" + this.props.currentPatient.id + "/ledger"}>
+                        <Link
+                            to={this.props.currentPatient ? "/patients/" + this.props.currentPatient.id + "/billing/ledger" : "/patients/profile"}>
                             <Icon type="book"/>Ledger
                         </Link>
                     </Menu.Item>
