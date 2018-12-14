@@ -1,5 +1,5 @@
 import React from "react";
-import {Menu, Layout, Icon} from "antd";
+import {Menu, Layout, Icon, Divider} from "antd";
 import {Link} from "react-router-dom";
 
 const Sider = Layout.Sider;
@@ -12,7 +12,7 @@ class PatientSider extends React.Component {
                       style={{overflow: 'auto', minHeight: '100vh', background: '#fff'}}>
             {/*<div className="logo"/>*/}
             <Menu mode="inline">
-                <Menu.ItemGroup key="g1" title="Patient">
+                <Menu.ItemGroup key="g1" title={<Divider style={{margin:'0px'}}>Patient</Divider>}>
                     <Menu.Item key="17">
                         <Link
                             to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/profile" : "/patients/profile"}>
@@ -32,7 +32,7 @@ class PatientSider extends React.Component {
                         </Link>
                     </Menu.Item>
                 </Menu.ItemGroup>
-                <Menu.ItemGroup key="g2" title="EMR">
+                <Menu.ItemGroup key="g2" title={<Divider style={{margin:'0px'}}>EMR</Divider>}>
                     {/*<SubMenu key="nestedsub1" title={<span>EMR</span>}>*/}
                     <Menu.Item key="20">
                         <Link
@@ -65,19 +65,19 @@ class PatientSider extends React.Component {
                     </Menu.Item>
                     <Menu.Item key="25" disabled={!this.props.currentPatient}>
                         <Link
-                            to={this.props.currentPatient ? "/patients/" + this.props.currentPatient.id + "/emr/timeline" : "/patients/profile"}>
+                            to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/timeline" : "/patients/profile"}>
                             <Icon type="clock-circle"/>Timeline
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="26" disabled={!this.props.currentPatient}>
                         <Link
-                            to={this.props.currentPatient ? "/patients/" + this.props.currentPatient.id + "/emr/labtrackings" : "/patients/profile"}>
+                            to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/labtrackings" : "/patients/profile"}>
                             <Icon type="solution"/>Lab Orders
                         </Link>
                     </Menu.Item>
                 </Menu.ItemGroup>
                 {/*</SubMenu>*/}
-                <Menu.ItemGroup key="g3" title="Billing">
+                <Menu.ItemGroup key="g3" title={<Divider style={{margin:'0px'}}>Billing</Divider>}>
                     <Menu.Item key="27">
                         <Link
                             to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/invoices" : "/patients/billing/invoices"}>
@@ -92,7 +92,7 @@ class PatientSider extends React.Component {
                     </Menu.Item>
                     <Menu.Item key="29" disabled={!this.props.currentPatient}>
                         <Link
-                            to={this.props.currentPatient ? "/patients/" + this.props.currentPatient.id + "/billing/ledger" : "/patients/profile"}>
+                            to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/ledger" : "/patients/profile"}>
                             <Icon type="book"/>Ledger
                         </Link>
                     </Menu.Item>
