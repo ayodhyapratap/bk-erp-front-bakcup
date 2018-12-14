@@ -25,3 +25,7 @@
     margin-top: 0px !important;
     margin-bottom: 0px !important;
 }
+
+.ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+    background: #1890ff !important;
+}

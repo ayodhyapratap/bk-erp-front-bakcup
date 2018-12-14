@@ -35,3 +35,4 @@ export const ALL_APPOINTMENT_API= 'appointment/';
 export const APPOINTMENT_API= 'appointment/%s';
 export const PATIENT_CLINIC_NOTES = 'patients/clinic_notes/?id=%s';
 export const APPOINTMENT_PERPRACTICE_API= 'appointment/?id=%s';
+export const PATIENT_GROUPS = 'patients/group/?id=%s';

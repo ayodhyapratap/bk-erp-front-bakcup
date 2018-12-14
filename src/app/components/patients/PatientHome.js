@@ -59,7 +59,7 @@ class PatientHome extends React.Component {
                                render={() =>
                                    (this.state.currentPatient ?
                                        <Redirect to={"/patient/" + this.state.currentPatient.id + "/profile"}/> :
-                                       <PatientProfile {...this.state} setCurrentPatient={this.setCurrentPatient}/>)}/>
+                                       <PatientProfile {...this.state} setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
                         <Route exact path='/patients/profile/add'
                                render={() => <EditPatientDetails/>}/>
                         <Route exact path='/patient/:id/profile'

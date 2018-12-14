@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Col, Icon, List, Row} from "antd";
+import {Button, Card, Col, Icon, List, Radio, Row} from "antd";
 
 class PatientFiles extends React.Component {
     constructor(props) {
@@ -27,7 +27,32 @@ class PatientFiles extends React.Component {
                          <Button><Icon type="plus"/>Add</Button>
                      </Button.Group>}>
             <Row>
-                <Col span={8}></Col>
+                <Col span={8}
+                     style={{
+                         height: 'calc(100vh - 55px)',
+                         overflow: 'auto',
+                         paddingRight: '10px',
+                         // backgroundColor: '#e3e5e6',
+                         borderRight: '1px solid #ccc'
+                     }}>
+                    <Radio.Group buttonStyle="solid" defaultValue="all">
+                        <h2>Uploaded Files</h2>
+                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                      value="all">
+                            All Patents</Radio.Button>
+                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="b">
+                            Recently Visited
+                        </Radio.Button>
+                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="c">
+                            Recently Added
+                        </Radio.Button>
+                        <p><br/></p>
+                        <h2>Generated Files</h2>
+                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="d">
+                            Chengdu
+                        </Radio.Button>
+                    </Radio.Group>
+                </Col>
                 <Col span={16}>
                     <List
                         grid={{gutter: 16, column: 4}}
