@@ -36,3 +36,7 @@ export const APPOINTMENT_API= 'appointment/%s';
 export const APPOINTMENT_PERPRACTICE_API= 'appointment/?id=%s';
 export const PATIENT_GROUPS = 'patients/group/?id=%s';
 export const ADD_VITAL_SIGN='patients/vital_sign/?id=%s';
+
+
+//search and advanced search API
+export const SEARCH_PATIENT='patients/search/?name=%s';

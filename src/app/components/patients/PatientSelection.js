@@ -1,9 +1,10 @@
 import React from "react";
-import {Avatar, Card, Col, Icon, Radio, Row} from "antd";
+import {Avatar, Input, Card, Col, Icon, Radio, Row} from "antd";
 import {getAPI, interpolate} from "../../utils/common";
-import {PATIENT_GROUPS, PATIENTS_LIST} from "../../constants/api";
+import {PATIENT_GROUPS,SEARCH_PATIENT, PATIENTS_LIST} from "../../constants/api";
 
 const {Meta} = Card;
+const Search = Input.Search;
 
 class PatientSelection extends React.Component {
     constructor(props) {
@@ -13,6 +14,7 @@ class PatientSelection extends React.Component {
             patientGroup: []
         }
         this.getPatientListData = this.getPatientListData.bind(this);
+        this.searchPatient = this.searchPatient.bind(this);
     }
 
     componentDidMount() {
@@ -45,6 +47,23 @@ class PatientSelection extends React.Component {
         };
         getAPI(PATIENTS_LIST, successFn, errorFn);
     }
+
+    searchPatient(e) {
+        console.log(e.target.value);
+        let that = this;
+        let successFn = function (data) {
+          if(data){
+            that.setState({
+              patientListData: data
+            })
+          }
+        };
+        let errorFn = function () {
+
+        };
+        getAPI(interpolate(SEARCH_PATIENT,[e.target.value]), successFn, errorFn);
+    }
+
 
     render() {
         let that = this;
@@ -82,6 +101,11 @@ class PatientSelection extends React.Component {
             </Col>
 
             <Col span={18} style={{overflow: 'scroll'}}>
+            <Search
+               placeholder="input search text"
+               onChange={value => this.searchPatient(value)}
+               enterButton
+               />
 
                 {this.state.patientListData.length ?
                     this.state.patientListData.map((patient) => <PatientCard {...patient}
