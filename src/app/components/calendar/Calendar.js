@@ -3,6 +3,7 @@ import moment from "moment";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import BigCalendar from 'react-big-calendar'
 import {Card, Popover,Button} from "antd"
+import { SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
 
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -12,8 +13,8 @@ import CreateAppointment from "./CreateAppointment";
 import { Redirect } from 'react-router-dom';
 import TimeGrid from 'react-big-calendar/lib/TimeGrid'
 import dates from 'date-arithmetic'
-import {getAPI,interpolate, displayMessage} from "../../utils/common";
-import { APPOINTMENT_PERPRACTICE_API} from "../../constants/api";
+import {getAPI, postAPI, putAPI, interpolate, displayMessage} from "../../utils/common";
+import { APPOINTMENT_PERPRACTICE_API,APPOINTMENT_API} from "../../constants/api";
 
 
 
@@ -29,50 +30,103 @@ class App extends Component {
     this.state = {
       startTime:null,
       visiblePopover: false,
-      events: [
-        {
-          start: new Date(),
-          end: new Date(moment().add(1, "hour")),
-          title: "Some title"
-        }
-      ]
+      events: []
     };
     this.onSelectSlot= this.onSelectSlot.bind(this);
     this.onSelectEvent = this.onSelectEvent.bind(this);
-    this.moveEvent = this.moveEvent.bind(this)
-   this.newEvent = this.newEvent.bind(this)
     this.appointmentList();
+    this.moveEvent = this.moveEvent.bind(this)
+    this.resizeEvent = this.resizeEvent.bind(this)
   }
 
-  onEventResize = ({ event, start, end }) => {
+  moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
     const { events } = this.state
 
-    const nextEvents = events.map(existingEvent => {
-      return existingEvent.id == event.id
-        ? { ...existingEvent, start, end }
-        : existingEvent
+    const idx = events.indexOf(event)
+    let allDay = event.allDay
+    let that= this;
+    if (!event.allDay && droppedOnAllDaySlot) {
+      allDay = true
+    } else if (event.allDay && !droppedOnAllDaySlot) {
+      allDay = false
+    }
+
+    const updatedEvent = { ...event, start, end, allDay }
+
+    const nextEvents = [...events]
+    let changedEvent={"id":event.id,
+                  "shedule_at":moment(start),
+                  "slot":parseInt((end-start)/60000)};
+
+    let successFn = function(data){
+      displayMessage(SUCCESS_MSG_TYPE, "time changed");
+      nextEvents.splice(idx, 1, updatedEvent)
+
+         that.setState({
+        events: nextEvents,
+      })
+    }
+    let errorFn= function(){
+    }
+
+    putAPI (interpolate(APPOINTMENT_API,[event.id]), changedEvent  , successFn,errorFn);
+
+
+    // this.setState({
+    //   events: nextEvents,
+    // })
+
+    // alert(`${event.title} was dropped onto ${updatedEvent.start}`)
+  }
+
+  resizeEvent = ({ event, start, end }) => {
+    const { events } = this.state
+    let changedEvent={};
+    let that=  this;
+    const nextEvents =[];
+     events.forEach((existingEvent) => {
+          if(existingEvent.id == event.id){
+            changedEvent={"id":event.id,
+                          "shedule_at":moment(start),
+                          "slot":parseInt((end-start)/60000)};
+          }
     })
 
-    this.setState({
-      events: nextEvents,
-    })
+    console.log(changedEvent);
+    let successFn = function(data){
+      displayMessage(SUCCESS_MSG_TYPE, "time changed");
+      events.forEach((existingEvent) => {
+       nextEvents.push( existingEvent.id == event.id
+         ? { ...existingEvent, start, end }
+         : existingEvent)});
+         that.setState({
+        events: nextEvents,
+      })
+    }
+    let errorFn= function(){
+    }
+
+    putAPI (interpolate(APPOINTMENT_API,[event.id]), changedEvent  , successFn,errorFn);
+
+
 
     //alert(`${event.title} was resized to ${start}-${end}`)
-
   }
 
-  onEventDrop = ({ event, start, end, isAllDay: droppedOnAllDaySlot }) => {
-    const { events } = this.state
-
-     const idx = events.indexOf(event)
-     let allDay = event.allDay
-
-     if (!event.allDay && droppedOnAllDaySlot) {
-       allDay = true
-     } else if (event.allDay && !droppedOnAllDaySlot) {
-       allDay = false
-  };
-}
+  newEvent(event) {
+    // let idList = this.state.events.map(a => a.id)
+    // let newId = Math.max(...idList) + 1
+    // let hour = {
+    //   id: newId,
+    //   title: 'New Event',
+    //   allDay: event.slots.length == 1,
+    //   start: event.start,
+    //   end: event.end,
+    // }
+    // this.setState({
+    //   events: this.state.events.concat([hour]),
+    // })
+  }
 
   onSelectSlot(value){
    console.log(value);
@@ -89,68 +143,6 @@ class App extends Component {
     }
 
   }
-
-
-  moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
-      const { events } = this.state
-
-      const idx = events.indexOf(event)
-      let allDay = event.allDay
-
-      if (!event.allDay && droppedOnAllDaySlot) {
-        allDay = true
-      } else if (event.allDay && !droppedOnAllDaySlot) {
-        allDay = false
-      }
-
-      const updatedEvent = { ...event, start, end, allDay }
-
-      const nextEvents = [...events]
-      nextEvents.splice(idx, 1, updatedEvent)
-
-      this.setState({
-        events: nextEvents,
-      })
-
-      // alert(`${event.title} was dropped onto ${updatedEvent.start}`)
-    }
-
-    resizeEvent = ({ event, start, end }) => {
-      const { events } = this.state
-
-      const nextEvents = events.map(existingEvent => {
-        return existingEvent.id == event.id
-          ? { ...existingEvent, start, end }
-          : existingEvent
-      })
-
-      this.setState({
-        events: nextEvents,
-      })
-
-      //alert(`${event.title} was resized to ${start}-${end}`)
-    }
-
-    newEvent(event) {
-      // let idList = this.state.events.map(a => a.id)
-      // let newId = Math.max(...idList) + 1
-      // let hour = {
-      //   id: newId,
-      //   title: 'New Event',
-      //   allDay: event.slots.length == 1,
-      //   start: event.start,
-      //   end: event.end,
-      // }
-      // this.setState({
-      //   events: this.state.events.concat([hour]),
-      // })
-    }
-
-
-
-
-
-
 
 
 
@@ -178,7 +170,8 @@ class App extends Component {
          newEvents.push({
            start:new Date(moment(appointment.shedule_at)),
            end:  new Date(endtime),
-           title: appointment.patient_name
+           title: appointment.patient_name,
+           id : appointment.id
          })
        });
        return {events:newEvents}
@@ -200,10 +193,10 @@ class App extends Component {
 
     }
 
-   let errorFn = function (){
+    let errorFn = function (){
 
-   }
-   getAPI (interpolate(APPOINTMENT_PERPRACTICE_API,[this.props.active_practiceId])  , successFn,errorFn);
+    }
+    getAPI (interpolate(APPOINTMENT_PERPRACTICE_API,[this.props.active_practiceId])  , successFn,errorFn);
   }
 
 
@@ -222,6 +215,8 @@ class App extends Component {
       >
 
       <DragAndDropCalendar
+
+
           defaultDate={new Date()}
           localizer={localizer}
           defaultView="week"
