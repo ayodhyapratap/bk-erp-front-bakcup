@@ -80,7 +80,7 @@ class PatientVitalSign extends React.Component{
             }];
 
       if(this.props.match.params.id){
-        return <Card title="Patient Vital Sign"  extra={<Button.Group>
+        return <Card title={ this.state.currentPatient?this.state.currentPatient.name + " Vital Sign":"PatientVitalSign"}  extra={<Button.Group>
             <Link to={"/patient/"+this.props.match.params.id+"/emr/vitalsigns/add"}><Button><Icon type="plus"/>Add</Button></Link>
         </Button.Group>}>
         {/*this.state.vitalsign.length ?
