@@ -89,13 +89,15 @@ class PatientHome extends React.Component {
 
                         {/*** Patient Vital Sign Routes*/}
                         <Route exact path='/patients/emr/vitalsigns'
-                               render={() => (this.state.currentPatient ?
+                               render={(route) => (this.state.currentPatient ?
                                    <Redirect to={"/patient/" + this.state.currentPatient.id + "/emr/vitalsigns"}/> :
-                                   <PatientVitalSign {...this.state}/>)}/>
+                                   <PatientVitalSign {...this.state} {...route}/>)}/>
                         <Route exact path='/patient/:id/emr/vitalsigns'
-                               render={() => <PatientVitalSign />}/>
-                         <Route exact path='/patients/emr/vitalsigns/add'
-                                render={() => <AddorEditPatientVitalSigns/>}/>
+                               render={(route) => <PatientVitalSign {...this.state}  {...route} />}/>
+                         <Route exact path='/patient/:id/emr/vitalsigns/add'
+                                render={(route) => <AddorEditPatientVitalSigns {...this.state} {...route}/>}/>
+                         <Route exact path='/patient/:id/emr/vitalsigns/edit'
+                                render={(route) => <AddorEditPatientVitalSigns {...this.state} {...route}/>}/>
 
                         {/*** Patient Clinic Notes Routes*/}
                         <Route path={"/patients/emr/clinicnotes"}

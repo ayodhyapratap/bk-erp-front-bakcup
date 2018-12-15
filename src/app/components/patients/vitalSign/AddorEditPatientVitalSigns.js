@@ -17,13 +17,12 @@ class AddorEditPatientVitalSigns extends React.Component {
 
         this.state = {
           redirect:false,
+          vitalSign:null,
 
         }
         this.changeRedirect= this.changeRedirect.bind(this);
         console.log("Working or not");
 
-    }
-    componentDidMount(){
     }
 
 
@@ -40,7 +39,7 @@ class AddorEditPatientVitalSigns extends React.Component {
             label: "pulse",
             key: "pulse",
             required: true,
-            initialValue:this.props.currentPatient?this.props.currentPatient.addhar_id:null,
+            //initialValue:this.props.currentPatient?this.props.currentPatient.addhar_id:null,
             type: INPUT_FIELD
         },{
             label: "temperature",
@@ -79,8 +78,21 @@ class AddorEditPatientVitalSigns extends React.Component {
 
         let editformProp;
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        if(this.props.currentPatient){
-           editformProp={
+        // if(this.props.currentPatient){
+        //    editformProp={
+        //     successFn:function(data){
+        //       displayMessage(SUCCESS_MSG_TYPE, "success")
+        //
+        //       console.log(data);
+        //     },
+        //     errorFn:function(){
+        //
+        //     },
+        //     action: interpolate(PATIENT_PROFILE, [this.props.currentPatient.id]),
+        //     method: "put",
+        //   }
+        // }
+          const formProp={
             successFn:function(data){
               displayMessage(SUCCESS_MSG_TYPE, "success")
 
@@ -89,34 +101,22 @@ class AddorEditPatientVitalSigns extends React.Component {
             errorFn:function(){
 
             },
-            action: interpolate(PATIENT_PROFILE, [this.props.currentPatient.id]),
-            method: "put",
-          }
-        }
-          const newformProp={
-            successFn:function(data){
-              displayMessage(SUCCESS_MSG_TYPE, "success")
-
-              console.log(data);
-            },
-            errorFn:function(){
-
-            },
-            action:  interpolate(ADD_VITAL_SIGN, [4]),
+            action:  interpolate(ADD_VITAL_SIGN, [this.props.match.params.id]),
             method: "post",
           }
-          const defaultValues = [{"key":"patient", "value":[4]}];
+
+          const defaultValues = [{"key":"id", "value":[this.state.vitalsign]}];
 
           return <Row>
                 <Card>
-                  <Route exact path='/patients/profile/edit'
-                        render={() => (this.props.currentPatient? <TestFormLayout title="Edit Patient" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>:<Redirect to='/patients/profile' />)}/>
-                  <Route exact path='/patients/emr/vitalsigns/add'
-                        render={() =><TestFormLayout title="Add Patient"  defaultValues={defaultValues} changeRedirect= {this.changeRedirect} formProp= {newformProp} fields={fields}/>}/>
+                  <Route exact path='/patient/:id/emr/vitalsigns/edit'
+                        render={() => (this.state.vitalsign? <TestFormLayout  defaultValues={defaultValues}  title="Edit vital sign" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>:<Redirect to='/patients/profile' />)}/>
+                  <Route exact path='/patient/:id/emr/vitalsigns/add'
+                        render={() =><TestFormLayout title="Add vital sign" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
 
 
                 </Card>
-                {this.state.redirect&&    <Redirect to='/patients/profile' />}
+                {this.state.redirect&&    <Redirect to={'/patient/'+this.props.match.params.id+'/emr/vitalsigns'} />}
             </Row>
 
     }
