@@ -25,7 +25,7 @@ class PatientSider extends React.Component {
                             <Icon type="calendar"/>Appointments
                         </Link>
                     </Menu.Item>
-                    <Menu.Item key="19">
+                    <Menu.Item key="19" disabled={!this.props.currentPatient}>
                         <Link
                             to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/communications" : "/patients/communications"}>
                             <Icon type="message"/>Communications

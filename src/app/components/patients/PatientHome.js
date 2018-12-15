@@ -65,7 +65,7 @@ class PatientHome extends React.Component {
                                render={() => <EditPatientDetails/>}/>
                         <Route exact path='/patient/:id/profile'
                                render={() => <PatientProfile {...this.state}
-                                                             setCurrentPatient={this.setCurrentPatient}/>}/>
+                                                             setCurrentPatient={this.setCurrentPatient} {...this.props}/>}/>
                         <Route exact path='/patient/:id/profile/edit'
                                render={() => <EditPatientDetails {...this.state} />}/>
 
@@ -80,10 +80,10 @@ class PatientHome extends React.Component {
                            render={() => <CreateAppointment {...this.props} />}/>*/}
 
                         {/*** Patient Communication Routes*/}
-                        <Route exact path='/patients/communications'
-                               render={() => (this.state.currentPatient ?
-                                   <Redirect to={"/patient/" + this.state.currentPatient.id + "/communications"}/> :
-                                   <PatientCommunication/>)}/>
+                        {/*<Route exact path='/patients/communications'*/}
+                               {/*render={() => (this.state.currentPatient ?*/}
+                                   {/*<Redirect to={"/patient/" + this.state.currentPatient.id + "/communications"}/> :*/}
+                                   {/*<PatientCommunication/>)}/>*/}
                         <Route exact path='/patient/:id/communications'
                                render={() => <PatientCommunication/>}/>
 
