@@ -21,6 +21,7 @@ import MedicalHistory from "./options/medical-history/MedicalHistory";
 import Error404 from "../common/errors/Error404";
 import CalendarSettings from "./options/calendar/CalendarSettings"
 import SettingSider from "./SettingSider";
+import PermissionDenied from "../common/errors/PermissionDenied";
 
 const Content = Layout.Content;
 
@@ -51,56 +52,56 @@ class SettingsDash extends React.Component {
                     <Switch>
                         <Route exact path="/settings/clinics-staff"
                                render={(route) => (this.props.permissions.view_practicestaff ?
-                                       <PracticeStaff  {...this.props}/> : <Error404/>
+                                       <PracticeStaff  {...this.props}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/clinics-staff/adddoctor"
                                render={(route) => (this.props.permissions.add_practicestaff ?
-                                       <AddStaffDoctor  {...this.props}/> : <Error404/>
+                                       <AddStaffDoctor  {...this.props}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/clinics"
                                render={(route) => (this.props.permissions.view_practice ?
-                                       <PracticeDetails  {...this.props}/> : <Error404/>
+                                       <PracticeDetails  {...this.props}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/clinics/add"
                                render={(route) => (this.props.permissions.add_practice ?
-                                       <AddPracticeDetails  {...this.props}/> : <Error404/>
+                                       <AddPracticeDetails  {...this.props}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/communication-settings"
                                render={(route) => (this.props.permissions.view_practice ?
-                                       <CommunicationSettings  {...this.props}/> : <Error404/>
+                                       <CommunicationSettings  {...this.props}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/calendarsettings"
                                render={(route) => (this.props.permissions.view_practicestaff ?
-                                       <CalendarSettings  {...this.props}/> : <Error404/>
+                                       <CalendarSettings  {...this.props}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/procedures"
                                render={(route) => (this.props.permissions.view_procedurecatalog ?
-                                       <RecentProcedure  {...this.props}/> : <Error404/>
+                                       <RecentProcedure  {...this.props}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/procedures/addprocedure"
                                render={(route) => (this.props.permissions.add_procedurecatalog ?
-                                       <AddProcedure  {...this.props}/> : <Error404/>
+                                       <AddProcedure  {...this.props}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/billing"
                                render={(route) => (this.props.permissions.view_taxes ?
-                                       <BillingSettings  {...this.props}/> : <Error404/>
+                                       <BillingSettings  {...this.props}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/loyalty"
                                render={(route) => (this.props.permissions.view_practiceoffers ?
-                                       <Offers  {...this.props}/> : <Error404/>
+                                       <Offers  {...this.props}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/emr"
                                render={(route) => (this.props.permissions.view_practiceoffers ?
-                                       <EMRSettings  {...this.props}/> : <Error404/>
+                                       <EMRSettings  {...this.props}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/loyalty/add"
                                render={(route) => (this.props.permissions.add_practiceoffers ?
-                                       <AddOffer  {...this.props}/> : <Error404/>
+                                       <AddOffer  {...this.props}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/clinics/:id/edit"
                                render={(route) => (this.props.permissions.change_practice ?
                                    <EditPracticeDetail {...this.props} practiceId={route.match.params.id}/> :
-                                   <Error404/>)
+                                   <PermissionDenied/>)
                                }/>
                         <Route exact path="/settings/prescriptions"
                                render={() => <Prescriptions  {...this.props}/>}/>
