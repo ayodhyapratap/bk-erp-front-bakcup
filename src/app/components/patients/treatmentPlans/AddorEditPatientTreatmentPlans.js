@@ -75,7 +75,7 @@ class AddorEditPatientTreatmentPlans extends React.Component {
         })
       }
       const  fields= [{
-          label: "procedure",
+          label: "Procedure",
           key: "procedure",
           type: SELECT_FIELD,
           initialValue:this.state.edittreatmentPlans?this.state.edittreatmentPlans.drug:null,
@@ -143,9 +143,9 @@ class AddorEditPatientTreatmentPlans extends React.Component {
           return <Row>
                 <Card>
                   <Route exact path='/patient/:id/emr/planss/:treatmentPlansid/edit'
-                        render={() => ( <TestFormLayout defaultValues={defaultValues} title="Edit vital sign" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>)}/>
+                        render={() => ( <TestFormLayout defaultValues={defaultValues} title="Edit Treatment Plans" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>)}/>
                   <Route exact path='/patient/:id/emr/plans/add'
-                        render={() =><TestFormLayout title="Add vital sign" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
+                        render={() =><TestFormLayout title="Add Treatment Plans" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
 
 
                 </Card>

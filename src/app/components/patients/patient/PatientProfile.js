@@ -3,21 +3,43 @@ import PatientSelection from "../PatientSelection";
 import {Avatar, Button, Card, Col, Divider, Icon, List, Row} from "antd";
 import {Link} from "react-router-dom";
 import {getAPI, interpolate} from "../../../utils/common";
-import {PATIENT_PROFILE} from "../../../constants/api";
+import {MEDICAL_HISTORY, PATIENT_GROUPS, PATIENT_PROFILE} from "../../../constants/api";
+import {MEDICAL_HISTORY_KEY} from "../../../constants/dataKeys";
 
 class PatientProfile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             patientProfile: null,
-            currentPatient: this.props.currentPatient
+            currentPatient: this.props.currentPatient,
+            medicalHistory: {}
         };
         this.loadProfile = this.loadProfile.bind(this);
+        this.getMedicalHistory = this.getMedicalHistory.bind(this);
     }
 
     componentDidMount() {
-        if (this.state.currentPatient)
+        if (this.state.currentPatient) {
             this.loadProfile();
+
+        }
+        this.getMedicalHistory();
+    }
+
+    getMedicalHistory() {
+        let that = this;
+        let successFn = function (data) {
+            let medicalHistoryData = {};
+            data.forEach(function (history) {
+                medicalHistoryData[history.id] = history
+            });
+            that.setState({
+                medicalHistory: medicalHistoryData
+            })
+        }
+        let errorFn = function () {
+        }
+        getAPI(interpolate(MEDICAL_HISTORY, [that.props.active_practiceId]), successFn, errorFn);
     }
 
     componentWillReceiveProps(newProps) {
@@ -47,13 +69,14 @@ class PatientProfile extends React.Component {
     }
 
     render() {
+        let that = this;
         if (this.props.currentPatient) {
             let patient = this.state.patientProfile;
             if (!patient)
                 return <Card loading={true}/>;
             return <Card title="Patient Profile"
-                         extra={<Link to={"/patient/"+this.state.currentPatient.id+"/profile/edit"}>
-                             <Button type="primary" >
+                         extra={<Link to={"/patient/" + this.state.currentPatient.id + "/profile/edit"}>
+                             <Button type="primary">
                                  <Icon type="edit"/>&nbsp;Edit Patient Profile</Button>
                          </Link>}>
                 <Row gutter={16}>
@@ -82,8 +105,10 @@ class PatientProfile extends React.Component {
                     </Col>
                     <Col span={6} style={{borderLeft: '1 px solid #ccc'}}>
                         <Divider>Medical History</Divider>
-                        <List dataSource={patient.medical_history}
-                              renderItem={(item) => <List.Item>{item}</List.Item>}/>
+                        {this.state.medicalHistory&& 1===2 && <List dataSource={patient.medical_history}
+                                                                    renderItem={(item) =>
+                                                                        <List.Item>{this.state.medicalHistory[item].name}</List.Item>}/>}
+
                         <Divider>Groups</Divider>
                         <List dataSource={patient.patient_group}
                               renderItem={(item) => <List.Item>{item}</List.Item>}/>
