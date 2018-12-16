@@ -35,7 +35,10 @@ export const ALL_APPOINTMENT_API= 'appointment/';
 export const APPOINTMENT_API= 'appointment/%s/';
 export const APPOINTMENT_PERPRACTICE_API= 'appointment/?id=%s';
 export const PATIENT_GROUPS = 'patients/group/?id=%s';
-export const ADD_VITAL_SIGN='patients/vital_sign/?id=%s';
+export const VITAL_SIGNS_API='patients/vital_sign/?id=%s';
+export const PRESCRIPTIONS_API='patients/prescriptions/?id=%s';
+export const TREATMENTPLANS_API='patients/procedure/?id=%s';
+export const ALL_PRESCRIPTIONS_API='patients/prescriptions/%s/';
 
 
 //search and advanced search API

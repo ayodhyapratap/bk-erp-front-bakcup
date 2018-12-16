@@ -1,7 +1,7 @@
 import React from "react";
 import {Avatar, Input, Divider, Table, Col,Button, Form,  Row, Card, Icon, Skeleton} from "antd";
 import {Link} from "react-router-dom";
-import {ADD_VITAL_SIGN, PATIENT_PROFILE} from "../../../constants/api";
+import {VITAL_SIGNS_API, PATIENT_PROFILE} from "../../../constants/api";
 import {getAPI,interpolate, displayMessage} from "../../../utils/common";
 import moment from 'moment';
 
@@ -35,7 +35,7 @@ class PatientVitalSign extends React.Component{
       let errorFn = function (){
 
       }
-      getAPI(interpolate(ADD_VITAL_SIGN,[this.props.match.params.id]), successFn, errorFn)
+      getAPI(interpolate(VITAL_SIGNS_API,[this.props.match.params.id]), successFn, errorFn)
     }
     render(){
       const columns = [{

@@ -15,6 +15,8 @@ import PatientVitalSign from "./vitalSign/PatientVitalSign";
 import AddorEditPatientVitalSigns from "./vitalSign/AddorEditPatientVitalSigns";
 import PatientCompletedProcedures from "./completedProcedures/PatientCompletedProcedures";
 import PatientPrescriptions from "./prescriptions/PatientPrescriptions";
+import AddorEditPatientPrescriptions from "./prescriptions/AddorEditPatientPrescriptions";
+import PatientTreatmentPlans from "./treatmentPlans/PatientTreatmentPlans";
 import PatientLabOrders from "./labOrders/PatientLabOrders";
 import PatientInvoices from "./invoices/PatientInvoices";
 import PatientPayments from "./payments/PatientPayments";
@@ -27,7 +29,8 @@ class PatientHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentPatient: null
+            currentPatient: null,
+            active_practiceId:this.props.active_practiceId,
         }
         this.setCurrentPatient = this.setCurrentPatient.bind(this);
     }
@@ -122,11 +125,19 @@ class PatientHome extends React.Component {
 
                         {/*** Patient Prescriptions Routes*/}
                         <Route exact path='/patients/emr/prescriptions'
-                               render={() => (this.state.currentPatient ?
+                               render={(route) => (this.state.currentPatient ?
                                    <Redirect to={"/patient/" + this.state.currentPatient.id + "/emr/prescriptions"}/> :
-                                   <PatientPrescriptions/>)}/>
-                        <Route exact path='/patient/:id/emr/prescriptions'
-                               render={() => <PatientPrescriptions/>}/>
+                                   <PatientPrescriptions   {...this.state} {...route}/>)}/>
+                       <Route path='/patient/:id/emr/prescriptions'
+                              render={(route) => <PatientPrescriptions {...this.state}  {...route} />}/>
+
+                        {/*** Patient Treatment Plan Routes*/}
+                        <Route exact path='/patients/emr/plans'
+                               render={(route) => (this.state.currentPatient ?
+                                   <Redirect to={"/patient/" + this.state.currentPatient.id + "/emr/plans"}/> :
+                                   <PatientTreatmentPlans   {...this.state} {...route}/>)}/>
+                       <Route path='/patient/:id/emr/plans'
+                              render={(route) => <PatientTreatmentPlans {...this.state}  {...route} />}/>
 
                         {/*** Patient Timeline Routes*/}
                         <Route path={"/patient/:id/emr/timeline"} component={PatientTimeline}/>

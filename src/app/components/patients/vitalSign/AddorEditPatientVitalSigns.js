@@ -4,7 +4,7 @@ import {Route} from "react-router";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon, Row} from "antd";
 import {CHECKBOX_FIELD, DATE_PICKER, NUMBER_FIELD,  SUCCESS_MSG_TYPE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../constants/dataKeys";
-import {ADD_VITAL_SIGN, PATIENT_PROFILE} from "../../../constants/api";
+import {VITAL_SIGNS_API, PATIENT_PROFILE} from "../../../constants/api";
 import {getAPI,interpolate, displayMessage} from "../../../utils/common";
 import { Redirect } from 'react-router-dom'
 import moment from 'moment';
@@ -101,7 +101,7 @@ class AddorEditPatientVitalSigns extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(ADD_VITAL_SIGN, [this.props.match.params.id]),
+            action:  interpolate(VITAL_SIGNS_API, [this.props.match.params.id]),
             method: "post",
           }
 

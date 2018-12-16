@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import moment from "moment";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import BigCalendar from 'react-big-calendar'
-import {Card, Popover,Button} from "antd"
+import {Card,Row, Timeline,  Col, Popover,Button} from "antd"
 import { SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
 
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
@@ -30,7 +30,8 @@ class App extends Component {
     this.state = {
       startTime:null,
       visiblePopover: false,
-      events: []
+      events: [],
+      appointments:[],
     };
     this.onSelectSlot= this.onSelectSlot.bind(this);
     this.onSelectEvent = this.onSelectEvent.bind(this);
@@ -190,6 +191,9 @@ class App extends Component {
       //   events:event,
       //
       // })
+      that.setState({
+        appointments:data,
+      })
 
     }
 
@@ -204,44 +208,68 @@ class App extends Component {
     return (
 
       <Card>
-      <Route exact path="/calendar/create-appointment" render={(route) => <CreateAppointment {...this.props} startTime={this.state.startTime}/>}/>
+        <Route exact path="/calendar/create-appointment" render={(route) => <CreateAppointment {...this.props} startTime={this.state.startTime}/>}/>
 
-      <Popover
-      content={<a onClick={this.hide}>Close</a>}
-      title="Title"
-      trigger="click"
-      visible={this.state.visiblePopover}
-      onVisibleChange={this.handleVisibleChange}
-      >
+        <Popover
+        content={<a onClick={this.hide}>Close</a>}
+        title="Title"
+        trigger="click"
+        visible={this.state.visiblePopover}
+        onVisibleChange={this.handleVisibleChange}
+        >
+        </Popover>
+        <Row>
+          <Col span={18}>
+            <DragAndDropCalendar
 
-      <DragAndDropCalendar
 
+                defaultDate={new Date()}
+                localizer={localizer}
+                defaultView="week"
+                step={10}
+                timeslots={1}
+                events={this.state.events}
+                onEventDrop={this.moveEvent}
+                onEventResize={this.resizeEvent}
+                resizable
+                selectable
+                popup={this.onSelectEvent}
+                onSelectSlot={this.onSelectSlot}
+                onSelectEvent={this.onSelectEvent}
+                views={{ month: true, week: MyWeek, day: true, agenda:true }}
+                style={{ height: "100vh" }}
+              />
+          </Col>
+          <Col span={6}>
+            <Card>
+            <Timeline>
+              {this.state.appointments.length ?
+                  this.state.appointments.map((apppointment) => <Timeline.Item><AppointmentCard {...apppointment}/></Timeline.Item>) :
+                  <p style={{textAlign: 'center'}}>No Data Found</p>
+              }
+              </Timeline>
+            </Card>
+          </Col>
+        </Row>
 
-          defaultDate={new Date()}
-          localizer={localizer}
-          defaultView="week"
-          step={10}
-          timeslots={1}
-          events={this.state.events}
-          onEventDrop={this.moveEvent}
-          onEventResize={this.resizeEvent}
-          resizable
-          selectable
-          popup={this.onSelectEvent}
-          onSelectSlot={this.onSelectSlot}
-          onSelectEvent={this.onSelectEvent}
-          views={{ month: true, week: MyWeek, day: true, agenda:true }}
-          style={{ height: "100vh" }}
-        />
-      </Popover>
-
-        </Card>
+      </Card>
     );
   }
 }
 
 export default App;
 
+
+function AppointmentCard(appointment) {
+    return <div style={{width:'100%',minHeight:'30px'}}>
+    <p style={{float:'left'}}>
+            <span>{moment(appointment.shedule_at).format("HH:mm")}</span>
+                <span>&nbsp;{appointment.patient_name}</span>
+                </p>
+            <a style={{float:'right'}}> Check In</a>
+
+        </div>;
+}
 
 
 class MyWeek extends React.Component {

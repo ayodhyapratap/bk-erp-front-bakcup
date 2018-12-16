@@ -1,67 +1,68 @@
 import React from "react";
 import {Avatar, Input, Checkbox, Divider, Table, Col,Button, Form,  Row, Card, Icon, Skeleton} from "antd";
 import {Link} from "react-router-dom";
-import {PRESCRIPTIONS_API,DRUG_CATALOG, PATIENT_PROFILE} from "../../../constants/api";
+import {TREATMENTPLANS_API,PROCEDURE_CATEGORY, PATIENT_PROFILE} from "../../../constants/api";
 import {getAPI,interpolate, displayMessage} from "../../../utils/common";
 import  moment from "moment";
-import AddorEditPatientPrescriptions from './AddorEditPatientPrescriptions';
+import AddorEditPatientTreatmentPlans from './AddorEditPatientTreatmentPlans';
 import {Redirect,Switch, Route} from "react-router";
 
 
-class PatientPrescriptions extends React.Component{
+class PatientTreatmentPlans extends React.Component{
     constructor(props){
         super(props);
         super(props);
         this.state = {
           currentPatient:this.props.currentPatient,
           active_practiceId:this.props.active_practiceId,
-          prescription:[],
-          drug_catalog:null,
+          treatmentPlans:[],
+          procedure_categry:null,
         }
-        this.loadPrescriptions =this.loadPrescriptions.bind(this);
+        this.loadtreatmentPlanss =this.loadtreatmentPlanss.bind(this);
         this.loadDrugCatalog =this.loadDrugCatalog.bind(this);
 
     }
     componentDidMount(){
       if(this.props.match.params.id){
-      this.loadPrescriptions();
+      this.loadtreatmentPlanss();
       this.loadDrugCatalog();
     }
 
     }
-    loadPrescriptions(){
+    loadtreatmentPlanss(){
       let that = this;
       let successFn =function (data){
         that.setState({
-          prescription:data
+          treatmentPlans:data
         })
       }
       let errorFn = function (){
 
       }
-      getAPI(interpolate(PRESCRIPTIONS_API,[this.props.match.params.id]), successFn, errorFn)
+      getAPI(interpolate(TREATMENTPLANS_API,[this.props.match.params.id]), successFn, errorFn)
     }
     loadDrugCatalog(){
       let that = this;
       let successFn =function (data){
         that.setState({
-          drug_catalog:data
+          procedure_categry:data
         })
 
       }
       let errorFn = function (){
 
       }
-      getAPI(interpolate(DRUG_CATALOG,[this.props.active_practiceId]), successFn, errorFn)
+      getAPI(interpolate(PROCEDURE_CATEGORY,[this.props.active_practiceId]), successFn, errorFn)
     }
     render(){
-      const drugs={}
-      if(this.state.drug_catalog){
+      const procedures={}
+      if(this.state.procedure_categry){
 
-        this.state.drug_catalog.forEach(function(drug){
-          drugs[drug.id]=(drug.name+","+drug.strength)
+        this.state.procedure_categry.forEach(function(procedure){
+          procedures[procedure.id]=(procedure.name)
         })
       }
+      console.log(this.state.procedure_categry);
 
       const columns = [{
             title: 'Time',
@@ -69,10 +70,10 @@ class PatientPrescriptions extends React.Component{
             key: 'name',
             render: created_at =><span>{moment(created_at).format('LLL')}</span>,
           }, {
-            title: 'Drug',
-            key: 'drug',
+            title: 'procedure',
+            key: 'procedure',
             render:(text, record) => (
-              <span> {drugs[record.drug]}</span>
+              <span> {procedures[record.procedure]}</span>
             )
           }, {
             title: 'Quantity',
@@ -98,7 +99,7 @@ class PatientPrescriptions extends React.Component{
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-              <span><Link to={"/patient/"+this.props.match.params.id+"/emr/prescriptions/"+record.id+"/edit"}>
+              <span><Link to={"/patient/"+this.props.match.params.id+"/emr/plans/"+record.id+"/edit"}>
                 <a >Edit</a></Link>
                 <Divider type="vertical" />
                 <a href="javascript:;">Delete</a>
@@ -108,15 +109,15 @@ class PatientPrescriptions extends React.Component{
 
       if(this.props.match.params.id){
       return <div><Switch>
-      <Route exact path='/patient/:id/emr/prescriptions/add'
-             render={(route) => <AddorEditPatientPrescriptions{...this.state} {...route}/>}/>
-      <Route exact path='/patient/:id/emr/prescriptions/:prescriptionid/edit'
-             render={(route) => <AddorEditPatientPrescriptions {...this.state} {...route}/>}/>
-      <Card title={ this.state.currentPatient?this.state.currentPatient.name + " prescriptions":"prescriptions"}  extra={<Button.Group>
-          <Link to={"/patient/"+this.props.match.params.id+"/emr/prescriptions/add"}><Button><Icon type="plus"/>Add</Button></Link>
+      <Route exact path='/patient/:id/emr/plans/add'
+             render={(route) => <AddorEditPatientTreatmentPlans{...this.state} {...route}/>}/>
+      <Route exact path='/patient/:id/emr/plans/:treatmentPlansid/edit'
+             render={(route) => <AddorEditPatientTreatmentPlans {...this.state} {...route}/>}/>
+      <Card title={ this.state.currentPatient?this.state.currentPatient.name + " treatmentPlanss":"treatmentPlanss"}  extra={<Button.Group>
+          <Link to={"/patient/"+this.props.match.params.id+"/emr/plans/add"}><Button><Icon type="plus"/>Add</Button></Link>
       </Button.Group>}>
 
-      <Table columns={columns}  dataSource={this.state.prescription} />
+      <Table columns={columns}  dataSource={this.state.treatmentPlans} />
 
       </Card>
       </Switch>
@@ -131,4 +132,4 @@ class PatientPrescriptions extends React.Component{
 
     }
 }
-export default PatientPrescriptions;
+export default PatientTreatmentPlans;
