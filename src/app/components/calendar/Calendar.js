@@ -243,6 +243,7 @@ class App extends Component {
           <Col span={6}>
             <Card>
             <Timeline>
+            <h4>Appointments</h4>
               {this.state.appointments.length ?
                   this.state.appointments.map((apppointment) => <Timeline.Item><AppointmentCard {...apppointment}/></Timeline.Item>) :
                   <p style={{textAlign: 'center'}}>No Data Found</p>

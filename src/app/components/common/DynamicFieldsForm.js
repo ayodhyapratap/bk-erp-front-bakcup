@@ -106,7 +106,7 @@ class DynamicFieldsForm extends React.Component {
                         case SELECT_FIELD:
                             return <FormItem {...formItemLayout} label={field.label} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <Select placeholder={field.placeholder} disabled={field.disabled}>
+                                    <Select placeholder={field.placeholder} disabled={field.disabled} mode={field.mode?field.mode:"default"}>
                                         {field.options.map((option) => <Select.Option
                                             value={option.value}>{option.label}</Select.Option>)}
                                     </Select >
