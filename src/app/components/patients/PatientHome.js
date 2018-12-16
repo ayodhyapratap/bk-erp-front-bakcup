@@ -22,6 +22,9 @@ import PatientInvoices from "./invoices/PatientInvoices";
 import PatientPayments from "./payments/PatientPayments";
 import PatientLedgers from "./ledgers/PatientLedgers";
 import {Switch} from "react-router-dom";
+import {MEDICAL_HISTORY, PATIENT_GROUPS} from "../../constants/api";
+import {MEDICAL_HISTORY_KEY, PATIENT_GROUP_KEY} from "../../constants/dataKeys";
+import {getAPI, interpolate} from "../../utils/common";
 // import CreateAppointment from "./appointment/CreateAppointment"
 const {Header, Content, Sider} = Layout;
 
@@ -30,8 +33,9 @@ class PatientHome extends React.Component {
         super(props);
         this.state = {
             currentPatient: null,
-            active_practiceId:this.props.active_practiceId,
-        }
+            active_practiceId: this.props.active_practiceId,
+            medicalHistory : []
+        };
         this.setCurrentPatient = this.setCurrentPatient.bind(this);
     }
 
@@ -58,28 +62,29 @@ class PatientHome extends React.Component {
                                  // marginLeft: '200px'
                              }}>
                         <Switch>
-                        {/*** Patient Profile Routes*/}
-                        <Route exact path='/patients/profile'
-                               render={() =>
-                                   (this.state.currentPatient ?
-                                       <Redirect to={"/patient/" + this.state.currentPatient.id + "/profile"}/> :
-                                       <PatientProfile {...this.state} setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
-                        <Route exact path='/patients/profile/add'
-                               render={() => <EditPatientDetails/>}/>
-                        <Route exact path='/patient/:id/profile'
-                               render={() => <PatientProfile {...this.state}
-                                                             setCurrentPatient={this.setCurrentPatient} {...this.props}/>}/>
-                        <Route exact path='/patient/:id/profile/edit'
-                               render={() => <EditPatientDetails {...this.state} />}/>
+                            {/*** Patient Profile Routes*/}
+                            <Route exact path='/patients/profile'
+                                   render={() =>
+                                       (this.state.currentPatient ?
+                                           <Redirect to={"/patient/" + this.state.currentPatient.id + "/profile"}/> :
+                                           <PatientProfile {...this.state}
+                                                           setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
+                            <Route exact path='/patients/profile/add'
+                                   render={() => <EditPatientDetails/>}/>
+                            <Route exact path='/patient/:id/profile'
+                                   render={() => <PatientProfile {...this.state}
+                                                                 setCurrentPatient={this.setCurrentPatient} {...this.props}/>}/>
+                            <Route exact path='/patient/:id/profile/edit'
+                                   render={() => <EditPatientDetails {...this.state} />}/>
 
-                        {/*** Patient Appointment Routes*/}
-                        <Route exact path='/patients/appointments'
-                               render={() => (this.state.currentPatient ?
-                                   <Redirect to={"/patient/" + this.state.currentPatient.id + "/appointments"}/> :
-                                   <Appointment/>)}/>
-                        <Route exact path='/patient/:id/appointments'
-                               render={() => <Appointment/>}/>
-                        {/*      <Route exact path='/patients/appointments/create'
+                            {/*** Patient Appointment Routes*/}
+                            <Route exact path='/patients/appointments'
+                                   render={() => (this.state.currentPatient ?
+                                       <Redirect to={"/patient/" + this.state.currentPatient.id + "/appointments"}/> :
+                                       <Appointment/>)}/>
+                            <Route exact path='/patient/:id/appointments'
+                                   render={() => <Appointment/>}/>
+                            {/*      <Route exact path='/patients/appointments/create'
                            render={() => <CreateAppointment {...this.props} />}/>*/}
 
                         {/*** Patient Communication Routes*/}

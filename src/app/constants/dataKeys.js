@@ -21,7 +21,9 @@ export const LAST_NAME = 'lastname';
 export const AUTH_TOKEN = 'token';
 export const ROLE = 'role';
 export const GROUP = 'group';
-export const PRACTICE = 'practice'
+export const PRACTICE = 'practice';
+export const MEDICAL_HISTORY_KEY = 'Medical History';
+export const PATIENT_GROUP_KEY = 'Patient Group';
 
 /***
  * Form Data Types
