@@ -205,10 +205,9 @@ class App extends Component {
 
 
   render() {console.log(this.state.events);
-    return (
-
+    return (<Switch>
+            <Route exact path="/calendar/create-appointment" render={(route) => <CreateAppointment {...this.props} startTime={this.state.startTime}/>}/>
       <Card>
-        <Route exact path="/calendar/create-appointment" render={(route) => <CreateAppointment {...this.props} startTime={this.state.startTime}/>}/>
 
         <Popover
         content={<a onClick={this.hide}>Close</a>}
@@ -254,6 +253,8 @@ class App extends Component {
         </Row>
 
       </Card>
+        </Switch>
+
     );
   }
 }
