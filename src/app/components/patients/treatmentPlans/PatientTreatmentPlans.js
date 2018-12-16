@@ -20,6 +20,7 @@ class PatientTreatmentPlans extends React.Component{
         }
         this.loadtreatmentPlanss =this.loadtreatmentPlanss.bind(this);
         this.loadDrugCatalog =this.loadDrugCatalog.bind(this);
+        this.editTreatmentPlanData =this.editTreatmentPlanData.bind(this);
 
     }
     componentDidMount(){
@@ -54,6 +55,17 @@ class PatientTreatmentPlans extends React.Component{
       }
       getAPI(interpolate(PROCEDURE_CATEGORY,[this.props.active_practiceId]), successFn, errorFn)
     }
+
+
+    editTreatmentPlanData(record){
+        this.setState({
+            editTreatmentPlan:record,
+        });
+        let id=this.props.match.params.id
+        this.props.history.push("/patient/"+id+"/emr/plans/edit")
+
+    }
+
     render(){
       const procedures={}
       if(this.state.procedure_categry){
@@ -87,20 +99,21 @@ class PatientTreatmentPlans extends React.Component{
             title: 'Active',
             key: 'is_active',
             render:(text, record) => (
-              <Checkbox checked={record.is_active}/>
+              <Checkbox disabled checked={record.is_active}/>
             )
           },  {
             title: 'Completed',
             key: 'is_completed',
             render:(text, record) => (
-              <Checkbox checked={record.is_completed}/>
+              <Checkbox  disabled checked={record.is_completed}/>
             )
           }, {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-              <span><Link to={"/patient/"+this.props.match.params.id+"/emr/plans/"+record.id+"/edit"}>
-                <a >Edit</a></Link>
+              <span>
+               <a onClick={()=>this.editTreatmentPlanData(record)}>Edit</a>
+
                 <Divider type="vertical" />
                 <a href="javascript:;">Delete</a>
               </span>
@@ -111,9 +124,9 @@ class PatientTreatmentPlans extends React.Component{
       return <div><Switch>
       <Route exact path='/patient/:id/emr/plans/add'
              render={(route) => <AddorEditPatientTreatmentPlans{...this.state} {...route}/>}/>
-      <Route exact path='/patient/:id/emr/plans/:treatmentPlansid/edit'
+      <Route exact path='/patient/:id/emr/plans/edit'
              render={(route) => <AddorEditPatientTreatmentPlans {...this.state} {...route}/>}/>
-      <Card title={ this.state.currentPatient?this.state.currentPatient.name + " treatmentPlanss":"treatmentPlanss"}  extra={<Button.Group>
+      <Card title={ this.state.currentPatient?this.state.currentPatient.name + " treatmentPlans":"treatmentPlanss"}  extra={<Button.Group>
           <Link to={"/patient/"+this.props.match.params.id+"/emr/plans/add"}><Button><Icon type="plus"/>Add</Button></Link>
       </Button.Group>}>
 

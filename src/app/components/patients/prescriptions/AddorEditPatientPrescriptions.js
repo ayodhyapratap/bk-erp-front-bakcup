@@ -25,17 +25,14 @@ class AddorEditPatientPrescriptions extends React.Component {
             redirect: false,
             vitalSign: null,
             drug_catalog: this.props.drug_catalog ? this.props.drug_catalog : null,
+            editPrescription:this.props.editPrescription ? this.props.editPrescription : null,
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
-        this.loadPrescription = this.loadPrescription.bind(this);
     }
 
     componentDidMount() {
         this.loadDrugCatalog();
-        if (this.props.match.params.prescriptionid) {
-            this.loadPrescription();
-        }
     }
 
     loadDrugCatalog() {
@@ -52,26 +49,19 @@ class AddorEditPatientPrescriptions extends React.Component {
         }
     }
 
-    loadPrescription() {
-        let that = this;
-        let successFn = function (data) {
-            that.setState({
-                editPrescription: data
-            })
-        };
-        let errorFn = function () {
-        }
-        getAPI(interpolate(ALL_PRESCRIPTIONS_API, [this.props.match.params.prescriptionid]), successFn, errorFn)
-    }
+
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        let redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
+
+
     }
 
     render() {
+        console.log(this.state.editPrescription)
         const drugOption = []
         if (this.state.drug_catalog) {
             this.state.drug_catalog.forEach(function (drug) {
@@ -88,7 +78,7 @@ class AddorEditPatientPrescriptions extends React.Component {
             label: "Quantity",
             key: "qunatity",
             required: true,
-            initialValue: this.state.editPrescription ? this.state.editPrescription.quantity : null,
+            initialValue: this.state.editPrescription ? this.state.editPrescription.qunatity : null,
             type: INPUT_FIELD
         }, {
             label: "cost",
@@ -115,20 +105,6 @@ class AddorEditPatientPrescriptions extends React.Component {
 
         let editformProp;
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        if (this.props.match.params.prescriptionid) {
-            editformProp = {
-                successFn: function (data) {
-                    displayMessage(SUCCESS_MSG_TYPE, "success");
-
-                    console.log(data);
-                },
-                errorFn: function () {
-
-                },
-                action: interpolate(PRESCRIPTIONS_API, [this.props.match.params.id]),
-                method: "put",
-            }
-        }
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
@@ -141,15 +117,15 @@ class AddorEditPatientPrescriptions extends React.Component {
         }
 
 
-        const defaultValues = [{"key": "id", "value": [this.props.match.params.prescriptionid]}];
-        return <Row>
+        let defaultValues=[]
+        if(this.state.editPrescription){
+            defaultValues = [{"key":"id", "value":this.state.editPrescription.id}];}
+
+            return <Row>
             <Card>
-                <Route exact path='/patient/:id/emr/prescriptions/:prescriptionid/edit'
-                       render={() => (<TestFormLayout defaultValues={defaultValues}
-                                                      title="Edit Prescriptions"
-                                                      changeRedirect={this.changeRedirect}
-                                                      formProp={editformProp}
-                                                      fields={fields}/>)}/>
+                <Route exact path='/patient/:id/emr/prescriptions/edit'
+                           render={() => (this.state.editPrescription?<TestFormLayout defaultValues={defaultValues} title="Edit Invoive" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>: <Redirect to={'/patient/' + this.props.match.params.id + '/emr/prescriptions'} />)}/>
+
                 <Route exact path='/patient/:id/emr/prescriptions/add'
                        render={() => <TestFormLayout title="Add Prescriptions"
                                                      changeRedirect={this.changeRedirect}

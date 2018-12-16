@@ -18,27 +18,24 @@ class AddorEditPatientTreatmentPlans extends React.Component {
         this.state = {
           redirect:false,
           vitalSign:null,
-          procedure_categry:this.props.procedure_categry?this.props.procedure_categry:null,
+          procedure_category:this.props.procedure_category?this.props.procedure_category:null,
+          editTreatmentPlan:this.props.editTreatmentPlan ? this.props.editTreatmentPlan : null,
 
         }
         this.changeRedirect= this.changeRedirect.bind(this);
         this.loadDrugCatalog =this.loadDrugCatalog.bind(this);
-        this.loadtreatmentPlans =this.loadtreatmentPlans.bind(this);
-        console.log("Working or not");
 
     }
     componentDidMount(){
       this.loadDrugCatalog();
-      if(this.props.match.params.treatmentPlansid){
-      //  this.loadPrescription();
-      }
+
     }
     loadDrugCatalog(){
-      if(this.state.procedure_categry==null){
+      if(this.state.procedure_category==null){
         let that = this;
         let successFn =function (data){
           that.setState({
-            procedure_categry:data,
+            procedure_category:data,
 
           })
         }
@@ -48,18 +45,7 @@ class AddorEditPatientTreatmentPlans extends React.Component {
         getAPI(interpolate(PROCEDURE_CATEGORY,[this.props.active_practiceId]), successFn, errorFn)
       }
     }
-    loadtreatmentPlans(){
-      let that = this;
-      let successFn =function (data){
-        that.setState({
-          edittreatmentPlans:data
-        })
-      }
-      let errorFn = function (){
 
-      }
-      getAPI(interpolate(TREATMENTPLANS_API,[this.props.match.params.treatmentPlansid]), successFn, errorFn)
-    }
       changeRedirect(){
         var redirectVar=this.state.redirect;
       this.setState({
@@ -69,8 +55,8 @@ class AddorEditPatientTreatmentPlans extends React.Component {
 
     render() {
       const drugOption=[]
-      if(this.state.procedure_categry){
-        this.state.procedure_categry.forEach(function(drug){
+      if(this.state.procedure_category){
+        this.state.procedure_category.forEach(function(drug){
           drugOption.push({label:(drug.name), value:drug.id} );
         })
       }
@@ -78,53 +64,37 @@ class AddorEditPatientTreatmentPlans extends React.Component {
           label: "Procedure",
           key: "procedure",
           type: SELECT_FIELD,
-          initialValue:this.state.edittreatmentPlans?this.state.edittreatmentPlans.drug:null,
+          initialValue:this.state.editTreatmentPlan?this.state.editTreatmentPlan.procedure:null,
           options: drugOption
       }, {
             label: "Quantity",
             key: "qunatity",
             required: true,
-            initialValue:this.state.edittreatmentPlans?this.state.edittreatmentPlans.quantity:null,
+            initialValue:this.state.editTreatmentPlan?this.state.editTreatmentPlan.qunatity:null,
             type: INPUT_FIELD
         },{
             label: "cost",
             key: "cost",
-            initialValue:this.state.edittreatmentPlans?this.state.edittreatmentPlans.cost:null,
+            initialValue:this.state.editTreatmentPlan?this.state.editTreatmentPlan.cost:null,
             type: INPUT_FIELD
         },{
             label: "total",
             key: "total",
-            initialValue:this.state.edittreatmentPlans?this.state.edittreatmentPlans.total:null,
+            initialValue:this.state.editTreatmentPlan?this.state.editTreatmentPlan.total:null,
             type: INPUT_FIELD,
         }, {
             label: "active",
             key: "is_active",
-            initialValue:this.state.edittreatmentPlans?this.state.edittreatmentPlans.is_active:false,
+            initialValue:this.state.editTreatmentPlan?this.state.editTreatmentPlan.is_active:false,
             type: SINGLE_CHECKBOX_FIELD,
         },  {
             label: "Completed",
             key: "is_completed",
-            initialValue:this.state.edittreatmentPlans?this.state.edittreatmentPlans.is_completed:false,
+            initialValue:this.state.editTreatmentPlan?this.state.editTreatmentPlan.is_completed:false,
             type: SINGLE_CHECKBOX_FIELD,
         }, ];
 
 
-        let editformProp;
-        const TestFormLayout = Form.create()(DynamicFieldsForm);
-        if(this.props.match.params.treatmentPlansid){
-           editformProp={
-            successFn:function(data){
-              displayMessage(SUCCESS_MSG_TYPE, "success")
-
-              console.log(data);
-            },
-            errorFn:function(){
-
-            },
-            action: interpolate(TREATMENTPLANS_API, [this.props.match.params.id]),
-            method: "post",
-          }
-        }
           const formProp={
             successFn:function(data){
               displayMessage(SUCCESS_MSG_TYPE, "success")
@@ -138,12 +108,15 @@ class AddorEditPatientTreatmentPlans extends React.Component {
             method: "post",
           }
 
+        const TestFormLayout = Form.create()(DynamicFieldsForm);
 
-          const defaultValues = [{"key":"id", "value":[this.props.match.params.treatmentPlansid]}];
+        let defaultValues=[];
+          if(this.state.editTreatmentPlan)
+           defaultValues = [{"key":"id", "value":this.props.editTreatmentPlan.id}];
           return <Row>
                 <Card>
-                  <Route exact path='/patient/:id/emr/planss/:treatmentPlansid/edit'
-                        render={() => ( <TestFormLayout defaultValues={defaultValues} title="Edit Treatment Plans" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>)}/>
+                  <Route exact path='/patient/:id/emr/plans/edit'
+                         render={() => (this.state.editTreatmentPlan?<TestFormLayout defaultValues={defaultValues} title="Edit Invoive" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>: <Redirect to={'/patient/' + this.props.match.params.id + '/emr/plans'} />)}/>
                   <Route exact path='/patient/:id/emr/plans/add'
                         render={() =><TestFormLayout title="Add Treatment Plans" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
 

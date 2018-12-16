@@ -17,9 +17,11 @@ class PatientPrescriptions extends React.Component{
           active_practiceId:this.props.active_practiceId,
           prescription:[],
           drug_catalog:null,
+          editPrescription: null,
         }
         this.loadPrescriptions =this.loadPrescriptions.bind(this);
         this.loadDrugCatalog =this.loadDrugCatalog.bind(this);
+        this.editPrescriptionData =this.editPrescriptionData.bind(this);
 
     }
     componentDidMount(){
@@ -54,6 +56,16 @@ class PatientPrescriptions extends React.Component{
       }
       getAPI(interpolate(DRUG_CATALOG,[this.props.active_practiceId]), successFn, errorFn)
     }
+
+    editPrescriptionData(record){
+        this.setState({
+            editPrescription:record,
+        });
+        let id=this.props.match.params.id
+        this.props.history.push("/patient/"+id+"/emr/prescriptions/edit")
+
+    }
+
     render(){
       const drugs={}
       if(this.state.drug_catalog){
@@ -98,8 +110,8 @@ class PatientPrescriptions extends React.Component{
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-              <span><Link to={"/patient/"+this.props.match.params.id+"/emr/prescriptions/"+record.id+"/edit"}>
-                <a >Edit</a></Link>
+              <span>
+                <a onClick={()=>this.editPrescriptionData(record)}>Edit</a>
                 <Divider type="vertical" />
                 <a href="javascript:;">Delete</a>
               </span>
@@ -109,8 +121,8 @@ class PatientPrescriptions extends React.Component{
       if(this.props.match.params.id){
       return <div><Switch>
       <Route exact path='/patient/:id/emr/prescriptions/add'
-             render={(route) => <AddorEditPatientPrescriptions{...this.state} {...route}/>}/>
-      <Route exact path='/patient/:id/emr/prescriptions/:prescriptionid/edit'
+             render={(route) => <AddorEditPatientPrescriptions{...this.state} loadPrescriptions={this.loadPrescriptions()} {...route}/>}/>
+      <Route exact path='/patient/:id/emr/prescriptions/edit'
              render={(route) => <AddorEditPatientPrescriptions {...this.state} {...route}/>}/>
       <Card title={ this.state.currentPatient?this.state.currentPatient.name + " prescriptions":"prescriptions"}  extra={<Button.Group>
           <Link to={"/patient/"+this.props.match.params.id+"/emr/prescriptions/add"}><Button><Icon type="plus"/>Add</Button></Link>
