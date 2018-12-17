@@ -25,6 +25,7 @@ import SettingsDash from "../settings/SettingsDash"
 import Calendar from "../calendar/Calendar";
 import PatientHome from "../patients/PatientHome";
 import Error404 from "../common/errors/Error404";
+import ReportsHome from "../reports/ReportsHome";
 
 const Content = Layout.Content;
 
@@ -43,11 +44,13 @@ class AppBase extends React.Component {
         this.switchPractice = this.switchPractice.bind(this);
 
     }
+
     toggleSider = (option) => {
         this.setState({
             collapsed: !!option,
         });
     }
+
     activeData() {
         let that = this;
         that.state.practiceList.forEach(function (practice) {
@@ -137,7 +140,6 @@ class AppBase extends React.Component {
     }
 
 
-
     render() {
         return <Layout style={{minHeight: '100vh'}}>
 
@@ -150,6 +152,8 @@ class AppBase extends React.Component {
                     <Route path="/patient/:id" render={(route) => <PatientHome {...this.state} {...this.props}/>}/>
                     <Route path="/patients" render={(route) => <PatientHome {...this.state} {...this.props}/>}/>
                     <Route path="/settings" render={(route) => <SettingsDash {...this.state} {...this.props}/>}/>
+                    <Route path="/reports"
+                           render={(route) => <ReportsHome {...route} {...this.state} {...this.props}/>}/>
                     <Route component={Error404}/>
                     <AppFooter/>
 
