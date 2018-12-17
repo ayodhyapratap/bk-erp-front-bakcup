@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import moment from "moment";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import BigCalendar from 'react-big-calendar'
-import {Card,Row, Timeline,  Col, Popover,Button} from "antd"
+import {Card, Row, Timeline, Col, Popover, Button, List} from "antd"
 import {DOCTORS_ROLE, SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
 
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
@@ -273,7 +273,6 @@ class App extends Component {
             backgroundColor: backgroundColor,
             borderRadius: '0px',
             opacity: 0.8,
-            color: 'black',
             border: '5px',
             color:'white',
             display: 'block'
@@ -292,9 +291,19 @@ class App extends Component {
         endTime = new Date(new moment(this.state.calendarTimings.end_time, 'HH:mm:ss'))
 
       }
+        let counter=0;
+      this.state.events.forEach(function (event) {
+                    let today = new Date();
+                    console.log(today)
+                    if(moment(event.start).format("YYYY-MM-DD")==moment(today).format("YYYY-MM-DD")){
+                        console.log("yaaahooo");
+                        counter++;
+                    }
+      })
+
     return (<Switch>
             <Route exact path="/calendar/create-appointment" render={(route) => <CreateAppointment {...this.props} startTime={this.state.startTime}/>}/>
-      <Card>
+      <Card bodyStyle={{padding:0}}>
 
         <Popover
         content={<a onClick={this.hide}>Close</a>}
@@ -304,11 +313,18 @@ class App extends Component {
         onVisibleChange={this.handleVisibleChange}
         >
         </Popover>
-        <Row>
-          <Col span={18}>
+        <Row gutter={16}>
+          <Col span={3}>
+              <List
+                  header={<div>Doctors</div>}
+                  bordered
+                  dataSource={this.state.practice_doctors}
+                  renderItem={item => (<List.Item style={{textOverflow:"ellipsis"}}>{item.name}</List.Item>)}
+                  size={"small"}
+              />
+          </Col>
+          <Col span={16}>
             <DragAndDropCalendar
-
-
                 defaultDate={new Date()}
                 localizer={localizer}
                 defaultView="week"
@@ -330,7 +346,7 @@ class App extends Component {
 
             />
           </Col>
-          <Col span={6}>
+          <Col span={5}>
             <Card>
             <Timeline>
             <h4>Appointments</h4>
@@ -339,6 +355,7 @@ class App extends Component {
                   <p style={{textAlign: 'center'}}>No Data Found</p>
               }
               </Timeline>
+                <h3>today's apointment={counter}</h3>
             </Card>
           </Col>
         </Row>
