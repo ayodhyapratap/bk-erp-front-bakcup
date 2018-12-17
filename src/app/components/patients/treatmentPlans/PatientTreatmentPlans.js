@@ -17,6 +17,7 @@ class PatientTreatmentPlans extends React.Component{
           active_practiceId:this.props.active_practiceId,
           treatmentPlans:[],
           procedure_categry:null,
+          incompletedTreatmentPlans:[],
         }
         this.loadtreatmentPlanss =this.loadtreatmentPlanss.bind(this);
         this.loadProcedureCategory =this.loadProcedureCategory.bind(this);
@@ -31,11 +32,20 @@ class PatientTreatmentPlans extends React.Component{
 
     }
     loadtreatmentPlanss(){
+        let incompleted=[];
       let that = this;
       let successFn =function (data){
         that.setState({
           treatmentPlans:data
         })
+          data.forEach(function (treatmentplan) {
+              if(treatmentplan.is_completed){
+                  incompleted.push(treatmentplan)
+              }
+          })
+          that.setState({
+              incompletedTreatmentPlans:incompleted,
+          })
       }
       let errorFn = function (){
 
@@ -130,7 +140,7 @@ class PatientTreatmentPlans extends React.Component{
           <Link to={"/patient/"+this.props.match.params.id+"/emr/plans/add"}><Button><Icon type="plus"/>Add</Button></Link>
       </Button.Group>}>
 
-      <Table columns={columns}  dataSource={this.state.treatmentPlans} />
+      <Table columns={columns}  dataSource={this.state.incompletedTreatmentPlans} />
 
       </Card>
       </Switch>

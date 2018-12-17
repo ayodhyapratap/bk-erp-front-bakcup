@@ -115,11 +115,11 @@ class PatientHome extends React.Component {
 
                         {/*** Patient Completed Procedures Routes*/}
                         <Route exact path='/patients/emr/workdone'
-                               render={() => (this.state.currentPatient ?
+                               render={(route) => (this.state.currentPatient ?
                                    <Redirect to={"/patient/" + this.state.currentPatient.id + "/emr/workdone"}/> :
-                                   <PatientCompletedProcedures/>)}/>
+                                   <PatientCompletedProcedures {...this.state} {...route} />)}/>
                         <Route exact path='/patient/:id/emr/workdone'
-                               render={() => <PatientCompletedProcedures/>}/>
+                               render={(route) => <PatientCompletedProcedures {...this.state} {...route}/>}/>
 
                         {/*** Patient Files Routes*/}
                         <Route exact path='/patients/emr/files'
@@ -160,11 +160,11 @@ class PatientHome extends React.Component {
 
                         {/*** Patient Payments Routes*/}
                         <Route exact path='/patients/billing/payments'
-                               render={() => (this.state.currentPatient ?
+                               render={(route) => (this.state.currentPatient ?
                                    <Redirect to={"/patient/" + this.state.currentPatient.id + "/billing/payments"}/> :
-                                   <PatientPayments/>)}/>
+                                   <PatientPayments {...this.state} {...route}/>)}/>
                         <Route exact path='/patient/:id/billing/payments'
-                               render={() => <PatientPayments/>}/>
+                               render={(route) => <PatientPayments {...this.state} {...route}/>}/>
 
                         {/*** Patient Ledger Routes*/}
                         <Route exact path='/patient/:id/billing/ledger'

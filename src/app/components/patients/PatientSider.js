@@ -45,6 +45,12 @@ class PatientSider extends React.Component {
                             <Icon type="solution"/>Clinical Notes
                         </Link>
                     </Menu.Item>
+                    <Menu.Item key="30">
+                        <Link
+                            to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/plans" : "/patients/emr/plans"}>
+                            <Icon type="read"/>Treatment Plans
+                        </Link>
+                    </Menu.Item>
                     <Menu.Item key="22">
                         <Link
                             to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/workdone" : "/patients/emr/workdone"}>
@@ -61,12 +67,6 @@ class PatientSider extends React.Component {
                         <Link
                             to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/prescriptions" : "/patients/emr/prescriptions"}>
                             <Icon type="solution"/>Prescriptions
-                        </Link>
-                    </Menu.Item>
-                    <Menu.Item key="30">
-                        <Link
-                            to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/plans" : "/patients/emr/plans"}>
-                            <Icon type="read"/>Treatment Plans
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="25" disabled={!this.props.currentPatient}>
