@@ -19,14 +19,14 @@ class PatientTreatmentPlans extends React.Component{
           procedure_categry:null,
         }
         this.loadtreatmentPlanss =this.loadtreatmentPlanss.bind(this);
-        this.loadDrugCatalog =this.loadDrugCatalog.bind(this);
+        this.loadProcedureCategory =this.loadProcedureCategory.bind(this);
         this.editTreatmentPlanData =this.editTreatmentPlanData.bind(this);
 
     }
     componentDidMount(){
       if(this.props.match.params.id){
       this.loadtreatmentPlanss();
-      this.loadDrugCatalog();
+      this.loadProcedureCategory();
     }
 
     }
@@ -42,7 +42,7 @@ class PatientTreatmentPlans extends React.Component{
       }
       getAPI(interpolate(TREATMENTPLANS_API,[this.props.match.params.id]), successFn, errorFn)
     }
-    loadDrugCatalog(){
+    loadProcedureCategory(){
       let that = this;
       let successFn =function (data){
         that.setState({

@@ -3,7 +3,7 @@ import moment from "moment";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import BigCalendar from 'react-big-calendar'
 import {Card,Row, Timeline,  Col, Popover,Button} from "antd"
-import { SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
+import {DOCTORS_ROLE, SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
 
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -14,7 +14,7 @@ import { Redirect } from 'react-router-dom';
 import TimeGrid from 'react-big-calendar/lib/TimeGrid'
 import dates from 'date-arithmetic'
 import {getAPI, postAPI, putAPI, interpolate, displayMessage} from "../../utils/common";
-import { APPOINTMENT_PERPRACTICE_API,APPOINTMENT_API} from "../../constants/api";
+import {APPOINTMENT_PERPRACTICE_API, APPOINTMENT_API, PRACTICESTAFF, CALENDER_SETTINGS} from "../../constants/api";
 
 
 
@@ -28,17 +28,81 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      startTime:null,
-      visiblePopover: false,
-      events: [],
-      appointments:[],
+        startTime:null,
+        visiblePopover: false,
+        events: [],
+        appointments:[],
+        practice_doctors: [],
+        practice_staff: [],
+        doctors_object: null,
+        calendarTimings:null
     };
     this.onSelectSlot= this.onSelectSlot.bind(this);
     this.onSelectEvent = this.onSelectEvent.bind(this);
-    this.appointmentList();
     this.moveEvent = this.moveEvent.bind(this)
-    this.resizeEvent = this.resizeEvent.bind(this)
+    this.resizeEvent = this.resizeEvent.bind(this);
+    this.loadDoctors = this.loadDoctors.bind(this);
+    this.eventStyleGetter = this.eventStyleGetter.bind(this);
+    this.loadCalendarTimings = this.loadCalendarTimings.bind(this);
+    this.loadDoctors();
+    this.appointmentList();
+    this.loadCalendarTimings()
   }
+
+  loadDoctors(){
+    let that = this;
+    let successFn = function(data){
+        data.staff.forEach(function(usersdata){
+            if(usersdata.role ==  DOCTORS_ROLE){
+                let doctor=that.state.practice_doctors;
+                doctor.push(usersdata);
+                that.setState({
+                    practice_doctors:doctor,
+                })
+            }
+            else{
+                let doctor=that.state.practice_staff;
+                doctor.push(usersdata);
+                that.setState({
+                    practice_staff:doctor,
+                })
+            }
+        })
+        let doctor_object= {}
+        if(that.state.practice_doctors) {
+
+            that.state.practice_doctors.forEach(function (drug) {
+                doctor_object[drug.id] = drug;
+            })
+        }
+        that.setState({
+            doctors_object:doctor_object,
+        })
+
+    }
+    let errorFn = function(){
+    };
+    getAPI(interpolate(PRACTICESTAFF,[this.props.active_practiceId]), successFn, errorFn);
+
+  }
+
+
+  loadCalendarTimings(){
+    var that = this;
+    let successFn = function (data) {
+        console.log("get table");
+        that.setState({
+            calendarTimings:data[0],
+        })
+    };
+    let errorFn = function () {
+    };
+    getAPI(interpolate( CALENDER_SETTINGS, [this.props.active_practiceId]), successFn, errorFn);
+  }
+
+
+  /**Calenders Functions*/
+
 
   moveEvent({ event, start, end, isAllDay: droppedOnAllDaySlot }) {
     const { events } = this.state
@@ -114,20 +178,7 @@ class App extends Component {
     //alert(`${event.title} was resized to ${start}-${end}`)
   }
 
-  newEvent(event) {
-    // let idList = this.state.events.map(a => a.id)
-    // let newId = Math.max(...idList) + 1
-    // let hour = {
-    //   id: newId,
-    //   title: 'New Event',
-    //   allDay: event.slots.length == 1,
-    //   start: event.start,
-    //   end: event.end,
-    // }
-    // this.setState({
-    //   events: this.state.events.concat([hour]),
-    // })
-  }
+
 
   onSelectSlot(value){
    console.log(value);
@@ -156,6 +207,9 @@ class App extends Component {
    })
   }
 
+
+/*  list and style settings*/
+
   appointmentList(){
    let that = this;
    let successFn = function(data){
@@ -172,7 +226,9 @@ class App extends Component {
            start:new Date(moment(appointment.shedule_at)),
            end:  new Date(endtime),
            title: appointment.patient_name,
-           id : appointment.id
+           id : appointment.id,
+           doctor:appointment.doctor,
+
          })
        });
        return {events:newEvents}
@@ -202,13 +258,42 @@ class App extends Component {
     }
     getAPI (interpolate(APPOINTMENT_PERPRACTICE_API,[this.props.active_practiceId])  , successFn,errorFn);
   }
+    eventStyleGetter(event, start, end, isSelected) {
+        let doctor=event.doctor;
+        let doctor_object;
 
+        if(this.state.doctors_object!=null){
+            console.log(this.state.doctors_object[doctor]);
 
-  render() {console.log(this.state.events);
-    return (
+            doctor_object=this.state.doctors_object[doctor].calender_colour;
+        }
+        var backgroundColor = doctor_object;
+        var style = {
+            backgroundColor: backgroundColor,
+            borderRadius: '0px',
+            opacity: 0.8,
+            color: 'black',
+            border: '5px',
+            color:'white',
+            display: 'block'
+        };
+        return {
+            style: style
+        };
+    }
 
+  render() {
+     let startTime;
+        let endTime;
+      if(this.state.calendarTimings){
+        console.log(new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss')));
+        startTime=new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss'));
+        endTime = new Date(new moment(this.state.calendarTimings.end_time, 'HH:mm:ss'))
+
+      }
+    return (<Switch>
+            <Route exact path="/calendar/create-appointment" render={(route) => <CreateAppointment {...this.props} startTime={this.state.startTime}/>}/>
       <Card>
-        <Route exact path="/calendar/create-appointment" render={(route) => <CreateAppointment {...this.props} startTime={this.state.startTime}/>}/>
 
         <Popover
         content={<a onClick={this.hide}>Close</a>}
@@ -238,7 +323,11 @@ class App extends Component {
                 onSelectEvent={this.onSelectEvent}
                 views={{ month: true, week: MyWeek, day: true, agenda:true }}
                 style={{ height: "100vh" }}
-              />
+                eventPropGetter={(this.eventStyleGetter)}
+                min = {startTime}
+                max = {endTime}
+
+            />
           </Col>
           <Col span={6}>
             <Card>
@@ -254,6 +343,8 @@ class App extends Component {
         </Row>
 
       </Card>
+        </Switch>
+
     );
   }
 }

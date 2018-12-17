@@ -1,7 +1,7 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Checkbox, Card, Form, Icon,Tabs, Divider, Tag , Row, Table} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {CHECKBOX_FIELD, DOCTORS_ROLE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {PRACTICESTAFF, STAFF_ROLES, ALL_PRACTICE_STAFF, ALL_PRACTICE_DOCTORS} from "../../../../constants/api"
 import {Link} from "react-router-dom";
 import {getAPI, interpolate} from "../../../../utils/common";
@@ -48,7 +48,7 @@ class PracticeDetails extends React.Component {
       var that = this;
         let successFn = function (data) {
           data.forEach(function(usersdata){
-            if(usersdata.role ==  1){
+            if(usersdata.role ==  DOCTORS_ROLE){
               let doctor=that.state.practice_doctors;
                doctor.push(usersdata);
               that.setState({
@@ -98,7 +98,7 @@ class PracticeDetails extends React.Component {
       // });
         let successFn = function(data){
           data.staff.forEach(function(usersdata){
-            if(usersdata.role ==  1){
+            if(usersdata.role ==  DOCTORS_ROLE){
               let doctor=that.state.practice_doctors;
                doctor.push(usersdata);
               that.setState({

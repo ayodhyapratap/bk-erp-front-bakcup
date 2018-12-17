@@ -37,3 +37,9 @@ export const NUMBER_FIELD = 'number';
 export const DATE_PICKER = 'datepicker';
 export const TEXT_FIELD = 'textfield';
 export const TIME_PICKER = 'timepicker';
+
+
+/***
+ *Role
+ **/
+export const DOCTORS_ROLE = '1';
