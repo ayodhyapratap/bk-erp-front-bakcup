@@ -41,7 +41,7 @@ export const PRESCRIPTIONS_API='patients/prescriptions/?id=%s';
 export const TREATMENTPLANS_API='patients/procedure/?id=%s';
 export const ALL_PRESCRIPTIONS_API='patients/prescriptions/%s/';
 export const INVOICES_API='patients/invoices/?id=%s';
-
+export const PATIENT_CLINIC_NOTES_API='patients/clinic_notes/?id=%s'
 
 //search and advanced search API
 export const SEARCH_PATIENT='patients/search/?name=%s';

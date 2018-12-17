@@ -176,7 +176,8 @@ class PracticeDetails extends React.Component {
           key:"confirmation_sms",
           render: confirmation_sms => (
             <span>
-            <Checkbox disabled checked={confirmation_sms} />
+            <Checkbox disabled
+                      checked={confirmation_sms} />
             </span>),
           },
           {
