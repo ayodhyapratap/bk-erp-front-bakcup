@@ -5,6 +5,7 @@ import Applogo from '../../assets/img/app_logo.png'
 
 const Sider = Layout.Sider;
 const SubMenu = Menu.SubMenu;
+const MenuItemGroup = Menu.ItemGroup;
 
 class AppSider extends React.Component {
     constructor(props) {
@@ -33,7 +34,7 @@ class AppSider extends React.Component {
             trigger={null}
             collapsible
             collapsed={this.props.collapsed}
-            style={{zIndex:1}}
+            style={{zIndex: 1}}
             breakpoint="xl"
             // collapsedWidth="0"
             onBreakpoint={(broken) => {
@@ -72,7 +73,32 @@ class AppSider extends React.Component {
                         <span className="nav-text">Settings</span>
                     </Link>
                 </Menu.Item>
-
+                <SubMenu key="sub1" title={<span><Icon type="gold"/><span>Back Office</span></span>}>
+                    <Menu.Item key="6">
+                        <Link to="/settings/clinics">
+                            <Icon type="credit-card" />
+                            <span className="nav-text">Expenses</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="7">
+                        <Link to="/settings/clinics">
+                            <Icon type="bell" />
+                            <span className="nav-text">Activities</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="8">
+                        <Link to="/settings/clinics">
+                            <Icon type="database" />
+                            <span className="nav-text">Inventory</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="9">
+                        <Link to="/settings/clinics">
+                            <Icon type="experiment"/>
+                            <span className="nav-text">Labs</span>
+                        </Link>
+                    </Menu.Item>
+                </SubMenu>
 
             </Menu>
         </Sider>

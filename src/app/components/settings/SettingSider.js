@@ -25,6 +25,9 @@ class SettingSider extends React.Component {
                 <Menu.Item key="7"><Link to="/settings/communication-settings">
                     <Icon type="message"/>Communication
                     Settings</Link></Menu.Item>
+                <Menu.Item key="17"><Link to="/settings/calendarsettings">
+                    <Icon type="schedule" />Calendar
+                    </Link></Menu.Item>
                 <Menu.Item key="8"><Link to="/settings/procedures">
                     <Icon type="folder-open"/>Procedure
                     Catalog</Link></Menu.Item>

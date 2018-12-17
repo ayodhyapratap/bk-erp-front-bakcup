@@ -267,6 +267,7 @@ class App extends Component {
 
             doctor_object=this.state.doctors_object[doctor].calender_colour;
         }
+//        var backgroundColor = '#' + event.hexColor;
         var backgroundColor = doctor_object;
         var style = {
             backgroundColor: backgroundColor,
