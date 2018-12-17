@@ -132,7 +132,7 @@ class AddorEditPatientPrescriptions extends React.Component {
                                                      formProp={formProp}
                                                      fields={fields}/>}/>
             </Card>
-            {this.state.redirect && <Redirect to={'/patient/' + this.props.match.params.id + '/emr/prescriptions'}/>}
+                {this.state.redirect && <Redirect to={'/patient/' + this.props.match.params.id + '/emr/prescriptions'}/>}
         </Row>
 
     }

@@ -157,7 +157,7 @@ class PracticeDetails extends React.Component {
           key:"action",
           render:(text, record) => (
             <span>
-            <Link to="/settings/clinics-staff/adddoctor">
+            <Link to={"/settings/clinics-staff/"+record.id+"/edit"}>
               <a>edit {record.name}</a></Link>
               <Divider type="vertical" />
               <a href="javascript:;">Delete</a>
@@ -176,7 +176,7 @@ class PracticeDetails extends React.Component {
           key:"confirmation_sms",
           render: confirmation_sms => (
             <span>
-            <Checkbox checked={confirmation_sms} />
+            <Checkbox disabled checked={confirmation_sms} />
             </span>),
           },
           {
@@ -185,7 +185,7 @@ class PracticeDetails extends React.Component {
           key:"schedule_sms",
           render: schedule_sms => (
             <span>
-            <Checkbox checked={schedule_sms} />
+            <Checkbox disabled checked={schedule_sms} />
             </span>          )
           },
           {
@@ -194,7 +194,7 @@ class PracticeDetails extends React.Component {
           key:"confirmation_email",
           render: confirmation_email => (
             <span>
-            <Checkbox checked={confirmation_email} />
+            <Checkbox disabled checked={confirmation_email} />
             </span>)
           },
           {
@@ -203,7 +203,7 @@ class PracticeDetails extends React.Component {
           key:"online_appointment_sms",
           render:online_appointment_sms => (
             <span>
-            <Checkbox checked={online_appointment_sms}/>
+            <Checkbox disabled checked={online_appointment_sms}/>
             </span>
           )
         }]
@@ -217,15 +217,11 @@ class PracticeDetails extends React.Component {
               <TabPane tab={<span><Icon type="android" />Manage Staff</span>} key="staff">
                 <h2>Doctors   <Link to="/settings/clinics-staff/adddoctor">
                       <Button type="primary" style={{float: 'right'}}>
-                          <Icon type="plus"/>&nbsp;Add
+                          <Icon type="plus"/>&nbsp;Add Doctor/Stafff
                       </Button>
                   </Link></h2>
                 <Table columns={columns} dataSource={this.state.practice_doctors}/>
-                <h2>Staff   <Link to="/settings/clinics-staff/adddoctor">
-                      <Button type="primary" style={{float: 'right'}}>
-                          <Icon type="plus"/>&nbsp;Add
-                      </Button>
-                  </Link></h2>
+                <h2>Staff </h2>
                 <Table columns={columns} dataSource={this.state.practice_staff}/>
 
                 </TabPane>

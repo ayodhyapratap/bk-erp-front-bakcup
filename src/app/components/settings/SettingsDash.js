@@ -52,15 +52,19 @@ class SettingsDash extends React.Component {
                     <Switch>
                         <Route exact path="/settings/clinics-staff"
                                render={(route) => (this.props.permissions.view_practicestaff ?
-                                       <PracticeStaff  {...this.props}/> : <PermissionDenied/>
+                                       <PracticeStaff  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/clinics-staff/adddoctor"
                                render={(route) => (this.props.permissions.add_practicestaff ?
-                                       <AddStaffDoctor  {...this.props}/> : <PermissionDenied/>
+                                       <AddStaffDoctor  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
+                        <Route exact path="/settings/clinics-staff/:doctorid/edit"
+                               render={(route) => (this.props.permissions.add_practicestaff ?
+                                        <AddStaffDoctor  {...this.props} {...route}/> : <PermissionDenied/>
+                                )}/>
                         <Route exact path="/settings/clinics"
                                render={(route) => (this.props.permissions.view_practice ?
-                                       <PracticeDetails  {...this.props}/> : <PermissionDenied/>
+                                       <PracticeDetails  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/clinics/add"
                                render={(route) => (this.props.permissions.add_practice ?

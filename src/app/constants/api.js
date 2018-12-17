@@ -21,7 +21,8 @@ export const EMR_TREATMENTNOTES= 'clinics/%s/treatmentnotes/';
 export const EMR_INVESTIGATIONS= 'clinics/%s/investigations/';
 export const EMR_FILETAGS= 'clinics/%s/filetags/';
 export const ALL_PRACTICE_STAFF='staff/';
-export const ALL_PRACTICE_DOCTORS='doctor/';
+export const SINGLE_PRACTICE_STAFF_API='staff/%s/';
+
 export const PATIENTS_LIST = 'patients/'
 export const PATIENT_PROFILE = 'patients/%s/'
 export const STAFF_ROLES = 'staff/roles/'
