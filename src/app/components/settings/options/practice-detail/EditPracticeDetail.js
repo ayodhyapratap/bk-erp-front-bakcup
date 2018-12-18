@@ -14,6 +14,7 @@ class EditPracticeDetail extends React.Component {
 
         this.state = {
             practiceDetail: null,
+            countries:null,
 
         };
         this.changeRedirect= this.changeRedirect.bind(this);
@@ -44,6 +45,10 @@ class EditPracticeDetail extends React.Component {
     render() {
         let specialisationsOptions=[]
         if(this.state.practiceDetail){
+            let countries=this.state.practiceDetail.countries
+            this.setState({
+                countries:countries,
+            })
             this.state.practiceDetail.specialisations.forEach(function(specialisation){
                 specialisationsOptions.push({label:(specialisation.name), value:specialisation.id} );
             })

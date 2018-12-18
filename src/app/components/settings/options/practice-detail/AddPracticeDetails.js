@@ -2,7 +2,7 @@ import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon, Row} from "antd";
 import {CHECKBOX_FIELD, SUCCESS_MSG_TYPE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
-import {ALL_PRACTICE} from "../../../../constants/api";
+import {ALL_PRACTICE, EXTRA_DATA} from "../../../../constants/api";
 import {getAPI, displayMessage} from "../../../../utils/common";
 import { Redirect } from 'react-router-dom'
 
@@ -14,6 +14,8 @@ class AddPracticeDetails extends React.Component {
 
         this.state = {
           redirect:false,
+            specialisations: null,
+            countries:null,
         }
         this.changeRedirect= this.changeRedirect.bind(this);
     }
@@ -21,19 +23,19 @@ class AddPracticeDetails extends React.Component {
       var that = this;
         let successFn = function (data) {
           let specialisations = {};
-          data[0].specialisations.forEach(function(speciality){
+          data.specialisation.forEach(function(speciality){
             specialisations[speciality.id] = speciality
           });
           console.log(specialisations);
 
           that.setState({
-          practiceList: data,
-          specialisations:specialisations,
+          specialisations:data.specialisation,
+          countries:data.country,
           })
         };
         let errorFn = function () {
         };
-        getAPI(ALL_PRACTICE, successFn, errorFn);
+        getAPI(EXTRA_DATA, successFn, errorFn);
       }
 
       changeRedirect(){
@@ -44,6 +46,13 @@ class AddPracticeDetails extends React.Component {
       }
 
     render() {
+
+        let specialisationsOptions=[]
+        if(this.state.specialisations){
+            this.state.specialisations.forEach(function(specialisation){
+                specialisationsOptions.push({label:(specialisation.name), value:specialisation.id} );
+            })
+        }
       const  fields= [{
             label: "Practice Name",
             key: "name",
@@ -58,7 +67,7 @@ class AddPracticeDetails extends React.Component {
             label: "Practice Specialisation",
             key: "specialisation",
             type: SELECT_FIELD,
-            options: [{label: "Hello", value: "1"}, {label: "New", value: "2"}, {label: "World", value: "13"}]
+            options:specialisationsOptions,
         }, {
             label: "Practice Street Address",
             key: "address",
