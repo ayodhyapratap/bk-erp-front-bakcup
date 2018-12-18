@@ -103,7 +103,7 @@ class PatientClinicNotes extends React.Component {
         if(this.props.match.params.id){
             return <div><Switch>
                 <Route exact path='/patient/:id/emr/clinicnotes/add'
-                       render={(route) => <AddClinicNotes{...this.state} loadClinicNotes={this.loadClinicNotes()} {...route}/>}/>
+                       render={(route) => <AddClinicNotes{...this.state}  {...route}/>}/>
                 <Route exact path='/patient/:id/emr/clinicnotes/edit'
                        render={(route) => <AddClinicNotes {...this.state} {...route}/>}/>
                 <Card title={ this.state.currentPatient?this.state.currentPatient.name + " clinicnotes":"clinicnotes"}  extra={<Button.Group>

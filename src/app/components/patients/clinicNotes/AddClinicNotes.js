@@ -38,21 +38,11 @@ class AddClinicNotes extends React.Component {
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
-        this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
         console.log("Working or not");
 
     }
 
     componentDidMount() {
-        if (this.props.drug_catalog == null) {
-            this.loadDrugCatalog();
-        }
-        if (this.props.procedure_category == null) {
-            this.loadProcedureCategory()
-        }
-        if (this.props.taxes_list == null) {
-            this.loadTaxes();
-        }
 
     }
 
@@ -168,11 +158,11 @@ class AddClinicNotes extends React.Component {
             <Card>
                 <Route exact path='/patient/:id/emr/clinicnotes/edit'
                        render={() => (this.state.editClinicNotes ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit Invoive"
+                           <TestFormLayout defaultValues={defaultValues} title="Edit Clinic notes"
                                            changeRedirect={this.changeRedirect} formProp={formProp} fields={fields}/> :
                            <Redirect to={'/patient/' + this.props.match.params.id + '/billing/invoices'}/>)}/>
                 <Route exact path='/patient/:id/emr/clinicnotes/add'
-                       render={() => <TestFormLayout title="Add Invoice" changeRedirect={this.changeRedirect}
+                       render={() => <TestFormLayout title="Add Clinic Notes" changeRedirect={this.changeRedirect}
                                                      formProp={formProp} fields={fields}/>}/>
 
 
