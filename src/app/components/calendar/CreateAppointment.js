@@ -37,6 +37,7 @@ class CreateAppointment extends React.Component{
           treatmentNotes:null,
           practice_staff:[],
           appointment: null,
+          loading:false,
 
 
       }
@@ -55,16 +56,22 @@ class CreateAppointment extends React.Component{
   }
     loadAppointment(){
         let that=this;
+        this.setState({
+            loading:true,
+        })
         let successFn = function (data) {
 
             that.setState({
                 appointment:data,
+                loading:false,
             });
 
         }
 
         let errorFn = function (){
-
+            that.setState({
+                loading:false,
+            })
         }
         getAPI (interpolate(APPOINTMENT_API,[this.props.match.params.appointmentid])  , successFn,errorFn);
 
@@ -260,7 +267,7 @@ class CreateAppointment extends React.Component{
 
       }
     const TestFormLayout = Form.create()(DynamicFieldsForm);
-      return <Row><Card>
+      return <Row><Card loading={this.state.loading} >
           <Route exact path='/calendar/:appointmentid/edit-appointment'
                  render={() => (this.props.match.params.appointmentid?<TestFormLayout defaultValues={defaultValues} title="Edit Appointment" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/patients/appointments/'} />)}/>
 

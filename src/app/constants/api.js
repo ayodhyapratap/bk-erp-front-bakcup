@@ -46,3 +46,7 @@ export const PATIENT_PAYMENTS_API='patients/payment/?id=%s'
 
 //search and advanced search API
 export const SEARCH_PATIENT='patients/search/?name=%s';
+
+
+//extra data
+export const EXTRA_DATA = 'clinics/extra_data';

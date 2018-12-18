@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import moment from "moment";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import BigCalendar from 'react-big-calendar'
-import {Card, Row, Timeline, Col, Popover, Button, List} from "antd"
+import {Card, Row, Timeline, Col, Popover, Button, List, Divider} from "antd"
 import {DOCTORS_ROLE, SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
 
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
@@ -307,27 +307,28 @@ class App extends Component {
     return (<Switch>
             <Route exact path="/calendar/create-appointment" render={(route) => <CreateAppointment {...this.props} {...route} startTime={this.state.startTime}/>}/>
             <Route exact path="/calendar/:appointmentid/edit-appointment" render={(route) => <CreateAppointment {...this.props} {...route} startTime={this.state.startTime}/>}/>
-      <Card bodyStyle={{padding:0}}>
 
-        <Popover
-        content={<a onClick={this.hide}>Close</a>}
-        title="Title"
-        trigger="click"
-        visible={this.state.visiblePopover}
-        onVisibleChange={this.handleVisibleChange}
-        >
-        </Popover>
+
+        {/*<Popover*/}
+        {/*content={<a onClick={this.hide}>Close</a>}*/}
+        {/*title="Title"*/}
+        {/*trigger="click"*/}
+        {/*visible={this.state.visiblePopover}*/}
+        {/*onVisibleChange={this.handleVisibleChange}*/}
+        {/*>*/}
+        {/*</Popover>*/}
         <Row gutter={16}>
           <Col span={3}>
+              <Divider>Doctors</Divider>
               <List
-                  header={<div>Doctors</div>}
-                  bordered
+                  // header={<div>Doctors</div>}
                   dataSource={this.state.practice_doctors}
                   renderItem={item => (<List.Item style={{textOverflow:"ellipsis"}}>{item.name}</List.Item>)}
                   size={"small"}
               />
           </Col>
           <Col span={16}>
+              <Card bodyStyle={{paddingX:0}}>
             <DragAndDropCalendar
                 defaultDate={new Date()}
                 localizer={localizer}
@@ -349,22 +350,23 @@ class App extends Component {
                 max = {endTime}
 
             />
+              </Card>
           </Col>
           <Col span={5}>
-            <Card>
+              <Divider>Appointments</Divider>
             <Timeline>
-            <h4>Appointments</h4>
+
               {this.state.appointments.length ?
                   this.state.appointments.map((apppointment) => <Timeline.Item><AppointmentCard {...apppointment}/></Timeline.Item>) :
                   <p style={{textAlign: 'center'}}>No Data Found</p>
               }
               </Timeline>
                 <h3>today's apointment={counter}</h3>
-            </Card>
+
           </Col>
         </Row>
 
-      </Card>
+
         </Switch>
 
     );

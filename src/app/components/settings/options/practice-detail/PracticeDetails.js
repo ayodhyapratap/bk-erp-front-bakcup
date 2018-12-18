@@ -13,6 +13,7 @@ class PracticeDetails extends React.Component {
         super(props);
         this.state = {
           practiceList: null,
+            specialisations:null,
         };
     }
 
@@ -79,6 +80,14 @@ class PracticeDetails extends React.Component {
     }
 
     render() {
+        let specialisations = {};
+        if(this.props.activePracticeData){
+        this.props.activePracticeData.specialisations.forEach(function (speciality) {
+            specialisations[speciality.id] = speciality.name
+        });}
+        console.log(specialisations);
+
+
       const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -98,7 +107,7 @@ class PracticeDetails extends React.Component {
             dataIndex: 'specialisation',
             render: specialisation => (
               <span>
-                 <Tag color="blue" key={specialisation}>{specialisation}</Tag>
+                 <Tag color="blue" key={specialisation}>{specialisations[specialisation]}</Tag>
               </span>
             ),
           }, {

@@ -6,6 +6,7 @@ import moment from "moment";
 import {Route, Switch} from "react-router";
 import AddorEditPatientPrescriptions from "../prescriptions/AddorEditPatientPrescriptions";
 import {Link} from "react-router-dom";
+import AddClinicNotes from "./AddClinicNotes";
 
 class PatientClinicNotes extends React.Component {
     constructor(props){
@@ -62,7 +63,7 @@ class PatientClinicNotes extends React.Component {
             dataIndex: 'name',
             key: 'name',
         },{
-            title: 'chief_complaints',
+            title: 'chief complaints',
             dataIndex: 'chief_complaints',
             key: 'chief_complaints',
         },{
@@ -101,10 +102,10 @@ class PatientClinicNotes extends React.Component {
 
         if(this.props.match.params.id){
             return <div><Switch>
-                {/*<Route exact path='/patient/:id/emr/clinicnotes/add'*/}
-                       {/*render={(route) => <AddorEditPatientclinicnotes{...this.state} loadClinicNotes={this.loadClinicNotes()} {...route}/>}/>*/}
-                {/*<Route exact path='/patient/:id/emr/clinicnotes/edit'*/}
-                       {/*render={(route) => <AddorEditPatientclinicnotes {...this.state} {...route}/>}/>*/}
+                <Route exact path='/patient/:id/emr/clinicnotes/add'
+                       render={(route) => <AddClinicNotes{...this.state} loadClinicNotes={this.loadClinicNotes()} {...route}/>}/>
+                <Route exact path='/patient/:id/emr/clinicnotes/edit'
+                       render={(route) => <AddClinicNotes {...this.state} {...route}/>}/>
                 <Card title={ this.state.currentPatient?this.state.currentPatient.name + " clinicnotes":"clinicnotes"}  extra={<Button.Group>
                     <Link to={"/patient/"+this.props.match.params.id+"/emr/clinicnotes/add"}><Button><Icon type="plus"/>Add</Button></Link>
                 </Button.Group>}>

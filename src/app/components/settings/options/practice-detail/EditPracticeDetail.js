@@ -14,7 +14,6 @@ class EditPracticeDetail extends React.Component {
 
         this.state = {
             practiceDetail: null,
-            specialisations: null,
 
         };
         this.changeRedirect= this.changeRedirect.bind(this);
@@ -30,15 +29,9 @@ class EditPracticeDetail extends React.Component {
     componentDidMount() {
       var that = this;
         let successFn = function (data) {
-          let specialisations = {};
-          data.specialisations.forEach(function(speciality){
-            specialisations[speciality.id] = speciality
-          });
-          console.log(specialisations);
 
           that.setState({
           practiceDetail: data,
-          specialisations:specialisations,
           })
         };
         let errorFn = function () {
@@ -49,6 +42,14 @@ class EditPracticeDetail extends React.Component {
 
 
     render() {
+        let specialisationsOptions=[]
+        if(this.state.practiceDetail){
+            this.state.practiceDetail.specialisations.forEach(function(specialisation){
+                specialisationsOptions.push({label:(specialisation.name), value:specialisation.id} );
+            })
+        }
+
+
       if(this.state.practiceDetail!=null){
       const fields= [{
             label: "Practice Name",
@@ -67,7 +68,7 @@ class EditPracticeDetail extends React.Component {
             key: "specialisation",
             initialValue: this.state.practiceDetail.specialisation ,
             type: SELECT_FIELD,
-            options: [{label: "1", value: "1"}, {label: "2", value: "2"}, {label: "3", value: "13"}]
+            options: specialisationsOptions
         }, {
             label: "Practice Street Address",
             key: "address",
