@@ -26,6 +26,7 @@ import Calendar from "../calendar/Calendar";
 import PatientHome from "../patients/PatientHome";
 import Error404 from "../common/errors/Error404";
 import ReportsHome from "../reports/ReportsHome";
+import WebAdminHome from "../webAdmin/WebAdminHome";
 
 const Content = Layout.Content;
 
@@ -148,6 +149,7 @@ class AppBase extends React.Component {
                 <AppHeader {...this.props} switchPractice={this.switchPractice} {...this.state}
                            toggleSider={this.toggleSider}/>
                 <Switch>
+                    <Route path="/web" render={(route) => <WebAdminHome {...this.state} {...this.props} {...route}/>}/>
                     <Route path="/calendar" render={(route) => <Calendar {...this.state} {...this.props} {...route}/>}/>
                     <Route path="/patient/:id" render={(route) => <PatientHome {...this.state} {...this.props}/>}/>
                     <Route path="/patients" render={(route) => <PatientHome {...this.state} {...this.props}/>}/>

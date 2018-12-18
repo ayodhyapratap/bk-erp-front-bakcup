@@ -76,19 +76,19 @@ class AppSider extends React.Component {
                 <SubMenu key="sub1" title={<span><Icon type="gold"/><span>Back Office</span></span>}>
                     <Menu.Item key="6">
                         <Link to="/settings/clinics">
-                            <Icon type="credit-card" />
+                            <Icon type="credit-card"/>
                             <span className="nav-text">Expenses</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="7">
                         <Link to="/settings/clinics">
-                            <Icon type="bell" />
+                            <Icon type="bell"/>
                             <span className="nav-text">Activities</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="8">
                         <Link to="/settings/clinics">
-                            <Icon type="database" />
+                            <Icon type="database"/>
                             <span className="nav-text">Inventory</span>
                         </Link>
                     </Menu.Item>
@@ -99,7 +99,39 @@ class AppSider extends React.Component {
                         </Link>
                     </Menu.Item>
                 </SubMenu>
+                <SubMenu key="web" title={<span><Icon type="google"/><span>Web Admin</span></span>}>
+                    <Menu.Item key="web-1">
+                        <Link to="/web/videos">
+                            <Icon type="youtube"/>
+                            <span className="nav-text">Videos</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="web-2">
+                        <Link to="/web/disease">
+                            <Icon type="bell"/>
+                            <span className="nav-text">Disease</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="web-3">
+                        <Link to="/web/blog">
+                            <Icon type="database"/>
+                            <span className="nav-text">Blogs</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="web-4">
+                        <Link to="/web/event">
+                            <Icon type="notification"/>
+                            <span className="nav-text">Events</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="web-5">
+                        <Link to="/web/contact">
+                            <Icon type="phone"/>
+                            <span className="nav-text">Contacts</span>
+                        </Link>
+                    </Menu.Item>
 
+                </SubMenu>
             </Menu>
         </Sider>
     }
