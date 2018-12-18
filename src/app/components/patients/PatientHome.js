@@ -79,11 +79,13 @@ class PatientHome extends React.Component {
 
                             {/*** Patient Appointment Routes*/}
                             <Route exact path='/patients/appointments'
-                                   render={() => (this.state.currentPatient ?
+                                   render={(route) => (this.state.currentPatient ?
                                        <Redirect to={"/patient/" + this.state.currentPatient.id + "/appointments"}/> :
-                                       <Appointment/>)}/>
+                                       <Appointment  {...this.state} {...route}/>)}/>
                             <Route exact path='/patient/:id/appointments'
-                                   render={() => <Appointment/>}/>
+                                   render={(route) => <Appointment  {...this.state} {...route}/>}/>
+                            <Route exact path='/patients/appointments/:appointmentid'
+                                   render={(route) => <Appointment  {...this.state} {...route}/>}/>
                             {/*      <Route exact path='/patients/appointments/create'
                            render={() => <CreateAppointment {...this.props} />}/>*/}
 

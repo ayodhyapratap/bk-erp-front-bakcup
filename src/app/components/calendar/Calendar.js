@@ -205,6 +205,9 @@ class App extends Component {
    this.setState({
      visiblePopover:true
    })
+
+      this.props.history.push("/patients/appointments/"+ event.id)
+
   }
 
 
@@ -299,10 +302,11 @@ class App extends Component {
                         console.log("yaaahooo");
                         counter++;
                     }
-      })
+      });
 
     return (<Switch>
-            <Route exact path="/calendar/create-appointment" render={(route) => <CreateAppointment {...this.props} startTime={this.state.startTime}/>}/>
+            <Route exact path="/calendar/create-appointment" render={(route) => <CreateAppointment {...this.props} {...route} startTime={this.state.startTime}/>}/>
+            <Route exact path="/calendar/:appointmentid/edit-appointment" render={(route) => <CreateAppointment {...this.props} {...route} startTime={this.state.startTime}/>}/>
       <Card bodyStyle={{padding:0}}>
 
         <Popover
