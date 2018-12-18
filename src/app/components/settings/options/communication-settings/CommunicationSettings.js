@@ -22,12 +22,12 @@ class CommunicationSettings extends React.Component {
               <TabPane tab={<span><Icon type="android" />Appointment & FollowUp SMS</span>} key="appointmentsms">
                 <AppointmentSMS {...this.props}/>
               </TabPane>
-              <TabPane tab={<span><Icon type="android" />Wish SMS</span>} key="wishsms">
-                <WishSMS/>
-              </TabPane>
-              <TabPane tab={<span><Icon type="android" />Emails</span>} key="emails">
-                <Emails/>
-              </TabPane>
+              {/*<TabPane tab={<span><Icon type="android" />Wish SMS</span>} key="wishsms">*/}
+                {/*<WishSMS/>*/}
+              {/*</TabPane>*/}
+              {/*<TabPane tab={<span><Icon type="android" />Emails</span>} key="emails">*/}
+                {/*<Emails/>*/}
+              {/*</TabPane>*/}
             </Tabs>
 
           </Card>

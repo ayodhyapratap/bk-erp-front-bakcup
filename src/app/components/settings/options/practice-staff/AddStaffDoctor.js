@@ -95,22 +95,22 @@ class AddStaffDoctor extends React.Component {
                     value: "green"
                 }]
             },{
-                label: "schedule_sms",
+                label: "Schedule sms",
                 key: "schedule_sms",
                 initialValue: this.state.editStaff ? this.state.editStaff.schedule_sms : false,
                 type: SINGLE_CHECKBOX_FIELD,
             },{
-                label: "confirmation_sms",
+                label: "Confirmation sms",
                 key: "confirmation_sms",
                 initialValue: this.state.editStaff ? this.state.editStaff.confirmation_sms : false,
                 type: SINGLE_CHECKBOX_FIELD,
             },{
-                label: "confirmation_email",
+                label: "Confirmation email",
                 key: "confirmation_email",
                 initialValue: this.state.editStaff ? this.state.editStaff.confirmation_email : false,
                 type: SINGLE_CHECKBOX_FIELD,
             },{
-                label: "online_appointment_sms",
+                label: "Online appointment sms",
                 key: "online_appointment_sms",
                 initialValue: this.state.editStaff ? this.state.editStaff.online_appointment_sms : false,
                 type: SINGLE_CHECKBOX_FIELD,
