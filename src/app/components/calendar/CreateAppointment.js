@@ -17,6 +17,7 @@ import {
 import {
     PATIENTS_LIST,
     ALL_APPOINTMENT_API,
+    APPOINTMENT_CATEGORIES,
     PRACTICESTAFF,
     PROCEDURE_CATEGORY,
     EMR_TREATMENTNOTES, APPOINTMENT_API, SINGLE_PRACTICE_STAFF_API
@@ -33,6 +34,7 @@ class CreateAppointment extends React.Component{
       this.state = {
         redirect:false,
           practice_doctors: [],
+          appointmentCategories:null,
           procedure_category:null,
           treatmentNotes:null,
           practice_staff:[],
@@ -50,6 +52,7 @@ class CreateAppointment extends React.Component{
       this.loadDoctors();
       this.loadProcedureCategory();
       this.loadTreatmentNotes();
+      this.loadAppointmentCategories();
       if(this.props.match.params.appointmentid){
           this.loadAppointment();
       }
@@ -130,6 +133,20 @@ class CreateAppointment extends React.Component{
         getAPI(interpolate(EMR_TREATMENTNOTES,[this.props.active_practiceId]), successFn, errorFn)
     }
 
+    loadAppointmentCategories(){
+        let that = this;
+        let successFn =function (data){
+            that.setState({
+                appointmentCategories:data
+            })
+
+        }
+        let errorFn = function (){
+
+        }
+        getAPI(interpolate(APPOINTMENT_CATEGORIES,[this.props.active_practiceId]), successFn, errorFn)
+    }
+
   changeRedirect(){
     var redirectVar=this.state.redirect;
       this.setState({
@@ -157,8 +174,12 @@ class CreateAppointment extends React.Component{
               treatmentNotesOption.push({label:(drug.name+"("+drug.email+")"), value:drug.id} );
           })
       }
-      const categoryOptions= [{label: "Fast", value: 1}, {label: "Full stomach", value: 2}, {label: "No liquids", value: 3}]
-
+      const categoryOptions= [];
+      if(this.state.appointmentCategories){
+          this.state.appointmentCategories.forEach(function(category){
+              categoryOptions.push({label:category.name, value:category.id} );
+          })
+      }
       const fields= [ {
         label: "shedule_at",
         key: "shedule_at",

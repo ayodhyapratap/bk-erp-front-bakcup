@@ -26,11 +26,11 @@ class CalendarSettings extends React.Component {
         return <div>
           <Row>
           <Card>
-            <Tabs defaultActiveKey="taxcatalog" >
-              <TabPane tab={<span><Icon type="android" />Tax Catalog</span>} key="taxcatalog">
+            <Tabs defaultActiveKey="timings" >
+              <TabPane tab={<span><Icon type="android" />Calender Timings Settings</span>} key="timings">
                <PracticeTimings {...this.state} {...this.props}/>
               </TabPane>
-              <TabPane tab={<span><Icon type="android" />Accepted Modes of payment </span>} key="paymentmodes">
+              <TabPane tab={<span><Icon type="android" />Appointment Categories</span>} key="categories">
                 <AppointmentCategories {...this.props}/>
               </TabPane>
               {/*<TabPane tab={<span><Icon type="android" />Emails</span>} key="cancelledinvoice">
