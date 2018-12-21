@@ -37,6 +37,7 @@ export const NUMBER_FIELD = 'number';
 export const DATE_PICKER = 'datepicker';
 export const TEXT_FIELD = 'textfield';
 export const TIME_PICKER = 'timepicker';
+export const COLOR_PICKER = 'colorpicker';
 
 
 /***

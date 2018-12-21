@@ -39,7 +39,7 @@ class PatientTreatmentPlans extends React.Component{
           treatmentPlans:data
         })
           data.forEach(function (treatmentplan) {
-              if(treatmentplan.is_completed){
+              if(!treatmentplan.is_completed){
                   incompleted.push(treatmentplan)
               }
           })
@@ -77,6 +77,7 @@ class PatientTreatmentPlans extends React.Component{
     }
 
     render(){
+      console.log(this.state.incompletedTreatmentPlans);
       const procedures={}
       if(this.state.procedure_categry){
 

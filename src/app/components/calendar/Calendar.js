@@ -8,7 +8,7 @@ import {DOCTORS_ROLE, SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./app.css";
-import {Route, Switch} from "react-router-dom";
+import {Route, Link, Switch} from "react-router-dom";
 import CreateAppointment from "./CreateAppointment";
 import { Redirect } from 'react-router-dom';
 import TimeGrid from 'react-big-calendar/lib/TimeGrid'
@@ -353,6 +353,7 @@ class App extends Component {
               </Card>
           </Col>
           <Col span={5}>
+          <Link to='/calendar/create-appointment'><Button > Walkin Appointment</Button></Link>
               <Divider>Appointments</Divider>
             <Timeline>
 

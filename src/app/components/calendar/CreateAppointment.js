@@ -84,7 +84,6 @@ class CreateAppointment extends React.Component{
       let successFn = function(data){
           data.staff.forEach(function(usersdata){
               if(usersdata.role ==  DOCTORS_ROLE){
-                  console.log("sdasdadsadadasdassdassassddassd")
                   let doctor=that.state.practice_doctors;
                   doctor.push(usersdata);
                   that.setState({
@@ -180,11 +179,17 @@ class CreateAppointment extends React.Component{
               categoryOptions.push({label:category.name, value:category.id} );
           })
       }
+      let appointmentTime=this.state.appointment?this.state.appointment.shedule_at:this.props.startTime;
+      if(!appointmentTime){
+        appointmentTime=new moment(new Date()).format();
+        console.log(appointmentTime);
+      }
+
       const fields= [ {
         label: "shedule_at",
         key: "shedule_at",
         type: DATE_PICKER,
-        initialValue:this.state.appointment?this.state.appointment.shedule_at:this.props.startTime,
+        initialValue:appointmentTime,
         format:"YYYY/MM/DD HH:mm"
     },{
         label: "Time Slot",

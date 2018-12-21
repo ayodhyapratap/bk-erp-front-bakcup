@@ -7,7 +7,8 @@ import {
     INPUT_FIELD,
     RADIO_FIELD,
     SELECT_FIELD,
-    SINGLE_CHECKBOX_FIELD
+    SINGLE_CHECKBOX_FIELD,
+    COLOR_PICKER
 } from "../../../../constants/dataKeys";
 import {ALL_PRACTICE_STAFF, DRUG_CATALOG, SINGLE_PRACTICE_STAFF_API} from "../../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
@@ -24,10 +25,9 @@ class AddStaffDoctor extends React.Component {
         }
         this.changeRedirect= this.changeRedirect.bind(this);
         this.loadEditPracticeStaff = this.loadEditPracticeStaff.bind(this);
-       if(this.props.match.params.doctorid);
-       {
-        this.loadEditPracticeStaff()
-       }
+         if(this.props.match.params.doctorid){
+          this.loadEditPracticeStaff()
+         }
     }
 
     loadEditPracticeStaff() {
@@ -89,11 +89,8 @@ class AddStaffDoctor extends React.Component {
                 key: "calender_colour",
                 required: true,
                 initialValue: this.state.editStaff?this.state.editStaff.calender_colour:null,
-                type: SELECT_FIELD,
-                options: [{label: "red", value: "red"}, {label: "blue", value: "blue"}, {
-                    label: "green",
-                    value: "green"
-                }]
+                type: COLOR_PICKER,
+
             },{
                 label: "Schedule sms",
                 key: "schedule_sms",

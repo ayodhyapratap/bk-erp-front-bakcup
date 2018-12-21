@@ -1,9 +1,11 @@
 import React from "react";
 import {Button, Divider, Form, TimePicker, Icon, DatePicker, Input, InputNumber, Radio, Select, Checkbox} from "antd";
-import {CHECKBOX_FIELD ,TIME_PICKER, SINGLE_CHECKBOX_FIELD, TEXT_FIELD, INPUT_FIELD, DATE_PICKER, NUMBER_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../constants/dataKeys";
+import {CHECKBOX_FIELD ,TIME_PICKER, SINGLE_CHECKBOX_FIELD, COLOR_PICKER, TEXT_FIELD, INPUT_FIELD, DATE_PICKER, NUMBER_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {postAPI, putAPI} from "../../utils/common";
 import moment from "moment";
+import { SwatchesPicker } from 'react-color';
+
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -29,6 +31,7 @@ class DynamicFieldsForm extends React.Component {
         }
         this.resetFormData = this.resetFormData.bind(this);
         this.submitForm = this.submitForm.bind(this);
+        this.colorChange = this.colorChange.bind(this);
     }
 
     componentDidMount() {
@@ -60,6 +63,9 @@ class DynamicFieldsForm extends React.Component {
                   values[object.key]= object.value;
                 })
               }
+              if(this.state.colorPickerKey){
+                values[this.state.colorPickerKey]=this.state.colorPickerColor;
+              }
                 that.submitForm(values);
             }
         });
@@ -82,6 +88,17 @@ class DynamicFieldsForm extends React.Component {
         else if(this.props.formProp.method=="put"){
           putAPI(this.props.formProp.action, data, successFn, errorFn);
         }
+    }
+
+    colorChange(color,key){
+    console.log(color,key);
+    this.setState({
+        colorPickerKey:key,
+          colorPickerColor:color.hex,
+
+      });
+
+
     }
 
     render() {
@@ -173,6 +190,13 @@ class DynamicFieldsForm extends React.Component {
                                   <TimePicker  format={field.format}/>
                                 )}
                             </FormItem>;
+                        case COLOR_PICKER:
+                            return <FormItem label={field.label}  {...formItemLayout}  extra={field.extra}>
+                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                  <SwatchesPicker onChange={(color)=>that.colorChange(color, field.key) }/>
+                                )}
+                            </FormItem>;
+
                         default:
                             return null;
                     }
