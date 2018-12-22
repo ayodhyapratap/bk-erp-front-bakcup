@@ -1,67 +1,153 @@
 import React from "react";
-import {Card, Divider, Table, Tag} from "antd";
+
+import {Button, Card, Checkbox, Divider, Icon, Table, Tag} from "antd";
+import {getAPI, interpolate} from "../../../utils/common";
+import {PAYMENT_MODES, INVOICES_API, PATIENT_PAYMENTS_API, TAXES} from "../../../constants/api";
+import moment from "moment";
+import {Link} from "react-router-dom";
+import {Route, Switch} from "react-router";
+import AddPayment from "./AddPayment";
+
 
 class PatientPayments extends React.Component{
     constructor(props){
         super(props);
+        this.state = {
+          payments:[],
+          active_practiceId:this.props.active_practiceId,
+        }
+
+    }
+    componentDidMount(){
+      this.loadPaymentModes();
+      this.loadPayments();
+      this.loadInvoices();
+    }
+
+
+    loadPayments(){
+        let that = this;
+        let successFn =function (data){
+            that.setState({
+                payments:data
+            })
+        }
+        let errorFn = function (){
+
+        }
+        getAPI(interpolate(PATIENT_PAYMENTS_API, [this.props.match.params.id]), successFn, errorFn);
+    }
+    loadInvoices(){
+        let that = this;
+        let successFn =function (data){
+            that.setState({
+                invoices:data
+            })
+        }
+        let errorFn = function (){
+
+        }
+        getAPI(interpolate(INVOICES_API, [this.props.match.params.id]), successFn, errorFn);
+    }
+    loadPaymentModes(){
+      var that = this;
+        let successFn = function (data) {
+          console.log("get table");
+          that.setState({
+            paymentModes:data,
+          })
+        };
+        let errorFn = function () {
+        };
+        getAPI(interpolate( PAYMENT_MODES, [this.props.active_practiceId]), successFn, errorFn);
+    }
+    editInvoiceData(record){
+        this.setState({
+            editInvoice:record,
+        });
+        let id=this.props.match.params.id
+        this.props.history.push("/patient/"+id+"/billing/invoices/edit")
+
     }
     render(){
-        const columns = [{
-            title: 'reciept Number',
-            dataIndex: 'name',
-            key: 'name',
-            render: text => <a href="javascript:;">{text}</a>,
-        }, {
-            title: 'Amount (rs)',
-            dataIndex: 'age',
-            key: 'age',
-        }, {
-            title: 'Invoice',
-            dataIndex: 'address',
-            key: 'address',
-        }, {
-            title: 'Payment Type',
-            key: 'tags',
-            dataIndex: 'tags',
-            render: tags => (
-                <span>
-      {tags.map(tag => <Tag color="blue" key={tag}>{tag}</Tag>)}
-    </span>
-            ),
-        }, {
-            title: 'Action',
-            key: 'action',
-            render: (text, record) => (
-                <span>
-      <a href="javascript:;">Invite {record.name}</a>
-      <Divider type="vertical" />
-      <a href="javascript:;">Delete</a>
-    </span>
-            ),
-        }];
+      const paymentmodes={}
+      if(this.state.paymentModes){
+          this.state.paymentModes.forEach(function (mode) {
+              paymentmodes[mode.id]=mode.mode;
+          })
+      }
+      const invoicelist={}
+      if(this.state.invoices){
+          this.state.invoices.forEach(function (mode) {
+              invoicelist[mode.id]=mode.id;
+          })
+      }
+      const columns = [{
+          title: 'Time',
+          dataIndex: 'created_at',
+          key: 'name',
+          render: created_at =><span>{moment(created_at).format('LLL')}</span>,
+          },
+          {
+         title: 'AMOUNT PAID	',
+         dataIndex: 'amount',
+         key: 'amount',
+         },{
+          title: 'INVOICES	',
+          key: 'invoice	',
+          render:(text, record) => (
+              <span> {invoicelist[record.invoice]}</span>
+          )
+          }, {
+          title: 'MODE OF PAYMENT',
+          key: 'payment_mode',
+          render:(text, record) => (
+              <span> {paymentmodes[record.payment_mode]}</span>
+          )
+          }, {
+          title: 'Advance',
+          key: 'is_advance',
+          render:(text, record) => (
+              <Checkbox disabled checked={record.is_advance}/>
+          )
+          },
 
-        const dataSource = [{
-            key: '1',
-            name: 'l54',
-            age: 352,
-            address: '124',
-            tags: ['card', 'bank'],
-        }, {
-            key: '2',
-            name: 'l44',
-            age: 4525,
-            address: '1235.',
-            tags: ['cheque'],
-        }, {
-            key: '3',
-            name: 'l52',
-            age: 5412,
-            address: '124',
-            tags: ['Cash'],
-        }];
-        return <Card title="Patient Payments">
-            <Table dataSource={dataSource} columns={columns} />
-        </Card>
-    }
+          {
+          title: 'Action',
+          key: 'action',
+          render: (text, record) => (
+              <span>
+              <a onClick={()=>this.editInvoiceData(record)}>Edit</a>
+              <Divider type="vertical" />
+              <a href="javascript:;">Delete</a>
+            </span>
+          ),
+      }];
+
+
+      if(this.props.match.params.id){
+          return <div><Switch>
+              <Route exact path='/patient/:id/billing/payments/add'
+                     render={(route) => <AddPayment{...this.state} {...route}/>}/>
+              <Route exact path='/patient/:id/billing/payments/edit'
+                     render={(route) => <AddPayment {...this.state} {...route}/>}/>
+              <Card title={ this.state.currentPatient?this.state.currentPatient.name + " payments":"Payments"}  extra={<Button.Group>
+                    <Link to={"/patient/"+this.props.match.params.id+"/billing/payments/add"}><Button><Icon type="plus"/>Add</Button></Link>
+              </Button.Group>}>
+
+                  <Table columns={columns}  dataSource={this.state.payments} />
+
+              </Card>
+          </Switch>
+
+          </div>
+      }
+      else{
+          return <Card>
+              <h2> select patient to further continue</h2>
+          </Card>
+      }
+
+  }
 }
 export default PatientPayments;

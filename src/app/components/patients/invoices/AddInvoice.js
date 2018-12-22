@@ -63,7 +63,7 @@ class AddInvoice extends React.Component {
         let that = this;
         let successFn =function (data){
             that.setState({
-                procedure_categry:data
+                procedure_category:data
             })
 
         }
@@ -169,9 +169,9 @@ class AddInvoice extends React.Component {
             action:  interpolate(INVOICES_API, [this.props.match.params.id]),
             method: "post",
         }
-        let defaultValues=[]
+        let defaultValues=[{"key":"practice", "value":this.props.active_practiceId}];
         if(this.state.editInvoice){
-         defaultValues = [{"key":"id", "value":this.state.editInvoice.id}];
+         defaultValues.push({"key":"id", "value":this.state.editInvoice.id});
       }
         return <Row>
             <Card>

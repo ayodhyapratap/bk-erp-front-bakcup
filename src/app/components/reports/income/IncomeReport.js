@@ -1,8 +1,52 @@
 import React from "react";
 import {Button, Card, Col, Icon, Radio, Row, Table} from "antd";
+import {INVOICE_REPORTS} from "../../../constants/api";
+import {getAPI, displayMessage, interpolate} from "../../../utils/common";
+import moment from "moment"
 
 export default class IncomeReport extends React.Component {
+  constructor(props) {
+      super(props);
+      this.state={
+        report:[],
+      }
+      this.report=this.report.bind(this);
+      this.report();
+  }
+  report(){
+    let that =this;
+      let successFn = function (data) {
+        console.log(data);
+        that.setState({
+          report:data.data,
+        });
+      };
+      let errorFn = function () {
+      };
+     getAPI(interpolate( INVOICE_REPORTS, [this.props.active_practiceId,"start="+this.props.startDate+"&end="+this.props.endDate]), successFn, errorFn);
+  }
     render() {
+      const columns = [{
+                title: 'Date',
+                key: 'date',
+                render: (text, record) => (
+                  <span>
+                {  moment(record.created_at).format('LL')}
+                  </span>
+                ),
+                },{
+                title: '	Invoice Number	',
+                dataIndex: 'age',
+                key: 'age',
+                }, {
+                title: 'Patient',
+                dataIndex: 'age',
+                key: 'age',
+                }, {
+                title: 'Treatments & Products',
+                dataIndex: 'age',
+                key: 'age',
+                },];
         return <div>
             <h2>Income Report
                 <Button.Group style={{float: 'right'}}>
@@ -13,7 +57,7 @@ export default class IncomeReport extends React.Component {
             <Card>
                 <Row gutter={16}>
                     <Col span={16}>
-                        <Table dataSource={[]}/>
+                    <Table columns={columns} size={'small'} dataSource={this.state.report}/>
                     </Col>
                     <Col span={8}>
                         <Radio.Group buttonStyle="solid" defaultValue="all">

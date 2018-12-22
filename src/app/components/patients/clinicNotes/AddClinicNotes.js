@@ -64,7 +64,7 @@ class AddClinicNotes extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                procedure_categry: data
+                procedure_category: data
             })
 
         }

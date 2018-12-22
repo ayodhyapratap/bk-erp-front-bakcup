@@ -15,7 +15,7 @@ class PatientCompletedProcedures extends React.Component{
             currentPatient:this.props.currentPatient,
             active_practiceId:this.props.active_practiceId,
             treatmentPlans:[],
-            procedure_categry:null,
+            procedure_category:null,
             completedTreatmentPlans:[],
         }
         this.loadtreatmentPlanss =this.loadtreatmentPlanss.bind(this);
@@ -56,7 +56,7 @@ class PatientCompletedProcedures extends React.Component{
         let that = this;
         let successFn =function (data){
             that.setState({
-                procedure_categry:data
+                procedure_category:data
             })
 
         }
@@ -78,13 +78,13 @@ class PatientCompletedProcedures extends React.Component{
 
     render(){
         const procedures={}
-        if(this.state.procedure_categry){
+        if(this.state.procedure_category){
 
-            this.state.procedure_categry.forEach(function(procedure){
+            this.state.procedure_category.forEach(function(procedure){
                 procedures[procedure.id]=(procedure.name)
             })
         }
-        console.log(this.state.procedure_categry);
+        console.log(this.state.procedure_category);
 
         const columns = [{
             title: 'Time',

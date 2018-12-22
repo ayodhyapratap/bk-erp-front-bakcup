@@ -18,6 +18,8 @@ export default class ReportsHeader extends React.Component {
     }
 
     render() {
+
+      let that =this;
         const reportCategory = [{name: 'Daily Summary', value: '/reports/summary'},
             {name: 'Income', value: '/reports/income'},
             {name: 'Payments', value: '/reports/payments'},
@@ -41,6 +43,7 @@ export default class ReportsHeader extends React.Component {
                 </li>
                 <li style={{display: 'inline', float: 'right'}}>
                     <RangePicker
+                        onChange={(date, dateString)=> that.props.reportsDateRange(dateString)}
                         defaultValue={[moment(), moment()]}
                         format={dateFormat}
                     />

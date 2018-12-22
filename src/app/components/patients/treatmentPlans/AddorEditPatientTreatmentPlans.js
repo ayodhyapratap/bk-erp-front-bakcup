@@ -110,9 +110,9 @@ class AddorEditPatientTreatmentPlans extends React.Component {
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
-        let defaultValues=[];
+        let defaultValues=[{"key":"practice", "value":this.props.active_practiceId}];
           if(this.state.editTreatmentPlan)
-           defaultValues = [{"key":"id", "value":this.props.editTreatmentPlan.id}];
+           defaultValues.push({"key":"id", "value":this.props.editTreatmentPlan.id});
           return <Row>
                 <Card>
                   <Route exact path='/patient/:id/emr/plans/edit'

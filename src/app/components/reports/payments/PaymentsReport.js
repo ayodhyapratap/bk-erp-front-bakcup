@@ -1,8 +1,82 @@
 import React from "react";
 import {Button, Card, Col, Icon, Radio, Row, Table} from "antd";
+import {PAYMENTS_REPORTS} from "../../../constants/api";
+import {getAPI, displayMessage, interpolate} from "../../../utils/common";
+import moment from "moment";
 
 export default class PaymentsReport extends React.Component {
+  constructor(props) {
+      super(props);
+      this.state={
+        report:[],
+      }
+      this.report=this.report.bind(this);
+      this.report();
+  }
+  report(){
+    let that =this;
+      let successFn = function (data) {
+        console.log(data);
+        that.setState({
+          report:data.data,
+        });
+      };
+      let errorFn = function () {
+      };
+     getAPI(interpolate( PAYMENTS_REPORTS, [this.props.active_practiceId,"start="+this.props.startDate+"&end="+this.props.endDate]), successFn, errorFn);
+  }
     render() {
+      const columns = [{
+                title: 'Date',
+                key: 'date',
+                render: (text, record) => (
+                  <span>
+                {  moment(record.shedule_at).format('LL')}
+                  </span>
+                ),
+                }, {
+                title: 'Scheduled At	',
+                key: 'time',
+                render: (text, record) => (
+                  <span>
+                  {  moment(record.shedule_at).format('HH:mm')}
+
+                  </span>
+                ),
+                }, {
+                title: 'Patient',
+                dataIndex: 'age',
+                key: 'age',
+                }, {
+                title: 'Receipt Number',
+                dataIndex: 'age',
+                key: 'age',
+                }, {
+                title: 'Invoice(s)',
+                dataIndex: 'age',
+                key: 'age',
+                }, {
+                title: 'Treatments & Products',
+                dataIndex: 'age',
+                key: 'age',
+                }, {
+                title: 'Amount Paid (INR)	',
+                dataIndex: 'patient_name',
+                key: 'patient_name',
+                }, {
+                title: 'Advance Amount (INR)',
+                dataIndex: 'address',
+                key: 'address',
+                }, {
+                title: 'Payment Info	',
+                dataIndex: 'address',
+                key: 'address',
+                }, {
+                title: 'Vendor Fees (INR)',
+                dataIndex: 'address',
+                key: 'address',
+              }];
+
         const relatedReport = [{name: 'Refund Payments', value: 'b'},
             {name: 'Payment Received From Each Patient Group', value: 'c'},
             {name: 'Patients With Unsettled Advance, As Of Today', value: 'd'},
@@ -25,7 +99,7 @@ export default class PaymentsReport extends React.Component {
             <Card>
                 <Row gutter={16}>
                     <Col span={16}>
-                        <Table dataSource={[]}/>
+                    <Table columns={columns} size={'small'} dataSource={this.state.report}/>
                     </Col>
                     <Col span={8}>
                         <Radio.Group buttonStyle="solid" defaultValue="all">

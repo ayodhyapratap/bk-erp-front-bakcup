@@ -1,8 +1,81 @@
 import React from "react";
 import {Button, Card, Col, Icon, Radio, Row, Table} from "antd";
+import {APPOINTMENT_REPORTS} from "../../../constants/api";
+import {getAPI, displayMessage, interpolate} from "../../../utils/common";
+import moment from "moment"
 
 export default class AppointmentsReport extends React.Component{
+  constructor(props) {
+      super(props);
+      this.state={
+        appointmentReports:[],
+      }
+      this.loadAppointmentReport=this.loadAppointmentReport.bind(this);
+      this.loadAppointmentReport();
+  }
+  loadAppointmentReport(){
+    let that =this;
+      let successFn = function (data) {
+        console.log(data);
+        that.setState({
+          appointmentReports:data.data,
+        });
+      };
+      let errorFn = function () {
+      };
+     getAPI(interpolate( APPOINTMENT_REPORTS, [this.props.active_practiceId,"start="+this.props.startDate+"&end="+this.props.endDate]), successFn, errorFn);
+  }
+
+
     render(){
+      const columns = [{
+                title: 'Date',
+                key: 'date',
+                render: (text, record) => (
+                  <span>
+                {  moment(record.shedule_at).format('LL')}
+                  </span>
+                ),
+                }, {
+                title: 'Scheduled At	',
+                key: 'time',
+                render: (text, record) => (
+                  <span>
+                  {  moment(record.shedule_at).format('HH:mm')}
+
+                  </span>
+                ),
+                }, {
+                title: 'Check-in At',
+                dataIndex: 'age',
+                key: 'age',
+                }, {
+                title: 'Waited For (hh:mm:ss)',
+                dataIndex: 'age',
+                key: 'age',
+                }, {
+                title: 'Engaged At',
+                dataIndex: 'age',
+                key: 'age',
+                }, {
+                title: 'Checkout At',
+                dataIndex: 'age',
+                key: 'age',
+                }, {
+                title: 'Patient',
+                dataIndex: 'patient_name',
+                key: 'patient_name',
+                }, {
+                title: 'Doctor',
+                dataIndex: 'address',
+                key: 'address',
+                }, {
+                title: 'Category',
+                dataIndex: 'address',
+                key: 'address',
+              }];
+
+
         const relatedReport = [
             {name:'Appointments For Each Category',value:'b'},
             {name:'Cancellation Numbers',value:'c'},
@@ -23,7 +96,7 @@ export default class AppointmentsReport extends React.Component{
             <Card>
                 <Row gutter={16}>
                     <Col span={16}>
-                        <Table dataSource={[]}/>
+                        <Table columns={columns} size={'small'} dataSource={this.state.appointmentReports}/>
                     </Col>
                     <Col span={8}>
                         <Radio.Group buttonStyle="solid" defaultValue="all">

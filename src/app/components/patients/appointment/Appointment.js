@@ -116,7 +116,7 @@ class Appointment extends React.Component{
         let that = this;
         let successFn =function (data){
             that.setState({
-                procedure_categry:data
+                procedure_category:data
             })
 
         }
@@ -190,8 +190,8 @@ class Appointment extends React.Component{
 
   render(){
       const procedures={}
-      if(this.state.procedure_categry){
-          this.state.procedure_categry.forEach(function (procedure) {
+      if(this.state.procedure_category){
+          this.state.procedure_category.forEach(function (procedure) {
               procedures[procedure.id]=procedure.name;
           })
       }

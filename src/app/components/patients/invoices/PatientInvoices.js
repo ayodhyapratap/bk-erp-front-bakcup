@@ -16,7 +16,7 @@ class PatientInvoices extends React.Component{
             active_practiceId:this.props.active_practiceId,
             invoices:[],
             drug_catalog:null,
-            procedure_categry:null,
+            procedure_category:null,
             taxes_list: null,
             editInvoice: null,
         }
@@ -65,7 +65,7 @@ class PatientInvoices extends React.Component{
         let that = this;
         let successFn =function (data){
             that.setState({
-                procedure_categry:data
+                procedure_category:data
             })
 
         }
@@ -106,8 +106,8 @@ class PatientInvoices extends React.Component{
             })
         }
         const procedures={}
-        if(this.state.procedure_categry){
-            this.state.procedure_categry.forEach(function (procedure) {
+        if(this.state.procedure_category){
+            this.state.procedure_category.forEach(function (procedure) {
                 procedures[procedure.id]=procedure.name;
             })
         }
