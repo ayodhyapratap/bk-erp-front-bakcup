@@ -22,6 +22,13 @@ export default class AddPost extends React.Component {
             editBlogData : this.props.editBlogData?this.props.editBlogData:null
         }
     }
+    changeRedirect(){
+        var redirectVar=this.state.redirect;
+        this.setState({
+            redirect:  !redirectVar,
+        })  ;
+    }
+
     componentDidMount(){
         if(this.props.match.params.id){
             if(this.state.editBlogData) {
@@ -124,7 +131,7 @@ export default class AddPost extends React.Component {
 
         return <Row>
             <Card>
-                <Route exact path='web/bog/edit/:id'
+                <Route exact path='web/blog/edit/:id'
                        render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Post" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'web/blog'} />)}/>
                 <Route exact path='/web/blog/add'
                        render={() =><TestFormLayout title="Add Post" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>

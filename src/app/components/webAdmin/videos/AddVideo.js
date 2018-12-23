@@ -11,18 +11,19 @@ import {
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {
-    BLOG_CONTACTUS,
+    BLOG_DISEASE,
+    BLOG_POST, BLOG_VIDEOS,
     INVOICES_API,
     PRACTICE,
-    SINGLE_CONTACT,
     SINGLE_DISEASE,
-    SINGLE_POST
+    SINGLE_POST,
+    SINGLE_VIDEO
 } from "../../../constants/api";
 import {Route} from "react-router";
 import {Redirect} from "react-router-dom";
 
 
-export default class AddContacts extends React.Component {
+export default class AddVideo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -53,7 +54,7 @@ export default class AddContacts extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(SINGLE_CONTACT ,successFn, errorFn);
+        getAPI(SINGLE_VIDEO ,successFn, errorFn);
 
     }
 
@@ -66,27 +67,21 @@ export default class AddContacts extends React.Component {
             type: INPUT_FIELD
         },{
             label: "Rank ",
-            key: "contact_rank",
-            initialValue:this.state.editBlogData?this.state.editBlogData.contact_rank:null,
+            key: "rank",
+            initialValue:this.state.editBlogData?this.state.editBlogData.rank:null,
             type: NUMBER_FIELD
         },{
-            label: "Phone Number ",
-            key: "phone_no",
-            initialValue:this.state.editBlogData?this.state.editBlogData.phone_no:null,
+            label: "Video link",
+            key: "link",
+            initialValue:this.state.editBlogData?this.state.editBlogData.link:null,
             type: INPUT_FIELD,
-        },{
-            label: "Address",
-            key: "address",
-            initialValue:this.state.editBlogData?this.state.editBlogData.address:null,
-            type: TEXT_FIELD,
-            minRows:3,
         },{
             label: "Active",
             key: "is_active",
             initialValue:this.state.editBlogData?this.state.editBlogData.is_active:null,
             type: SINGLE_CHECKBOX_FIELD,
             minRows:3,
-        },];
+        }, ];
 
 
         let editformProp;
@@ -99,7 +94,7 @@ export default class AddContacts extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_CONTACT, [this.props.practiceId]),
+                action: interpolate(SINGLE_VIDEO, [this.props.practiceId]),
                 method: "put",
 
             }
@@ -115,21 +110,21 @@ export default class AddContacts extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(BLOG_CONTACTUS, [this.props.match.params.id]),
+            action:  interpolate(BLOG_VIDEOS, [this.props.match.params.id]),
             method: "post",
         }
         let defaultValues=[];
 
         return <Row>
             <Card>
-                <Route exact path='web/contact/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Contact" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'web/contact'} />)}/>
-                <Route exact path='/web/contact/add'
-                       render={() =><TestFormLayout title="Add Contact" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
+                <Route exact path='web/videos/edit/:id'
+                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Video" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'web/videos'} />)}/>
+                <Route exact path='/web/videos/add'
+                       render={() =><TestFormLayout title="Add video" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
 
 
             </Card>
-            {this.state.redirect&&    <Redirect to={'web/blog'} />}
+            {this.state.redirect&&    <Redirect to={'web/videos'} />}
         </Row>
 
     }
