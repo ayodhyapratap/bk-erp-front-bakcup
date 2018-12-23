@@ -15,7 +15,7 @@ import {
     INVOICES_API,
     PRACTICE,
     SINGLE_CONTACT,
-    SINGLE_DISEASE,
+    SINGLE_DISEASE, SINGLE_PAGE_SEO,
     SINGLE_POST
 } from "../../../constants/api";
 import {Route} from "react-router";
@@ -31,7 +31,7 @@ export default class AddContacts extends React.Component {
     }
     componentDidMount(){
         if(this.props.match.params.id){
-            if(this.state.editBlogData) {
+            if(!this.state.editBlogData) {
                 this.loadData();
             }
         }
@@ -53,7 +53,7 @@ export default class AddContacts extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(SINGLE_CONTACT ,successFn, errorFn);
+        getAPI(interpolate(SINGLE_CONTACT, [this.props.match.params.id]) ,successFn, errorFn);
 
     }
 
@@ -122,14 +122,14 @@ export default class AddContacts extends React.Component {
 
         return <Row>
             <Card>
-                <Route exact path='web/contact/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Contact" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'web/contact'} />)}/>
+                <Route exact path='/web/contact/edit/:id'
+                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Contact" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/web/contact'} />)}/>
                 <Route exact path='/web/contact/add'
                        render={() =><TestFormLayout title="Add Contact" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
 
 
             </Card>
-            {this.state.redirect&&    <Redirect to={'web/blog'} />}
+            {this.state.redirect&&    <Redirect to={'/web/blog'} />}
         </Row>
 
     }

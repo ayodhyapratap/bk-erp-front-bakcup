@@ -130,7 +130,36 @@ class AppSider extends React.Component {
                             <span className="nav-text">Contacts</span>
                         </Link>
                     </Menu.Item>
-
+                    <Menu.Item key="web-6">
+                        <Link to="/web/pageseo">
+                            <Icon type="phone"/>
+                            <span className="nav-text">Page SEO</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="web-7">
+                        <Link to="/web/slider-image">
+                            <Icon type="phone"/>
+                            <span className="nav-text">Slider Image</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="web-8">
+                        <Link to="/web/facilities">
+                            <Icon type="phone"/>
+                            <span className="nav-text">Facilities</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="web-9">
+                        <Link to="/web/landingpagevideo">
+                            <Icon type="phone"/>
+                            <span className="nav-text">Landing Page Videos</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="web-10">
+                        <Link to="/web/landingpagecontent">
+                            <Icon type="phone"/>
+                            <span className="nav-text">Landing Page Content</span>
+                        </Link>
+                    </Menu.Item>
                 </SubMenu>
             </Menu>
         </Sider>

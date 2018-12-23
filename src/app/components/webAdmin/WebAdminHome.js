@@ -6,6 +6,11 @@ import BlogList from "./blog/BlogList";
 import ContactsList from "./contacts/ContactsList";
 import DiseaseList from "./disease/DiseaseList";
 import EventsList from "./events/EventsList";
+import SEOList from "./seo/SEOList";
+import SliderImageList from "./sliderImages/SliderImageList";
+import FacilityList from "./facilities/FacilityList";
+import LandingPageVideoList from "./landingPageVideos/LandingPageVideoList";
+import LandingPageContentList from "./landingPageContent/LandingPageContentList";
 
 const {Content} = Layout;
 export default class WebAdminHome extends React.Component {
@@ -27,6 +32,12 @@ export default class WebAdminHome extends React.Component {
                 <Route path="/web/contact" render={(route) => <ContactsList/>}/>
                 <Route path="/web/disease" render={(route) => <DiseaseList/>}/>
                 <Route path="/web/event" render={(route) => <EventsList/>}/>
+                <Route path="/web/pageseo" render={(route) => <SEOList/>}/>
+                <Route path="/web/slider-image" render={(route) => <SliderImageList/>}/>
+                <Route path="/web/facilities" render={(route) => <FacilityList/>}/>
+                <Route path="/web/landingpagevideo" render={(route) => <LandingPageVideoList/>}/>
+                <Route path="/web/landingpagecontent" render={(route) => <LandingPageContentList/>}/>
+
             </Switch>
         </Content>
     }

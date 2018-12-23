@@ -10,7 +10,15 @@ import {
 } from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
-import {BLOG_DISEASE, BLOG_POST, INVOICES_API, PRACTICE, SINGLE_DISEASE, SINGLE_POST} from "../../../constants/api";
+import {
+    BLOG_DISEASE,
+    BLOG_POST,
+    INVOICES_API,
+    PRACTICE,
+    SINGLE_DISEASE,
+    SINGLE_PAGE_SEO,
+    SINGLE_POST
+} from "../../../constants/api";
 import {Route} from "react-router";
 import {Redirect} from "react-router-dom";
 
@@ -31,7 +39,7 @@ export default class AddPost extends React.Component {
 
     componentDidMount(){
         if(this.props.match.params.id){
-            if(this.state.editBlogData) {
+            if(!this.state.editBlogData) {
                 this.loadData();
             }
         }
@@ -47,7 +55,8 @@ export default class AddPost extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(SINGLE_POST ,successFn, errorFn);
+        getAPI(interpolate(SINGLE_POST, [this.props.match.params.id]) ,successFn, errorFn);
+
 
     }
 
@@ -85,11 +94,6 @@ export default class AddPost extends React.Component {
             key: "keywords",
             initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
             type: TEXT_FIELD,
-        },{
-            label: "Url",
-            key: "domain",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
-            type: INPUT_FIELD,
         },{
             label: "content",
             key: "content",
@@ -131,14 +135,14 @@ export default class AddPost extends React.Component {
 
         return <Row>
             <Card>
-                <Route exact path='web/blog/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Post" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'web/blog'} />)}/>
+                <Route exact path='/web/blog/edit/:id'
+                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Post" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/web/blog'} />)}/>
                 <Route exact path='/web/blog/add'
                        render={() =><TestFormLayout title="Add Post" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
 
 
             </Card>
-            {this.state.redirect&&    <Redirect to={'web/blog'} />}
+            {this.state.redirect&&    <Redirect to={'/web/blog'} />}
         </Row>
 
     }

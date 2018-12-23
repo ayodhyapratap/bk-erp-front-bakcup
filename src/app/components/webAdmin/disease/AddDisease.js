@@ -3,7 +3,7 @@ import React from "react";
 import {INPUT_FIELD, QUILL_TEXT_FIELD, SELECT_FIELD, SUCCESS_MSG_TYPE, TEXT_FIELD} from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
-import {BLOG_DISEASE, INVOICES_API, PRACTICE, SINGLE_DISEASE} from "../../../constants/api";
+import {BLOG_DISEASE, INVOICES_API, PRACTICE, SINGLE_DISEASE, SINGLE_PAGE_SEO} from "../../../constants/api";
 import {Route} from "react-router";
 import {Redirect} from "react-router-dom";
 
@@ -17,7 +17,7 @@ export default class AddDisease extends React.Component {
     }
     componentDidMount(){
         if(this.props.match.params.id){
-            if(this.state.editBlogData) {
+            if(!this.state.editBlogData) {
                 this.loadData();
             }
         }
@@ -39,7 +39,8 @@ export default class AddDisease extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(SINGLE_DISEASE ,successFn, errorFn);
+        getAPI(interpolate(SINGLE_DISEASE, [this.props.match.params.id]) ,successFn, errorFn);
+
 
     }
 
@@ -121,14 +122,14 @@ export default class AddDisease extends React.Component {
 
         return <Row>
             <Card>
-                <Route exact path='web/disease/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Disease" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'web/disease'} />)}/>
+                <Route exact path='/web/disease/edit/:id'
+                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Disease" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/web/disease'} />)}/>
                 <Route exact path='/web/disease/add'
                        render={() =><TestFormLayout title="Add Disease" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
 
 
             </Card>
-            {this.state.redirect&&    <Redirect to={'web/disease'} />}
+            {this.state.redirect&&    <Redirect to={'/web/disease'} />}
         </Row>
 
     }

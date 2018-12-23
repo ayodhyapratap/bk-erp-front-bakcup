@@ -11,19 +11,19 @@ import {
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {
-    BLOG_DISEASE, BLOG_EVENTS,
-    BLOG_POST,
+    BLOG_DISEASE, BLOG_FACILITY, BLOG_PAGE_SEO,
+    BLOG_POST, BLOG_SLIDER,
     INVOICES_API,
     PRACTICE,
-    SINGLE_DISEASE,
-    SINGLE_EVENTS, SINGLE_PAGE_SEO,
-    SINGLE_POST
+    SINGLE_DISEASE, SINGLE_FACILITY,
+    SINGLE_PAGE_SEO,
+    SINGLE_POST, SINGLE_SLIDER
 } from "../../../constants/api";
 import {Route} from "react-router";
 import {Redirect} from "react-router-dom";
 
 
-export default class AddEvent extends React.Component {
+export default class AddFacility extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -47,6 +47,7 @@ export default class AddEvent extends React.Component {
 
     loadData(){
         let that =this;
+        console.log("i M groot")
         let successFn = function (data) {
             that.setState({
                 editBlogData:data,
@@ -55,44 +56,17 @@ export default class AddEvent extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_EVENTS, [this.props.match.params.id]) ,successFn, errorFn);
-
+        getAPI(interpolate(SINGLE_FACILITY, [this.props.match.params.id]) ,successFn, errorFn);
 
     }
 
 
     render(){
         const  fields= [{
-            label: "Event Title",
-            key: "title",
-            initialValue:this.state.editBlogData?this.state.editBlogData.title:null,
+            label: "Name",
+            key: "name",
+            initialValue:this.state.editBlogData?this.state.editBlogData.name:null,
             type: INPUT_FIELD
-        },{
-            label: "Event Date",
-            key: "event_date",
-            initialValue:this.state.editBlogData?this.state.editBlogData.discount:null,
-            type: DATE_PICKER,
-
-        },{
-            label: "Event Image",
-            key: "event_image",
-            initialValue:this.state.editBlogData?this.state.editBlogData.discount:null,
-            type: INPUT_FIELD,
-        },{
-            label: "SEO Description",
-            key: "meta_description  ",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
-            type: INPUT_FIELD,
-        },{
-            label: "SEO Keywords",
-            key: "keywords",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
-            type: TEXT_FIELD,
-        },{
-            label: "Url",
-            key: "domain",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
-            type: INPUT_FIELD,
         },{
             label: "content",
             key: "content",
@@ -103,7 +77,7 @@ export default class AddEvent extends React.Component {
             key: "is_active",
             initialValue:this.state.editBlogData?this.state.editBlogData.is_active:null,
             type: SINGLE_CHECKBOX_FIELD,
-        },];
+        }, ];
 
 
         let editformProp;
@@ -116,7 +90,7 @@ export default class AddEvent extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_EVENTS, [this.props.practiceId]),
+                action: interpolate(SINGLE_FACILITY, [this.props.practiceId]),
                 method: "put",
 
             }
@@ -132,21 +106,21 @@ export default class AddEvent extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(BLOG_EVENTS, [this.props.match.params.id]),
+            action:  interpolate(BLOG_FACILITY, [this.props.match.params.id]),
             method: "post",
         }
         let defaultValues=[];
 
         return <Row>
             <Card>
-                <Route exact path='/web/event/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Event" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/web/event'} />)}/>
-                <Route exact path='/web/event/add'
-                       render={() =><TestFormLayout title="Add Event" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
+                <Route exact path='/web/facilities/edit/:id'
+                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit slider-image" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'web/facilities'} />)}/>
+                <Route exact path='/web/facilities/add'
+                       render={() =><TestFormLayout title="Add slider-image" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
 
 
             </Card>
-            {this.state.redirect&&    <Redirect to={'/web/event'} />}
+            {this.state.redirect&&    <Redirect to={'/web/slider-image'} />}
         </Row>
 
     }

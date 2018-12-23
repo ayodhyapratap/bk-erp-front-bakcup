@@ -13,9 +13,9 @@ import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {
     BLOG_DISEASE,
     BLOG_POST, BLOG_VIDEOS,
-    INVOICES_API,
+    INVOICES_API, LANDING_PAGE_VIDEO,
     PRACTICE,
-    SINGLE_DISEASE, SINGLE_PAGE_SEO,
+    SINGLE_DISEASE, SINGLE_LANDING_PAGE_VIDEO, SINGLE_PAGE_SEO,
     SINGLE_POST,
     SINGLE_VIDEO
 } from "../../../constants/api";
@@ -23,7 +23,7 @@ import {Route} from "react-router";
 import {Redirect} from "react-router-dom";
 
 
-export default class AddVideo extends React.Component {
+export default class AddLandingPageVideo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -54,7 +54,7 @@ export default class AddVideo extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_VIDEO, [this.props.match.params.id]) ,successFn, errorFn);
+        getAPI(interpolate(SINGLE_LANDING_PAGE_VIDEO, [this.props.match.params.id]) ,successFn, errorFn);
 
 
     }
@@ -94,7 +94,7 @@ export default class AddVideo extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_VIDEO, [this.props.practiceId]),
+                action: interpolate(SINGLE_LANDING_PAGE_VIDEO, [this.props.practiceId]),
                 method: "put",
 
             }
@@ -110,21 +110,21 @@ export default class AddVideo extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(BLOG_VIDEOS, [this.props.match.params.id]),
+            action:  interpolate(LANDING_PAGE_VIDEO, [this.props.match.params.id]),
             method: "post",
         }
         let defaultValues=[];
 
         return <Row>
             <Card>
-                <Route exact path='/web/videos/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Video" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/web/videos'} />)}/>
-                <Route exact path='/web/videos/add'
+                <Route exact path='/web/landingpagevideo/edit/:id'
+                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Video" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/web/landingpagevideo'} />)}/>
+                <Route exact path='/web/landingpagevideo/add'
                        render={() =><TestFormLayout title="Add video" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
 
 
             </Card>
-            {this.state.redirect&&    <Redirect to={'/web/videos'} />}
+            {this.state.redirect&&    <Redirect to={'/web/landingpagevideo'} />}
         </Row>
 
     }

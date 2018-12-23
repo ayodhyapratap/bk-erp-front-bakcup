@@ -31,7 +31,7 @@ export default class DiseaseList extends React.Component{
         return<div><Switch>
             <Route exact path='/web/event/add'
                    render={(route) => <AddEvent {...this.state} {...route}/>}/>
-            <Route exact path='web/event/edit/:id'
+            <Route exact path='/web/event/edit/:id'
                    render={(route) => <AddEvent {...this.state} {...route}/>}/>
             <Card title="Disease" extra={<Link to={"/web/event/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
                 <List/>
