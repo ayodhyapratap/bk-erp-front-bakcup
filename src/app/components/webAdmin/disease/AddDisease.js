@@ -1,9 +1,9 @@
 import {Button, Card, Form, Icon, List, Row} from "antd";
 import React from "react";
-import {INPUT_FIELD, SELECT_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {INPUT_FIELD, QUILL_TEXT_FIELD, SELECT_FIELD, SUCCESS_MSG_TYPE, TEXT_FIELD} from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
-import {displayMessage, interpolate} from "../../../utils/common";
-import {INVOICES_API} from "../../../constants/api";
+import {displayMessage, getAPI, interpolate} from "../../../utils/common";
+import {BLOG_DISEASE, INVOICES_API, PRACTICE, SINGLE_DISEASE} from "../../../constants/api";
 import {Route} from "react-router";
 import {Redirect} from "react-router-dom";
 
@@ -11,58 +11,114 @@ import {Redirect} from "react-router-dom";
 export default class AddDisease extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            editBlogData : this.props.editBlogData?this.props.editBlogData:null
+        }
+    }
+    componentDidMount(){
+        if(this.props.match.params.id){
+            if(this.state.editBlogData) {
+                this.loadData();
+            }
+        }
+    }
+
+    loadData(){
+        let that =this;
+        let successFn = function (data) {
+            that.setState({
+                editBlogData:data,
+            })
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(SINGLE_DISEASE ,successFn, errorFn);
+
     }
 
 
     render(){
         const  fields= [{
-            label: "Unit",
-            key: "unit",
-            initialValue:this.state.editInvoice?this.state.editInvoice.unit:null,
+            label: "Disease Type",
+            key: "disease_type",
+            initialValue:this.state.editBlogData?this.state.editBlogData.unit:null,
             type: INPUT_FIELD
         },{
-            label: "cost",
-            key: "cost",
-            initialValue:this.state.editInvoice?this.state.editInvoice.cost:null,
+            label: "Disease Name",
+            key: "disease_name",
+            initialValue:this.state.editBlogData?this.state.editBlogData.cost:null,
             type: INPUT_FIELD
         },{
-            label: "discount",
-            key: "discount",
-            initialValue:this.state.editInvoice?this.state.editInvoice.discount:null,
+            label: "Disease Main Image",
+            key: "main_image",
+            initialValue:this.state.editBlogData?this.state.editBlogData.discount:null,
             type: INPUT_FIELD,
         },{
-            label: "total",
-            key: "total",
-            initialValue:this.state.editInvoice?this.state.editInvoice.total:null,
+            label: "Disease Side Image",
+            key: "side_image",
+            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
             type: INPUT_FIELD,
+        },{
+            label: "SEO Description",
+            key: "meta_description",
+            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            type: TEXT_FIELD,
+        },{
+            label: "SEO Keywords",
+            key: "keywords",
+            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            type: TEXT_FIELD,
+        },{
+            label: "Url",
+            key: "domain",
+            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            type: INPUT_FIELD,
+        },{
+            label: "content",
+            key: "content",
+            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            type: QUILL_TEXT_FIELD,
         }, ];
 
 
         let editformProp;
+        if(this.state.editBlogData) {
+            editformProp = {
+                successFn: function (data) {
+                    displayMessage(SUCCESS_MSG_TYPE, "success");
+                    console.log(data);
+                },
+                errorFn: function () {
+
+                },
+                action: interpolate(SINGLE_DISEASE, [this.props.practiceId]),
+                method: "put",
+
+            }
+        }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
         const formProp={
             successFn:function(data){
-                displayMessage(SUCCESS_MSG_TYPE, "success")
+                displayMessage(SUCCESS_MSG_TYPE, "success");
 
                 console.log(data);
             },
             errorFn:function(){
 
             },
-            action:  interpolate(INVOICES_API, [this.props.match.params.id]),
+            action:  interpolate(BLOG_DISEASE, [this.props.match.params.id]),
             method: "post",
         }
         let defaultValues=[];
-        if(this.state.editInvoice){
-            defaultValues.push({"key":"id", "value":this.state.editInvoice.id});
-        }
+
         return <Row>
             <Card>
-                <Route exact path=''
-                       render={() => (this.state.editInvoice?<TestFormLayout defaultValues={defaultValues} title="Edit Invoive" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>: <Redirect to={'/patient/'+this.props.match.params.id+'/billing/invoices'} />)}/>
-                <Route exact path='/patient/:id/billing/invoices/add'
-                       render={() =><TestFormLayout title="Add Invoice" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
+                <Route exact path='web/disease/edit/:id'
+                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Disease" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'web/disease'} />)}/>
+                <Route exact path='/web/disease/add'
+                       render={() =><TestFormLayout title="Add Disease" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
 
 
             </Card>

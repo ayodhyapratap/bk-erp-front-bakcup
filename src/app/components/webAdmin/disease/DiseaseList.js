@@ -3,7 +3,7 @@ import React from "react";
 import {getAPI} from "../../../utils/common";
 import {BLOG_DISEASE } from "../../../constants/api";
 import {Route, Switch} from "react-router";
-import AddInvoice from "../../patients/invoices/AddInvoice";
+import AddDisease from "./AddDisease";
 
 export default class DiseaseList extends React.Component{
     constructor(props){
@@ -28,7 +28,9 @@ export default class DiseaseList extends React.Component{
     }
     render(){
         return<div><Switch>
-            <Route exact path='web/disease/add'
+            <Route exact path='/web/disease/add'
+                   render={(route) => <AddDisease{...this.state} {...route}/>}/>
+            <Route exact path='web/disease/edit/:id'
                    render={(route) => <AddDisease{...this.state} {...route}/>}/>
             <Card title="Disease" extra={<Button type="primary"><Icon type="plus"/> Add</Button>}>
             <List/>
