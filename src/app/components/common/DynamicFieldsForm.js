@@ -1,11 +1,25 @@
 import React from "react";
 import {Button, Divider, Form, TimePicker, Icon, DatePicker, Input, InputNumber, Radio, Select, Checkbox} from "antd";
-import {CHECKBOX_FIELD ,TIME_PICKER, SINGLE_CHECKBOX_FIELD, COLOR_PICKER, TEXT_FIELD, INPUT_FIELD, DATE_PICKER, NUMBER_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../constants/dataKeys";
+import {
+    CHECKBOX_FIELD,
+    TIME_PICKER,
+    SINGLE_CHECKBOX_FIELD,
+    COLOR_PICKER,
+    TEXT_FIELD,
+    INPUT_FIELD,
+    DATE_PICKER,
+    NUMBER_FIELD,
+    RADIO_FIELD,
+    SELECT_FIELD,
+    QUILL_TEXT_FIELD
+} from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {postAPI, putAPI} from "../../utils/common";
 import moment from "moment";
 import { SwatchesPicker } from 'react-color';
 
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -179,6 +193,12 @@ class DynamicFieldsForm extends React.Component {
                             {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                 <TextArea autosize={{ minRows: field.minRows, maxRows: field.maxRows }} placeholder={field.placeholder} disabled={field.disabled} onChange={that.inputChange}/>
                             )}
+                            </FormItem>   </div>;
+
+                        case QUILL_TEXT_FIELD:
+                        return <div> <Divider/><FormItem label={field.label}  {...formItemLayout} extra={field.extra}>
+                            {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                <ReactQuill theme="snow" placeholder={field.placeholder}/>                            )}
                             </FormItem>   </div>;
                         case TIME_PICKER:
                             return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>

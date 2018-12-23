@@ -60,3 +60,27 @@ export const INVOICE_REPORTS = 'clinics/%s/invoice_report/?%s'
 export const PATIENTS_REPORTS = 'clinics/%s/patients_report/?%s'
 export const PAYMENTS_REPORTS = 'clinics/%s/payments_report/?%s'
 export const TREATMENT_REPORTS = 'clinics/%s/treatment_report/?%s'
+
+//blogs APT
+
+
+export const  BLOG_POST = 'post/';
+export const  SINGLE_POST = 'post/%s/';
+export const  BLOG_VIDEOS = 'video/';
+export const  SINGLE_VIDEO = 'video/%s/';
+export const  BLOG_DISEASE = 'disease/';
+export const  SINGLE_DISEASE = 'disease/%s/';
+export const  BLOG_EVENTS = 'events/';
+export const  SINGLE_EVENTS = 'events/%s/';
+export const  BLOG_CONTACTUS = 'contactus/';
+export const  SINGLE_CONTACT = 'contactus/%s/';
+export const  BLOG_PAGE_SEO = 'page_seo/';
+export const  SINGLE_PAGE_SEO = 'page_seo/%s/';
+export const  BLOG_SLIDER = 'slider/';
+export const  SINGLE_SLIDER = 'slider/%s/';
+export const  BLOG_FACILITY = 'facility/';
+export const  SINGLE_FACILITY = 'facility/%s/';
+export const  LANDING_PAGE_CONTENT = 'landing_page_content/';
+export const  SINGLE_LANDING_PAGE_CONTENT = 'landing_page_content/%s/';
+export const  LANDING_PAGE_VIDEO = 'landing_page_video/';
+export const  SINGLE_LANDING_PAGE_VIDEO = 'landing_page_video/%s/';

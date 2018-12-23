@@ -38,6 +38,8 @@ export const DATE_PICKER = 'datepicker';
 export const TEXT_FIELD = 'textfield';
 export const TIME_PICKER = 'timepicker';
 export const COLOR_PICKER = 'colorpicker';
+export const QUILL_TEXT_FIELD = 'quilltextfield';
+
 
 
 /***
