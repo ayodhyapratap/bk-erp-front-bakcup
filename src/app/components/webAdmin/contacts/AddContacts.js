@@ -115,7 +115,7 @@ export default class AddContacts extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(BLOG_CONTACTUS, [this.props.match.params.id]),
+            action:  BLOG_CONTACTUS,
             method: "post",
         }
         let defaultValues=[];

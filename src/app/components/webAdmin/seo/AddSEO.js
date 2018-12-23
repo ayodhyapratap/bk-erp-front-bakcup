@@ -116,7 +116,7 @@ export default class AddSEO extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(BLOG_PAGE_SEO, [this.props.match.params.id]),
+            action:  BLOG_PAGE_SEO,
             method: "post",
         }
         let defaultValues=[];

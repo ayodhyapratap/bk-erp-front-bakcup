@@ -1,4 +1,4 @@
-import {Button, Card, Form, Icon, List, Row} from "antd";
+import {Button, Card, Form, Icon, List, Row, Upload} from "antd";
 import React from "react";
 import {
     DATE_PICKER,
@@ -110,7 +110,7 @@ export default class AddVideo extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(BLOG_VIDEOS, [this.props.match.params.id]),
+            action:  BLOG_VIDEOS,
             method: "post",
         }
         let defaultValues=[];
@@ -124,6 +124,7 @@ export default class AddVideo extends React.Component {
 
 
             </Card>
+
             {this.state.redirect&&    <Redirect to={'/web/videos'} />}
         </Row>
 

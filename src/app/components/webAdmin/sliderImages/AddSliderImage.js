@@ -111,7 +111,7 @@ export default class AddSliderImage extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(BLOG_SLIDER, [this.props.match.params.id]),
+            action:  BLOG_SLIDER,
             method: "post",
         }
         let defaultValues=[];

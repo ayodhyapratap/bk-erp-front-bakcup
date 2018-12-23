@@ -132,7 +132,7 @@ export default class AddEvent extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(BLOG_EVENTS, [this.props.match.params.id]),
+            action:  BLOG_EVENTS,
             method: "post",
         }
         let defaultValues=[];

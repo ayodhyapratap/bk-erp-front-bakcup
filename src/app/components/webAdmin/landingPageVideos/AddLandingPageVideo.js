@@ -110,7 +110,7 @@ export default class AddLandingPageVideo extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(LANDING_PAGE_VIDEO, [this.props.match.params.id]),
+            action:  LANDING_PAGE_VIDEO,
             method: "post",
         }
         let defaultValues=[];

@@ -105,7 +105,7 @@ export default class AddLandingPageContent extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(LANDING_PAGE_CONTENT, [this.props.match.params.id]),
+            action:  LANDING_PAGE_CONTENT,
             method: "post",
         }
         let defaultValues=[];

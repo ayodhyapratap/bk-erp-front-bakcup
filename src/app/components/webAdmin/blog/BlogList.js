@@ -1,4 +1,4 @@
-import {Button, Card, Icon, List} from "antd";
+import {Button, Card, Icon, List, Row, Upload} from "antd";
 import React from "react";
 import {getAPI} from "../../../utils/common";
 import { BLOG_POST} from "../../../constants/api";
@@ -35,6 +35,11 @@ export default class DiseaseList extends React.Component{
                    render={(route) => <AddPost {...this.state} {...route}/>}/>
             <Card title="Disease" extra={<Link to={"/web/blog/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
                 <List/>
+                <Upload>
+                    <Button>
+                        <Icon type="upload" /> Click to Upload
+                    </Button>
+                </Upload>,
             </Card>
         </Switch>
         </div>

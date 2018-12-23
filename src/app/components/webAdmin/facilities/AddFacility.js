@@ -90,7 +90,7 @@ export default class AddFacility extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_FACILITY, [this.props.practiceId]),
+                action: SINGLE_FACILITY,
                 method: "put",
 
             }

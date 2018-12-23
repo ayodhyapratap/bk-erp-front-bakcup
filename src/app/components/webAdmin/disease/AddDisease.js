@@ -115,7 +115,7 @@ export default class AddDisease extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(BLOG_DISEASE, [this.props.match.params.id]),
+            action:  BLOG_DISEASE,
             method: "post",
         }
         let defaultValues=[];

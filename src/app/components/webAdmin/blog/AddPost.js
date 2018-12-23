@@ -128,7 +128,7 @@ export default class AddPost extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(BLOG_POST, [this.props.match.params.id]),
+            action:  BLOG_POST,
             method: "post",
         }
         let defaultValues=[];
