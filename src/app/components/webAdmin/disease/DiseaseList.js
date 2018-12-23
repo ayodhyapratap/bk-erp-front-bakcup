@@ -4,12 +4,13 @@ import {getAPI} from "../../../utils/common";
 import {BLOG_DISEASE } from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddDisease from "./AddDisease";
+import {Link} from "react-router-dom";
 
 export default class DiseaseList extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            post:null
+            disease:null
         };
         this.loadDiseases=this.loadDiseases.bind(this);
     }
@@ -32,7 +33,7 @@ export default class DiseaseList extends React.Component{
                    render={(route) => <AddDisease{...this.state} {...route}/>}/>
             <Route exact path='web/disease/edit/:id'
                    render={(route) => <AddDisease{...this.state} {...route}/>}/>
-            <Card title="Disease" extra={<Button type="primary"><Icon type="plus"/> Add</Button>}>
+            <Card title="Disease" extra={<Link to={"/web/disease/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
             <List/>
         </Card>
         </Switch>

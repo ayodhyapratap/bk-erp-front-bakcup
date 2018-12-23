@@ -189,7 +189,7 @@ class DynamicFieldsForm extends React.Component {
                                 )}
                             </FormItem>;
                         case TEXT_FIELD:
-                        return <div> <Divider/><FormItem label={field.label}  {...formItemLayout} extra={field.extra}>
+                        return <div> <FormItem label={field.label}  {...formItemLayout} extra={field.extra}>
                             {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                 <TextArea autosize={{ minRows: field.minRows, maxRows: field.maxRows }} placeholder={field.placeholder} disabled={field.disabled} onChange={that.inputChange}/>
                             )}
