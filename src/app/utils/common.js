@@ -8,17 +8,18 @@ import {ERROR_MESSAGE_404, ERROR_MESSAGE_500} from "../constants/messages";
 import {ERROR_MSG_TYPE, INFO_MSG_TYPE, SUCCESS_MSG_TYPE, WARNING_MSG_TYPE} from "../constants/dataKeys";
 
 export const makeURL = function (URL) {
-  return API_URL + '/' + URL;
+    return API_URL + '/' + URL;
 };
 
-export const putAPI = function (URL, data, successFn, errorFn) {
+export const putAPI = function (URL, data, successFn, errorFn, headerConfig = {}) {
     // console.log("sending to " + makeURL(URL), data);
     axios({
         method: 'put',
         url: makeURL(URL),
         data: data,
         headers: {
-            Authorization: 'Bearer ' + getAuthToken()
+            Authorization: 'Bearer ' + getAuthToken(),
+            ...headerConfig
         }
     }).then(function (response) {
         // console.log(response);
@@ -30,14 +31,15 @@ export const putAPI = function (URL, data, successFn, errorFn) {
     });
 };
 
-export const postAPI = function (URL, data, successFn, errorFn) {
+export const postAPI = function (URL, data, successFn, errorFn, headerConfig = {}) {
     // console.log("sending to " + makeURL(URL), data);
     axios({
         method: 'post',
         url: makeURL(URL),
         data: data,
         headers: {
-            Authorization: 'Bearer ' + getAuthToken()
+            Authorization: 'Bearer ' + getAuthToken(),
+            ...headerConfig
         }
     }).then(function (response) {
         // console.log(response);

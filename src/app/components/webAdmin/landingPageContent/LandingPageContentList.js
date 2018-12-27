@@ -1,4 +1,4 @@
-import {Button, Card, Icon, List} from "antd";
+import {Avatar, Button, Card, Icon, List} from "antd";
 import React from "react";
 import {getAPI} from "../../../utils/common";
 import {BLOG_POST, BLOG_VIDEOS, LANDING_PAGE_CONTENT, LANDING_PAGE_VIDEO} from "../../../constants/api";
@@ -10,7 +10,7 @@ export default class LandingPageContentList extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            videos:null
+            pageContent:[]
         };
         this.loadData=this.loadData.bind(this);
     }
@@ -20,7 +20,9 @@ export default class LandingPageContentList extends React.Component{
     loadData(){
         let that =this;
         let successFn = function (data) {
-            console.log(data);
+            that.setState({
+                pageContent:data
+            })
         }
         let errorFn = function () {
 
@@ -33,8 +35,20 @@ export default class LandingPageContentList extends React.Component{
                    render={(route) => <AddLandingPageContent {...this.state} {...route}/>}/>
             <Route exact path='/web/landingpagecontent/edit/:id'
                    render={(route) => <AddLandingPageContent {...this.state} {...route}/>}/>
-            <Card title="Disease" extra={<Link to={"/web/landingpagecontent/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <List/>
+            <Card title="Landing Page Content" extra={<Link to={"/web/landingpagecontent/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
+                <List dataSource={this.state.pageContent}
+                      itemLayout="vertical"
+                      renderItem={item => <List.Item key={item.id}
+
+                                                     actions={[<Link to={"/web/landingpagecontent/edit/"+item.id}>Edit</Link>,
+                                                         <a >Delete</a>]}
+                                                     extra={<img src={item.image} style={{width:'300px'}}/>}>
+                          <List.Item.Meta
+                              avatar={<Avatar style={{ backgroundColor: '#87d068' }} >{item.rank}</Avatar>}
+                              title={item.title}
+                              description={item.content}
+                          />
+                      </List.Item>}/>
             </Card>
         </Switch>
         </div>

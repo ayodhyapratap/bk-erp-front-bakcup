@@ -1,7 +1,7 @@
 import {Button, Card, Form, Icon, List, Row} from "antd";
 import React from "react";
 import {
-    DATE_PICKER,
+    DATE_PICKER, FILE_UPLOAD_FIELD,
     INPUT_FIELD,
     QUILL_TEXT_FIELD,
     SELECT_FIELD, SINGLE_CHECKBOX_FIELD,
@@ -70,33 +70,33 @@ export default class AddEvent extends React.Component {
         },{
             label: "Event Date",
             key: "event_date",
-            initialValue:this.state.editBlogData?this.state.editBlogData.discount:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.event_date:null,
             type: DATE_PICKER,
 
         },{
             label: "Event Image",
             key: "event_image",
-            initialValue:this.state.editBlogData?this.state.editBlogData.discount:null,
-            type: INPUT_FIELD,
+            initialValue:this.state.editBlogData?this.state.editBlogData.event_image:null,
+            type: FILE_UPLOAD_FIELD,
         },{
             label: "SEO Description",
-            key: "meta_description  ",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            key: "meta_description",
+            initialValue:this.state.editBlogData?this.state.editBlogData.meta_description:null,
             type: INPUT_FIELD,
         },{
             label: "SEO Keywords",
             key: "keywords",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.keywords:null,
             type: TEXT_FIELD,
         },{
             label: "Url",
             key: "domain",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.domain:null,
             type: INPUT_FIELD,
         },{
             label: "content",
             key: "content",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.content:null,
             type: QUILL_TEXT_FIELD,
         }, {
             label: "Active",

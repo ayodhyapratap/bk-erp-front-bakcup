@@ -94,7 +94,7 @@ export default class AddVideo extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_VIDEO, [this.props.practiceId]),
+                action: interpolate(SINGLE_VIDEO, [this.props.match.params.id]),
                 method: "put",
 
             }

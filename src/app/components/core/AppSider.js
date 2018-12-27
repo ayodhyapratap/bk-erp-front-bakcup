@@ -11,7 +11,7 @@ class AppSider extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            openKeys: ['sub1'],
+            openKeys: [],
         }
     }
 
@@ -138,7 +138,7 @@ class AppSider extends React.Component {
                     </Menu.Item>
                     <Menu.Item key="web-7">
                         <Link to="/web/slider-image">
-                            <Icon type="phone"/>
+                            <Icon type="picture"/>
                             <span className="nav-text">Slider Image</span>
                         </Link>
                     </Menu.Item>
@@ -150,13 +150,13 @@ class AppSider extends React.Component {
                     </Menu.Item>
                     <Menu.Item key="web-9">
                         <Link to="/web/landingpagevideo">
-                            <Icon type="phone"/>
+                            <Icon type="video-camera"/>
                             <span className="nav-text">Landing Page Videos</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="web-10">
                         <Link to="/web/landingpagecontent">
-                            <Icon type="phone"/>
+                            <Icon type="read"/>
                             <span className="nav-text">Landing Page Content</span>
                         </Link>
                     </Menu.Item>

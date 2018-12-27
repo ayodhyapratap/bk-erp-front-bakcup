@@ -1,7 +1,7 @@
 import {Button, Card, Form, Icon, List, Row} from "antd";
 import React from "react";
 import {
-    DATE_PICKER,
+    DATE_PICKER, FILE_UPLOAD_FIELD,
     INPUT_FIELD,
     QUILL_TEXT_FIELD,
     SELECT_FIELD,
@@ -70,34 +70,39 @@ export default class AddPost extends React.Component {
         },{
             label: "Blog Domain ",
             key: "domain",
-            initialValue:this.state.editBlogData?this.state.editBlogData.cost:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.domain:null,
+            type: INPUT_FIELD
+        },{
+            label: "Blog URL ",
+            key: "slug",
+            initialValue:this.state.editBlogData?this.state.editBlogData.slug:null,
             type: INPUT_FIELD
         },{
             label: "Blog Image",
             key: "featured_image",
-            initialValue:this.state.editBlogData?this.state.editBlogData.discount:null,
-            type: INPUT_FIELD,
+            initialValue:this.state.editBlogData?this.state.editBlogData.image:null,
+            type: FILE_UPLOAD_FIELD,
         },{
             label: "Posted On",
             key: "posted_on",
-            initialValue:this.state.editBlogData?this.state.editBlogData.discount:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.posted_on:null,
             type: DATE_PICKER,
             format:"YYYY/MM/DD HH:mm"
 
         },{
             label: "SEO Description",
-            key: "meta_description  ",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            key: "meta_description",
+            initialValue:this.state.editBlogData?this.state.editBlogData.meta_description:null,
             type: INPUT_FIELD,
         },{
             label: "SEO Keywords",
             key: "keywords",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.keywords:null,
             type: TEXT_FIELD,
         },{
             label: "content",
             key: "content",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.content:null,
             type: QUILL_TEXT_FIELD,
         }, ];
 

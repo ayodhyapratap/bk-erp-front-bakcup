@@ -1,4 +1,4 @@
-import {Button, Card, Icon, List, Row, Upload} from "antd";
+import {Button, Card, Divider, Icon, List, Row, Table, Upload} from "antd";
 import React from "react";
 import {getAPI} from "../../../utils/common";
 import { BLOG_POST} from "../../../constants/api";
@@ -20,7 +20,9 @@ export default class DiseaseList extends React.Component{
     loadData(){
         let that =this;
         let successFn = function (data) {
-            console.log(data);
+            that.setState({
+                post:data
+            })
         }
         let errorFn = function () {
 
@@ -28,13 +30,31 @@ export default class DiseaseList extends React.Component{
         getAPI(BLOG_POST ,successFn, errorFn);
     }
     render(){
+        let coloumns = [{
+            title: 'Blog Title',
+            dataIndex: 'title',
+            key: 'post_title'
+        },{
+            title:'Date',
+            dataIndex:'posted_on',
+            key:'post_date'
+        },{
+            title:'Actions',
+            render:(item)=>{
+                return <div>
+                    <Link to={"/web/blog/edit/"+item.id}>Edit</Link>
+                    <Divider type="vertical"/>
+                    <a >Delete</a>
+                </div>
+            }
+        }];
         return<div><Switch>
                 <Route exact path='/web/blog/add'
                    render={(route) => <AddPost {...this.state} {...route}/>}/>
             <Route exact path='/web/blog/edit/:id'
                    render={(route) => <AddPost {...this.state} {...route}/>}/>
             <Card title="Disease" extra={<Link to={"/web/blog/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <List/>
+               <Table dataSource={this.state.post} columns={coloumns}/>
                 <Upload>
                     <Button>
                         <Icon type="upload" /> Click to Upload
