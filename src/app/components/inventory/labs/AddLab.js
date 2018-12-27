@@ -27,19 +27,20 @@ export default class AddLab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            editData : this.props.editData?this.props.editData:null
+            editData: this.props.editData ? this.props.editData : null
         }
     }
-    changeRedirect(){
-        var redirectVar=this.state.redirect;
+
+    changeRedirect() {
+        var redirectVar = this.state.redirect;
         this.setState({
-            redirect:  !redirectVar,
-        })  ;
+            redirect: !redirectVar,
+        });
 
     }
 
-    componentDidMount(){
-        if(this.props.match.params.id) {
+    componentDidMount() {
+        if (this.props.match.params.id) {
             if (!this.state.editData) {
                 this.loadData();
             }
@@ -47,24 +48,24 @@ export default class AddLab extends React.Component {
         this.getPatientListData();
 
 
-
     }
 
 
-    loadData(){
-        let that =this;
+    loadData() {
+        let that = this;
         let successFn = function (data) {
             that.setState({
-                editData:data,
+                editData: data,
             })
         }
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_EXPENSES_API, [this.props.match.params.id]) ,successFn, errorFn);
+        getAPI(interpolate(SINGLE_EXPENSES_API, [this.props.match.params.id]), successFn, errorFn);
 
 
     }
+
     getPatientListData() {
         let that = this;
         let successFn = function (data) {
@@ -79,51 +80,51 @@ export default class AddLab extends React.Component {
     }
 
 
-    render(){
+    render() {
 
-        const patientOptions=[]
-        if(this.state.patientListData){
-            this.state.patientListData.forEach(function(drug){
-                patientOptions.push({label:(drug.name), value:drug.id} );
+        const patientOptions = []
+        if (this.state.patientListData) {
+            this.state.patientListData.forEach(function (drug) {
+                patientOptions.push({label: (drug.name), value: drug.id});
             })
         }
-        const  fields= [{
+        const fields = [{
             label: "Job number ",
             key: "job_no",
-            initialValue:this.state.editData?this.state.editData.job_no:null,
+            initialValue: this.state.editData ? this.state.editData.job_no : null,
             type: INPUT_FIELD
-        },{
+        }, {
             label: "Doctor Name ",
             key: "job_no",
-            initialValue:this.state.editData?this.state.editData.doctor_name:null,
+            initialValue: this.state.editData ? this.state.editData.doctor_name : null,
             type: INPUT_FIELD
-        },{
+        }, {
             label: "Name ",
             key: "name",
-            initialValue:this.state.editData?this.state.editData.name:null,
+            initialValue: this.state.editData ? this.state.editData.name : null,
             type: INPUT_FIELD
-        },{
+        }, {
             label: "Status ",
             key: "status",
-            initialValue:this.state.editData?this.state.editData.status:null,
+            initialValue: this.state.editData ? this.state.editData.status : null,
             type: INPUT_FIELD
-        },{
+        }, {
             label: "Due Date",
             key: "due_date",
             type: DATE_PICKER,
-            initialValue:this.state.editData?this.state.editData.due_date:null,
-            format:"YYYY/MM/DD HH:mm"
-        },{
+            initialValue: this.state.editData ? this.state.editData.due_date : null,
+            format: "YYYY/MM/DD HH:mm"
+        }, {
             label: "patient",
             key: "patient",
             type: SELECT_FIELD,
-            initialValue:this.state.editData?this.state.editData.patient:null,
+            initialValue: this.state.editData ? this.state.editData.patient : null,
             options: patientOptions
         },];
 
 
         let editformProp;
-        if(this.state.editBlogData) {
+        if (this.state.editBlogData) {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
@@ -139,29 +140,33 @@ export default class AddLab extends React.Component {
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
-        const formProp={
-            successFn:function(data){
+        const formProp = {
+            successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
 
                 console.log(data);
             },
-            errorFn:function(){
+            errorFn: function () {
 
             },
-            action:  LAB_API,
+            action: LAB_API,
             method: "post",
         }
-        const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}];
+        const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
         return <Row>
             <Card>
                 <Route exact path='/inventory/lab/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Post" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/inventory/lab'} />)}/>
+                       render={() => (this.props.match.params.id ?
+                           <TestFormLayout defaultValues={defaultValues} title="Edit Lab"
+                                           changeRedirect={this.changeRedirect} formProp={editformProp}
+                                           fields={fields}/> : <Redirect to={'/inventory/lab'}/>)}/>
                 <Route exact path='/inventory/lab/add'
-                       render={() =><TestFormLayout title="Add lab" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
+                       render={() => <TestFormLayout title="Add lab" changeRedirect={this.changeRedirect}
+                                                     formProp={formProp} fields={fields}/>}/>
 
 
             </Card>
-            {this.state.redirect&&    <Redirect to={'/inventory/lab'} />}
+            {this.state.redirect && <Redirect to={'/inventory/lab'}/>}
         </Row>
 
     }

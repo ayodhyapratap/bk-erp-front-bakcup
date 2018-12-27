@@ -29,3 +29,6 @@
 .ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
     background: #1890ff !important;
 }
+.ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+    word-break: inherit !important;
+}

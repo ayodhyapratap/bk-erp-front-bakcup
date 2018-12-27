@@ -11,7 +11,8 @@ import {
     Radio,
     Select,
     Checkbox,
-    Upload
+    Upload,
+    message
 } from "antd";
 import {
     CHECKBOX_FIELD,
@@ -24,15 +25,16 @@ import {
     NUMBER_FIELD,
     RADIO_FIELD,
     SELECT_FIELD,
-    QUILL_TEXT_FIELD, FILE_UPLOAD_FIELD
+    QUILL_TEXT_FIELD, FILE_UPLOAD_FIELD, WARNING_MSG_TYPE
 } from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
-import {postAPI, putAPI} from "../../utils/common";
+import {displayMessage, makeURL, postAPI, putAPI} from "../../utils/common";
 import moment from "moment";
 import {SwatchesPicker} from 'react-color';
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import {FILE_UPLOAD_API} from "../../constants/api";
 
 const {TextArea} = Input;
 const FormItem = Form.Item;
@@ -96,13 +98,14 @@ class DynamicFieldsForm extends React.Component {
                     values[this.state.colorPickerKey] = this.state.colorPickerColor;
                 }
 
-                this.state.fields.forEach(function (field) {
-
+                values.forEach(function (field,key) {
                     if (field.type == FILE_UPLOAD_FIELD) {
-                        console.log(values[field.key]);
-                        reqFormData.append(field.key, that.state[field.key]);
-                    } else {
-                        reqFormData.append(field.key, values[field.key]);
+                        if(values[key] && values[key].file.response.image) {
+                            values[key] = values[key].file.response.image
+                        }else{
+                            displayMessage(WARNING_MSG_TYPE,"File Upload required");
+                            return false
+                        }
                     }
                 });
                 // reqFormData.concat(...values);
@@ -254,24 +257,24 @@ class DynamicFieldsForm extends React.Component {
                             </FormItem>;
                         case FILE_UPLOAD_FIELD:
                             const props = {
-                                onRemove: (file) => {
-                                    that.setState((state) => {
-                                        const index = state.fileList.indexOf(file);
-                                        const newFileList = state.fileList.slice();
-                                        newFileList.splice(index, 1);
-                                        return {
-                                            [field.key]: null,
-                                        };
-                                    });
+                                name: 'image',
+                                data:{
+                                  name:'hello'
                                 },
-                                beforeUpload: (file) => {
-                                    console.log(file, that.state);
-                                    that.setState(function (state) {
-                                        return {[field.key]:  file}
-                                    });
-                                    return false;
+                                action: makeURL(FILE_UPLOAD_API),
+                                headers: {
+                                    authorization: 'authorization-text',
                                 },
-                                [field.key]: that.state[field.key],
+                                onChange(info) {
+                                    if (info.file.status !== 'uploading') {
+                                        console.log(info.file, info.fileList);
+                                    }
+                                    if (info.file.status === 'done') {
+                                        message.success(`${info.file.name} file uploaded successfully`);
+                                    } else if (info.file.status === 'error') {
+                                        message.error(`${info.file.name} file upload failed.`);
+                                    }
+                                },
                             };
                             return <Form.Item
                                 {...formItemLayout}

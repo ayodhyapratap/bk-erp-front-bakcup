@@ -36,7 +36,7 @@ export default class LabList extends React.Component{
                    render={(route) => <AddLab {...this.state} {...route}/>}/>
             <Route exact path='/inventory/expenses/lab/:id'
                    render={(route) => <AddLab {...this.state} {...route}/>}/>
-            <Card title="lab" extra={<Link to={"/inventory/lab/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
+            <Card title="Lab" extra={<Link to={"/inventory/lab/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
 
             </Card>
         </Switch>

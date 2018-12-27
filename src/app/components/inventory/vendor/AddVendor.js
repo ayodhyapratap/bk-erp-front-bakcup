@@ -27,51 +27,52 @@ export default class AddVendor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            editData : this.props.editData?this.props.editData:null
+            editData: this.props.editData ? this.props.editData : null
         }
     }
-    changeRedirect(){
-        var redirectVar=this.state.redirect;
+
+    changeRedirect() {
+        var redirectVar = this.state.redirect;
         this.setState({
-            redirect:  !redirectVar,
-        })  ;
+            redirect: !redirectVar,
+        });
     }
 
-    componentDidMount(){
-        if(this.props.match.params.id){
-            if(!this.state.editData) {
+    componentDidMount() {
+        if (this.props.match.params.id) {
+            if (!this.state.editData) {
                 this.loadData();
             }
         }
     }
 
-    loadData(){
-        let that =this;
+    loadData() {
+        let that = this;
         let successFn = function (data) {
             that.setState({
-                editData:data,
+                editData: data,
             })
         }
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_VENDOR_API, [this.props.match.params.id]) ,successFn, errorFn);
+        getAPI(interpolate(SINGLE_VENDOR_API, [this.props.match.params.id]), successFn, errorFn);
 
 
     }
 
 
-    render(){
-        const  fields= [{
+    render() {
+        const fields = [{
             label: "Name",
             key: "name",
-            initialValue:this.state.editData?this.state.editData.name:null,
+            initialValue: this.state.editData ? this.state.editData.name : null,
             type: INPUT_FIELD
         },];
 
 
         let editformProp;
-        if(this.state.editBlogData) {
+        if (this.state.editBlogData) {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
@@ -87,29 +88,31 @@ export default class AddVendor extends React.Component {
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
-        const formProp={
-            successFn:function(data){
+        const formProp = {
+            successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
 
                 console.log(data);
             },
-            errorFn:function(){
+            errorFn: function () {
 
             },
-            action:  VENDOR_API,
+            action: VENDOR_API,
             method: "post",
         }
-        const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}];
+        const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
         return <Row>
             <Card>
                 <Route exact path='/inventory/vendor/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Post" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/inventory/vendor'} />)}/>
+                       render={() => (this.props.match.params.id ?
+                           <TestFormLayout defaultValues={defaultValues} title="Edit Vendor"
+                                           changeRedirect={this.changeRedirect} formProp={editformProp}
+                                           fields={fields}/> : <Redirect to={'/inventory/vendor'}/>)}/>
                 <Route exact path='/inventory/vendor/add'
-                       render={() =><TestFormLayout title="Add Post" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
-
-
+                       render={() => <TestFormLayout title="Add Vendor" changeRedirect={this.changeRedirect}
+                                                     formProp={formProp} fields={fields}/>}/>
             </Card>
-            {this.state.redirect&&    <Redirect to={'/inventory/vendor'} />}
+            {this.state.redirect && <Redirect to={'/inventory/vendor'}/>}
         </Row>
 
     }

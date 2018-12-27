@@ -81,7 +81,7 @@ class AppSider extends React.Component {
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="7">
-                        <Link to="/settings/clinics">
+                        <Link to="/inventory/activity">
                             <Icon type="bell"/>
                             <span className="nav-text">Activities</span>
                         </Link>

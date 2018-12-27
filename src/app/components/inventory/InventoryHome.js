@@ -1,11 +1,11 @@
 import React from "react";
 import {Layout} from "antd";
 import {Route, Switch} from "react-router-dom";
-import VideosList from "../webAdmin/videos/VideosList";
 import VendorList from "./vendor/VendorList";
 import ExpensesList from "./expenses/ExpensesList";
 import ManufactureList from "./manufacture/ManufactureList";
 import LabList from "./labs/LabList";
+import ActivityList from "./activities/ActivityList";
 
 const {Content} = Layout;
 export default class InventoryHome extends React.Component {
@@ -22,10 +22,11 @@ export default class InventoryHome extends React.Component {
         }}>
 
             <Switch>
-                <Route path="/inventory/vendor" render={(route) =><VendorList {...this.props}/>}/>
-                <Route path="/inventory/expenses" render={(route) =><ExpensesList {...this.props}/>}/>
-                <Route path="/inventory/manufacture" render={(route) =><ManufactureList {...this.props}/>}/>
-                <Route path="/inventory/lab" render={(route) =><LabList {...this.props}/>}/>
+                <Route path="/inventory/vendor" render={(route) => <VendorList {...this.props}/>}/>
+                <Route path="/inventory/expenses" render={(route) => <ExpensesList {...this.props}/>}/>
+                <Route path="/inventory/manufacture" render={(route) => <ManufactureList {...this.props}/>}/>
+                <Route path="/inventory/lab" render={(route) => <LabList {...this.props}/>}/>
+                <Route path="/inventory/activity" render={(route) => <ActivityList {...this.props}/>}/>
             </Switch>
         </Content>
     }
