@@ -94,7 +94,7 @@ export default class AddLandingPageVideo extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_LANDING_PAGE_VIDEO, [this.props.practiceId]),
+                action: interpolate(SINGLE_LANDING_PAGE_VIDEO, [this.props.match.params.id]),
                 method: "put",
 
             }

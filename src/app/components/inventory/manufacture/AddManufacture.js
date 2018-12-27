@@ -4,30 +4,30 @@ import {
     DATE_PICKER, FILE_UPLOAD_FIELD,
     INPUT_FIELD,
     QUILL_TEXT_FIELD,
-    SELECT_FIELD, SINGLE_CHECKBOX_FIELD,
+    SELECT_FIELD,
     SUCCESS_MSG_TYPE,
     TEXT_FIELD
 } from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {
-    BLOG_DISEASE, BLOG_PAGE_SEO,
-    BLOG_POST, BLOG_SLIDER,
-    INVOICES_API,
+    BLOG_DISEASE,
+    BLOG_POST,
+    INVOICES_API, MANUFACTURER_API,
     PRACTICE,
-    SINGLE_DISEASE,
+    SINGLE_DISEASE, SINGLE_MANUFACTURER_API,
     SINGLE_PAGE_SEO,
-    SINGLE_POST, SINGLE_SLIDER
+    SINGLE_POST, SINGLE_VENDOR_API
 } from "../../../constants/api";
 import {Route} from "react-router";
 import {Redirect} from "react-router-dom";
 
 
-export default class AddSliderImage extends React.Component {
+export default class AddManufacture extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            editBlogData : this.props.editBlogData?this.props.editBlogData:null
+            editData : this.props.editData?this.props.editData:null
         }
     }
     changeRedirect(){
@@ -39,7 +39,7 @@ export default class AddSliderImage extends React.Component {
 
     componentDidMount(){
         if(this.props.match.params.id){
-            if(!this.state.editBlogData) {
+            if(!this.state.editData) {
                 this.loadData();
             }
         }
@@ -47,16 +47,16 @@ export default class AddSliderImage extends React.Component {
 
     loadData(){
         let that =this;
-        console.log("i M groot")
         let successFn = function (data) {
             that.setState({
-                editBlogData:data,
+                editData:data,
             })
         }
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_SLIDER, [this.props.match.params.id]) ,successFn, errorFn);
+        getAPI(interpolate(SINGLE_VENDOR_API, [this.props.match.params.id]) ,successFn, errorFn);
+
 
     }
 
@@ -65,24 +65,9 @@ export default class AddSliderImage extends React.Component {
         const  fields= [{
             label: "Name",
             key: "name",
-            initialValue:this.state.editBlogData?this.state.editBlogData.name:null,
+            initialValue:this.state.editData?this.state.editData.name:null,
             type: INPUT_FIELD
-        },{
-            label: "Page Title ",
-            key: "title",
-            initialValue:this.state.editBlogData?this.state.editBlogData.title:null,
-            type: INPUT_FIELD
-        },{
-            label: "Slider Image ",
-            key: "silder_image",
-            initialValue:this.state.editBlogData?this.state.editBlogData.silder_image:null,
-            type: FILE_UPLOAD_FIELD
-        },{
-            label: "Active",
-            key: "is_active",
-            initialValue:this.state.editBlogData?this.state.editBlogData.is_active:null,
-            type: SINGLE_CHECKBOX_FIELD,
-        }, ];
+        },];
 
 
         let editformProp;
@@ -95,7 +80,7 @@ export default class AddSliderImage extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_SLIDER, [this.props.match.params.id]),
+                action: interpolate(SINGLE_MANUFACTURER_API, [this.props.match.params.id]),
                 method: "put",
 
             }
@@ -111,21 +96,20 @@ export default class AddSliderImage extends React.Component {
             errorFn:function(){
 
             },
-            action:  BLOG_SLIDER,
+            action:  MANUFACTURER_API,
             method: "post",
         }
-        let defaultValues=[];
-
+        const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}];
         return <Row>
             <Card>
-                <Route exact path='/web/slider-image/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit slider-image" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'web/silder-image'} />)}/>
-                <Route exact path='/web/slider-image/add'
-                       render={() =><TestFormLayout title="Add slider-image" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
+                <Route exact path='/inventory/manufacture/edit/:id'
+                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Manufacture" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/inventory/manufacture'} />)}/>
+                <Route exact path='/inventory/manufacture/add'
+                       render={() =><TestFormLayout title="Add Manufacture" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
 
 
             </Card>
-            {this.state.redirect&&    <Redirect to={'/web/slider-image'} />}
+            {this.state.redirect&&    <Redirect to={'/inventory/manufacture'} />}
         </Row>
 
     }

@@ -99,7 +99,7 @@ export default class AddContacts extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_CONTACT, [this.props.practiceId]),
+                action: interpolate(SINGLE_CONTACT,[this.props.match.params.id]),
                 method: "put",
 
             }

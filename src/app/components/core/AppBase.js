@@ -27,6 +27,7 @@ import PatientHome from "../patients/PatientHome";
 import Error404 from "../common/errors/Error404";
 import ReportsHome from "../reports/ReportsHome";
 import WebAdminHome from "../webAdmin/WebAdminHome";
+import InventoryHome from "../inventory/InventoryHome";
 
 const Content = Layout.Content;
 
@@ -154,6 +155,7 @@ class AppBase extends React.Component {
                     <Route path="/patient/:id" render={(route) => <PatientHome {...this.state} {...this.props}/>}/>
                     <Route path="/patients" render={(route) => <PatientHome {...this.state} {...this.props}/>}/>
                     <Route path="/settings" render={(route) => <SettingsDash {...this.state} {...this.props}/>}/>
+                    <Route path="/inventory" render={(route) => <InventoryHome {...this.state} {...this.props}/>}/>
                     <Route path="/reports"
                            render={(route) => <ReportsHome {...route} {...this.state} {...this.props}/>}/>
                     <Route component={Error404}/>

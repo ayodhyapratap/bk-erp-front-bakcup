@@ -117,7 +117,7 @@ export default class AddPost extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_POST, [this.props.practiceId]),
+                action: interpolate(SINGLE_POST, [this.props.match.params.id]),
                 method: "put",
 
             }

@@ -99,7 +99,7 @@ export default class AddDisease extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_DISEASE, [this.props.practiceId]),
+                action: interpolate(SINGLE_DISEASE, [this.props.match.params.id]),
                 method: "put",
 
             }

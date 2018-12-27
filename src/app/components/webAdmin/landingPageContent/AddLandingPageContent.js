@@ -89,7 +89,7 @@ export default class AddLandingPageContent extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_LANDING_PAGE_CONTENT, [this.props.practiceId]),
+                action: interpolate(SINGLE_LANDING_PAGE_CONTENT, [this.props.match.params.id]),
                 method: "put",
 
             }

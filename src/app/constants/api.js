@@ -84,3 +84,19 @@ export const  LANDING_PAGE_CONTENT = 'landing_page_content/';
 export const  SINGLE_LANDING_PAGE_CONTENT = 'landing_page_content/%s/';
 export const  LANDING_PAGE_VIDEO = 'landing_page_video/';
 export const  SINGLE_LANDING_PAGE_VIDEO = 'landing_page_video/%s/';
+
+
+//inventory API
+
+export const  EXPENSES_API = "expenses/";
+export const  SINGLE_EXPENSES_API = "expenses/%s/";
+export const  VENDOR_API = "vendor/";
+export const  SINGLE_VENDOR_API = "vendor/%s/";
+export const  ACTIVITY_API = "activity/";
+export const  SINGLE_ACTIVITY_API = "activity/%s/";
+export const  LAB_API = "lab/";
+export const  SINGLE_LAB_API = "lab/%s/";
+export const  MANUFACTURER_API = "manufacturer/";
+export const  SINGLE_MANUFACTURER_API = "manufacturer/%s/";
+export const  INVENTORY_API = "inventory/";
+export const  SINGLE_INVENTORY_API = "inventory/%s/";

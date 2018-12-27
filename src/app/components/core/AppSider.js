@@ -75,7 +75,7 @@ class AppSider extends React.Component {
                 </Menu.Item>
                 <SubMenu key="sub1" title={<span><Icon type="gold"/><span>Back Office</span></span>}>
                     <Menu.Item key="6">
-                        <Link to="/settings/clinics">
+                        <Link to="/inventory/expenses">
                             <Icon type="credit-card"/>
                             <span className="nav-text">Expenses</span>
                         </Link>
@@ -87,13 +87,19 @@ class AppSider extends React.Component {
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="8">
-                        <Link to="/settings/clinics">
+                        <Link to="/inventory/manufacture">
                             <Icon type="database"/>
-                            <span className="nav-text">Inventory</span>
+                            <span className="nav-text">Manufactures</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="42">
+                        <Link to="/inventory/vendor">
+                            <Icon type="database"/>
+                            <span className="nav-text">Vendor</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="9">
-                        <Link to="/settings/clinics">
+                        <Link to="/inventory/lab">
                             <Icon type="experiment"/>
                             <span className="nav-text">Labs</span>
                         </Link>

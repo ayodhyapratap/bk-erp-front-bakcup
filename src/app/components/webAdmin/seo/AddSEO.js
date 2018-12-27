@@ -100,7 +100,7 @@ export default class AddSEO extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_PAGE_SEO, [this.props.practiceId]),
+                action: interpolate(SINGLE_PAGE_SEO, [this.props.match.params.id]),
                 method: "put",
 
             }

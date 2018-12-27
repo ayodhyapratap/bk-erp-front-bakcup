@@ -116,7 +116,7 @@ export default class AddEvent extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_EVENTS, [this.props.practiceId]),
+                action: interpolate(SINGLE_EVENTS, [this.props.match.params.id]),
                 method: "put",
 
             }

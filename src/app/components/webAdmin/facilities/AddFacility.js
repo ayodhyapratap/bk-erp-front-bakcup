@@ -90,7 +90,7 @@ export default class AddFacility extends React.Component {
                 errorFn: function () {
 
                 },
-                action: SINGLE_FACILITY,
+                action: interpolate(SINGLE_FACILITY, [this.props.match.params.id]),
                 method: "put",
 
             }
@@ -106,7 +106,7 @@ export default class AddFacility extends React.Component {
             errorFn:function(){
 
             },
-            action:  interpolate(BLOG_FACILITY, [this.props.match.params.id]),
+            action:  BLOG_FACILITY,
             method: "post",
         }
         let defaultValues=[];
