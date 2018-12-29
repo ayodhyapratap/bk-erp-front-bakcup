@@ -62,9 +62,7 @@ class Prescriptions extends React.Component {
                 </Link>
             </h2>
             <Card>
-                <Table columns={columns} dataSource={this.state.catalog}>
-
-                </Table>
+                <Table columns={columns} dataSource={this.state.catalog}/>
             </Card>
         </Row>
     }

@@ -258,8 +258,8 @@ class DynamicFieldsForm extends React.Component {
                         case FILE_UPLOAD_FIELD:
                             const props = {
                                 name: 'image',
-                                data:{
-                                  name:'hello'
+                                data: {
+                                    name: 'hello'
                                 },
                                 action: makeURL(FILE_UPLOAD_API),
                                 headers: {
@@ -293,15 +293,15 @@ class DynamicFieldsForm extends React.Component {
                             return null;
                     }
                 }) : null}
-                    <FormItem {...formItemLayout}>
+                <FormItem {...formItemLayout}>
                     {/*<Button onClick={this.resetFormData}>Reset</Button>*/}
                     <Button type="primary" htmlType="submit">
-                    Submit
+                        Submit
                     </Button>
-                    </FormItem>
-                    </Form>
-                    </div>
-                    }
-                }
+                </FormItem>
+            </Form>
+        </div>
+    }
+}
 
-                export default DynamicFieldsForm;
+export default DynamicFieldsForm;

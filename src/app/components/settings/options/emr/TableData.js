@@ -1,7 +1,14 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Modal, Card, Form, Icon, Row, Table, Divider} from "antd";
-import {CHECKBOX_FIELD, SUCCESS_MSG_TYPE, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {
+    CHECKBOX_FIELD,
+    SUCCESS_MSG_TYPE,
+    INPUT_FIELD,
+    RADIO_FIELD,
+    NUMBER_FIELD,
+    SELECT_FIELD
+} from "../../../../constants/dataKeys";
 import {TAXES} from "../../../../constants/api"
 import {Link} from "react-router-dom";
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
@@ -81,7 +88,7 @@ class TableData extends React.Component {
                 label: this.props.name,
                 key: "name",
                 required: true,
-                initialValue:this.state.editingName,
+                initialValue: this.state.editingName,
                 type: INPUT_FIELD
             },];
         const formProp = {
@@ -99,8 +106,11 @@ class TableData extends React.Component {
             action: interpolate(this.props.id, [this.props.active_practiceId]),
             method: "post",
         };
-        const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}]
-        const editFormDefaultValues = [{"key":"practice", "value":this.props.active_practiceId}, {"key":"id" , "value": this.state.editingId}]
+        const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}]
+        const editFormDefaultValues = [{"key": "practice", "value": this.props.active_practiceId}, {
+            "key": "id",
+            "value": this.state.editingId
+        }]
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
@@ -108,9 +118,10 @@ class TableData extends React.Component {
             <Divider/>
             <Table columns={columns} dataSource={this.state.data}/>
             <Modal
-                title="Basic Modal"
+                title={"Edit " + this.props.name}
                 visible={this.state.visible}
                 footer={null}
+                onCancel={this.handleCancel}
             >
                 <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields}/>
                 <Button key="back" onClick={this.handleCancel}>Return</Button>,

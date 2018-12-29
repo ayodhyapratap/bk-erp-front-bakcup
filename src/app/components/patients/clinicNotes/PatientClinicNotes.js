@@ -86,7 +86,7 @@ class PatientClinicNotes extends React.Component {
             title: 'Active',
             key: 'is_active',
             render:(text, record) => (
-                <Checkbox checked={record.is_active}/>
+                <Checkbox disabled={true} checked={record.is_active}/>
             )
         },{
             title: 'Action',
