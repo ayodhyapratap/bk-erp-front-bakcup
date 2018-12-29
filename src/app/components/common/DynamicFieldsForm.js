@@ -98,16 +98,16 @@ class DynamicFieldsForm extends React.Component {
                     values[this.state.colorPickerKey] = this.state.colorPickerColor;
                 }
 
-                values.forEach(function (field,key) {
-                    if (field.type == FILE_UPLOAD_FIELD) {
-                        if(values[key] && values[key].file.response.image) {
-                            values[key] = values[key].file.response.image
-                        }else{
-                            displayMessage(WARNING_MSG_TYPE,"File Upload required");
-                            return false
-                        }
-                    }
-                });
+                // values.forEach(function (field,key) {
+                //     if (field.type == FILE_UPLOAD_FIELD) {
+                //         if(values[key] && values[key].file.response.image) {
+                //             values[key] = values[key].file.response.image
+                //         }else{
+                //             displayMessage(WARNING_MSG_TYPE,"File Upload required");
+                //             return false
+                //         }
+                //     }
+                // });
                 // reqFormData.concat(...values);
                 that.submitForm(values);
             }

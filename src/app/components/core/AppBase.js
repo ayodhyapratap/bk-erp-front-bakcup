@@ -16,20 +16,13 @@ import {
 } from "../../utils/auth";
 import {getAPI, deleteAPI, interpolate} from "../../utils/common";
 import {ALL_PRACTICE, PRACTICE} from "../../constants/api";
-
-
-//settings
-import TestForm from "./TestForm";
 import SettingsDash from "../settings/SettingsDash"
-
 import Calendar from "../calendar/Calendar";
 import PatientHome from "../patients/PatientHome";
 import Error404 from "../common/errors/Error404";
 import ReportsHome from "../reports/ReportsHome";
 import WebAdminHome from "../webAdmin/WebAdminHome";
 import InventoryHome from "../inventory/InventoryHome";
-
-const Content = Layout.Content;
 
 class AppBase extends React.Component {
     constructor(props) {
@@ -104,8 +97,6 @@ class AppBase extends React.Component {
             getAPI(ALL_PRACTICE, successFn, errorFn);
         } else {
             let practice = loggedInUserPractices();
-            // if(!Array.isArray(practice) || !practice.length)
-            //     return true
             console.log(practice);
             var practiceKeys = Object.keys(practice);
             console.log(practiceKeys);

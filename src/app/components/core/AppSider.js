@@ -1,7 +1,7 @@
 import React from "react";
-import {Icon, Layout, Menu} from 'antd';
+import {Divider, Icon, Layout, Menu} from 'antd';
 import {Link} from 'react-router-dom';
-import Applogo from '../../assets/img/app_logo.png'
+import Applogo from '../../assets/img/kidneycarelogo.png'
 
 const Sider = Layout.Sider;
 const SubMenu = Menu.SubMenu;
@@ -44,7 +44,8 @@ class AppSider extends React.Component {
             onCollapse={(collapsed, type) => {
                 console.log(collapsed, type);
             }}>
-            <img src={Applogo} alt="" style={{width: '100%'}}/>
+            <img src={Applogo} alt="" style={{width: '100%',padding:'20px'}}/>
+
             <Menu mode="inline" defaultSelectedKeys={['1']}
                   openKeys={this.state.openKeys}
                   onOpenChange={this.onOpenChange}
