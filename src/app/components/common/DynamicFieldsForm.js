@@ -31,7 +31,7 @@ import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {displayMessage, makeURL, postAPI, putAPI} from "../../utils/common";
 import moment from "moment";
 import {SwatchesPicker} from 'react-color';
-
+import quill from 'quill';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import {FILE_UPLOAD_API} from "../../constants/api";
@@ -67,10 +67,6 @@ class DynamicFieldsForm extends React.Component {
         this.resetFormData();
     }
 
-    initialiseFormData() {
-
-    }
-
     resetFormData() {
         let formData = {};
         this.state.fields.forEach(function (field) {
@@ -97,18 +93,13 @@ class DynamicFieldsForm extends React.Component {
                 if (this.state.colorPickerKey) {
                     values[this.state.colorPickerKey] = this.state.colorPickerColor;
                 }
-
-                // values.forEach(function (field,key) {
-                //     if (field.type == FILE_UPLOAD_FIELD) {
-                //         if(values[key] && values[key].file.response.image) {
-                //             values[key] = values[key].file.response.image
-                //         }else{
-                //             displayMessage(WARNING_MSG_TYPE,"File Upload required");
-                //             return false
-                //         }
-                //     }
-                // });
-                // reqFormData.concat(...values);
+                that.props.fields.forEach(function (formFields) {
+                    if (formFields.type == FILE_UPLOAD_FIELD) {
+                        let key = formFields.key;
+                        values[key] = values[key].file.response.image
+                    }
+                });
+                console.log("Fields in the form", values);
                 that.submitForm(values);
             }
         });
@@ -139,8 +130,6 @@ class DynamicFieldsForm extends React.Component {
             colorPickerKey: key,
             colorPickerColor: color.hex,
         });
-
-
     }
 
     render() {
@@ -162,7 +151,6 @@ class DynamicFieldsForm extends React.Component {
                                            onChange={that.inputChange}/>
                                 )}
                             </FormItem>;
-
                         case SELECT_FIELD:
                             return <FormItem {...formItemLayout} label={field.label} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
@@ -173,7 +161,6 @@ class DynamicFieldsForm extends React.Component {
                                     </Select>
                                 )}
                             </FormItem>;
-
                         case RADIO_FIELD:
                             return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
@@ -230,19 +217,23 @@ class DynamicFieldsForm extends React.Component {
                                     )}
                                 </FormItem>
                             </div>;
-
                         case QUILL_TEXT_FIELD:
                             return <div>
                                 <Divider/>
                                 <FormItem label={field.label}  {...formItemLayout} extra={field.extra}>
-                                    {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                    {getFieldDecorator(field.key, {
+                                        initialValue: (field.initialValue && field.initialValue.length ? field.initialValue : ''),
+                                        rules: [{
+                                            required: field.required,
+                                            message: REQUIRED_FIELD_MESSAGE
+                                        }]
+                                    })(
                                         <ReactQuill theme="snow" placeholder={field.placeholder}/>)}
                                 </FormItem>
                             </div>;
                         case TIME_PICKER:
                             return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
-                                {getFieldDecorator(field.key,
-                                    {initialValue: field.initialValue ? moment(field.initialValue, field.format) : null},
+                                {getFieldDecorator(field.key, {initialValue: field.initialValue ? moment(field.initialValue, field.format) : null},
                                     {
                                         rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],
                                     })(
@@ -252,7 +243,16 @@ class DynamicFieldsForm extends React.Component {
                         case COLOR_PICKER:
                             return <FormItem label={field.label}  {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <SwatchesPicker onChange={(color) => that.colorChange(color, field.key)}/>
+                                    <div>
+                                        <SwatchesPicker style={{width: '100%'}}
+                                                        onChange={(color) => that.colorChange(color, field.key)}/>
+                                        {that.state.colorPickerKey ? <div style={{
+                                            margin: '10px',
+                                            backgroundColor: that.state.colorPickerColor,
+                                            height: '40px',
+                                            width: '40px'
+                                        }}/> : null}
+                                    </div>
                                 )}
                             </FormItem>;
                         case FILE_UPLOAD_FIELD:
@@ -276,19 +276,15 @@ class DynamicFieldsForm extends React.Component {
                                     }
                                 },
                             };
-                            return <Form.Item
-                                {...formItemLayout}
-                                label={field.label}
-                            >
-                                {getFieldDecorator(field.key, {
-                                    valuePropName: field.key,
-                                    // getValueFromEvent: this.normFile,
-                                })(<Upload {...props}>
-                                    <Button>
-                                        <Icon type="upload"/> Select File
-                                    </Button>
-                                </Upload>)}
-                            </Form.Item>
+                            return <Form.Item {...formItemLayout} label={field.label}>
+                                {getFieldDecorator(field.key, {valuePropName: field.key,})(
+                                    <Upload {...props}>
+                                        <Button>
+                                            <Icon type="upload"/> Select File
+                                        </Button>
+                                    </Upload>
+                                )}
+                            </Form.Item>;
                         default:
                             return null;
                     }

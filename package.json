@@ -10,6 +10,7 @@
     "jqueryui": "^1.11.1",
     "lockr": "^0.8.5",
     "moment": "^2.22.2",
+    "quill-delta": "^4.1.0",
     "react": "^16.6.3",
     "react-big-calendar": "^0.20.2",
     "react-color": "^2.14.1",

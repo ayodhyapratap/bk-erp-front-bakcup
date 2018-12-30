@@ -18,6 +18,7 @@ class PracticeDetails extends React.Component {
     }
 
     componentDidMount() {
+        this.props.refreshClinicData();
       // let group=loggedInUserGroup();
       // if(group[0].name=="Admin"){
       //   this.admin_practiceData();

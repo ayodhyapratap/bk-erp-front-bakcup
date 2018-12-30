@@ -4,8 +4,7 @@ import {Button, Card, Form, Icon, Row} from "antd";
 import {CHECKBOX_FIELD, SUCCESS_MSG_TYPE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {ALL_PRACTICE, EXTRA_DATA} from "../../../../constants/api";
 import {getAPI, displayMessage} from "../../../../utils/common";
-import { Redirect } from 'react-router-dom'
-
+import {Redirect} from 'react-router-dom'
 
 
 class AddPracticeDetails extends React.Component {
@@ -13,47 +12,48 @@ class AddPracticeDetails extends React.Component {
         super(props);
 
         this.state = {
-          redirect:false,
+            redirect: false,
             specialisations: null,
-            countries:null,
+            countries: null,
         }
-        this.changeRedirect= this.changeRedirect.bind(this);
+        this.changeRedirect = this.changeRedirect.bind(this);
     }
-    componentDidMount() {
-      var that = this;
-        let successFn = function (data) {
-          let specialisations = {};
-          data.specialisation.forEach(function(speciality){
-            specialisations[speciality.id] = speciality
-          });
-          console.log(specialisations);
 
-          that.setState({
-          specialisations:data.specialisation,
-          countries:data.country,
-          })
+    componentDidMount() {
+        var that = this;
+        let successFn = function (data) {
+            let specialisations = {};
+            data.specialisation.forEach(function (speciality) {
+                specialisations[speciality.id] = speciality
+            });
+            console.log(specialisations);
+
+            that.setState({
+                specialisations: data.specialisation,
+                countries: data.country,
+            })
         };
         let errorFn = function () {
         };
         getAPI(EXTRA_DATA, successFn, errorFn);
-      }
+    }
 
-      changeRedirect(){
-        var redirectVar=this.state.redirect;
-      this.setState({
-        redirect:  !redirectVar,
-      })  ;
-      }
+    changeRedirect() {
+        var redirectVar = this.state.redirect;
+        this.setState({
+            redirect: !redirectVar,
+        });
+    }
 
     render() {
 
-        let specialisationsOptions=[]
-        if(this.state.specialisations){
-            this.state.specialisations.forEach(function(specialisation){
-                specialisationsOptions.push({label:(specialisation.name), value:specialisation.id} );
+        let specialisationsOptions = []
+        if (this.state.specialisations) {
+            this.state.specialisations.forEach(function (specialisation) {
+                specialisationsOptions.push({label: (specialisation.name), value: specialisation.id});
             })
         }
-      const  fields= [{
+        const fields = [{
             label: "Practice Name",
             key: "name",
             required: true,
@@ -67,7 +67,7 @@ class AddPracticeDetails extends React.Component {
             label: "Practice Specialisation",
             key: "specialisation",
             type: SELECT_FIELD,
-            options:specialisationsOptions,
+            options: specialisationsOptions,
         }, {
             label: "Practice Street Address",
             key: "address",
@@ -118,25 +118,26 @@ class AddPracticeDetails extends React.Component {
             type: INPUT_FIELD
         },];
 
-        const formProp={
-          successFn:function(data){
-            displayMessage(SUCCESS_MSG_TYPE, "success")
+        const formProp = {
+            successFn: function (data) {
+                displayMessage(SUCCESS_MSG_TYPE, "success")
 
-            console.log(data);
-          },
-          errorFn:function(){
+                console.log(data);
+            },
+            errorFn: function () {
 
-          },
-          action: ALL_PRACTICE,
-          method: "post",
+            },
+            action: ALL_PRACTICE,
+            method: "post",
         }
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <Row>
             <Card>
-                <TestFormLayout title="Practice Details" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>
+                <TestFormLayout title="Practice Details" changeRedirect={this.changeRedirect} formProp={formProp}
+                                fields={fields}/>
             </Card>
-            {this.state.redirect&&    <Redirect to='/settings/clinics' />}
+            {this.state.redirect && <Redirect to='/settings/clinics'/>}
         </Row>
     }
 }

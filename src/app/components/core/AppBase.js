@@ -145,7 +145,7 @@ class AppBase extends React.Component {
                     <Route path="/calendar" render={(route) => <Calendar {...this.state} {...this.props} {...route}/>}/>
                     <Route path="/patient/:id" render={(route) => <PatientHome {...this.state} {...this.props}/>}/>
                     <Route path="/patients" render={(route) => <PatientHome {...this.state} {...this.props}/>}/>
-                    <Route path="/settings" render={(route) => <SettingsDash {...this.state} {...this.props}/>}/>
+                    <Route path="/settings" render={(route) => <SettingsDash {...this.state} {...this.props} refreshClinicData={this.clinicData}/>}/>
                     <Route path="/inventory" render={(route) => <InventoryHome {...this.state} {...this.props}/>}/>
                     <Route path="/reports"
                            render={(route) => <ReportsHome {...route} {...this.state} {...this.props}/>}/>
