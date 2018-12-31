@@ -29,7 +29,7 @@ class AddPrescription extends React.Component {
                 label: "Dosage",
                 key: "strength",
                 required: true,
-                type: INPUT_FIELD
+                type: NUMBER_FIELD
             }, {
                 label: "Instructions ",
                 key: "instruction",
@@ -77,7 +77,7 @@ class AddPrescription extends React.Component {
         return <div><Card>
             <TestFormLayout title="Add Prescriptions" formProp={formProp} changeRedirect={this.changeRedirect}
                             fields={this.state.fields}/>
-            {this.state.redirect && <Redirect to='/settings/loyalty'/>}
+            {this.state.redirect && <Redirect to='/settings/prescriptions'/>}
 
         </Card>
         </div>

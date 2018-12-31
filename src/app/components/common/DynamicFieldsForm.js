@@ -97,6 +97,11 @@ class DynamicFieldsForm extends React.Component {
                     if (formFields.type == FILE_UPLOAD_FIELD) {
                         let key = formFields.key;
                         values[key] = values[key].file.response.image
+                    } else if (formFields.type == TIME_PICKER) {
+                        let key = formFields.key;
+                        if (formFields.format) {
+                            values[key] = moment(values[key]).format(formFields.format);
+                        }
                     }
                 });
                 console.log("Fields in the form", values);
@@ -193,7 +198,7 @@ class DynamicFieldsForm extends React.Component {
                                 {...formItemLayout}
                                 label={field.label} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <InputNumber min={1} disabled={field.disabled}/>
+                                    <InputNumber min={field.min} max={field.max} disabled={field.disabled}/>
                                 )}
                                 <span className="ant-form-text">{field.follow}</span>
                             </FormItem>;
@@ -233,10 +238,10 @@ class DynamicFieldsForm extends React.Component {
                             </div>;
                         case TIME_PICKER:
                             return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
-                                {getFieldDecorator(field.key, {initialValue: field.initialValue ? moment(field.initialValue, field.format) : null},
-                                    {
-                                        rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],
-                                    })(
+                                {getFieldDecorator(field.key, {
+                                    initialValue: field.initialValue ? moment(field.initialValue, field.format) : null,
+                                    rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],
+                                })(
                                     <TimePicker format={field.format}/>
                                 )}
                             </FormItem>;

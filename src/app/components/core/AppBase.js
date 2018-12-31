@@ -35,6 +35,7 @@ class AppBase extends React.Component {
             specialisations: null,
         };
         this.activeData = this.activeData.bind(this);
+        this.clinicData = this.clinicData.bind(this);
         this.clinicData();
         this.switchPractice = this.switchPractice.bind(this);
 

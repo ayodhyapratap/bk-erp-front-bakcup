@@ -1,10 +1,10 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Card,Divider, Form, Icon, Row, Table} from "antd";
+import {Button, Card, Divider, Form, Icon, Popconfirm, Row, Table} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {Link} from "react-router-dom";
 import {DRUG_CATALOG, } from "../../../../constants/api";
-import {getAPI, deleteAPI, interpolate} from "../../../../utils/common";
+import {getAPI, deleteAPI, interpolate, postAPI} from "../../../../utils/common";
 
 class Prescriptions extends React.Component {
     constructor(props) {
@@ -12,6 +12,8 @@ class Prescriptions extends React.Component {
         this.state = {
           catalog: null
         }
+        this.loadData = this.loadData.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
     }
     componentDidMount(){
       this.loadData();
@@ -28,8 +30,19 @@ class Prescriptions extends React.Component {
         };
        getAPI(interpolate( DRUG_CATALOG, [this.props.active_practiceId]), successFn, errorFn);
     }
-
+    deleteObject(record){
+        let that = this;
+        let reqData= record;
+        reqData.is_active = false;
+        let successFn = function (data){
+            that.loadData();
+        }
+        let errorFn = function (){
+        }
+        postAPI(interpolate(DRUG_CATALOG, [this.props.active_practiceId]),reqData,successFn,errorFn);
+    }
     render() {
+        let that = this;
        const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -49,7 +62,9 @@ class Prescriptions extends React.Component {
               <span><a>
                 Edit</a>
                 <Divider type="vertical" />
-                delete
+                  <Popconfirm title="Are you sure delete this prescription?" onConfirm={()=>that.deleteObject(record)} okText="Yes" cancelText="No">
+                      <a>Delete</a>
+                  </Popconfirm>
               </span>
             ),
           }];

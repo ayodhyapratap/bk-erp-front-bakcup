@@ -1,134 +1,170 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Modal, Card, Form, Icon, Row, Table, Divider} from "antd";
-import {SUCCESS_MSG_TYPE, CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
-import {TAXES} from "../../../../constants/api"
+import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm} from "antd";
+import {
+    SUCCESS_MSG_TYPE,
+    CHECKBOX_FIELD,
+    INPUT_FIELD,
+    RADIO_FIELD,
+    NUMBER_FIELD,
+    SELECT_FIELD
+} from "../../../../constants/dataKeys";
+import {PAYMENT_MODES, TAXES} from "../../../../constants/api"
 import {Link} from "react-router-dom";
-import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
+import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
 
 class TaxCatalog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          redirect: false,
-          visible: false,
-          taxes:null
+            redirect: false,
+            visible: false,
+            taxes: null
         };
         this.loadData = this.loadData.bind(this);
 
     }
-    componentDidMount(){
-      this.loadData();
+
+    componentDidMount() {
+        this.loadData();
     }
-    loadData(){
-      var that = this;
+
+    loadData() {
+        var that = this;
         let successFn = function (data) {
-          console.log("get table");
-          that.setState({
-            taxes:data,
-          })
+            console.log("get table");
+            that.setState({
+                taxes: data,
+            })
         };
         let errorFn = function () {
         };
-        getAPI(interpolate( TAXES, [this.props.active_practiceId]), successFn, errorFn);
+        getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
     }
-    changeRedirect(){
-      var redirectVar=this.state.redirect;
-    this.setState({
-      redirect:  !redirectVar,
-    })  ;
-    }
-    editTax(value){
-      this.setState({
-        editingId:value.id,
-        editingName: value.name,
-        editingValue:value.tax_value,
 
-        visible: true,
-      })
+    changeRedirect() {
+        var redirectVar = this.state.redirect;
+        this.setState({
+            redirect: !redirectVar,
+        });
     }
+
+    editTax(value) {
+        this.setState({
+            editingId: value.id,
+            editingName: value.name,
+            editingValue: value.tax_value,
+
+            visible: true,
+        })
+    }
+
     handleCancel = () => {
-        this.setState({ visible: false });
+        this.setState({visible: false});
     }
 
+    deleteObject(record) {
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.loadData();
+        }
+        let errorFn = function () {
+        };
+        postAPI(interpolate(TAXES, [this.props.active_practiceId]), reqData, successFn, errorFn)
+    }
 
     render() {
-      let that =this;
-      const columns = [{
+        let that = this;
+        const columns = [{
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-          }, {
-            title: 'tax value',
+        }, {
+            title: 'Tax Value',
             dataIndex: 'tax_value',
             key: 'tax_value',
-          },{
-            title: 'Action',
+            render: (text, record) => (<span>{text} %</span>)
+        }, {
+            title: 'Actions',
             key: 'action',
             render: (text, record) => (
-              <span>
-              <a onClick={()=>this.editTax(record)}>  Edit</a>
-                <Divider type="vertical" />
+                <span>
+              <a onClick={() => this.editTax(record)}>  Edit</a>
+                <Divider type="vertical"/>
+                    <Popconfirm title="Are you sure delete this tax?"
+                                onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
+                      <a>Delete</a>
+                  </Popconfirm>
               </span>
             ),
-          }];
-      const   fields= [{
+        }];
+        const fields = [{
             label: "Tax name",
             key: "name",
             required: true,
             type: INPUT_FIELD
-        },{
+        }, {
             label: "Tax Value",
             key: "tax_value",
-            follow: "INR",
+            follow: "%",
+            max: 100,
+            min: 0,
             required: true,
             type: NUMBER_FIELD
-      },];
-      const   editfields= [{
-              label: "Tax name",
-              key: "name",
-              required: true,
-              initialValue:this.state.editingName,
-              type: INPUT_FIELD
-          },{
+        },];
+        const editfields = [{
+            label: "Tax name",
+            key: "name",
+            required: true,
+            initialValue: this.state.editingName,
+            type: INPUT_FIELD
+        }, {
             label: "Tax Value",
             key: "tax_value",
-            follow: "INR",
+            follow: "%",
+            max: 100,
+            min: 0,
             required: true,
-            initialValue:this.state.editingValue,
+            initialValue: this.state.editingValue,
 
             type: NUMBER_FIELD
-      },];
-      const formProp={
-        successFn:function(data){
-          that.handleCancel();
-          that.loadData();
-          console.log(data);
-          console.log("sucess");
-          displayMessage(SUCCESS_MSG_TYPE, "success")
-        },
-        errorFn:function(){
+        },];
+        const formProp = {
+            successFn: function (data) {
+                that.handleCancel();
+                that.loadData();
+                console.log(data);
+                console.log("sucess");
+                displayMessage(SUCCESS_MSG_TYPE, "success")
+            },
+            errorFn: function () {
 
-        },
-        action: interpolate(TAXES,[this.props.active_practiceId]),
-        method: "post",
-      }
-      const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}];
-      const editFormDefaultValues = [{"key":"practice", "value":this.props.active_practiceId}, {"key":"id", "value":this.state.editingId}];
+            },
+            action: interpolate(TAXES, [this.props.active_practiceId]),
+            method: "post",
+        }
+        const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
+        const editFormDefaultValues = [{"key": "practice", "value": this.props.active_practiceId}, {
+            "key": "id",
+            "value": this.state.editingId
+        }];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
-            <TestFormLayout defaultValues={defaultValues} formProp={formProp}  fields={fields}/>
+            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
             <Divider/>
-            <Table columns={columns}  dataSource={this.state.taxes}/>
+            <Table columns={columns} dataSource={this.state.taxes}/>
             <Modal
-             title="Basic Modal"
-             visible={this.state.visible}
-             footer={null}
-             >
-              <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp}  fields={editfields}/>
-              <Button key="back" onClick={this.handleCancel}>Return</Button>,
+                title="Edit Tax"
+                visible={this.state.visible}
+                footer={null}
+                onCancel={this.handleCancel}
+            >
+                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields}/>
+                <Button key="back" onClick={this.handleCancel}>Return</Button>,
 
-           </Modal>
+            </Modal>
         </div>
     }
 }

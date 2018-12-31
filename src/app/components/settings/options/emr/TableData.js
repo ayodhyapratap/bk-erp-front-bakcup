@@ -1,6 +1,6 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Modal, Card, Form, Icon, Row, Table, Divider} from "antd";
+import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm} from "antd";
 import {
     CHECKBOX_FIELD,
     SUCCESS_MSG_TYPE,
@@ -11,7 +11,7 @@ import {
 } from "../../../../constants/dataKeys";
 import {TAXES} from "../../../../constants/api"
 import {Link} from "react-router-dom";
-import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
+import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
 
 class TableData extends React.Component {
     constructor(props) {
@@ -22,6 +22,7 @@ class TableData extends React.Component {
             data: null,
         }
         this.loadData = this.loadData.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
     }
 
     componentDidMount() {
@@ -59,6 +60,17 @@ class TableData extends React.Component {
         this.setState({visible: false});
     }
 
+    deleteObject(record) {
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.loadData();
+        }
+        let errorFn = function () {
+        };
+        postAPI(interpolate(this.props.id, [this.props.active_practiceId]), reqData, successFn, errorFn)
+    }
 
     render() {
         let that = this;
@@ -73,6 +85,10 @@ class TableData extends React.Component {
                 <span>
               <a onClick={() => this.editFunction(record)}>  Edit</a>
                 <Divider type="vertical"/>
+                    <Popconfirm title="Are you sure delete this item?"
+                                onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
+                      <a>Delete</a>
+                  </Popconfirm>
               </span>
             ),
         }];

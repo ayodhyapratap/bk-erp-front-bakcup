@@ -71,6 +71,11 @@ class SettingsDash extends React.Component {
                                render={(route) => (this.props.permissions.add_practice ?
                                        <AddPracticeDetails  {...this.props}/> : <PermissionDenied/>
                                )}/>
+                        <Route exact path="/settings/clinics/:id/edit"
+                               render={(route) => (this.props.permissions.change_practice ?
+                                   <EditPracticeDetail {...this.props} practiceId={route.match.params.id}/> :
+                                   <PermissionDenied/>)
+                               }/>
                         <Route exact path="/settings/communication-settings"
                                render={(route) => (this.props.permissions.view_practice ?
                                        <CommunicationSettings  {...this.props}/> : <PermissionDenied/>
@@ -103,11 +108,7 @@ class SettingsDash extends React.Component {
                                render={(route) => (this.props.permissions.add_practiceoffers ?
                                        <AddOffer  {...this.props}/> : <PermissionDenied/>
                                )}/>
-                        <Route exact path="/settings/clinics/:id/edit"
-                               render={(route) => (this.props.permissions.change_practice ?
-                                   <EditPracticeDetail {...this.props} practiceId={route.match.params.id}/> :
-                                   <PermissionDenied/>)
-                               }/>
+
                         <Route exact path="/settings/prescriptions"
                                render={() => <Prescriptions  {...this.props}/>}/>
                         <Route exact path="/settings/prescriptions/add"
