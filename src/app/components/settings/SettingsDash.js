@@ -22,6 +22,7 @@ import Error404 from "../common/errors/Error404";
 import CalendarSettings from "./options/calendar/CalendarSettings"
 import SettingSider from "./SettingSider";
 import PermissionDenied from "../common/errors/PermissionDenied";
+import AddorEditLab from "./options/labs/AddorEditLab";
 
 const Content = Layout.Content;
 
@@ -60,8 +61,8 @@ class SettingsDash extends React.Component {
                                )}/>
                         <Route exact path="/settings/clinics-staff/:doctorid/edit"
                                render={(route) => (this.props.permissions.add_practicestaff ?
-                                        <AddStaffDoctor  {...this.props} {...route}/> : <PermissionDenied/>
-                                )}/>
+                                       <AddStaffDoctor  {...this.props} {...route}/> : <PermissionDenied/>
+                               )}/>
                         <Route exact path="/settings/clinics"
                                render={(route) => (this.props.permissions.view_practice ?
                                        <PracticeDetails  {...this.props} {...route}/> : <PermissionDenied/>
@@ -113,8 +114,8 @@ class SettingsDash extends React.Component {
                                render={() => <AddPrescription  {...this.props}/>}/>
                         <Route exact path="/settings/expense-types"
                                render={() => <ExpensesTypes  {...this.props}/>}/>
-                        <Route exact path="/settings/labs"
-                               render={() => <LabTest  {...this.props}/>}/>
+                        <Route path="/settings/labs"
+                               render={(route) => <LabTest  {...this.props} {...route}/>}/>
                         <Route exact path="/settings/medical-history"
                                render={() => <MedicalHistory  {...this.props}/>}/>
                         <Route component={Error404}/>
