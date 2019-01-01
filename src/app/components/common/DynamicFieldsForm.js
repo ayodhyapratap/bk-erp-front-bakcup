@@ -31,7 +31,6 @@ import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {displayMessage, makeURL, postAPI, putAPI} from "../../utils/common";
 import moment from "moment";
 import {SwatchesPicker} from 'react-color';
-import quill from 'quill';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import {FILE_UPLOAD_API} from "../../constants/api";

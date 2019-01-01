@@ -102,13 +102,13 @@ class AppBase extends React.Component {
             var practiceKeys = Object.keys(practice);
             console.log(practiceKeys);
             var that = this;
+            let practiceArray = [];
             practiceKeys.forEach(function (key) {
                 let successFn = function (data) {
                     that.setState(function (prevState) {
                         console.log(prevState)
-                        let practiceArray = [];
-                        let previousList = prevState.practiceList
-                        practiceArray = practiceArray.concat(previousList);
+                        // let previousList = prevState.practiceList
+                        // practiceArray = practiceArray.concat(previousList);
                         practiceArray.push(data);
                         console.log(practiceArray);
                         // if(doctors==null){doctors=[];}
