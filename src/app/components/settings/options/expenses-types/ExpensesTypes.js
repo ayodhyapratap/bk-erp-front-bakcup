@@ -1,6 +1,6 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Modal, Card, Form, Icon, Row, Table, Divider} from "antd";
+import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm} from "antd";
 import {SUCCESS_MSG_TYPE, CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {EXPENSE_TYPE} from "../../../../constants/api"
 import {Link} from "react-router-dom";
@@ -15,6 +15,7 @@ class ExpensesTypes extends React.Component {
           expenses:null
         };
         this.loadData = this.loadData.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
 
     }
     componentDidMount(){
@@ -50,6 +51,18 @@ class ExpensesTypes extends React.Component {
     handleCancel = () => {
         this.setState({ visible: false });
     }
+    deleteObject(record) {
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.loadData();
+        }
+        let errorFn = function () {
+        };
+        postAPI(interpolate(EXPENSE_TYPE, [this.props.active_practiceId]), reqData, successFn, errorFn)
+    }
+
 
 
     render() {
@@ -65,6 +78,10 @@ class ExpensesTypes extends React.Component {
               <span>
               <a onClick={()=>this.editTax(record)}>  Edit</a>
                 <Divider type="vertical" />
+                <Popconfirm title="Are you sure delete this?"
+                            onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
+                  <a>Delete</a>
+              </Popconfirm>
               </span>
             ),
           }];

@@ -22,6 +22,7 @@ class TaxCatalog extends React.Component {
             taxes: null
         };
         this.loadData = this.loadData.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
 
     }
 
@@ -93,7 +94,7 @@ class TaxCatalog extends React.Component {
                 <span>
               <a onClick={() => this.editTax(record)}>  Edit</a>
                 <Divider type="vertical"/>
-                    <Popconfirm title="Are you sure delete this tax?"
+                    <Popconfirm title="Are you sure delete this?"
                                 onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
                       <a>Delete</a>
                   </Popconfirm>

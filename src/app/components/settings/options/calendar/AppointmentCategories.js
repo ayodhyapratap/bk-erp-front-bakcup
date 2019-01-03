@@ -15,6 +15,7 @@ class AppointmentCategories extends React.Component {
           appointmentCategories:null
         };
         this.loadAppointmentCategories = this.loadAppointmentCategories.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
 
     }
     componentDidMount(){
@@ -47,6 +48,19 @@ class AppointmentCategories extends React.Component {
         visible: true,
       })
     }
+
+    deleteObject(record) {
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.loadAppointmentCategories();
+        }
+        let errorFn = function () {
+        };
+        postAPI(interpolate(APPOINTMENT_CATEGORIES, [this.props.active_practiceId]), reqData, successFn, errorFn)
+    }
+
     handleCancel = () => {
         this.setState({ visible: false });
     }
@@ -65,6 +79,10 @@ class AppointmentCategories extends React.Component {
               <span>
               <a onClick={()=>this.editCategory(record)}>  Edit</a>
                 <Divider type="vertical" />
+                <Popconfirm title="Are you sure delete this?"
+                            onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
+                  <a>Delete</a>
+              </Popconfirm>
               </span>
             ),
           }];
