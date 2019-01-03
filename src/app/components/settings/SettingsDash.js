@@ -109,10 +109,9 @@ class SettingsDash extends React.Component {
                                        <AddOffer  {...this.props}/> : <PermissionDenied/>
                                )}/>
 
-                        <Route exact path="/settings/prescriptions"
-                               render={() => <Prescriptions  {...this.props}/>}/>
-                        <Route exact path="/settings/prescriptions/add"
-                               render={() => <AddPrescription  {...this.props}/>}/>
+                        <Route path="/settings/prescriptions"
+                               render={(route) => <Prescriptions  {...this.props} {...route}/>}/>
+
                         <Route exact path="/settings/expense-types"
                                render={() => <ExpensesTypes  {...this.props}/>}/>
                         <Route path="/settings/labs"

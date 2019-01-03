@@ -38,12 +38,12 @@ export default class VideosList extends React.Component {
             height: '200',
             width: '300',
             playerVars: { // https://developers.google.com/youtube/player_parameters
-                autoplay: 1
+                // autoplay: 1
             }
         };
         let _onReady = function(event) {
             // access to player in all event handlers via event.target
-            event.target.pauseVideo();
+            // event.target.pauseVideo();
         }
         return <div><Switch>
             <Route exact path='/web/videos/add'

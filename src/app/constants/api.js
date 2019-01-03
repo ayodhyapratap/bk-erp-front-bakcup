@@ -25,12 +25,14 @@ export const APPOINTMENT_CATEGORIES = 'clinics/%s/appointment_category/';
 export const ALL_PRACTICE_STAFF = 'staff/';
 export const SINGLE_PRACTICE_STAFF_API = 'staff/%s/';
 
-export const PATIENTS_LIST = 'patients/'
-export const PATIENT_PROFILE = 'patients/%s/'
-export const STAFF_ROLES = 'staff/roles/'
-export const MEDICAL_HISTORY = 'patients/history/?id=%s'
+export const PATIENTS_LIST = 'patients/';
+export const PATIENT_PROFILE = 'patients/%s/';
+export const STAFF_ROLES = 'staff/roles/';
+export const MEDICAL_HISTORY = 'clinics/%s/history/';
+export const PATIENT_MEDICAL_HISTORY = 'patients/history/?id=%s';
 export const EXPENSE_TYPE = 'clinics/%s/expense_type/';
 export const DRUG_CATALOG = 'clinics/%s/drugcatalog/';
+export const SINGLE_DRUG_CATALOG = 'clinics/%s/drugcatalog/?id=%s';
 export const LABTEST_API = 'clinics/%s/labtest/';
 export const COMMUNICATONS_API = 'clinics/%s/communications/';
 export const CALENDER_SETTINGS = 'clinics/%s/calender_settings/';

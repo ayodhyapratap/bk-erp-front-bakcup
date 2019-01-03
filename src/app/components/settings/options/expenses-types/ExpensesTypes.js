@@ -55,7 +55,7 @@ class ExpensesTypes extends React.Component {
     render() {
       let that =this;
       const columns = [{
-            title: 'Expance Name',
+            title: 'Expense Name',
             dataIndex: 'name',
             key: 'name',
           },{
@@ -69,13 +69,13 @@ class ExpensesTypes extends React.Component {
             ),
           }];
       const   fields= [{
-            label: "expance name",
+            label: "Expense name",
             key: "name",
             required: true,
             type: INPUT_FIELD
         },];
       const   editfields= [{
-              label: "expance  name",
+              label: "Expense name",
               key: "name",
               required: true,
               initialValue:this.state.editingName,

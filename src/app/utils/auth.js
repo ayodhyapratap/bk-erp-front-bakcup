@@ -45,9 +45,16 @@ export const loggedInUserPractices = function () {
     return practices;
 };
 export const loggedInactivePractice = function () {
-    let practice = lockr.get(CURRENT_PRACTICE);
-    if (practice)
-        return practice;
+    let currentPractice = lockr.get(CURRENT_PRACTICE);
+    if (currentPractice) {
+        return currentPractice;
+    }else {
+        let practice = lockr.get(PRACTICE);
+        if(practice.length ){
+            setCurrentPractice(practice[0].practice);
+            return loggedInactivePractice();
+        }
+    }
     return null
 }
 

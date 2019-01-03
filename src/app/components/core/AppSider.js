@@ -53,7 +53,7 @@ class AppSider extends React.Component {
                 <Menu.Item key="1">
                     <Link to="/calendar">
                         <Icon type="schedule"/>
-                        <span className="nav-text">Calender</span>
+                        <span className="nav-text">Calendar</span>
                     </Link>
                 </Menu.Item>
                 <Menu.Item key="26">

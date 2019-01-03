@@ -27,69 +27,76 @@ export default class AddVideo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            editBlogData : this.props.editBlogData?this.props.editBlogData:null
+            editBlogData: this.props.editBlogData ? this.props.editBlogData : null
         }
     }
-    componentDidMount(){
-        if(this.props.match.params.id){
-            if(!this.state.editBlogData) {
+
+    componentDidMount() {
+        if (this.props.match.params.id) {
+            if (!this.state.editBlogData) {
                 this.loadData();
             }
         }
     }
-    changeRedirect(){
-        var redirectVar=this.state.redirect;
+
+    changeRedirect() {
+        var redirectVar = this.state.redirect;
         this.setState({
-            redirect:  !redirectVar,
-        })  ;
+            redirect: !redirectVar,
+        });
     }
 
-    loadData(){
-        let that =this;
+    loadData() {
+        let that = this;
         let successFn = function (data) {
             that.setState({
-                editBlogData:data,
+                editBlogData: data,
             })
         }
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_VIDEO, [this.props.match.params.id]) ,successFn, errorFn);
+        getAPI(interpolate(SINGLE_VIDEO, [this.props.match.params.id]), successFn, errorFn);
 
 
     }
 
 
-    render(){
-        const  fields= [{
+    render() {
+        let that = this;
+        const fields = [{
             label: "Name",
             key: "name",
-            initialValue:this.state.editBlogData?this.state.editBlogData.name:null,
+            initialValue: this.state.editBlogData ? this.state.editBlogData.name : null,
             type: INPUT_FIELD
-        },{
+        }, {
             label: "Rank ",
             key: "rank",
-            initialValue:this.state.editBlogData?this.state.editBlogData.rank:null,
+            initialValue: this.state.editBlogData ? this.state.editBlogData.rank : null,
             type: NUMBER_FIELD
-        },{
+        }, {
             label: "Video link",
             key: "link",
-            initialValue:this.state.editBlogData?this.state.editBlogData.link:null,
+            initialValue: this.state.editBlogData ? this.state.editBlogData.link : null,
             type: INPUT_FIELD,
-        },{
-            label: "Active",
-            key: "is_active",
-            initialValue:this.state.editBlogData?this.state.editBlogData.is_active:null,
-            type: SINGLE_CHECKBOX_FIELD,
-        }, ];
+        },
+        //     {
+        //     label: "Active",
+        //     key: "is_active",
+        //     initialValue: this.state.editBlogData ? this.state.editBlogData.is_active : null,
+        //     type: SINGLE_CHECKBOX_FIELD,
+        // },
+        ];
 
 
         let editformProp;
-        if(this.state.editBlogData) {
+        if (this.state.editBlogData) {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
-                    console.log(data);
+                    that.setState({
+                        redirect: true
+                    });
                 },
                 errorFn: function () {
 
@@ -101,31 +108,37 @@ export default class AddVideo extends React.Component {
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
-        const formProp={
-            successFn:function(data){
+        const formProp = {
+            successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-
+                that.setState({
+                    redirect: true
+                });
                 console.log(data);
             },
-            errorFn:function(){
+            errorFn: function () {
 
             },
-            action:  BLOG_VIDEOS,
+            action: BLOG_VIDEOS,
             method: "post",
         }
-        let defaultValues=[];
+        let defaultValues = [{key:'is_active',value:true}];
 
         return <Row>
             <Card>
                 <Route exact path='/web/videos/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Video" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/web/videos'} />)}/>
+                       render={() => (this.props.match.params.id ?
+                           <TestFormLayout defaultValues={defaultValues} title="Edit Video"
+                                           changeRedirect={this.changeRedirect} formProp={editformProp}
+                                           fields={fields}/> : <Redirect to={'/web/videos'}/>)}/>
                 <Route exact path='/web/videos/add'
-                       render={() =><TestFormLayout title="Add video" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
+                       render={() => <TestFormLayout title="Add video" defaultValues={defaultValues} changeRedirect={this.changeRedirect}
+                                                     formProp={formProp} fields={fields}/>}/>
 
 
             </Card>
 
-            {this.state.redirect&&    <Redirect to={'/web/videos'} />}
+            {this.state.redirect && <Redirect to={'/web/videos'}/>}
         </Row>
 
     }
