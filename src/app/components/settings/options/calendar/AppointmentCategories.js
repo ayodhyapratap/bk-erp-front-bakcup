@@ -1,10 +1,10 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Modal, Card, Form, Icon, Row, Table, Divider} from "antd";
+import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm} from "antd";
 import {SUCCESS_MSG_TYPE, CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {APPOINTMENT_CATEGORIES} from "../../../../constants/api"
 import {Link} from "react-router-dom";
-import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
+import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
 
 class AppointmentCategories extends React.Component {
     constructor(props) {

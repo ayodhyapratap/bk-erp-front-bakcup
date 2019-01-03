@@ -1,10 +1,10 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Card, Form, Icon, Tabs, Divider, Tag, Row, Table} from "antd";
+import {Button, Card, Form, Icon, Tabs, Divider, Tag, Row, Table, Popconfirm} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {PROCEDURE_CATEGORY} from "../../../../constants/api"
 import {Link} from "react-router-dom";
-import {getAPI, interpolate} from "../../../../utils/common";
+import {getAPI, interpolate, postAPI} from "../../../../utils/common";
 
 const {Column, ColumnGroup} = Table;
 const TabPane = Tabs.TabPane;
@@ -55,6 +55,7 @@ class RecentProcedure extends React.Component {
 
 
     render() {
+        let that = this;
         return <Row>
             <h2>Procedures
                 <Link to="/settings/procedures/addprocedure">

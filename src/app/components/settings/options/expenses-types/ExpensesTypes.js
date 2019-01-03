@@ -4,7 +4,7 @@ import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm} from "
 import {SUCCESS_MSG_TYPE, CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {EXPENSE_TYPE} from "../../../../constants/api"
 import {Link} from "react-router-dom";
-import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
+import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
 
 class ExpensesTypes extends React.Component {
     constructor(props) {
