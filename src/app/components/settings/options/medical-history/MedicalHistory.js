@@ -15,6 +15,7 @@ class MedicalHistory extends React.Component {
           history:null
         };
         this.loadData = this.loadData.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
 
     }
     componentDidMount(){
@@ -50,6 +51,18 @@ class MedicalHistory extends React.Component {
     handleCancel = () => {
         this.setState({ visible: false });
     }
+    deleteObject(record) {
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.loadData();
+        }
+        let errorFn = function () {
+        };
+        postAPI(interpolate(MEDICAL_HISTORY, [this.props.active_practiceId]), reqData, successFn, errorFn)
+    }
+
 
 
     render() {
@@ -65,6 +78,10 @@ class MedicalHistory extends React.Component {
               <span>
               <a onClick={()=>this.editTax(record)}>  Edit</a>
                 <Divider type="vertical" />
+                <Popconfirm title="Are you sure delete this?"
+                            onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
+                  <a>Delete</a>
+              </Popconfirm>
               </span>
             ),
           }];

@@ -11,9 +11,15 @@ class Offers extends React.Component {
         super(props);
         this.state = {
           offers: null
-        }
+        };
+        this.deleteObject = this.deleteObject.bind(this);
+        this.loadData = this.loadData.bind(this);
+
     }
-    componentDidMount() {
+    componentDidMount(){
+      this.loadData;
+    }
+    loadData() {
       var that = this;
         let successFn = function (data) {
           console.log("get table");
@@ -25,6 +31,19 @@ class Offers extends React.Component {
         };
         getAPI(interpolate( OFFERS, [this.props.active_practiceId]), successFn, errorFn);
       }
+      deleteObject(record) {
+          let that = this;
+          let reqData = record;
+          reqData.is_active = false;
+          let successFn = function (data) {
+              that.loadData();
+          }
+          let errorFn = function () {
+          };
+          postAPI(interpolate(OFFERS, [this.props.active_practiceId]), reqData, successFn, errorFn)
+      }
+
+
     render() {
       const columns = [{
             title: 'Name',
@@ -45,7 +64,10 @@ class Offers extends React.Component {
               <span>
                 Edit
                 <Divider type="vertical" />
-                delete
+                <Popconfirm title="Are you sure delete this?"
+                            onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
+                  <a>Delete</a>
+              </Popconfirm>
               </span>
             ),
           }];

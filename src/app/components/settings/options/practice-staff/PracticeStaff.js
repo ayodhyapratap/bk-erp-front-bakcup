@@ -22,7 +22,10 @@ class PracticeDetails extends React.Component {
         this.staffRoles();
     }
 
-    componentDidMount() {
+    componentDidMount(){
+      this.loadData();
+    }
+    loadData(){
         let group = loggedInUserGroup();
         if (group[0].name == "Admin") {
             this.admin_StaffData();
@@ -32,7 +35,17 @@ class PracticeDetails extends React.Component {
         }
 
     }
+    deleteStaff(value){
+      var that = this;
+      let successFn = function (data) {
+        that.loadData();
+        console.log("Deleted");
+      };
+      let errorFn = function () {
+      };
+      deleteAPI(interpolate(SINGLE_PRACTICE_STAFF_API,[value]), successFn, errorFn);
 
+    }
     staffRoles() {
         let that = this;
         let successFn = function (data) {
@@ -157,7 +170,7 @@ class PracticeDetails extends React.Component {
             <Link to={"/settings/clinics-staff/" + record.id + "/edit"}>
               <a>edit {record.name}</a></Link>
               <Divider type="vertical"/>
-              <a href="javascript:;">Delete</a>
+              <a onClick={() => this.deleteStaff(record.id)}>Delete</a>
             </span>
             )
         }];

@@ -18,7 +18,10 @@ class RecentProcedure extends React.Component {
         }
     }
 
-    componentDidMount() {
+    componentDidMount(){
+      this.loadData();
+    }
+    loadData(){
         var that = this;
         let successFn = function (data) {
             console.log("get table");
@@ -37,6 +40,17 @@ class RecentProcedure extends React.Component {
         this.setState({
             current: e.key,
         });
+    }
+    deleteObject(record) {
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.loadData();
+        }
+        let errorFn = function () {
+        };
+        postAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), reqData, successFn, errorFn)
     }
 
 
@@ -87,8 +101,11 @@ class RecentProcedure extends React.Component {
                       <Link to="/settings/clinics-staff/adddoctor">
                         <a>edit {record.name}</a></Link>
                         <Divider type="vertical"/>
-                        <a href="javascript:;">Delete</a>
-                      </span>
+                        <Popconfirm title="Are you sure delete this?"
+                                    onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
+                          <a>Delete</a>
+                      </Popconfirm>
+                    </span>
                                 )}
                             />
 
