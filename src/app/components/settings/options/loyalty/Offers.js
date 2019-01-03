@@ -52,11 +52,11 @@ class Offers extends React.Component {
             dataIndex: 'code',
             key: 'code',
         }, {
-            title: 'description',
+            title: 'Description',
             dataIndex: 'description',
             key: 'description',
         }, {
-            title: ' discount',
+            title: ' Discount',
             dataIndex: 'discount',
             key: 'discount',
         }, {

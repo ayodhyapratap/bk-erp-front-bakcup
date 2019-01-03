@@ -113,7 +113,7 @@ class DynamicFieldsForm extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.state.formProp.successFn(data);
-            if (that.props.changeRedirect !== null) {
+            if (that.props.changeRedirect) {
                 that.props.changeRedirect();
             }
         };

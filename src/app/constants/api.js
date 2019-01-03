@@ -28,8 +28,8 @@ export const SINGLE_PRACTICE_STAFF_API = 'staff/%s/';
 export const PATIENTS_LIST = 'patients/';
 export const PATIENT_PROFILE = 'patients/%s/';
 export const STAFF_ROLES = 'staff/roles/';
-export const MEDICAL_HISTORY = 'clinics/%s/history/';
-export const PATIENT_MEDICAL_HISTORY = 'patients/history/?id=%s';
+export const MEDICAL_HISTORY = 'patients/history/?id=%s'
+// export const PATIENT_MEDICAL_HISTORY = 'patients/history/?id=%s';
 export const EXPENSE_TYPE = 'clinics/%s/expense_type/';
 export const DRUG_CATALOG = 'clinics/%s/drugcatalog/';
 export const SINGLE_DRUG_CATALOG = 'clinics/%s/drugcatalog/?id=%s';

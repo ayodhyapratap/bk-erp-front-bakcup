@@ -117,7 +117,7 @@ class MedicalHistory extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
         <Card>
-              <TestFormLayout title="Medical History"  formProp={formProp}  fields={fields}/>
+              <TestFormLayout title="Medical History" defaultValues={defaultValues}  formProp={formProp}  fields={fields}/>
               <Divider/>
               <Table columns={columns}  dataSource={this.state.history}/>
             </Card>
