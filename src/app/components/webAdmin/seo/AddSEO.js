@@ -66,15 +66,16 @@ export default class AddSEO extends React.Component {
             label: "Page",
             key: "name",
             initialValue:this.state.editBlogData?this.state.editBlogData.name:null,
-            type: INPUT_FIELD
+            type: INPUT_FIELD,
+            disabled:true
         },{
-            label: "Page Title ",
+            label: "Page Title",
             key: "title",
             initialValue:this.state.editBlogData?this.state.editBlogData.title:null,
             type: INPUT_FIELD
         },{
             label: "SEO Description",
-            key: "meta_description  ",
+            key: "meta_description",
             initialValue:this.state.editBlogData?this.state.editBlogData.meta_description:null,
             type: TEXT_FIELD,
         },{
@@ -82,20 +83,18 @@ export default class AddSEO extends React.Component {
             key: "keywords",
             initialValue:this.state.editBlogData?this.state.editBlogData.keywords:null,
             type: TEXT_FIELD,
-        },{
-            label: "Active",
-            key: "is_active",
-            initialValue:this.state.editBlogData?this.state.editBlogData.is_active:null,
-            type: SINGLE_CHECKBOX_FIELD,
         }, ];
 
 
         let editformProp;
+        let that = this;
         if(this.state.editBlogData) {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     console.log(data);
+                    that.props.loadData();
+                    that.changeRedirect();
                 },
                 errorFn: function () {
 
@@ -119,7 +118,7 @@ export default class AddSEO extends React.Component {
             action:  BLOG_PAGE_SEO,
             method: "post",
         }
-        let defaultValues=[];
+        let defaultValues=[{key:'is_active',value:true}];
 
         return <Row>
             <Card>

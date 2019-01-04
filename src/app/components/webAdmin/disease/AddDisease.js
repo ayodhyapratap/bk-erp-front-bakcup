@@ -1,11 +1,19 @@
 import {Button, Card, Form, Icon, List, Row} from "antd";
 import React from "react";
-import {INPUT_FIELD, QUILL_TEXT_FIELD, SELECT_FIELD, SUCCESS_MSG_TYPE, TEXT_FIELD} from "../../../constants/dataKeys";
+import {
+    FILE_UPLOAD_FIELD,
+    INPUT_FIELD,
+    QUILL_TEXT_FIELD,
+    SELECT_FIELD,
+    SUCCESS_MSG_TYPE,
+    TEXT_FIELD
+} from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {BLOG_DISEASE, INVOICES_API, PRACTICE, SINGLE_DISEASE, SINGLE_PAGE_SEO} from "../../../constants/api";
 import {Route} from "react-router";
 import {Redirect} from "react-router-dom";
+import {DISEASE_TYPES} from "../../../constants/hardData";
 
 
 export default class AddDisease extends React.Component {
@@ -49,42 +57,43 @@ export default class AddDisease extends React.Component {
         const  fields= [{
             label: "Disease Type",
             key: "disease_type",
-            initialValue:this.state.editBlogData?this.state.editBlogData.unit:null,
-            type: INPUT_FIELD
+            initialValue:this.state.editBlogData?this.state.editBlogData.disease_type:null,
+            type: SELECT_FIELD,
+            options: DISEASE_TYPES
         },{
             label: "Disease Name",
             key: "disease_name",
-            initialValue:this.state.editBlogData?this.state.editBlogData.cost:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.disease_name:null,
             type: INPUT_FIELD
         },{
             label: "Disease Main Image",
             key: "main_image",
-            initialValue:this.state.editBlogData?this.state.editBlogData.discount:null,
-            type: INPUT_FIELD,
+            initialValue:this.state.editBlogData?this.state.editBlogData.main_image:null,
+            type: FILE_UPLOAD_FIELD,
         },{
             label: "Disease Side Image",
             key: "side_image",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.side_image:null,
             type: INPUT_FIELD,
         },{
             label: "SEO Description",
             key: "meta_description",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.meta_description:null,
             type: TEXT_FIELD,
         },{
             label: "SEO Keywords",
             key: "keywords",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.keywords:null,
             type: TEXT_FIELD,
         },{
             label: "Url",
             key: "domain",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.domain:null,
             type: INPUT_FIELD,
         },{
             label: "content",
             key: "content",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.content:null,
             type: QUILL_TEXT_FIELD,
         }, ];
 

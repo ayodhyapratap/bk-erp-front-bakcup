@@ -1,7 +1,13 @@
-import {Avatar, Button, Card, Icon, List} from "antd";
+import {Avatar, Button, Card, Icon, List, Popconfirm} from "antd";
 import React from "react";
-import {getAPI} from "../../../utils/common";
-import {BLOG_POST, BLOG_VIDEOS, LANDING_PAGE_CONTENT, LANDING_PAGE_VIDEO} from "../../../constants/api";
+import {getAPI, interpolate, postAPI} from "../../../utils/common";
+import {
+    BLOG_POST,
+    BLOG_VIDEOS,
+    LANDING_PAGE_CONTENT,
+    LANDING_PAGE_VIDEO,
+    SINGLE_LANDING_PAGE_CONTENT
+} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import {Link} from "react-router-dom";
 import AddLandingPageContent from "./AddLandingPageContent";
@@ -13,6 +19,7 @@ export default class LandingPageContentList extends React.Component{
             pageContent:[]
         };
         this.loadData=this.loadData.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
     }
     componentDidMount(){
         this.loadData();
@@ -29,7 +36,19 @@ export default class LandingPageContentList extends React.Component{
         }
         getAPI(LANDING_PAGE_CONTENT ,successFn, errorFn);
     }
+    deleteObject(record) {
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.loadData();
+        }
+        let errorFn = function () {
+        };
+        postAPI(interpolate(SINGLE_LANDING_PAGE_CONTENT, [record.id]), reqData, successFn, errorFn)
+    }
     render(){
+        let that = this;
         return<div><Switch>
             <Route exact path='/web/landingpagecontent/add'
                    render={(route) => <AddLandingPageContent {...this.state} {...route}/>}/>
@@ -41,7 +60,10 @@ export default class LandingPageContentList extends React.Component{
                       renderItem={item => <List.Item key={item.id}
 
                                                      actions={[<Link to={"/web/landingpagecontent/edit/"+item.id}>Edit</Link>,
-                                                         <a >Delete</a>]}
+                                                         <Popconfirm title="Are you sure delete this item?"
+                                                                     onConfirm={() => that.deleteObject(item)} okText="Yes" cancelText="No">
+                                                             <a>Delete</a>
+                                                         </Popconfirm>]}
                                                      extra={<img src={item.image} style={{width:'300px'}}/>}>
                           <List.Item.Meta
                               avatar={<Avatar style={{ backgroundColor: '#87d068' }} >{item.rank}</Avatar>}

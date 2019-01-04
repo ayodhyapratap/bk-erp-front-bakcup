@@ -1,7 +1,7 @@
-import {Button, Card, Divider, Icon, List, Table} from "antd";
+import {Button, Card, Divider, Icon, List, Popconfirm, Table} from "antd";
 import React from "react";
-import {getAPI} from "../../../utils/common";
-import {BLOG_CONTACTUS} from "../../../constants/api";
+import {getAPI, interpolate, postAPI} from "../../../utils/common";
+import {BLOG_CONTACTUS, SINGLE_CONTACT, SINGLE_LANDING_PAGE_CONTENT} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import {Link} from "react-router-dom";
 import AddContacts from "./AddContacts";
@@ -14,6 +14,7 @@ export default class ContactsList extends React.Component{
             contacts:null
         };
         this.loadData=this.loadData.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
     }
     componentDidMount(){
         this.loadData();
@@ -30,7 +31,20 @@ export default class ContactsList extends React.Component{
         }
         getAPI(BLOG_CONTACTUS ,successFn, errorFn);
     }
+    deleteObject(record) {
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.loadData();
+        };
+        let errorFn = function () {
+        };
+        postAPI(interpolate(SINGLE_CONTACT, [record.id]), reqData, successFn, errorFn)
+    }
+
     render(){
+        let that = this;
         let coloumns = [{
             title: 'Rank',
             dataIndex: 'contact_rank',
@@ -54,15 +68,18 @@ export default class ContactsList extends React.Component{
                 return <div>
                     <Link to={"/web/contact/edit/"+item.id}>Edit</Link>
                     <Divider type="vertical"/>
-                    <a >Delete</a>
+                    <Popconfirm title="Are you sure delete this item?"
+                                onConfirm={() => that.deleteObject(item)} okText="Yes" cancelText="No">
+                        <a>Delete</a>
+                    </Popconfirm>
                 </div>
             }
         }];
         return<div><Switch>
             <Route exact path='/web/contact/add'
-                   render={(route) => <AddContacts {...this.state} {...route}/>}/>
+                   render={(route) => <AddContacts {...this.state} {...route} loadData={this.loadData}/>}/>
             <Route exact path='/web/contact/edit/:id'
-                   render={(route) => <AddContacts {...this.state} {...route}/>}/>
+                   render={(route) => <AddContacts {...this.state} {...route} loadData={this.loadData}/>}/>
             <Card title="Contacts" extra={<Link to={"/web/contact/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
                 <Table dataSource={this.state.contacts} columns={coloumns}/>
             </Card>

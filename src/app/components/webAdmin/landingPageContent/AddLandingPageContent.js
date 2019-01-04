@@ -1,7 +1,7 @@
 import {Button, Card, Form, Icon, List, Row} from "antd";
 import React from "react";
 import {
-    DATE_PICKER,
+    DATE_PICKER, FILE_UPLOAD_FIELD,
     INPUT_FIELD, NUMBER_FIELD,
     QUILL_TEXT_FIELD,
     SELECT_FIELD, SINGLE_CHECKBOX_FIELD,
@@ -70,7 +70,7 @@ export default class AddLandingPageContent extends React.Component {
             label: "Image",
             key: "image",
             initialValue:this.state.editBlogData?this.state.editBlogData.image:null,
-            type: INPUT_FIELD,
+            type: FILE_UPLOAD_FIELD,
         },{
             label: "content",
             key: "content",

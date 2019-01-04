@@ -1,7 +1,7 @@
-import {Avatar, Button, Card, Icon, List} from "antd";
+import {Avatar, Button, Card, Icon, List, Popconfirm} from "antd";
 import React from "react";
-import {getAPI} from "../../../utils/common";
-import {BLOG_POST, BLOG_VIDEOS} from "../../../constants/api";
+import {getAPI, interpolate, postAPI} from "../../../utils/common";
+import {BLOG_POST, BLOG_VIDEOS, SINGLE_CONTACT} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import {Link} from "react-router-dom";
 import AddVideo from "./AddVideo";
@@ -14,6 +14,7 @@ export default class VideosList extends React.Component {
             videos: []
         };
         this.loadData = this.loadData.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
     }
 
     componentDidMount() {
@@ -33,7 +34,20 @@ export default class VideosList extends React.Component {
         getAPI(BLOG_VIDEOS, successFn, errorFn);
     }
 
+    deleteObject(record) {
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.loadData();
+        };
+        let errorFn = function () {
+        };
+        postAPI(interpolate(SINGLE_CONTACT, [record.id]), reqData, successFn, errorFn)
+    }
+
     render() {
+        let that = this;
         const opts = {
             height: '200',
             width: '300',
@@ -41,28 +55,31 @@ export default class VideosList extends React.Component {
                 // autoplay: 1
             }
         };
-        let _onReady = function(event) {
+        let _onReady = function (event) {
             // access to player in all event handlers via event.target
             // event.target.pauseVideo();
         }
         return <div><Switch>
             <Route exact path='/web/videos/add'
-                   render={(route) => <AddVideo {...this.state} {...route}/>}/>
+                   render={(route) => <AddVideo {...this.state} {...route} loadData={this.loadData}/>}/>
             <Route exact path='/web/videos/edit/:id'
-                   render={(route) => <AddVideo {...this.state} {...route}/>}/>
+                   render={(route) => <AddVideo {...this.state} {...route} loadData={this.loadData}/>}/>
             <Card title="Videos"
                   extra={<Link to={"/web/videos/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
                 <List dataSource={this.state.videos}
                       itemLayout="vertical"
                       renderItem={item => <List.Item key={item.id}
-
-                                                     actions={[<Link to={"/web/videos/edit/"+item.id}>Edit</Link>,
-                                                         <a >Delete</a>]}
+                                                     actions={[<Link to={"/web/videos/edit/" + item.id}>Edit</Link>,
+                                                         <Popconfirm title="Are you sure delete this item?"
+                                                                     onConfirm={() => that.deleteObject(item)}
+                                                                     okText="Yes" cancelText="No">
+                                                             <a>Delete</a>
+                                                         </Popconfirm>]}
                                                      extra={<YouTube videoId={item.link}
-                                                                                   opts={opts}
+                                                                     opts={opts}
                                                                      onReady={_onReady}/>}>
                           <List.Item.Meta
-                              avatar={<Avatar style={{ backgroundColor: '#87d068' }} >{item.rank}</Avatar>}
+                              avatar={<Avatar style={{backgroundColor: '#87d068'}}>{item.rank}</Avatar>}
                               title={item.name}
                           />
                       </List.Item>}/>

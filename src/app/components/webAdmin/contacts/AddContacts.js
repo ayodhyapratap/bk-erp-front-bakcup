@@ -26,110 +26,114 @@ export default class AddContacts extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            editBlogData : this.props.editBlogData?this.props.editBlogData:null
+            editBlogData: this.props.editBlogData ? this.props.editBlogData : null
         }
     }
-    componentDidMount(){
-        if(this.props.match.params.id){
-            if(!this.state.editBlogData) {
+
+    componentDidMount() {
+        if (this.props.match.params.id) {
+            if (!this.state.editBlogData) {
                 this.loadData();
             }
         }
     }
-    changeRedirect(){
-        var redirectVar=this.state.redirect;
+
+    changeRedirect() {
+        var redirectVar = this.state.redirect;
         this.setState({
-            redirect:  !redirectVar,
-        })  ;
+            redirect: !redirectVar,
+        });
     }
 
-    loadData(){
-        let that =this;
+    loadData() {
+        let that = this;
         let successFn = function (data) {
             that.setState({
-                editBlogData:data,
+                editBlogData: data,
             })
         }
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_CONTACT, [this.props.match.params.id]) ,successFn, errorFn);
+        getAPI(interpolate(SINGLE_CONTACT, [this.props.match.params.id]), successFn, errorFn);
 
     }
 
 
-    render(){
-        const  fields= [{
+    render() {
+        const fields = [{
             label: "Name",
             key: "name",
-            initialValue:this.state.editBlogData?this.state.editBlogData.name:null,
+            initialValue: this.state.editBlogData ? this.state.editBlogData.name : null,
             type: INPUT_FIELD
-        },{
+        }, {
             label: "Rank ",
             key: "contact_rank",
-            initialValue:this.state.editBlogData?this.state.editBlogData.contact_rank:null,
+            initialValue: this.state.editBlogData ? this.state.editBlogData.contact_rank : null,
             type: NUMBER_FIELD
-        },{
+        }, {
             label: "Phone Number ",
             key: "phone_no",
-            initialValue:this.state.editBlogData?this.state.editBlogData.phone_no:null,
+            initialValue: this.state.editBlogData ? this.state.editBlogData.phone_no : null,
             type: INPUT_FIELD,
-        },{
+        }, {
             label: "Address",
             key: "address",
-            initialValue:this.state.editBlogData?this.state.editBlogData.address:null,
+            initialValue: this.state.editBlogData ? this.state.editBlogData.address : null,
             type: TEXT_FIELD,
-            minRows:3,
-        },{
-            label: "Active",
-            key: "is_active",
-            initialValue:this.state.editBlogData?this.state.editBlogData.is_active:null,
-            type: SINGLE_CHECKBOX_FIELD,
-            minRows:3,
-        },];
+            minRows: 3,
+        }];
 
-
+        let that = this;
         let editformProp;
-        if(this.state.editBlogData) {
+        if (this.state.editBlogData) {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     console.log(data);
+                    that.props.loadData();
+                    that.changeRedirect();
                 },
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_CONTACT,[this.props.match.params.id]),
+                action: interpolate(SINGLE_CONTACT, [this.props.match.params.id]),
                 method: "put",
 
             }
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
-        const formProp={
-            successFn:function(data){
+        const formProp = {
+            successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-
+                that.props.loadData();
+                that.changeRedirect();
                 console.log(data);
             },
-            errorFn:function(){
+            errorFn: function () {
 
             },
-            action:  BLOG_CONTACTUS,
+            action: BLOG_CONTACTUS,
             method: "post",
         }
-        let defaultValues=[];
+        let defaultValues = [{key: 'is_active', value: true}];
 
         return <Row>
             <Card>
                 <Route exact path='/web/contact/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Contact" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/web/contact'} />)}/>
+                       render={() => (this.props.match.params.id ?
+                           <TestFormLayout defaultValues={defaultValues} title="Edit Contact"
+                                           changeRedirect={this.changeRedirect} formProp={editformProp}
+                                           fields={fields}/> : <Redirect to={'/web/contact'}/>)}/>
                 <Route exact path='/web/contact/add'
-                       render={() =><TestFormLayout title="Add Contact" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
+                       render={() => <TestFormLayout title="Add Contact" defaultValues={defaultValues}
+                                                     changeRedirect={this.changeRedirect} formProp={formProp}
+                                                     fields={fields}/>}/>
 
 
             </Card>
-            {this.state.redirect&&    <Redirect to={'/web/blog'} />}
+            {this.state.redirect && <Redirect to={'/web/blog'}/>}
         </Row>
 
     }

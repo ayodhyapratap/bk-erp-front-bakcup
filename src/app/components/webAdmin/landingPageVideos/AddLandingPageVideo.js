@@ -61,6 +61,7 @@ export default class AddLandingPageVideo extends React.Component {
 
 
     render(){
+        let that = this;
         const  fields= [{
             label: "Name",
             key: "name",
@@ -90,6 +91,8 @@ export default class AddLandingPageVideo extends React.Component {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     console.log(data);
+                    that.props.loadData();
+                    that.changeRedirect();
                 },
                 errorFn: function () {
 
@@ -104,9 +107,10 @@ export default class AddLandingPageVideo extends React.Component {
         const formProp={
             successFn:function(data){
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-
+                that.props.loadData();
                 console.log(data);
-            },
+                that.changeRedirect();}
+            ,
             errorFn:function(){
 
             },

@@ -52,7 +52,7 @@ export default class SEOList extends React.Component{
                 title:'Actions',
                 render:(item)=>{
                     return <div>
-                        <Link to={"/web/contact/edit/"+item.id}>Edit</Link>
+                        <Link to={"/web/pageseo/edit/"+item.id}>Edit</Link>
                     </div>
                 }
             }];
@@ -60,7 +60,7 @@ export default class SEOList extends React.Component{
                 {/*<Route exact path='/web/pageseo/add'*/}
                    {/*render={(route) => <AddSEO {...this.state} {...route}/>}/>*/}
             <Route exact path='/web/pageseo/edit/:id'
-                   render={(route) => <AddSEO {...this.state} {...route}/>}/>
+                   render={(route) => <AddSEO loadData={this.loadData} {...this.state} {...route}/>}/>
             <Card title="Pages SEO"
                   // extra={<Link to={"/web/pageseo/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}
             >

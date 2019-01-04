@@ -27,65 +27,64 @@ export default class AddFacility extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            editBlogData : this.props.editBlogData?this.props.editBlogData:null
+            editBlogData: this.props.editBlogData ? this.props.editBlogData : null
         }
     }
-    changeRedirect(){
-        var redirectVar=this.state.redirect;
+
+    changeRedirect() {
+        var redirectVar = this.state.redirect;
         this.setState({
-            redirect:  !redirectVar,
-        })  ;
+            redirect: !redirectVar,
+        });
     }
 
-    componentDidMount(){
-        if(this.props.match.params.id){
-            if(!this.state.editBlogData) {
+    componentDidMount() {
+        if (this.props.match.params.id) {
+            if (!this.state.editBlogData) {
                 this.loadData();
             }
         }
     }
 
-    loadData(){
-        let that =this;
+    loadData() {
+        let that = this;
         console.log("i M groot")
         let successFn = function (data) {
             that.setState({
-                editBlogData:data,
+                editBlogData: data,
             })
         }
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_FACILITY, [this.props.match.params.id]) ,successFn, errorFn);
+        getAPI(interpolate(SINGLE_FACILITY, [this.props.match.params.id]), successFn, errorFn);
 
     }
 
 
-    render(){
-        const  fields= [{
+    render() {
+        const fields = [{
             label: "Name",
             key: "name",
-            initialValue:this.state.editBlogData?this.state.editBlogData.name:null,
+            initialValue: this.state.editBlogData ? this.state.editBlogData.name : null,
             type: INPUT_FIELD
-        },{
+        }, {
             label: "content",
             key: "content",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            initialValue: this.state.editBlogData ? this.state.editBlogData.content : null,
             type: QUILL_TEXT_FIELD,
-        }, {
-            label: "Active",
-            key: "is_active",
-            initialValue:this.state.editBlogData?this.state.editBlogData.is_active:null,
-            type: SINGLE_CHECKBOX_FIELD,
-        }, ];
+        },];
 
-
+        let that = this;
         let editformProp;
-        if(this.state.editBlogData) {
+        if (this.state.editBlogData) {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     console.log(data);
+                    that.props.loadData();
+                    that.changeRedirect();
+
                 },
                 errorFn: function () {
 
@@ -97,30 +96,36 @@ export default class AddFacility extends React.Component {
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
-        const formProp={
-            successFn:function(data){
+        const formProp = {
+            successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-
+                that.props.loadData();
+                that.changeRedirect();
                 console.log(data);
             },
-            errorFn:function(){
+            errorFn: function () {
 
             },
-            action:  BLOG_FACILITY,
+            action: BLOG_FACILITY,
             method: "post",
         }
-        let defaultValues=[];
+        let defaultValues = [{key: 'is_active', value: true}];
 
         return <Row>
             <Card>
                 <Route exact path='/web/facilities/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit slider-image" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'web/facilities'} />)}/>
+                       render={() => (this.props.match.params.id ?
+                           <TestFormLayout defaultValues={defaultValues} title="Edit Facility"
+                                           changeRedirect={this.changeRedirect} formProp={editformProp}
+                                           fields={fields}/> : <Redirect to={'web/facilities'}/>)}/>
                 <Route exact path='/web/facilities/add'
-                       render={() =><TestFormLayout title="Add slider-image" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
+                       render={() => <TestFormLayout title="Add Facility" defaultValues={defaultValues}
+                                                     changeRedirect={this.changeRedirect} formProp={formProp}
+                                                     fields={fields}/>}/>
 
 
             </Card>
-            {this.state.redirect&&    <Redirect to={'/web/slider-image'} />}
+            {this.state.redirect && <Redirect to={'/web/facilities'}/>}
         </Row>
 
     }

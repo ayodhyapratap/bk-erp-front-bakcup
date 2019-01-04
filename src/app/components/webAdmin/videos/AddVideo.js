@@ -97,6 +97,7 @@ export default class AddVideo extends React.Component {
                     that.setState({
                         redirect: true
                     });
+                    that.props.loadData();
                 },
                 errorFn: function () {
 
@@ -114,6 +115,7 @@ export default class AddVideo extends React.Component {
                 that.setState({
                     redirect: true
                 });
+                that.props.loadData();
                 console.log(data);
             },
             errorFn: function () {
