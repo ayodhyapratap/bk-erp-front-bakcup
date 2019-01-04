@@ -1,7 +1,7 @@
 import {Button, Card, Form, Icon, List, Row} from "antd";
 import React from "react";
 import {
-    FILE_UPLOAD_FIELD,
+    SINGLE_IMAGE_UPLOAD_FIELD,
     INPUT_FIELD,
     QUILL_TEXT_FIELD,
     SELECT_FIELD,
@@ -69,7 +69,7 @@ export default class AddDisease extends React.Component {
             label: "Disease Main Image",
             key: "main_image",
             initialValue:this.state.editBlogData?this.state.editBlogData.main_image:null,
-            type: FILE_UPLOAD_FIELD,
+            type: SINGLE_IMAGE_UPLOAD_FIELD,
         },{
             label: "Disease Side Image",
             key: "side_image",

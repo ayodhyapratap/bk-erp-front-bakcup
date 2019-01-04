@@ -1,7 +1,7 @@
-import {Button, Card, Divider, Icon, List, Row, Table, Upload} from "antd";
+import {Button, Card, Divider, Icon, List, Popconfirm, Row, Table, Upload} from "antd";
 import React from "react";
-import {getAPI} from "../../../utils/common";
-import { BLOG_POST} from "../../../constants/api";
+import {getAPI, interpolate, postAPI} from "../../../utils/common";
+import {BLOG_POST, SINGLE_CONTACT, SINGLE_POST} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddPost from "./AddPost";
 import {Link} from "react-router-dom";
@@ -13,6 +13,7 @@ export default class DiseaseList extends React.Component{
             post:null
         };
         this.loadData=this.loadData.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
     }
     componentDidMount(){
         this.loadData();
@@ -29,7 +30,19 @@ export default class DiseaseList extends React.Component{
         }
         getAPI(BLOG_POST ,successFn, errorFn);
     }
+    deleteObject(record) {
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.loadData();
+        };
+        let errorFn = function () {
+        };
+        postAPI(interpolate(SINGLE_POST, [record.id]), reqData, successFn, errorFn)
+    }
     render(){
+        let that = this;
         let coloumns = [{
             title: 'Blog Title',
             dataIndex: 'title',
@@ -44,7 +57,10 @@ export default class DiseaseList extends React.Component{
                 return <div>
                     <Link to={"/web/blog/edit/"+item.id}>Edit</Link>
                     <Divider type="vertical"/>
-                    <a >Delete</a>
+                    <Popconfirm title="Are you sure delete this item?"
+                                onConfirm={() => that.deleteObject(item)} okText="Yes" cancelText="No">
+                        <a>Delete</a>
+                    </Popconfirm>
                 </div>
             }
         }];

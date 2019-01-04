@@ -1,7 +1,7 @@
 import {Button, Card, Form, Icon, List, Row} from "antd";
 import React from "react";
 import {
-    DATE_PICKER, FILE_UPLOAD_FIELD,
+    DATE_PICKER, SINGLE_IMAGE_UPLOAD_FIELD,
     INPUT_FIELD,
     QUILL_TEXT_FIELD,
     SELECT_FIELD,
@@ -80,8 +80,8 @@ export default class AddPost extends React.Component {
         },{
             label: "Blog Image",
             key: "featured_image",
-            initialValue:this.state.editBlogData?this.state.editBlogData.image:null,
-            type: FILE_UPLOAD_FIELD,
+            initialValue:this.state.editBlogData?this.state.editBlogData.featured_image:null,
+            type: SINGLE_IMAGE_UPLOAD_FIELD,
         },{
             label: "Posted On",
             key: "posted_on",

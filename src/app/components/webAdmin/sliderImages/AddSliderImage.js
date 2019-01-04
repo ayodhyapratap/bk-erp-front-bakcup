@@ -1,7 +1,7 @@
 import {Button, Card, Form, Icon, List, Row} from "antd";
 import React from "react";
 import {
-    DATE_PICKER, FILE_UPLOAD_FIELD,
+    DATE_PICKER, SINGLE_IMAGE_UPLOAD_FIELD,
     INPUT_FIELD,
     QUILL_TEXT_FIELD,
     SELECT_FIELD, SINGLE_CHECKBOX_FIELD,
@@ -77,7 +77,7 @@ export default class AddSliderImage extends React.Component {
             label: "Slider Image ",
             key: "silder_image",
             initialValue: this.state.editBlogData ? this.state.editBlogData.silder_image : null,
-            type: FILE_UPLOAD_FIELD
+            type: SINGLE_IMAGE_UPLOAD_FIELD
         },];
 
         let that = this;

@@ -25,7 +25,7 @@ import {
     NUMBER_FIELD,
     RADIO_FIELD,
     SELECT_FIELD,
-    QUILL_TEXT_FIELD, FILE_UPLOAD_FIELD, WARNING_MSG_TYPE
+    QUILL_TEXT_FIELD, WARNING_MSG_TYPE, SINGLE_IMAGE_UPLOAD_FIELD
 } from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {displayMessage, makeURL, postAPI, putAPI} from "../../utils/common";
@@ -81,7 +81,6 @@ class DynamicFieldsForm extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqFormData = new FormData();
                 console.log(values);
                 if (this.props.defaultValues) {
                     this.props.defaultValues.forEach(function (object) {
@@ -93,9 +92,13 @@ class DynamicFieldsForm extends React.Component {
                     values[this.state.colorPickerKey] = this.state.colorPickerColor;
                 }
                 that.props.fields.forEach(function (formFields) {
-                    if (formFields.type == FILE_UPLOAD_FIELD) {
+                    if (formFields.type == SINGLE_IMAGE_UPLOAD_FIELD) {
                         let key = formFields.key;
-                        values[key] = values[key].file.response.image
+                        console.log(values[key]);
+                        if (values[key] && values[key].file && values[key].file.response)
+                            values[key] = values[key].file.response.image
+                        else
+                            values[key] = formFields.initialValue;
                     } else if (formFields.type == TIME_PICKER) {
                         let key = formFields.key;
                         if (formFields.format) {
@@ -259,7 +262,7 @@ class DynamicFieldsForm extends React.Component {
                                     </div>
                                 )}
                             </FormItem>;
-                        case FILE_UPLOAD_FIELD:
+                        case SINGLE_IMAGE_UPLOAD_FIELD:
                             const props = {
                                 name: 'image',
                                 data: {
@@ -286,6 +289,8 @@ class DynamicFieldsForm extends React.Component {
                                         <Button>
                                             <Icon type="upload"/> Select File
                                         </Button>
+                                        {field.initialValue ?
+                                            <img src={field.initialValue} style={{maxWidth: '100%'}}/> : null}
                                     </Upload>
                                 )}
                             </Form.Item>;

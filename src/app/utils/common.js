@@ -95,12 +95,16 @@ export const handleErrorResponse = function (error) {
         console.info("Error Response Recieved", response);
         let status = response.status;
         if (status == 400) {
-            if (response.data.message) {
-                message.error(response.data.message);
+            if (response.data.detail) {
+                message.error(response.data.detail);
             }
-        } else if (status == 404) {
-            if (response.data.message) {
-                message.error(response.data.message);
+        } else if (status == 401) {
+            if (response.data.detail) {
+                message.error(response.data.detail);
+            }
+        }else if (status == 404) {
+            if (response.data.detail) {
+                message.error(response.data.detail);
             } else {
                 message.error(ERROR_MESSAGE_404);
             }
