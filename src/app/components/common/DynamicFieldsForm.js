@@ -55,8 +55,11 @@ class DynamicFieldsForm extends React.Component {
         this.state = {
             fields: this.props.fields, //Fields data to create the form
             formData: {},
-            formProp: this.props.formProp    //Form data to send on form submission
+            formProp: this.props.formProp,    //Form data to send on form submission
+            disabled: false,
+            loading: false,
         }
+
         this.resetFormData = this.resetFormData.bind(this);
         this.submitForm = this.submitForm.bind(this);
         this.colorChange = this.colorChange.bind(this);
@@ -114,14 +117,26 @@ class DynamicFieldsForm extends React.Component {
 
     submitForm(data) {
         let that = this;
+        this.setState({
+          disabled:true,
+          loading:true,
+        });
         let successFn = function (data) {
             that.state.formProp.successFn(data);
+            that.setState({
+              disabled:false,
+              loading:false,
+            });
             if (that.props.changeRedirect) {
                 that.props.changeRedirect();
             }
         };
         let errorFn = function () {
             that.state.formProp.errorFn();
+            that.setState({
+              disabled:false,
+              loading:false,
+            });
         };
         if (this.props.formProp.method == "post") {
             postAPI(this.props.formProp.action, data, successFn, errorFn);
@@ -154,14 +169,14 @@ class DynamicFieldsForm extends React.Component {
                         case INPUT_FIELD:
                             return <FormItem label={field.label}  {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <Input placeholder={field.placeholder} disabled={field.disabled}
+                                    <Input placeholder={field.placeholder} disabled={field.disabled?field.disabled:that.state.disabled}
                                            onChange={that.inputChange}/>
                                 )}
                             </FormItem>;
                         case SELECT_FIELD:
                             return <FormItem {...formItemLayout} label={field.label} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <Select placeholder={field.placeholder} disabled={field.disabled}
+                                    <Select placeholder={field.placeholder} disabled={field.disabled?field.disabled:that.state.disabled}
                                             mode={field.mode ? field.mode : "default"}>
                                         {field.options.map((option) => <Select.Option
                                             value={option.value}>{option.label}</Select.Option>)}
@@ -171,7 +186,7 @@ class DynamicFieldsForm extends React.Component {
                         case RADIO_FIELD:
                             return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <RadioGroup disabled={field.disabled}>
+                                    <RadioGroup disabled={field.disabled?field.disabled:that.state.disabled}>
                                         {field.options.map((option) => <Radio
                                             value={option.value}>{option.label}</Radio>)}
                                     </RadioGroup>
@@ -180,7 +195,7 @@ class DynamicFieldsForm extends React.Component {
                         case CHECKBOX_FIELD:
                             return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <CheckboxGroup options={field.options} disabled={field.disabled}/>
+                                    <CheckboxGroup options={field.options} disabled={field.disabled?field.disabled:that.state.disabled}/>
                                 )}
                             </FormItem>;
                         case SINGLE_CHECKBOX_FIELD:
@@ -192,7 +207,7 @@ class DynamicFieldsForm extends React.Component {
                                     {
                                         rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],
                                     })(
-                                    <Checkbox disabled={field.disabled}>{field.follow}</Checkbox>
+                                    <Checkbox disabled={field.disabled?field.disabled:that.state.disabled}>{field.follow}</Checkbox>
                                 )}
                             </FormItem>;
                         case NUMBER_FIELD:
@@ -200,7 +215,7 @@ class DynamicFieldsForm extends React.Component {
                                 {...formItemLayout}
                                 label={field.label} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <InputNumber min={field.min} max={field.max} disabled={field.disabled}/>
+                                    <InputNumber min={field.min} max={field.max} disabled={field.disabled?field.disabled:that.state.disabled}/>
                                 )}
                                 <span className="ant-form-text">{field.follow}</span>
                             </FormItem>;
@@ -219,7 +234,7 @@ class DynamicFieldsForm extends React.Component {
                                 <FormItem label={field.label}  {...formItemLayout} extra={field.extra}>
                                     {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                         <TextArea autosize={{minRows: field.minRows, maxRows: field.maxRows}}
-                                                  placeholder={field.placeholder} disabled={field.disabled}
+                                                  placeholder={field.placeholder} disabled={field.disabled?field.disabled:that.state.disabled}
                                                   onChange={that.inputChange}/>
                                     )}
                                 </FormItem>
@@ -300,7 +315,7 @@ class DynamicFieldsForm extends React.Component {
                 }) : null}
                 <FormItem {...formItemLayout}>
                     {/*<Button onClick={this.resetFormData}>Reset</Button>*/}
-                    <Button type="primary" htmlType="submit">
+                    <Button loading={that.state.loading} type="primary" htmlType="submit">
                         Submit
                     </Button>
                 </FormItem>
