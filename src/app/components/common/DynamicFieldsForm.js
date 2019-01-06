@@ -167,14 +167,14 @@ class DynamicFieldsForm extends React.Component {
                 {this.state.fields ? this.state.fields.map(function (field) {
                     switch (field.type) {
                         case INPUT_FIELD:
-                            return <FormItem label={field.label}  {...formItemLayout} extra={field.extra}>
+                            return <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <Input placeholder={field.placeholder} disabled={field.disabled?field.disabled:that.state.disabled}
                                            onChange={that.inputChange}/>
                                 )}
                             </FormItem>;
                         case SELECT_FIELD:
-                            return <FormItem {...formItemLayout} label={field.label} extra={field.extra}>
+                            return <FormItem key={field.key} {...formItemLayout} label={field.label} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <Select placeholder={field.placeholder} disabled={field.disabled?field.disabled:that.state.disabled}
                                             mode={field.mode ? field.mode : "default"}>
@@ -184,7 +184,7 @@ class DynamicFieldsForm extends React.Component {
                                 )}
                             </FormItem>;
                         case RADIO_FIELD:
-                            return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
+                            return <FormItem key={field.key} label={field.label} {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <RadioGroup disabled={field.disabled?field.disabled:that.state.disabled}>
                                         {field.options.map((option) => <Radio
@@ -193,13 +193,13 @@ class DynamicFieldsForm extends React.Component {
                                 )}
                             </FormItem>;
                         case CHECKBOX_FIELD:
-                            return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
+                            return <FormItem key={field.key} label={field.label} {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <CheckboxGroup options={field.options} disabled={field.disabled?field.disabled:that.state.disabled}/>
                                 )}
                             </FormItem>;
                         case SINGLE_CHECKBOX_FIELD:
-                            return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
+                            return <FormItem key={field.key} label={field.label} {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, {
                                         valuePropName: 'checked',
                                         initialValue: field.initialValue
@@ -211,7 +211,7 @@ class DynamicFieldsForm extends React.Component {
                                 )}
                             </FormItem>;
                         case NUMBER_FIELD:
-                            return <FormItem
+                            return <FormItem key={field.key}
                                 {...formItemLayout}
                                 label={field.label} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
@@ -220,7 +220,7 @@ class DynamicFieldsForm extends React.Component {
                                 <span className="ant-form-text">{field.follow}</span>
                             </FormItem>;
                         case DATE_PICKER:
-                            return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
+                            return <FormItem key={field.key} label={field.label} {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key,
                                     {initialValue: field.initialValue ? moment(field.initialValue) : null},
                                     {
@@ -231,7 +231,7 @@ class DynamicFieldsForm extends React.Component {
                             </FormItem>;
                         case TEXT_FIELD:
                             return <div>
-                                <FormItem label={field.label}  {...formItemLayout} extra={field.extra}>
+                                <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
                                     {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                         <TextArea autosize={{minRows: field.minRows, maxRows: field.maxRows}}
                                                   placeholder={field.placeholder} disabled={field.disabled?field.disabled:that.state.disabled}
@@ -242,7 +242,7 @@ class DynamicFieldsForm extends React.Component {
                         case QUILL_TEXT_FIELD:
                             return <div>
                                 <Divider/>
-                                <FormItem label={field.label}  {...formItemLayout} extra={field.extra}>
+                                <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
                                     {getFieldDecorator(field.key, {
                                         initialValue: (field.initialValue && field.initialValue.length ? field.initialValue : ''),
                                         rules: [{
@@ -254,7 +254,7 @@ class DynamicFieldsForm extends React.Component {
                                 </FormItem>
                             </div>;
                         case TIME_PICKER:
-                            return <FormItem label={field.label} {...formItemLayout} extra={field.extra}>
+                            return <FormItem key={field.key} label={field.label} {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, {
                                     initialValue: field.initialValue ? moment(field.initialValue, field.format) : null,
                                     rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],
@@ -263,7 +263,7 @@ class DynamicFieldsForm extends React.Component {
                                 )}
                             </FormItem>;
                         case COLOR_PICKER:
-                            return <FormItem label={field.label}  {...formItemLayout} extra={field.extra}>
+                            return <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <div>
                                         <SwatchesPicker style={{width: '100%'}}
@@ -298,7 +298,7 @@ class DynamicFieldsForm extends React.Component {
                                     }
                                 },
                             };
-                            return <Form.Item {...formItemLayout} label={field.label}>
+                            return <Form.Item key={field.key} {...formItemLayout} label={field.label}>
                                 {getFieldDecorator(field.key, {valuePropName: field.key,})(
                                     <Upload {...props}>
                                         <Button>

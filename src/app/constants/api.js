@@ -30,6 +30,8 @@ export const PATIENT_PROFILE = 'patients/%s/';
 export const STAFF_ROLES = 'staff/roles/';
 export const MEDICAL_HISTORY = 'patients/history/?id=%s'
 // export const PATIENT_MEDICAL_HISTORY = 'patients/history/?id=%s';
+export const PATIENT_FILES = 'patients/files/?id=%s';
+export const ALL_PATIENT_FILES = 'patients/files/';
 export const EXPENSE_TYPE = 'clinics/%s/expense_type/';
 export const DRUG_CATALOG = 'clinics/%s/drugcatalog/';
 export const SINGLE_DRUG_CATALOG = 'clinics/%s/drugcatalog/?id=%s';

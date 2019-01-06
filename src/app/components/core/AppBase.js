@@ -88,7 +88,7 @@ class AppBase extends React.Component {
                 that.setState({
                     practiceList: data,
                     specialisations: specialisations,
-                    active_practiceId: data[0].id,
+                    // active_practiceId: data[0].id,
                 }, function () {
                     that.activeData();
                 })

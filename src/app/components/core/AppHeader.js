@@ -57,11 +57,6 @@ class AppHeader extends React.Component {
                 {/*/></Menu.Item>*/}
 
                 <div style={{float: 'right', margin: '0px 20px'}}>
-                    {/*<Icon*/}
-                    {/*className="trigger"*/}
-                    {/*type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}*/}
-                    {/*onClick={this.props.toggleSider}*/}
-                    {/*/>*/}
                     <Dropdown overlay={userMenu} placement="bottomRight">
                         <Avatar style={{backgroundColor: '#87d068'}} icon="user"/>
                     </Dropdown>

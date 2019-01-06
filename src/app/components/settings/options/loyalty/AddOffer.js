@@ -34,6 +34,7 @@ class AddOffer extends React.Component {
                 key: "discount",
                 required: true,
                 type: NUMBER_FIELD,
+                follow:'%'
             },]
         }
         this.changeRedirect = this.changeRedirect.bind(this);

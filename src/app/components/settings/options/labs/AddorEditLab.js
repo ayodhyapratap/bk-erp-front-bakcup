@@ -46,6 +46,7 @@ export default class AddorEditLab extends React.Component {
             type: NUMBER_FIELD,
             initialValue: (this.state.editFields ? this.state.editFields.cost : null),
             required: true,
+            follow:'INR',
             min:1
         }, {
             label: "Instructions",

@@ -1,33 +1,58 @@
 import React from "react";
 import {Button, Card, Col, Icon, List, Radio, Row} from "antd";
+import {getAPI, interpolate} from "../../../utils/common";
+import {ALL_PATIENT_FILES, EMR_FILETAGS, PATIENT_FILES} from "../../../constants/api";
 
 class PatientFiles extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            files: [],
+            tags: []
+        };
+        this.loadData = this.loadData.bind(this);
+    }
+
+    componentWillMount() {
+        this.loadData();
+        this.loadTags()
+    }
+
+    loadData() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                files: data
+            })
+        }
+        let errorFn = function () {
+        }
+        if (this.props.match.params.id)
+            getAPI(interpolate(PATIENT_FILES, [this.props.match.params.id]), successFn, errorFn);
+        // else
+        //     getAPI(ALL_PATIENT_FILES, successFn, errorFn);
+    }
+
+    loadTags() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                tags: data
+            })
+        }
+        let errorFn = function () {
+        }
+        getAPI(interpolate(EMR_FILETAGS, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     render() {
-        const data = [
-            {
-                title: 'Title 1',
-            },
-            {
-                title: 'Title 2',
-            },
-            {
-                title: 'Title 3',
-            },
-            {
-                title: 'Title 4',
-            },
-        ];
         return <Card title="Files"
                      extra={<Button.Group>
                          <Button>Email</Button>
                          <Button><Icon type="plus"/>Add</Button>
                      </Button.Group>}>
             <Row>
-                <Col span={8}
+                <Col span={6}
                      style={{
                          height: 'calc(100vh - 55px)',
                          overflow: 'auto',
@@ -39,10 +64,12 @@ class PatientFiles extends React.Component {
                         <h2>Uploaded Files</h2>
                         <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
                                       value="all">
-                            All Patents</Radio.Button>
-                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="b">
-                            Recently Visited
-                        </Radio.Button>
+                            All Files</Radio.Button>
+                        {this.state.tags.map(tag => <Radio.Button
+                            style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={tag}>
+                            {tag}
+                        </Radio.Button>)}
+
                         <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="c">
                             Recently Added
                         </Radio.Button>
@@ -51,12 +78,15 @@ class PatientFiles extends React.Component {
                         <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="d">
                             Chengdu
                         </Radio.Button>
+                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                      value="none">
+                            Untagged Files</Radio.Button>
                     </Radio.Group>
                 </Col>
-                <Col span={16}>
+                <Col span={18}>
                     <List
                         grid={{gutter: 16, column: 4}}
-                        dataSource={data}
+                        dataSource={this.state.files}
                         renderItem={item => (
                             <List.Item>
                                 <Card bodyStyle={{padding: '5px'}} hoverable cover={<img alt="example"

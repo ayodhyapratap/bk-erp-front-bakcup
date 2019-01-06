@@ -50,7 +50,7 @@ export const loggedInactivePractice = function () {
         return currentPractice;
     }else {
         let practice = lockr.get(PRACTICE);
-        if(practice.length ){
+        if(practice && practice.length){
             setCurrentPractice(practice[0].practice);
             return loggedInactivePractice();
         }
@@ -88,7 +88,7 @@ export const logInUser = function (data, successFn, errorFn) {
         let data = response.data;
         lockr.set(ROLE, data.user);
         lockr.set(AUTH_TOKEN, data.token);
-        lockr.set(GROUP, data.group)
+        lockr.set(GROUP, data.group);
         lockr.set(PRACTICE, data.practice)
         console.log(data.practice);
         successFn()

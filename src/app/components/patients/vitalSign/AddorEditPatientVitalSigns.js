@@ -36,40 +36,40 @@ class AddorEditPatientVitalSigns extends React.Component {
     render() {
       console.log(this.props.currentPatient);
       const  fields= [ {
-            label: "pulse",
+            label: "Pulse",
             key: "pulse",
             required: true,
             //initialValue:this.props.currentPatient?this.props.currentPatient.addhar_id:null,
             type: INPUT_FIELD
         },{
-            label: "temperature",
+            label: "Temperature",
             key: "temperature",
           //  initialValue:this.props.currentPatient?this.props.currentPatient.blood_group:null,
             type: INPUT_FIELD
         },{
-            label: "temperature_part",
+            label: "Temperature Part",
             key: "temperature_part",
             type: SELECT_FIELD,
             //initialValue:this.props.currentPatient?this.props.currentPatient.gender:null,
             options: [{label: "forehead", value: "forehead"}, {label: "armpit", value: "armpit"}, {label: "oral ", value: "oral"}]
         },{
-            label: "blood_pressure",
+            label: "Blood Pressure",
             key: "blood_pressure",
           //  initialValue:this.props.currentPatient?this.props.currentPatient.family_relation:null,
             type: INPUT_FIELD,
         },{
-            label: "position",
+            label: "Position",
             key: "position",
             type: SELECT_FIELD,
             //initialValue:this.props.currentPatient?this.props.currentPatient.gender:null,
             options: [{label: "standing", value: "standing"}, {label: "sitting", value: "sitting"}]
         },  {
-            label: "weight",
+            label: "Weight",
             key: "weight",
         //    initialValue:this.props.currentPatient?this.props.currentPatient.primary_mobile_no:null,
             type: INPUT_FIELD,
         }, {
-            label: "resp_rate",
+            label: "Resp Rate",
             key: "resp_rate",
         //    initialValue:this.props.currentPatient?this.props.currentPatient.secondary_mobile_no:null,
             type: INPUT_FIELD,
