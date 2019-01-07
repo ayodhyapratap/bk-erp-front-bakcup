@@ -1,7 +1,7 @@
-import {Button, Card, Divider, Icon, List, Table} from "antd";
+import {Button, Card, Divider, Icon, List, Popconfirm, Table} from "antd";
 import React from "react";
-import {getAPI} from "../../../utils/common";
-import {BLOG_DISEASE} from "../../../constants/api";
+import {getAPI, interpolate, patchAPI} from "../../../utils/common";
+import {BLOG_DISEASE, SINGLE_CONTACT, SINGLE_DISEASE} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddDisease from "./AddDisease";
 import {Link} from "react-router-dom";
@@ -13,6 +13,7 @@ export default class DiseaseList extends React.Component {
             disease: null
         };
         this.loadDiseases = this.loadDiseases.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
     }
 
     componentDidMount() {
@@ -31,8 +32,19 @@ export default class DiseaseList extends React.Component {
         }
         getAPI(BLOG_DISEASE, successFn, errorFn);
     }
-
+    deleteObject(record) {
+        let that = this;
+        let reqData = {};
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.loadDiseases();
+        };
+        let errorFn = function () {
+        };
+        patchAPI(interpolate(SINGLE_DISEASE, [record.id]), reqData, successFn, errorFn)
+    }
     render() {
+        let that = this;
         let coloumns = [{
             title: 'Disease Name',
             dataIndex: 'disease_name',
@@ -47,7 +59,10 @@ export default class DiseaseList extends React.Component {
                 return <div>
                     <Link to={"/web/disease/edit/"+item.id}>Edit</Link>
                     <Divider type="vertical"/>
-                    <a >Delete</a>
+                    <Popconfirm title="Are you sure delete this item?"
+                                onConfirm={() => that.deleteObject(item)} okText="Yes" cancelText="No">
+                        <a>Delete</a>
+                    </Popconfirm>
                 </div>
             }
         }];

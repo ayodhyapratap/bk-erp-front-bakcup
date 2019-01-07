@@ -1,7 +1,14 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon, Row} from "antd";
-import {CHECKBOX_FIELD, SUCCESS_MSG_TYPE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {
+    CHECKBOX_FIELD,
+    SUCCESS_MSG_TYPE,
+    INPUT_FIELD,
+    RADIO_FIELD,
+    SELECT_FIELD,
+    COUNTRY_FIELD, STATE_FIELD, CITY_FIELD
+} from "../../../../constants/dataKeys";
 import {ALL_PRACTICE, EXTRA_DATA} from "../../../../constants/api";
 import {getAPI, displayMessage} from "../../../../utils/common";
 import {Redirect} from 'react-router-dom'
@@ -73,24 +80,21 @@ class AddPracticeDetails extends React.Component {
             key: "address",
             type: INPUT_FIELD
         }, {
-            label: "Practice locality",
+            label: "Practice Locality",
             key: "locality",
             type: INPUT_FIELD
         }, {
-            label: "Practice City",
-            key: "city",
-            type: SELECT_FIELD,
-            options: [{label: "Hello", value: "1"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
-        }, {
-            label: "Practice state",
-            key: "state",
-            type: SELECT_FIELD,
-            options: [{label: "Hello", value: "1"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
-        }, {
             label: "Practice Country",
             key: "country",
-            type: SELECT_FIELD,
-            options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
+            type: COUNTRY_FIELD,
+        }, {
+            label: "Practice State",
+            key: "state",
+            type: STATE_FIELD,
+        }, {
+            label: "Practice City",
+            key: "city",
+            type: CITY_FIELD,
         }, {
             label: "Practice PINCODE",
             key: "pincode",
@@ -104,14 +108,15 @@ class AddPracticeDetails extends React.Component {
             key: "email",
             type: INPUT_FIELD
         }, {
-            label: "Practice website",
+            label: "Practice Website",
             key: "website",
             type: INPUT_FIELD
         }, {
             label: "Timezone",
             key: "timezone",
             type: SELECT_FIELD,
-            options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
+            options: [{label: "GMT +05:30", value: 12}],
+            initialValue:12
         }, {
             label: "GSTIN",
             key: "gstin",

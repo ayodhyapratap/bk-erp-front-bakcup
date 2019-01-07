@@ -1,6 +1,6 @@
 import {Button, Card, Divider, Icon, List, Popconfirm, Table} from "antd";
 import React from "react";
-import {getAPI, interpolate, postAPI} from "../../../utils/common";
+import {getAPI, interpolate, patchAPI, postAPI} from "../../../utils/common";
 import {BLOG_EVENTS, BLOG_POST, SINGLE_CONTACT} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import {Link} from "react-router-dom";
@@ -36,14 +36,14 @@ export default class DiseaseList extends React.Component {
 
     deleteObject(record) {
         let that = this;
-        let reqData = record;
+        let reqData = {};
         reqData.is_active = false;
         let successFn = function (data) {
             that.loadData();
         };
         let errorFn = function () {
         };
-        postAPI(interpolate(SINGLE_CONTACT, [record.id]), reqData, successFn, errorFn)
+        patchAPI(interpolate(SINGLE_CONTACT, [record.id]), reqData, successFn, errorFn)
     }
 
     render() {

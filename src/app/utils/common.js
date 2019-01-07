@@ -51,7 +51,26 @@ export const postAPI = function (URL, data, successFn, errorFn, headerConfig = {
         errorFn();
     });
 };
-
+export const patchAPI = function (URL, data, successFn, errorFn, headerConfig = {}) {
+    // console.log("sending to " + makeURL(URL), data);
+    axios({
+        method: 'patch',
+        url: makeURL(URL),
+        data: data,
+        headers: {
+            Authorization: 'Bearer ' + getAuthToken(),
+            ...headerConfig
+        }
+    }).then(function (response) {
+        // console.log(response);
+        let data = response.data;
+        successFn(data);
+    }).catch(function (error) {
+        console.log(error);
+        handleErrorResponse(error);
+        errorFn();
+    });
+};
 export const getAPI = function (URL, successFn, errorFn) {
     // console.log(getAuthToken());
     axios({

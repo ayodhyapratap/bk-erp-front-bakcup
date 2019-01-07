@@ -86,12 +86,13 @@ export default class AddDisease extends React.Component {
             initialValue:this.state.editBlogData?this.state.editBlogData.keywords:null,
             type: TEXT_FIELD,
         },{
-            label: "Url",
+            label: "URL",
             key: "domain",
             initialValue:this.state.editBlogData?this.state.editBlogData.domain:null,
             type: INPUT_FIELD,
+            required:true
         },{
-            label: "content",
+            label: "Content",
             key: "content",
             initialValue:this.state.editBlogData?this.state.editBlogData.content:null,
             type: QUILL_TEXT_FIELD,

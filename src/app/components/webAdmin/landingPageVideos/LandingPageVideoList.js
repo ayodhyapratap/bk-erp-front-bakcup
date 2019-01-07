@@ -1,6 +1,6 @@
 import {Avatar, Button, Card, Icon, List, Popconfirm} from "antd";
 import React from "react";
-import {getAPI, interpolate, postAPI} from "../../../utils/common";
+import {getAPI, interpolate, patchAPI, postAPI} from "../../../utils/common";
 import {
     BLOG_POST,
     BLOG_VIDEOS,
@@ -39,14 +39,14 @@ export default class LandingPageVideoList extends React.Component{
     }
     deleteObject(record) {
         let that = this;
-        let reqData = record;
+        let reqData = {};
         reqData.is_active = false;
         let successFn = function (data) {
             that.loadData();
         }
         let errorFn = function () {
         };
-        postAPI(interpolate(SINGLE_LANDING_PAGE_VIDEO, [record.id]), reqData, successFn, errorFn)
+        patchAPI(interpolate(SINGLE_LANDING_PAGE_VIDEO, [record.id]), reqData, successFn, errorFn)
     }
     render(){
         let that = this;

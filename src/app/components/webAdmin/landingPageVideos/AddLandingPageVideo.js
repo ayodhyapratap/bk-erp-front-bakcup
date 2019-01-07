@@ -27,66 +27,63 @@ export default class AddLandingPageVideo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            editBlogData : this.props.editBlogData?this.props.editBlogData:null
+            editBlogData: this.props.editBlogData ? this.props.editBlogData : null
         }
     }
-    componentDidMount(){
-        if(this.props.match.params.id){
-            if(!this.state.editBlogData) {
+
+    componentDidMount() {
+        if (this.props.match.params.id) {
+            if (!this.state.editBlogData) {
                 this.loadData();
             }
         }
     }
-    changeRedirect(){
-        var redirectVar=this.state.redirect;
+
+    changeRedirect() {
+        var redirectVar = this.state.redirect;
         this.setState({
-            redirect:  !redirectVar,
-        })  ;
+            redirect: !redirectVar,
+        });
     }
 
-    loadData(){
-        let that =this;
+    loadData() {
+        let that = this;
         let successFn = function (data) {
             that.setState({
-                editBlogData:data,
+                editBlogData: data,
             })
         }
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_LANDING_PAGE_VIDEO, [this.props.match.params.id]) ,successFn, errorFn);
+        getAPI(interpolate(SINGLE_LANDING_PAGE_VIDEO, [this.props.match.params.id]), successFn, errorFn);
 
 
     }
 
 
-    render(){
+    render() {
         let that = this;
-        const  fields= [{
+        const fields = [{
             label: "Name",
             key: "name",
-            initialValue:this.state.editBlogData?this.state.editBlogData.name:null,
+            initialValue: this.state.editBlogData ? this.state.editBlogData.name : null,
             type: INPUT_FIELD
-        },{
+        }, {
             label: "Rank ",
             key: "rank",
-            initialValue:this.state.editBlogData?this.state.editBlogData.rank:null,
+            initialValue: this.state.editBlogData ? this.state.editBlogData.rank : null,
             type: NUMBER_FIELD
-        },{
+        }, {
             label: "Video link",
             key: "link",
-            initialValue:this.state.editBlogData?this.state.editBlogData.link:null,
+            initialValue: this.state.editBlogData ? this.state.editBlogData.link : null,
             type: INPUT_FIELD,
-        },{
-            label: "Active",
-            key: "is_active",
-            initialValue:this.state.editBlogData?this.state.editBlogData.is_active:null,
-            type: SINGLE_CHECKBOX_FIELD,
-        }, ];
+        }];
 
 
         let editformProp;
-        if(this.state.editBlogData) {
+        if (this.state.editBlogData) {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
@@ -104,31 +101,37 @@ export default class AddLandingPageVideo extends React.Component {
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
-        const formProp={
-            successFn:function(data){
+        const formProp = {
+            successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.props.loadData();
                 console.log(data);
-                that.changeRedirect();}
+                that.changeRedirect();
+            }
             ,
-            errorFn:function(){
+            errorFn: function () {
 
             },
-            action:  LANDING_PAGE_VIDEO,
+            action: LANDING_PAGE_VIDEO,
             method: "post",
         }
-        let defaultValues=[];
+        let defaultValues = [{"is_active": true}];
 
         return <Row>
             <Card>
                 <Route exact path='/web/landingpagevideo/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Video" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/web/landingpagevideo'} />)}/>
+                       render={() => (this.props.match.params.id ?
+                           <TestFormLayout defaultValues={defaultValues} title="Edit Video"
+                                           changeRedirect={this.changeRedirect} formProp={editformProp}
+                                           fields={fields}/> : <Redirect to={'/web/landingpagevideo'}/>)}/>
                 <Route exact path='/web/landingpagevideo/add'
-                       render={() =><TestFormLayout title="Add video" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
+                       render={() => <TestFormLayout title="Add video" defaultValues={defaultValues}
+                                                     changeRedirect={this.changeRedirect} formProp={formProp}
+                                                     fields={fields}/>}/>
 
 
             </Card>
-            {this.state.redirect&&    <Redirect to={'/web/landingpagevideo'} />}
+            {this.state.redirect && <Redirect to={'/web/landingpagevideo'}/>}
         </Row>
 
     }

@@ -72,7 +72,7 @@ export default class AddLandingPageContent extends React.Component {
             initialValue:this.state.editBlogData?this.state.editBlogData.image:null,
             type: SINGLE_IMAGE_UPLOAD_FIELD,
         },{
-            label: "content",
+            label: "Content",
             key: "content",
             initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
             type: QUILL_TEXT_FIELD,

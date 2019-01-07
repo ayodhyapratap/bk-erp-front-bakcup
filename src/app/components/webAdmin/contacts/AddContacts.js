@@ -69,12 +69,24 @@ export default class AddContacts extends React.Component {
         }, {
             label: "Rank ",
             key: "contact_rank",
-            initialValue: this.state.editBlogData ? this.state.editBlogData.contact_rank : null,
-            type: NUMBER_FIELD
+            initialValue: this.state.editBlogData ? this.state.editBlogData.contact_rank : 1,
+            type: NUMBER_FIELD,
+            required:true,
+            min:1
+        }, {
+            label: "Link",
+            key: "link",
+            initialValue: this.state.editBlogData ? this.state.editBlogData.link : null,
+            type: INPUT_FIELD,
         }, {
             label: "Phone Number ",
             key: "phone_no",
             initialValue: this.state.editBlogData ? this.state.editBlogData.phone_no : null,
+            type: INPUT_FIELD,
+        },{
+            label: "Email",
+            key: "email",
+            initialValue: this.state.editBlogData ? this.state.editBlogData.email : null,
             type: INPUT_FIELD,
         }, {
             label: "Address",
