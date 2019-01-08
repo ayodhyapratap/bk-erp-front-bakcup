@@ -104,7 +104,7 @@ class Appointment extends React.Component{
                   loading:false,
 
           })
-              
+
 
           }
           getAPI (interpolate(APPOINTMENT_API,[this.props.match.params.appointmentid])  , successFn,errorFn);
@@ -207,24 +207,24 @@ class Appointment extends React.Component{
       }
       const categories={1:"fast", 2: "Full Stomach", 3:"No Liquids"}
       const columns = [{
-          title: 'shedule TIme',
+          title: 'Schedule Time',
           key: 'name',
           render: (text, record) =>(<span>{moment(record.shedule_at).format('LLL')},{record.slot}mins</span>
           )
       },{
-          title: 'patient_id',
+          title: 'Patient ID',
           dataIndex: 'patient_id',
           key: 'patient_id',
       },{
-          title: 'patient_name',
+          title: 'Patient Name',
           dataIndex: 'patient_name',
           key: 'patient_name',
       },{
-          title: 'patient_mobile',
+          title: 'Patient Mobile',
           dataIndex: 'patient_mobile',
           key: 'patient_mobile',
       }, {
-          title: 'email',
+          title: 'Email',
           dataIndex: 'email',
           key: 'email',
       }, {
@@ -234,7 +234,7 @@ class Appointment extends React.Component{
               <span> {doctors[record.doctor]}</span>
           )
       }, {
-          title: 'procedure',
+          title: 'Procedure',
           key: 'procedure',
           render:(text, record) => (
               <span> {procedures[record.procedure]}</span>

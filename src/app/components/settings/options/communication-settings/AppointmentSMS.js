@@ -197,11 +197,9 @@ class AppointmentSMS extends React.Component {
         const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}, {"key":"id", "value":this.state.data?this.state.data.id:null,}];
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        if(this.state.data!=null){
         return <div>
             <TestFormLayout formProp={formProp} defaultValues={defaultValues}  title="Communication Settings" fields={fields}/>
-        </div>}
-        else{return <Card loading="true" />}
+        </div>
     }
 }
 

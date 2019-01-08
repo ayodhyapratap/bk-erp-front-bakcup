@@ -7,6 +7,7 @@ export const API_URL = BACKEND_BASE_URL + 'api';
 export const FILE_UPLOAD_API = 'blogImage/';
 
 export const SIGNUP_URL = '';
+export const RESET_PASSWORD = 'users/reset_password/';
 export const LOGIN_URL = 'users/login/';
 export const PRACTICESTAFF = 'clinics/%s/practice_staff/';
 export const ALL_PRACTICE = 'clinics/';
@@ -65,7 +66,8 @@ export const INVOICE_REPORTS = 'clinics/%s/invoice_report/?%s'
 export const PATIENTS_REPORTS = 'clinics/%s/patients_report/?%s'
 export const PAYMENTS_REPORTS = 'clinics/%s/payments_report/?%s'
 export const TREATMENT_REPORTS = 'clinics/%s/treatment_report/?%s'
-
+export const DRUG_TYPE_API = '';
+export const DRUG_UNIT_API = '';
 //blogs APT
 
 

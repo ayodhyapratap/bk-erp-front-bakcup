@@ -1,4 +1,4 @@
-import {Button, Card, Icon, List} from "antd";
+import {Avatar, Button, Card, Icon, List} from "antd";
 import React from "react";
 import {getAPI} from "../../../utils/common";
 import {BLOG_PAGE_SEO, BLOG_POST, BLOG_SLIDER} from "../../../constants/api";
@@ -44,7 +44,14 @@ export default class SliderImageList extends React.Component {
                     <Icon type="plus"/> Add
                 </Button>
             </Link>}>
-                <List dataSource={this.state.slider}/>
+                <List dataSource={this.state.slider} renderItem={item => <List.Item key={item.id} extra={<img style={{maxWidth:'100%',width:'400px'}} src={item.silder_image}
+                                                                                                              alt=""/>}>
+                    <List.Item.Meta
+                        avatar={<Avatar src={item.avatar} />}
+                        title={<a href={item.href}>{item.title}</a>}
+                        description={item.description}
+                    />
+                </List.Item>}/>
             </Card>
         </Switch>
         </div>

@@ -56,11 +56,10 @@ export default class AddLandingPageContent extends React.Component {
         }
         getAPI(interpolate(SINGLE_LANDING_PAGE_CONTENT, [this.props.match.params.id]) ,successFn, errorFn);
 
-
     }
 
-
     render(){
+        let that =this;
         const  fields= [{
             label: "Title",
             key: "title",
@@ -74,16 +73,17 @@ export default class AddLandingPageContent extends React.Component {
         },{
             label: "Content",
             key: "content",
-            initialValue:this.state.editBlogData?this.state.editBlogData.total:null,
+            initialValue:this.state.editBlogData?this.state.editBlogData.content:null,
             type: QUILL_TEXT_FIELD,
         }, ];
-
 
         let editformProp;
         if(this.state.editBlogData) {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
+                    that.loadData();
+                    that.changeRedirect();
                     console.log(data);
                 },
                 errorFn: function () {

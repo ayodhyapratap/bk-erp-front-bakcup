@@ -43,7 +43,7 @@ export const SINGLE_IMAGE_UPLOAD_FIELD = 'singleimageupload';
 export const COUNTRY_FIELD = 'country';
 export const STATE_FIELD = 'state';
 export const CITY_FIELD = 'city';
-
+export const PASSWORD_FIELD = 'password';
 /***
  *Role
  **/

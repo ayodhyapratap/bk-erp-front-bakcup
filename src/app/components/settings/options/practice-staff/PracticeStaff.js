@@ -28,10 +28,11 @@ class PracticeDetails extends React.Component {
         this.staffRoles();
     }
 
-    componentDidMount(){
-      this.loadData();
+    componentDidMount() {
+        this.loadData();
     }
-    loadData(){
+
+    loadData() {
         let group = loggedInUserGroup();
         if (group[0].name == "Admin") {
             this.admin_StaffData();
@@ -41,17 +42,19 @@ class PracticeDetails extends React.Component {
         }
 
     }
-    deleteStaff(value){
-      var that = this;
-      let successFn = function (data) {
-        that.loadData();
-        console.log("Deleted");
-      };
-      let errorFn = function () {
-      };
-      deleteAPI(interpolate(SINGLE_PRACTICE_STAFF_API,[value]), successFn, errorFn);
+
+    deleteStaff(value) {
+        var that = this;
+        let successFn = function (data) {
+            that.loadData();
+            console.log("Deleted");
+        };
+        let errorFn = function () {
+        };
+        deleteAPI(interpolate(SINGLE_PRACTICE_STAFF_API, [value]), successFn, errorFn);
 
     }
+
     staffRoles() {
         let that = this;
         let successFn = function (data) {
@@ -67,26 +70,27 @@ class PracticeDetails extends React.Component {
     admin_StaffData() {
         var that = this;
         let successFn = function (data) {
-            data.forEach(function (usersdata) {
-                if (usersdata.role == DOCTORS_ROLE) {
-                    let doctor = that.state.practice_doctors;
-                    doctor.push(usersdata);
-                    that.setState({
-                        practice_doctors: doctor,
-                    })
-                } else {
-                    let doctor = that.state.practice_staff;
-                    doctor.push(usersdata);
-                    that.setState({
-                        practice_staff: doctor,
-                    })
-                }
+            // data.forEach(function (usersdata) {
+            //     if (usersdata.role == DOCTORS_ROLE) {
+            //         let doctor = that.state.practice_doctors;
+            //         doctor.push(usersdata);
+            //
+            //     } else {
+            //         let doctor = that.state.practice_staff;
+            //         doctor.push(usersdata);
+            //         that.setState({
+            //             practice_staff: doctor,
+            //         })
+            //     }
+            // })
+            that.setState({
+                practice_doctors: data.doctors,
+                practice_staff: data.staff,
             })
-
         };
         let errorFn = function () {
         };
-        getAPI(ALL_PRACTICE_STAFF, successFn, errorFn);
+        getAPI(interpolate(PRACTICESTAFF, [this.props.active_practiceId]), successFn, errorFn);
     }
 
 
@@ -164,17 +168,16 @@ class PracticeDetails extends React.Component {
             dataIndex: "registration_number",
             key: "registration_number",
         }, {
-            title: "Clinic",
-            key: "clinic_name",
-            render: (text, record) => (
-                <div> {record.practice && <span>{record.practice.name}</span>}</div>),
+            title: "Status",
+            key: "user",
+            render: (text, record) => (record.user && record.user.is_active ? <Tag color="#87d068">Active</Tag> : <Tag color="#f50">Pending</Tag>),
         }, {
             title: "Action	",
             key: "action",
             render: (text, record) => (
                 <span>
             <Link to={"/settings/clinics-staff/" + record.id + "/edit"}>
-              <a>edit {record.name}</a></Link>
+              <a>Edit</a></Link>
               <Divider type="vertical"/>
               <a onClick={() => this.deleteStaff(record.id)}>Delete</a>
             </span>

@@ -43,76 +43,76 @@ class EditPatientDetails extends React.Component {
             initialValue:this.props.currentPatient?this.props.currentPatient.name:null,
             type: INPUT_FIELD
         }, {
-            label: "patient_id",
+            label: "Patient ID",
             key: "patient_id",
             required: true,
             initialValue:this.props.currentPatient?this.props.currentPatient.patient_id:null,
             type: INPUT_FIELD
         }, {
-            label: "addhar_id",
+            label: "Adhaar ID",
             key: "addhar_id",
             required: true,
             initialValue:this.props.currentPatient?this.props.currentPatient.addhar_id:null,
             type: INPUT_FIELD
         },{
-            label: "gender",
+            label: "Gender",
             key: "gender",
             type: SELECT_FIELD,
             initialValue:this.props.currentPatient?this.props.currentPatient.gender:null,
             options: [{label: "Male", value: "male"}, {label: "female", value: "female"}, {label: "other", value: "other"}]
         }, {
-            label: "dob",
+            label: "DOB",
             key: "dob",
             initialValue:this.props.currentPatient?moment(this.props.currentPatient.dob):null,
             type: DATE_PICKER
         },
         {
-            label: "anniversary",
+            label: "Anniversary",
             key: "anniversary",
             initialValue:this.props.currentPatient?moment(this.props.currentPatient.anniversary):null,
             type: DATE_PICKER
         }, {
-            label: "blood_group",
+            label: "Blood Group",
             key: "blood_group",
             initialValue:this.props.currentPatient?this.props.currentPatient.blood_group:null,
             type: INPUT_FIELD
         }, {
-            label: "age",
+            label: "Age",
             key: "age",
             initialValue:this.props.currentPatient?this.props.currentPatient.age:null,
             type: NUMBER_FIELD
         }, {
-            label: "family_relation",
+            label: "Family Relation",
             key: "family_relation",
             initialValue:this.props.currentPatient?this.props.currentPatient.family_relation:null,
             type: INPUT_FIELD,
         }, {
-            label: "primary_mobile_no",
+            label: "Mobile (Primary)",
             key: "primary_mobile_no",
             initialValue:this.props.currentPatient?this.props.currentPatient.primary_mobile_no:null,
             type: INPUT_FIELD,
         }, {
-            label: "secondary_mobile_no",
+            label: "Mobile (Secondary)",
             key: "secondary_mobile_no",
             initialValue:this.props.currentPatient?this.props.currentPatient.secondary_mobile_no:null,
             type: INPUT_FIELD,
         }, {
-            label: "landline_no",
+            label: "Landline",
             key: "landline_no",
             initialValue:this.props.currentPatient?this.props.currentPatient.landline_no:null,
             type: INPUT_FIELD,
         }, {
-            label: "address",
+            label: "Address",
             key: "address",
             initialValue:this.props.currentPatient?this.props.currentPatient.address:null,
             type: INPUT_FIELD,
         }, {
-            label: "locality",
+            label: "Locality",
             key: "locality",
             initialValue:this.props.currentPatient?this.props.currentPatient.locality:null,
             type: INPUT_FIELD,
         },{
-            label: "city",
+            label: "City",
             key: "city",
             initialValue:this.props.currentPatient?this.props.currentPatient.city:null,
             type: INPUT_FIELD

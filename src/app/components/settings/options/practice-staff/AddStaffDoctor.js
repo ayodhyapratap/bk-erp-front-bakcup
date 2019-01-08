@@ -10,7 +10,7 @@ import {
     SINGLE_CHECKBOX_FIELD,
     COLOR_PICKER
 } from "../../../../constants/dataKeys";
-import {ALL_PRACTICE_STAFF, DRUG_CATALOG, SINGLE_PRACTICE_STAFF_API} from "../../../../constants/api";
+import {ALL_PRACTICE_STAFF, DRUG_CATALOG, SINGLE_PRACTICE_STAFF_API, STAFF_ROLES} from "../../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
 import {Redirect} from 'react-router-dom'
 import {Route} from "react-router";
@@ -21,13 +21,26 @@ class AddStaffDoctor extends React.Component {
         this.state = {
             redirect: false,
             editStaff: null,
+            roles:[]
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.loadEditPracticeStaff = this.loadEditPracticeStaff.bind(this);
         if (this.props.match.params.doctorid) {
-            this.loadEditPracticeStaff()
+            this.loadEditPracticeStaff();
         }
+        this.staffRoles();
+    }
+    staffRoles() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                roles: data,
+            })
+        }
+        let errorFn = function () {
+        }
+        getAPI(STAFF_ROLES, successFn, errorFn)
     }
 
     loadEditPracticeStaff() {
@@ -85,31 +98,30 @@ class AddStaffDoctor extends React.Component {
                 required: true,
                 initialValue: this.state.editStaff ? this.state.editStaff.role : null,
                 type: SELECT_FIELD,
-                options: [{label: "Doctor", value: [1]}, {label: "Staff", value: [2]}, {label: "Frontdesk", value: [3]}]
+                options: this.state.roles.map(role=>({label: role.name , value: [role.id]}))
             }, {
                 label: "Calendar Colour",
                 key: "calender_colour",
-                required: true,
                 initialValue: this.state.editStaff ? this.state.editStaff.calender_colour : null,
                 type: COLOR_PICKER,
 
             }, {
-                label: "Schedule sms",
+                label: "Schedule SMS",
                 key: "schedule_sms",
                 initialValue: this.state.editStaff ? this.state.editStaff.schedule_sms : false,
                 type: SINGLE_CHECKBOX_FIELD,
             }, {
-                label: "Confirmation sms",
+                label: "Confirmation SMS",
                 key: "confirmation_sms",
                 initialValue: this.state.editStaff ? this.state.editStaff.confirmation_sms : false,
                 type: SINGLE_CHECKBOX_FIELD,
             }, {
-                label: "Confirmation email",
+                label: "Confirmation Email",
                 key: "confirmation_email",
                 initialValue: this.state.editStaff ? this.state.editStaff.confirmation_email : false,
                 type: SINGLE_CHECKBOX_FIELD,
             }, {
-                label: "Online appointment sms",
+                label: "Online Appointment SMS",
                 key: "online_appointment_sms",
                 initialValue: this.state.editStaff ? this.state.editStaff.online_appointment_sms : false,
                 type: SINGLE_CHECKBOX_FIELD,

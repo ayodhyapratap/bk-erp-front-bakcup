@@ -31,7 +31,7 @@ import {
     COUNTRY_STATE_CITY_FIELD,
     COUNTRY_FIELD,
     STATE_FIELD,
-    CITY_FIELD
+    CITY_FIELD, PASSWORD_FIELD
 } from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {displayMessage, getAPI, makeURL, postAPI, putAPI} from "../../utils/common";
@@ -217,6 +217,16 @@ class DynamicFieldsForm extends React.Component {
                 {this.props.title ? <h2>{this.props.title}</h2> : null}
                 {this.state.fields ? this.state.fields.map(function (field) {
                     switch (field.type) {
+                        case PASSWORD_FIELD:
+                            return <Form.Item key={field.key} label={field.label}  {...formItemLayout}
+                                              extra={field.extra}>
+                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                    <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                                           type="password"
+                                           placeholder={field.placeholder}
+                                           disabled={field.disabled ? field.disabled : that.state.disabled} />
+                                )}
+                            </Form.Item>
                         case INPUT_FIELD:
                             return <FormItem key={field.key} label={field.label}  {...formItemLayout}
                                              extra={field.extra}>
@@ -225,6 +235,7 @@ class DynamicFieldsForm extends React.Component {
                                            disabled={field.disabled ? field.disabled : that.state.disabled}
                                            onChange={that.inputChange}/>
                                 )}
+                                {field.follow?<span className="ant-form-text">{field.follow}</span>:null}
                             </FormItem>;
                         case SELECT_FIELD:
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
@@ -237,6 +248,7 @@ class DynamicFieldsForm extends React.Component {
                                             value={option.value}>{option.label}</Select.Option>)}
                                     </Select>
                                 )}
+                                {field.follow?<span className="ant-form-text">{field.follow}</span>:null}
                             </FormItem>;
                         case RADIO_FIELD:
                             return <FormItem key={field.key} label={field.label} {...formItemLayout}

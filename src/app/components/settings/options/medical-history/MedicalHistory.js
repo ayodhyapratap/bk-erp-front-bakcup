@@ -112,8 +112,8 @@ class MedicalHistory extends React.Component {
         action: interpolate(MEDICAL_HISTORY,[this.props.active_practiceId]),
         method: "post",
       }
-      const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}];
-      const editFormDefaultValues = [{"key":"practice", "value":this.props.active_practiceId}, {"key":"id", "value":this.state.editingId}];
+      const defaultValues = [];
+      const editFormDefaultValues = [{"key":"id", "value":this.state.editingId}];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
         <Card>

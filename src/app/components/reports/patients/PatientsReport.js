@@ -62,7 +62,7 @@ export default class PatientsReport extends React.Component {
             {name: 'New Membership', value: 'f'},
         ]
         return <div>
-            <h2>Appointments Report
+            <h2>Patients Report
                 <Button.Group style={{float: 'right'}}>
                     <Button><Icon type="mail"/> Mail</Button>
                     <Button><Icon type="printer"/> Print</Button>

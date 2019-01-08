@@ -129,7 +129,7 @@ function PatientCard(patient) {
                             <Icon type="user"/>}
                     </Avatar>)}
                 title={patient.name}
-                description="This is the description"/>
+                description={<span>{patient.primary_mobile_no}<br/>{patient.email}</span>}/>
         </Card>
     </Col>;
 }
