@@ -100,7 +100,7 @@ export default class AddPost extends React.Component {
             initialValue:this.state.editBlogData?this.state.editBlogData.keywords:null,
             type: TEXT_FIELD,
         },{
-            label: "content",
+            label: "Content",
             key: "content",
             initialValue:this.state.editBlogData?this.state.editBlogData.content:null,
             type: QUILL_TEXT_FIELD,

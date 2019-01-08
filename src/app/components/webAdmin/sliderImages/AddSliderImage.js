@@ -6,7 +6,7 @@ import {
     QUILL_TEXT_FIELD,
     SELECT_FIELD, SINGLE_CHECKBOX_FIELD,
     SUCCESS_MSG_TYPE,
-    TEXT_FIELD
+    TEXT_FIELD, NUMBER_FIELD
 } from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
@@ -73,6 +73,11 @@ export default class AddSliderImage extends React.Component {
             key: "title",
             initialValue: this.state.editBlogData ? this.state.editBlogData.title : null,
             type: INPUT_FIELD
+        }, {
+            label: "Rank ",
+            key: "rank",
+            initialValue: this.state.editBlogData ? this.state.editBlogData.rank : null,
+            type: NUMBER_FIELD
         }, {
             label: "Slider Image ",
             key: "silder_image",
