@@ -47,18 +47,7 @@ class LabTest extends React.Component {
 
     }
 
-    deleteTest(record) {
-        let that = this;
-        let reqData = record;
-        reqData.is_active = false;
-        let successFn = function (data) {
-            that.loadData();
-        }
-        let errorFn = function () {
 
-        }
-        postAPI(interpolate(LABTEST_API, [that.props.active_practiceId]), reqData, successFn, errorFn);
-    }
 
     render() {
         let that = this;

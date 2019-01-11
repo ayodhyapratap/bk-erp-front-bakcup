@@ -34,7 +34,6 @@ class PracticeTimings extends React.Component {
     loadData() {
         var that = this;
         let successFn = function (data) {
-            console.log("get table");
             that.setState({
                 timings: data[0],
             })
@@ -96,7 +95,6 @@ class PracticeTimings extends React.Component {
             successFn: function (data) {
                 that.loadData();
                 console.log(data);
-                console.log("sucess");
                 displayMessage(SUCCESS_MSG_TYPE, "success")
             },
             errorFn: function () {
@@ -106,12 +104,9 @@ class PracticeTimings extends React.Component {
             method: "post",
         }
         if (this.state.timings) {
-            const editFormDefaultValues = [{"key": "practice", "value": this.props.active_practiceId}, {
-                "key": "id",
-                "value": this.state.editingId
-            }];
+            let editFormDefaultValues = [{"key": "practice", "value": this.props.active_practiceId},
+                {"key": "id", "value": this.state.timings.id}];
             const TestFormLayout = Form.create()(DynamicFieldsForm);
-            console.log("working edit");
             return <div>
                 <TestFormLayout title="Set Practice Timings" defaultValues={editFormDefaultValues} formProp={formProp}
                                 fields={editfields}/>
@@ -120,7 +115,6 @@ class PracticeTimings extends React.Component {
         else {
             const editFormDefaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
             const TestFormLayout = Form.create()(DynamicFieldsForm);
-            console.log("not");
             return <div>
                 <TestFormLayout title="Set Practice Timings" defaultValues={editFormDefaultValues} formProp={formProp}
                                 fields={editfields}/>

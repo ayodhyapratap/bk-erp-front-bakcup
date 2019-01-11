@@ -31,6 +31,7 @@ export const PATIENT_GROUP_KEY = 'Patient Group';
 export const INPUT_FIELD = 'input';
 export const RADIO_FIELD = 'radio';
 export const SELECT_FIELD = 'select';
+export const MULTI_SELECT_FIELD = 'multiselect';
 export const CHECKBOX_FIELD = 'checkbox';
 export const SINGLE_CHECKBOX_FIELD = 'singlecheckbox';
 export const NUMBER_FIELD = 'number';

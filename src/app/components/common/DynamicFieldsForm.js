@@ -31,7 +31,7 @@ import {
     COUNTRY_STATE_CITY_FIELD,
     COUNTRY_FIELD,
     STATE_FIELD,
-    CITY_FIELD, PASSWORD_FIELD
+    CITY_FIELD, PASSWORD_FIELD, MULTI_SELECT_FIELD
 } from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {displayMessage, getAPI, makeURL, postAPI, putAPI} from "../../utils/common";
@@ -46,6 +46,16 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
 var fieldDecorators = function (field, formData) {
+    if(field.type==MULTI_SELECT_FIELD){
+        return {
+            initialValue: formData[field.key],
+            rules: [{
+                required: field.required,
+                message: REQUIRED_FIELD_MESSAGE,
+                type:'array'
+            }]
+        }
+    }
     return {
         initialValue: formData[field.key],
         rules: [{
@@ -221,10 +231,10 @@ class DynamicFieldsForm extends React.Component {
                             return <Form.Item key={field.key} label={field.label}  {...formItemLayout}
                                               extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                                    <Input prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
                                            type="password"
                                            placeholder={field.placeholder}
-                                           disabled={field.disabled ? field.disabled : that.state.disabled} />
+                                           disabled={field.disabled ? field.disabled : that.state.disabled}/>
                                 )}
                             </Form.Item>
                         case INPUT_FIELD:
@@ -235,7 +245,7 @@ class DynamicFieldsForm extends React.Component {
                                            disabled={field.disabled ? field.disabled : that.state.disabled}
                                            onChange={that.inputChange}/>
                                 )}
-                                {field.follow?<span className="ant-form-text">{field.follow}</span>:null}
+                                {field.follow ? <span className="ant-form-text">{field.follow}</span> : null}
                             </FormItem>;
                         case SELECT_FIELD:
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
@@ -248,7 +258,19 @@ class DynamicFieldsForm extends React.Component {
                                             value={option.value}>{option.label}</Select.Option>)}
                                     </Select>
                                 )}
-                                {field.follow?<span className="ant-form-text">{field.follow}</span>:null}
+                                {field.follow ? <span className="ant-form-text">{field.follow}</span> : null}
+                            </FormItem>;
+                        case MULTI_SELECT_FIELD:
+                            return <FormItem key={field.key} {...formItemLayout} label={field.label}
+                                             extra={field.extra}>
+                                {getFieldDecorator(field.key, {...fieldDecorators(field, that.state.formData)})(
+                                    <Select mode="multiple" placeholder={field.placeholder}
+                                            disabled={field.disabled ? field.disabled : that.state.disabled}>
+                                        {field.options.map((option) => <Select.Option
+                                            value={option.value}>{option.label}</Select.Option>)}
+                                    </Select>
+                                )}
+                                {field.follow ? <span className="ant-form-text">{field.follow}</span> : null}
                             </FormItem>;
                         case RADIO_FIELD:
                             return <FormItem key={field.key} label={field.label} {...formItemLayout}
