@@ -105,6 +105,12 @@ class AppSider extends React.Component {
                             <span className="nav-text">Labs</span>
                         </Link>
                     </Menu.Item>
+                    <Menu.Item key="10">
+                        <Link to="/inventory">
+                            <Icon type="gold"/>
+                            <span className="nav-text">Inventory</span>
+                        </Link>
+                    </Menu.Item>
                 </SubMenu>
                 <SubMenu key="web" title={<span><Icon type="google"/><span>Web Admin</span></span>}>
                     <Menu.Item key="web-1">

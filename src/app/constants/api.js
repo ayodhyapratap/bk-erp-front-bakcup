@@ -8,6 +8,7 @@ export const FILE_UPLOAD_API = 'blogImage/';
 
 export const SIGNUP_URL = '';
 export const RESET_PASSWORD = 'users/reset_password/';
+export const CHANGE_PASSWORD = 'users/passwordchange/';
 export const LOGIN_URL = 'users/login/';
 export const PRACTICESTAFF = 'clinics/%s/practice_staff/';
 export const ALL_PRACTICE = 'clinics/';

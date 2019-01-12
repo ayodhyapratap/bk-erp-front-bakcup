@@ -23,6 +23,7 @@ import Error404 from "../common/errors/Error404";
 import ReportsHome from "../reports/ReportsHome";
 import WebAdminHome from "../webAdmin/WebAdminHome";
 import InventoryHome from "../inventory/InventoryHome";
+import Profile from "../auth/Profile";
 
 class AppBase extends React.Component {
     constructor(props) {
@@ -150,6 +151,7 @@ class AppBase extends React.Component {
                     <Route path="/inventory" render={(route) => <InventoryHome {...this.state} {...this.props}/>}/>
                     <Route path="/reports"
                            render={(route) => <ReportsHome {...route} {...this.state} {...this.props}/>}/>
+                    <Route path="/profile" component={Profile}/>
                     <Route component={Error404}/>
                     <AppFooter/>
 

@@ -10,3 +10,9 @@ export const DISEASE_TYPES = [
     {label: 'Cancer Disease', value: 'Cancer Disease'},
     {label: 'Other Disease', value: 'Other Disease'}
 ];
+
+export const INVENTORY_ITEM_TYPE = [
+    {label:'Drug',value:'Drug'},
+    {label:'Equipment',value:'Equipment'},
+    {label:'Supplies',value:'Supplies'}
+];

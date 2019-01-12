@@ -29,3 +29,10 @@ export const REQUIRED_FIELD_MESSAGE = 'This field is required!'
 export const ERROR_INTERNET_CONNECTIVITY = 'Connection Failed';
 export const ERROR_MESSAGE_500 = 'Internal Server Error';
 export const ERROR_MESSAGE_404 = 'Not Found';
+
+
+export const PASS_LEN = 'Password should be atleast 6 character long';
+export const PASS_UPPER = 'Password must have atleast 1 uppercase letter';
+export const PASS_LOWER = 'Password must have atleast 1 lowercase letter';
+export const PASS_DIGIT = 'Password must contain atleast 1 digit';
+export const PASS_SPEC =  'Password must have atleast 1 special character';

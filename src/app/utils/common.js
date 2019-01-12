@@ -4,7 +4,14 @@ import {getAuthToken} from "./auth";
 import CONFIG from "../../app.config";
 import {API_URL} from "../constants/api";
 
-import {ERROR_MESSAGE_404, ERROR_MESSAGE_500} from "../constants/messages";
+import {
+    ERROR_MESSAGE_404,
+    ERROR_MESSAGE_500,
+    PASS_DIGIT,
+    PASS_LEN,
+    PASS_LOWER, PASS_SPEC,
+    PASS_UPPER
+} from "../constants/messages";
 import {ERROR_MSG_TYPE, INFO_MSG_TYPE, SUCCESS_MSG_TYPE, WARNING_MSG_TYPE} from "../constants/dataKeys";
 
 export const makeURL = function (URL) {
@@ -183,4 +190,24 @@ export const parseQueryString = function (query) {
         });
     }
     return obj;
+}
+export const validatePassword = function (rule, value, callback) {
+
+    if (value.length < 6 && value.length != 0) {
+        return (PASS_LEN);
+    }
+    if (value == value.toLowerCase() && value.length != 0) {
+        return (PASS_UPPER);
+    }
+    else if (value == value.toUpperCase() && value.length != 0) {
+        return (PASS_LOWER);
+    }
+    else if (value.search(/[0-9]/) < 0 && value.length != 0) {
+        return (PASS_DIGIT);
+    }
+    else if (!(/^[a-zA-Z0-9 ]*$/.test(value) == true && value.length != 0)) {
+    } else {
+        return (PASS_SPEC);
+    }
+    return;
 }
