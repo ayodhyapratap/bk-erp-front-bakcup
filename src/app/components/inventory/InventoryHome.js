@@ -28,9 +28,8 @@ export default class InventoryHome extends React.Component {
                 <Route path="/inventory/manufacture" render={(route) => <ManufactureList {...this.props}/>}/>
                 <Route path="/inventory/lab" render={(route) => <LabList {...this.props}/>}/>
                 <Route path="/inventory/activity" render={(route) => <ActivityList {...this.props}/>}/>
-                <Route path="/inventory" render={(route)=> <InventoryItemList {...this.props}/>}/>
+                <Route path="/inventory" render={(route)=> <InventoryItemList {...route} {...this.props}/>}/>
             </Switch>
         </Content>
     }
 }
-
