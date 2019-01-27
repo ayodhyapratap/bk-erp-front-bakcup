@@ -16,3 +16,8 @@ export const INVENTORY_ITEM_TYPE = [
     {label:'Equipment',value:'Equipment'},
     {label:'Supplies',value:'Supplies'}
 ];
+
+
+
+export const ADD_STOCK ="ADD";
+export const CONSUME_STOCK ="CONSUME";

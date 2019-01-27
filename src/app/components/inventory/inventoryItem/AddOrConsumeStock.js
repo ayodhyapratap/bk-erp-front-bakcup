@@ -4,7 +4,7 @@ import {Card, Form, Row} from "antd";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {CHECKBOX_FIELD, INPUT_FIELD,SUCCESS_MSG_TYPE, NUMBER_FIELD, SELECT_FIELD} from "../../../constants/dataKeys";
 import {STOCK_ENTRY} from "../../../constants/api";
-import {INVENTORY_ITEM_TYPE} from "../../../constants/hardData";
+import {INVENTORY_ITEM_TYPE, ADD_STOCK, CONSUME_STOCK} from "../../../constants/hardData";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {Link, Redirect, Switch} from "react-router-dom";
 import {Route} from "react-router";
@@ -48,7 +48,7 @@ export default class AddOrConsumeStock extends React.Component {
       }
       let defaultAddValues = [{"key":"inventory_item", "value":this.state.itemId},{"key":"item_add_type", "value":this.state.actionType}];
       let defaultConsumeValues = [{"key":"inventory_item", "value":this.state.itemId},{"key":"item_type", "value":this.state.actionType}];
-      if(this.state.actionType=="ADD"){
+      if(this.state.actionType==ADD_STOCK){
         fields = [ {
              label: 'Quantity',
              key: 'quantity',
@@ -62,7 +62,7 @@ export default class AddOrConsumeStock extends React.Component {
           key: 'batch_number',
           type: INPUT_FIELD,
       },{
-        label: 'Total',
+        label: 'Total Cost',
         key: 'total_cost',
         type: NUMBER_FIELD,
     },];
@@ -73,7 +73,7 @@ export default class AddOrConsumeStock extends React.Component {
         </Row>
       }
 
-      if(this.state.actionType=="CONSUME"){
+      if(this.state.actionType==CONSUME_STOCK){
         fields = [ {
              label: 'Quantity',
              key: 'quantity',

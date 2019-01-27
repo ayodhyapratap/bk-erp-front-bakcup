@@ -6,6 +6,7 @@ import {Link, Route, Switch} from "react-router-dom";
 import AddorEditInventoryItem from "./AddorEditInventoryItem";
 import AddItemType from "./AddItemType";
 import AddOrConsumeStock from "./AddOrConsumeStock"
+import {ADD_STOCK,CONSUME_STOCK} from "../../../constants/hardData"
 
 export default class InventoryItemList extends React.Component {
     constructor(props) {
@@ -165,9 +166,9 @@ export default class InventoryItemList extends React.Component {
           title:'Action',
           render:(item)=>{
               return <div>
-                <a onClick={()=>this.setActionType("ADD",item.id)}>Add </a>
+                <a onClick={()=>this.setActionType(ADD_STOCK,item.id)}>Add </a>
                   <Divider type="vertical"/>
-                  <a onClick={()=>this.setActionType("CONSUME",item.id)}>Consume</a>
+                  <a onClick={()=>this.setActionType(CONSUME_STOCK,item.id)}>Consume</a>
               </div>
           }
       },{
