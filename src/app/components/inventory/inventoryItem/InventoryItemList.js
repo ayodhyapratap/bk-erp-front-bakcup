@@ -1,10 +1,11 @@
 import React from "react";
-import {Button, Card, Icon, Tag, Divider, Popconfirm, Table} from "antd";
+import {Button, Card, Icon,Modal, Tag, Divider, Popconfirm, Table} from "antd";
 import {getAPI, interpolate, deleteAPI} from "../../../utils/common";
 import {INVENTORY_ITEM_API, SINGLE_INVENTORY_ITEM_API, MANUFACTURER_API, TAXES, VENDOR_API} from "../../../constants/api";
 import {Link, Route, Switch} from "react-router-dom";
 import AddorEditInventoryItem from "./AddorEditInventoryItem";
 import AddItemType from "./AddItemType";
+import AddOrConsumeStock from "./AddOrConsumeStock"
 
 export default class InventoryItemList extends React.Component {
     constructor(props) {
@@ -12,8 +13,11 @@ export default class InventoryItemList extends React.Component {
         this.state = {
             inventoryItemList: [],
             active_practiceId:this.props.active_practiceId,
+            stockModalVisibility:false,
         }
         this.loadData = this.loadData.bind(this);
+        this.showAddOrConsumeModal = this.showAddOrConsumeModal.bind(this);
+        this.setActionType = this.setActionType.bind(this);
     }
     componentDidMount(){
       this.loadData();
@@ -84,6 +88,20 @@ export default class InventoryItemList extends React.Component {
 
     }
 
+    setActionType(type,item_Id){
+      this.setState({
+        itemId:item_Id,
+        actionType:type,
+      })
+      this.showAddOrConsumeModal(true);
+    }
+
+    showAddOrConsumeModal(type){
+      this.setState({
+        stockModalVisibility:type,
+      })
+    }
+
     render() {
       const taxesdata={}
       if(this.state.taxes_list){
@@ -150,7 +168,16 @@ export default class InventoryItemList extends React.Component {
           <span> {vendorData[record.vendor]}</span>
       )
       },{
-          title:'Actions',
+          title:'Action',
+          render:(item)=>{
+              return <div>
+                <a onClick={()=>this.setActionType("add",item.id)}>Add </a>
+                  <Divider type="vertical"/>
+                  <a onClick={()=>this.setActionType("consume",item.id)}>Consume</a>
+              </div>
+          }
+      },{
+          title:'Edit',
           render:(item)=>{
               return <div>
                   <Link to={"/inventory/edit/"+item.id}>Edit Details </Link>
@@ -170,14 +197,26 @@ export default class InventoryItemList extends React.Component {
                 <Route path="/inventory/edit-item-type/:id" render={(route) => <AddItemType {...route} {...this.state}/>}/>
                 <Route exact path='/inventory/edit/:id'
                        render={(route) => <AddorEditInventoryItem {...this.state} {...route}/>}/>
+
                 <Route>
                     <Card title="Inventory List"
                           extra={<div>
                             <Link to="/inventory/add"><Button><Icon type="plus"/> Add Item</Button></Link>
-                            <Link to="/inventory/add"><Button><Icon type="plus"/> Add Stock</Button></Link>
-                            <Link to="/inventory/add"><Button><Icon type="plus"/> Consume Stock</Button></Link>
+                            <Link to="/inventory/add-stock"><Button><Icon type="plus"/> Add Stock</Button></Link>
+                            <Link to="/inventory/consume-stock"><Button><Icon type="plus"/> Consume Stock</Button></Link>
                           </div>}>
                         <Table dataSource={this.state.inventoryItemList} columns={columns}/>
+                        <Modal
+                          visible={this.state.stockModalVisibility}
+                          title={"Stock"+this.state.actionType}
+                          onOk={()=>this.showAddOrConsumeModal(false)}
+                          onCancel={()=>this.showAddOrConsumeModal(false)}
+                          footer={null  }
+                        >
+                          <AddOrConsumeStock showAddOrConsumeModal={this.showAddOrConsumeModal}
+                                            itemId={this.state.itemId}
+                                            actionType={this.state.actionType}/>
+                      </Modal>
                     </Card>
                 </Route>
             </Switch>

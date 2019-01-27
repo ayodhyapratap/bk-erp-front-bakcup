@@ -112,3 +112,4 @@ export const  INVENTORY_API = "inventory/";
 export const  SINGLE_INVENTORY_API = "inventory/%s/";
 export const  ITEM_TYPE_STOCK = "item_type_stock/";
 export const  SINGLE_ITEM_TYPE_STOCK = "item_type_stock/%s/";
+export const  STOCK_ENTRY = "stock_entry/";
