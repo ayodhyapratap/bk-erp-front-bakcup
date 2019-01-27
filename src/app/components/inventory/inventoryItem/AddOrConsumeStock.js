@@ -48,7 +48,7 @@ export default class AddOrConsumeStock extends React.Component {
       }
       let defaultAddValues = [{"key":"inventory_item", "value":this.state.itemId},{"key":"item_add_type", "value":this.state.actionType}];
       let defaultConsumeValues = [{"key":"inventory_item", "value":this.state.itemId},{"key":"item_type", "value":this.state.actionType}];
-      if(this.state.actionType=="add"){
+      if(this.state.actionType=="ADD"){
         fields = [ {
              label: 'Quantity',
              key: 'quantity',
@@ -73,7 +73,7 @@ export default class AddOrConsumeStock extends React.Component {
         </Row>
       }
 
-      if(this.state.actionType=="consume"){
+      if(this.state.actionType=="CONSUME"){
         fields = [ {
              label: 'Quantity',
              key: 'quantity',

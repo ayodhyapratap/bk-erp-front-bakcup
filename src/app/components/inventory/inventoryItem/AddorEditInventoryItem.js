@@ -190,13 +190,7 @@ export default class AddorEditInventoryItem extends React.Component {
             initialValue:this.state.editInventoryItem?this.state.editInventoryItem.taxes:null,
             mode: "multiple"
         },
-        {
-           label: 'Vendor',
-           key: 'vendor',
-           type: SELECT_FIELD,
-           options: vendorOption,
-           initialValue:this.state.editInventoryItem?this.state.editInventoryItem.vendor:null,
-       },  {
+         {
           label: 'Inventory',
           key: 'inventory',
           type: SELECT_FIELD,

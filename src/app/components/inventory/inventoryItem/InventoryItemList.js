@@ -161,19 +161,13 @@ export default class InventoryItemList extends React.Component {
       render:(text, record) => (
           <span> {manufacturerData[record.manufacturer]}</span>
       )
-      }, {
-      title: 'Vendor',
-      key: 'vendor',
-      render:(text, record) => (
-          <span> {vendorData[record.vendor]}</span>
-      )
       },{
           title:'Action',
           render:(item)=>{
               return <div>
-                <a onClick={()=>this.setActionType("add",item.id)}>Add </a>
+                <a onClick={()=>this.setActionType("ADD",item.id)}>Add </a>
                   <Divider type="vertical"/>
-                  <a onClick={()=>this.setActionType("consume",item.id)}>Consume</a>
+                  <a onClick={()=>this.setActionType("CONSUME",item.id)}>Consume</a>
               </div>
           }
       },{
