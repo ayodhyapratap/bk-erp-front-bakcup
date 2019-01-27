@@ -67,7 +67,7 @@ export const INVOICE_REPORTS = 'clinics/%s/invoice_report/?%s'
 export const PATIENTS_REPORTS = 'clinics/%s/patients_report/?%s'
 export const PAYMENTS_REPORTS = 'clinics/%s/payments_report/?%s'
 export const TREATMENT_REPORTS = 'clinics/%s/treatment_report/?%s'
-export const DRUG_TYPE_API = '';
+export const DRUG_TYPE_API = 'drug_type/';
 export const DRUG_UNIT_API = '';
 //blogs APT
 
@@ -106,5 +106,9 @@ export const  LAB_API = "lab/";
 export const  SINGLE_LAB_API = "lab/%s/";
 export const  MANUFACTURER_API = "manufacturer/";
 export const  SINGLE_MANUFACTURER_API = "manufacturer/%s/";
+export const  INVENTORY_ITEM_API = "inventory_item/";
+export const  SINGLE_INVENTORY_ITEM_API = "inventory_item/%s/";
 export const  INVENTORY_API = "inventory/";
 export const  SINGLE_INVENTORY_API = "inventory/%s/";
+export const  ITEM_TYPE_STOCK = "item_type_stock/";
+export const  SINGLE_ITEM_TYPE_STOCK = "item_type_stock/%s/";

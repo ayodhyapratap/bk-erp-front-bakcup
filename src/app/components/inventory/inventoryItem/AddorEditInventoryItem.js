@@ -3,7 +3,7 @@ import AddInventoryForm from "./AddInventoryForm";
 import {Card, Form, Row} from "antd";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {CHECKBOX_FIELD, INPUT_FIELD,SUCCESS_MSG_TYPE, NUMBER_FIELD, SELECT_FIELD} from "../../../constants/dataKeys";
-import {SINGLE_INVENTORY_API, TAXES, MANUFACTURER_API, VENDOR_API, INVENTORY_API} from "../../../constants/api";
+import {SINGLE_INVENTORY_ITEM_API, TAXES, MANUFACTURER_API, VENDOR_API,INVENTORY_ITEM_API ,INVENTORY_API} from "../../../constants/api";
 import {INVENTORY_ITEM_TYPE} from "../../../constants/hardData";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {Link, Redirect, Switch} from "react-router-dom";
@@ -48,6 +48,9 @@ export default class AddorEditInventoryItem extends React.Component {
         if (this.props.vendor_list == null) {
             this.loadVendorList();
         }
+        if (this.props.inventory_list == null) {
+            this.loadInventoryList();
+        }
     }
     loadTaxes() {
         var that = this;
@@ -86,6 +89,18 @@ export default class AddorEditInventoryItem extends React.Component {
         }
         getAPI(VENDOR_API, successFn, errorFn);
     }
+    loadInventoryList() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                inventory_list: data
+            })
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(INVENTORY_API, successFn, errorFn);
+    }
 
     loadData(){
         let that =this;
@@ -97,7 +112,7 @@ export default class AddorEditInventoryItem extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_INVENTORY_API, [this.props.match.params.id]) ,successFn, errorFn);
+        getAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [this.props.match.params.id]) ,successFn, errorFn);
 
 
     }
@@ -123,6 +138,12 @@ export default class AddorEditInventoryItem extends React.Component {
               vendorOption.push({label: (vendor.name ), value: vendor.id});
           })
       }
+      const inventoryOption = [];
+      if (this.state.inventory_list) {
+          this.state.inventory_list.forEach(function (inventory) {
+              inventoryOption.push({label: (inventory.name ), value: inventory.id});
+          })
+      }
 
         const fields = [{
             label: 'Item Name',
@@ -142,14 +163,14 @@ export default class AddorEditInventoryItem extends React.Component {
             options: manufacturerOption,
             initialValue:this.state.editInventoryItem?this.state.editInventoryItem.manufacturer:null,
         }, {
-            label: 'Stocking Unit',
-            key: 'stocking_unit',
-            placeholder: 'Example: Bottles, Strips etc.',
-            follow: '(Make sure this is the same as the unit in which you dispense this item.)',
-            required: true,
-            type: INPUT_FIELD,
-            initialValue:this.state.editInventoryItem?this.state.editInventoryItem.stocking_unit:null,
-        }, {
+        //     label: 'Stocking Unit',
+        //     key: 'stocking_unit',
+        //     placeholder: 'Example: Bottles, Strips etc.',
+        //     follow: '(Make sure this is the same as the unit in which you dispense this item.)',
+        //     required: true,
+        //     type: INPUT_FIELD,
+        //     initialValue:this.state.editInventoryItem?this.state.editInventoryItem.stocking_unit:null,
+        // }, {
             label: 'Re-Order Level',
             key: 're_order_level',
             type: INPUT_FIELD,
@@ -176,6 +197,12 @@ export default class AddorEditInventoryItem extends React.Component {
            options: vendorOption,
            initialValue:this.state.editInventoryItem?this.state.editInventoryItem.vendor:null,
        },  {
+          label: 'Inventory',
+          key: 'inventory',
+          type: SELECT_FIELD,
+          options: inventoryOption,
+          initialValue:this.state.editInventoryItem?this.state.editInventoryItem.inventory:null,
+      },  {
             label: 'Item Type',
             key: 'item_type',
             type: SELECT_FIELD,
@@ -194,7 +221,7 @@ export default class AddorEditInventoryItem extends React.Component {
               errorFn: function () {
 
               },
-              action: interpolate(SINGLE_INVENTORY_API, [this.props.match.params.id]),
+              action: interpolate(SINGLE_INVENTORY_ITEM_API, [this.props.match.params.id]),
               method: "put",
 
           }
@@ -209,7 +236,7 @@ export default class AddorEditInventoryItem extends React.Component {
           errorFn:function(){
 
           },
-          action:  INVENTORY_API,
+          action:  INVENTORY_ITEM_API,
           method: "post",
       }
       let defaultValues=[];

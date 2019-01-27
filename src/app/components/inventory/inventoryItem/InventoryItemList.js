@@ -1,9 +1,10 @@
 import React from "react";
 import {Button, Card, Icon, Tag, Divider, Popconfirm, Table} from "antd";
 import {getAPI, interpolate, deleteAPI} from "../../../utils/common";
-import {INVENTORY_API, SINGLE_INVENTORY_API, MANUFACTURER_API, TAXES, VENDOR_API} from "../../../constants/api";
+import {INVENTORY_ITEM_API, SINGLE_INVENTORY_ITEM_API, MANUFACTURER_API, TAXES, VENDOR_API} from "../../../constants/api";
 import {Link, Route, Switch} from "react-router-dom";
 import AddorEditInventoryItem from "./AddorEditInventoryItem";
+import AddItemType from "./AddItemType";
 
 export default class InventoryItemList extends React.Component {
     constructor(props) {
@@ -30,7 +31,7 @@ export default class InventoryItemList extends React.Component {
         }
         let errorFn = function () {
         }
-        getAPI(INVENTORY_API, successFn, errorFn);
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn);
     }
     loadManufactureList() {
         let that = this;
@@ -79,7 +80,7 @@ export default class InventoryItemList extends React.Component {
       };
       let errorFn = function () {
       };
-      deleteAPI(interpolate(SINGLE_INVENTORY_API,[value]), successFn, errorFn);
+      deleteAPI(interpolate(SINGLE_INVENTORY_ITEM_API,[value]), successFn, errorFn);
 
     }
 
@@ -152,7 +153,9 @@ export default class InventoryItemList extends React.Component {
           title:'Actions',
           render:(item)=>{
               return <div>
-                  <Link to={"/inventory/edit/"+item.id}>Edit</Link>
+                  <Link to={"/inventory/edit/"+item.id}>Edit Details </Link>
+                  <Divider type="vertical"/>
+                  <Link to={"/inventory/edit-item-type/"+item.id}>Edit stock type </Link>
                   <Divider type="vertical"/>
                   <Popconfirm title="Are you sure delete this item?"
                               onConfirm={() => that.deleteObject(item.id)} okText="Yes" cancelText="No">
@@ -164,11 +167,16 @@ export default class InventoryItemList extends React.Component {
         return <div>
             <Switch>
                 <Route path="/inventory/add" render={(route) => <AddorEditInventoryItem {...route} {...this.state}/>}/>
+                <Route path="/inventory/edit-item-type/:id" render={(route) => <AddItemType {...route} {...this.state}/>}/>
                 <Route exact path='/inventory/edit/:id'
                        render={(route) => <AddorEditInventoryItem {...this.state} {...route}/>}/>
                 <Route>
                     <Card title="Inventory List"
-                          extra={<Link to="/inventory/add"><Button><Icon type="plus"/> Add</Button></Link>}>
+                          extra={<div>
+                            <Link to="/inventory/add"><Button><Icon type="plus"/> Add Item</Button></Link>
+                            <Link to="/inventory/add"><Button><Icon type="plus"/> Add Stock</Button></Link>
+                            <Link to="/inventory/add"><Button><Icon type="plus"/> Consume Stock</Button></Link>
+                          </div>}>
                         <Table dataSource={this.state.inventoryItemList} columns={columns}/>
                     </Card>
                 </Route>
