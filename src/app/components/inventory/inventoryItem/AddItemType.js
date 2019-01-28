@@ -4,7 +4,7 @@ import {Card, Form, Row} from "antd";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {CHECKBOX_FIELD, INPUT_FIELD,SUCCESS_MSG_TYPE, NUMBER_FIELD, SELECT_FIELD,SINGLE_CHECKBOX_FIELD} from "../../../constants/dataKeys";
 import {SINGLE_INVENTORY_ITEM_API, INVENTORY_ITEM_API ,INVENTORY_API,ITEM_TYPE_STOCK, SINGLE_ITEM_TYPE_STOCK, DRUG_TYPE_API } from "../../../constants/api";
-import {INVENTORY_ITEM_TYPE} from "../../../constants/hardData";
+import {INVENTORY_ITEM_TYPE, DRUG, SUPPLIES, EQUIPMENT} from "../../../constants/hardData";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {Link, Redirect, Switch} from "react-router-dom";
 import {Route} from "react-router";
@@ -125,7 +125,7 @@ export default class AddItemType extends React.Component {
       }
       let defaultValues = [{"key":"inventory_item", "value":this.props.match.params.id},{"key":"item_type", "value":this.state.item_type}];
 
-      if(this.state.item_type=="Drug"){
+      if(this.state.item_type==DRUG){
         fields=[ {
             label: 'Drug Type',
             key: 'drug_type',
@@ -154,7 +154,7 @@ export default class AddItemType extends React.Component {
           initialValue:this.state.editInventoryItemType?this.state.editInventoryItemType.instructions:null,
       },]
       }
-      if(this.state.item_type=="Equipment"){
+      if(this.state.item_type==EQUIPMENT){
         fields=[ {
             key: "perscribe_this",
             type: SINGLE_CHECKBOX_FIELD,
@@ -172,7 +172,7 @@ export default class AddItemType extends React.Component {
           initialValue:this.state.editInventoryItemType?this.state.editInventoryItemType.instructions:null,
       },]
       }
-      if(this.state.item_type=="Supplies"){
+      if(this.state.item_type==SUPPLIES){
         fields=[ {
             key: "perscribe_this",
             type: SINGLE_CHECKBOX_FIELD,

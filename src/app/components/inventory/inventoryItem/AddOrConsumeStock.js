@@ -47,7 +47,7 @@ export default class AddOrConsumeStock extends React.Component {
           method: "post",
       }
       let defaultAddValues = [{"key":"inventory_item", "value":this.state.itemId},{"key":"item_add_type", "value":this.state.actionType}];
-      let defaultConsumeValues = [{"key":"inventory_item", "value":this.state.itemId},{"key":"item_type", "value":this.state.actionType}];
+      let defaultConsumeValues = [{"key":"inventory_item", "value":this.state.itemId},{"key":"item_add_type", "value":this.state.actionType}];
       if(this.state.actionType==ADD_STOCK){
         fields = [ {
              label: 'Quantity',

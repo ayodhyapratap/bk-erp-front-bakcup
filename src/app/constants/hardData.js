@@ -21,3 +21,6 @@ export const INVENTORY_ITEM_TYPE = [
 
 export const ADD_STOCK ="ADD";
 export const CONSUME_STOCK ="CONSUME";
+export const  DRUG ="Drug";
+export const EQUIPMENT ="Equipment";
+export const SUPPLIES ="Supplies";

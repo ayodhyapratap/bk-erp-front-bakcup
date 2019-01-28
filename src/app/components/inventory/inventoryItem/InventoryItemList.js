@@ -6,6 +6,7 @@ import {Link, Route, Switch} from "react-router-dom";
 import AddorEditInventoryItem from "./AddorEditInventoryItem";
 import AddItemType from "./AddItemType";
 import AddOrConsumeStock from "./AddOrConsumeStock"
+import ConsumeStock from "./ConsumeStock"
 import {ADD_STOCK,CONSUME_STOCK} from "../../../constants/hardData"
 
 export default class InventoryItemList extends React.Component {
@@ -191,6 +192,10 @@ export default class InventoryItemList extends React.Component {
                 <Route path="/inventory/add" render={(route) => <AddorEditInventoryItem {...route} {...this.state}/>}/>
                 <Route path="/inventory/edit-item-type/:id" render={(route) => <AddItemType {...route} {...this.state}/>}/>
                 <Route exact path='/inventory/edit/:id'
+                       render={(route) => <AddorEditInventoryItem {...this.state} {...route}/>}/>
+                <Route exact path='/inventory/consume-stock'
+                       render={(route) => <ConsumeStock {...this.state} {...route}/>}/>
+                <Route exact path='/inventory/add-stock'
                        render={(route) => <AddorEditInventoryItem {...this.state} {...route}/>}/>
 
                 <Route>
