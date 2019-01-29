@@ -8,7 +8,7 @@ import '../../assets/auth.css';
 // import PrivacyPolicy from "../common/PrivacyPolicy";
 // import VerifyEmail from "./VerifyEmail";
 // import ForgotPass from "./ForgotPass";
-import AppLogo from '../../assets/img/app_logo.png';
+import AppLogo from '../../assets/img/kidneycarelogo.png';
 import DynamicFieldsForm from "../common/DynamicFieldsForm";
 import {PASSWORD_FIELD, SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
 import {PATIENT_CLINIC_NOTES_API, RESET_PASSWORD} from "../../constants/api";
@@ -60,6 +60,7 @@ class Auth extends React.Component {
                         <Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}
                              lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}}>
                             <div className="loginFormWrapper">
+                                <img src={AppLogo} alt="" style={{maxWidth: '100%'}}/>
                                 <PasswordResetForm {...this.props}
                                                    formProp={formProp}
                                                    fields={resetPasswordFields}
@@ -80,8 +81,8 @@ class Auth extends React.Component {
                         </Col>
                         <Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}
                              lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>
-                            <div className="loginFormWrapper">
-                                <img src={AppLogo} alt="" style={{maxWidth: '100%'}}/>
+                            <div className="loginFormWrapper" style={{textAlign:'center'}}>
+                                <img src={AppLogo} alt="" style={{maxWidth: '100%',minWidth:'50%',margin:'20px'}}/>
                                 <LoginFormLayout {...this.props} login={this.props.login}/>
                                 <Divider/>
                                 <h4>
