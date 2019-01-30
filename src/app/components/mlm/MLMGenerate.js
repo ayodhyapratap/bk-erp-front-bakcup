@@ -73,7 +73,7 @@ class MLMGenerate extends React.Component {
       if (!err) {
         that.setState({changePassLoading: true});
         let data = {}
-  
+
         let successFn = function(data) {
 
           displayMessage(SUCCESS_MSG_TYPE, data.message);
@@ -130,7 +130,6 @@ class MLMGenerate extends React.Component {
 
         roleItems = keys.map(function(k){
           let name=role.id+"/"+k
-          console.log(name);
             return <Form.Item
               {...formItemLayout}
               label={k}
