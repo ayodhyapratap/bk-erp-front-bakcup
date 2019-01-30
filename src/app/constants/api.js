@@ -113,3 +113,8 @@ export const  SINGLE_INVENTORY_API = "inventory/%s/";
 export const  ITEM_TYPE_STOCK = "item_type_stock/";
 export const  SINGLE_ITEM_TYPE_STOCK = "item_type_stock/%s/";
 export const  STOCK_ENTRY = "stock_entry/";
+
+
+// MLM API_URL
+export const ROLE_COMMISION="role_commission";
+export const PRODUCT_LEVEL="product_level";

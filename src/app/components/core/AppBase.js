@@ -24,6 +24,7 @@ import ReportsHome from "../reports/ReportsHome";
 import WebAdminHome from "../webAdmin/WebAdminHome";
 import InventoryHome from "../inventory/InventoryHome";
 import Profile from "../auth/Profile";
+import MlmBase from "../mlm/MlmBase"
 
 class AppBase extends React.Component {
     constructor(props) {
@@ -152,6 +153,7 @@ class AppBase extends React.Component {
                     <Route path="/reports"
                            render={(route) => <ReportsHome {...route} {...this.state} {...this.props}/>}/>
                     <Route path="/profile" component={Profile}/>
+                    <Route path="/mlm" render={(route) => <MlmBase {...this.state} {...this.props}/>}/>
                     <Route component={Error404}/>
                     <AppFooter/>
 
