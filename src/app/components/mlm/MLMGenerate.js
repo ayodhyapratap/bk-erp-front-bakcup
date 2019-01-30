@@ -72,12 +72,8 @@ class MLMGenerate extends React.Component {
       console.log(values);
       if (!err) {
         that.setState({changePassLoading: true});
-        let data = {
-          "stages":[]
-        };
-        values.role.forEach(function (name){
-                data.stages.push({"role": name});
-        });
+        let data = {}
+  
         let successFn = function(data) {
 
           displayMessage(SUCCESS_MSG_TYPE, data.message);
@@ -107,6 +103,7 @@ class MLMGenerate extends React.Component {
 
 
   render() {
+    let that =this
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const formItemLayout = {
       labelCol: {
@@ -126,26 +123,35 @@ class MLMGenerate extends React.Component {
     };
     getFieldDecorator('keys', { initialValue: [] });
     const keys = getFieldValue('keys');
-    const formItems = keys.map((k, index) => (
-      <Form.Item
-        {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-        label={index === 0 ? 'role' : ''}
-        required={false}
-        key={k}
-      >
-        {getFieldDecorator(`role[${k}]`, {
-          validateTrigger: ['onChange', 'onBlur'],
-          rules: [{
-            required: true,
-            whitespace: true,
-            message: "Pleaseenter",
-          }],
-        })(
-          <Input placeholder="enter " style={{ width: '60%', marginRight: 8 }} />
-        )}
+    let formItems;
+    if(that.state.staffRoles){
+      formItems= that.state.staffRoles.map(function(role){
+      let roleItems;
 
-      </Form.Item>
-    ));
+        roleItems = keys.map(function(k){
+          let name=role.id+"/"+k
+          console.log(name);
+            return <Form.Item
+              {...formItemLayout}
+              label={k}
+              required={false}
+              key={name}
+
+            >
+              {getFieldDecorator(name, {
+                validateTrigger: ['onChange', 'onBlur'],
+
+              })(
+                <Input placeholder="enter " style={{ width: '20%', marginRight: 8 }} />
+              )}
+
+            </Form.Item>})
+
+      return  <div>
+        <h3>{role.name}</h3>
+        {roleItems}
+        </div>
+    });}
 
     return (
       <Card>
