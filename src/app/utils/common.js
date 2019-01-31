@@ -25,7 +25,7 @@ export const putAPI = function (URL, data, successFn, errorFn, headerConfig = {}
         url: makeURL(URL),
         data: data,
         headers: {
-            Authorization: 'Bearer ' + getAuthToken(),
+            Authorization: 'Token ' + getAuthToken(),
             ...headerConfig
         }
     }).then(function (response) {
@@ -45,7 +45,7 @@ export const postAPI = function (URL, data, successFn, errorFn, headerConfig = {
         url: makeURL(URL),
         data: data,
         headers: {
-            Authorization: 'Bearer ' + getAuthToken(),
+            Authorization: 'Token ' + getAuthToken(),
             ...headerConfig
         }
     }).then(function (response) {
@@ -65,7 +65,7 @@ export const patchAPI = function (URL, data, successFn, errorFn, headerConfig = 
         url: makeURL(URL),
         data: data,
         headers: {
-            Authorization: 'Bearer ' + getAuthToken(),
+            Authorization: 'Token ' + getAuthToken(),
             ...headerConfig
         }
     }).then(function (response) {
@@ -84,7 +84,7 @@ export const getAPI = function (URL, successFn, errorFn) {
         method: 'get',
         url: makeURL(URL),
         headers: {
-            Authorization: 'Bearer ' + getAuthToken()
+            Authorization: 'Token ' + getAuthToken()
         }
     }).then(function (response) {
         console.log(response);
@@ -102,7 +102,7 @@ export const deleteAPI = function (URL, successFn, errorFn) {
         method: 'delete',
         url: makeURL(URL),
         headers: {
-            Authorization: 'Bearer ' + getAuthToken()
+            Authorization: 'Token ' + getAuthToken()
         }
     }).then(function (response) {
         console.log(response);

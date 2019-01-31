@@ -38,11 +38,11 @@ class AppSider extends React.Component {
             breakpoint="xl"
             // collapsedWidth="0"
             onBreakpoint={(broken) => {
-                console.log(broken);
+                // console.log(broken);
                 that.props.toggleSider(broken);
             }}
             onCollapse={(collapsed, type) => {
-                console.log(collapsed, type);
+                // console.log(collapsed, type);
             }}>
             <img src={Applogo} alt="" style={{width: '100%',padding:'20px'}}/>
 

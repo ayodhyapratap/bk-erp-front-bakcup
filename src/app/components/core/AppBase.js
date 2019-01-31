@@ -52,7 +52,6 @@ class AppBase extends React.Component {
     activeData() {
         let that = this;
         that.state.practiceList.forEach(function (practice) {
-            console.log(practice);
             if (that.state.active_practiceId == practice.id) {
                 that.setState({
                     activePracticeData: practice,
@@ -63,7 +62,7 @@ class AppBase extends React.Component {
     }
 
     switchPractice(practiceId) {
-        console.log(practiceId);
+        // console.log(practiceId);
         let that = this;
         that.setState({
             active_practiceId: practiceId,
@@ -85,7 +84,7 @@ class AppBase extends React.Component {
                 data[0].specialisations.forEach(function (speciality) {
                     specialisations[speciality.id] = speciality
                 });
-                console.log(specialisations);
+                // console.log(specialisations);
 
                 that.setState({
                     practiceList: data,

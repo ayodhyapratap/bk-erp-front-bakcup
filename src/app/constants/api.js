@@ -118,3 +118,4 @@ export const  STOCK_ENTRY = "stock_entry/";
 // MLM API_URL
 export const ROLE_COMMISION="role_commission";
 export const PRODUCT_LEVEL="product_level";
+export const GENERATE_MLM_COMMISSON = 'product_level/generate_mlm/';
