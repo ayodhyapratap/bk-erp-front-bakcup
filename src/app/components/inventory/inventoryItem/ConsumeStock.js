@@ -1,5 +1,21 @@
 import React from "react";
-import {Button, Card, Form, Input, Icon, Modal, List, Row, Col, Tag, Divider, Popconfirm, Table, Tabs,} from "antd";
+import {
+    Button,
+    Card,
+    Form,
+    Input,
+    Icon,
+    Modal,
+    List,
+    Row,
+    Col,
+    Tag,
+    Divider,
+    Popconfirm,
+    Table,
+    Tabs,
+    InputNumber, Select,
+} from "antd";
 import {getAPI, interpolate, deleteAPI} from "../../../utils/common";
 
 import {INVENTORY_ITEM_TYPE, DRUG, SUPPLIES, EQUIPMENT} from "../../../constants/hardData";
@@ -10,15 +26,22 @@ import {
     TAXES,
     VENDOR_API
 } from "../../../constants/api";
+import {takeWhile, dropWhile} from 'lodash';
 
 const TabPane = Tabs.TabPane;
-let id = 0;
 
+let tableFormFields = {
+    id: null,
+    quantity: 0,
+    batch: null
+};
 
 class ConsumeStock extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            tableFormValues: []
+        }
 
     }
 
@@ -43,13 +66,13 @@ class ConsumeStock extends React.Component {
                 if (item.item_type == EQUIPMENT) {
                     equipmentItems.push(item);
                 }
-
-
-            })
+            });
             that.setState({
-                drugItems: drugItems,
-                equipmentItems: equipmentItems,
-                supplesItems: supplesItems,
+                items: {
+                    [DRUG]: drugItems,
+                    [EQUIPMENT]: equipmentItems,
+                    [SUPPLIES]: supplesItems,
+                }
             })
 
         }
@@ -61,31 +84,35 @@ class ConsumeStock extends React.Component {
     ///formdata
 
     remove = (k) => {
-        const {form} = this.props;
-        // can use data-binding to get
-        const keys = form.getFieldValue('keys');
-        // We need at least one passenger
-        if (keys.length === 1) {
-            return;
-        }
-
-        // can use data-binding to set
-        form.setFieldsValue({
-            keys: keys.filter(key => key !== k),
+        this.setState(function (prevState) {
+            // console.log(dropWhile(prevState.tableFormValues, ['id', k]));
+            return {
+                tableFormValues: [...dropWhile([...prevState.tableFormValues], ['id', k])]
+            }
         });
     }
 
-    add = (itemId) => {
-        const {form} = this.props;
+    add = (item) => {
+        // const {form} = this.props;
         // can use data-binding to get
-        const keys = form.getFieldValue('keys');
-        const nextKeys = keys.concat(++id);
+        // const keys = form.getFieldValue('keys');
+        // const nextKeys = keys.concat(++id);
         // can use data-binding to set
         // important! notify form to detect changes
-        form.setFieldsValue({
-            keys: nextKeys,
+        // form.setFieldsValue({
+        //     keys: nextKeys,
+        // });
+        this.setState(function (prevState) {
+            return {
+                tableFormValues: [...prevState.tableFormValues,
+                    {
+                        ...tableFormFields,
+                        ...item,
+                        id: Math.random(),
+                    }]
+            }
         });
-    }
+    };
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -98,7 +125,7 @@ class ConsumeStock extends React.Component {
 
 
     render() {
-
+        let that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const formItemLayout = {
             labelCol: {
@@ -121,128 +148,88 @@ class ConsumeStock extends React.Component {
             },
         };
         getFieldDecorator('keys', {initialValue: []});
-        const keys = getFieldValue('keys');
-        console.log(keys);
-
-        const formItems = keys.map((k, index) => (
-            <div>
-                <Form.Item
-                    {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                    label={k.name}
-                    required={false}
-                    key={k}
-                >
-                    {getFieldDecorator(`quantity[${k}]`, {
-                        validateTrigger: ['onChange', 'onBlur'],
-                        rules: [{
-                            required: true,
-                            whitespace: true,
-                            message: "Please input passenger's name or delete this field.",
-                        }],
-                    })(
-                        <Input placeholder="quantity" style={{width: '60%', marginRight: 8}}/>
-                    )}
-                </Form.Item>
-                <Form.Item
-                    {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                    label={k.name}
-                    required={false}
-                    key={k}>
-
-                    {getFieldDecorator(`batch_no[${k}]`, {
-                        validateTrigger: ['onChange', 'onBlur'],
-                        rules: [{
-                            required: true,
-                            whitespace: true,
-                            message: "Please input passenger's name or delete this field.",
-                        }],
-                    })(
-                        <Input placeholder="batch Number" style={{width: '60%', marginRight: 8}}/>
-                    )}
-                    {keys.length > 1 ? (
-                        <Icon
-                            className="dynamic-delete-button"
-                            type="minus-circle-o"
-                            disabled={keys.length === 1}
-                            onClick={() => this.remove(k)}
-                        />
-                    ) : null}
-
-
-                </Form.Item>
-            </div>
-        ));
-
-
+        let consumeRow = [{
+            title: 'Item Name',
+            key: 'item_name',
+            dataIndex: 'name'
+        }, {
+            title: 'Quantity',
+            key: 'quantity',
+            dataIndex: 'quantity',
+            render: (item,record) => <Form.Item
+                key={`quantity[${record.id}]`}
+                {...formItemLayout}>
+                {getFieldDecorator(`quantity[${record.id}]`, {
+                    validateTrigger: ['onChange', 'onBlur'],
+                    rules: [{
+                        required: true,
+                        message: "This field is required.",
+                    }],
+                })(
+                    <InputNumber min={0} placeholder="quantity"/>
+                )}
+            </Form.Item>
+        }, {
+            title: 'Batch',
+            key: 'batch',
+            dataIndex: 'batch',
+            render: (item,record) => <Form.Item
+                key={`batch[${record.id}]`}
+                {...formItemLayout}>
+                {getFieldDecorator(`batch[${record.id}]`, {
+                    validateTrigger: ['onChange', 'onBlur'],
+                    rules: [{
+                        required: true,
+                        message: "This field is required.",
+                    }],
+                })(
+                    <Select placeholder="Batch Number"/>
+                )}
+            </Form.Item>
+        }, {
+            title: 'Action',
+            key: 'id',
+            dataIndex: 'id',
+            render: (value) => <a onClick={() => that.remove(value)}>Delete</a>
+        }];
         return <div>
-            <Row>
-                <Card>
+            <Card>
+                <Row gutter={16}>
                     <Col span={7}>
-                        <Tabs defaultActiveKey="1" size="small">
-                            <TabPane tab="Drugs" key="1">
+                        <Tabs size="small">
+                            {INVENTORY_ITEM_TYPE.map(itemType => <TabPane tab={itemType.label} key={itemType.value}>
                                 <List size={"small"}
                                       itemLayout="horizontal"
-                                      dataSource={this.state.drugItems}
+                                      dataSource={this.state.items ? this.state.items[itemType.value] : []}
                                       renderItem={item => (
                                           <List.Item>
                                               <List.Item.Meta
                                                   title={item.name}/>
                                               <Button type="primary" size="small" shape="circle"
                                                       onClick={() => this.add(item)} icon={"arrow-right"}/>
-                                          </List.Item>
-                                      )}
-                                />
-
-
-                            </TabPane>
-                            <TabPane tab="Tab 2" key="2">
-                                <List
-                                    itemLayout="horizontal"
-                                    dataSource={this.state.supplesItems}
-                                    renderItem={item => (
-                                        <List.Item>
-                                            <List.Item.Meta
-
-                                                title={item.name}
-                                            />
-                                        </List.Item>
-                                    )}
-                                /></TabPane>
-                            <TabPane tab="Tab 3" key="3">
-                                <List
-                                    itemLayout="horizontal"
-                                    dataSource={this.state.equipmentItems}
-                                    renderItem={item => (
-                                        <List.Item>
-
-                                            <List.Item.Meta
-
-                                                description={item.name}
-
-                                            />
-                                        </List.Item>
-                                    )}
-                                /></TabPane>
+                                          </List.Item>)}/>
+                            </TabPane>)}
                         </Tabs>
                     </Col>
                     <Col span={17}>
-
                         <Form onSubmit={this.handleSubmit}>
-                            {formItems}
-
+                            <Table pagination={false}
+                                   bordered={true}
+                                   dataSource={this.state.tableFormValues}
+                                   columns={consumeRow}/>
+                            {/*<List>{formItems}</List>*/}
                             <Form.Item {...formItemLayoutWithOutLabel}>
                                 <Button type="primary" htmlType="submit">Submit</Button>
                             </Form.Item>
                         </Form>
 
                     </Col>
-                </Card>
-            </Row>
+                </Row>
+            </Card>
+
         </div>
 
     }
-
-
 }
 
 export default Form.create()(ConsumeStock);

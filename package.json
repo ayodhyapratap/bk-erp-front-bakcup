@@ -9,6 +9,7 @@
     "jquery": "^3.3.1",
     "jqueryui": "^1.11.1",
     "lockr": "^0.8.5",
+    "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "quill-delta": "^4.1.0",
     "react": "^16.6.3",
