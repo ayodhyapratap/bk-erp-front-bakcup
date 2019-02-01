@@ -13,6 +13,7 @@ export const LOGIN_URL = 'users/login/';
 export const PRACTICESTAFF = 'clinics/%s/practice_staff/';
 export const ALL_PRACTICE = 'clinics/';
 export const PRACTICE = 'clinics/%s/';
+export const PRACTICE_DELETE = 'clinics/%s/delete_clinic/';
 export const TAXES = 'clinics/%s/taxes/';
 export const OFFERS = 'clinics/%s/offers/';
 export const PAYMENT_MODES = 'clinics/%s/payment_modes/';

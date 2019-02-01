@@ -40,7 +40,7 @@ class App extends Component {
         this.eventStyleGetter = this.eventStyleGetter.bind(this);
         this.loadCalendarTimings = this.loadCalendarTimings.bind(this);
         this.loadDoctors();
-        this.appointmentList();
+        this.appointmentList(moment(), moment());
         this.loadCalendarTimings()
     }
 
@@ -188,7 +188,7 @@ class App extends Component {
      * List and style settings
      * */
 
-    appointmentList() {
+    appointmentList(start, end) {
         let that = this;
         let successFn = function (data) {
             that.setState(function (prevState) {
@@ -231,7 +231,10 @@ class App extends Component {
         }
         let errorFn = function () {
         }
-        getAPI(interpolate(APPOINTMENT_PERPRACTICE_API, [this.props.active_practiceId]), successFn, errorFn);
+        getAPI(interpolate(APPOINTMENT_PERPRACTICE_API, [this.props.active_practiceId]), successFn, errorFn, {
+            start: start.format('YYYY-MM-DD'),
+            end: end.format('YYYY-MM-DD')
+        });
     }
 
     eventStyleGetter(event, start, end, isSelected) {
@@ -241,7 +244,6 @@ class App extends Component {
             console.log(this.state.doctors_object[doctor]);
             doctor_object = this.state.doctors_object[doctor].calender_colour;
         }
-//        var backgroundColor = '#' + event.hexColor;
         var backgroundColor = doctor_object;
         var style = {
             backgroundColor: backgroundColor,
@@ -254,6 +256,17 @@ class App extends Component {
         return {
             style: style
         };
+    }
+
+    onRangeChange = (e) => {
+        console.log(e)
+        if (e.start && e.end) {
+            this.appointmentList(moment(e.start), moment(e.end));
+        }else if(e.length == 1){
+            this.appointmentList(moment(e[0]), moment(e[0]));
+        }else if(e.length == 7){
+            this.appointmentList(moment(e[0]), moment(e[6]));
+        }
     }
 
     render() {
@@ -269,7 +282,6 @@ class App extends Component {
             let today = new Date();
             console.log(today)
             if (moment(event.start).format("YYYY-MM-DD") == moment(today).format("YYYY-MM-DD")) {
-                console.log("yaaahooo");
                 counter++;
             }
         });
@@ -289,7 +301,7 @@ class App extends Component {
                                     <Divider>Doctors</Divider>
                                     <List dataSource={this.state.practice_doctors}
                                           renderItem={item => (
-                                              <List.Item style={{textOverflow: "ellipsis"}}>{item.name}</List.Item>)}
+                                              <List.Item style={{textOverflow: "ellipsis"}}><span style={{width:'5px',marginRight:'2px',backgroundColor:item.calender_colour}}/>{item.name}</List.Item>)}
                                           size={"small"}/>
 
                                 </Col>
@@ -312,7 +324,8 @@ class App extends Component {
                                         style={{height: "calc(100vh - 85px)"}}
                                         eventPropGetter={(this.eventStyleGetter)}
                                         min={startTime}
-                                        max={endTime}/>
+                                        max={endTime}
+                                        onRangeChange={this.onRangeChange}/>
                                 </Col>
                                 <Col span={5}>
                                     <Link to='/calendar/create-appointment'>
