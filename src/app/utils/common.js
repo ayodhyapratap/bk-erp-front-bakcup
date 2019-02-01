@@ -78,14 +78,15 @@ export const patchAPI = function (URL, data, successFn, errorFn, headerConfig = 
         errorFn();
     });
 };
-export const getAPI = function (URL, successFn, errorFn) {
+export const getAPI = function (URL, successFn, errorFn, params = {}) {
     // console.log(getAuthToken());
     axios({
         method: 'get',
         url: makeURL(URL),
         headers: {
             Authorization: 'Token ' + getAuthToken()
-        }
+        },
+        params: params
     }).then(function (response) {
         console.log(response);
         let data = response.data;
@@ -128,7 +129,7 @@ export const handleErrorResponse = function (error) {
             if (response.data.detail) {
                 message.error(response.data.detail);
             }
-        }else if (status == 404) {
+        } else if (status == 404) {
             if (response.data.detail) {
                 message.error(response.data.detail);
             } else {

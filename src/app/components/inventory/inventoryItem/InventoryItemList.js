@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Table} from "antd";
+import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Table, Row, Radio} from "antd";
 import {getAPI, interpolate, deleteAPI} from "../../../utils/common";
 import {
     INVENTORY_ITEM_API,
@@ -12,20 +12,22 @@ import {Link, Route, Switch} from "react-router-dom";
 import AddorEditInventoryItem from "./AddorEditInventoryItem";
 import AddItemType from "./AddItemType";
 import AddOrConsumeStock from "./AddOrConsumeStock"
-import ConsumeStock from "./ConsumeStock"
-import {ADD_STOCK, CONSUME_STOCK} from "../../../constants/hardData"
+import {ADD_STOCK, CONSUME_STOCK, INVENTORY_ITEM_TYPE} from "../../../constants/hardData"
 
 export default class InventoryItemList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            inventoryItemList: [],
+            invantoryItems: [], //All List
+            inventoryItemList: [], // Filtered List
             active_practiceId: this.props.active_practiceId,
             stockModalVisibility: false,
+            itemTypeFilter: "ALL"
         }
         this.loadData = this.loadData.bind(this);
         this.showAddOrConsumeModal = this.showAddOrConsumeModal.bind(this);
         this.setActionType = this.setActionType.bind(this);
+        this.changeFilter = this.changeFilter.bind(this);
     }
 
     componentDidMount() {
@@ -38,8 +40,20 @@ export default class InventoryItemList extends React.Component {
     loadData() {
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                inventoryItemList: data
+            that.setState(function (prevState) {
+                let inventoryItemList = [];
+                if (prevState.itemTypeFilter == "ALL") {
+                    inventoryItemList = data
+                } else {
+                    data.forEach(function (item) {
+                        if (item.item_type == prevState.itemTypeFilter)
+                            inventoryItemList.push(item);
+                    })
+                }
+                return {
+                    invantoryItems: data,
+                    inventoryItemList: inventoryItemList
+                }
             })
         }
         let errorFn = function () {
@@ -55,7 +69,6 @@ export default class InventoryItemList extends React.Component {
             })
         }
         let errorFn = function () {
-
         }
         getAPI(MANUFACTURER_API, successFn, errorFn);
     }
@@ -113,11 +126,28 @@ export default class InventoryItemList extends React.Component {
         })
     }
 
+    changeFilter(e) {
+        this.setState(function (prevState) {
+            if (e.target.value == "ALL") {
+                return {
+                    inventoryItemList: prevState.invantoryItems
+                }
+            } else {
+                let filteredList = [];
+                prevState.invantoryItems.forEach(function (item) {
+                    if (item.item_type == e.target.value)
+                        filteredList.push(item);
+                });
+                return {inventoryItemList: filteredList}
+            }
+        })
+    }
+
     render() {
         const taxesdata = {}
         if (this.state.taxes_list) {
             this.state.taxes_list.forEach(function (tax) {
-                taxesdata[tax.id] = tax.name;
+                taxesdata[tax.id] = tax;
             })
         }
         const manufacturerData = {}
@@ -138,7 +168,7 @@ export default class InventoryItemList extends React.Component {
             dataIndex: 'name',
             key: 'name'
         }, {
-            title: 'code',
+            title: 'Item Code',
             dataIndex: 'code',
             key: 'code'
         }, {
@@ -146,9 +176,13 @@ export default class InventoryItemList extends React.Component {
             dataIndex: 'stocking_unit',
             key: 'stocking_unit'
         }, {
-            title: 'Retail Price',
+            title: 'Retail Price (INR)',
             dataIndex: 'retail_price',
-            key: 'retail_price'
+            key: 'retail_price',
+            render: (value, record) => <span>{value}
+                {record.taxes.map(tax =>
+                    <small> {(taxesdata[tax] ? taxesdata[tax].name + "@" + taxesdata[tax].tax_value + "%" : null)}</small>
+                )}</span>
         }, {
             title: 'Item type',
             dataIndex: 'item_type',
@@ -157,15 +191,6 @@ export default class InventoryItemList extends React.Component {
             title: 'Reorder Level',
             dataIndex: 're_order_level',
             key: 're_order_level'
-        }, {
-            title: 'Taxes',
-            key: 'taxes',
-            dataIndex: "taxes",
-            render: taxes => (
-                <span>
-            {taxes.map(tax => <Tag color="blue" key={tax}>{taxesdata[tax]}</Tag>)}
-          </span>
-            ),
         }, {
             title: 'Manufacturer',
             key: 'manufacturer',
@@ -184,7 +209,7 @@ export default class InventoryItemList extends React.Component {
             //     }
             // },
             {
-                title: 'Edit',
+                title: 'Actions',
                 render: (item) => {
                     return <div>
                         <Link to={"/inventory/edit/" + item.id}>Edit Details </Link>
@@ -206,26 +231,37 @@ export default class InventoryItemList extends React.Component {
                 <Route exact path='/inventory/edit/:id'
                        render={(route) => <AddorEditInventoryItem {...this.state} {...route}/>}/>
                 <Route exact path='/inventory/consume-stock'
-                       render={(route) => <ConsumeStock {...this.state} {...route}/>}/>
+                       render={(route) => <AddOrConsumeStock key={CONSUME_STOCK}
+                                                             type={CONSUME_STOCK}
+                                                             loadData={this.loadData}
+                                                             {...this.state} {...route}/>}/>
                 <Route exact path='/inventory/add-stock'
-                       render={(route) => <AddorEditInventoryItem {...this.state} {...route}/>}/>
-
+                       render={(route) => <AddOrConsumeStock key={ADD_STOCK}
+                                                             type={ADD_STOCK}
+                                                             loadData={this.loadData}
+                                                             {...this.state} {...route}/>}/>
                 <Route>
                     <Card title="Inventory List"
-                          extra={<div>
+                          extra={<Button.Group>
                               <Link to="/inventory/add"><Button><Icon type="plus"/> Add Item</Button></Link>
-                              <Link to="/inventory/add-stock"><Button><Icon type="plus"/> Add Stock</Button></Link>
-                              <Link to="/inventory/consume-stock"><Button><Icon type="plus"/> Consume
-                                  Stock</Button></Link>
-                          </div>}>
-                        <Table dataSource={this.state.inventoryItemList} columns={columns}/>
-                        <Modal
-                            visible={this.state.stockModalVisibility}
-                            title={"Stock" + this.state.actionType}
-                            onOk={() => this.showAddOrConsumeModal(false)}
-                            onCancel={() => this.showAddOrConsumeModal(false)}
-                            footer={null}
-                        >
+                              <Link to="/inventory/add-stock"><Button>Add Stock</Button></Link>
+                              <Link to="/inventory/consume-stock"><Button>Consume Stock</Button></Link>
+                          </Button.Group>}>
+                        <Row>
+                            <Radio.Group defaultValue={"ALL"} buttonStyle="solid" onChange={this.changeFilter}>
+                                <Radio.Button value={"ALL"}>ALL</Radio.Button>
+                                {INVENTORY_ITEM_TYPE.map(item =>
+                                    <Radio.Button value={item.value}>
+                                        {item.label}
+                                    </Radio.Button>)}
+                            </Radio.Group>
+                        </Row>
+                        <Table bordered={true} dataSource={this.state.inventoryItemList} columns={columns}/>
+                        <Modal visible={this.state.stockModalVisibility}
+                               title={"Stock" + this.state.actionType}
+                               onOk={() => this.showAddOrConsumeModal(false)}
+                               onCancel={() => this.showAddOrConsumeModal(false)}
+                               footer={null}>
                             <AddOrConsumeStock showAddOrConsumeModal={this.showAddOrConsumeModal}
                                                itemId={this.state.itemId}
                                                actionType={this.state.actionType}/>

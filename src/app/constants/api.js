@@ -72,50 +72,51 @@ export const DRUG_UNIT_API = '';
 //blogs APT
 
 
-export const  BLOG_POST = 'post/';
-export const  SINGLE_POST = 'post/%s/';
-export const  BLOG_VIDEOS = 'video/';
-export const  SINGLE_VIDEO = 'video/%s/';
-export const  BLOG_DISEASE = 'disease/';
-export const  SINGLE_DISEASE = 'disease/%s/';
-export const  BLOG_EVENTS = 'events/';
-export const  SINGLE_EVENTS = 'events/%s/';
-export const  BLOG_CONTACTUS = 'contactus/';
-export const  SINGLE_CONTACT = 'contactus/%s/';
-export const  BLOG_PAGE_SEO = 'page_seo/';
-export const  SINGLE_PAGE_SEO = 'page_seo/%s/';
-export const  BLOG_SLIDER = 'slider/';
-export const  SINGLE_SLIDER = 'slider/%s/';
-export const  BLOG_FACILITY = 'facility/';
-export const  SINGLE_FACILITY = 'facility/%s/';
-export const  LANDING_PAGE_CONTENT = 'landing_page_content/';
-export const  SINGLE_LANDING_PAGE_CONTENT = 'landing_page_content/%s/';
-export const  LANDING_PAGE_VIDEO = 'landing_page_video/';
-export const  SINGLE_LANDING_PAGE_VIDEO = 'landing_page_video/%s/';
+export const BLOG_POST = 'post/';
+export const SINGLE_POST = 'post/%s/';
+export const BLOG_VIDEOS = 'video/';
+export const SINGLE_VIDEO = 'video/%s/';
+export const BLOG_DISEASE = 'disease/';
+export const SINGLE_DISEASE = 'disease/%s/';
+export const BLOG_EVENTS = 'events/';
+export const SINGLE_EVENTS = 'events/%s/';
+export const BLOG_CONTACTUS = 'contactus/';
+export const SINGLE_CONTACT = 'contactus/%s/';
+export const BLOG_PAGE_SEO = 'page_seo/';
+export const SINGLE_PAGE_SEO = 'page_seo/%s/';
+export const BLOG_SLIDER = 'slider/';
+export const SINGLE_SLIDER = 'slider/%s/';
+export const BLOG_FACILITY = 'facility/';
+export const SINGLE_FACILITY = 'facility/%s/';
+export const LANDING_PAGE_CONTENT = 'landing_page_content/';
+export const SINGLE_LANDING_PAGE_CONTENT = 'landing_page_content/%s/';
+export const LANDING_PAGE_VIDEO = 'landing_page_video/';
+export const SINGLE_LANDING_PAGE_VIDEO = 'landing_page_video/%s/';
 
 
 //inventory API
 
-export const  EXPENSES_API = "expenses/";
-export const  SINGLE_EXPENSES_API = "expenses/%s/";
-export const  VENDOR_API = "vendor/";
-export const  SINGLE_VENDOR_API = "vendor/%s/";
-export const  ACTIVITY_API = "activity/";
-export const  SINGLE_ACTIVITY_API = "activity/%s/";
-export const  LAB_API = "lab/";
-export const  SINGLE_LAB_API = "lab/%s/";
-export const  MANUFACTURER_API = "manufacturer/";
-export const  SINGLE_MANUFACTURER_API = "manufacturer/%s/";
-export const  INVENTORY_ITEM_API = "inventory_item/";
-export const  SINGLE_INVENTORY_ITEM_API = "inventory_item/%s/";
-export const  INVENTORY_API = "inventory/";
-export const  SINGLE_INVENTORY_API = "inventory/%s/";
-export const  ITEM_TYPE_STOCK = "item_type_stock/";
-export const  SINGLE_ITEM_TYPE_STOCK = "item_type_stock/%s/";
-export const  STOCK_ENTRY = "stock_entry/";
+export const EXPENSES_API = "expenses/";
+export const SINGLE_EXPENSES_API = "expenses/%s/";
+export const VENDOR_API = "vendor/";
+export const SINGLE_VENDOR_API = "vendor/%s/";
+export const ACTIVITY_API = "activity/";
+export const SINGLE_ACTIVITY_API = "activity/%s/";
+export const LAB_API = "lab/";
+export const SINGLE_LAB_API = "lab/%s/";
+export const MANUFACTURER_API = "manufacturer/";
+export const SINGLE_MANUFACTURER_API = "manufacturer/%s/";
+export const INVENTORY_ITEM_API = "inventory_item/";
+export const SINGLE_INVENTORY_ITEM_API = "inventory_item/%s/";
+export const INVENTORY_API = "inventory/";
+export const SINGLE_INVENTORY_API = "inventory/%s/";
+export const ITEM_TYPE_STOCK = "item_type_stock/";
+export const SINGLE_ITEM_TYPE_STOCK = "item_type_stock/%s/";
+export const STOCK_ENTRY = "stock_entry/";
+export const BULK_STOCK_ENTRY = "stock_entry/bulk/";
 
 
 // MLM API_URL
-export const ROLE_COMMISION="role_commission";
-export const PRODUCT_LEVEL="product_level";
+export const ROLE_COMMISION = "role_commission";
+export const PRODUCT_LEVEL = "product_level";
 export const GENERATE_MLM_COMMISSON = 'product_level/generate_mlm/';

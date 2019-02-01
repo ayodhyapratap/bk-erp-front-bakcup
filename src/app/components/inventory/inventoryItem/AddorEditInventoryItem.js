@@ -163,14 +163,14 @@ export default class AddorEditInventoryItem extends React.Component {
             options: manufacturerOption,
             initialValue:this.state.editInventoryItem?this.state.editInventoryItem.manufacturer:null,
         }, {
-        //     label: 'Stocking Unit',
-        //     key: 'stocking_unit',
-        //     placeholder: 'Example: Bottles, Strips etc.',
-        //     follow: '(Make sure this is the same as the unit in which you dispense this item.)',
-        //     required: true,
-        //     type: INPUT_FIELD,
-        //     initialValue:this.state.editInventoryItem?this.state.editInventoryItem.stocking_unit:null,
-        // }, {
+            label: 'Stocking Unit',
+            key: 'stocking_unit',
+            placeholder: 'Example: Bottles, Strips etc.',
+            follow: '(Make sure this is the same as the unit in which you dispense this item.)',
+            required: true,
+            type: INPUT_FIELD,
+            initialValue:this.state.editInventoryItem?this.state.editInventoryItem.stocking_unit:null,
+        }, {
             label: 'Re-Order Level',
             key: 're_order_level',
             type: INPUT_FIELD,

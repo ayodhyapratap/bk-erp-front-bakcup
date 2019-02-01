@@ -1,7 +1,7 @@
 import React from "react";
-import {Avatar, Input, Card, Col, Icon, Radio, Row} from "antd";
-import {getAPI, interpolate} from "../../utils/common";
-import {PATIENT_GROUPS,SEARCH_PATIENT, PATIENTS_LIST} from "../../constants/api";
+import {Avatar, Input, Card, Col, Icon, Radio, Row, Button} from "antd";
+import {getAPI, interpolate, postAPI} from "../../utils/common";
+import {PATIENT_GROUPS, SEARCH_PATIENT, PATIENTS_LIST} from "../../constants/api";
 
 const {Meta} = Card;
 const Search = Input.Search;
@@ -11,10 +11,12 @@ class PatientSelection extends React.Component {
         super(props);
         this.state = {
             patientListData: [],
-            patientGroup: []
+            patientGroup: [],
+            morePatients: null
         }
         this.getPatientListData = this.getPatientListData.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
+        this.getMorePatient = this.getMorePatient.bind(this);
     }
 
     componentDidMount() {
@@ -27,7 +29,7 @@ class PatientSelection extends React.Component {
         let successFn = function (data) {
             that.setState({
                 patientGroup: data
-            })
+            });
         };
         let errorFn = function () {
 
@@ -39,7 +41,9 @@ class PatientSelection extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                patientListData: data
+                patientListData: data.results,
+                morePatients: data.next,
+                currentPage: data.current
             })
         };
         let errorFn = function () {
@@ -52,22 +56,40 @@ class PatientSelection extends React.Component {
         console.log(e.target.value);
         let that = this;
         let successFn = function (data) {
-          if(data){
-            that.setState({
-              patientListData: data
-            })
-          }
+            if (data) {
+                that.setState({
+                    patientListData: data
+                })
+            }
         };
         let errorFn = function () {
 
         };
-        getAPI(interpolate(SEARCH_PATIENT,[e.target.value]), successFn, errorFn);
+        getAPI(interpolate(SEARCH_PATIENT, [e.target.value]), successFn, errorFn);
     }
 
+    getMorePatient() {
+        let that = this;
+        let current = this.state.currentPage;
+        let successFn = function (data) {
+            if (data.current == current + 1)
+                that.setState(function (prevState) {
+                    return {
+                        patientListData: [...prevState.patientListData, ...data.results],
+                        morePatients: data.next,
+                        currentPage: data.current
+                    }
+                })
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(PATIENTS_LIST, successFn, errorFn, {page: parseInt(current) + 1});
+    }
 
     render() {
         let that = this;
-        return <Row >
+        return <Row>
             <Col span={6}
                  style={{
                      height: 'calc(100vh - 55px)',
@@ -99,19 +121,19 @@ class PatientSelection extends React.Component {
                     <p><b>Membership</b></p>
                 </Radio.Group>
             </Col>
-
             <Col span={18} style={{overflow: 'scroll'}}>
-            <Search
-               placeholder="input search text"
-               onChange={value => this.searchPatient(value)}
-               enterButton
-               />
+                <Search placeholder="input search text"
+                        onChange={value => this.searchPatient(value)}
+                        enterButton/>
 
                 {this.state.patientListData.length ?
                     this.state.patientListData.map((patient) => <PatientCard {...patient}
                                                                              setCurrentPatient={that.props.setCurrentPatient}/>) :
                     <p style={{textAlign: 'center'}}>No Data Found</p>
                 }
+                {this.state.morePatients ?
+                    <div style={{textAlign: 'center'}}><Button type="primary" onClick={this.getMorePatient}>Load
+                        More...</Button></div> : null}
             </Col>
         </Row>
     }
@@ -122,14 +144,13 @@ export default PatientSelection;
 function PatientCard(patient) {
     return <Col span={8}>
         <Card onClick={() => patient.setCurrentPatient(patient)} style={{margin: '5px'}}>
-            <Meta
-                avatar={(patient.image ? <Avatar src={patient.image}/> :
-                    <Avatar style={{backgroundColor: '#87d068'}}>
-                        {patient.name ? patient.name.charAt(0) :
-                            <Icon type="user"/>}
-                    </Avatar>)}
-                title={patient.name}
-                description={<span>{patient.primary_mobile_no}<br/>{patient.email}</span>}/>
+            <Meta avatar={(patient.image ? <Avatar src={patient.image}/> :
+                <Avatar style={{backgroundColor: '#87d068'}}>
+                    {patient.name ? patient.name.charAt(0) :
+                        <Icon type="user"/>}
+                </Avatar>)}
+                  title={patient.name}
+                  description={<span>{patient.primary_mobile_no}<br/>{patient.email}</span>}/>
         </Card>
     </Col>;
 }
