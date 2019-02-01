@@ -166,11 +166,13 @@ export default class InventoryItemList extends React.Component {
         let columns = [{
             title: 'Name',
             dataIndex: 'name',
-            key: 'name'
+            key: 'name',
+            render: (value,record) => <span>{record.inventory_item.name}</span>
         }, {
             title: 'Item Code',
             dataIndex: 'code',
-            key: 'code'
+            key: 'code',
+            render: (value,record) => <span>{record.inventory_item.code}</span>
         }, {
             title: 'Stocking Unit',
             dataIndex: 'stocking_unit',
@@ -179,24 +181,26 @@ export default class InventoryItemList extends React.Component {
             title: 'Retail Price (INR)',
             dataIndex: 'retail_price',
             key: 'retail_price',
-            render: (value, record) => <span>{value}
-                {/*{record.taxes.map(tax =>*/}
-                    {/*<small> {(taxesdata[tax] ? taxesdata[tax].name + "@" + taxesdata[tax].tax_value + "%" : null)}</small>*/}
-                {/*)}*/}
+            render: (value, record) => <span>{record.inventory_item.retail_price}
+                {record.inventory_item.taxes.map(tax =>
+                    <small> {(taxesdata[tax] ? taxesdata[tax].name + "@" + taxesdata[tax].tax_value + "%" : null)}</small>
+                )}
                 </span>
         }, {
             title: 'Item type',
             dataIndex: 'item_type',
-            key: 'item_type'
+            key: 'item_type',
+            render: (value,record) => <span>{record.inventory_item.item_type}</span>
         }, {
             title: 'Reorder Level',
             dataIndex: 're_order_level',
-            key: 're_order_level'
+            key: 're_order_level',
+            render: (value,record) => <span>{record.inventory_item.re_order_level}</span>
         }, {
             title: 'Manufacturer',
             key: 'manufacturer',
             render: (text, record) => (
-                <span> {manufacturerData[record.manufacturer]}</span>
+                <span> {manufacturerData[record.inventory_item.manufacturer]}</span>
             )
         },
             //     {

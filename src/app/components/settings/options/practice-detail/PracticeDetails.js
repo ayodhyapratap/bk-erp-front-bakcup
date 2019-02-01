@@ -1,32 +1,31 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button,Divider, Tag,  Card, Form, Icon, Row, Table} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {Button, Divider, Tag, Card, Form, Icon, Row, Table} from "antd";
 import {Link} from "react-router-dom";
-import {ALL_PRACTICE, PRACTICE} from "../../../../constants/api";
-import {getAPI, deleteAPI, interpolate} from "../../../../utils/common";
-import {loggedInUserGroup,loggedInUserPractices} from "../../../../../app/utils/auth";
+import {ALL_PRACTICE, PRACTICE, PRACTICE_DELETE} from "../../../../constants/api";
+import {getAPI, deleteAPI, interpolate, postAPI} from "../../../../utils/common";
 
 
 class PracticeDetails extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          practiceList: null,
-            specialisations:null,
+            practiceList: null,
+            specialisations: null,
         };
+        this.deletePractice = this.deletePractice.bind(this);
     }
 
     componentDidMount() {
         this.props.refreshClinicData();
-      // let group=loggedInUserGroup();
-      // if(group[0].name=="Admin"){
-      //   this.admin_practiceData();
-      // }
-      // else {
-      //   this.clinicData();
-      // }
+        // let group=loggedInUserGroup();
+        // if(group[0].name=="Admin"){
+        //   this.admin_practiceData();
+        // }
+        // else {
+        //   this.clinicData();
+        // }
     }
+
     // admin_practiceData(){
     //   var that = this;
     //   let successFn = function (data) {
@@ -68,59 +67,60 @@ class PracticeDetails extends React.Component {
     //
     // }
 
-    deletePractice(value){
-      var that = this;
-      let successFn = function (data) {
-        this.props.refreshClinicData();
-      };
-      let errorFn = function () {
-      };
-      deleteAPI(interpolate(PRACTICE,[value]), successFn, errorFn);
+    deletePractice(value) {
+        var that = this;
+        let successFn = function (data) {
+            that.props.refreshClinicData();
+        };
+        let errorFn = function () {
+        };
+        postAPI(interpolate(PRACTICE_DELETE, [value]), successFn, errorFn);
 
     }
 
     render() {
         let specialisations = {};
-        if(this.props.activePracticeData){
-        this.props.activePracticeData.specialisations.forEach(function (speciality) {
-            specialisations[speciality.id] = speciality.name
-        });}
+        if (this.props.activePracticeData) {
+            this.props.activePracticeData.specialisations.forEach(function (speciality) {
+                specialisations[speciality.id] = speciality.name
+            });
+        }
         console.log(specialisations);
 
 
-      const columns = [{
+        const columns = [{
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
             render: text => <a href="javascript:;">{text}</a>,
-          }, {
+        }, {
             title: 'Tagline',
             dataIndex: 'tagline',
             key: 'tagline',
-          }, {
+        }, {
             title: 'Address',
             dataIndex: 'address',
             key: 'address',
-          }, {
-            title: 'specialisation',
+        }, {
+            title: 'Specialisation',
             key: 'specialisation',
             dataIndex: 'specialisation',
             render: specialisation => (
-              <span>
+                <span>
                  <Tag color="blue" key={specialisation}>{specialisations[specialisation]}</Tag>
               </span>
             ),
-          }, {
+        }, {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-              <span>
+                <span>
                 <Link to={'/settings/clinics/' + record.id + '/edit'}>Edit</Link>
-                <Divider type="vertical" />
+                <Divider type="vertical"/>
                 <a onClick={() => this.deletePractice(record.id)}>Delete</a>
               </span>
             ),
-          }];
+        }];
 
         return <Row>
             <h2>Practice Details
@@ -131,7 +131,7 @@ class PracticeDetails extends React.Component {
                 </Link>
             </h2>
             <Card>
-                <Table columns={columns} dataSource={this.props.practiceList} />
+                <Table columns={columns} dataSource={this.props.practiceList}/>
             </Card>
         </Row>
     }
