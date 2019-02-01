@@ -1,9 +1,15 @@
 import React from "react";
-import AddInventoryForm from "./AddInventoryForm";
 import {Card, Form, Row} from "antd";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
-import {CHECKBOX_FIELD, INPUT_FIELD,SUCCESS_MSG_TYPE, NUMBER_FIELD, SELECT_FIELD} from "../../../constants/dataKeys";
-import {SINGLE_INVENTORY_ITEM_API, TAXES, MANUFACTURER_API, VENDOR_API,INVENTORY_ITEM_API ,INVENTORY_API} from "../../../constants/api";
+import {CHECKBOX_FIELD, INPUT_FIELD, SUCCESS_MSG_TYPE, NUMBER_FIELD, SELECT_FIELD} from "../../../constants/dataKeys";
+import {
+    SINGLE_INVENTORY_ITEM_API,
+    TAXES,
+    MANUFACTURER_API,
+    VENDOR_API,
+    INVENTORY_ITEM_API,
+    INVENTORY_API
+} from "../../../constants/api";
 import {INVENTORY_ITEM_TYPE} from "../../../constants/hardData";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {Link, Redirect, Switch} from "react-router-dom";
@@ -13,12 +19,12 @@ import {Route} from "react-router";
 export default class AddorEditInventoryItem extends React.Component {
     constructor(props) {
         super(props);
-        this.state ={
-          editInventoryItem : this.props.editInventoryItem?this.props.editInventoryItem:null,
-          taxes_list: this.props.taxes_list ? this.props.taxes_list : null,
-          manufacture_list: this.props.manufacture_list ? this.props.manufacture_list : null,
-          vendor_list: this.props.vendor_list ? this.props.vendor_list : null,
-          redirect: false,
+        this.state = {
+            editInventoryItem: this.props.editInventoryItem ? this.props.editInventoryItem : null,
+            taxes_list: this.props.taxes_list ? this.props.taxes_list : null,
+            manufacture_list: this.props.manufacture_list ? this.props.manufacture_list : null,
+            vendor_list: this.props.vendor_list ? this.props.vendor_list : null,
+            redirect: false,
 
 
         };
@@ -26,16 +32,16 @@ export default class AddorEditInventoryItem extends React.Component {
 
     }
 
-    changeRedirect(){
-        var redirectVar=this.state.redirect;
+    changeRedirect() {
+        var redirectVar = this.state.redirect;
         this.setState({
-            redirect:  !redirectVar,
-        })  ;
+            redirect: !redirectVar,
+        });
     }
 
-    componentDidMount(){
-        if(this.props.match.params.id){
-            if(!this.state.editInventoryItem) {
+    componentDidMount() {
+        if (this.props.match.params.id) {
+            if (!this.state.editInventoryItem) {
                 this.loadData();
             }
         }
@@ -52,6 +58,7 @@ export default class AddorEditInventoryItem extends React.Component {
             this.loadInventoryList();
         }
     }
+
     loadTaxes() {
         var that = this;
         let successFn = function (data) {
@@ -65,6 +72,7 @@ export default class AddorEditInventoryItem extends React.Component {
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
     }
+
     loadManufactureList() {
         let that = this;
         let successFn = function (data) {
@@ -77,6 +85,7 @@ export default class AddorEditInventoryItem extends React.Component {
         }
         getAPI(MANUFACTURER_API, successFn, errorFn);
     }
+
     loadVendorList() {
         let that = this;
         let successFn = function (data) {
@@ -89,6 +98,7 @@ export default class AddorEditInventoryItem extends React.Component {
         }
         getAPI(VENDOR_API, successFn, errorFn);
     }
+
     loadInventoryList() {
         let that = this;
         let successFn = function (data) {
@@ -102,66 +112,66 @@ export default class AddorEditInventoryItem extends React.Component {
         getAPI(INVENTORY_API, successFn, errorFn);
     }
 
-    loadData(){
-        let that =this;
+    loadData() {
+        let that = this;
         let successFn = function (data) {
             that.setState({
-                editInventoryItem:data,
+                editInventoryItem: data,
             })
         }
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [this.props.match.params.id]) ,successFn, errorFn);
+        getAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [this.props.match.params.id]), successFn, errorFn);
 
 
     }
 
 
-
     render() {
-      const taxesOption = [];
-      if (this.state.taxes_list) {
-          this.state.taxes_list.forEach(function (drug) {
-              taxesOption.push({label: (drug.name + "(" + drug.tax_value + ")"), value: drug.id});
-          })
-      }
-      const manufacturerOption = [];
-      if (this.state.manufacture_list) {
-          this.state.manufacture_list.forEach(function (manufacturer) {
-              manufacturerOption.push({label: (manufacturer.name ), value: manufacturer.id});
-          })
-      }
-      const vendorOption = [];
-      if (this.state.vendor_list) {
-          this.state.vendor_list.forEach(function (vendor) {
-              vendorOption.push({label: (vendor.name ), value: vendor.id});
-          })
-      }
-      const inventoryOption = [];
-      if (this.state.inventory_list) {
-          this.state.inventory_list.forEach(function (inventory) {
-              inventoryOption.push({label: (inventory.name ), value: inventory.id});
-          })
-      }
+        let that = this;
+        const taxesOption = [];
+        if (this.state.taxes_list) {
+            this.state.taxes_list.forEach(function (drug) {
+                taxesOption.push({label: (drug.name + "(" + drug.tax_value + ")"), value: drug.id});
+            })
+        }
+        const manufacturerOption = [];
+        if (this.state.manufacture_list) {
+            this.state.manufacture_list.forEach(function (manufacturer) {
+                manufacturerOption.push({label: (manufacturer.name), value: manufacturer.id});
+            })
+        }
+        const vendorOption = [];
+        if (this.state.vendor_list) {
+            this.state.vendor_list.forEach(function (vendor) {
+                vendorOption.push({label: (vendor.name), value: vendor.id});
+            })
+        }
+        const inventoryOption = [];
+        if (this.state.inventory_list) {
+            this.state.inventory_list.forEach(function (inventory) {
+                inventoryOption.push({label: (inventory.name), value: inventory.id});
+            })
+        }
 
         const fields = [{
             label: 'Item Name',
             key: 'name',
             type: INPUT_FIELD,
-            initialValue:this.state.editInventoryItem?this.state.editInventoryItem.name:null,
+            initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.name : null,
             required: true
         }, {
             label: 'Item Code',
             key: 'code',
             type: INPUT_FIELD,
-            initialValue:this.state.editInventoryItem?this.state.editInventoryItem.code:null,
+            initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.code : null,
         }, {
             label: 'Manufacturer',
             key: 'manufacturer',
             type: SELECT_FIELD,
             options: manufacturerOption,
-            initialValue:this.state.editInventoryItem?this.state.editInventoryItem.manufacturer:null,
+            initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.manufacturer : null,
         }, {
             label: 'Stocking Unit',
             key: 'stocking_unit',
@@ -169,16 +179,16 @@ export default class AddorEditInventoryItem extends React.Component {
             follow: '(Make sure this is the same as the unit in which you dispense this item.)',
             required: true,
             type: INPUT_FIELD,
-            initialValue:this.state.editInventoryItem?this.state.editInventoryItem.stocking_unit:null,
+            initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.stocking_unit : null,
         }, {
             label: 'Re-Order Level',
             key: 're_order_level',
             type: INPUT_FIELD,
-            initialValue:this.state.editInventoryItem?this.state.editInventoryItem.re_order_level:null,
+            initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.re_order_level : null,
         }, {
             label: 'Retail Price',
             key: 'retail_price',
-            initialValue:this.state.editInventoryItem?this.state.editInventoryItem.retail_price:null,
+            initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.retail_price : null,
             type: NUMBER_FIELD,
             min: 1,
             follow: 'INR'
@@ -187,65 +197,67 @@ export default class AddorEditInventoryItem extends React.Component {
             key: 'taxes',
             type: CHECKBOX_FIELD,
             options: taxesOption,
-            initialValue:this.state.editInventoryItem?this.state.editInventoryItem.taxes:null,
+            initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.taxes : null,
             mode: "multiple"
-        },
-         {
-          label: 'Inventory',
-          key: 'inventory',
-          type: SELECT_FIELD,
-          options: inventoryOption,
-          initialValue:this.state.editInventoryItem?this.state.editInventoryItem.inventory:null,
-      },  {
+        }, {
+            label: 'Inventory',
+            key: 'inventory',
+            type: SELECT_FIELD,
+            options: inventoryOption,
+            initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.inventory : null,
+        }, {
             label: 'Item Type',
             key: 'item_type',
             type: SELECT_FIELD,
             required: true,
             options: INVENTORY_ITEM_TYPE,
-            initialValue:this.state.editInventoryItem?this.state.editInventoryItem.item_type:null,
+            initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.item_type : null,
         }];
         const AddInventoryFormLayout = Form.create()(DynamicFieldsForm);
-      let editformProp;
-      if(this.state.editInventoryItem) {
-          editformProp = {
-              successFn: function (data) {
-                  displayMessage(SUCCESS_MSG_TYPE, "success");
-                  console.log(data);
-              },
-              errorFn: function () {
+        let editformProp;
+        if (this.state.editInventoryItem) {
+            editformProp = {
+                successFn: function (data) {
+                    displayMessage(SUCCESS_MSG_TYPE, "success");
+                    console.log(data);
+                },
+                errorFn: function () {
 
-              },
-              action: interpolate(SINGLE_INVENTORY_ITEM_API, [this.props.match.params.id]),
-              method: "put",
+                },
+                action: interpolate(SINGLE_INVENTORY_ITEM_API, [this.props.match.params.id]),
+                method: "put",
+            }
+        }
 
-          }
-      }
+        const formProp = {
+            successFn: function (data) {
+                displayMessage(SUCCESS_MSG_TYPE, "success");
+                that.props.history.push('/inventory/edit-item-type/' + data.id);
+            },
+            errorFn: function () {
 
-      const formProp={
-          successFn:function(data){
-              displayMessage(SUCCESS_MSG_TYPE, "success");
+            },
+            action: INVENTORY_ITEM_API,
+            method: "post",
+        }
+        let defaultValues = [];
 
-              console.log(data);
-          },
-          errorFn:function(){
-
-          },
-          action:  INVENTORY_ITEM_API,
-          method: "post",
-      }
-      let defaultValues=[];
-
-      return <Row>
-          <Card>
-              <Route exact path='/inventory/edit/:id'
-                     render={() => (this.props.match.params.id?<AddInventoryFormLayout defaultValues={defaultValues} title="Edit Post" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/web/blog'} />)}/>
-              <Route exact path='/inventory/add'
-                     render={() =><AddInventoryFormLayout title="Add Inventory Item" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
+        return <Row>
+            <Card>
+                <Route exact path='/inventory/edit/:id'
+                       render={() => (this.props.match.params.id ?
+                           <AddInventoryFormLayout defaultValues={defaultValues} title="Edit Post"
+                                                   changeRedirect={this.changeRedirect} formProp={editformProp}
+                                                   fields={fields}/> : <Redirect to={'/web/blog'}/>)}/>
+                <Route exact path='/inventory/add'
+                       render={() => <AddInventoryFormLayout title="Add Inventory Item"
+                                                             changeRedirect={this.changeRedirect} formProp={formProp}
+                                                             fields={fields}/>}/>
 
 
-          </Card>
-          {this.state.redirect&&    <Redirect to={'/inventory'} />}
-      </Row>
+            </Card>
+            {this.state.redirect && <Redirect to={'/inventory'}/>}
+        </Row>
 
     }
 }

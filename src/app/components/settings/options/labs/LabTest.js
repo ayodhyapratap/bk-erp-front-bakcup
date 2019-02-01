@@ -16,7 +16,7 @@ class LabTest extends React.Component {
         };
         this.editLabs = this.editLabs.bind(this);
         this.loadData = this.loadData.bind(this);
-        this.deleteTest = this.deleteTest.bind(this);
+        // this.deleteTest = this.deleteTest.bind(this);
     }
 
     componentDidMount() {

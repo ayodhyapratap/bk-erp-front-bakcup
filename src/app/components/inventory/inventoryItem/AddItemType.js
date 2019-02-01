@@ -1,5 +1,4 @@
 import React from "react";
-import AddInventoryForm from "./AddInventoryForm";
 import {Card, Form, Row} from "antd";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {
@@ -8,7 +7,7 @@ import {
     SUCCESS_MSG_TYPE,
     NUMBER_FIELD,
     SELECT_FIELD,
-    SINGLE_CHECKBOX_FIELD
+    SINGLE_CHECKBOX_FIELD, TEXT_FIELD
 } from "../../../constants/dataKeys";
 import {
     SINGLE_INVENTORY_ITEM_API,
@@ -29,10 +28,7 @@ export default class AddItemType extends React.Component {
         super(props);
         this.state = {
             editInventoryItemType: this.props.editInventoryItemType ? this.props.editInventoryItemType : null,
-
             redirect: false,
-
-
         };
         this.changeRedirect = this.changeRedirect.bind(this);
 
@@ -46,11 +42,9 @@ export default class AddItemType extends React.Component {
     }
 
     componentDidMount() {
-
         if (!this.state.editInventoryItemType) {
             this.loadData();
         }
-
         this.loadInventoryItemData();
         this.loadDrugType();
     }
@@ -121,7 +115,6 @@ export default class AddItemType extends React.Component {
                 },
                 action: interpolate(SINGLE_ITEM_TYPE_STOCK, [this.props.match.params.id]),
                 method: "put",
-
             }
         }
 
@@ -144,18 +137,19 @@ export default class AddItemType extends React.Component {
 
         if (this.state.item_type == DRUG) {
             fields = [{
+                label:"I prescribe this",
+                key: "perscribe_this",
+                type: SINGLE_CHECKBOX_FIELD,
+                initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.perscribe_this : null,
+                // follow: "I prescribe this"
+            },{
                 label: 'Drug Type',
                 key: 'drug_type',
                 type: SELECT_FIELD,
                 options: drugOption,
                 initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.drug_type : null,
             }, {
-                label: 'Quantity',
-                key: 'stocking_unit',
-                initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.stocking_unit : null,
-                type: NUMBER_FIELD,
-            }, {
-                label: 'strength',
+                label: 'Strength',
                 key: 'strength',
                 initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.strength : null,
                 type: NUMBER_FIELD,
@@ -165,27 +159,23 @@ export default class AddItemType extends React.Component {
                 type: INPUT_FIELD,
                 initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.stength_unit : null,
             }, {
-                label: 'instructions',
+                label: 'Instructions',
                 key: 'instructions',
-                type: INPUT_FIELD,
+                type: TEXT_FIELD,
                 initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.instructions : null,
             },]
         }
         if (this.state.item_type == EQUIPMENT) {
             fields = [{
+                label:"I prescribe this",
                 key: "perscribe_this",
                 type: SINGLE_CHECKBOX_FIELD,
                 initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.perscribe_this : null,
-                follow: "i prescribe this"
+                // follow: "I prescribe this"
             }, {
-                label: 'Quantity',
-                key: 'stocking_unit',
-                initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.stocking_unit : null,
-                type: NUMBER_FIELD,
-            }, {
-                label: 'instructions',
+                label: 'Instructions',
                 key: 'instructions',
-                type: INPUT_FIELD,
+                type: TEXT_FIELD,
                 initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.instructions : null,
             },]
         }
@@ -194,26 +184,21 @@ export default class AddItemType extends React.Component {
                 key: "perscribe_this",
                 type: SINGLE_CHECKBOX_FIELD,
                 initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.perscribe_this : null,
-                follow: "i prescribe this"
+                label: "I prescribe this"
             }, {
-                label: 'Quantity',
-                key: 'stocking_unit',
-                initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.stocking_unit : null,
-                type: NUMBER_FIELD,
-            }, {
-                label: 'strength',
+                label: 'Strength',
                 key: 'strength',
                 initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.strength : null,
                 type: NUMBER_FIELD,
             }, {
-                label: 'stength_unit',
+                label: 'Strength Unit',
                 key: 'stength_unit',
                 type: INPUT_FIELD,
                 initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.stength_unit : null,
             }, {
-                label: 'instructions',
+                label: 'Instructions',
                 key: 'instructions',
-                type: INPUT_FIELD,
+                type: TEXT_FIELD,
                 initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.instructions : null,
             },]
         }
@@ -228,8 +213,7 @@ export default class AddItemType extends React.Component {
                 </Card>
                 {this.state.redirect && <Redirect to={'/inventory'}/>}
             </Row>
-        }
-        else {
+        } else {
             return <Row>
                 <Card>
                     <AddInventoryFormLayout title="Add Inventory Item type" defaultValues={defaultValues}

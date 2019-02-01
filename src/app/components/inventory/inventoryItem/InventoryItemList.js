@@ -6,7 +6,7 @@ import {
     SINGLE_INVENTORY_ITEM_API,
     MANUFACTURER_API,
     TAXES,
-    VENDOR_API
+    VENDOR_API, ITEM_TYPE_STOCK
 } from "../../../constants/api";
 import {Link, Route, Switch} from "react-router-dom";
 import AddorEditInventoryItem from "./AddorEditInventoryItem";
@@ -58,7 +58,7 @@ export default class InventoryItemList extends React.Component {
         }
         let errorFn = function () {
         }
-        getAPI(INVENTORY_ITEM_API, successFn, errorFn);
+        getAPI(ITEM_TYPE_STOCK, successFn, errorFn);
     }
 
     loadManufactureList() {
@@ -180,9 +180,10 @@ export default class InventoryItemList extends React.Component {
             dataIndex: 'retail_price',
             key: 'retail_price',
             render: (value, record) => <span>{value}
-                {record.taxes.map(tax =>
-                    <small> {(taxesdata[tax] ? taxesdata[tax].name + "@" + taxesdata[tax].tax_value + "%" : null)}</small>
-                )}</span>
+                {/*{record.taxes.map(tax =>*/}
+                    {/*<small> {(taxesdata[tax] ? taxesdata[tax].name + "@" + taxesdata[tax].tax_value + "%" : null)}</small>*/}
+                {/*)}*/}
+                </span>
         }, {
             title: 'Item type',
             dataIndex: 'item_type',
@@ -242,11 +243,11 @@ export default class InventoryItemList extends React.Component {
                                                              {...this.state} {...route}/>}/>
                 <Route>
                     <Card title="Inventory List"
-                          extra={<Button.Group>
-                              <Link to="/inventory/add"><Button><Icon type="plus"/> Add Item</Button></Link>
-                              <Link to="/inventory/add-stock"><Button>Add Stock</Button></Link>
-                              <Link to="/inventory/consume-stock"><Button>Consume Stock</Button></Link>
-                          </Button.Group>}>
+                          extra={<div>
+                              <Link to="/inventory/add"><Button type="primary"><Icon type="plus"/> Add Item</Button></Link>
+                              <Link to="/inventory/add-stock"><Button type="primary">Add Stock</Button></Link>
+                              <Link to="/inventory/consume-stock"><Button type="primary">Consume Stock</Button></Link>
+                          </div>}>
                         <Row>
                             <Radio.Group defaultValue={"ALL"} buttonStyle="solid" onChange={this.changeFilter}>
                                 <Radio.Button value={"ALL"}>ALL</Radio.Button>
@@ -256,6 +257,7 @@ export default class InventoryItemList extends React.Component {
                                     </Radio.Button>)}
                             </Radio.Group>
                         </Row>
+                        <br/>
                         <Table bordered={true} dataSource={this.state.inventoryItemList} columns={columns}/>
                         <Modal visible={this.state.stockModalVisibility}
                                title={"Stock" + this.state.actionType}
