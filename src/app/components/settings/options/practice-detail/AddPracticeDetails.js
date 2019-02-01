@@ -5,6 +5,7 @@ import {
     CHECKBOX_FIELD,
     SUCCESS_MSG_TYPE,
     INPUT_FIELD,
+    EMAIL_FIELD,
     RADIO_FIELD,
     SELECT_FIELD,
     COUNTRY_FIELD, STATE_FIELD, CITY_FIELD
@@ -106,7 +107,7 @@ class AddPracticeDetails extends React.Component {
         }, {
             label: "Practice Email",
             key: "email",
-            type: INPUT_FIELD
+            type: EMAIL_FIELD
         }, {
             label: "Practice Website",
             key: "website",
