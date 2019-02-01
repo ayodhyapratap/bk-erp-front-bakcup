@@ -71,8 +71,7 @@ class PracticeDetails extends React.Component {
     deletePractice(value){
       var that = this;
       let successFn = function (data) {
-        that.practiceData();
-        console.log("Deleted");
+        this.props.refreshClinicData();
       };
       let errorFn = function () {
       };
