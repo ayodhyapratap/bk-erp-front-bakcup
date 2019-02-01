@@ -46,7 +46,7 @@ export default class InventoryItemList extends React.Component {
                     inventoryItemList = data
                 } else {
                     data.forEach(function (item) {
-                        if (item.item_type == prevState.itemTypeFilter)
+                        if (item.inventory_item.item_type == prevState.itemTypeFilter)
                             inventoryItemList.push(item);
                     })
                 }
@@ -135,7 +135,7 @@ export default class InventoryItemList extends React.Component {
             } else {
                 let filteredList = [];
                 prevState.invantoryItems.forEach(function (item) {
-                    if (item.item_type == e.target.value)
+                    if (item.inventory_item.item_type == e.target.value)
                         filteredList.push(item);
                 });
                 return {inventoryItemList: filteredList}
@@ -262,7 +262,7 @@ export default class InventoryItemList extends React.Component {
                             </Radio.Group>
                         </Row>
                         <br/>
-                        <Table bordered={true} dataSource={this.state.inventoryItemList} columns={columns}/>
+                        <Table pagination={false} bordered={true} dataSource={this.state.inventoryItemList} columns={columns}/>
                         <Modal visible={this.state.stockModalVisibility}
                                title={"Stock" + this.state.actionType}
                                onOk={() => this.showAddOrConsumeModal(false)}

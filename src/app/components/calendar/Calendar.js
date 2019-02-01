@@ -194,7 +194,7 @@ class App extends Component {
             that.setState(function (prevState) {
                 let previousEvent = prevState.events;
                 let newEvents = [];
-                newEvents.concat(previousEvent);
+                // newEvents.concat(previousEvent);
                 data.forEach(function (appointment) {
                     let endtime = new moment(appointment.shedule_at).add(appointment.slot, 'minutes')
                     console.log(moment(appointment.shedule_at).format('LLL'));
@@ -205,26 +205,11 @@ class App extends Component {
                         end: new Date(endtime),
                         title: appointment.patient_name,
                         id: appointment.id,
-                        doctor: appointment.doctor,
-
+                        doctor: appointment.doctor
                     })
                 });
                 return {events: newEvents}
-            })
-            // data.forEach(function (appointment){
-            //   let endtime=new moment(appointment.shedule_at).add( appointment.slot, 'minutes')
-            //   console.log(moment(appointment.shedule_at).format('LLL'));
-            //   console.log(endtime.format('LLL'));
-            // let event= that.state.events;
-            // event.push({
-            //   start:moment(appointment.shedule_at),
-            //   end:  endtime,
-            //   title: appointment.patient_name
-            // })
-            // that.setState({
-            //   events:event,
-            //
-            // })
+            });
             that.setState({
                 appointments: data,
             })

@@ -13,7 +13,10 @@ export default class AppointmentsReport extends React.Component {
         this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
         this.loadAppointmentReport();
     }
-
+    componentWillReceiveProps(newProps){
+        if(this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
+            this.loadAppointmentReport();
+    }
     loadAppointmentReport() {
         let that = this;
         let successFn = function (data) {
