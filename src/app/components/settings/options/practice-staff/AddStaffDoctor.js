@@ -92,12 +92,11 @@ class AddStaffDoctor extends React.Component {
                 required: true,
                 initialValue: this.state.editStaff ? this.state.editStaff.registration_number : null,
                 type: INPUT_FIELD
-            },
-            {
+            },{
                 label: "Role",
                 key: "role",
                 required: true,
-                initialValue: this.state.editStaff ? parseInt(this.state.editStaff.role): null,
+                initialValue: this.state.editStaff ? this.state.editStaff.role: null,
                 type: SELECT_FIELD,
                 options: this.state.roles.map(role=>({label: role.name , value: [role.id]}))
             }, {

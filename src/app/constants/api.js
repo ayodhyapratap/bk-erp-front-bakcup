@@ -18,6 +18,7 @@ export const TAXES = 'clinics/%s/taxes/';
 export const OFFERS = 'clinics/%s/offers/';
 export const PAYMENT_MODES = 'clinics/%s/payment_modes/';
 export const PROCEDURE_CATEGORY = 'clinics/%s/procedure_category/';
+
 export const EMR_DIAGNOSES = 'clinics/%s/diagnoses/';
 export const EMR_COMPLAINTS = 'clinics/%s/complaints/';
 export const EMR_OBSERVATIONS = 'clinics/%s/observations/';
