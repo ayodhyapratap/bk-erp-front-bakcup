@@ -377,7 +377,12 @@ class DynamicFieldsForm extends React.Component {
                                             backgroundColor: that.state.colorPickerColor,
                                             height: '40px',
                                             width: '40px'
-                                        }}/> : null}
+                                        }} /> : (that.state.formData[field.key]?<div style={{
+                                            margin: '10px',
+                                            backgroundColor: that.state.formData[field.key],
+                                            height: '40px',
+                                            width: '40px'
+                                        }} />:null)}
                                     </div>
                                 )}
                             </FormItem>;
