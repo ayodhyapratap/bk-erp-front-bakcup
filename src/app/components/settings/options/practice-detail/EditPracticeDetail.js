@@ -83,20 +83,19 @@ class EditPracticeDetail extends React.Component {
                 label: "Practice City",
                 initialValue: this.state.practiceDetail.City,
                 key: "city",
-                type: SELECT_FIELD,
-                options: [{label: "Hello", value: "1"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
+                type: INPUT_FIELD,
+            //     options: [{label: "Hello", value: "1"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
             }, {
                 label: "Practice state",
                 key: "state",
                 initialValue: this.state.practiceDetail.state,
-                type: SELECT_FIELD,
-                options: [{label: "Hello", value: "1"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
+                type: INPUT_FIELD,
+                // options: [{label: "Hello", value: "1"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
             }, {
                 label: "Practice Country",
                 key: "country",
                 initialValue: this.state.practiceDetail.country,
-                type: SELECT_FIELD,
-                options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
+                type: INPUT_FIELD,
             }, {
                 label: "Practice PINCODE",
                 key: "pincode",
@@ -117,12 +116,6 @@ class EditPracticeDetail extends React.Component {
                 key: "website",
                 initialValue: this.state.practiceDetail.website,
                 type: INPUT_FIELD
-            }, {
-                label: "Timezone",
-                key: "timezone",
-                initialValue: this.state.practiceDetail.timezone,
-                type: SELECT_FIELD,
-                options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
             }, {
                 label: "GSTIN",
                 initialValue: this.state.practiceDetail.gstin,

@@ -63,6 +63,7 @@ class AddProcedure extends React.Component {
     }
 
     render() {
+        let that = this;
         const formFields = [{
             label: "Procedure Name",
             key: "name",
@@ -103,7 +104,7 @@ class AddProcedure extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, 'success');
-                console.log(data);
+                that.changeRedirect();
 
             },
             errorFn: function () {

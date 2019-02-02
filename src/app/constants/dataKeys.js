@@ -49,4 +49,4 @@ export const EMAIL_FIELD='email';
 /***
  *Role
  **/
-export const DOCTORS_ROLE = '1';
+export const DOCTORS_ROLE = '3';
