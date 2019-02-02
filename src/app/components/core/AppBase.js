@@ -35,6 +35,7 @@ class AppBase extends React.Component {
             practiceList: [],
             activePracticeData: null,
             specialisations: null,
+            allowAllPermissions:true
         };
         this.activeData = this.activeData.bind(this);
         this.clinicData = this.clinicData.bind(this);
