@@ -83,9 +83,20 @@ class PracticeDetails extends React.Component {
             //         })
             //     }
             // })
-            that.setState({
-                practice_doctors: data.doctors,
-                practice_staff: data.staff,
+            data.staff.forEach(function (usersdata) {
+                if (usersdata.role == DOCTORS_ROLE) {
+                    let doctor = that.state.practice_doctors;
+                    doctor.push(usersdata);
+                    that.setState({
+                        practice_doctors: doctor,
+                    })
+                } else {
+                    let doctor = that.state.practice_staff;
+                    doctor.push(usersdata);
+                    that.setState({
+                        practice_staff: doctor,
+                    })
+                }
             })
         };
         let errorFn = function () {

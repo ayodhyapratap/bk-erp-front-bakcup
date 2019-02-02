@@ -15,13 +15,15 @@ class RecentProcedure extends React.Component {
         this.state = {
             current: 'staff',
             procedure_category: null,
-        }
+        };
+        this.loadData = this.loadData.bind(this);
     }
 
-    componentDidMount(){
-      this.loadData();
+    componentDidMount() {
+        this.loadData();
     }
-    loadData(){
+
+    loadData() {
         var that = this;
         let successFn = function (data) {
             console.log("get table");
@@ -41,6 +43,7 @@ class RecentProcedure extends React.Component {
             current: e.key,
         });
     }
+
     deleteObject(record) {
         let that = this;
         let reqData = record;
