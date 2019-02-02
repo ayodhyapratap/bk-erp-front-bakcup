@@ -86,18 +86,15 @@ class SettingsDash extends React.Component {
                                                  render={(route) => (this.props.permissions.view_practicestaff || this.props.allowAllPermissions ?
                                                         <CalendarSettings  {...this.props} /> : <PermissionDenied />
                                                  )} />
-                                          <Route exact path="/settings/procedures"
+                                          <Route  path="/settings/procedures"
                                                  render={(route) => (this.props.permissions.view_procedurecatalog || this.props.allowAllPermissions ?
-                                                        <RecentProcedure  {...this.props} /> : <PermissionDenied />
+                                                        <RecentProcedure  {...this.props} {...route}/> : <PermissionDenied />
                                                  )} />
                                           <Route exact path="/settings/procedures/addprocedure"
                                                  render={(route) => (this.props.permissions.add_procedurecatalog || this.props.allowAllPermissions ?
                                                         <AddProcedure  {...this.props} /> : <PermissionDenied />
                                                  )} />
-                                          <Route exact path="/settings/procedures/:id/editprocedure"
-                                                 render={(route) => (this.props.permissions.add_procedurecatalog || this.props.allowAllPermissions ?
-                                                        <EditProcedure  {...this.props} {...route}/> : <PermissionDenied />
-                                                 )} />
+                                        
                                           <Route exact path="/settings/billing"
                                                  render={(route) => (this.props.permissions.view_taxes || this.props.allowAllPermissions ?
                                                         <BillingSettings  {...this.props} /> : <PermissionDenied />
