@@ -3,7 +3,7 @@ import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Card, Divider, Form, Icon, Popconfirm, Row, Table} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {Link, Route, Switch} from "react-router-dom";
-import {LABTEST_API} from "../../../../constants/api";
+import {LABTEST_API, OFFERS} from "../../../../constants/api";
 import {getAPI, deleteAPI, interpolate, postAPI} from "../../../../utils/common";
 import AddorEditLab from "./AddorEditLab";
 
@@ -16,7 +16,7 @@ class LabTest extends React.Component {
         };
         this.editLabs = this.editLabs.bind(this);
         this.loadData = this.loadData.bind(this);
-        // this.deleteTest = this.deleteTest.bind(this);
+        this.deleteTest = this.deleteTest.bind(this);
     }
 
     componentDidMount() {
@@ -46,7 +46,17 @@ class LabTest extends React.Component {
 
 
     }
-
+    deleteTest(record) {
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.loadData();
+        }
+        let errorFn = function () {
+        }
+        postAPI(interpolate(LABTEST_API, [this.props.active_practiceId]), reqData, successFn, errorFn);
+    }
 
 
     render() {
