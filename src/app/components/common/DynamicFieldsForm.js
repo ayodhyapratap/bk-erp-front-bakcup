@@ -364,7 +364,7 @@ class DynamicFieldsForm extends React.Component {
                         case COLOR_PICKER:
                             return <FormItem key={field.key} label={field.label}  {...formItemLayout}
                                 extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                {getFieldDecorator(field.key, fieldDecorators(field.key, that.state.formData))(
                                     <div>
                                         <SwatchesPicker style={{ width: '100%' }}
                                             onChange={(color) => that.colorChange(color, field.key)} />
@@ -373,7 +373,12 @@ class DynamicFieldsForm extends React.Component {
                                             backgroundColor: that.state.colorPickerColor,
                                             height: '40px',
                                             width: '40px'
-                                        }} /> : null}
+                                        }} /> : (that.state.formData[field.key]?<div style={{
+                                            margin: '10px',
+                                            backgroundColor: that.state.formData[field.key],
+                                            height: '40px',
+                                            width: '40px'
+                                        }} />:null)}
                                     </div>
                                 )}
                             </FormItem>;

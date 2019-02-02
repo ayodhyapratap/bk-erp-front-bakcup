@@ -8,7 +8,8 @@ import {
     RADIO_FIELD,
     SELECT_FIELD,
     SINGLE_CHECKBOX_FIELD,
-    COLOR_PICKER
+    COLOR_PICKER,
+    EMAIL_FIELD
 } from "../../../../constants/dataKeys";
 import {ALL_PRACTICE_STAFF, DRUG_CATALOG, SINGLE_PRACTICE_STAFF_API, STAFF_ROLES} from "../../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
@@ -84,7 +85,7 @@ class AddStaffDoctor extends React.Component {
                 key: "email",
                 required: true,
                 initialValue: this.state.editStaff ? this.state.editStaff.email : null,
-                type: INPUT_FIELD
+                type: EMAIL_FIELD
             }, {
                 label: "Registration Number",
                 key: "registration_number",
@@ -96,7 +97,7 @@ class AddStaffDoctor extends React.Component {
                 label: "Role",
                 key: "role",
                 required: true,
-                initialValue: this.state.editStaff ? this.state.editStaff.role : null,
+                initialValue: this.state.editStaff ? parseInt(this.state.editStaff.role): null,
                 type: SELECT_FIELD,
                 options: this.state.roles.map(role=>({label: role.name , value: [role.id]}))
             }, {

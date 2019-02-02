@@ -70,11 +70,12 @@ class PracticeDetails extends React.Component {
     deletePractice(value) {
         var that = this;
         let successFn = function (data) {
+          console.log("data");
             that.props.refreshClinicData();
         };
         let errorFn = function () {
         };
-        postAPI(interpolate(PRACTICE_DELETE, [value]), successFn, errorFn);
+        postAPI(interpolate(PRACTICE_DELETE, [value]),{}, successFn, errorFn);
 
     }
 
