@@ -32,17 +32,17 @@ import {
     COUNTRY_FIELD,
     STATE_FIELD,
     EMAIL_FIELD,
-    CITY_FIELD, PASSWORD_FIELD, MULTI_SELECT_FIELD
+    CITY_FIELD, PASSWORD_FIELD, MULTI_SELECT_FIELD, MULTI_IMAGE_UPLOAD_FIELD
 } from "../../constants/dataKeys";
-import { REQUIRED_FIELD_MESSAGE } from "../../constants/messages";
-import { displayMessage, getAPI, makeURL, postAPI, putAPI } from "../../utils/common";
+import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
+import {displayMessage, getAPI, makeURL, postAPI, putAPI} from "../../utils/common";
 import moment from "moment";
-import { SwatchesPicker } from 'react-color';
+import {SwatchesPicker} from 'react-color';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { EXTRA_DATA, FILE_UPLOAD_API } from "../../constants/api";
+import {EXTRA_DATA, FILE_UPLOAD_API} from "../../constants/api";
 
-const { TextArea } = Input;
+const {TextArea} = Input;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
@@ -114,7 +114,6 @@ class DynamicFieldsForm extends React.Component {
                 if (this.props.defaultValues) {
                     this.props.defaultValues.forEach(function (object) {
                         values[object.key] = object.value;
-                        console.log(object);
                     })
                 }
                 if (this.state.colorPickerKey) {
@@ -123,9 +122,14 @@ class DynamicFieldsForm extends React.Component {
                 that.props.fields.forEach(function (formFields) {
                     if (formFields.type == SINGLE_IMAGE_UPLOAD_FIELD) {
                         let key = formFields.key;
-                        console.log(values[key]);
                         if (values[key] && values[key].file && values[key].file.response)
-                            values[key] = values[key].file.response.image
+                            values[key] = values[key].file.response.image;
+                        else
+                            values[key] = formFields.initialValue;
+                    } else if (formFields.type == MULTI_IMAGE_UPLOAD_FIELD) {
+                        let key = formFields.key;
+                        if (values[key] && values[key].file && values[key].file.response)
+                            values[key] = values[key].fileList.map(file => file.response.id);
                         else
                             values[key] = formFields.initialValue;
                     } else if (formFields.type == TIME_PICKER) {
@@ -189,7 +193,7 @@ class DynamicFieldsForm extends React.Component {
                         states = country.states
                     }
                 })
-                return { stateOptions: states }
+                return {stateOptions: states}
             })
         } else {
             this.setState(function (prevState) {
@@ -199,7 +203,7 @@ class DynamicFieldsForm extends React.Component {
                         cities = state.cities
                     }
                 })
-                return { cityOptions: cities }
+                return {cityOptions: cities}
             })
         }
     }
@@ -219,10 +223,10 @@ class DynamicFieldsForm extends React.Component {
     render() {
         const that = this;
         const formItemLayout = (this.props.formLayout ? this.props.formLayout : {
-            labelCol: { span: 6 },
-            wrapperCol: { span: 14 },
+            labelCol: {span: 6},
+            wrapperCol: {span: 14},
         });
-        const { getFieldDecorator } = this.props.form;
+        const {getFieldDecorator} = this.props.form;
         return <div>
             <Form onSubmit={this.handleSubmit}>
                 {this.props.title ? <h2>{this.props.title}</h2> : null}
@@ -230,31 +234,31 @@ class DynamicFieldsForm extends React.Component {
                     switch (field.type) {
                         case PASSWORD_FIELD:
                             return <Form.Item key={field.key} label={field.label}  {...formItemLayout}
-                                extra={field.extra}>
+                                              extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                                        type="password"
-                                        placeholder={field.placeholder}
-                                        disabled={field.disabled ? field.disabled : that.state.disabled} />
+                                    <Input prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                                           type="password"
+                                           placeholder={field.placeholder}
+                                           disabled={field.disabled ? field.disabled : that.state.disabled}/>
                                 )}
-                            </Form.Item>
+                            </Form.Item>;
                         case INPUT_FIELD:
                             return <FormItem key={field.key} label={field.label}  {...formItemLayout}
-                                extra={field.extra}>
+                                             extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <Input placeholder={field.placeholder}
-                                        disabled={field.disabled ? field.disabled : that.state.disabled}
-                                        onChange={that.inputChange} />
+                                           disabled={field.disabled ? field.disabled : that.state.disabled}
+                                           onChange={that.inputChange}/>
                                 )}
                                 {field.follow ? <span className="ant-form-text">{field.follow}</span> : null}
                             </FormItem>;
                         case SELECT_FIELD:
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
-                                extra={field.extra}>
+                                             extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <Select placeholder={field.placeholder}
-                                        disabled={field.disabled ? field.disabled : that.state.disabled}
-                                        mode={field.mode ? field.mode : "default"}>
+                                            disabled={field.disabled ? field.disabled : that.state.disabled}
+                                            mode={field.mode ? field.mode : "default"}>
                                         {field.options.map((option) => <Select.Option
                                             value={option.value}>{option.label}</Select.Option>)}
                                     </Select>
@@ -263,10 +267,10 @@ class DynamicFieldsForm extends React.Component {
                             </FormItem>;
                         case MULTI_SELECT_FIELD:
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
-                                extra={field.extra}>
-                                {getFieldDecorator(field.key, { ...fieldDecorators(field, that.state.formData) })(
+                                             extra={field.extra}>
+                                {getFieldDecorator(field.key, {...fieldDecorators(field, that.state.formData)})(
                                     <Select mode="multiple" placeholder={field.placeholder}
-                                        disabled={field.disabled ? field.disabled : that.state.disabled}>
+                                            disabled={field.disabled ? field.disabled : that.state.disabled}>
                                         {field.options.map((option) => <Select.Option
                                             value={option.value}>{option.label}</Select.Option>)}
                                     </Select>
@@ -275,7 +279,7 @@ class DynamicFieldsForm extends React.Component {
                             </FormItem>;
                         case RADIO_FIELD:
                             return <FormItem key={field.key} label={field.label} {...formItemLayout}
-                                extra={field.extra}>
+                                             extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <RadioGroup disabled={field.disabled ? field.disabled : that.state.disabled}>
                                         {field.options.map((option) => <Radio
@@ -285,61 +289,61 @@ class DynamicFieldsForm extends React.Component {
                             </FormItem>;
                         case CHECKBOX_FIELD:
                             return <FormItem key={field.key} label={field.label} {...formItemLayout}
-                                extra={field.extra}>
+                                             extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <CheckboxGroup options={field.options}
-                                        disabled={field.disabled ? field.disabled : that.state.disabled} />
+                                                   disabled={field.disabled ? field.disabled : that.state.disabled}/>
                                 )}
                             </FormItem>;
                         case SINGLE_CHECKBOX_FIELD:
                             return <FormItem key={field.key} label={field.label} {...formItemLayout}
-                                extra={field.extra}>
+                                             extra={field.extra}>
                                 {getFieldDecorator(field.key, {
-                                    valuePropName: 'checked',
-                                    initialValue: field.initialValue
-                                },
+                                        valuePropName: 'checked',
+                                        initialValue: field.initialValue
+                                    },
                                     {
-                                        rules: [{ required: field.required, message: REQUIRED_FIELD_MESSAGE }],
+                                        rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],
                                     })(
-                                        <Checkbox
-                                            disabled={field.disabled ? field.disabled : that.state.disabled}>{field.follow}</Checkbox>
-                                    )}
+                                    <Checkbox
+                                        disabled={field.disabled ? field.disabled : that.state.disabled}>{field.follow}</Checkbox>
+                                )}
                             </FormItem>;
                         case NUMBER_FIELD:
                             return <FormItem key={field.key}
-                                {...formItemLayout}
-                                label={field.label} extra={field.extra}>
+                                             {...formItemLayout}
+                                             label={field.label} extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <InputNumber min={field.min} max={field.max}
-                                        disabled={field.disabled ? field.disabled : that.state.disabled} />
+                                                 disabled={field.disabled ? field.disabled : that.state.disabled}/>
                                 )}
                                 <span className="ant-form-text">{field.follow}</span>
                             </FormItem>;
                         case DATE_PICKER:
                             return <FormItem key={field.key} label={field.label} {...formItemLayout}
-                                extra={field.extra}>
+                                             extra={field.extra}>
                                 {getFieldDecorator(field.key,
-                                    { initialValue: field.initialValue ? moment(field.initialValue) : null },
+                                    {initialValue: field.initialValue ? moment(field.initialValue) : null},
                                     {
-                                        rules: [{ required: field.required, message: REQUIRED_FIELD_MESSAGE }],
+                                        rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],
                                     })(
-                                        <DatePicker format={field.format} />
-                                    )}
+                                    <DatePicker format={field.format}/>
+                                )}
                             </FormItem>;
                         case TEXT_FIELD:
                             return <div>
                                 <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
                                     {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                        <TextArea autosize={{ minRows: field.minRows, maxRows: field.maxRows }}
-                                            placeholder={field.placeholder}
-                                            disabled={field.disabled ? field.disabled : that.state.disabled}
-                                            onChange={that.inputChange} />
+                                        <TextArea autosize={{minRows: field.minRows, maxRows: field.maxRows}}
+                                                  placeholder={field.placeholder}
+                                                  disabled={field.disabled ? field.disabled : that.state.disabled}
+                                                  onChange={that.inputChange}/>
                                     )}
                                 </FormItem>
                             </div>;
                         case QUILL_TEXT_FIELD:
                             return <div>
-                                <Divider />
+                                <Divider/>
                                 <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
                                     {getFieldDecorator(field.key, {
                                         initialValue: (field.initialValue && field.initialValue.length ? field.initialValue : ''),
@@ -348,37 +352,37 @@ class DynamicFieldsForm extends React.Component {
                                             message: REQUIRED_FIELD_MESSAGE
                                         }]
                                     })(
-                                        <ReactQuill theme="snow" placeholder={field.placeholder} />)}
+                                        <ReactQuill theme="snow" placeholder={field.placeholder}/>)}
                                 </FormItem>
                             </div>;
                         case TIME_PICKER:
                             return <FormItem key={field.key} label={field.label} {...formItemLayout}
-                                extra={field.extra}>
+                                             extra={field.extra}>
                                 {getFieldDecorator(field.key, {
                                     initialValue: field.initialValue ? moment(field.initialValue, field.format) : null,
-                                    rules: [{ required: field.required, message: REQUIRED_FIELD_MESSAGE }],
+                                    rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],
                                 })(
-                                    <TimePicker format={field.format} />
+                                    <TimePicker format={field.format}/>
                                 )}
                             </FormItem>;
                         case COLOR_PICKER:
                             return <FormItem key={field.key} label={field.label}  {...formItemLayout}
-                                extra={field.extra}>
+                                             extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <div>
-                                        <SwatchesPicker style={{ width: '100%' }}
-                                            onChange={(color) => that.colorChange(color, field.key)} />
+                                        <SwatchesPicker style={{width: '100%'}}
+                                                        onChange={(color) => that.colorChange(color, field.key)}/>
                                         {that.state.colorPickerKey ? <div style={{
                                             margin: '10px',
                                             backgroundColor: that.state.colorPickerColor,
                                             height: '40px',
                                             width: '40px'
-                                        }} /> : null}
+                                        }}/> : null}
                                     </div>
                                 )}
                             </FormItem>;
                         case SINGLE_IMAGE_UPLOAD_FIELD:
-                            const props = {
+                            const singleUploadprops = {
                                 name: 'image',
                                 data: {
                                     name: 'hello'
@@ -399,24 +403,57 @@ class DynamicFieldsForm extends React.Component {
                                 },
                             };
                             return <Form.Item key={field.key} {...formItemLayout} label={field.label}>
-                                {getFieldDecorator(field.key, { valuePropName: field.key, })(
-                                    <Upload {...props}>
+                                {getFieldDecorator(field.key, {valuePropName: field.key,})(
+                                    <Upload {...singleUploadprops}>
                                         <Button>
-                                            <Icon type="upload" /> Select File
+                                            <Icon type="upload"/> Select File
                                         </Button>
                                         {field.initialValue ?
-                                            <img src={field.initialValue} style={{ maxWidth: '100%' }} /> : null}
+                                            <img src={field.initialValue} style={{maxWidth: '100%'}}/> : null}
+                                    </Upload>
+                                )}
+                            </Form.Item>;
+                        case MULTI_IMAGE_UPLOAD_FIELD:
+                            const multiuploadprops = {
+                                name: 'image',
+                                data: {
+                                    name: 'hello'
+                                },
+                                action: makeURL(FILE_UPLOAD_API),
+                                headers: {
+                                    authorization: 'authorization-text',
+                                },
+                                onChange(info) {
+                                    if (info.file.status !== 'uploading') {
+                                        console.log(info.file, info.fileList);
+                                    }
+                                    if (info.file.status === 'done') {
+                                        message.success(`${info.file.name} file uploaded successfully`);
+                                    } else if (info.file.status === 'error') {
+                                        message.error(`${info.file.name} file upload failed.`);
+                                    }
+                                },
+                            };
+                            return <Form.Item key={field.key} {...formItemLayout} label={field.label}>
+                                {getFieldDecorator(field.key, {valuePropName: field.key,})(
+                                    <Upload {...multiuploadprops}>
+                                        <Button>
+                                            <Icon type="upload"/> Select File
+                                        </Button>
+                                        {field.initialValue && field.initialValue.length ?
+                                            field.initialValue.map(img => <img src={img}
+                                                                               style={{maxWidth: '100%'}}/>) : null}
                                     </Upload>
                                 )}
                             </Form.Item>;
                         case COUNTRY_FIELD:
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
-                                extra={field.extra}>
+                                             extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <Select placeholder={field.placeholder}
-                                        disabled={field.disabled ? field.disabled : that.state.disabled}
-                                        mode={field.mode ? field.mode : "default"}
-                                        onChange={(value) => that.setAddressField('country', value)}>
+                                            disabled={field.disabled ? field.disabled : that.state.disabled}
+                                            mode={field.mode ? field.mode : "default"}
+                                            onChange={(value) => that.setAddressField('country', value)}>
                                         {that.state.countryOptions.map((option) => <Select.Option
                                             value={option.id}>{option.name}</Select.Option>)}
                                     </Select>
@@ -424,12 +461,12 @@ class DynamicFieldsForm extends React.Component {
                             </FormItem>;
                         case STATE_FIELD:
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
-                                extra={field.extra}>
+                                             extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <Select placeholder={field.placeholder}
-                                        disabled={field.disabled ? field.disabled : that.state.disabled}
-                                        mode={field.mode ? field.mode : "default"}
-                                        onChange={(value) => that.setAddressField('state', value)}>
+                                            disabled={field.disabled ? field.disabled : that.state.disabled}
+                                            mode={field.mode ? field.mode : "default"}
+                                            onChange={(value) => that.setAddressField('state', value)}>
                                         {that.state.stateOptions.map((option) => <Select.Option
                                             value={option.id}>{option.name}</Select.Option>)}
                                     </Select>
@@ -452,18 +489,18 @@ class DynamicFieldsForm extends React.Component {
                                     }],
                                 })(
                                     <Input placeholder={field.placeholder}
-                                    disabled={field.disabled ? field.disabled : that.state.disabled}
-                                    onChange={that.inputChange} />
+                                           disabled={field.disabled ? field.disabled : that.state.disabled}
+                                           onChange={that.inputChange}/>
                                 )}
                             </Form.Item>
 
                         case CITY_FIELD:
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
-                                extra={field.extra}>
+                                             extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <Select placeholder={field.placeholder}
-                                        disabled={field.disabled ? field.disabled : that.state.disabled}
-                                        mode={field.mode ? field.mode : "default"}>
+                                            disabled={field.disabled ? field.disabled : that.state.disabled}
+                                            mode={field.mode ? field.mode : "default"}>
                                         {that.state.cityOptions.map((option) => <Select.Option
                                             value={option.id}>{option.name}</Select.Option>)}
                                     </Select>

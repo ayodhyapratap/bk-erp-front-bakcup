@@ -6,7 +6,7 @@ import {
     QUILL_TEXT_FIELD,
     SELECT_FIELD,
     SUCCESS_MSG_TYPE,
-    TEXT_FIELD
+    TEXT_FIELD, MULTI_IMAGE_UPLOAD_FIELD
 } from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
@@ -73,8 +73,8 @@ export default class AddDisease extends React.Component {
         },{
             label: "Disease Side Image",
             key: "side_image",
-            initialValue:this.state.editBlogData?this.state.editBlogData.side_image:null,
-            type: INPUT_FIELD,
+            initialValue:this.state.editBlogData?this.state.editBlogData.side_image:[],
+            type: MULTI_IMAGE_UPLOAD_FIELD,
         },{
             label: "SEO Description",
             key: "meta_description",

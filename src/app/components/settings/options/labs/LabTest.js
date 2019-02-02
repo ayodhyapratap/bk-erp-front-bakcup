@@ -56,11 +56,11 @@ class LabTest extends React.Component {
             dataIndex: 'name',
             key: 'code',
         }, {
-            title: 'cost',
+            title: 'Cost',
             dataIndex: 'cost',
             key: 'cost',
         }, {
-            title: ' test Instructions',
+            title: ' Test Instructions',
             dataIndex: 'instruction',
             key: 'instruction',
         }, {

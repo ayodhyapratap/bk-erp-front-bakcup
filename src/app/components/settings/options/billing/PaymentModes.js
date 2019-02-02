@@ -92,8 +92,7 @@ class PaymentModes extends React.Component {
             key: 'action',
             render: (text, record) => (
                 <span>
-              <a onClick={() => this.editPayment(record)}>  Edit</a>
-                <Divider type="vertical"/>
+              <a onClick={() => this.editPayment(record)}>Edit</a>
                     <Divider type="vertical"/>
                     <Popconfirm title="Are you sure delete this payment mode?"
                                 onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">

@@ -71,8 +71,8 @@ export default class AddVideo extends React.Component {
             type: INPUT_FIELD
         }, {
             label: "Rank ",
-            key: "contact_rank",
-            initialValue: this.state.editBlogData ? this.state.editBlogData.contact_rank : 1,
+            key: "rank",
+            initialValue: this.state.editBlogData ? this.state.editBlogData.rank : 1,
             type: NUMBER_FIELD,
             required:true,
             min:1
