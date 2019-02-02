@@ -38,7 +38,7 @@ export const loggedInUserPractices = function () {
     let practices = {};
     if (role && token && practice) {
         practice.forEach(function (clinic) {
-            practices[clinic.practice] = clinic
+            practices[clinic[0].practice] = clinic
         })
 
     }
@@ -89,7 +89,7 @@ export const logInUser = function (data, successFn, errorFn) {
         lockr.set(ROLE, data.user);
         lockr.set(AUTH_TOKEN, data.token);
         lockr.set(GROUP, data.group);
-        lockr.set(PRACTICE, data.practice)
+        lockr.set(PRACTICE, data.practice_permissions)
         console.log(data.practice);
         successFn()
     }).catch(function (error) {

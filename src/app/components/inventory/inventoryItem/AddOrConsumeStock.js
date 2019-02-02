@@ -31,7 +31,8 @@ class AddOrConsumeStock extends React.Component {
         super(props);
         this.state = {
             classType: props.type,
-            tableFormValues: []
+            tableFormValues: [],
+            maxQuantityforConsume: {},
         }
 
     }
@@ -109,10 +110,15 @@ class AddOrConsumeStock extends React.Component {
                         inventory_item: item.id,
                         quantity: values.quantity[item._id],
                         batch_number: values.batch[item._id],
-                        expiry_date: values.expiry_date[item._id],
-                        unit_cost: values.unit_cost[item._id],
-                        total_cost: values.unit_cost[item._id] * values.quantity[item._id]
                     };
+                    if (that.state.classType == ADD_STOCK) {
+                        itemObject = {
+                            ...itemObject,
+                            expiry_date: values.expiry_date[item._id],
+                            unit_cost: values.unit_cost[item._id],
+                            total_cost: values.unit_cost[item._id] * values.quantity[item._id]
+                        }
+                    }
                     reqData.push(itemObject);
                 });
                 console.log(reqData);
@@ -129,6 +135,21 @@ class AddOrConsumeStock extends React.Component {
         });
     }
 
+    changeMaxQuantityforConsume(recordId, batch) {
+        this.setState(function (prevState) {
+            let newMaxQuantityforConsume = {...prevState.maxQuantityforConsume}
+            prevState.tableFormValues.forEach(function (formValue) {
+                if (formValue._id == recordId)
+                    formValue.item_type_stock.item_stock.forEach(function (stock) {
+                        if (stock.batch_number == batch)
+                            newMaxQuantityforConsume[recordId] = stock.quantity || 0
+                    })
+            });
+            return {
+                maxQuantityforConsume: newMaxQuantityforConsume
+            }
+        });
+    }
 
     render() {
         let that = this;
@@ -158,26 +179,26 @@ class AddOrConsumeStock extends React.Component {
             title: 'Item Name',
             key: 'item_name',
             dataIndex: 'name'
-        }, {
-            title: 'Quantity',
-            key: 'quantity',
-            dataIndex: 'quantity',
-            render: (item, record) => <Form.Item
-                key={`quantity[${record._id}]`}
-                {...formItemLayout}>
-                {getFieldDecorator(`quantity[${record._id}]`, {
-                    validateTrigger: ['onChange', 'onBlur'],
-                    rules: [{
-                        required: true,
-                        message: "This field is required.",
-                    }],
-                })(
-                    <InputNumber min={0} placeholder="quantity"/>
-                )}
-            </Form.Item>
         }];
         if (this.state.classType == ADD_STOCK) {
             consumeRow = consumeRow.concat([{
+                title: 'Quantity',
+                key: 'quantity',
+                dataIndex: 'quantity',
+                render: (item, record) => <Form.Item
+                    key={`quantity[${record._id}]`}
+                    {...formItemLayout}>
+                    {getFieldDecorator(`quantity[${record._id}]`, {
+                        validateTrigger: ['onChange', 'onBlur'],
+                        rules: [{
+                            required: true,
+                            message: "This field is required.",
+                        }],
+                    })(
+                        <InputNumber min={0} placeholder="quantity"/>
+                    )}
+                </Form.Item>
+            }, {
                 title: 'Batch',
                 key: 'batch',
                 dataIndex: 'batch',
@@ -249,17 +270,40 @@ class AddOrConsumeStock extends React.Component {
                             message: "This field is required.",
                         }],
                     })(
-                        <Input placeholder="Batch Number"/>
+                        <Select placeholder="Batch Number"
+                                onChange={(value) => that.changeMaxQuantityforConsume(record._id, value)}>
+                            {record.item_type_stock.item_stock.map(stock =>
+                                <Select.Option value={stock.batch_number}>
+                                    #{stock.batch_number} ({stock.quantity})
+                                </Select.Option>)}
+                        </Select>
                     )}
                 </Form.Item>
-            }]);
+            }, {
+                title: 'Quantity',
+                key: 'quantity',
+                dataIndex: 'quantity',
+                render: (item, record) => <Form.Item
+                    key={`quantity[${record._id}]`}
+                    {...formItemLayout}>
+                    {getFieldDecorator(`quantity[${record._id}]`, {
+                        validateTrigger: ['onChange', 'onBlur'],
+                        rules: [{
+                            required: true,
+                            message: "This field is required.",
+                        }],
+                    })(
+                        <InputNumber min={0} max={this.state.maxQuantityforConsume[record._id]} placeholder="quantity"/>
+                    )}
+                </Form.Item>
+            },]);
         }
         consumeRow = consumeRow.concat([{
             title: 'Action',
             key: '_id',
             dataIndex: '_id',
             render: (value, record) => <a onClick={() => that.remove(record._id)}>Delete</a>
-        }])
+        }]);
         return <div>
             <Card title={this.state.classType + " Stock"}>
                 <Row gutter={16}>
@@ -272,7 +316,9 @@ class AddOrConsumeStock extends React.Component {
                                       renderItem={item => (
                                           <List.Item>
                                               <List.Item.Meta
-                                                  title={item.name}/>
+                                                  title={item.name}
+                                                  description={item.item_type_stock.item_stock.map((stock) =>
+                                                      <span>#{stock.batch_number}({stock.quantity})<br/></span>)}/>
                                               <Button type="primary" size="small" shape="circle"
                                                       onClick={() => this.add(item)} icon={"arrow-right"}/>
                                           </List.Item>)}/>

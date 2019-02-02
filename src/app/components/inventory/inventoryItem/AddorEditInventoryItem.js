@@ -54,9 +54,6 @@ export default class AddorEditInventoryItem extends React.Component {
         if (this.props.vendor_list == null) {
             this.loadVendorList();
         }
-        if (this.props.inventory_list == null) {
-            this.loadInventoryList();
-        }
     }
 
     loadTaxes() {
@@ -99,18 +96,6 @@ export default class AddorEditInventoryItem extends React.Component {
         getAPI(VENDOR_API, successFn, errorFn);
     }
 
-    loadInventoryList() {
-        let that = this;
-        let successFn = function (data) {
-            that.setState({
-                inventory_list: data
-            })
-        }
-        let errorFn = function () {
-
-        }
-        getAPI(INVENTORY_API, successFn, errorFn);
-    }
 
     loadData() {
         let that = this;
@@ -122,8 +107,8 @@ export default class AddorEditInventoryItem extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [this.props.match.params.id]), successFn, errorFn);
-
+        if (this.props.match.params.id)
+            getAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [this.props.match.params.id]), successFn, errorFn);
 
     }
 
@@ -148,12 +133,7 @@ export default class AddorEditInventoryItem extends React.Component {
                 vendorOption.push({label: (vendor.name), value: vendor.id});
             })
         }
-        const inventoryOption = [];
-        if (this.state.inventory_list) {
-            this.state.inventory_list.forEach(function (inventory) {
-                inventoryOption.push({label: (inventory.name), value: inventory.id});
-            })
-        }
+
 
         const fields = [{
             label: 'Item Name',
@@ -200,12 +180,6 @@ export default class AddorEditInventoryItem extends React.Component {
             initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.taxes : null,
             mode: "multiple"
         }, {
-            label: 'Inventory',
-            key: 'inventory',
-            type: SELECT_FIELD,
-            options: inventoryOption,
-            initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.inventory : null,
-        }, {
             label: 'Item Type',
             key: 'item_type',
             type: SELECT_FIELD,
@@ -240,7 +214,7 @@ export default class AddorEditInventoryItem extends React.Component {
             action: INVENTORY_ITEM_API,
             method: "post",
         }
-        let defaultValues = [];
+        let defaultValues = [{key: 'practice', value: this.props.active_practiceId}];
 
         return <Row>
             <Card>

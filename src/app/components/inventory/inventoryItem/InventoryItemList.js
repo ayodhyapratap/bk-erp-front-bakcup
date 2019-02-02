@@ -46,7 +46,7 @@ export default class InventoryItemList extends React.Component {
                     inventoryItemList = data
                 } else {
                     data.forEach(function (item) {
-                        if (item.inventory_item.item_type == prevState.itemTypeFilter)
+                        if (item.item_type == prevState.itemTypeFilter)
                             inventoryItemList.push(item);
                     })
                 }
@@ -58,7 +58,7 @@ export default class InventoryItemList extends React.Component {
         }
         let errorFn = function () {
         }
-        getAPI(ITEM_TYPE_STOCK, successFn, errorFn);
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn);
     }
 
     loadManufactureList() {
@@ -135,7 +135,7 @@ export default class InventoryItemList extends React.Component {
             } else {
                 let filteredList = [];
                 prevState.invantoryItems.forEach(function (item) {
-                    if (item.inventory_item.item_type == e.target.value)
+                    if (item.item_type == e.target.value)
                         filteredList.push(item);
                 });
                 return {inventoryItemList: filteredList}
@@ -167,22 +167,29 @@ export default class InventoryItemList extends React.Component {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            render: (value,record) => <span>{record.inventory_item.name}</span>
+            // render: (value,record) => <span>{record.inventory_item.name}</span>
         }, {
             title: 'Item Code',
             dataIndex: 'code',
             key: 'code',
-            render: (value,record) => <span>{record.inventory_item.code}</span>
+            // render: (value,record) => <span>{record.inventory_item.code}</span>
         }, {
-            title: 'Stocking Unit',
-            dataIndex: 'stocking_unit',
-            key: 'stocking_unit'
+            title: 'Inventory Stock',
+            dataIndex: 'item_type_stock',
+            key: 'item_type_stock',
+            render: function (item_type_stock) {
+                let totalStock = 0;
+                item_type_stock.item_stock.forEach(function (stock) {
+                    totalStock += (Number.isInteger(stock.quantity) ? stock.quantity : 0)
+                });
+                return totalStock;
+            }
         }, {
             title: 'Retail Price (INR)',
             dataIndex: 'retail_price',
             key: 'retail_price',
-            render: (value, record) => <span>{record.inventory_item.retail_price}
-                {record.inventory_item.taxes.map(tax =>
+            render: (value, record) => <span>{record.retail_price}
+                {record.taxes && record.taxes.map(tax =>
                     <small> {(taxesdata[tax] ? taxesdata[tax].name + "@" + taxesdata[tax].tax_value + "%" : null)}</small>
                 )}
                 </span>
@@ -190,17 +197,17 @@ export default class InventoryItemList extends React.Component {
             title: 'Item type',
             dataIndex: 'item_type',
             key: 'item_type',
-            render: (value,record) => <span>{record.inventory_item.item_type}</span>
+            // render: (value,record) => <span>{record.inventory_item.item_type}</span>
         }, {
             title: 'Reorder Level',
             dataIndex: 're_order_level',
             key: 're_order_level',
-            render: (value,record) => <span>{record.inventory_item.re_order_level}</span>
+            // render: (value, record) => <span>{record.inventory_item.re_order_level}</span>
         }, {
             title: 'Manufacturer',
             key: 'manufacturer',
             render: (text, record) => (
-                <span> {manufacturerData[record.inventory_item.manufacturer]}</span>
+                <span> {manufacturerData[record.manufacturer]}</span>
             )
         },
             //     {
@@ -248,7 +255,8 @@ export default class InventoryItemList extends React.Component {
                 <Route>
                     <Card title="Inventory List"
                           extra={<div>
-                              <Link to="/inventory/add"><Button type="primary"><Icon type="plus"/> Add Item</Button></Link>
+                              <Link to="/inventory/add"><Button type="primary"><Icon type="plus"/> Add
+                                  Item</Button></Link>
                               <Link to="/inventory/add-stock"><Button type="primary">Add Stock</Button></Link>
                               <Link to="/inventory/consume-stock"><Button type="primary">Consume Stock</Button></Link>
                           </div>}>
@@ -262,7 +270,8 @@ export default class InventoryItemList extends React.Component {
                             </Radio.Group>
                         </Row>
                         <br/>
-                        <Table pagination={false} bordered={true} dataSource={this.state.inventoryItemList} columns={columns}/>
+                        <Table pagination={false} bordered={true} dataSource={this.state.inventoryItemList}
+                               columns={columns}/>
                         <Modal visible={this.state.stockModalVisibility}
                                title={"Stock" + this.state.actionType}
                                onOk={() => this.showAddOrConsumeModal(false)}
