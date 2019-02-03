@@ -27,10 +27,10 @@ class BillingSettings extends React.Component {
           <Row>
           <Card>
             <Tabs defaultActiveKey="taxcatalog" >
-              <TabPane tab={<span><Icon type="android" />Tax Catalog</span>} key="taxcatalog">
+              <TabPane tab={<span><Icon type="cluster" />Tax Catalog</span>} key="taxcatalog">
                <TaxCatalog {...this.state} {...this.props}/>
               </TabPane>
-              <TabPane tab={<span><Icon type="android" />Accepted Modes of payment </span>} key="paymentmodes">
+              <TabPane tab={<span><Icon type="dollar" />Accepted Modes of payment </span>} key="paymentmodes">
                 <PaymentModes {...this.props}/>
               </TabPane>
               {/*<TabPane tab={<span><Icon type="android" />Emails</span>} key="cancelledinvoice">

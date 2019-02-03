@@ -19,7 +19,7 @@ class CommunicationSettings extends React.Component {
           <h2>Communication Settings</h2>
           <Card>
             <Tabs defaultActiveKey="appointmentsms" >
-              <TabPane tab={<span><Icon type="android" />Appointment & FollowUp SMS</span>} key="appointmentsms">
+              <TabPane tab={<span><Icon type="schedule" />Appointment & FollowUp SMS</span>} key="appointmentsms">
                 <AppointmentSMS {...this.props}/>
               </TabPane>
               {/*<TabPane tab={<span><Icon type="android" />Wish SMS</span>} key="wishsms">*/}

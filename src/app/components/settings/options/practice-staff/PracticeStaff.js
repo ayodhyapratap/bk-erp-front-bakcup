@@ -236,7 +236,7 @@ class PracticeDetails extends React.Component {
             <h2>Practice Staff</h2>
             <Card>
                 <Tabs defaultActiveKey="staff">
-                    <TabPane tab={<span><Icon type="android"/>Manage Staff</span>} key="staff">
+                    <TabPane tab={<span><Icon type="user-add"/>Manage Staff</span>} key="staff">
                         <h2>Doctors <Link to="/settings/clinics-staff/adddoctor">
                             <Button type="primary" style={{float: 'right'}}>
                                 <Icon type="plus"/>&nbsp;Add Doctor/Staff
@@ -246,13 +246,13 @@ class PracticeDetails extends React.Component {
                         <h2>Staff </h2>
                         <Table columns={columns} dataSource={this.state.practice_staff}/>
                     </TabPane>
-                    <TabPane tab={<span><Icon type="android"/>Staff Notification</span>} key="notification">
+                    <TabPane tab={<span><Icon type="team"/>Staff Notification</span>} key="notification">
                         <h2>Doctors</h2>
                         <Table columns={notification_columns} dataSource={this.state.practice_doctors}/>
                         <h2>Staff</h2>
                         <Table columns={notification_columns} dataSource={this.state.practice_staff}/>
                     </TabPane>
-                    <TabPane tab={<span><Icon type="android"/>Doctors visit Timing</span>} key="timing">
+                    <TabPane tab={<span><Icon type="schedule"/>Doctors visit Timing</span>} key="timing">
                         <Table>
                             <Column title="Name"
                                     dataIndex="name"
