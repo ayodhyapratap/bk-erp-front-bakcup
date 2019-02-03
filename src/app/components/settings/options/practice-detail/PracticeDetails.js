@@ -9,7 +9,7 @@ class PracticeDetails extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            practiceList: null,
+            practiceList: [],
             specialisations: null,
         };
         this.deletePractice = this.deletePractice.bind(this);
@@ -70,16 +70,17 @@ class PracticeDetails extends React.Component {
     deletePractice(value) {
         var that = this;
         let successFn = function (data) {
-          console.log("data");
+            console.log("data");
             that.props.refreshClinicData();
         };
         let errorFn = function () {
         };
-        postAPI(interpolate(PRACTICE_DELETE, [value]),{}, successFn, errorFn);
+        postAPI(interpolate(PRACTICE_DELETE, [value]), {}, successFn, errorFn);
 
     }
 
     render() {
+        let that = this;
         let specialisations = {};
         if (this.props.activePracticeData) {
             this.props.activePracticeData.specialisations.forEach(function (speciality) {
@@ -118,7 +119,8 @@ class PracticeDetails extends React.Component {
                 <span>
                 <Link to={'/settings/clinics/' + record.id + '/edit'}>Edit</Link>
                 <Divider type="vertical"/>
-                <a onClick={() => this.deletePractice(record.id)}>Delete</a>
+                    {that.props.practiceList.length > 1
+                        ? <a onClick={() => this.deletePractice(record.id)}>Delete</a> : null}
               </span>
             ),
         }];
@@ -132,7 +134,7 @@ class PracticeDetails extends React.Component {
                 </Link>
             </h2>
             <Card>
-                <Table columns={columns} dataSource={this.props.practiceList}/>
+                <Table pagination={false} columns={columns} dataSource={this.props.practiceList}/>
             </Card>
         </Row>
     }
