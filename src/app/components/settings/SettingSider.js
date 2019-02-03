@@ -54,6 +54,12 @@ class SettingSider extends React.Component {
                             <Icon type="trophy"/>Loyalty
                         </Link>
                     </Menu.Item>
+                    <Menu.Item key="30">
+                        <Link to="/settings/mlm">
+                            <Icon type="wallet"/>
+                            <span className="nav-text">MLM</span>
+                        </Link>
+                    </Menu.Item>
                     {/*<Menu.Item key="11"><Link to="/settings/contacts"> Contacts</Link></Menu.Item>*/}
                     <Menu.Item key="12">
                         <Link to="/settings/emr">

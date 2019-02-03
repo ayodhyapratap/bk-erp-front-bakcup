@@ -1,9 +1,9 @@
 import React from "react";
 import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Table} from "antd";
-import {getAPI, interpolate, deleteAPI} from "../../utils/common";
+import {getAPI, interpolate, deleteAPI} from "../../../../utils/common";
 import MLMGenerate from "./MLMGenerate"
 import {Link, Route, Switch} from "react-router-dom";
-import {ROLE_COMMISION, STAFF_ROLES, PRODUCT_LEVEL} from "../../constants/api"
+import {ROLE_COMMISION, STAFF_ROLES, PRODUCT_LEVEL} from "../../../../constants/api"
 
 
 export default class MlmBase extends React.Component {
@@ -18,7 +18,7 @@ export default class MlmBase extends React.Component {
     componentDidMount() {
         this.loadMlmData();
         this.loadRoles();
-        this.loadProductlevels();
+
     }
 
     loadMlmData() {
@@ -47,18 +47,18 @@ export default class MlmBase extends React.Component {
         getAPI(STAFF_ROLES, successFn, errorFn);
     }
 
-    loadProductlevels() {
-        let that = this;
-        let successFn = function (data) {
-            that.setState({
-                productLevels: data
-            })
-        }
-        let errorFn = function () {
-
-        }
-        getAPI(PRODUCT_LEVEL, successFn, errorFn);
-    }
+    // loadProductlevels() {
+    //     let that = this;
+    //     let successFn = function (data) {
+    //         that.setState({
+    //             productLevels: data
+    //         })
+    //     }
+    //     let errorFn = function () {
+    //
+    //     }
+    //     getAPI(PRODUCT_LEVEL, successFn, errorFn);
+    // }
 
 
     render() {
@@ -111,12 +111,12 @@ export default class MlmBase extends React.Component {
         }
         return <div>
             <Switch>
-                <Route path="/mlm/generate"
+                <Route path="/settings/mlm/generate"
                        render={(route) => <MLMGenerate {...route} loadData={this.loadMlmData}{...this.state}/>}/>
                 <Route>
                     <Card title="MLM List"
                           extra={<div>
-                              <Link to="/mlm/generate"><Button type="primary">Set MLM Commission</Button></Link>
+                              <Link to="/settings/mlm/generate"><Button type="primary">Set MLM Commission</Button></Link>
                           </div>}>
                         <Table dataSource={datasource} columns={columns} bordered/>
 
