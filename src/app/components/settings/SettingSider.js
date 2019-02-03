@@ -31,7 +31,7 @@ class SettingSider extends React.Component {
                     </Menu.Item>
                     <Menu.Item key="7">
                         <Link to="/settings/communication-settings">
-                            <Icon type="message"/>Communication Settings
+                            <Icon type="message"/>Communication
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="17">

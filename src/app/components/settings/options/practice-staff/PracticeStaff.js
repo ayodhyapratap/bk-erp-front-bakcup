@@ -242,18 +242,18 @@ class PracticeDetails extends React.Component {
                                 <Icon type="plus"/>&nbsp;Add Doctor/Staff
                             </Button>
                         </Link></h2>
-                        <Table columns={columns} dataSource={this.state.practice_doctors}/>
+                        <Table pagination={false}columns={columns} dataSource={this.state.practice_doctors}/>
                         <h2>Staff </h2>
-                        <Table columns={columns} dataSource={this.state.practice_staff}/>
+                        <Table pagination={false}columns={columns} dataSource={this.state.practice_staff}/>
                     </TabPane>
                     <TabPane tab={<span><Icon type="android"/>Staff Notification</span>} key="notification">
                         <h2>Doctors</h2>
-                        <Table columns={notification_columns} dataSource={this.state.practice_doctors}/>
+                        <Table pagination={false}columns={notification_columns} dataSource={this.state.practice_doctors}/>
                         <h2>Staff</h2>
-                        <Table columns={notification_columns} dataSource={this.state.practice_staff}/>
+                        <Table pagination={false}columns={notification_columns} dataSource={this.state.practice_staff}/>
                     </TabPane>
                     <TabPane tab={<span><Icon type="android"/>Doctors visit Timing</span>} key="timing">
-                        <Table>
+                        <Table pagination={false}>
                             <Column title="Name"
                                     dataIndex="name"
                                     key="name"

@@ -114,13 +114,18 @@ export default class MlmBase extends React.Component {
                 <Route path="/settings/mlm/generate"
                        render={(route) => <MLMGenerate {...route} loadData={this.loadMlmData}{...this.state}/>}/>
                 <Route>
-                    <Card title="MLM List"
-                          extra={<div>
-                              <Link to="/settings/mlm/generate"><Button type="primary">Set MLM Commission</Button></Link>
-                          </div>}>
-                        <Table dataSource={datasource} columns={columns} bordered/>
-
-                    </Card>
+                    <div>
+                        <h2>MLM Commissions
+                            <Link to="/settings/mlm/generate">
+                                <Button type="primary" style={{float: 'right'}}>
+                                    <Icon type="plus"/>&nbsp;Add
+                                </Button>
+                            </Link>
+                        </h2>
+                        <Card>
+                            <Table dataSource={datasource} columns={columns} bordered/>
+                        </Card>
+                    </div>
                 </Route>
             </Switch>
 
