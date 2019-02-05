@@ -148,31 +148,23 @@ class Addinvoicedynamic extends React.Component {
                 let reqData = [];
                 that.state.tableFormValues.forEach(function (item) {
                     let itemObject = {
-                        item_add_type: that.state.classType,
                         inventory_item: item.id,
-                        quantity: values.quantity[item._id],
-                        batch_number: values.batch[item._id],
                     };
-                    if (that.state.classType == ADD_STOCK) {
-                        itemObject = {
-                            ...itemObject,
-                            expiry_date: values.expiry_date[item._id],
-                            unit_cost: values.unit_cost[item._id],
-                            total_cost: values.unit_cost[item._id] * values.quantity[item._id]
-                        }
-                    }
+
+
                     reqData.push(itemObject);
                 });
                 console.log(reqData);
                 let successFn = function (data) {
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
-                    that.props.history.push('/inventory');
+                    let url='/patient/' + this.props.match.params.id + '/billing/invoices';
+                    that.props.history.push(url);
                 }
                 let errorFn = function () {
 
                 }
-                postAPI(BULK_STOCK_ENTRY, reqData, successFn, errorFn);
+                postAPI("ll", reqData, successFn, errorFn);
             }
         });
     }
@@ -182,8 +174,8 @@ class Addinvoicedynamic extends React.Component {
     render() {
       const taxesOption = []
       if (this.state.taxes_list) {
-          this.state.taxes_list.forEach(function (drug) {
-              taxesOption.push({label: (drug.name + "(" + drug.tax_value + ")"), value: drug.id});
+          this.state.taxes_list.forEach(function (tax) {
+              taxesOption.push( <Select.Option value={tax.id}>{tax.name}</Select.Option>);
           })
       }
         let that = this;
@@ -221,7 +213,7 @@ class Addinvoicedynamic extends React.Component {
                 render: (item, record) => <Form.Item
                     key={`quantity[${record._id}]`}
                     {...formItemLayout}>
-                    {getFieldDecorator(`quantity[${record._id}]`, {
+                    {getFieldDecorator(`Unit[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{
                             required: true,
@@ -232,20 +224,19 @@ class Addinvoicedynamic extends React.Component {
                     )}
                 </Form.Item>
             },{
-                title: 'discount',
+                title: 'discount %',
                 key: 'discount',
                 dataIndex: 'discount',
                 render: (item, record) => <Form.Item
-                    key={`expiry_date[${record._id}]`}
+                    key={`discount[${record._id}]`}
                     {...formItemLayout}>
-                    {getFieldDecorator(`expiry_date[${record._id}]`, {
+                    {getFieldDecorator(`discount[${record._id}]`, {
                         rules: [{
                             required: true,
                             message: "This field is required.",
                         }],
-                        initialValue: moment(new Date())
                     })(
-                        <MonthPicker/>
+                      <InputNumber min={0} max={100} placeholder="discount"/>
                     )}
                 </Form.Item>
             }, {
@@ -276,11 +267,11 @@ class Addinvoicedynamic extends React.Component {
                         validateTrigger: ['onChange', 'onBlur'],
 
                     })(
-                      {/*  <Select placeholder="Batch Number">{taxesOption}</Select>*/}
+                        <Select placeholder="Batch Number">{taxesOption}</Select>
                     )}
                 </Form.Item>
             }, ]);
-          
+
         consumeRow = consumeRow.concat([{
             title: 'Action',
             key: '_id',
