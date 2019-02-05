@@ -6,6 +6,7 @@ import moment from "moment";
 import {Link} from "react-router-dom";
 import {Route, Switch} from "react-router";
 import AddInvoice from "./AddInvoice";
+import AddInvoicedynamic from "./AddInvoicedynamic";
 
 class PatientInvoices extends React.Component{
     constructor(props){
@@ -174,7 +175,7 @@ class PatientInvoices extends React.Component{
         if(this.props.match.params.id){
             return <div><Switch>
                 <Route exact path='/patient/:id/billing/invoices/add'
-                       render={(route) => <AddInvoice{...this.state} {...route}/>}/>
+                       render={(route) => <AddInvoicedynamic{...this.state} {...route}/>}/>
                 <Route exact path='/patient/:id/billing/invoices/edit'
                        render={(route) => <AddInvoice {...this.state} {...route}/>}/>
                 <Card title={ this.state.currentPatient?this.state.currentPatient.name + " Invoice":"Invoice"}  extra={<Button.Group>

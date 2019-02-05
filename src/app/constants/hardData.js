@@ -13,6 +13,16 @@ export const DISEASE_TYPES = [
 export const DRUG = "Drug";
 export const EQUIPMENT = "Equipment";
 export const SUPPLIES = "Supplies";
+export const PROCEDURES = "Procedure";
+export const PRESCRIPTIONS = "Prescriptions";
+export const INVENTORY = "Inventory";
+
+
+export const INVOICE_ITEM_TYPE = [
+    {label: PROCEDURES, value: PROCEDURES},
+    {label: PRESCRIPTIONS, value: PRESCRIPTIONS},
+    {label: INVENTORY, value: INVENTORY}
+];
 export const INVENTORY_ITEM_TYPE = [
     {label: DRUG, value: DRUG},
     {label: EQUIPMENT, value: EQUIPMENT},
@@ -22,4 +32,3 @@ export const INVENTORY_ITEM_TYPE = [
 
 export const ADD_STOCK = "ADD";
 export const CONSUME_STOCK = "CONSUME";
-
