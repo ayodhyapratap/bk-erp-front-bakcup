@@ -72,9 +72,13 @@ class MLMGenerate extends React.Component {
             // that.state.productLevels.forEach(function (level) {
             //     reqData[level.name] = {...values[level.name]}
             // });
-            reqData[values.margin_name] = [];
+            reqData[values.margin_name] = {};
             for (let i = 1; i <= that.state.level_count; i++) {
-                reqData[values.margin_name].push({level: i, commission_list: {...values[i]}})
+                reqData[values.margin_name][i] = []
+                for (let j = 1; j < values[i].length; j++) {
+                    // if (values[i][j] != undefined)
+                    reqData[values.margin_name][i].push({[j]: values[i][j]})
+                }
             }
             if (!err) {
                 console.log(reqData);
@@ -145,14 +149,14 @@ class MLMGenerate extends React.Component {
                         {getFieldDecorator(`${i}[${record.id}]`, {
                             validateTrigger: ['onChange', 'onBlur'],
                         })(
-                            <InputNumber min={0} max={100} placeholder="Percent Commisson"/>
+                            <InputNumber min={0} max={100} placeholder="Percent Commission"/>
                         )}
                     </Form.Item>
                 })
             }
 
         return (
-            <Card>
+            <Card title={"Manage MLM Commission"}>
                 <Form onSubmit={this.handleSubmit} className="login-form">
                     <Form.Item
                         {...formItemLayout}
@@ -180,8 +184,9 @@ class MLMGenerate extends React.Component {
                     {/*</Form.Item>*/}
                     <Table bordered={true} pagination={false} columns={columns} dataSource={this.state.staffRoles}/>
                     <Form.Item>
+                        <br/>
                         <Button type="primary" htmlType="submit" className="login-form-button">
-                            Set MLM Commissons
+                            Set MLM Commissions
                         </Button>
                     </Form.Item>
                 </Form>

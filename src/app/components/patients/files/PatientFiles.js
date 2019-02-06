@@ -33,8 +33,8 @@ class PatientFiles extends React.Component {
         }
         if (this.props.match.params.id)
             getAPI(interpolate(PATIENT_FILES, [this.props.match.params.id]), successFn, errorFn);
-        // else
-        //     getAPI(ALL_PATIENT_FILES, successFn, errorFn);
+        else
+            getAPI(ALL_PATIENT_FILES, successFn, errorFn);
     }
 
     loadTags() {
@@ -81,7 +81,6 @@ class PatientFiles extends React.Component {
         const defaultFields = [{key: 'is_active', value: true}, {key: 'patient', value: this.props.match.params.id}]
         return <Card title="Files"
                      extra={<Button.Group>
-                         <Button>Email</Button>
                          <Button onClick={() => this.triggerAddModal(true)}><Icon type="plus"/>Add</Button>
                      </Button.Group>}>
             <Row>
@@ -106,14 +105,14 @@ class PatientFiles extends React.Component {
                         <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="c">
                             Recently Added
                         </Radio.Button>
-                        <p><br/></p>
-                        <h2>Generated Files</h2>
-                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="d">
-                            Chengdu
-                        </Radio.Button>
-                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                      value="none">
-                            Untagged Files</Radio.Button>
+                        {/*<p><br/></p>*/}
+                        {/*<h2>Generated Files</h2>*/}
+                        {/*<Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="d">*/}
+                            {/*Chengdu*/}
+                        {/*</Radio.Button>*/}
+                        {/*<Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}*/}
+                                      {/*value="none">*/}
+                            {/*Untagged Files</Radio.Button>*/}
                     </Radio.Group>
                 </Col>
                 <Col span={18}>
@@ -121,9 +120,8 @@ class PatientFiles extends React.Component {
                         grid={{gutter: 16, column: 3}}
                         dataSource={this.state.files}
                         renderItem={item => (
-                            <List.Item>
-                                <Card bodyStyle={{padding: '5px'}} hoverable cover={<img alt="example"
-                                                                                         src={item.file_type}/>}>{item.title}</Card>
+                            <List.Item style={{textAlign:'center'}}>
+                                <img src={item.file_type} alt="" style={{maxWidth:'100%',height:'100px'}}/>
                             </List.Item>
                         )}
                     />

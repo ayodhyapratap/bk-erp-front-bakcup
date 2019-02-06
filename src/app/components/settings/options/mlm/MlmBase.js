@@ -1,10 +1,11 @@
 import React from "react";
-import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Table} from "antd";
+import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Table, Tabs} from "antd";
 import {getAPI, interpolate, deleteAPI} from "../../../../utils/common";
 import MLMGenerate from "./MLMGenerate"
 import {Link, Route, Switch} from "react-router-dom";
-import {ROLE_COMMISION, STAFF_ROLES, PRODUCT_LEVEL} from "../../../../constants/api"
+import {PRODUCT_MARGIN, ROLE_COMMISION, STAFF_ROLES} from "../../../../constants/api";
 
+const TabPane = Tabs.TabPane;
 
 export default class MlmBase extends React.Component {
     constructor(props) {
@@ -13,12 +14,14 @@ export default class MlmBase extends React.Component {
             mlmItems: [],
             active_practiceId: this.props.active_practiceId,
         }
+        this.loadMlmData = this.loadMlmData.bind(this);
+        this.loadRoles = this.loadRoles.bind(this);
     }
 
     componentDidMount() {
         this.loadMlmData();
         this.loadRoles();
-
+        this.loadProductMargin();
     }
 
     loadMlmData() {
@@ -47,18 +50,18 @@ export default class MlmBase extends React.Component {
         getAPI(STAFF_ROLES, successFn, errorFn);
     }
 
-    // loadProductlevels() {
-    //     let that = this;
-    //     let successFn = function (data) {
-    //         that.setState({
-    //             productLevels: data
-    //         })
-    //     }
-    //     let errorFn = function () {
-    //
-    //     }
-    //     getAPI(PRODUCT_LEVEL, successFn, errorFn);
-    // }
+    loadProductMargin() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                productMargin: data
+            })
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(PRODUCT_MARGIN, successFn, errorFn);
+    }
 
 
     render() {
@@ -74,17 +77,17 @@ export default class MlmBase extends React.Component {
             dataIndex: 'role',
         }];
 
-        if (this.state.productLevels) {
-            this.state.productLevels.forEach(function (level) {
-                columns.push({
-                        title: (level.name),
-                        key: (level.id),
-                        dataIndex: (level.name),
-                        render: item => <span>{item ? item : '--'} %</span>
-                    }
-                );
-            })
-        }
+        // if (this.state.productLevels) {
+        //     this.state.productLevels.forEach(function (level) {
+        //         columns.push({
+        //                 title: (level.name),
+        //                 key: (level.id),
+        //                 dataIndex: (level.name),
+        //                 render: item => <span>{item ? item : '--'} %</span>
+        //             }
+        //         );
+        //     })
+        // }
 
 
         let that = this;
@@ -112,7 +115,7 @@ export default class MlmBase extends React.Component {
         return <div>
             <Switch>
                 <Route path="/settings/mlm/generate"
-                       render={(route) => <MLMGenerate {...route} loadData={this.loadMlmData}{...this.state}/>}/>
+                       render={(route) => <MLMGenerate {...route} loadData={this.loadMlmData} {...this.state}/>}/>
                 <Route>
                     <div>
                         <h2>MLM Commissions
@@ -123,7 +126,14 @@ export default class MlmBase extends React.Component {
                             </Link>
                         </h2>
                         <Card>
-                            <Table dataSource={datasource} columns={columns} bordered/>
+                            {this.state.productMargin ?
+                                <Tabs type="card">
+                                    {this.state.productMargin.map(marginType =>
+                                        <TabPane tab={marginType.name} key={marginType.id}>
+                                            <Table pagination={false} dataSource={datasource} columns={columns} bordered/>
+                                        </TabPane>)}
+                                </Tabs> : <h4>No MLM Data</h4>}
+
                         </Card>
                     </div>
                 </Route>

@@ -119,6 +119,7 @@ export const BULK_STOCK_ENTRY = "stock_entry/bulk/";
 
 
 // MLM API_URL
-export const ROLE_COMMISION = "role_commission";
+export const ROLE_COMMISION = "role_commission/";
 export const PRODUCT_LEVEL = "product_level";
+export const PRODUCT_MARGIN = "product_margin/";
 export const GENERATE_MLM_COMMISSON = 'product_margin/generate_mlm/';
