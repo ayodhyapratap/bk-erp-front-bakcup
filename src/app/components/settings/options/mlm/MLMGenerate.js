@@ -11,7 +11,7 @@ class MLMGenerate extends React.Component {
         super(props);
         this.state = {
             redirect: false,
-            level_count: 3
+            level_count: 1
         }
     }
 
@@ -80,6 +80,7 @@ class MLMGenerate extends React.Component {
                     reqData[values.margin_name][i].push({[j]: values[i][j]})
                 }
             }
+            reqData[values.margin_name].details = {level_count: that.state.level_count}
             if (!err) {
                 console.log(reqData);
                 that.setState({changePassLoading: true});
@@ -111,7 +112,7 @@ class MLMGenerate extends React.Component {
     setLevelCount = (e) => {
         let that = this;
         that.setState({
-            level_count: e
+            level_count: e < 5 ? e : 5
         })
     }
 
@@ -149,7 +150,7 @@ class MLMGenerate extends React.Component {
                         {getFieldDecorator(`${i}[${record.id}]`, {
                             validateTrigger: ['onChange', 'onBlur'],
                         })(
-                            <InputNumber min={0} max={100} placeholder="Percent Commission"/>
+                            <InputNumber min={0} max={5} placeholder="Percent Commission"/>
                         )}
                     </Form.Item>
                 })
@@ -169,19 +170,19 @@ class MLMGenerate extends React.Component {
                             <Input placeholder="Margin Type Name"/>
                         )}
                     </Form.Item>
-                    {/*<Form.Item*/}
-                    {/*{...formItemLayout}*/}
-                    {/*label={'No of Levels'}*/}
-                    {/*required={false}*/}
-                    {/*key={`level_count`}*/}
+                    <Form.Item
+                        {...formItemLayout}
+                        label={'No of Levels'}
+                        required={false}
+                        key={`level_count`}
 
-                    {/*>*/}
-                    {/*{getFieldDecorator(`level_count`, {*/}
-                    {/*validateTrigger: ['onChange', 'onBlur'],*/}
-                    {/*})(*/}
-                    {/*<InputNumber min={1} max={5} placeholder="Level Count" onChange={this.setLevelCount}/>*/}
-                    {/*)}*/}
-                    {/*</Form.Item>*/}
+                    >
+                        {getFieldDecorator(`level_count`, {
+                            validateTrigger: ['onChange', 'onBlur'],
+                        })(
+                            <InputNumber min={1} max={5} placeholder="Level Count" onChange={this.setLevelCount}/>
+                        )}
+                    </Form.Item>
                     <Table bordered={true} pagination={false} columns={columns} dataSource={this.state.staffRoles}/>
                     <Form.Item>
                         <br/>

@@ -1,4 +1,4 @@
 /**
  * Diffent Connection Configs */
 
-export const BACKEND_BASE_URL = 'http://bk-erp.plutonic.co.in:8000/';
+export const BACKEND_BASE_URL = 'http://13.233.86.110:8000/';

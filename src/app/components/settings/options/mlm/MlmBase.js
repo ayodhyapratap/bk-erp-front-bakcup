@@ -1,9 +1,9 @@
 import React from "react";
 import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Table, Tabs} from "antd";
-import {getAPI, interpolate, deleteAPI} from "../../../../utils/common";
+import {getAPI, interpolate, deleteAPI, postAPI} from "../../../../utils/common";
 import MLMGenerate from "./MLMGenerate"
 import {Link, Route, Switch} from "react-router-dom";
-import {PRODUCT_MARGIN, ROLE_COMMISION, STAFF_ROLES} from "../../../../constants/api";
+import {OFFERS, PRODUCT_MARGIN, ROLE_COMMISION, SINGLE_PRODUCT_MARGIN, STAFF_ROLES} from "../../../../constants/api";
 
 const TabPane = Tabs.TabPane;
 
@@ -12,6 +12,7 @@ export default class MlmBase extends React.Component {
         super(props);
         this.state = {
             mlmItems: [],
+            productMargin: [],
             active_practiceId: this.props.active_practiceId,
         }
         this.loadMlmData = this.loadMlmData.bind(this);
@@ -63,55 +64,68 @@ export default class MlmBase extends React.Component {
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
 
+    deleteObject(record) {
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.loadProductMargin();
+        }
+        let errorFn = function () {
+        }
+        postAPI(interpolate(SINGLE_PRODUCT_MARGIN, [record.id]), reqData, successFn, errorFn);
+    }
 
     render() {
+        let that = this;
         const rolesdata = {}
         if (this.state.staffRoles) {
             this.state.staffRoles.forEach(function (role) {
                 rolesdata[role.id] = role.name;
             })
         }
-        let columns = [{
-            title: 'Role',
-            key: 'role',
-            dataIndex: 'role',
-        }];
+        let columns = {}
 
-        // if (this.state.productLevels) {
-        //     this.state.productLevels.forEach(function (level) {
-        //         columns.push({
-        //                 title: (level.name),
-        //                 key: (level.id),
-        //                 dataIndex: (level.name),
-        //                 render: item => <span>{item ? item : '--'} %</span>
-        //             }
-        //         );
-        //     })
-        // }
+        that.state.productMargin.forEach(function (productMargin) {
+            columns[productMargin.id] = [{
+                title: 'Role',
+                key: 'role',
+                dataIndex: 'role',
+            }];
+            for (let level = 1; level <= productMargin.level_count; level++) {
+                columns[productMargin.id].push({
+                    title: 'Level ' + level,
+                    key: level,
+                    dataIndex: level,
+                    render: (value) => <span>{value}%</span>
+                })
+            }
+        })
 
 
-        let that = this;
-
-        let datasource = [];
-        if (that.state.staffRoles) {
-            that.state.staffRoles.forEach(function (role) {
-                let roledata = {"role": role.name};
-                if (that.state.productLevels) {
-                    that.state.productLevels.forEach(function (level) {
-                        if (that.state.mlmItems) {
-                            for (let i = 0; i < that.state.mlmItems.length; i++) {
-                                let item = that.state.mlmItems[i];
-                                if (item.role == role.id && item.level == level.id) {
-                                    roledata[level.name] = item.commision_percent;
-                                    break;
+        let datasource = {};
+        that.state.productMargin.forEach(function (productMargin) {
+            datasource[productMargin.id] = [];
+            if (that.state.staffRoles) {
+                that.state.staffRoles.forEach(function (role) {
+                    let roledata = {"role": role.name};
+                    if (productMargin.level_count) {
+                        for (let level = 1; level <= productMargin.level_count; level++) {
+                            if (that.state.mlmItems) {
+                                for (let i = 0; i < that.state.mlmItems.length; i++) {
+                                    let item = that.state.mlmItems[i];
+                                    if (item.role == role.id && item.level == level) {
+                                        roledata[level] = item.commision_percent;
+                                        break;
+                                    }
                                 }
                             }
                         }
-                    })
-                }
-                datasource.push(roledata);
-            })
-        }
+                    }
+                    datasource[productMargin.id].push(roledata);
+                })
+            }
+        });
         return <div>
             <Switch>
                 <Route path="/settings/mlm/generate"
@@ -130,7 +144,20 @@ export default class MlmBase extends React.Component {
                                 <Tabs type="card">
                                     {this.state.productMargin.map(marginType =>
                                         <TabPane tab={marginType.name} key={marginType.id}>
-                                            <Table pagination={false} dataSource={datasource} columns={columns} bordered/>
+                                            <h4>
+                                                <div >
+                                                    <Button.Group >
+                                                        <Button type="primary"><Icon type="edit"/> Edit</Button>
+                                                        <Button type="danger"
+                                                                onClick={() => that.deleteObject(marginType)}><Icon
+                                                            type="delete"/> Delete</Button>
+                                                    </Button.Group>
+                                                </div>
+                                            </h4>
+                                            <Table pagination={false} dataSource={datasource[marginType.id]}
+                                                   rowKey="role"
+                                                   columns={columns[marginType.id]}
+                                                   bordered/>
                                         </TabPane>)}
                                 </Tabs> : <h4>No MLM Data</h4>}
 

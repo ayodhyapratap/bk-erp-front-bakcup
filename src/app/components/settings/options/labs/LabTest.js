@@ -74,6 +74,10 @@ class LabTest extends React.Component {
             dataIndex: 'instruction',
             key: 'instruction',
         }, {
+            title: ' MLM Margin',
+            dataIndex: 'margin',
+            key: 'margin',
+        }, {
             title: 'Action',
             key: 'action',
             render: (text, record) => (

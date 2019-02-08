@@ -101,6 +101,11 @@ class RecentProcedure extends React.Component {
                                     key="cost"
                                 />
                                 <Column
+                                    title="MLM Margin"
+                                    dataIndex="margin"
+                                    key="margin"
+                                />
+                                <Column
                                     title="Applicable Taxes"
                                     dataIndex="taxes"
                                     key="taxes"

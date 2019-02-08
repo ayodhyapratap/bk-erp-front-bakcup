@@ -163,7 +163,7 @@ export default class InventoryItemList extends React.Component {
     }
 
     render() {
-        const taxesdata = {}
+        const taxesdata = {};
         if (this.state.taxes_list) {
             this.state.taxes_list.forEach(function (tax) {
                 taxesdata[tax.id] = tax;
