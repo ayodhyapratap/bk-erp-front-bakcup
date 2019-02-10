@@ -22,11 +22,6 @@ class App extends Component {
         super(props);
         this.state = {
             user: loggedInUser(),
-            permissions: loggedInPermissions(),
-            // active_practiceId: loggedInactivePractice(),
-            // practiceList: [],
-            // activePracticeData: null,
-            // specialisations: null,
             redirect: false,
         };
         this.login = this.login.bind(this);

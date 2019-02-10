@@ -32,16 +32,19 @@ class AppBase extends React.Component {
         this.state = {
             collapsed: false,
             active_practiceId: loggedInactivePractice(),
-            practiceList: [],
+            practiceList: loggedInUserPractices(),
             activePracticeData: null,
+            activePracticePermissions: {},
             specialisations: null,
-            allowAllPermissions:true
+            allowAllPermissions: true,
         };
         this.activeData = this.activeData.bind(this);
         this.clinicData = this.clinicData.bind(this);
-        this.clinicData();
         this.switchPractice = this.switchPractice.bind(this);
+    }
 
+    componentDidMount() {
+        this.clinicData();
     }
 
     toggleSider = (option) => {
@@ -52,24 +55,24 @@ class AppBase extends React.Component {
 
     activeData() {
         let that = this;
-        that.state.practiceList.forEach(function (practice) {
-            if (that.state.active_practiceId == practice.id) {
-                that.setState({
-                    activePracticeData: practice,
-                })
-
-            }
+        that.state.practiceList.forEach(function (practiceObj) {
+            let permissions = {};
+            practiceObj.permissions_data.forEach(function (permission) {
+                permissions[permission.codename] = permission
+            });
+            that.setState({
+                activePracticeData: practiceObj.pratice,
+                activePracticePermissions: permissions
+            })
         });
     }
 
     switchPractice(practiceId) {
-        // console.log(practiceId);
         let that = this;
         that.setState({
             active_practiceId: practiceId,
         }, function () {
             setCurrentPractice(practiceId);
-            // window.location.reload();
             that.activeData();
         });
 
@@ -77,62 +80,28 @@ class AppBase extends React.Component {
     }
 
     clinicData() {
-        let group = loggedInUserGroup();
-        if (Array.isArray(group) && group.length && group[0].name == "Admin") {
-            var that = this;
-            let successFn = function (data) {
-                let specialisations = {};
-                data[0].specialisations.forEach(function (speciality) {
-                    specialisations[speciality.id] = speciality
-                });
-                // console.log(specialisations);
-
-                that.setState({
-                    practiceList: data,
-                    specialisations: specialisations,
-                    // active_practiceId: data[0].id,
-                }, function () {
-                    that.activeData();
-                })
-            };
-            let errorFn = function () {
-            };
-            getAPI(ALL_PRACTICE, successFn, errorFn);
-        } else {
-            let practice = loggedInUserPractices();
-            console.log(practice);
-            var practiceKeys = Object.keys(practice);
-            console.log(practiceKeys);
-            var that = this;
-            let practiceArray = [];
-            practiceKeys.forEach(function (key) {
-                let successFn = function (data) {
-                    that.setState(function (prevState) {
-                        console.log(prevState)
-                        // let previousList = prevState.practiceList
-                        // practiceArray = practiceArray.concat(previousList);
-                        practiceArray.push(data);
-                        console.log(practiceArray);
-                        // if(doctors==null){doctors=[];}
-                        // if(staff==null){staff=[];}
-                        // practiceArray.concat(data);
-                        if (prevState.active_practiceId == data.id) {
-                            return {
-                                practiceList: practiceArray,
-                                activePracticeData: data
-                            }
-                        }
-                        return {
-                            practiceList: practiceArray,
-                        }
+        var that = this;
+        that.setState(function (prevState) {
+            let returnObj = {}
+            console.log(prevState);
+            let practices = loggedInUserPractices();
+            practices.forEach(function (practiceObj) {
+                console.log(practiceObj.pratice.id);
+                if (prevState.active_practiceId == practiceObj.pratice.id) {
+                    let permissions = {};
+                    practiceObj.permissions_data.forEach(function (permission) {
+                        console.log(permission)
+                        permissions[permission.codename] = permission
                     });
+                    returnObj = {
+                        activePracticeData: practiceObj.pratice,
+                        activePracticePermissions: permissions
+                    }
                 }
-                let errorFn = function () {
-                };
-                getAPI(interpolate(PRACTICE, [key]), successFn, errorFn);
 
             });
-        }
+            return returnObj;
+        });
     }
 
 
@@ -146,10 +115,12 @@ class AppBase extends React.Component {
                            switchPractice={this.switchPractice}
                            toggleSider={this.toggleSider}/>
                 <Switch>
-                    <Route path="/web" render={(route) => <WebAdminHome {...this.state}
-                                                                        {...this.props}
-                                                                        {...route}
-                                                                        key={this.state.active_practiceId}/>}/>
+                    {this.state.activePracticePermissions.WebAdmin ?
+                        <Route path="/web" render={(route) => <WebAdminHome {...this.state}
+                                                                            {...this.props}
+                                                                            {...route}
+                                                                            key={this.state.active_practiceId}/>}/>
+                        : null}
                     <Route path="/calendar" render={(route) => <Calendar {...this.state}
                                                                          {...this.props}
                                                                          {...route}
@@ -176,7 +147,10 @@ class AppBase extends React.Component {
                                                                            {...route}
                                                                            key={this.state.active_practiceId}/>}/>
 
-                    <Route path="/profile" component={Profile}/>
+                    <Route path="/profile" render={(route) => <Profile {...this.state}
+                                                                       {...this.props}
+                                                                       {...route}
+                                                                       key={this.state.active_practiceId}/>}/>
                     <Route component={Error404}/>
                     <AppFooter/>
                 </Switch>

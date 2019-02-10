@@ -33,13 +33,13 @@ class PracticeDetails extends React.Component {
     }
 
     loadData() {
-        let group = loggedInUserGroup();
-        if (group[0].name == "Admin") {
+        // let group = loggedInUserGroup();
+        // if (group[0].name == "Admin") {
             this.admin_StaffData();
-        }
-        else {
-            this.clinicData();
-        }
+        // }
+        // else {
+        //     this.clinicData();
+        // }
 
     }
 
