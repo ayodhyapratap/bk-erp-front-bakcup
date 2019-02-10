@@ -92,21 +92,21 @@ class PracticeDetails extends React.Component {
 
         const columns = [{
             title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
+            dataIndex: 'pratice.name',
+            key: 'pratice.name',
             render: text => <a href="javascript:;">{text}</a>,
         }, {
             title: 'Tagline',
-            dataIndex: 'tagline',
-            key: 'tagline',
+            dataIndex: 'pratice.tagline',
+            key: 'pratice.tagline',
         }, {
             title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
+            dataIndex: 'pratice.address',
+            key: 'pratice.address',
         }, {
             title: 'Specialisation',
             key: 'specialisation',
-            dataIndex: 'specialisation',
+            dataIndex: 'pratice.specialisation',
             render: specialisation => (
                 <span>
                  <Tag color="blue" key={specialisation}>{specialisations[specialisation]}</Tag>
@@ -117,10 +117,10 @@ class PracticeDetails extends React.Component {
             key: 'action',
             render: (text, record) => (
                 <span>
-                <Link to={'/settings/clinics/' + record.id + '/edit'}>Edit</Link>
+                <Link to={'/settings/clinics/' + record.pratice.id + '/edit'}>Edit</Link>
                 <Divider type="vertical"/>
                     {that.props.practiceList.length > 1
-                        ? <a onClick={() => this.deletePractice(record.id)}>Delete</a> : null}
+                        ? <a onClick={() => this.deletePractice(record.pratice.id)}>Delete</a> : null}
               </span>
             ),
         }];
