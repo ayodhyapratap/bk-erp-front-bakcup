@@ -16,35 +16,29 @@ class PracticeDetails extends React.Component {
     }
 
     componentDidMount() {
-        this.props.refreshClinicData();
-        // let group=loggedInUserGroup();
-        // if(group[0].name=="Admin"){
-        //   this.admin_practiceData();
-        // }
-        // else {
-        //   this.clinicData();
-        // }
+        // this.props.refreshClinicData();
+        this.admin_practiceData();
     }
 
-    // admin_practiceData(){
-    //   var that = this;
-    //   let successFn = function (data) {
-    //     let specialisations = {};
-    //     data[0].specialisations.forEach(function(speciality){
-    //       specialisations[speciality.id] = speciality
-    //     });
-    //     console.log(specialisations);
-    //
-    //     that.setState({
-    //     practiceList: data,
-    //     specialisations:specialisations,
-    //     })
-    //   };
-    //   let errorFn = function () {
-    //   };
-    //   getAPI(ALL_PRACTICE, successFn, errorFn);
-    //
-    // }
+    admin_practiceData() {
+        var that = this;
+        let successFn = function (data) {
+            let specialisations = {};
+            data[0].specialisations.forEach(function (speciality) {
+                specialisations[speciality.id] = speciality
+            });
+            console.log(specialisations);
+
+            that.setState({
+                practiceList: data,
+                specialisations: specialisations,
+            })
+        };
+        let errorFn = function () {
+        };
+        getAPI(ALL_PRACTICE, successFn, errorFn);
+
+    }
 
     // clinicData(){
     //   let  practice=loggedInUserPractices();
@@ -92,21 +86,21 @@ class PracticeDetails extends React.Component {
 
         const columns = [{
             title: 'Name',
-            dataIndex: 'pratice.name',
-            key: 'pratice.name',
+            dataIndex: 'name',
+            key: 'name',
             render: text => <a href="javascript:;">{text}</a>,
         }, {
             title: 'Tagline',
-            dataIndex: 'pratice.tagline',
-            key: 'pratice.tagline',
+            dataIndex: 'tagline',
+            key: 'tagline',
         }, {
             title: 'Address',
-            dataIndex: 'pratice.address',
-            key: 'pratice.address',
+            dataIndex: 'address',
+            key: 'address',
         }, {
             title: 'Specialisation',
             key: 'specialisation',
-            dataIndex: 'pratice.specialisation',
+            dataIndex: 'specialisation',
             render: specialisation => (
                 <span>
                  <Tag color="blue" key={specialisation}>{specialisations[specialisation]}</Tag>
@@ -117,10 +111,10 @@ class PracticeDetails extends React.Component {
             key: 'action',
             render: (text, record) => (
                 <span>
-                <Link to={'/settings/clinics/' + record.pratice.id + '/edit'}>Edit</Link>
+                <Link to={'/settings/clinics/' + record.id + '/edit'}>Edit</Link>
                 <Divider type="vertical"/>
                     {that.props.practiceList.length > 1
-                        ? <a onClick={() => this.deletePractice(record.pratice.id)}>Delete</a> : null}
+                        ? <a onClick={() => this.deletePractice(record.id)}>Delete</a> : null}
               </span>
             ),
         }];
@@ -134,7 +128,7 @@ class PracticeDetails extends React.Component {
                 </Link>
             </h2>
             <Card>
-                <Table pagination={false} columns={columns} dataSource={this.props.practiceList}/>
+                <Table pagination={false} columns={columns} dataSource={this.state.practiceList}/>
             </Card>
         </Row>
     }

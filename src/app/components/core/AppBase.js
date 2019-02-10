@@ -98,7 +98,6 @@ class AppBase extends React.Component {
                         activePracticePermissions: permissions
                     }
                 }
-
             });
             return returnObj;
         });

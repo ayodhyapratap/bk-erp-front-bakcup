@@ -2,8 +2,14 @@ import {
     Form, Icon, Input, Button, Checkbox, Card, Table, InputNumber
 } from 'antd';
 import React from "react";
-import {ROLE_COMMISION, STAFF_ROLES, PRODUCT_LEVEL, GENERATE_MLM_COMMISSON} from "../../../../constants/api"
-import {displayMessage, getAPI, postAPI, putAPI} from "../../../../utils/common";
+import {
+    ROLE_COMMISION,
+    STAFF_ROLES,
+    PRODUCT_LEVEL,
+    GENERATE_MLM_COMMISSON,
+    SINGLE_PRODUCT_MARGIN
+} from "../../../../constants/api"
+import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../../utils/common";
 import {SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
 
 class MLMGenerate extends React.Component {
@@ -11,13 +17,20 @@ class MLMGenerate extends React.Component {
         super(props);
         this.state = {
             redirect: false,
-            level_count: 1
+            level_count: 1,
+            margin: null,
+            editRecord: (this.props.editRecord ? this.props.editRecord : null),
+            editId: (this.props.editId ? this.props.editId : null)
         }
     }
 
     componentDidMount() {
         this.loadMlmData();
         this.loadRoles();
+        if (this.state.editRecord && this.state.editId) {
+            this.loadMlmData();
+            this.setLevelCount(this.state.editRecord.length)
+        }
         // this.loadProductlevels();
     }
 
@@ -25,13 +38,13 @@ class MLMGenerate extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                mlmItems: data
+                margin: data
             })
         }
         let errorFn = function () {
 
         }
-        getAPI(ROLE_COMMISION, successFn, errorFn);
+        getAPI(interpolate(SINGLE_PRODUCT_MARGIN, [this.state.editId]), successFn, errorFn);
     }
 
     loadRoles() {
@@ -137,6 +150,7 @@ class MLMGenerate extends React.Component {
         }];
         if (this.state.level_count)
             for (let i = 1; i <= this.state.level_count; i++) {
+                let record = {}
                 columns.push({
                     title: 'Level ' + i,
                     dataIndex: 'Level ' + i,
@@ -145,12 +159,12 @@ class MLMGenerate extends React.Component {
                         {...formItemLayout}
                         // label={k}
                         required={true}
-                        key={`${i}[${record.id}]`}
-                    >
+                        key={`${i}[${record.id}]`}>
                         {getFieldDecorator(`${i}[${record.id}]`, {
                             validateTrigger: ['onChange', 'onBlur'],
+                            initialValue: (this.state.editRecord && (record = this.state.editRecord[record.id]) ? record[i] : null)
                         })(
-                            <InputNumber min={0} max={5} placeholder="Percent Commission"/>
+                            <InputNumber min={0} placeholder="Percent Commission"/>
                         )}
                     </Form.Item>
                 })
@@ -166,6 +180,7 @@ class MLMGenerate extends React.Component {
                         key={`margin_name`}>
                         {getFieldDecorator(`margin_name`, {
                             validateTrigger: ['onChange', 'onBlur'],
+                            initialValue: (this.state.margin ? this.state.margin.name : null)
                         })(
                             <Input placeholder="Margin Type Name"/>
                         )}
@@ -179,6 +194,7 @@ class MLMGenerate extends React.Component {
                     >
                         {getFieldDecorator(`level_count`, {
                             validateTrigger: ['onChange', 'onBlur'],
+                            initialValue: (this.state.editRecord ? this.state.editRecord.length : null)
                         })(
                             <InputNumber min={1} max={5} placeholder="Level Count" onChange={this.setLevelCount}/>
                         )}

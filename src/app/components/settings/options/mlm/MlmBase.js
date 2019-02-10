@@ -64,6 +64,15 @@ export default class MlmBase extends React.Component {
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
 
+    editObject(id, record) {
+        this.setState({
+            editId: id,
+            editRecord: record
+        }, function () {
+            this.props.history.push('/settings/mlm/edit');
+        })
+    }
+
     deleteObject(record) {
         let that = this;
         let reqData = record;
@@ -128,8 +137,12 @@ export default class MlmBase extends React.Component {
         });
         return <div>
             <Switch>
-                <Route path="/settings/mlm/generate"
+                <Route exact path="/settings/mlm/generate"
                        render={(route) => <MLMGenerate {...route} loadData={this.loadMlmData} {...this.state}/>}/>
+                {this.state.editId && this.state.editRecord ?
+                    <Route exact path="/settings/mlm/edit"
+                           render={(route) => <MLMGenerate {...route}
+                                                           loadData={this.loadMlmData} {...this.state}/>}/> : null}
                 <Route>
                     <div>
                         <h2>MLM Commissions
@@ -145,9 +158,11 @@ export default class MlmBase extends React.Component {
                                     {this.state.productMargin.map(marginType =>
                                         <TabPane tab={marginType.name} key={marginType.id}>
                                             <h4>
-                                                <div >
-                                                    <Button.Group >
-                                                        <Button type="primary"><Icon type="edit"/> Edit</Button>
+                                                <div>
+                                                    <Button.Group>
+                                                        <Button type="primary"
+                                                                onClick={() => this.editObject(marginType.id, datasource[marginType.id])}><Icon
+                                                            type="edit"/> Edit</Button>
                                                         <Button type="danger"
                                                                 onClick={() => that.deleteObject(marginType)}><Icon
                                                             type="delete"/> Delete</Button>
