@@ -46,7 +46,7 @@ class SettingsDash extends React.Component {
                             // marginLeft: '200px'
                         }}>
             <Layout>
-                <SettingSider/>
+                <SettingSider {...this.props}/>
                 <Content style={{
                     margin: '24px 16px',
                     // padding: 24,
@@ -55,77 +55,89 @@ class SettingsDash extends React.Component {
                 }}>
                     <Switch>
                         <Route exact path="/settings/clinics-staff"
-                               render={(route) => (this.props.permissions.view_practicestaff || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsPracticeStaff || this.props.allowAllPermissions ?
                                        <PracticeStaff  {...this.props} {...route} /> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/clinics-staff/adddoctor"
-                               render={(route) => (this.props.permissions.add_practicestaff || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsPracticeStaff || this.props.allowAllPermissions ?
                                        <AddStaffDoctor  {...this.props} {...route} /> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/clinics-staff/:doctorid/edit"
-                               render={(route) => (this.props.permissions.add_practicestaff || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsPracticeStaff || this.props.allowAllPermissions ?
                                        <AddStaffDoctor  {...this.props} {...route} /> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/clinics"
-                               render={(route) => (this.props.permissions.view_practice || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsPracticeDetail || this.props.allowAllPermissions ?
                                        <PracticeDetails  {...this.props} {...route} /> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/clinics/add"
-                               render={(route) => (this.props.permissions.add_practice || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsPracticeDetail || this.props.allowAllPermissions ?
                                        <AddPracticeDetails  {...this.props} /> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/clinics/:id/edit"
-                               render={(route) => (this.props.permissions.change_practice || this.props.allowAllPermissions ?
-                                   <EditPracticeDetail {...this.props} practiceId={route.match.params.id}/> :
-                                   <PermissionDenied/>)
-                               }/>
+                               render={(route) => (this.props.activePracticePermissions.SettingsPracticeDetail || this.props.allowAllPermissions ?
+                                       <EditPracticeDetail {...this.props} practiceId={route.match.params.id}/> :
+                                       <PermissionDenied/>
+                               )}/>
                         <Route exact path="/settings/communication-settings"
-                               render={(route) => (this.props.permissions.view_practice || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsCommunincations || this.props.allowAllPermissions ?
                                        <CommunicationSettings  {...this.props} /> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/calendarsettings"
-                               render={(route) => (this.props.permissions.view_practicestaff || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsCalendar || this.props.allowAllPermissions ?
                                        <CalendarSettings  {...this.props} /> : <PermissionDenied/>
                                )}/>
-                        <Route path="/settings/procedures"
-                               render={(route) => (this.props.permissions.view_procedurecatalog || this.props.allowAllPermissions ?
-                                       <RecentProcedure  {...this.props} {...route}/> : <PermissionDenied/>
-                               )}/>
                         <Route exact path="/settings/procedures/addprocedure"
-                               render={(route) => (this.props.permissions.add_procedurecatalog || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsProcedureCatalog || this.props.allowAllPermissions ?
                                        <AddProcedure  {...this.props} /> : <PermissionDenied/>
                                )}/>
+                        <Route path="/settings/procedures"
+                               render={(route) => (this.props.activePracticePermissions.SettingsProcedureCatalog || this.props.allowAllPermissions ?
+                                       <RecentProcedure  {...this.props} {...route}/> : <PermissionDenied/>
+                               )}/>
+
 
                         <Route exact path="/settings/billing"
-                               render={(route) => (this.props.permissions.view_taxes || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsBilling || this.props.allowAllPermissions ?
                                        <BillingSettings  {...this.props} /> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/loyalty"
-                               render={(route) => (this.props.permissions.view_practiceoffers || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsLoyalty || this.props.allowAllPermissions ?
                                        <Offers  {...this.props} /> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/emr"
-                               render={(route) => (this.props.permissions.view_practiceoffers || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsEMR || this.props.allowAllPermissions ?
                                        <EMRSettings  {...this.props} /> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/loyalty/add"
-                               render={(route) => (this.props.permissions.add_practiceoffers || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsLoyalty || this.props.allowAllPermissions ?
                                        <AddOffer  {...this.props} /> : <PermissionDenied/>
                                )}/>
 
                         <Route path="/settings/prescriptions"
-                               render={(route) => <Prescriptions  {...this.props} {...route} />}/>
+                               render={(route) => (this.props.activePracticePermissions.SettingsPrescriptions || this.props.allowAllPermissions ?
+                                       <Prescriptions  {...this.props} {...route} /> : <PermissionDenied/>
+                               )}/>
 
                         <Route exact path="/settings/expense-types"
-                               render={() => <ExpensesTypes  {...this.props} />}/>
+                               render={(route) => (this.props.activePracticePermissions.SettingsExpenseTypes || this.props.allowAllPermissions ?
+                                       <ExpensesTypes  {...this.props} /> : <PermissionDenied/>
+                               )}/>
                         <Route path="/settings/labs"
-                               render={(route) => <LabTest  {...this.props} {...route} />}/>
+                               render={(route) => (this.props.activePracticePermissions.SettingsLabs || this.props.allowAllPermissions ?
+                                       <LabTest  {...this.props} {...route} /> : <PermissionDenied/>
+                               )}/>
                         <Route exact path="/settings/medical-history"
-                               render={() => <MedicalHistory  {...this.props} />}/>
-                        <Route path="/settings/mlm" render={(route) => <MlmBase {...this.state}
-                                                                       {...this.props}
-                                                                       {...route}
-                                                                       key={this.state.active_practiceId}/>}/>
+                               render={(route) => (this.props.activePracticePermissions.SettingsMedicalHistory || this.props.allowAllPermissions ?
+                                       <MedicalHistory  {...this.props} /> : <PermissionDenied/>
+                               )}/>
+                        <Route path="/settings/mlm"
+                               render={(route) => (this.props.activePracticePermissions.MLMSettings || this.props.allowAllPermissions ?
+                                       <MlmBase {...this.state}
+                                                {...this.props}
+                                                {...route}
+                                                key={this.state.active_practiceId}/> : <PermissionDenied/>
+                               )}/>
                         <Route component={Error404}/>
                     </Switch>
                 </Content>

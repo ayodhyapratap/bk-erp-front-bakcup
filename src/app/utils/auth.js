@@ -34,24 +34,20 @@ export const loggedInUserPractices = function () {
     let role = lockr.get(ROLE);
     let token = lockr.get(AUTH_TOKEN);
     let practice = lockr.get(PRACTICE);
-    console.log(practice)
-    let practices = {};
+    console.log(practice);
     if (role && token && practice) {
-        practice.forEach(function (clinic) {
-            practices[clinic[0].practice] = clinic
-        })
-
+        return practice;
     }
-    return practices;
+    return [];
 };
 export const loggedInactivePractice = function () {
     let currentPractice = lockr.get(CURRENT_PRACTICE);
     if (currentPractice) {
         return currentPractice;
-    }else {
+    } else {
         let practice = lockr.get(PRACTICE);
-        if(practice && practice.length){
-            setCurrentPractice(practice[0].practice);
+        if (practice && practice.length) {
+            setCurrentPractice(practice.practice);
             return loggedInactivePractice();
         }
     }
@@ -88,9 +84,7 @@ export const logInUser = function (data, successFn, errorFn) {
         let data = response.data;
         lockr.set(ROLE, data.user);
         lockr.set(AUTH_TOKEN, data.token);
-        lockr.set(GROUP, data.group);
-        lockr.set(PRACTICE, data.practice_permissions)
-        console.log(data.practice);
+        lockr.set(PRACTICE, data.practice_permissions);
         successFn()
     }).catch(function (error) {
         console.log(error);

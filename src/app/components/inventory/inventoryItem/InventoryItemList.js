@@ -22,7 +22,8 @@ export default class InventoryItemList extends React.Component {
             inventoryItemList: [], // Filtered List
             active_practiceId: this.props.active_practiceId,
             stockModalVisibility: false,
-            itemTypeFilter: "ALL"
+            itemTypeFilter: "ALL",
+            itemStockFilter: "ALL"
         }
         this.loadData = this.loadData.bind(this);
         this.showAddOrConsumeModal = this.showAddOrConsumeModal.bind(this);
@@ -126,25 +127,43 @@ export default class InventoryItemList extends React.Component {
         })
     }
 
-    changeFilter(e) {
-        this.setState(function (prevState) {
-            if (e.target.value == "ALL") {
-                return {
-                    inventoryItemList: prevState.invantoryItems
-                }
-            } else {
+    changeFilter = (e) => {
+        let that = this;
+        this.setState({
+            [e.target.name]: e.target.value
+        }, function () {
+            that.setState(function (prevState) {
                 let filteredList = [];
-                prevState.invantoryItems.forEach(function (item) {
-                    if (item.item_type == e.target.value)
-                        filteredList.push(item);
-                });
+                if (prevState.itemTypeFilter == "ALL" && prevState.itemStockFilter == "ALL") {
+                    filteredList = prevState.invantoryItems;
+                } else {
+                    prevState.invantoryItems.forEach(function (item) {
+                        let approved = 0;
+                        if (prevState.itemTypeFilter == "ALL" || prevState.itemTypeFilter == item.item_type) {
+                            approved += 1
+                        }
+                        if (prevState.itemStockFilter == 'All') {
+                            approved += 1
+                        } else if (prevState.itemStockFilter == 'LOW' && item.item_stock_type.item_stock) {
+                            let sum = item.item_stock_type.item_stock.reduce(function (a, b) {
+                                return a.quantity + b.quantity;
+                            }, 0);
+                            if (sum < item.re_order_level) {
+                                approved += 1
+                            }
+                        }
+                        if (approved >= 1) {
+                            filteredList.push(item)
+                        }
+                    });
+                }
                 return {inventoryItemList: filteredList}
-            }
+            })
         })
     }
 
     render() {
-        const taxesdata = {}
+        const taxesdata = {};
         if (this.state.taxes_list) {
             this.state.taxes_list.forEach(function (tax) {
                 taxesdata[tax.id] = tax;
@@ -177,12 +196,13 @@ export default class InventoryItemList extends React.Component {
             title: 'Inventory Stock',
             dataIndex: 'item_type_stock',
             key: 'item_type_stock',
-            render: function (item_type_stock) {
+            render: function (item_type_stock, record) {
                 let totalStock = 0;
                 item_type_stock.item_stock.forEach(function (stock) {
                     totalStock += (Number.isInteger(stock.quantity) ? stock.quantity : 0)
                 });
-                return totalStock;
+                return <span>{totalStock} {totalStock <= record.re_order_level ?
+                    <Tag color="#f50">Low</Tag> : null}</span>;
             }
         }, {
             title: 'Retail Price (INR)',
@@ -261,15 +281,21 @@ export default class InventoryItemList extends React.Component {
                               <Link to="/inventory/consume-stock"><Button type="primary">Consume Stock</Button></Link>
                           </div>}>
                         <Row>
-                            <Radio.Group defaultValue={"ALL"} buttonStyle="solid" onChange={this.changeFilter}>
+                            <Radio.Group name="itemTypeFilter" size="small" defaultValue={"ALL"} buttonStyle="solid"
+                                         onChange={this.changeFilter} style={{margin: '10px'}}>
                                 <Radio.Button value={"ALL"}>ALL</Radio.Button>
                                 {INVENTORY_ITEM_TYPE.map(item =>
                                     <Radio.Button value={item.value}>
                                         {item.label}
                                     </Radio.Button>)}
                             </Radio.Group>
+                            <Radio.Group name="itemStockFilter" size="small" defaultValue={"ALL"} buttonStyle="solid"
+                                         style={{margin: '10px', float: 'right'}}>
+                                <Radio.Button value={"ALL"}>ALL</Radio.Button>
+                                <Radio.Button value={"LOW"}>Low</Radio.Button>
+                                <Radio.Button value={"EXPIRED"}>Expired</Radio.Button>
+                            </Radio.Group>
                         </Row>
-                        <br/>
                         <Table pagination={false} bordered={true} dataSource={this.state.inventoryItemList}
                                columns={columns}/>
                         <Modal visible={this.state.stockModalVisibility}

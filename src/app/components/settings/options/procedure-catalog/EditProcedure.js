@@ -9,7 +9,7 @@ import {
     SELECT_FIELD,
     NUMBER_FIELD
 } from "../../../../constants/dataKeys";
-import {PROCEDURE_CATEGORY, TAXES} from "../../../../constants/api"
+import {PROCEDURE_CATEGORY, PRODUCT_MARGIN, TAXES} from "../../../../constants/api"
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
 import {Redirect} from "react-router-dom";
 
@@ -26,6 +26,19 @@ class EditProcedure extends React.Component {
         this.loadTaxes = this.loadTaxes.bind(this);
         this.loadProcedures = this.loadProcedures.bind(this)
         this.loadTaxes();
+        this.loadProductMargin();
+    }
+    loadProductMargin() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                productMargin: data
+            })
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
     changeRedirect() {
         var redirectVar = this.state.redirect;
@@ -105,6 +118,13 @@ class EditProcedure extends React.Component {
                 })
             )
         }, {
+            label: 'MLM Margin Type',
+            type: SELECT_FIELD,
+            initialValue: (this.state.editFields ? this.state.editFields.margin : null),
+            key: 'margin',
+            required: true,
+            options: that.state.productMargin.map(margin => ({label: margin.name, value: margin.id}))
+        },{
             label: "Add Under",
             key: "under",
             type: SELECT_FIELD,

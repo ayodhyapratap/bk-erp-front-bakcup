@@ -1,5 +1,5 @@
 import React from "react";
-import {Card, Row} from "antd";
+import {Card, Row, Select} from "antd";
 import {Redirect, Route} from "react-router-dom";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form} from "antd/lib/index";
@@ -10,17 +10,19 @@ import {
     SINGLE_CHECKBOX_FIELD,
     SUCCESS_MSG_TYPE, TEXT_FIELD
 } from "../../../../constants/dataKeys";
-import {displayMessage, interpolate} from "../../../../utils/common";
-import {LABTEST_API, PATIENT_PAYMENTS_API} from "../../../../constants/api";
+import {displayMessage, getAPI, interpolate} from "../../../../utils/common";
+import {LABTEST_API, PATIENT_PAYMENTS_API, PRODUCT_MARGIN} from "../../../../constants/api";
 
 export default class AddorEditLab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             redirect: false,
-            editFields: (this.props.editTest ? this.props.editTest : null)
+            editFields: (this.props.editTest ? this.props.editTest : null),
+            productMargin: []
         }
         this.changeRedirect = this.changeRedirect.bind(this);
+        this.loadProductMargin();
     }
 
     changeRedirect() {
@@ -29,6 +31,19 @@ export default class AddorEditLab extends React.Component {
             redirect: !redirectVar,
             editFields: {},
         });
+    }
+
+    loadProductMargin() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                productMargin: data
+            })
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
 
     render() {
@@ -46,8 +61,15 @@ export default class AddorEditLab extends React.Component {
             type: NUMBER_FIELD,
             initialValue: (this.state.editFields ? this.state.editFields.cost : null),
             required: true,
-            follow:'INR',
-            min:1
+            follow: 'INR',
+            min: 1
+        }, {
+            label: 'MLM Margin Type',
+            type: SELECT_FIELD,
+            initialValue: (this.state.editFields ? this.state.editFields.margin : null),
+            key: 'margin',
+            required: true,
+            options: that.state.productMargin.map(margin => ({label: margin.name, value: margin.id}))
         }, {
             label: "Instructions",
             key: "instruction",

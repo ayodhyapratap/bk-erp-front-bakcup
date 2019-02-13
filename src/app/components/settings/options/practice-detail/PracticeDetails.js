@@ -16,35 +16,29 @@ class PracticeDetails extends React.Component {
     }
 
     componentDidMount() {
-        this.props.refreshClinicData();
-        // let group=loggedInUserGroup();
-        // if(group[0].name=="Admin"){
-        //   this.admin_practiceData();
-        // }
-        // else {
-        //   this.clinicData();
-        // }
+        // this.props.refreshClinicData();
+        this.admin_practiceData();
     }
 
-    // admin_practiceData(){
-    //   var that = this;
-    //   let successFn = function (data) {
-    //     let specialisations = {};
-    //     data[0].specialisations.forEach(function(speciality){
-    //       specialisations[speciality.id] = speciality
-    //     });
-    //     console.log(specialisations);
-    //
-    //     that.setState({
-    //     practiceList: data,
-    //     specialisations:specialisations,
-    //     })
-    //   };
-    //   let errorFn = function () {
-    //   };
-    //   getAPI(ALL_PRACTICE, successFn, errorFn);
-    //
-    // }
+    admin_practiceData() {
+        var that = this;
+        let successFn = function (data) {
+            let specialisations = {};
+            data[0].specialisations.forEach(function (speciality) {
+                specialisations[speciality.id] = speciality
+            });
+            console.log(specialisations);
+
+            that.setState({
+                practiceList: data,
+                specialisations: specialisations,
+            })
+        };
+        let errorFn = function () {
+        };
+        getAPI(ALL_PRACTICE, successFn, errorFn);
+
+    }
 
     // clinicData(){
     //   let  practice=loggedInUserPractices();
@@ -134,7 +128,7 @@ class PracticeDetails extends React.Component {
                 </Link>
             </h2>
             <Card>
-                <Table pagination={false} columns={columns} dataSource={this.props.practiceList}/>
+                <Table pagination={false} columns={columns} dataSource={this.state.practiceList}/>
             </Card>
         </Row>
     }

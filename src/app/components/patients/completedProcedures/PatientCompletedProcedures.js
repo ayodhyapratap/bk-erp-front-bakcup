@@ -1,87 +1,105 @@
 import React from "react";
 import {Button, Card, Checkbox, Divider, Icon, Table} from "antd";
 import {getAPI, interpolate} from "../../../utils/common";
-import {PROCEDURE_CATEGORY, TREATMENTPLANS_API} from "../../../constants/api";
+import {PROCEDURE_CATEGORY, PRODUCT_MARGIN, TREATMENTPLANS_API} from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
 import AddorEditPatientTreatmentPlans from "../treatmentPlans/AddorEditPatientTreatmentPlans";
 import {Link} from "react-router-dom";
+import {SELECT_FIELD} from "../../../constants/dataKeys";
 
-class PatientCompletedProcedures extends React.Component{
-    constructor(props){
+class PatientCompletedProcedures extends React.Component {
+    constructor(props) {
         super(props);
         super(props);
         this.state = {
-            currentPatient:this.props.currentPatient,
-            active_practiceId:this.props.active_practiceId,
-            treatmentPlans:[],
-            procedure_category:null,
-            completedTreatmentPlans:[],
+            currentPatient: this.props.currentPatient,
+            active_practiceId: this.props.active_practiceId,
+            treatmentPlans: [],
+            procedure_category: null,
+            completedTreatmentPlans: [],
         }
-        this.loadtreatmentPlanss =this.loadtreatmentPlanss.bind(this);
-        this.loadProcedureCategory =this.loadProcedureCategory.bind(this);
-        this.editTreatmentPlanData =this.editTreatmentPlanData.bind(this);
+        this.loadtreatmentPlanss = this.loadtreatmentPlanss.bind(this);
+        this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
+        this.editTreatmentPlanData = this.editTreatmentPlanData.bind(this);
 
     }
-    componentDidMount(){
-        if(this.props.match.params.id){
+
+    componentDidMount() {
+        if (this.props.match.params.id) {
             this.loadtreatmentPlanss();
             this.loadProcedureCategory();
+            this.loadProductMargin();
         }
 
     }
-    loadtreatmentPlanss(){
-        let completed=[];
+
+    loadProductMargin() {
         let that = this;
-        let successFn =function (data){
+        let successFn = function (data) {
             that.setState({
-                treatmentPlans:data
+                productMargin: data
+            })
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(PRODUCT_MARGIN, successFn, errorFn);
+    }
+
+    loadtreatmentPlanss() {
+        let completed = [];
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                treatmentPlans: data
             })
             data.forEach(function (treatmentplan) {
-                if(treatmentplan.is_completed){
+                if (treatmentplan.is_completed) {
                     completed.push(treatmentplan)
                 }
             })
             that.setState({
-                completedTreatmentPlans:completed,
+                completedTreatmentPlans: completed,
             })
 
         }
-        let errorFn = function (){
+        let errorFn = function () {
 
         }
-        getAPI(interpolate(TREATMENTPLANS_API,[this.props.match.params.id]), successFn, errorFn)
+        getAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id]), successFn, errorFn)
     }
-    loadProcedureCategory(){
+
+    loadProcedureCategory() {
         let that = this;
-        let successFn =function (data){
+        let successFn = function (data) {
             that.setState({
-                procedure_category:data
+                procedure_category: data
             })
 
         }
-        let errorFn = function (){
+        let errorFn = function () {
 
         }
-        getAPI(interpolate(PROCEDURE_CATEGORY,[this.props.active_practiceId]), successFn, errorFn)
+        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn)
     }
 
 
-    editTreatmentPlanData(record){
+    editTreatmentPlanData(record) {
         this.setState({
-            editTreatmentPlan:record,
+            editTreatmentPlan: record,
         });
-        let id=this.props.match.params.id
-        this.props.history.push("/patient/"+id+"/emr/plans/edit")
+        let id = this.props.match.params.id
+        this.props.history.push("/patient/" + id + "/emr/plans/edit")
 
     }
 
-    render(){
-        const procedures={}
-        if(this.state.procedure_category){
+    render() {
+        const procedures = {}
+        if (this.state.procedure_category) {
 
-            this.state.procedure_category.forEach(function(procedure){
-                procedures[procedure.id]=(procedure.name)
+            this.state.procedure_category.forEach(function (procedure) {
+                procedures[procedure.id] = (procedure.name)
             })
         }
         console.log(this.state.procedure_category);
@@ -90,11 +108,11 @@ class PatientCompletedProcedures extends React.Component{
             title: 'Time',
             dataIndex: 'created_at',
             key: 'name',
-            render: created_at =><span>{moment(created_at).format('LLL')}</span>,
+            render: created_at => <span>{moment(created_at).format('LLL')}</span>,
         }, {
             title: 'procedure',
             key: 'procedure',
-            render:(text, record) => (
+            render: (text, record) => (
                 <span> {procedures[record.procedure]}</span>
             )
         }, {
@@ -106,48 +124,58 @@ class PatientCompletedProcedures extends React.Component{
             dataIndex: 'cost',
             key: 'cost',
         }, {
+            label: 'MLM Margin Type',
+            type: SELECT_FIELD,
+            initialValue: (this.state.editFields ? this.state.editFields.margin : null),
+            key: 'margin',
+            required: true,
+            options: this.state.productMargin.map(margin => ({label: margin.name, value: margin.id}))
+        }, {
             title: 'Active',
             key: 'is_active',
-            render:(text, record) => (
+            render: (text, record) => (
                 <Checkbox disabled checked={record.is_active}/>
             )
-        },  {
+        }, {
             title: 'Completed',
             key: 'is_completed',
-            render:(text, record) => (
-                <Checkbox  disabled checked={record.is_completed}/>
+            render: (text, record) => (
+                <Checkbox disabled checked={record.is_completed}/>
             )
         }, {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
                 <span>
-               <a onClick={()=>this.editTreatmentPlanData(record)}>Edit</a>
+               <a onClick={() => this.editTreatmentPlanData(record)}>Edit</a>
 
-                <Divider type="vertical" />
+                <Divider type="vertical"/>
                 <a href="javascript:;">Delete</a>
               </span>
             ),
         }];
 
-        if(this.props.match.params.id){
+        if (this.props.match.params.id) {
             return <div><Switch>
                 <Route exact path='/patient/:id/emr/plans/add'
                        render={(route) => <AddorEditPatientTreatmentPlans{...this.state} {...route}/>}/>
                 <Route exact path='/patient/:id/emr/plans/edit'
                        render={(route) => <AddorEditPatientTreatmentPlans {...this.state} {...route}/>}/>
-                <Card title={ this.state.currentPatient?this.state.currentPatient.name + " completed Procedurees":"completed Procedures"}  extra={<Button.Group>
-                    <Link to={"/patient/"+this.props.match.params.id+"/emr/plans/add"}><Button><Icon type="plus"/>Add</Button></Link>
-                </Button.Group>}>
+                <Card
+                    title={this.state.currentPatient ? this.state.currentPatient.name + " completed Procedurees" : "completed Procedures"}
+                    extra={<Button.Group>
+                        <Link to={"/patient/" + this.props.match.params.id + "/emr/plans/add"}><Button><Icon
+                            type="plus"/>Add</Button></Link>
+                    </Button.Group>}>
 
-                    <Table columns={columns}  dataSource={this.state.completedTreatmentPlans} />
+                    <Table columns={columns} dataSource={this.state.completedTreatmentPlans}/>
 
                 </Card>
             </Switch>
 
             </div>
         }
-        else{
+        else {
             return <Card>
                 <h2> select patient to further continue</h2>
             </Card>
@@ -155,4 +183,5 @@ class PatientCompletedProcedures extends React.Component{
 
     }
 }
+
 export default PatientCompletedProcedures;
