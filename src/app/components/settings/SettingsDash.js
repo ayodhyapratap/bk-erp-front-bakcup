@@ -9,7 +9,6 @@ import CommunicationSettings from "./options/communication-settings/Communicatio
 import RecentProcedure from "./options/procedure-catalog/RecentProcedure";
 import AddProcedure from "./options/procedure-catalog/AddProcedure";
 import EditProcedure from "./options/procedure-catalog/EditProcedure";
-
 import BillingSettings from "./options/billing/BillingSettings";
 import Offers from "./options/loyalty/Offers";
 import EMRSettings from "./options/emr/EMRSettings";
@@ -29,6 +28,7 @@ import MlmBase from "./options/mlm/MlmBase";
 
 const Content = Layout.Content;
 
+
 class SettingsDash extends React.Component {
     constructor(props) {
         super(props);
@@ -36,7 +36,6 @@ class SettingsDash extends React.Component {
             collapsed: false,
         };
     }
-
     render() {
         return <Content className="main-container"
                         style={{
@@ -95,8 +94,6 @@ class SettingsDash extends React.Component {
                                render={(route) => (this.props.activePracticePermissions.SettingsProcedureCatalog || this.props.allowAllPermissions ?
                                        <RecentProcedure  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
-
-
                         <Route exact path="/settings/billing"
                                render={(route) => (this.props.activePracticePermissions.SettingsBilling || this.props.allowAllPermissions ?
                                        <BillingSettings  {...this.props} /> : <PermissionDenied/>
@@ -113,12 +110,10 @@ class SettingsDash extends React.Component {
                                render={(route) => (this.props.activePracticePermissions.SettingsLoyalty || this.props.allowAllPermissions ?
                                        <AddOffer  {...this.props} /> : <PermissionDenied/>
                                )}/>
-
                         <Route path="/settings/prescriptions"
                                render={(route) => (this.props.activePracticePermissions.SettingsPrescriptions || this.props.allowAllPermissions ?
                                        <Prescriptions  {...this.props} {...route} /> : <PermissionDenied/>
                                )}/>
-
                         <Route exact path="/settings/expense-types"
                                render={(route) => (this.props.activePracticePermissions.SettingsExpenseTypes || this.props.allowAllPermissions ?
                                        <ExpensesTypes  {...this.props} /> : <PermissionDenied/>
@@ -144,7 +139,6 @@ class SettingsDash extends React.Component {
             </Layout>
         </Content>
     }
-
 }
 
 export default SettingsDash;

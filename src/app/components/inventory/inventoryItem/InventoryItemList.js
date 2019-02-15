@@ -198,9 +198,10 @@ export default class InventoryItemList extends React.Component {
             key: 'item_type_stock',
             render: function (item_type_stock, record) {
                 let totalStock = 0;
-                item_type_stock.item_stock.forEach(function (stock) {
-                    totalStock += (Number.isInteger(stock.quantity) ? stock.quantity : 0)
-                });
+                if (item_type_stock.item_stock)
+                    item_type_stock.item_stock.forEach(function (stock) {
+                        totalStock += (Number.isInteger(stock.quantity) ? stock.quantity : 0)
+                    });
                 return <span>{totalStock} {totalStock <= record.re_order_level ?
                     <Tag color="#f50">Low</Tag> : null}</span>;
             }

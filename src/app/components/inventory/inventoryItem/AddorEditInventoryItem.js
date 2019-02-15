@@ -163,7 +163,7 @@ export default class AddorEditInventoryItem extends React.Component {
         }, {
             label: 'Re-Order Level',
             key: 're_order_level',
-            type: INPUT_FIELD,
+            type: NUMBER_FIELD,
             initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.re_order_level : null,
         }, {
             label: 'Retail Price',

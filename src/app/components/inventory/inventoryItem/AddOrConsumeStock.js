@@ -317,7 +317,7 @@ class AddOrConsumeStock extends React.Component {
                                           <List.Item>
                                               <List.Item.Meta
                                                   title={item.name}
-                                                  description={item.item_type_stock.item_stock.map((stock) =>
+                                                  description={item.item_type_stock.item_stock && item.item_type_stock.item_stock.map((stock) =>
                                                       <span>#{stock.batch_number}({stock.quantity})<br/></span>)}/>
                                               <Button type="primary" size="small" shape="circle"
                                                       onClick={() => this.add(item)} icon={"arrow-right"}/>
