@@ -19,7 +19,8 @@ class AddProcedure extends React.Component {
         this.state = {
             taxes: [],
             procedure_category: [],
-            redirect:false
+            redirect:false,
+            productMargin:[]
         }
         this.loadTaxes = this.loadTaxes.bind(this);
         this.loadProcedures = this.loadProcedures.bind(this)

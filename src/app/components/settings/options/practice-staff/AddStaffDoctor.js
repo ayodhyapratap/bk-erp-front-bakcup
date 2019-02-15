@@ -22,7 +22,7 @@ class AddStaffDoctor extends React.Component {
         this.state = {
             redirect: false,
             editStaff: null,
-            roles:[]
+            roles: []
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -32,6 +32,7 @@ class AddStaffDoctor extends React.Component {
         }
         this.staffRoles();
     }
+
     staffRoles() {
         let that = this;
         let successFn = function (data) {
@@ -69,7 +70,7 @@ class AddStaffDoctor extends React.Component {
     render() {
         const fields = [
             {
-                label: "Doctor Name",
+                label: "Doctor/Staff Name",
                 key: "name",
                 required: true,
                 initialValue: this.state.editStaff ? this.state.editStaff.name : null,
@@ -84,21 +85,21 @@ class AddStaffDoctor extends React.Component {
                 label: "Email Id",
                 key: "email",
                 required: true,
+                disabled: this.state.editStaff ? true : false,
                 initialValue: this.state.editStaff ? this.state.editStaff.email : null,
                 type: EMAIL_FIELD
             }, {
                 label: "Registration Number",
                 key: "registration_number",
-                required: true,
                 initialValue: this.state.editStaff ? this.state.editStaff.registration_number : null,
                 type: INPUT_FIELD
-            },{
+            }, {
                 label: "Role",
                 key: "role",
                 required: true,
-                initialValue: this.state.editStaff ? this.state.editStaff.role: null,
+                initialValue: this.state.editStaff ? this.state.editStaff.role : null,
                 type: SELECT_FIELD,
-                options: this.state.roles.map(role=>({label: role.name , value: [role.id]}))
+                options: this.state.roles.map(role => ({label: role.name, value: [role.id]}))
             }, {
                 label: "Calendar Colour",
                 key: "calender_colour",

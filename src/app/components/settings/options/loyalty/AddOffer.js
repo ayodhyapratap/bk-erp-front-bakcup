@@ -34,8 +34,13 @@ class AddOffer extends React.Component {
                 key: "discount",
                 required: true,
                 type: NUMBER_FIELD,
-                follow:'%'
-            },]
+                // follow:'%'
+            }, {
+                label: "Discount Unit",
+                key: 'unit',
+                required: true,
+                options: [{label: 'Percent', value: '%'}, {label: 'Rupees', value: 'INR'}]
+            }]
         }
         this.changeRedirect = this.changeRedirect.bind(this);
 
@@ -60,6 +65,9 @@ class AddOffer extends React.Component {
             },
             action: interpolate(OFFERS, [this.props.active_practiceId]),
             method: "post",
+            beforeSubmit: function (data) {
+                console.log(data)
+            }
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div><Card>

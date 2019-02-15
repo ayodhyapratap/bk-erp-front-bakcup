@@ -15,13 +15,13 @@ class AppHeader extends React.Component {
                 {/*<Menu.Item>*/}
                 {/*UserName*/}
                 {/*</Menu.Item>*/}
-                <Menu.Item>
+                <Menu.Item key="profile">
                     <Link to="/profile">Profile</Link>
                 </Menu.Item>
                 {/*<Menu.Item>*/}
                 {/*<Link to="/settings">Settings</Link>*/}
                 {/*</Menu.Item>*/}
-                <Menu.Item>
+                <Menu.Item key="logout">
                     <a onClick={this.props.logout}>Log out</a>
                 </Menu.Item>
             </Menu>
@@ -47,6 +47,7 @@ class AppHeader extends React.Component {
                     <Select onChange={this.props.switchPractice} defaultValue={this.props.active_practiceId}
                             style={{width: '300px', maxWidth: '70vw'}}>
                         {this.props.practiceList && this.props.practiceList.map((option) => <Select.Option
+                            key={option.pratice.id}
                             value={option.pratice.id}>{option.pratice.name}</Select.Option>)}
                     </Select>
                 </Menu.Item>

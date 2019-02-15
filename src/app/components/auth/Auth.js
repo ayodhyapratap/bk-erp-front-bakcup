@@ -1,7 +1,7 @@
 import React from "react";
 import LoginForm from "./forms/LoginForm";
 // import RegisterForm from "./forms/RegisterForm";
-import {Col, Divider, Form, Layout, Row} from "antd";
+import {Card, Col, Divider, Form, Layout, Row} from "antd";
 import {Link, Route, Switch} from "react-router-dom";
 import '../../assets/auth.css';
 // import TermsCondition from "../common/TermsCondition";
@@ -54,41 +54,44 @@ class Auth extends React.Component {
             <Switch>
                 <Route path="/password-reset/">
                     <Row>
-                        <Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}
-                             lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>
-                        </Col>
+                        {/*<Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}*/}
+                             {/*lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>*/}
+                        {/*</Col>*/}
                         <Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}
                              lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}}>
-                            <div className="loginFormWrapper">
-                                <img src={AppLogo} alt="" style={{maxWidth: '100%'}}/>
+                            <div className="loginFormWrapper" style={{textAlign:'center'}}>
+                                <img src={AppLogo} alt="" style={{maxWidth: '100%',minWidth:'50%',margin:'20px'}}/>
+                                <Card>
                                 <PasswordResetForm {...this.props}
                                                    formProp={formProp}
                                                    fields={resetPasswordFields}
                                                    defaultValues={tokenDefaultValues}/>
+                                </Card>
                                 <Divider/>
                                 <h4>
-                                    <Link to="/terms">Terms & Conditions </Link>
-                                    <Divider type="vertical"/>
-                                    <Link to="/privacypolicy">Privacy Policy</Link></h4>
+                                    <Link to="/login">Login </Link>
+                                    {/*<Divider type="vertical"/>*/}
+                                    {/*<Link to="/privacypolicy">Privacy Policy</Link>*/}
+                                </h4>
                             </div>
                         </Col>
                     </Row>
                 </Route>
                 <Route>
                     <Row>
-                        <Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}
-                             lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>
-                        </Col>
+                        {/*<Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}*/}
+                             {/*lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>*/}
+                        {/*</Col>*/}
                         <Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}
                              lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>
                             <div className="loginFormWrapper" style={{textAlign:'center'}}>
                                 <img src={AppLogo} alt="" style={{maxWidth: '100%',minWidth:'50%',margin:'20px'}}/>
                                 <LoginFormLayout {...this.props} login={this.props.login}/>
-                                <Divider/>
-                                <h4>
-                                    <Link to="/terms">Terms & Conditions </Link>
-                                    <Divider type="vertical"/>
-                                    <Link to="/privacypolicy">Privacy Policy</Link></h4>
+                                {/*<Divider/>*/}
+                                {/*<h4>*/}
+                                    {/*<Link to="/terms">Terms & Conditions </Link>*/}
+                                    {/*<Divider type="vertical"/>*/}
+                                    {/*<Link to="/privacypolicy">Privacy Policy</Link></h4>*/}
                             </div>
                         </Col>
                     </Row>

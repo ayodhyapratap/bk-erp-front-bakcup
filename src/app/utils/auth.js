@@ -1,8 +1,8 @@
 import lockr from 'lockr';
 import axios from 'axios';
 import {AUTH_TOKEN, PASSWORD, ROLE, EMAIL, PRACTICE, GROUP} from "../constants/dataKeys";
-import {handleErrorResponse, makeURL} from "./common";
-import {LOGIN_URL} from "../constants/api";
+import {getAPI, handleErrorResponse, makeURL} from "./common";
+import {LOGIN_URL, USER_DATA} from "../constants/api";
 import {CURRENT_PRACTICE} from "../constants/formLabels";
 
 
@@ -34,7 +34,6 @@ export const loggedInUserPractices = function () {
     let role = lockr.get(ROLE);
     let token = lockr.get(AUTH_TOKEN);
     let practice = lockr.get(PRACTICE);
-    console.log(practice);
     if (role && token && practice) {
         return practice;
     }
@@ -42,12 +41,13 @@ export const loggedInUserPractices = function () {
 };
 export const loggedInactivePractice = function () {
     let currentPractice = lockr.get(CURRENT_PRACTICE);
-    if (currentPractice) {
+    if (currentPractice && currentPractice != {}) {
         return currentPractice;
     } else {
         let practice = lockr.get(PRACTICE);
         if (practice && practice.length) {
-            setCurrentPractice(practice.practice);
+            console.log(practice);
+            setCurrentPractice(practice[0].pratice.id);
             return loggedInactivePractice();
         }
     }
@@ -57,7 +57,7 @@ export const loggedInactivePractice = function () {
 
 export const loggedInPermissions = function () {
     let groups = lockr.get(GROUP);
-    let permissions = {}
+    let permissions = {};
     if (groups)
         groups.forEach(function (group) {
             group.permissions.forEach(function (permission) {
@@ -70,11 +70,6 @@ export const loggedInPermissions = function () {
 
 export const logInUser = function (data, successFn, errorFn) {
     console.log("workign");
-    // lockr.set(USER, {
-    //   [USERNAME]: 'username',
-    //   [USER_TYPE]: [ADMIN_ABBREV, MANAGER_ABBREV, ANALYST_ABBREV]
-    // });
-    // successFn();
     var data = {
         [EMAIL]: data.email,
         [PASSWORD]: data.password
@@ -92,6 +87,16 @@ export const logInUser = function (data, successFn, errorFn) {
         errorFn();
     })
 };
+export const loadUserDetails = function (callBackFn) {
+    let successFn = function (data) {
+        lockr.set(ROLE, data.user);
+        callBackFn();
+    }
+    let errorFn = function () {
+
+    }
+    getAPI(USER_DATA, successFn, errorFn);
+}
 export const saveAuthToken = function (response, successFn) {
     let data = response;
     lockr.set(ROLE, data.id);
@@ -100,19 +105,6 @@ export const saveAuthToken = function (response, successFn) {
 }
 
 export const logOutUser = function (successFn, errorFn) {
-    // axios.post(makeURL(LOGOUT_URL), {}).then(function (response) {
-    //   let data = response.data;
-    //   console.log('loginResponse', data);
-    //   if (data.status == SUCCESS) {
-    //     lockr.rm(USER);
-    //     successFn(data);
-    //   } else {
-    //     errorFn();
-    //   }
-    // }).catch(function (error) {
-    //   console.log(error);
-    //   errorFn();
-    // })
     lockr.rm(ROLE);
     lockr.rm(AUTH_TOKEN);
     lockr.rm(PRACTICE);
@@ -122,8 +114,8 @@ export const logOutUser = function (successFn, errorFn) {
 export const getAuthToken = function () {
     let token = lockr.get(AUTH_TOKEN);
     return token;
-
 };
+
 export const checkRole = function (role) {
     let roles = lockr.get(ROLE);
     if (roles[role] === undefined || roles[role] === '' || !roles[role]) {

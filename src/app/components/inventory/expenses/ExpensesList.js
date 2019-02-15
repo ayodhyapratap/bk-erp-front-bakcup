@@ -35,6 +35,11 @@ export default class ExpensesList extends React.Component {
 
     render() {
         const expenseColoumns = [{
+            title: 'Expense Date',
+            key: 'expense_date',
+            dataIndex: 'expense_date',
+
+        },{
             title: 'Expense Type',
             key: 'expense_type',
             dataIndex: 'expense_type'
@@ -60,9 +65,9 @@ export default class ExpensesList extends React.Component {
         }]
         return <div><Switch>
             <Route exact path='/inventory/expenses/add'
-                   render={(route) => <AddExpenses {...this.state} {...route}/>}/>
+                   render={(route) => <AddExpenses {...this.state} {...route} loadData={this.loadData}/>}/>
             <Route exact path='/inventory/expenses/edit/:id'
-                   render={(route) => <AddExpenses {...this.state} {...route}/>}/>
+                   render={(route) => <AddExpenses {...this.state} {...route} loadData={this.loadData}/>}/>
             <Card title="Expensess" extra={<Link to={"/inventory/expenses/add"}> <Button type="primary"><Icon
                 type="plus"/> Add</Button></Link>}>
                 <Table dataSource={this.state.expenses} columns={expenseColoumns}/>

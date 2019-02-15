@@ -56,9 +56,13 @@ class Offers extends React.Component {
             dataIndex: 'description',
             key: 'description',
         }, {
-            title: ' Discount',
+            title: 'Discount',
             dataIndex: 'discount',
             key: 'discount',
+        }, {
+            title: 'Discount Unit',
+            dataIndex: 'unit',
+            key: 'unit'
         }, {
             title: 'Action',
             key: 'action',

@@ -12,7 +12,7 @@ import {
     loggedInUserPractices,
     logInUser,
     logOutUser,
-    setCurrentPractice
+    setCurrentPractice, loadUserDetails
 } from "../../utils/auth";
 import {getAPI, deleteAPI, interpolate} from "../../utils/common";
 import {ALL_PRACTICE, PRACTICE} from "../../constants/api";
@@ -44,7 +44,17 @@ class AppBase extends React.Component {
     }
 
     componentDidMount() {
-        this.clinicData();
+        let that = this;
+        let successFn = function () {
+            that.setState({
+                active_practiceId: loggedInactivePractice(),
+                practiceList: loggedInUserPractices()
+            }, function () {
+                that.clinicData();
+            });
+        }
+        loadUserDetails(successFn);
+
     }
 
     toggleSider = (option) => {
@@ -83,19 +93,26 @@ class AppBase extends React.Component {
         var that = this;
         that.setState(function (prevState) {
             let returnObj = {}
-            console.log(prevState);
             let practices = loggedInUserPractices();
             practices.forEach(function (practiceObj) {
-                console.log(practiceObj.pratice.id);
-                if (prevState.active_practiceId == practiceObj.pratice.id) {
+                if (prevState.active_practiceId && prevState.active_practiceId == practiceObj.pratice.id) {
                     let permissions = {};
                     practiceObj.permissions_data.forEach(function (permission) {
-                        console.log(permission)
                         permissions[permission.codename] = permission
                     });
                     returnObj = {
                         activePracticeData: practiceObj.pratice,
                         activePracticePermissions: permissions
+                    }
+                } else {
+                    let permissions = {};
+                    practiceObj.permissions_data.forEach(function (permission) {
+                        permissions[permission.codename] = permission
+                    });
+                    returnObj = {
+                        activePracticeData: practiceObj.pratice,
+                        activePracticePermissions: permissions,
+                        active_practiceId: practiceObj.pratice.id
                     }
                 }
             });
@@ -147,6 +164,10 @@ class AppBase extends React.Component {
                                                                            key={this.state.active_practiceId}/>}/>
 
                     <Route path="/profile" render={(route) => <Profile {...this.state}
+                                                                       {...this.props}
+                                                                       {...route}
+                                                                       key={this.state.active_practiceId}/>}/>
+                    <Route exact path="/" render={(route) => <Calendar {...this.state}
                                                                        {...this.props}
                                                                        {...route}
                                                                        key={this.state.active_practiceId}/>}/>

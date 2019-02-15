@@ -58,6 +58,25 @@ export const postAPI = function (URL, data, successFn, errorFn, headerConfig = {
         errorFn();
     });
 };
+export const postOuterAPI = function (URL, data, successFn, errorFn, headerConfig = {}) {
+    // console.log("sending to " + makeURL(URL), data);
+    axios({
+        method: 'post',
+        url: URL,
+        data: data,
+        headers: {
+            ...headerConfig
+        }
+    }).then(function (response) {
+        // console.log(response);
+        let data = response.data;
+        successFn(data);
+    }).catch(function (error) {
+        console.log(error);
+        handleErrorResponse(error);
+        errorFn();
+    });
+};
 export const patchAPI = function (URL, data, successFn, errorFn, headerConfig = {}) {
     // console.log("sending to " + makeURL(URL), data);
     axios({

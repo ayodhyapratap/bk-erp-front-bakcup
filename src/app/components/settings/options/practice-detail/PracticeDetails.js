@@ -81,9 +81,6 @@ class PracticeDetails extends React.Component {
                 specialisations[speciality.id] = speciality.name
             });
         }
-        console.log(specialisations);
-
-
         const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -101,11 +98,6 @@ class PracticeDetails extends React.Component {
             title: 'Specialisation',
             key: 'specialisation',
             dataIndex: 'specialisation',
-            render: specialisation => (
-                <span>
-                 <Tag color="blue" key={specialisation}>{specialisations[specialisation]}</Tag>
-              </span>
-            ),
         }, {
             title: 'Action',
             key: 'action',

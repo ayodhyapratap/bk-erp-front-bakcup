@@ -11,18 +11,17 @@ import {SELECT_FIELD} from "../../../constants/dataKeys";
 class PatientCompletedProcedures extends React.Component {
     constructor(props) {
         super(props);
-        super(props);
         this.state = {
             currentPatient: this.props.currentPatient,
             active_practiceId: this.props.active_practiceId,
             treatmentPlans: [],
             procedure_category: null,
             completedTreatmentPlans: [],
+            productMargin: []
         }
         this.loadtreatmentPlanss = this.loadtreatmentPlanss.bind(this);
         this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
         this.editTreatmentPlanData = this.editTreatmentPlanData.bind(this);
-
     }
 
     componentDidMount() {
@@ -31,7 +30,6 @@ class PatientCompletedProcedures extends React.Component {
             this.loadProcedureCategory();
             this.loadProductMargin();
         }
-
     }
 
     loadProductMargin() {
@@ -42,7 +40,6 @@ class PatientCompletedProcedures extends React.Component {
             })
         }
         let errorFn = function () {
-
         }
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
@@ -62,10 +59,8 @@ class PatientCompletedProcedures extends React.Component {
             that.setState({
                 completedTreatmentPlans: completed,
             })
-
         }
         let errorFn = function () {
-
         }
         getAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id]), successFn, errorFn)
     }
@@ -76,8 +71,7 @@ class PatientCompletedProcedures extends React.Component {
             that.setState({
                 procedure_category: data
             })
-
-        }
+        };
         let errorFn = function () {
 
         }
@@ -89,7 +83,7 @@ class PatientCompletedProcedures extends React.Component {
         this.setState({
             editTreatmentPlan: record,
         });
-        let id = this.props.match.params.id
+        let id = this.props.match.params.id;
         this.props.history.push("/patient/" + id + "/emr/plans/edit")
 
     }

@@ -35,7 +35,7 @@ class PracticeDetails extends React.Component {
     loadData() {
         // let group = loggedInUserGroup();
         // if (group[0].name == "Admin") {
-            this.admin_StaffData();
+        this.admin_StaffData();
         // }
         // else {
         //     this.clinicData();
@@ -70,33 +70,18 @@ class PracticeDetails extends React.Component {
     admin_StaffData() {
         var that = this;
         let successFn = function (data) {
-            // data.forEach(function (usersdata) {
-            //     if (usersdata.role == DOCTORS_ROLE) {
-            //         let doctor = that.state.practice_doctors;
-            //         doctor.push(usersdata);
-            //
-            //     } else {
-            //         let doctor = that.state.practice_staff;
-            //         doctor.push(usersdata);
-            //         that.setState({
-            //             practice_staff: doctor,
-            //         })
-            //     }
-            // })
+            let doctor = [];
+            let staff = [];
             data.staff.forEach(function (usersdata) {
                 if (usersdata.role == DOCTORS_ROLE) {
-                    let doctor = that.state.practice_doctors;
                     doctor.push(usersdata);
-                    that.setState({
-                        practice_doctors: doctor,
-                    })
                 } else {
-                    let doctor = that.state.practice_staff;
-                    doctor.push(usersdata);
-                    that.setState({
-                        practice_staff: doctor,
-                    })
+                    staff.push(usersdata);
                 }
+            });
+            that.setState({
+                practice_doctors: doctor,
+                practice_staff: staff,
             })
         };
         let errorFn = function () {
@@ -170,18 +155,20 @@ class PracticeDetails extends React.Component {
             title: "Email",
             dataIndex: "email",
             key: "email",
+            render: (value, record) => (record.user && record.user.is_active ? record.user.email : value)
         }, {
-            title: "mobile",
+            title: "Mobile",
             dataIndex: "mobile",
             key: "mobile",
         }, {
-            title: "registration_number",
+            title: "Registration Number",
             dataIndex: "registration_number",
             key: "registration_number",
         }, {
             title: "Status",
             key: "user",
-            render: (text, record) => (record.user && record.user.is_active ? <Tag color="#87d068">Active</Tag> : <Tag color="#f50">Pending</Tag>),
+            render: (text, record) => (record.user && record.user.is_active ? <Tag color="#87d068">Active</Tag> :
+                <Tag color="#f50">Pending</Tag>),
         }, {
             title: "Action	",
             key: "action",
@@ -242,15 +229,17 @@ class PracticeDetails extends React.Component {
                                 <Icon type="plus"/>&nbsp;Add Doctor/Staff
                             </Button>
                         </Link></h2>
-                        <Table pagination={false}columns={columns} dataSource={this.state.practice_doctors}/>
+                        <Table pagination={false} columns={columns} dataSource={this.state.practice_doctors}/>
                         <h2>Staff </h2>
-                        <Table pagination={false}columns={columns} dataSource={this.state.practice_staff}/>
+                        <Table pagination={false} columns={columns} dataSource={this.state.practice_staff}/>
                     </TabPane>
                     <TabPane tab={<span><Icon type="team"/>Staff Notification</span>} key="notification">
                         <h2>Doctors</h2>
-                        <Table pagination={false}columns={notification_columns} dataSource={this.state.practice_doctors}/>
+                        <Table pagination={false} columns={notification_columns}
+                               dataSource={this.state.practice_doctors}/>
                         <h2>Staff</h2>
-                        <Table pagination={false}columns={notification_columns} dataSource={this.state.practice_staff}/>
+                        <Table pagination={false} columns={notification_columns}
+                               dataSource={this.state.practice_staff}/>
                     </TabPane>
                     <TabPane tab={<span><Icon type="schedule"/>Doctors visit Timing</span>} key="timing">
                         <Table>

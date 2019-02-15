@@ -74,8 +74,8 @@ class AddPracticeDetails extends React.Component {
         }, {
             label: "Practice Specialisation",
             key: "specialisation",
-            type: SELECT_FIELD,
-            options: specialisationsOptions,
+            type: INPUT_FIELD,
+            // options: specialisationsOptions,
         }, {
             label: "Practice Street Address",
             key: "address",
@@ -87,15 +87,15 @@ class AddPracticeDetails extends React.Component {
         }, {
             label: "Practice Country",
             key: "country",
-            type: COUNTRY_FIELD,
+            type: INPUT_FIELD,
         }, {
             label: "Practice State",
             key: "state",
-            type: STATE_FIELD,
+            type: INPUT_FIELD,
         }, {
             label: "Practice City",
             key: "city",
-            type: CITY_FIELD,
+            type: INPUT_FIELD,
         }, {
             label: "Practice PINCODE",
             key: "pincode",
@@ -112,13 +112,15 @@ class AddPracticeDetails extends React.Component {
             label: "Practice Website",
             key: "website",
             type: INPUT_FIELD
-        }, {
-            label: "Timezone",
-            key: "timezone",
-            type: SELECT_FIELD,
-            options: [{label: "GMT +05:30", value: 12}],
-            initialValue:12
-        }, {
+        },
+        //     {
+        //     label: "Timezone",
+        //     key: "timezone",
+        //     type: SELECT_FIELD,
+        //     options: [{label: "GMT +05:30", value: 12}],
+        //     initialValue:12
+        // },
+            {
             label: "GSTIN",
             key: "gstin",
             type: INPUT_FIELD

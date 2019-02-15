@@ -67,8 +67,8 @@ class EditPracticeDetail extends React.Component {
                 label: "Practice Specialisation",
                 key: "specialisation",
                 initialValue: this.state.practiceDetail.specialisation,
-                type: SELECT_FIELD,
-                options: specialisationsOptions
+                type: INPUT_FIELD,
+                // options: specialisationsOptions
             }, {
                 label: "Practice Street Address",
                 key: "address",
