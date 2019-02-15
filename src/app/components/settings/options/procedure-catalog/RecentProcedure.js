@@ -124,10 +124,8 @@ class RecentProcedure extends React.Component {
                                     title="Action	"
                                     key="action"
                                     render={(text, record) => (
-
                                         <span>
-
-                                            <a onClick={() => this.editProcedure(record)}>edit {record.name}</a>
+                                            <a onClick={() => this.editProcedure(record)}>Edit</a>
                                         <Divider type="vertical"/>
                                         <Popconfirm title="Are you sure delete this?"
                                                     onConfirm={() => that.deleteObject(record)} okText="Yes"

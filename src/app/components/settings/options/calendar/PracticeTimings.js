@@ -57,7 +57,7 @@ class PracticeTimings extends React.Component {
         const editfields = [{
             key: "today_first_day",
             type: SINGLE_CHECKBOX_FIELD,
-            initialValue: this.state.timings ? this.state.timings.today_first_day : null,
+            initialValue: this.state.timings ? this.state.timings.today_first_day : false,
             follow: "Always show today as first day on my calendar"
         }, {
             label: "Show Calendar Slots of  ",
@@ -69,7 +69,7 @@ class PracticeTimings extends React.Component {
         }, {
             key: "visting_hour_same_week",
             type: SINGLE_CHECKBOX_FIELD,
-            initialValue: this.state.timings ? this.state.timings.visting_hour_same_week : null,
+            initialValue: this.state.timings ? this.state.timings.visting_hour_same_week : false,
             follow: "Visiting hours are  same for all working days in a week"
         }, {
             label: "Practice open at",
