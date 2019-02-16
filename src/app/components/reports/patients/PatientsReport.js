@@ -5,53 +5,54 @@ import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment from "moment"
 
 export default class PatientsReport extends React.Component {
-  constructor(props) {
-      super(props);
-      this.state={
-        report:[],
-      }
-      this.report=this.report.bind(this);
-      this.report();
-  }
-  report(){
-    let that =this;
-      let successFn = function (data) {
-        console.log(data);
-        that.setState({
-          report:data.data,
-        });
-      };
-      let errorFn = function () {
-      };
-     getAPI(interpolate( PATIENTS_REPORTS, [this.props.active_practiceId,"start="+this.props.startDate+"&end="+this.props.endDate]), successFn, errorFn);
-  }
-    render() {
-      const columns = [{
-                title: 'Date',
-                key: 'date',
-                render: (text, record) => (
-                  <span>
-                {  moment(record.created_at).format('LL')}
-                  </span>
-                ),
-                }, {
-                title: 'Scheduled At	',
-                key: 'time',
-                render: (text, record) => (
-                  <span>
-                  {  moment(record.created_at).format('HH:mm')}
+    constructor(props) {
+        super(props);
+        this.state = {
+            report: [],
+        }
+        this.report = this.report.bind(this);
+        this.report();
+    }
 
+    report() {
+        let that = this;
+        let successFn = function (data) {
+            console.log(data);
+            that.setState({
+                report: data.data,
+            });
+        };
+        let errorFn = function () {
+        };
+        getAPI(interpolate(PATIENTS_REPORTS, [this.props.active_practiceId, "start=" + this.props.startDate + "&end=" + this.props.endDate]), successFn, errorFn);
+    }
+
+    render() {
+        const columns = [{
+            title: 'Date',
+            key: 'date',
+            render: (text, record) => (
+                <span>
+                {moment(record.created_at).format('LL')}
                   </span>
-                ),
-                }, {
-                title: '	Name',
-                dataIndex: 'age',
-                key: 'age',
-                }, {
-                title: 'Patient Number',
-                dataIndex: 'age',
-                key: 'age',
-                },];
+            ),
+        }, {
+            title: 'Scheduled At',
+            key: 'time',
+            render: (text, record) => (
+                <span>
+                  {moment(record.created_at).format('HH:mm')}
+                  </span>
+            ),
+        }, {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'age',
+        }, {
+            title: 'Patient Number',
+            dataIndex: 'mobile',
+            key: 'age',
+        },];
 
 
         const relatedReport = [
@@ -71,7 +72,7 @@ export default class PatientsReport extends React.Component {
             <Card>
                 <Row gutter={16}>
                     <Col span={16}>
-                      <Table columns={columns} size={'small'} dataSource={this.state.report}/>
+                        <Table columns={columns} size={'small'} dataSource={this.state.report}/>
                     </Col>
                     <Col span={8}>
                         <Radio.Group buttonStyle="solid" defaultValue="all">

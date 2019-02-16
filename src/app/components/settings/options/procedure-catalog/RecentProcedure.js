@@ -87,7 +87,6 @@ class RecentProcedure extends React.Component {
                 </h2>
                 <Card>
                     <Tabs defaultActiveKey="procedurecatalog">
-
                         <TabPane tab={<span><Icon type="android"/>Procedure Catalog</span>} key="procedurecatalog">
                             <Table dataSource={this.state.procedure_category}>
                                 <Column

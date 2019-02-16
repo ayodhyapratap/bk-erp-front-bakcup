@@ -13,6 +13,7 @@ export const RESET_PASSWORD_MAIL = 'users/staff_reset_mail/';
 export const LOGIN_URL = 'users/login/';
 export const USER_DATA = 'users/user_clone/';
 export const PRACTICESTAFF = 'clinics/%s/practice_staff/';
+export const USER_PRACTICE_PERMISSIONS = 'user_permissions/?user=%s&practice=%s';
 export const ALL_PRACTICE = 'clinics/';
 export const PRACTICE = 'clinics/%s/';
 export const PRACTICE_DELETE = 'clinics/%s/delete_clinic/';

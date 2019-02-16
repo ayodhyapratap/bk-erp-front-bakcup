@@ -1,13 +1,13 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Checkbox, Card, Form, Icon, Tabs, Divider, Tag, Row, Table} from "antd";
+import {Button, Checkbox, Card, Form, Icon, Tabs, Divider, Tag, Row, Table, Modal} from "antd";
 import {CHECKBOX_FIELD, DOCTORS_ROLE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {
     PRACTICESTAFF,
     STAFF_ROLES,
     ALL_PRACTICE_STAFF,
     ALL_PRACTICE_DOCTORS,
-    SINGLE_PRACTICE_STAFF_API
+    SINGLE_PRACTICE_STAFF_API, USER_PRACTICE_PERMISSIONS
 } from "../../../../constants/api"
 import {Link} from "react-router-dom";
 import {deleteAPI, getAPI, interpolate} from "../../../../utils/common";
@@ -23,13 +23,39 @@ class PracticeDetails extends React.Component {
             current: 'staff',
             practice_staff: [],
             practice_doctors: [],
-            roles: null
+            roles: null,
+            permissionEditModal: false,
+            editPermissions: [],
+            allPermissions: []
         }
         this.staffRoles();
     }
 
     componentDidMount() {
         this.loadData();
+    }
+
+    editPermissions(user) {
+        let that = this;
+        if (!user) {
+            that.setState({
+                permissionEditModal: false,
+            });
+            return true
+        }
+
+        that.setState({
+            permissionEditModal: true,
+            editPermissions: []
+        });
+        let successFn = function (data) {
+            that.setState({
+                editPermissions: data
+            })
+        }
+        let errorFn = function () {
+        }
+        getAPI(interpolate(USER_PRACTICE_PERMISSIONS, [user, that.props.active_practiceId]), successFn, errorFn);
     }
 
     loadData() {
@@ -146,7 +172,7 @@ class PracticeDetails extends React.Component {
 
 
     render() {
-
+        let that = this;
         const columns = [{
             title: "Name",
             dataIndex: "name",
@@ -175,7 +201,10 @@ class PracticeDetails extends React.Component {
             render: (text, record) => (
                 <span>
             <Link to={"/settings/clinics-staff/" + record.id + "/edit"}>
-              <a>Edit</a></Link>
+              <a>Edit</a>
+            </Link>
+                    <Divider type="vertical"/>
+                    <a onClick={() => that.editPermissions(record.id)}>Permissions</a>
               <Divider type="vertical"/>
               <a onClick={() => this.deleteStaff(record.id)}>Delete</a>
             </span>
@@ -261,6 +290,14 @@ class PracticeDetails extends React.Component {
                         </Table>
                     </TabPane>
                 </Tabs>
+                <Modal title="Edit Permissions"
+                       visible={this.state.permissionEditModal}
+                       onCancel={() => this.editPermissions()}
+                       footer={null}>
+                    {that.state.editPermissions.map(item => <Checkbox value={item.codename}
+                                                                      checked={true}
+                                                                      style={{display: 'list-item'}}>{item.name}</Checkbox>)}
+                </Modal>
             </Card>
         </Row>
     }
