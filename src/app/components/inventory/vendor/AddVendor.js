@@ -31,7 +31,7 @@ export default class AddVendor extends React.Component {
         }
     }
 
-    changeRedirect() {
+    changeRedirect = () => {
         var redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
@@ -63,19 +63,26 @@ export default class AddVendor extends React.Component {
 
 
     render() {
+        let that = this;
         const fields = [{
             label: "Name",
             key: "name",
             initialValue: this.state.editData ? this.state.editData.name : null,
             type: INPUT_FIELD
-        },];
+        }, {
+            label: "Description",
+            key: "description",
+            initialValue: this.state.editData ? this.state.editData.description : null,
+            type: INPUT_FIELD
+        }];
 
 
         let editformProp;
-        if (this.state.editBlogData) {
+        if (this.state.editData) {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
+                    that.props.loadData();
                     console.log(data);
                 },
                 errorFn: function () {
@@ -83,7 +90,6 @@ export default class AddVendor extends React.Component {
                 },
                 action: interpolate(SINGLE_VENDOR_API, [this.props.match.params.id]),
                 method: "put",
-
             }
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
@@ -91,7 +97,7 @@ export default class AddVendor extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-
+                that.props.loadData();
                 console.log(data);
             },
             errorFn: function () {

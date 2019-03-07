@@ -34,6 +34,7 @@ export default class ManufactureList extends React.Component {
     }
 
     render() {
+        let that = this;
         const manufactureColoumns = [{
             title: 'Name',
             key: 'name',
@@ -56,9 +57,9 @@ export default class ManufactureList extends React.Component {
         }];
         return <div><Switch>
             <Route exact path='/inventory/manufacture/add'
-                   render={(route) => <AddManufacture {...this.state} {...route}/>}/>
+                   render={(route) => <AddManufacture {...this.state} {...route} loadData={that.loadData}/>}/>
             <Route exact path='/inventory/manufacture/edit/:id'
-                   render={(route) => <AddManufacture {...this.state} {...route}/>}/>
+                   render={(route) => <AddManufacture {...this.state} {...route} loadData={that.loadData}/>}/>
             <Card title="Manufactures" extra={<Link to={"/inventory/manufacture/add"}> <Button type="primary"><Icon
                 type="plus"/> Add</Button></Link>}>
                 <Table dataSource={this.state.manufactures} columns={manufactureColoumns}/>

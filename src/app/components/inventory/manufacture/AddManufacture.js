@@ -31,7 +31,7 @@ export default class AddManufacture extends React.Component {
         }
     }
 
-    changeRedirect() {
+    changeRedirect=()=> {
         var redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
@@ -63,6 +63,7 @@ export default class AddManufacture extends React.Component {
 
 
     render() {
+        let that = this;
         const fields = [{
             label: "Name",
             key: "name",
@@ -72,10 +73,11 @@ export default class AddManufacture extends React.Component {
 
 
         let editformProp;
-        if (this.state.editBlogData) {
+        if (this.state.editData) {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
+                    that.props.loadData();
                     console.log(data);
                 },
                 errorFn: function () {
@@ -91,6 +93,7 @@ export default class AddManufacture extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
+                that.props.loadData();
 
                 console.log(data);
             },

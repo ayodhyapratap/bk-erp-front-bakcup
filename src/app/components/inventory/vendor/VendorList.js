@@ -34,6 +34,7 @@ export default class VendorList extends React.Component {
     }
 
     render() {
+        let that = this;
         const vendorsColoumns = [{
             title: 'Name',
             key: 'name',
@@ -56,9 +57,9 @@ export default class VendorList extends React.Component {
         }];
         return <div><Switch>
             <Route exact path='/inventory/vendor/add'
-                   render={(route) => <AddVendor {...this.state} {...route}/>}/>
+                   render={(route) => <AddVendor {...this.state} {...route} loadData={that.loadData}/>}/>
             <Route exact path='/inventory/vendor/edit/:id'
-                   render={(route) => <AddVendor {...this.state} {...route}/>}/>
+                   render={(route) => <AddVendor {...this.state} {...route} loadData={that.loadData}/>}/>
             <Card title="Vendors" extra={<Link to={"/inventory/vendor/add"}> <Button type="primary"><Icon
                 type="plus"/> Add</Button></Link>}>
                 <Table columns={vendorsColoumns} dataSource={this.state.vendors}/>
