@@ -41,3 +41,7 @@
 .ant-table{
     overflow-x: scroll;
 }
+
+.ant-checkbox-wrapper {
+     margin-left: 8px;
+}

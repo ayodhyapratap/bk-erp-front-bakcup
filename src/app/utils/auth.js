@@ -67,7 +67,14 @@ export const loggedInPermissions = function () {
     return permissions;
 }
 
-
+export const getAllPermissions = function () {
+    let permissions = [];
+    let lockrPermissions = lockr.get('PERMISSIONS');
+    if (lockrPermissions && lockrPermissions.ADMIN && lockrPermissions.ADMIN.length) {
+        return lockrPermissions.ADMIN;
+    }
+    return permissions
+}
 export const logInUser = function (data, successFn, errorFn) {
     console.log("workign");
     var data = {
@@ -80,6 +87,7 @@ export const logInUser = function (data, successFn, errorFn) {
         lockr.set(ROLE, data.user);
         lockr.set(AUTH_TOKEN, data.token);
         lockr.set(PRACTICE, data.practice_permissions);
+        lockr.set('PERMISSIONS', data.permissions_list);
         successFn()
     }).catch(function (error) {
         console.log(error);

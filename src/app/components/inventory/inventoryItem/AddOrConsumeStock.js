@@ -114,7 +114,7 @@ class AddOrConsumeStock extends React.Component {
                     if (that.state.classType == ADD_STOCK) {
                         itemObject = {
                             ...itemObject,
-                            expiry_date: values.expiry_date[item._id],
+                            expiry_date: moment(values.expiry_date[item._id]).format('YYYY-MM-DD'),
                             unit_cost: values.unit_cost[item._id],
                             total_cost: values.unit_cost[item._id] * values.quantity[item._id]
                         }
@@ -153,7 +153,7 @@ class AddOrConsumeStock extends React.Component {
 
     render() {
         let that = this;
-        const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
+        const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
             labelCol: {
                 xs: {span: 24},

@@ -7,11 +7,11 @@ import {
     STAFF_ROLES,
     ALL_PRACTICE_STAFF,
     ALL_PRACTICE_DOCTORS,
-    SINGLE_PRACTICE_STAFF_API, USER_PRACTICE_PERMISSIONS
+    SINGLE_PRACTICE_STAFF_API, USER_PRACTICE_PERMISSIONS, SET_USER_PERMISSION, SET_SPECIFIC_USER_PERMISSION
 } from "../../../../constants/api"
 import {Link} from "react-router-dom";
-import {deleteAPI, getAPI, interpolate} from "../../../../utils/common";
-import {loggedInUserGroup, loggedInUserPractices} from "../../../../../app/utils/auth";
+import {deleteAPI, getAPI, interpolate, patchAPI, postAPI} from "../../../../utils/common";
+import {getAllPermissions, loggedInUserPractices} from "../../../../utils/auth";
 
 const {Column, ColumnGroup} = Table;
 const TabPane = Tabs.TabPane;
@@ -25,14 +25,63 @@ class PracticeDetails extends React.Component {
             practice_doctors: [],
             roles: null,
             permissionEditModal: false,
-            editPermissions: [],
-            allPermissions: []
+            editPermissions: {},
+            allPermissions: getAllPermissions()
         }
+        this.setPermission = this.setPermission.bind(this);
         this.staffRoles();
     }
 
     componentDidMount() {
         this.loadData();
+    }
+
+    setPermission(codename, e) {
+        let that = this;
+        let value = e.target.checked;
+        this.setState(function (prevState) {
+            let permission = {...prevState.editPermissions[codename]}
+            permission.loading = true;
+            return {editPermissions: {...prevState.editPermissions, [codename]: permission}}
+        });
+        if (value) {
+            let reqData = {
+                "name": null,
+                "codename": codename,
+                "is_active": true,
+                "practice": that.props.active_practiceId,
+                "user": that.state.currentUser
+            }
+            let successFn = function (data) {
+                that.setState(function (prevState) {
+                    return {editPermissions: {...prevState.editPermissions, [codename]: data}}
+                })
+            }
+            let errorFn = function () {
+            }
+            postAPI(SET_USER_PERMISSION, reqData, successFn, errorFn);
+        } else {
+            if (that.state.editPermissions[codename].id) {
+                let reqData = {
+                    // "name": null,
+                    // "codename": codename,
+                    "is_active": false,
+                    // "practice": that.props.active_practiceId,
+                    // "user": that.state.currentUser
+                }
+                let successFn = function (data) {
+                    that.setState(function (prevState) {
+                        return {editPermissions: {...prevState.editPermissions, [data.codename]: undefined}}
+                    })
+                }
+                let errorFn = function () {
+
+                }
+                patchAPI(interpolate(SET_SPECIFIC_USER_PERMISSION, [that.state.editPermissions[codename].id]), reqData, successFn, errorFn);
+            } else {
+
+            }
+        }
     }
 
     editPermissions(user) {
@@ -46,11 +95,16 @@ class PracticeDetails extends React.Component {
 
         that.setState({
             permissionEditModal: true,
-            editPermissions: []
+            editPermissions: [],
+            currentUser: user
         });
         let successFn = function (data) {
+            let permissions = {}
+            data.forEach(function (item) {
+                permissions[item.codename] = item
+            })
             that.setState({
-                editPermissions: data
+                editPermissions: permissions
             })
         }
         let errorFn = function () {
@@ -198,17 +252,20 @@ class PracticeDetails extends React.Component {
         }, {
             title: "Action	",
             key: "action",
-            render: (text, record) => (
-                <span>
+            render: function (text, record) {
+                return (record.user && record.is_superuser ?
+                    <Tag> Not Allowed</Tag> :
+                    <span>
             <Link to={"/settings/clinics-staff/" + record.id + "/edit"}>
               <a>Edit</a>
             </Link>
+                     <Divider type="vertical"/>
+                        <a disabled={!(record.user && record.user.is_active)}
+                           onClick={() => that.editPermissions(record.user.id)}>Permissions</a>
                     <Divider type="vertical"/>
-                    <a onClick={() => that.editPermissions(record.id)}>Permissions</a>
-              <Divider type="vertical"/>
               <a onClick={() => this.deleteStaff(record.id)}>Delete</a>
-            </span>
-            )
+            </span>)
+            }
         }];
 
         const notification_columns = [{
@@ -294,9 +351,11 @@ class PracticeDetails extends React.Component {
                        visible={this.state.permissionEditModal}
                        onCancel={() => this.editPermissions()}
                        footer={null}>
-                    {that.state.editPermissions.map(item => <Checkbox value={item.codename}
-                                                                      checked={true}
-                                                                      style={{display: 'list-item'}}>{item.name}</Checkbox>)}
+                    {that.state.allPermissions.map(item => <Checkbox value={item.codename}
+                                                                     checked={that.state.editPermissions[item.codename]}
+                                                                     disabled={that.state.editPermissions[item.codename] && that.state.editPermissions[item.codename].loading}
+                                                                     onClick={(e) => this.setPermission(item.codename, e)}
+                                                                     style={{display: 'list-item'}}>{item.id} {item.name}</Checkbox>)}
                 </Modal>
             </Card>
         </Row>

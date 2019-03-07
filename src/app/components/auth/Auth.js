@@ -92,6 +92,10 @@ class Auth extends React.Component {
                                     {/*<Link to="/terms">Terms & Conditions </Link>*/}
                                     {/*<Divider type="vertical"/>*/}
                                     {/*<Link to="/privacypolicy">Privacy Policy</Link></h4>*/}
+                                <Divider/>
+                                <h4 style={{textAlign:'center'}}>
+                                    Powered By: <a href="https://plutonic.co.in/" target="_blank">Plutonic Services</a>
+                                </h4>
                             </div>
                         </Col>
                     </Row>

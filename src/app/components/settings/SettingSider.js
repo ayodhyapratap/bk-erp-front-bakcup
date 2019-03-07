@@ -13,7 +13,7 @@ class SettingSider extends React.Component {
     render() {
         return <Sider trigger={null}
                       collapsible
-                      collapsed={this.props.collapsed}
+                      // collapsed={this.props.collapsed}
                       style={{overflow: 'auto', minHeight: '100vh', background: '#fff'}}>
             {/*<div className="logo"/>*/}
 

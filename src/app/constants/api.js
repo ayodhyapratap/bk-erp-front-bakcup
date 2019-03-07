@@ -14,6 +14,8 @@ export const LOGIN_URL = 'users/login/';
 export const USER_DATA = 'users/user_clone/';
 export const PRACTICESTAFF = 'clinics/%s/practice_staff/';
 export const USER_PRACTICE_PERMISSIONS = 'user_permissions/?user=%s&practice=%s';
+export const SET_USER_PERMISSION = 'user_permissions/';
+export const SET_SPECIFIC_USER_PERMISSION = 'user_permissions/%s/';
 export const ALL_PRACTICE = 'clinics/';
 export const PRACTICE = 'clinics/%s/';
 export const PRACTICE_DELETE = 'clinics/%s/delete_clinic/';
