@@ -5,6 +5,7 @@ import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../.
 import {Link} from "react-router-dom";
 import {ALL_PRACTICE, OFFERS} from "../../../../constants/api";
 import {getAPI, deleteAPI, interpolate, postAPI} from "../../../../utils/common";
+import CustomizedTable from "../../../common/CustomizedTable";
 
 class Offers extends React.Component {
     constructor(props) {
@@ -84,7 +85,7 @@ class Offers extends React.Component {
                 </Link>
             </h2>
             <Card>
-                <Table columns={columns} dataSource={this.state.offers}/>
+                <CustomizedTable columns={columns} dataSource={this.state.offers}/>
 
             </Card>
         </Row>

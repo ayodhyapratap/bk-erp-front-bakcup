@@ -127,7 +127,7 @@ class SettingsDash extends React.Component {
                                        <MedicalHistory  {...this.props} /> : <PermissionDenied/>
                                )}/>
                         <Route path="/settings/mlm"
-                               render={(route) => (this.props.activePracticePermissions.MLMSettings || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsMLMSettings || this.props.allowAllPermissions ?
                                        <MlmBase {...this.state}
                                                 {...this.props}
                                                 {...route}

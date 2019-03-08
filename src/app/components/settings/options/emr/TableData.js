@@ -12,6 +12,7 @@ import {
 import {TAXES} from "../../../../constants/api"
 import {Link} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
+import CustomizedTable from "../../../common/CustomizedTable";
 
 class TableData extends React.Component {
     constructor(props) {
@@ -132,7 +133,7 @@ class TableData extends React.Component {
         return <div>
             <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
             <Divider/>
-            <Table columns={columns} dataSource={this.state.data}/>
+            <CustomizedTable columns={columns} dataSource={this.state.data}/>
             <Modal
                 title={"Edit " + this.props.name}
                 visible={this.state.visible}

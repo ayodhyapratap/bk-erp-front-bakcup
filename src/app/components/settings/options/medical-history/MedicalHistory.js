@@ -5,6 +5,7 @@ import {SUCCESS_MSG_TYPE, CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD
 import {MEDICAL_HISTORY} from "../../../../constants/api"
 import {Link} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
+import CustomizedTable from "../../../common/CustomizedTable";
 
 class MedicalHistory extends React.Component {
     constructor(props) {
@@ -119,7 +120,7 @@ class MedicalHistory extends React.Component {
         <Card>
               <TestFormLayout title="Medical History" defaultValues={defaultValues}  formProp={formProp}  fields={fields}/>
               <Divider/>
-              <Table columns={columns}  dataSource={this.state.history}/>
+              <CustomizedTable columns={columns}  dataSource={this.state.history}/>
             </Card>
             <Modal
              title="Basic Modal"

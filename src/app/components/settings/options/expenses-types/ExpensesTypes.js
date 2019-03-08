@@ -5,6 +5,7 @@ import {SUCCESS_MSG_TYPE, CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD
 import {EXPENSE_TYPE} from "../../../../constants/api"
 import {Link} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
+import CustomizedTable from "../../../common/CustomizedTable";
 
 class ExpensesTypes extends React.Component {
     constructor(props) {
@@ -118,7 +119,7 @@ class ExpensesTypes extends React.Component {
         return <div><Card>
             <TestFormLayout title="Expenses Types" defaultValues={defaultValues} formProp={formProp}  fields={fields}/>
             <Divider/>
-            <Table columns={columns}  dataSource={this.state.expenses}/>
+            <CustomizedTable columns={columns}  dataSource={this.state.expenses}/>
             </Card>
             <Modal
              title="Basic Modal"

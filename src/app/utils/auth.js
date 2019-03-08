@@ -75,6 +75,15 @@ export const getAllPermissions = function () {
     }
     return permissions
 }
+
+export const getSuperUserPermissions = function (){
+    let permissions = [];
+    let lockrPermissions = lockr.get('PERMISSIONS');
+    if (lockrPermissions && lockrPermissions.SUPERUSER && lockrPermissions.SUPERUSER.length) {
+        return lockrPermissions.ADMIN;
+    }
+    return permissions
+}
 export const logInUser = function (data, successFn, errorFn) {
     console.log("workign");
     var data = {

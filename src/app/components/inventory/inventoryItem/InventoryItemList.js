@@ -13,6 +13,7 @@ import AddorEditInventoryItem from "./AddorEditInventoryItem";
 import AddItemType from "./AddItemType";
 import AddOrConsumeStock from "./AddOrConsumeStock"
 import {ADD_STOCK, CONSUME_STOCK, INVENTORY_ITEM_TYPE} from "../../../constants/hardData"
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class InventoryItemList extends React.Component {
     constructor(props) {
@@ -196,6 +197,14 @@ export default class InventoryItemList extends React.Component {
             title: 'Inventory Stock',
             dataIndex: 'item_type_stock',
             key: 'item_type_stock',
+            export: function (item_type_stock, record) {
+                let totalStock = 0;
+                if (item_type_stock.item_stock)
+                    item_type_stock.item_stock.forEach(function (stock) {
+                        totalStock += (Number.isInteger(stock.quantity) ? stock.quantity : 0)
+                    });
+                return totalStock;
+            },
             render: function (item_type_stock, record) {
                 let totalStock = 0;
                 if (item_type_stock.item_stock)
@@ -227,6 +236,9 @@ export default class InventoryItemList extends React.Component {
         }, {
             title: 'Manufacturer',
             key: 'manufacturer',
+            export: function (text, record) {
+                return manufacturerData[record.manufacturer]
+            },
             render: (text, record) => (
                 <span> {manufacturerData[record.manufacturer]}</span>
             )
@@ -297,8 +309,8 @@ export default class InventoryItemList extends React.Component {
                                 <Radio.Button value={"EXPIRED"}>Expired</Radio.Button>
                             </Radio.Group>
                         </Row>
-                        <Table pagination={false} bordered={true} dataSource={this.state.inventoryItemList}
-                               columns={columns}/>
+                        <CustomizedTable pagination={false} bordered={true} dataSource={this.state.inventoryItemList}
+                                         columns={columns}/>
                         <Modal visible={this.state.stockModalVisibility}
                                title={"Stock" + this.state.actionType}
                                onOk={() => this.showAddOrConsumeModal(false)}
