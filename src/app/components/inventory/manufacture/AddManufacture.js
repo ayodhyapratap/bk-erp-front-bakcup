@@ -1,23 +1,13 @@
-import {Button, Card, Form, Icon, List, Row} from "antd";
+import {Card, Form, Row} from "antd";
 import React from "react";
 import {
-    DATE_PICKER, FILE_UPLOAD_FIELD,
     INPUT_FIELD,
-    QUILL_TEXT_FIELD,
-    SELECT_FIELD,
     SUCCESS_MSG_TYPE,
-    TEXT_FIELD
 } from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {
-    BLOG_DISEASE,
-    BLOG_POST,
-    INVOICES_API, MANUFACTURER_API,
-    PRACTICE,
-    SINGLE_DISEASE, SINGLE_MANUFACTURER_API,
-    SINGLE_PAGE_SEO,
-    SINGLE_POST, SINGLE_VENDOR_API
+    MANUFACTURER_API, SINGLE_MANUFACTURER_API, SINGLE_VENDOR_API
 } from "../../../constants/api";
 import {Route} from "react-router";
 import {Redirect} from "react-router-dom";
@@ -31,7 +21,7 @@ export default class AddManufacture extends React.Component {
         }
     }
 
-    changeRedirect=()=> {
+    changeRedirect = () => {
         var redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,

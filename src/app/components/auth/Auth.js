@@ -1,18 +1,13 @@
 import React from "react";
 import LoginForm from "./forms/LoginForm";
-// import RegisterForm from "./forms/RegisterForm";
 import {Card, Col, Divider, Form, Layout, Row} from "antd";
 import {Link, Route, Switch} from "react-router-dom";
 import '../../assets/auth.css';
-// import TermsCondition from "../common/TermsCondition";
-// import PrivacyPolicy from "../common/PrivacyPolicy";
-// import VerifyEmail from "./VerifyEmail";
-// import ForgotPass from "./ForgotPass";
 import AppLogo from '../../assets/img/kidneycarelogo.png';
 import DynamicFieldsForm from "../common/DynamicFieldsForm";
 import {PASSWORD_FIELD, SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
-import {PATIENT_CLINIC_NOTES_API, RESET_PASSWORD} from "../../constants/api";
-import {displayMessage, interpolate} from "../../utils/common";
+import {RESET_PASSWORD} from "../../constants/api";
+import {displayMessage} from "../../utils/common";
 
 class Auth extends React.Component {
     constructor(props) {
@@ -55,17 +50,17 @@ class Auth extends React.Component {
                 <Route path="/password-reset/">
                     <Row>
                         {/*<Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}*/}
-                             {/*lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>*/}
+                        {/*lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>*/}
                         {/*</Col>*/}
                         <Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}
                              lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}}>
-                            <div className="loginFormWrapper" style={{textAlign:'center'}}>
-                                <img src={AppLogo} alt="" style={{maxWidth: '100%',minWidth:'50%',margin:'20px'}}/>
+                            <div className="loginFormWrapper" style={{textAlign: 'center'}}>
+                                <img src={AppLogo} alt="" style={{maxWidth: '100%', minWidth: '50%', margin: '20px'}}/>
                                 <Card>
-                                <PasswordResetForm {...this.props}
-                                                   formProp={formProp}
-                                                   fields={resetPasswordFields}
-                                                   defaultValues={tokenDefaultValues}/>
+                                    <PasswordResetForm {...this.props}
+                                                       formProp={formProp}
+                                                       fields={resetPasswordFields}
+                                                       defaultValues={tokenDefaultValues}/>
                                 </Card>
                                 <Divider/>
                                 <h4>
@@ -80,20 +75,20 @@ class Auth extends React.Component {
                 <Route>
                     <Row>
                         {/*<Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}*/}
-                             {/*lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>*/}
+                        {/*lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>*/}
                         {/*</Col>*/}
                         <Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}
                              lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>
-                            <div className="loginFormWrapper" style={{textAlign:'center'}}>
-                                <img src={AppLogo} alt="" style={{maxWidth: '100%',minWidth:'50%',margin:'20px'}}/>
+                            <div className="loginFormWrapper" style={{textAlign: 'center'}}>
+                                <img src={AppLogo} alt="" style={{maxWidth: '100%', minWidth: '50%', margin: '20px'}}/>
                                 <LoginFormLayout {...this.props} login={this.props.login}/>
                                 {/*<Divider/>*/}
                                 {/*<h4>*/}
-                                    {/*<Link to="/terms">Terms & Conditions </Link>*/}
-                                    {/*<Divider type="vertical"/>*/}
-                                    {/*<Link to="/privacypolicy">Privacy Policy</Link></h4>*/}
+                                {/*<Link to="/terms">Terms & Conditions </Link>*/}
+                                {/*<Divider type="vertical"/>*/}
+                                {/*<Link to="/privacypolicy">Privacy Policy</Link></h4>*/}
                                 <Divider/>
-                                <h4 style={{textAlign:'center'}}>
+                                <h4 style={{textAlign: 'center'}}>
                                     Powered By: <a href="https://plutonic.co.in/" target="_blank">Plutonic Services</a>
                                 </h4>
                             </div>

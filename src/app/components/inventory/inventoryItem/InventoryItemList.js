@@ -1,12 +1,12 @@
 import React from "react";
-import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Table, Row, Radio} from "antd";
+import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Row, Radio} from "antd";
 import {getAPI, interpolate, deleteAPI} from "../../../utils/common";
 import {
     INVENTORY_ITEM_API,
     SINGLE_INVENTORY_ITEM_API,
     MANUFACTURER_API,
     TAXES,
-    VENDOR_API, ITEM_TYPE_STOCK
+    VENDOR_API
 } from "../../../constants/api";
 import {Link, Route, Switch} from "react-router-dom";
 import AddorEditInventoryItem from "./AddorEditInventoryItem";

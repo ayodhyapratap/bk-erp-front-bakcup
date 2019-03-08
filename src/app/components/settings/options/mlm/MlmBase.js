@@ -1,9 +1,9 @@
 import React from "react";
-import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Table, Tabs} from "antd";
-import {getAPI, interpolate, deleteAPI, postAPI} from "../../../../utils/common";
+import {Button, Card, Icon, Table, Tabs} from "antd";
+import {getAPI, interpolate, postAPI} from "../../../../utils/common";
 import MLMGenerate from "./MLMGenerate"
 import {Link, Route, Switch} from "react-router-dom";
-import {OFFERS, PRODUCT_MARGIN, ROLE_COMMISION, SINGLE_PRODUCT_MARGIN, STAFF_ROLES} from "../../../../constants/api";
+import {PRODUCT_MARGIN, ROLE_COMMISION, SINGLE_PRODUCT_MARGIN, STAFF_ROLES} from "../../../../constants/api";
 
 const TabPane = Tabs.TabPane;
 

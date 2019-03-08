@@ -1,26 +1,15 @@
-import {Button, Card, Form, Icon, List, Row} from "antd";
+import {Card, Form, Row} from "antd";
 import React from "react";
 import {
-    DATE_PICKER, FILE_UPLOAD_FIELD,
     INPUT_FIELD,
-    QUILL_TEXT_FIELD,
-    SELECT_FIELD,
     SUCCESS_MSG_TYPE,
-    TEXT_FIELD
 } from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {
-    BLOG_DISEASE,
-    BLOG_POST,
-    INVOICES_API,
-    PRACTICE,
-    SINGLE_DISEASE,
-    SINGLE_PAGE_SEO,
-    SINGLE_POST, SINGLE_VENDOR_API, VENDOR_API
+    SINGLE_VENDOR_API, VENDOR_API
 } from "../../../constants/api";
-import {Route} from "react-router";
-import {Redirect} from "react-router-dom";
+import {Route, Redirect} from "react-router-dom";
 
 
 export default class AddVendor extends React.Component {
@@ -69,7 +58,7 @@ export default class AddVendor extends React.Component {
             key: "name",
             initialValue: this.state.editData ? this.state.editData.name : null,
             type: INPUT_FIELD,
-            required:true
+            required: true
         }, {
             label: "Description",
             key: "description",
@@ -104,7 +93,7 @@ export default class AddVendor extends React.Component {
             errorFn: function () {
 
             },
-            action: interpolate(VENDOR_API,[that.props.active_practiceId]),
+            action: interpolate(VENDOR_API, [that.props.active_practiceId]),
             method: "post",
         }
         const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];

@@ -1,23 +1,14 @@
-import {Button, Card, Form, Icon, List, Row} from "antd";
+import {Card, Form, Row} from "antd";
 import React from "react";
 import {
-    DATE_PICKER,
     INPUT_FIELD, NUMBER_FIELD,
-    QUILL_TEXT_FIELD,
-    SELECT_FIELD, SINGLE_CHECKBOX_FIELD,
     SUCCESS_MSG_TYPE,
-    TEXT_FIELD
 } from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {
-    BLOG_DISEASE,
-    BLOG_POST, BLOG_VIDEOS,
-    INVOICES_API, LANDING_PAGE_VIDEO,
-    PRACTICE,
-    SINGLE_DISEASE, SINGLE_LANDING_PAGE_VIDEO, SINGLE_PAGE_SEO,
-    SINGLE_POST,
-    SINGLE_VIDEO
+    LANDING_PAGE_VIDEO,
+    SINGLE_LANDING_PAGE_VIDEO,
 } from "../../../constants/api";
 import {Route} from "react-router";
 import {Redirect} from "react-router-dom";

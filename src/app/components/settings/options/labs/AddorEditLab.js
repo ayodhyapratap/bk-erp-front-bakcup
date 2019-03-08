@@ -1,5 +1,5 @@
 import React from "react";
-import {Card, Row, Select} from "antd";
+import {Card, Row} from "antd";
 import {Redirect, Route} from "react-router-dom";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form} from "antd/lib/index";
@@ -7,11 +7,10 @@ import {
     INPUT_FIELD,
     NUMBER_FIELD,
     SELECT_FIELD,
-    SINGLE_CHECKBOX_FIELD,
     SUCCESS_MSG_TYPE, TEXT_FIELD
 } from "../../../../constants/dataKeys";
 import {displayMessage, getAPI, interpolate} from "../../../../utils/common";
-import {LABTEST_API, PATIENT_PAYMENTS_API, PRODUCT_MARGIN} from "../../../../constants/api";
+import {LABTEST_API,PRODUCT_MARGIN} from "../../../../constants/api";
 
 export default class AddorEditLab extends React.Component {
     constructor(props) {

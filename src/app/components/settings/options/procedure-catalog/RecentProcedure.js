@@ -1,7 +1,5 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Card, Form, Icon, Tabs, Divider, Tag, Row, Table, Popconfirm} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {Button, Card, Icon, Tabs, Divider, Tag, Row, Table, Popconfirm} from "antd";
 import {PROCEDURE_CATEGORY} from "../../../../constants/api"
 import {Route, Link, Switch} from "react-router-dom";
 import {getAPI, interpolate, postAPI} from "../../../../utils/common";

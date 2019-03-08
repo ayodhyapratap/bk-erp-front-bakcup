@@ -1,7 +1,7 @@
-import {Button, Card, Divider, Icon, List, Row, Table, Upload} from "antd";
+import {Button, Card, Icon} from "antd";
 import React from "react";
 import {getAPI} from "../../../utils/common";
-import {EXPENSES_API, VENDOR_API} from "../../../constants/api";
+import {EXPENSES_API} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddExpenses from "./AddExpenses";
 import {Link} from "react-router-dom";

@@ -6,9 +6,6 @@ import {Link} from 'react-router-dom';
 const Sider = Layout.Sider;
 
 class SettingSider extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         return <Sider trigger={null}

@@ -1,15 +1,13 @@
 import {
-    Form, Icon, Input, Button, Checkbox, Card, Table, InputNumber
+    Form, Input, Button, Card, Table, InputNumber
 } from 'antd';
 import React from "react";
 import {
-    ROLE_COMMISION,
     STAFF_ROLES,
-    PRODUCT_LEVEL,
     GENERATE_MLM_COMMISSON,
     SINGLE_PRODUCT_MARGIN
 } from "../../../../constants/api"
-import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../../utils/common";
+import {displayMessage, getAPI, interpolate, postAPI} from "../../../../utils/common";
 import {SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
 
 class MLMGenerate extends React.Component {

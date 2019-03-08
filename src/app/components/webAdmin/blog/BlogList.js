@@ -1,35 +1,38 @@
-import {Button, Card, Divider, Icon, List, Popconfirm, Row, Table, Upload} from "antd";
+import {Button, Card, Divider, Icon, Popconfirm, Table,} from "antd";
 import React from "react";
-import {getAPI, interpolate, patchAPI, postAPI} from "../../../utils/common";
-import {BLOG_POST, SINGLE_CONTACT, SINGLE_POST} from "../../../constants/api";
+import {getAPI, interpolate, patchAPI} from "../../../utils/common";
+import {BLOG_POST, SINGLE_POST} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddPost from "./AddPost";
 import {Link} from "react-router-dom";
 
-export default class DiseaseList extends React.Component{
-    constructor(props){
+export default class DiseaseList extends React.Component {
+    constructor(props) {
         super(props);
-        this.state={
-            post:null
+        this.state = {
+            post: null
         };
-        this.loadData=this.loadData.bind(this);
+        this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
     }
-    componentDidMount(){
+
+    componentDidMount() {
         this.loadData();
     }
-    loadData(){
-        let that =this;
+
+    loadData() {
+        let that = this;
         let successFn = function (data) {
             that.setState({
-                post:data
+                post: data
             })
         }
         let errorFn = function () {
 
         }
-        getAPI(BLOG_POST ,successFn, errorFn);
+        getAPI(BLOG_POST, successFn, errorFn);
     }
+
     deleteObject(record) {
         let that = this;
         let reqData = {};
@@ -41,21 +44,22 @@ export default class DiseaseList extends React.Component{
         };
         patchAPI(interpolate(SINGLE_POST, [record.id]), reqData, successFn, errorFn)
     }
-    render(){
+
+    render() {
         let that = this;
         let coloumns = [{
             title: 'Blog Title',
             dataIndex: 'title',
             key: 'post_title'
-        },{
-            title:'Date',
-            dataIndex:'posted_on',
-            key:'post_date'
-        },{
-            title:'Actions',
-            render:(item)=>{
+        }, {
+            title: 'Date',
+            dataIndex: 'posted_on',
+            key: 'post_date'
+        }, {
+            title: 'Actions',
+            render: (item) => {
                 return <div>
-                    <Link to={"/web/blog/edit/"+item.id}>Edit</Link>
+                    <Link to={"/web/blog/edit/" + item.id}>Edit</Link>
                     <Divider type="vertical"/>
                     <Popconfirm title="Are you sure delete this item?"
                                 onConfirm={() => that.deleteObject(item)} okText="Yes" cancelText="No">
@@ -64,13 +68,14 @@ export default class DiseaseList extends React.Component{
                 </div>
             }
         }];
-        return<div><Switch>
-                <Route exact path='/web/blog/add'
+        return <div><Switch>
+            <Route exact path='/web/blog/add'
                    render={(route) => <AddPost {...this.state} {...route}/>}/>
             <Route exact path='/web/blog/edit/:id'
                    render={(route) => <AddPost {...this.state} {...route}/>}/>
-            <Card title="Blogs" extra={<Link to={"/web/blog/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-               <Table dataSource={this.state.post} columns={coloumns}/>
+            <Card title="Blogs"
+                  extra={<Link to={"/web/blog/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
+                <Table dataSource={this.state.post} columns={coloumns}/>
             </Card>
         </Switch>
         </div>

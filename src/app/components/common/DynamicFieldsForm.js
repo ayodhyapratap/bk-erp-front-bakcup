@@ -26,16 +26,14 @@ import {
     RADIO_FIELD,
     SELECT_FIELD,
     QUILL_TEXT_FIELD,
-    WARNING_MSG_TYPE,
     SINGLE_IMAGE_UPLOAD_FIELD,
-    COUNTRY_STATE_CITY_FIELD,
     COUNTRY_FIELD,
     STATE_FIELD,
     EMAIL_FIELD,
     CITY_FIELD, PASSWORD_FIELD, MULTI_SELECT_FIELD, MULTI_IMAGE_UPLOAD_FIELD
 } from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
-import {displayMessage, getAPI, makeURL, postAPI, putAPI} from "../../utils/common";
+import {getAPI, makeURL, postAPI, putAPI} from "../../utils/common";
 import moment from "moment";
 import {SwatchesPicker} from 'react-color';
 import ReactQuill from 'react-quill';
@@ -377,12 +375,12 @@ class DynamicFieldsForm extends React.Component {
                                             backgroundColor: that.state.colorPickerColor,
                                             height: '40px',
                                             width: '40px'
-                                        }} /> : (that.state.formData[field.key]?<div style={{
+                                        }}/> : (that.state.formData[field.key] ? <div style={{
                                             margin: '10px',
                                             backgroundColor: that.state.formData[field.key],
                                             height: '40px',
                                             width: '40px'
-                                        }} />:null)}
+                                        }}/> : null)}
                                     </div>
                                 )}
                             </FormItem>;

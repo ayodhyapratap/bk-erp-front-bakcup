@@ -5,9 +5,6 @@ import {Layout} from "antd";
 
 const {Content} = Layout;
 export default class Profile extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         let that = this;

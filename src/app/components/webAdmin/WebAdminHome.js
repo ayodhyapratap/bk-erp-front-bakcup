@@ -14,9 +14,6 @@ import LandingPageContentList from "./landingPageContent/LandingPageContentList"
 
 const {Content} = Layout;
 export default class WebAdminHome extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         return <Content className="main-container" style={{

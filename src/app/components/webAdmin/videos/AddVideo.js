@@ -1,22 +1,13 @@
-import {Button, Card, Form, Icon, List, Row, Upload} from "antd";
+import {Card, Form, Row,} from "antd";
 import React from "react";
 import {
-    DATE_PICKER,
     INPUT_FIELD, NUMBER_FIELD,
-    QUILL_TEXT_FIELD,
-    SELECT_FIELD, SINGLE_CHECKBOX_FIELD,
-    SUCCESS_MSG_TYPE,
-    TEXT_FIELD
+    SUCCESS_MSG_TYPE
 } from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {
-    BLOG_DISEASE,
-    BLOG_POST, BLOG_VIDEOS,
-    INVOICES_API,
-    PRACTICE,
-    SINGLE_DISEASE, SINGLE_PAGE_SEO,
-    SINGLE_POST,
+    BLOG_VIDEOS,
     SINGLE_VIDEO
 } from "../../../constants/api";
 import {Route} from "react-router";
@@ -74,21 +65,21 @@ export default class AddVideo extends React.Component {
             key: "rank",
             initialValue: this.state.editBlogData ? this.state.editBlogData.rank : 1,
             type: NUMBER_FIELD,
-            required:true,
-            min:1
+            required: true,
+            min: 1
         }, {
             label: "Video link",
             key: "link",
             initialValue: this.state.editBlogData ? this.state.editBlogData.link : null,
             type: INPUT_FIELD,
-            required:true
+            required: true
         },
-        //     {
-        //     label: "Active",
-        //     key: "is_active",
-        //     initialValue: this.state.editBlogData ? this.state.editBlogData.is_active : null,
-        //     type: SINGLE_CHECKBOX_FIELD,
-        // },
+            //     {
+            //     label: "Active",
+            //     key: "is_active",
+            //     initialValue: this.state.editBlogData ? this.state.editBlogData.is_active : null,
+            //     type: SINGLE_CHECKBOX_FIELD,
+            // },
         ];
 
 
@@ -127,7 +118,7 @@ export default class AddVideo extends React.Component {
             action: BLOG_VIDEOS,
             method: "post",
         }
-        let defaultValues = [{key:'is_active',value:true}];
+        let defaultValues = [{key: 'is_active', value: true}];
 
         return <Row>
             <Card>
@@ -137,7 +128,8 @@ export default class AddVideo extends React.Component {
                                            changeRedirect={this.changeRedirect} formProp={editformProp}
                                            fields={fields}/> : <Redirect to={'/web/videos'}/>)}/>
                 <Route exact path='/web/videos/add'
-                       render={() => <TestFormLayout title="Add video" defaultValues={defaultValues} changeRedirect={this.changeRedirect}
+                       render={() => <TestFormLayout title="Add video" defaultValues={defaultValues}
+                                                     changeRedirect={this.changeRedirect}
                                                      formProp={formProp} fields={fields}/>}/>
 
 

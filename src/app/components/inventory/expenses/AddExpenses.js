@@ -1,8 +1,7 @@
-import {Button, Card, Form, Icon, List, Row} from "antd";
+import {Card, Form, Row} from "antd";
 import React from "react";
 import {
     DATE_PICKER,
-    FILE_UPLOAD_FIELD,
     INPUT_FIELD,
     SELECT_FIELD,
     SUCCESS_MSG_TYPE,

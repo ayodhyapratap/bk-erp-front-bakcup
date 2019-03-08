@@ -1,11 +1,10 @@
-import {Button, Card, Divider, Icon, List, Table} from "antd";
+import { Card, Table} from "antd";
 import React from "react";
-import {getAPI, patchAPI} from "../../../utils/common";
-import {BLOG_PAGE_SEO, BLOG_POST} from "../../../constants/api";
+import {getAPI} from "../../../utils/common";
+import {BLOG_PAGE_SEO} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddSEO from "./AddSEO";
 import {Link} from "react-router-dom";
-import TableData from "../../settings/options/emr/TableData";
 
 export default class SEOList extends React.Component{
     constructor(props){

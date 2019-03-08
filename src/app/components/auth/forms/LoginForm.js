@@ -1,10 +1,9 @@
-import {Form, Icon, Input, Button, Checkbox, Modal, Divider} from 'antd';
+import {Form, Icon, Input, Button, Modal,} from 'antd';
 import React from 'react';
 import 'antd/dist/antd.css';
-import {Link} from "react-router-dom";
 import {EMAIL, PASSWORD} from "../../../constants/formLabels";
 import {Redirect} from 'react-router';
-import {displayMessage, getAPI, interpolate, makeURL, postAPI, postOuterAPI} from "../../../utils/common";
+import {displayMessage, makeURL, postOuterAPI} from "../../../utils/common";
 import {RESET_PASSWORD_MAIL} from "../../../constants/api";
 
 const FormItem = Form.Item;

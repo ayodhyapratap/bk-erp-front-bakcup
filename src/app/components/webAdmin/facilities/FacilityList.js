@@ -1,12 +1,8 @@
-import {Button, Card, Divider, Icon, List, Popconfirm, Table} from "antd";
+import {Button, Card, Divider, Icon, Popconfirm, Table} from "antd";
 import React from "react";
-import {getAPI, interpolate, patchAPI, postAPI} from "../../../utils/common";
+import {getAPI, interpolate, patchAPI} from "../../../utils/common";
 import {
-    BLOG_FACILITY,
-    BLOG_PAGE_SEO,
-    BLOG_POST,
-    BLOG_SLIDER, SINGLE_FACILITY,
-    SINGLE_LANDING_PAGE_CONTENT
+    BLOG_FACILITY, SINGLE_FACILITY,
 } from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddFacility from "./AddFacility";
@@ -38,6 +34,7 @@ export default class FacilityList extends React.Component {
         }
         getAPI(BLOG_FACILITY, successFn, errorFn);
     }
+
     deleteObject(record) {
         let that = this;
         let reqData = {};
@@ -49,6 +46,7 @@ export default class FacilityList extends React.Component {
         };
         patchAPI(interpolate(SINGLE_FACILITY, [record.id]), reqData, successFn, errorFn)
     }
+
     render() {
         let that = this;
         let coloumns = [{
@@ -70,7 +68,7 @@ export default class FacilityList extends React.Component {
         }];
         return <div><Switch>
             <Route exact path='/web/facilities/add'
-                   render={(route) => <AddFacility  loadData={this.loadData} {...this.state} {...route}/>}/>
+                   render={(route) => <AddFacility loadData={this.loadData} {...this.state} {...route}/>}/>
             <Route exact path='/web/facilities/edit/:id'
                    render={(route) => <AddFacility loadData={this.loadData} {...this.state} {...route}/>}/>
             <Card title="Facilities" extra={<Link to={"/web/facilities/add"}> <Button type="primary"><Icon

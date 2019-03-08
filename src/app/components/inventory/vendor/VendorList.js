@@ -1,4 +1,4 @@
-import {Button, Card, Divider, Icon, List, Row, Table, Upload} from "antd";
+import {Button, Card, Icon} from "antd";
 import React from "react";
 import {getAPI, interpolate} from "../../../utils/common";
 import {VENDOR_API} from "../../../constants/api";
@@ -31,7 +31,7 @@ export default class VendorList extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(interpolate(VENDOR_API,[this.props.active_practiceId]), successFn, errorFn);
+        getAPI(interpolate(VENDOR_API, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     render() {

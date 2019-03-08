@@ -1,10 +1,11 @@
-import {Button, Card, Divider, Icon, List, Row, Table, Upload} from "antd";
+import {Button, Card,Icon} from "antd";
 import React from "react";
 import {getAPI} from "../../../utils/common";
-import {manufacture_API, MANUFACTURER_API} from "../../../constants/api";
+import {MANUFACTURER_API} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddManufacture from "./AddManufacture";
 import {Link} from "react-router-dom";
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class ManufactureList extends React.Component {
     constructor(props) {
@@ -62,7 +63,7 @@ export default class ManufactureList extends React.Component {
                    render={(route) => <AddManufacture {...this.state} {...route} loadData={that.loadData}/>}/>
             <Card title="Manufactures" extra={<Link to={"/inventory/manufacture/add"}> <Button type="primary"><Icon
                 type="plus"/> Add</Button></Link>}>
-                <Table dataSource={this.state.manufactures} columns={manufactureColoumns}/>
+                <CustomizedTable dataSource={this.state.manufactures} columns={manufactureColoumns}/>
             </Card>
         </Switch>
         </div>

@@ -1,23 +1,17 @@
-import {Button, Card, Form, Icon, List, Row} from "antd";
+import {Card, Form, Row} from "antd";
 import React from "react";
 import {
     DATE_PICKER, SINGLE_IMAGE_UPLOAD_FIELD,
     INPUT_FIELD,
     QUILL_TEXT_FIELD,
-    SELECT_FIELD, SINGLE_CHECKBOX_FIELD,
     SUCCESS_MSG_TYPE,
     TEXT_FIELD
 } from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {
-    BLOG_DISEASE, BLOG_EVENTS,
-    BLOG_POST,
-    INVOICES_API,
-    PRACTICE,
-    SINGLE_DISEASE,
-    SINGLE_EVENTS, SINGLE_PAGE_SEO,
-    SINGLE_POST
+    BLOG_EVENTS,
+    SINGLE_EVENTS,
 } from "../../../constants/api";
 import {Route} from "react-router";
 import {Redirect} from "react-router-dom";
@@ -134,7 +128,7 @@ export default class AddEvent extends React.Component {
             action: BLOG_EVENTS,
             method: "post",
         }
-        let defaultValues = [{key:'is_active',value:true}];
+        let defaultValues = [{key: 'is_active', value: true}];
 
         return <Row>
             <Card>
@@ -144,7 +138,8 @@ export default class AddEvent extends React.Component {
                                            changeRedirect={this.changeRedirect} formProp={editformProp}
                                            fields={fields}/> : <Redirect to={'/web/event'}/>)}/>
                 <Route exact path='/web/event/add'
-                       render={() => <TestFormLayout defaultValues={defaultValues} title="Add Event" changeRedirect={this.changeRedirect}
+                       render={() => <TestFormLayout defaultValues={defaultValues} title="Add Event"
+                                                     changeRedirect={this.changeRedirect}
                                                      formProp={formProp} fields={fields}/>}/>
 
 

@@ -1,8 +1,8 @@
 import React from "react";
-import {Button, Divider, Tag, Card, Form, Icon, Row, Table} from "antd";
+import {Button, Divider, Card, Icon, Row, Table} from "antd";
 import {Link} from "react-router-dom";
-import {ALL_PRACTICE, PRACTICE, PRACTICE_DELETE} from "../../../../constants/api";
-import {getAPI, deleteAPI, interpolate, postAPI} from "../../../../utils/common";
+import {ALL_PRACTICE, PRACTICE_DELETE} from "../../../../constants/api";
+import {getAPI, interpolate, postAPI} from "../../../../utils/common";
 
 
 class PracticeDetails extends React.Component {

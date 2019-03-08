@@ -1,7 +1,5 @@
 import React from "react";
-import {Avatar, Button, Card, Col, Divider, Drawer, Icon, Layout, Row, Tooltip} from "antd";
-import {getAPI} from "../../utils/common";
-import {PATIENTS_LIST} from "../../constants/api";
+import {Avatar, Button,  Drawer, Icon, Layout,  Tooltip} from "antd";
 import PatientSelection from "./PatientSelection";
 import {Link} from "react-router-dom";
 

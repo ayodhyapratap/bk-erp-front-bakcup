@@ -1,7 +1,7 @@
-import {Button, Card, Divider, Icon, List, Popconfirm, Table} from "antd";
+import {Button, Card, Divider, Icon, Popconfirm, Table} from "antd";
 import React from "react";
 import {getAPI, interpolate, patchAPI} from "../../../utils/common";
-import {BLOG_DISEASE, SINGLE_CONTACT, SINGLE_DISEASE} from "../../../constants/api";
+import {BLOG_DISEASE, SINGLE_DISEASE} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddDisease from "./AddDisease";
 import {Link} from "react-router-dom";
@@ -32,6 +32,7 @@ export default class DiseaseList extends React.Component {
         }
         getAPI(BLOG_DISEASE, successFn, errorFn);
     }
+
     deleteObject(record) {
         let that = this;
         let reqData = {};
@@ -43,21 +44,22 @@ export default class DiseaseList extends React.Component {
         };
         patchAPI(interpolate(SINGLE_DISEASE, [record.id]), reqData, successFn, errorFn)
     }
+
     render() {
         let that = this;
         let coloumns = [{
             title: 'Disease Name',
             dataIndex: 'disease_name',
             key: 'disease_name'
-        },{
-            title:'Disease Type',
-            dataIndex:'disease_type',
-            key:'disease_type'
-        },{
-            title:'Actions',
-            render:(item)=>{
+        }, {
+            title: 'Disease Type',
+            dataIndex: 'disease_type',
+            key: 'disease_type'
+        }, {
+            title: 'Actions',
+            render: (item) => {
                 return <div>
-                    <Link to={"/web/disease/edit/"+item.id}>Edit</Link>
+                    <Link to={"/web/disease/edit/" + item.id}>Edit</Link>
                     <Divider type="vertical"/>
                     <Popconfirm title="Are you sure delete this item?"
                                 onConfirm={() => that.deleteObject(item)} okText="Yes" cancelText="No">
