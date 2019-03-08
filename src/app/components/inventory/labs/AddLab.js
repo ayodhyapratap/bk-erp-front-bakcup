@@ -83,7 +83,7 @@ export default class AddLab extends React.Component {
     render() {
 
         const patientOptions = []
-        if (this.state.patientListData) {
+        if (this.state.patientListData && this.state.patientListData.length) {
             this.state.patientListData.forEach(function (drug) {
                 patientOptions.push({label: (drug.name), value: drug.id});
             })

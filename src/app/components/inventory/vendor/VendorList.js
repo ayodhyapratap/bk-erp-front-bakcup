@@ -1,10 +1,11 @@
 import {Button, Card, Divider, Icon, List, Row, Table, Upload} from "antd";
 import React from "react";
-import {getAPI} from "../../../utils/common";
+import {getAPI, interpolate} from "../../../utils/common";
 import {VENDOR_API} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddVendor from "./AddVendor";
 import {Link} from "react-router-dom";
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class VendorList extends React.Component {
     constructor(props) {
@@ -30,7 +31,7 @@ export default class VendorList extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(VENDOR_API, successFn, errorFn);
+        getAPI(interpolate(VENDOR_API,[this.props.active_practiceId]), successFn, errorFn);
     }
 
     render() {
@@ -39,10 +40,6 @@ export default class VendorList extends React.Component {
             title: 'Name',
             key: 'name',
             dataIndex: 'name'
-        }, {
-            title: 'Clinic',
-            key: 'practice',
-            dataIndex: 'practice'
         }, {
             title: 'Details',
             key: 'details',
@@ -62,7 +59,7 @@ export default class VendorList extends React.Component {
                    render={(route) => <AddVendor {...this.state} {...route} loadData={that.loadData}/>}/>
             <Card title="Vendors" extra={<Link to={"/inventory/vendor/add"}> <Button type="primary"><Icon
                 type="plus"/> Add</Button></Link>}>
-                <Table columns={vendorsColoumns} dataSource={this.state.vendors}/>
+                <CustomizedTable columns={vendorsColoumns} dataSource={this.state.vendors}/>
             </Card>
         </Switch>
         </div>

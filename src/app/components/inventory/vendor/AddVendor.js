@@ -68,7 +68,8 @@ export default class AddVendor extends React.Component {
             label: "Name",
             key: "name",
             initialValue: this.state.editData ? this.state.editData.name : null,
-            type: INPUT_FIELD
+            type: INPUT_FIELD,
+            required:true
         }, {
             label: "Description",
             key: "description",
@@ -103,7 +104,7 @@ export default class AddVendor extends React.Component {
             errorFn: function () {
 
             },
-            action: VENDOR_API,
+            action: interpolate(VENDOR_API,[that.props.active_practiceId]),
             method: "post",
         }
         const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];

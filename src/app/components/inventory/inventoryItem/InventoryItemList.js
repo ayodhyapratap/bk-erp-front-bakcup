@@ -287,12 +287,12 @@ export default class InventoryItemList extends React.Component {
                                                              {...this.state} {...route}/>}/>
                 <Route>
                     <Card title="Inventory List"
-                          extra={<div>
+                          extra={<Button.Group>
                               <Link to="/inventory/add"><Button type="primary"><Icon type="plus"/> Add
                                   Item</Button></Link>
                               <Link to="/inventory/add-stock"><Button type="primary">Add Stock</Button></Link>
                               <Link to="/inventory/consume-stock"><Button type="primary">Consume Stock</Button></Link>
-                          </div>}>
+                          </Button.Group>}>
                         <Row>
                             <Radio.Group name="itemTypeFilter" size="small" defaultValue={"ALL"} buttonStyle="solid"
                                          onChange={this.changeFilter} style={{margin: '10px'}}>

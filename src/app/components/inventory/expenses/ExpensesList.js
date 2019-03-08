@@ -5,6 +5,8 @@ import {EXPENSES_API, VENDOR_API} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddExpenses from "./AddExpenses";
 import {Link} from "react-router-dom";
+import moment from "moment";
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class ExpensesList extends React.Component {
     constructor(props) {
@@ -38,11 +40,17 @@ export default class ExpensesList extends React.Component {
             title: 'Expense Date',
             key: 'expense_date',
             dataIndex: 'expense_date',
-
-        },{
+            export: function (text) {
+                return moment(text).format('lll');
+            },
+            render: function (text) {
+                return moment(text).format('lll');
+            }
+        }, {
             title: 'Expense Type',
             key: 'expense_type',
-            dataIndex: 'expense_type'
+            dataIndex: 'expense_type',
+
         }, {
             title: 'Vendor',
             key: 'vendor',
@@ -70,7 +78,7 @@ export default class ExpensesList extends React.Component {
                    render={(route) => <AddExpenses {...this.state} {...route} loadData={this.loadData}/>}/>
             <Card title="Expensess" extra={<Link to={"/inventory/expenses/add"}> <Button type="primary"><Icon
                 type="plus"/> Add</Button></Link>}>
-                <Table dataSource={this.state.expenses} columns={expenseColoumns}/>
+                <CustomizedTable dataSource={this.state.expenses} columns={expenseColoumns}/>
             </Card>
         </Switch>
         </div>
