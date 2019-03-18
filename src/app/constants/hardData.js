@@ -32,3 +32,31 @@ export const INVENTORY_ITEM_TYPE = [
 
 export const ADD_STOCK = "ADD";
 export const CONSUME_STOCK = "CONSUME";
+
+export const APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS = [{
+    label: "CLINIC CONTACT",
+    value: "{{CLINICCONTACTNUMBER}}"
+}, {
+    label: "CLINIC NAME",
+    value: "{{CLINIC}}"
+}, {
+    label: "PATIENT NAME",
+    value: "{{PATIENT}}"
+}, {
+    label: "APPOINTMENT CATEGORY",
+    value: "{{CATEGORY}}"
+}];
+
+export const APPOINTMENT_CANCELATION_SMS_TAG_OPTIONS = [{
+    label: "CLINIC CONTACT",
+    value: "{{CLINICCONTACTNUMBER}}"
+}, {
+    label: "CLINIC NAME",
+    value: "{{CLINIC}}"
+}, {
+    label: "PATIENT NAME",
+    value: "{{PATIENT}}"
+}, {
+    label: "APPOINTMENT CATEGORY",
+    value: "{{CATEGORY}}"
+}];

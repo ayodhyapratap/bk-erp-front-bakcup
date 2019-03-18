@@ -3,6 +3,7 @@ import {Button, Card, Col, Icon, Radio, Row, Table} from "antd";
 import {APPOINTMENT_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment from "moment"
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class AppointmentsReport extends React.Component {
     constructor(props) {
@@ -92,15 +93,15 @@ export default class AppointmentsReport extends React.Component {
             {name: 'Appointment For Each Patient Group', value: 'j'},]
         return <div>
             <h2>Appointments Report
-                <Button.Group style={{float: 'right'}}>
-                    <Button><Icon type="mail"/> Mail</Button>
-                    <Button><Icon type="printer"/> Print</Button>
-                </Button.Group>
+                {/*<Button.Group style={{float: 'right'}}>*/}
+                    {/*<Button><Icon type="mail"/> Mail</Button>*/}
+                    {/*<Button><Icon type="printer"/> Print</Button>*/}
+                {/*</Button.Group>*/}
             </h2>
             <Card>
                 <Row gutter={16}>
                     <Col span={16}>
-                        <Table columns={columns} size={'small'} dataSource={this.state.appointmentReports}/>
+                        <CustomizedTable columns={columns} size={'small'} dataSource={this.state.appointmentReports}/>
                     </Col>
                     <Col span={8}>
                         <Radio.Group buttonStyle="solid" defaultValue="all">

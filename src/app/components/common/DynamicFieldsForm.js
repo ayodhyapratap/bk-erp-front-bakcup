@@ -12,7 +12,7 @@ import {
     Select,
     Checkbox,
     Upload,
-    message,
+    message, Tag,
 } from "antd";
 import {
     CHECKBOX_FIELD,
@@ -30,7 +30,7 @@ import {
     COUNTRY_FIELD,
     STATE_FIELD,
     EMAIL_FIELD,
-    CITY_FIELD, PASSWORD_FIELD, MULTI_SELECT_FIELD, MULTI_IMAGE_UPLOAD_FIELD
+    CITY_FIELD, PASSWORD_FIELD, MULTI_SELECT_FIELD, MULTI_IMAGE_UPLOAD_FIELD, SMS_FIELD
 } from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {getAPI, makeURL, postAPI, putAPI} from "../../utils/common";
@@ -75,12 +75,14 @@ class DynamicFieldsForm extends React.Component {
             loading: false,
             countryOptions: [],
             stateOptions: [],
-            cityOptions: []
+            cityOptions: [],
+            smsFields: {}
         }
         this.resetFormData = this.resetFormData.bind(this);
         this.submitForm = this.submitForm.bind(this);
         this.colorChange = this.colorChange.bind(this);
         this.loadCountryData = this.loadCountryData.bind(this);
+        this.addSMSTag = this.addSMSTag.bind(this);
     }
 
     componentDidMount() {
@@ -218,6 +220,15 @@ class DynamicFieldsForm extends React.Component {
         getAPI(EXTRA_DATA, successFn, errorFn);
     }
 
+    addSMSTag(key, value) {
+        let that = this;
+        let prevValue = that.props.form.getFieldValue(key) || '';
+        that.props.form.setFieldsValue({
+            [key]: prevValue + value
+        });
+    }
+
+
     render() {
         const that = this;
         const formItemLayout = (this.props.formLayout ? this.props.formLayout : {
@@ -337,6 +348,21 @@ class DynamicFieldsForm extends React.Component {
                                                   disabled={field.disabled ? field.disabled : that.state.disabled}
                                                   onChange={that.inputChange}/>
                                     )}
+
+                                </FormItem>
+                            </div>;
+                        case SMS_FIELD:
+                            return <div>
+                                <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
+                                    {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                        <TextArea autosize={{minRows: field.minRows, maxRows: field.maxRows}}
+                                                  placeholder={field.placeholder}
+                                                  disabled={field.disabled ? field.disabled : that.state.disabled}
+                                        />
+                                    )}
+                                    {field.options && field.options.map(item =>
+                                        <Tag color="#108ee9"
+                                             onClick={() => that.addSMSTag(field.key, item.value)}>{item.label}</Tag>)}
                                 </FormItem>
                             </div>;
                         case QUILL_TEXT_FIELD:

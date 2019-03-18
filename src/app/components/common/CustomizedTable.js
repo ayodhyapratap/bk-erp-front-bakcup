@@ -1,6 +1,6 @@
 import React from "react";
 import {Row, Col, Table, Button, Icon} from "antd";
-import {exportToExcel} from "../../utils/export";
+import {exportToExcel, exportToPDF} from "../../utils/export";
 import moment from "moment";
 
 export default class CustomizedTable extends React.Component {
@@ -8,8 +8,9 @@ export default class CustomizedTable extends React.Component {
         super(props);
         this.state = {
             ...props
-        }
+        };
         this.excelExport = this.excelExport.bind(this);
+        this.pdfExport = this.pdfExport.bind(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -19,7 +20,21 @@ export default class CustomizedTable extends React.Component {
     }
 
     pdfExport() {
-        console.log("PDF Export");
+        let that = this;
+        let excelColumns = that.state.columns.map(item => item.title);
+        let dataArrayForExcel = [];
+        that.state.dataSource.forEach(function (dataRow) {
+            let dataObjectToPush = {};
+            that.state.columns.forEach(function (column) {
+                if (column.export) {
+                    dataObjectToPush[column.title] = column.export(dataRow[column.dataIndex], dataRow);
+                } else {
+                    dataObjectToPush[column.title] = dataRow[column.dataIndex];
+                }
+            });
+            dataArrayForExcel.push(dataObjectToPush);
+        });
+        exportToPDF(excelColumns, dataArrayForExcel, "Export" + moment());
     }
 
     excelExport() {
@@ -47,8 +62,8 @@ export default class CustomizedTable extends React.Component {
                     <Button.Group size="small">
                         <Button disabled={this.state.loading} type="primary" onClick={this.excelExport}><Icon
                             type="file-excel"/> Excel</Button>
-                        {/*<Button disabled={this.state.loading} type="primary" onClick={this.pdfExport}><Icon*/}
-                        {/*type="file-pdf"/> PDF</Button>*/}
+                        <Button disabled={this.state.loading} type="primary" onClick={this.pdfExport}><Icon
+                            type="file-pdf"/> PDF</Button>
                     </Button.Group>
                 </Col>
             </Row>
