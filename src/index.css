@@ -12,3 +12,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+.div_padding_top{
+  padding-top: 20px;
+}
+.div_padding_top h2{
+  padding-bottom: 6px;
+  border-bottom: 1px solid #d9d9d9;
+}
+.float_right{
+  float: right;
+}
+/* .div_padding_top>Input{
+  padding-bottom: 20px;
+} */
+.padd_rgt_10px{
+  padding-right: 10px;
+  padding-top: 20px;
+}

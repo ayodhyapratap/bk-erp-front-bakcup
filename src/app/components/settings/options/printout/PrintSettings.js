@@ -1,40 +1,58 @@
 import React from 'react';
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Row, Col ,Radio ,Divider} from "antd";
-const style ={
-  box_shadow:{
-    webkitBoxShadow: "1px 3px 1px #9E9E9E",
-    mozBoxShadow: "1px 3px 1px #9E9E9E",
-    boxShadow: "1px 3px 1px #9E9E9E"
-  }
-}
+import {Row,Form, Col ,Radio, Input,Divider} from "antd";
+import HeaderSettingForm from "./HeaderSettingForm";
+import DocumentPdf from "./DocumentPdf";
+
+const { TextArea } = Input;
+
+const radioTab = ['Page','Header','Patient','Footer'];
+const  radioTabList= radioTab.map((radioTab)=><Radio.Button value={radioTab}>{radioTab}</Radio.Button>);
 class PrintPreview extends React.Component{
   constructor(props){
     super(props);
+    this.state={
+selectedFormType:''
+    }
   }
+
+changeFormType=(e)=>{
+  this.setState({
+    selectedFormType : e.target.value
+  })
+ 
+}
   render(){
-    return ( <Row>
-          <Col span={12}>
-            <Radio.Group defaultValue="a" buttonStyle="solid" size="small">
-              <Radio.Button value="a">Page Setting</Radio.Button>
-              <Radio.Button value="b">Header</Radio.Button>
-              <Radio.Button value="c">Patient</Radio.Button>
-              <Radio.Button value="d">Footer</Radio.Button>
-            </Radio.Group>
-            <div>
 
-              <h2>CUSTOMIZE HEADER</h2>
-              <Divider style={style}/>
-            </div>
-          </Col>
-          <Col span={12} >
-          <div style={style.box_shadow}>
-            <h3>pdf</h3>
-            </div>
-          </Col>
+  const HeaderSettingFormObject = Form.create({ name: 'setting' })(HeaderSettingForm);
 
+     return (<Row>
+        <Col span={12}>
+          <Radio.Group  buttonStyle="solid" size="small" value={this.state.selectedFormType} onChange={this.changeFormType}>
+              {radioTabList}
+          </Radio.Group>
+            <RenderForm forms={{Header:HeaderSettingFormObject}} {...this.state}/>  
+          <div className="div_padding_top">
+            <h2>{this.state.selectedFormType}</h2>
+          </div>
 
-        </Row>);
+        </Col>
+        <Col>
+          <h2>Hi</h2>
+        </Col>
+      </Row>
+      );
+    
   }
+  
 }
 export default PrintPreview;
+
+function RenderForm(props){
+  if(props.forms[props.selectedFormType]){
+    let Form = props.forms[props.selectedFormType];
+    return <Form/>  
+  }
+  return null;
+
+}

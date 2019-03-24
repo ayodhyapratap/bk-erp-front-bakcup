@@ -8,6 +8,7 @@
     "fullcalendar": "^3.9.0",
     "jquery": "^3.3.1",
     "jqueryui": "^1.11.1",
+    "jspdf-react": "^1.0.10",
     "lockr": "^0.8.5",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
