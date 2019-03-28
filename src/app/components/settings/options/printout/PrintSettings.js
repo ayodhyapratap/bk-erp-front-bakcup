@@ -3,6 +3,9 @@ import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Row,Form, Col ,Radio, Input,Divider} from "antd";
 import HeaderSettingForm from "./HeaderSettingForm";
 import DocumentPdf from "./DocumentPdf";
+import PageSetting from "./PageSettingForm"
+import Patient from "./PatientSettingForm"
+import Footer from "./FooterSettingForm"
 
 const { TextArea } = Input;
 
@@ -24,20 +27,26 @@ changeFormType=(e)=>{
 }
   render(){
 
-  const HeaderSettingFormObject = Form.create({ name: 'setting' })(HeaderSettingForm);
+  const HeaderSettingFormObject = Form.create()(HeaderSettingForm);
+  const PageSettingObject = Form.create()(PageSetting);
+  const patientObject = Form.create()(Patient);
+  const FooterObject = Form.create()(Footer);
 
      return (<Row>
         <Col span={12}>
           <Radio.Group  buttonStyle="solid" size="small" value={this.state.selectedFormType} onChange={this.changeFormType}>
               {radioTabList}
           </Radio.Group>
-            <RenderForm forms={{Header:HeaderSettingFormObject}} {...this.state}/>  
           <div className="div_padding_top">
-            <h2>{this.state.selectedFormType}</h2>
+            <RenderForm forms={{Header:HeaderSettingFormObject}} {...this.state}/>  
+            <RenderForm forms={{Page:PageSettingObject}} {...this.state}/>  
+            <RenderForm forms={{Patient:patientObject}} {...this.state}/>  
+            <RenderForm forms={{Footer:FooterObject}} {...this.state}/>  
+            
           </div>
 
         </Col>
-        <Col>
+        <Col span={12}>
           <h2>Hi</h2>
         </Col>
       </Row>

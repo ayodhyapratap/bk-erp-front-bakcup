@@ -11,6 +11,10 @@ class HeaderSettingForm extends React.Component {
 	    this.state = {
 	      user: UserList[0],
 	      color: colorList[0],
+        isHeaderNot:'1',
+        islogoNot:'1',
+        shrinkType:'1',
+        alignType:'rgt',
 	    };
 	  }
 	 changeImage = () => {
@@ -21,7 +25,12 @@ class HeaderSettingForm extends React.Component {
 	    });
 	  }
 
-
+    onChanged = (name,value)=>{
+      this.setState({
+      [name]:value
+      });
+   
+    }
   render() {
     const formItemLayout = {
       labelCol: {
@@ -38,8 +47,10 @@ class HeaderSettingForm extends React.Component {
       <Form {...formItemLayout} >
       	<h2>Custome Header</h2>
       	<Form.Item label={( <span>Include Haeder&nbsp;</span>)} >
-      		<Radio>Yes</Radio>
-      		<Radio className="float_right">No , I already have a letter head.</Radio>
+          <Radio.Group onChange={(e)=>this.onChanged('isHeaderNot',e.target.value)} value={this.state.isHeaderNot}>
+        		<Radio value={1}>Yes</Radio>
+        		<Radio value={0}>No , I already have a letter head.</Radio>
+          </Radio.Group>
       	</Form.Item>
        
         <Form.Item label={( <span>Header&nbsp;</span>)} >
@@ -62,14 +73,16 @@ class HeaderSettingForm extends React.Component {
         </Form.Item>
 
          <Form.Item >
-         	<lebe> Include Lebel&nbsp;
+         	<lebel> Include Logo&nbsp;
          		<span><Button size="small" style={{ marginLeft: 16,marginRight: 20}} onClick={this.changeImage}>
           			Change
      				</Button>
         		</span>
-            <Radio>Yes</Radio>
-            <Radio className="float_right">No</Radio>
-            </lebe>
+            <Radio.Group onChange={(e)=>this.onChanged('islogoNot',e.target.value)} value={this.state.islogoNot}>
+              <Radio value={1}>Yes</Radio>
+              <Radio value={0}>No</Radio>
+            </Radio.Group>
+            </lebel>
         </Form.Item>
 
         <Form.Item>
@@ -79,6 +92,22 @@ class HeaderSettingForm extends React.Component {
 	       		</Avatar>
         	</lebel>
         	 
+        </Form.Item>
+
+        <Form.Item label={(<span>Type&nbsp;</span>)}>
+          <Radio.Group onChange={(e)=>this.onChanged('shrinkType',e.target.value)} value={this.state.shrinkType}>
+            <Radio value={1}>Square</Radio>
+            <Radio value={2}>Narrow</Radio>
+            <Radio value={3}>Wide</Radio>
+          </Radio.Group>  
+        </Form.Item>
+
+        <Form.Item label={(<span>Alignment&nbsp;</span>)}>
+          <Radio.Group onChange={(e)=>this.onChanged('alignType',e.target.value)} value={this.state.alignType}>
+            <Radio value={'rgt'}>Right</Radio>
+            <Radio value={'lgt'}>Left</Radio>
+            <Radio value={'ctr'}>Centre</Radio>
+          </Radio.Group>  
         </Form.Item>
 
       </Form>
