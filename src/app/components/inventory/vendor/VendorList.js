@@ -1,7 +1,7 @@
-import {Button, Card, Icon} from "antd";
+import {Button, Card, Icon,Popconfirm,Divider} from "antd";
 import React from "react";
-import {getAPI, interpolate} from "../../../utils/common";
-import {VENDOR_API} from "../../../constants/api";
+import {getAPI, interpolate,deleteAPI} from "../../../utils/common";
+import {VENDOR_API ,SINGLE_VENDOR_API}from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddVendor from "./AddVendor";
 import {Link} from "react-router-dom";
@@ -33,7 +33,16 @@ export default class VendorList extends React.Component {
         }
         getAPI(interpolate(VENDOR_API, [this.props.active_practiceId]), successFn, errorFn);
     }
-
+    deleteVendor(value){
+        var that = this;
+        let successFn = function (data) {
+            that.loadData();
+            console.log("Deleted");
+        };
+        let errorFn = function () {
+        };
+        deleteAPI(interpolate(SINGLE_VENDOR_API, [value]), successFn, errorFn);
+    }
     render() {
         let that = this;
         const vendorsColoumns = [{
@@ -49,6 +58,12 @@ export default class VendorList extends React.Component {
             render: function (record) {
                 return <div>
                     <Link to={'/inventory/vendor/edit/' + record.id}>Edit</Link>
+                    <Divider type="vertical"/>
+                    <Popconfirm title="Are you sure delete this item?"
+                                onConfirm={() => that.deleteVendor(record.id)} okText="Yes" cancelText="No">
+                        <a>Delete</a>
+                    </Popconfirm>
+
                 </div>
             }
         }];

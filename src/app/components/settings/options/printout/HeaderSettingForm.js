@@ -45,7 +45,7 @@ class HeaderSettingForm extends React.Component {
     
     return (
       <Form {...formItemLayout} >
-      	<h2>Custome Header</h2>
+      	<h2>Customize Header</h2>
       	<Form.Item label={( <span>Include Haeder&nbsp;</span>)} >
           <Radio.Group onChange={(e)=>this.onChanged('isHeaderNot',e.target.value)} value={this.state.isHeaderNot}>
         		<Radio value={1}>Yes</Radio>
