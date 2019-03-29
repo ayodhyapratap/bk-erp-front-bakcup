@@ -13,7 +13,6 @@ export default class SEOList extends React.Component{
             pageSEO:null
         };
         this.loadData=this.loadData.bind(this);
-        this.deleteObject = this.deleteObject.bind(this);
     }
     componentDidMount(){
         this.loadData();
@@ -30,17 +29,7 @@ export default class SEOList extends React.Component{
         }
         getAPI(BLOG_PAGE_SEO ,successFn, errorFn);
     }
-    deleteObject(record) {
-        let that = this;
-        let reqData = {};
-        reqData.is_active = false;
-        let successFn = function (data) {
-            that.loadData();
-        };
-        let errorFn = function () {
-        };
-        patchAPI(interpolate(SINGLE_PAGE_SEO, [record.id]), reqData, successFn, errorFn)
-    }
+  
     render(){
         let that = this;
         let coloumns = [{
@@ -65,23 +54,16 @@ export default class SEOList extends React.Component{
                 render:(item)=>{
                     return <div>
                         <Link to={"/web/pageseo/edit/"+item.id}>Edit</Link>
-                          <Divider type="vertical"/>
-                        <Popconfirm title="Are you sure delete this item?"
-                                onConfirm={() => that.deleteObject(item)} okText="Yes" cancelText="No">
-                             <a>Delete</a>
-                        </Popconfirm>
                     </div>
                 }
             }];
         return<div><Switch>
-                <Route exact path='/web/pageseo/add'
-                   render={(route) => <AddSEO {...this.state} {...route}/>}/>
                 <Route exact path='/web/pageseo/edit/:id'
                    render={(route) => <AddSEO loadData={this.loadData} {...this.state} {...route}/>}/>
               
                 
                 <Card title="Pages SEO"
-                   extra={<Link to={"/web/pageseo/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}
+                   
             >
                 <Table dataSource={this.state.pageSEO} columns={coloumns}/>
             </Card>
