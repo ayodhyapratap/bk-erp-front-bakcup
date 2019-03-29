@@ -54,7 +54,7 @@ export default class DiseaseList extends React.Component {
         }, {
             title: 'Date',
             dataIndex: 'posted_on',
-            key: 'post_date'
+            key: 'post_date' 
         }, {
             title: 'Actions',
             render: (item) => {
