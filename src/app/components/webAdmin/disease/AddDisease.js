@@ -56,6 +56,7 @@ export default class AddDisease extends React.Component {
 
 
     render() {
+        let that = this;
         const fields = [{
             label: "Disease Type",
             key: "disease_type",
@@ -106,7 +107,10 @@ export default class AddDisease extends React.Component {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
-                    console.log(data);
+                    that.setState({
+                        redirect: true
+                    });
+                    that.props.loadData();
                 },
                 errorFn: function () {
 
@@ -121,8 +125,11 @@ export default class AddDisease extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-
-                console.log(data);
+                that.setState({
+                        redirect: true
+                    });
+                    that.props.loadData();
+                    console.log(data);
             },
             errorFn: function () {
 
