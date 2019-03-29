@@ -5,6 +5,7 @@ import {BLOG_POST, SINGLE_POST} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddPost from "./AddPost";
 import {Link} from "react-router-dom";
+import moment from "moment";
 
 export default class DiseaseList extends React.Component {
     constructor(props) {
@@ -54,7 +55,14 @@ export default class DiseaseList extends React.Component {
         }, {
             title: 'Date',
             dataIndex: 'posted_on',
-            key: 'post_date' 
+            key: 'post_date',
+            export: function (text) {
+                return moment(text).format('lll');
+            },
+            render: function (text) {
+                return moment(text).format('lll');
+            } 
+            
         }, {
             title: 'Actions',
             render: (item) => {
