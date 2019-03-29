@@ -47,7 +47,7 @@ export default class AddManufacture extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_VENDOR_API, [this.props.match.params.id]), successFn, errorFn);
+        getAPI(interpolate(SINGLE_MANUFACTURER_API, [this.props.match.params.id]), successFn, errorFn);
 
 
     }
