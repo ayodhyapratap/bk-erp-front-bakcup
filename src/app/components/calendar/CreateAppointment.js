@@ -47,16 +47,31 @@ class CreateAppointment extends React.Component{
       this.loadDoctors = this.loadDoctors.bind(this);
       this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
       this.loadTreatmentNotes = this.loadTreatmentNotes.bind(this);
+      this.getPatientListData = this.getPatientListData.bind(this);
   }
   componentDidMount(){
       this.loadDoctors();
       this.loadProcedureCategory();
       this.loadTreatmentNotes();
       this.loadAppointmentCategories();
+      this.getPatientListData();
       if(this.props.match.params.appointmentid){
           this.loadAppointment();
       }
   }
+   getPatientListData() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                patientListData: data,
+            })
+        };
+        let errorFn = function () {
+
+        };
+        getAPI(PATIENTS_LIST, successFn, errorFn);
+    }
+
     loadAppointment(){
         let that=this;
         this.setState({
@@ -189,8 +204,7 @@ class CreateAppointment extends React.Component{
         label: "shedule_at",
         key: "shedule_at",
         type: DATE_PICKER,
-        initialValue:appointmentTime,
-        format:"YYYY/MM/DD HH:mm"
+        initialValue:appointmentTime
     },{
         label: "Time Slot",
         key: "slot",
@@ -199,7 +213,7 @@ class CreateAppointment extends React.Component{
         type: NUMBER_FIELD,
     },{
         label: "Patient Name",
-        key: "patient_name",
+        key: "patient_ame",
         required: true,
         initialValue:this.state.appointment?this.state.appointment.patient_name:null,
         type: INPUT_FIELD

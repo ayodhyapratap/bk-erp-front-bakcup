@@ -64,12 +64,14 @@ class EditPatientDetails extends React.Component {
             label: "DOB",
             key: "dob",
             initialValue:this.props.currentPatient?moment(this.props.currentPatient.dob):null,
+            format:"YYYY-MM-DD",
             type: DATE_PICKER
         },
         {
             label: "Anniversary",
             key: "anniversary",
             initialValue:this.props.currentPatient?moment(this.props.currentPatient.anniversary):null,
+            format:"YYYY-MM-DD",
             type: DATE_PICKER
         }, {
             label: "Blood Group",

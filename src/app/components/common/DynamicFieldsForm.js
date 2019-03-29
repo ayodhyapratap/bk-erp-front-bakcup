@@ -135,6 +135,11 @@ class DynamicFieldsForm extends React.Component {
                         if (formFields.format) {
                             values[key] = moment(values[key]).format(formFields.format);
                         }
+                    }else if (formFields.type ==DATE_PICKER) {
+                        let key = formFields.key;
+                        if (formFields.format) {
+                            values[key] = moment(values[key]).format(formFields.format);
+                        }
                     }
                 });
                 console.log("Fields in the form", values);

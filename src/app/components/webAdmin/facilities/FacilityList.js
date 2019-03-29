@@ -15,7 +15,6 @@ export default class FacilityList extends React.Component {
             facility: null
         };
         this.loadData = this.loadData.bind(this);
-        this.loadData = this.loadData.bind(this);
     }
 
     componentDidMount() {
