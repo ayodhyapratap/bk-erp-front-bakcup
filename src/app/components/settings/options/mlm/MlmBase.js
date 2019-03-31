@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Icon, Table, Tabs} from "antd";
-import {getAPI, interpolate, postAPI} from "../../../../utils/common";
+import {getAPI, interpolate, postAPI,patchAPI} from "../../../../utils/common";
 import MLMGenerate from "./MLMGenerate"
 import {Link, Route, Switch} from "react-router-dom";
 import {PRODUCT_MARGIN, ROLE_COMMISION, SINGLE_PRODUCT_MARGIN, STAFF_ROLES} from "../../../../constants/api";
@@ -31,6 +31,7 @@ export default class MlmBase extends React.Component {
             that.setState({
                 mlmItems: data
             })
+            // console.log("mlmData==>",JSON.stringify(that.state.mlmItems));
         }
         let errorFn = function () {
 
@@ -44,6 +45,7 @@ export default class MlmBase extends React.Component {
             that.setState({
                 staffRoles: data
             })
+            // console.log("staff==>",JSON.stringify(that.state.staffRoles));
         }
         let errorFn = function () {
 
@@ -57,6 +59,7 @@ export default class MlmBase extends React.Component {
             that.setState({
                 productMargin: data
             })
+            // console.log("productMargin==>",JSON.stringify(that.state.productMargin));
         }
         let errorFn = function () {
 
@@ -82,7 +85,7 @@ export default class MlmBase extends React.Component {
         }
         let errorFn = function () {
         }
-        postAPI(interpolate(SINGLE_PRODUCT_MARGIN, [record.id]), reqData, successFn, errorFn);
+        patchAPI(interpolate(SINGLE_PRODUCT_MARGIN, [record.id]), reqData, successFn, errorFn);
     }
 
     render() {
@@ -111,30 +114,48 @@ export default class MlmBase extends React.Component {
             }
         })
 
+        
+
 
         let datasource = {};
+        
         that.state.productMargin.forEach(function (productMargin) {
             datasource[productMargin.id] = [];
+            // console.log(JSON.stringify(productMargin));
+
             if (that.state.staffRoles) {
                 that.state.staffRoles.forEach(function (role) {
+                    // console.log(JSON.stringify(role));
                     let roledata = {"role": role.name};
+                    //roledata[role.name] = [];
+                    let mylevel = {};
+                    // console.log(JSON.stringify(roledata));
                     if (productMargin.level_count) {
                         for (let level = 1; level <= productMargin.level_count; level++) {
                             if (that.state.mlmItems) {
+
                                 for (let i = 0; i < that.state.mlmItems.length; i++) {
+                                    // console.log(JSON.stringify(that.state.mlmItems));
+                                    // console.log("serial no",i,"->",that.state.mlmItems[i]);
                                     let item = that.state.mlmItems[i];
-                                    if (item.role == role.id && item.level == level) {
-                                        roledata[level] = item.commision_percent;
+                                    console.log(JSON.stringify(item));
+                                    // console.log("istem mrgin id=>",item.role ,"margin->",role.id,"commison=>",item.commision_percent);
+                                    if (item.margin.id == productMargin.id && item.level == level && role.id==item.role) {
+                                       roledata[level]= item.commision_percent;
+                                        // console.log(JSON.stringify(roledata));
                                         break;
                                     }
                                 }
                             }
                         }
+                        // //console.log(JSON.stringify(roledata));
                     }
+                    
                     datasource[productMargin.id].push(roledata);
                 })
             }
         });
+        // console.log(JSON.stringify(datasource));
         return <div>
             <Switch>
                 <Route exact path="/settings/mlm/generate"
