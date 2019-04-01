@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Icon, Table, Tabs} from "antd";
-import {getAPI, interpolate, postAPI,patchAPI} from "../../../../utils/common";
+import {getAPI, interpolate, postAPI,patchAPI,deleteAPI,putAPI} from "../../../../utils/common";
 import MLMGenerate from "./MLMGenerate"
 import {Link, Route, Switch} from "react-router-dom";
 import {PRODUCT_MARGIN, ROLE_COMMISION, SINGLE_PRODUCT_MARGIN, STAFF_ROLES} from "../../../../constants/api";
@@ -17,6 +17,7 @@ export default class MlmBase extends React.Component {
         }
         this.loadMlmData = this.loadMlmData.bind(this);
         this.loadRoles = this.loadRoles.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
     }
 
     componentDidMount() {
@@ -78,14 +79,21 @@ export default class MlmBase extends React.Component {
 
     deleteObject(record) {
         let that = this;
-        let reqData = record;
+        let reqData = {...record,is_active:false};
         reqData.is_active = false;
         let successFn = function (data) {
             that.loadProductMargin();
         }
         let errorFn = function () {
         }
-        patchAPI(interpolate(SINGLE_PRODUCT_MARGIN, [record.id]), reqData, successFn, errorFn);
+        putAPI(interpolate(SINGLE_PRODUCT_MARGIN, [record.id]), reqData, successFn, errorFn);
+    }
+
+    changeRedirect(){
+        var redirectVar=this.state.redirect;
+      this.setState({
+        redirect:  !redirectVar,
+      })  ;
     }
 
     render() {
@@ -138,7 +146,7 @@ export default class MlmBase extends React.Component {
                                     // console.log(JSON.stringify(that.state.mlmItems));
                                     // console.log("serial no",i,"->",that.state.mlmItems[i]);
                                     let item = that.state.mlmItems[i];
-                                    console.log(JSON.stringify(item));
+                                    // console.log(JSON.stringify(item));
                                     // console.log("istem mrgin id=>",item.role ,"margin->",role.id,"commison=>",item.commision_percent);
                                     if (item.margin.id == productMargin.id && item.level == level && role.id==item.role) {
                                        roledata[level]= item.commision_percent;

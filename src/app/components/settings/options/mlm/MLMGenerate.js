@@ -97,6 +97,7 @@ class MLMGenerate extends React.Component {
                 that.setState({changePassLoading: true});
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, data.message);
+                    
                     that.props.loadMlmData();
                     that.props.history.push('/mlm');
                 };
@@ -206,6 +207,7 @@ class MLMGenerate extends React.Component {
                     </Form.Item>
                 </Form>
             </Card>
+            
         );
     }
 }
