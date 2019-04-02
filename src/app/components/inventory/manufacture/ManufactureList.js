@@ -39,7 +39,6 @@ export default class ManufactureList extends React.Component {
         var that = this;
         let successFn = function (data) {
             that.loadData();
-            console.log("Deleted");
         };
         let errorFn = function () {
         };
