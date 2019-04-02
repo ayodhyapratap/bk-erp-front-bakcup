@@ -21,7 +21,7 @@ export default class CustomizedTable extends React.Component {
 
     pdfExport() {
         let that = this;
-        let excelColumns = that.state.columns.map(item => item.title);
+        let excelColumns = that.state.columns.map(item => ({title: item.title, dataKey: item.title}));
         let dataArrayForExcel = [];
         that.state.dataSource.forEach(function (dataRow) {
             let dataObjectToPush = {};
@@ -34,7 +34,7 @@ export default class CustomizedTable extends React.Component {
             });
             dataArrayForExcel.push(dataObjectToPush);
         });
-        exportToPDF(excelColumns, dataArrayForExcel, "Export" + moment());
+        exportToPDF(excelColumns, dataArrayForExcel, "Export" + moment(), true);
     }
 
     excelExport() {
