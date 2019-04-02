@@ -69,13 +69,11 @@ class RecentProcedure extends React.Component {
 
     render() {
         let that = this;
-        // console.log(this);
-        console.log(that.props.permissions);
         return <Switch>
             <Route exact path="/settings/procedures/:id/editprocedure"
-                   render={(route) => (that.props.activePracticePermissions.SettingsProcedureCatalog || that.props.allowAllPermissions ?
-                           <EditProcedure  {...that.props} {...that.state}{...route}
-                                           loadProcedures={that.loadProcedures}/> : <PermissionDenied/>
+                render={(route) => (that.props.activePracticePermissions.SettingsProcedureCatalog || that.props.allowAllPermissions ?
+                    <EditProcedure  {...that.props} {...that.state}{...route}
+                        loadProcedures={that.loadProcedures}/> : <PermissionDenied/>
                    )}/>
             <Row>
                 <h2>Procedures
@@ -115,12 +113,12 @@ class RecentProcedure extends React.Component {
                                     )}
                                 />
                                 <Column
-                                    title="Standard Notes	"
+                                    title="Standard Notes"
                                     dataIndex="default_notes"
                                     key="default_notes"
                                 />
                                 <Column
-                                    title="Action	"
+                                    title="Action"
                                     key="action"
                                     render={(text, record) => (
                                         <span>

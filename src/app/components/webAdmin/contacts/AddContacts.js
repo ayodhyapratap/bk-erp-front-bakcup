@@ -117,7 +117,6 @@ export default class AddContacts extends React.Component {
                         redirect: true
                     });
                     that.props.loadData();
-                console.log(data);
             },
             errorFn: function () {
 

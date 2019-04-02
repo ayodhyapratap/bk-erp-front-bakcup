@@ -81,7 +81,6 @@ export default class AddLandingPageContent extends React.Component {
                         redirect: true
                     });
                     that.props.loadData();
-                    console.log(data);
                 },
                 errorFn: function () {
 
@@ -100,7 +99,6 @@ export default class AddLandingPageContent extends React.Component {
                         redirect: true
                     });
                     that.props.loadData();
-                    console.log(data);
             },
             errorFn: function () {
 

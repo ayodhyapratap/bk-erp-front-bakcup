@@ -129,7 +129,6 @@ export default class AddDisease extends React.Component {
                         redirect: true
                     });
                     that.props.loadData();
-                    console.log(data);
             },
             errorFn: function () {
 
