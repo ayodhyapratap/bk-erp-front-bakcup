@@ -166,7 +166,7 @@ class AddStaffDoctor extends React.Component {
 
                 <Route exact path='/settings/clinics-staff/adddoctor'
                        render={() => <TestFormLayout defaultValues={defaultValues} changeRedirect={this.changeRedirect}
-                                                     title="ADD DOCTOR/Staff " formProp={formProp} fields={fields}/>}/>
+                                                     title="Add Doctor/Staff " formProp={formProp} fields={fields}/>}/>
             </Card>
             {this.state.redirect && <Redirect to='/settings/clinics-staff'/>}
 
