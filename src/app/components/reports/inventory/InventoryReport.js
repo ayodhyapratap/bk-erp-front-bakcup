@@ -3,6 +3,7 @@ import {Card, Table} from "antd";
 import {STOCK_ENTRY} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import moment from "moment";
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class InventoryReport extends React.Component {
     constructor(props) {
@@ -59,7 +60,7 @@ export default class InventoryReport extends React.Component {
         return <div>
             <h2>Inventory Report</h2>
             <Card>
-                <Table bordered={true} pagination={false} columns={columns} dataSource={this.state.inventoryList}/>
+                <CustomizedTable bordered={true} pagination={false} columns={columns} dataSource={this.state.inventoryList}/>
             </Card>
         </div>
     }

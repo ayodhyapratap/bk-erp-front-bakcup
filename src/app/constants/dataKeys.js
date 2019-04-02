@@ -46,7 +46,9 @@ export const COUNTRY_FIELD = 'country';
 export const STATE_FIELD = 'state';
 export const CITY_FIELD = 'city';
 export const PASSWORD_FIELD = 'password';
-export const EMAIL_FIELD='email';
+export const EMAIL_FIELD = 'email';
+export const SMS_FIELD = 'sms_field';
+
 /***
  *Role
  **/

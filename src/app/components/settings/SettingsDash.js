@@ -26,6 +26,7 @@ import PermissionDenied from "../common/errors/PermissionDenied";
 import AddorEditLab from "./options/labs/AddorEditLab";
 import MlmBase from "./options/mlm/MlmBase";
 import Printout from "./options/printout/Printout";
+import IntegrationHome from "./options/integration/IntegrationHome";
 
 const Content = Layout.Content;
 
@@ -37,6 +38,7 @@ class SettingsDash extends React.Component {
             collapsed: false,
         };
     }
+
     render() {
         return <Content className="main-container"
                         style={{
@@ -139,7 +141,10 @@ class SettingsDash extends React.Component {
                                     <Printout {...this.state}
                                               {...this.props}/>
                                )}/>
-
+                        <Route path="/settings/integration"
+                               render={(route) => <IntegrationHome {...this.state}
+                                                                   {...this.props}
+                                                                   {...route}/>}/>
                         <Route component={Error404}/>
                     </Switch>
                 </Content>

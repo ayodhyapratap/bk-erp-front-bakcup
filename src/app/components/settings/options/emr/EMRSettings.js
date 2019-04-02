@@ -39,7 +39,7 @@ class EMRSettings extends React.Component {
                             <TableData {...this.props} id={EMR_INVESTIGATIONS} name="Investigations"/>
                         </TabPane>
                         <TabPane tab={<span><Icon type="solution"/>Notes</span>} key="treatmentnotes">
-                            <TableData {...this.props} id={EMR_TREATMENTNOTES} name="treatment notes"/>
+                            <TableData {...this.props} id={EMR_TREATMENTNOTES} name="Treatment Notes"/>
                         </TabPane>
                         <TabPane tab={<span><Icon type="file"/>FIle Labels</span>} key="filetags">
                             <TableData {...this.props} id={EMR_FILETAGS} name="File Labels"/>

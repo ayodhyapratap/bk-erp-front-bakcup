@@ -3,6 +3,7 @@ import {Button, Card, Col, Icon, Radio, Row, Table} from "antd";
 import {INVOICE_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment from "moment"
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class IncomeReport extends React.Component {
   constructor(props) {
@@ -49,15 +50,11 @@ export default class IncomeReport extends React.Component {
                 },];
         return <div>
             <h2>Income Report
-                <Button.Group style={{float: 'right'}}>
-                    <Button><Icon type="mail"/> Mail</Button>
-                    <Button><Icon type="printer"/> Print</Button>
-                </Button.Group>
             </h2>
             <Card>
                 <Row gutter={16}>
                     <Col span={16}>
-                    <Table columns={columns} size={'small'} dataSource={this.state.report}/>
+                    <CustomizedTable columns={columns} size={'small'} dataSource={this.state.report}/>
                     </Col>
                     <Col span={8}>
                         <Radio.Group buttonStyle="solid" defaultValue="all">

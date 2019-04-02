@@ -10,7 +10,7 @@ class SettingSider extends React.Component {
     render() {
         return <Sider trigger={null}
                       collapsible
-                      // collapsed={this.props.collapsed}
+            // collapsed={this.props.collapsed}
                       style={{overflow: 'auto', minHeight: '100vh', background: '#fff'}}>
             {/*<div className="logo"/>*/}
 
@@ -89,7 +89,11 @@ class SettingSider extends React.Component {
                             <Icon type="printer"/> Printout
                         </Link>
                     </Menu.Item>
-
+                    <Menu.Item key="20">
+                        <Link to="/settings/integration">
+                            <Icon type="link"/> My Integrations
+                        </Link>
+                    </Menu.Item>
                 </Menu.ItemGroup>
             </Menu>
 
