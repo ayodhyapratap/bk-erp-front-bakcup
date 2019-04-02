@@ -60,11 +60,8 @@ export default class SEOList extends React.Component{
         return<div><Switch>
                 <Route exact path='/web/pageseo/edit/:id'
                    render={(route) => <AddSEO loadData={this.loadData} {...this.state} {...route}/>}/>
-              
-                
-                <Card title="Pages SEO"
-                   
-            >
+     
+                <Card title="Pages SEO">
                 <Table dataSource={this.state.pageSEO} columns={coloumns}/>
             </Card>
         </Switch>
