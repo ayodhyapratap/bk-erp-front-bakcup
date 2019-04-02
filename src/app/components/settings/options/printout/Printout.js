@@ -7,7 +7,7 @@ const TabPane = Tabs.TabPane;
 class Printout extends React.Component{
 	constructor(props){
 		super(props);
-		const panes = [
+		const emrPanes = [
 	      { title: 'Prescription', content: <PrintSettings/>	, key: '1' },
 	      { title: 'Treatment Plan', content: <PrintSettings/>, key: '2' },
 	      { title: 'Case Sheet', content: <PrintSettings/> , key: '3' },
@@ -15,12 +15,17 @@ class Printout extends React.Component{
 	      { title: 'Vital Signs', content: <PrintSettings/>, key: '5' },
 	      { title: 'Lab Order', content: <PrintSettings/>, key: '6' },
 	      { title: 'Lab Order Result', content: <PrintSettings/>, key: '7', closable: false,},
-
+	    ];
+	    const billingPanels =[
+	    { title:'Invoice' , content: <PrintSettings/>	, key: '1' },
+	    { title:'Receipts' , content: <PrintSettings/>	, key: '2' },
 	    ];
 
 	    this.state = {
-	      activeKey: panes[0].key,
-	      panes,
+	      activeKey: emrPanes[0].key,
+	      activeKey:billingPanels[0].key,
+	      emrPanes,
+	      billingPanels,
 	    };
 
 	}
@@ -34,7 +39,7 @@ class Printout extends React.Component{
 		              	<h4>
 	                        <div>
 	                        	<Tabs size="small">
-	                        		{this.state.panes.map(item=><TabPane tab={item.title} key={item.key}>{item.content}</TabPane>	)}
+	                        		{this.state.emrPanes.map(item=><TabPane tab={item.title} key={item.key}>{item.content}</TabPane>	)}
 								 </Tabs>
 	                        </div>
 	                    </h4>
@@ -44,10 +49,10 @@ class Printout extends React.Component{
 	                <Card>
 		               	<h4>
 	                        <div>
-	                            <Radio.Group defaultValue="a" buttonStyle="solid">
-						        	<Radio.Button value="a">Invoices</Radio.Button>
-						        	<Radio.Button value="b">Receipts</Radio.Button>
-								</Radio.Group>
+	                        	<Tabs size="small">
+	                        		{this.state.billingPanels.map(item=><TabPane tab={item.title} key={item.key}>{item.content}</TabPane>	)}
+	                        	</Tabs>
+	     							
 	                        </div>
 	                    </h4>
 	             	</Card>

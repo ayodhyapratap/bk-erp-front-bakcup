@@ -69,11 +69,13 @@ class RecentProcedure extends React.Component {
 
     render() {
         let that = this;
+        // console.log(this);
+        console.log(that.props.permissions);
         return <Switch>
             <Route exact path="/settings/procedures/:id/editprocedure"
-                   render={(route) => (this.props.permissions.add_procedurecatalog || this.props.allowAllPermissions ?
-                           <EditProcedure  {...this.props} {...this.state}{...route}
-                                           loadProcedures={this.loadProcedures}/> : <PermissionDenied/>
+                   render={(route) => (that.props.activePracticePermissions.SettingsProcedureCatalog || that.props.allowAllPermissions ?
+                           <EditProcedure  {...that.props} {...that.state}{...route}
+                                           loadProcedures={that.loadProcedures}/> : <PermissionDenied/>
                    )}/>
             <Row>
                 <h2>Procedures

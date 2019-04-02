@@ -96,6 +96,7 @@ class Appointment extends React.Component{
                   loading:false,
 
               });
+              console.log(this.state.appointments);
 
           }
 

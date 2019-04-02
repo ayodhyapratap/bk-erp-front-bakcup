@@ -213,7 +213,7 @@ class CreateAppointment extends React.Component{
         type: NUMBER_FIELD,
     },{
         label: "Patient Name",
-        key: "patient_ame",
+        key: "patient_name",
         required: true,
         initialValue:this.state.appointment?this.state.appointment.patient_name:null,
         type: INPUT_FIELD
@@ -236,18 +236,6 @@ class CreateAppointment extends React.Component{
         required: true,
         type: INPUT_FIELD
     },{
-        label: "Notify Patient",
-        key: "notify_via_sms",
-        type: SINGLE_CHECKBOX_FIELD,
-        initialValue:this.state.appointment?this.state.appointment.notify_via_sms:false,
-        follow: "Via SMS"
-    }, {
-        label: "Notify Patient",
-        key: "notify_via_email",
-        type: SINGLE_CHECKBOX_FIELD,
-        initialValue:this.state.appointment?this.state.appointment.notify_via_email:false,
-        follow: "Via Email"
-    }, {
         label: "Doctor",
         key: "doctor",
         required: true,
@@ -275,7 +263,20 @@ class CreateAppointment extends React.Component{
         type: SELECT_FIELD,
         initialValue:this.state.appointment?this.state.appointment.notes:null,
         options: treatmentNotesOption,
-    },];
+    },{
+        label: "Notify Patient",
+        key: "notify_via_sms",
+        type: SINGLE_CHECKBOX_FIELD,
+        initialValue:this.state.appointment?this.state.appointment.notify_via_sms:false,
+        follow: "Via SMS"
+    }, {
+        label: "Notify Patient",
+        key: "notify_via_email",
+        type: SINGLE_CHECKBOX_FIELD,
+        initialValue:this.state.appointment?this.state.appointment.notify_via_email:false,
+        follow: "Via Email"
+    }, 
+    ];
     const formProp={
       successFn:function(data){
         console.log(data);
@@ -312,7 +313,7 @@ class CreateAppointment extends React.Component{
                  render={() => (this.props.match.params.appointmentid?<TestFormLayout defaultValues={defaultValues} title="Edit Appointment" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/patients/appointments/'} />)}/>
 
           <Route exact path='/calendar/create-appointment'
-                 render={() => <TestFormLayout defaultValues={defaultValues}  changeRedirect= {this.changeRedirect} title="ADD Appointmnt "  formProp ={formProp} fields={fields}/>}/>
+                 render={() => <TestFormLayout defaultValues={defaultValues}  changeRedirect= {this.changeRedirect} title="ADD Appointment "  formProp ={formProp} fields={fields}/>}/>
       </Card>
           {this.state.redirect&&    <Redirect to='/patients/appointments/' />}
       </Row>

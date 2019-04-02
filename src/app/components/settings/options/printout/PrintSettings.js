@@ -10,12 +10,12 @@ import Footer from "./FooterSettingForm"
 const { TextArea } = Input;
 
 const radioTab = ['Page','Header','Patient','Footer'];
-const  radioTabList= radioTab.map((radioTab)=><Radio.Button value={radioTab}>{radioTab}</Radio.Button>);
+const  radioTabList= radioTab.map((radioTab)=><Radio.Button  value={radioTab}>{radioTab}</Radio.Button>);
 class PrintPreview extends React.Component{
   constructor(props){
     super(props);
     this.state={
-selectedFormType:''
+selectedFormType:'Header'
     }
   }
 
@@ -34,7 +34,7 @@ changeFormType=(e)=>{
 
      return (<Row>
         <Col span={12}>
-          <Radio.Group  buttonStyle="solid" size="small" value={this.state.selectedFormType} onChange={this.changeFormType}>
+          <Radio.Group  buttonStyle="solid" size="small"  value={this.seader} onChange={this.changeFormType}>
               {radioTabList}
           </Radio.Group>
           <div className="div_padding_top">
