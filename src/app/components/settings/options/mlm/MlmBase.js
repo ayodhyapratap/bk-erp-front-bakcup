@@ -32,7 +32,6 @@ export default class MlmBase extends React.Component {
             that.setState({
                 mlmItems: data
             })
-            // console.log("mlmData==>",JSON.stringify(that.state.mlmItems));
         }
         let errorFn = function () {
 
@@ -46,7 +45,6 @@ export default class MlmBase extends React.Component {
             that.setState({
                 staffRoles: data
             })
-            // console.log("staff==>",JSON.stringify(that.state.staffRoles));
         }
         let errorFn = function () {
 
@@ -60,7 +58,6 @@ export default class MlmBase extends React.Component {
             that.setState({
                 productMargin: data
             })
-            // console.log("productMargin==>",JSON.stringify(that.state.productMargin));
         }
         let errorFn = function () {
 
@@ -129,49 +126,37 @@ export default class MlmBase extends React.Component {
         
         that.state.productMargin.forEach(function (productMargin) {
             datasource[productMargin.id] = [];
-            // console.log(JSON.stringify(productMargin));
 
             if (that.state.staffRoles) {
                 that.state.staffRoles.forEach(function (role) {
-                    // console.log(JSON.stringify(role));
                     let roledata = {"role": role.name};
-                    //roledata[role.name] = [];
-                    let mylevel = {};
-                    // console.log(JSON.stringify(roledata));
                     if (productMargin.level_count) {
                         for (let level = 1; level <= productMargin.level_count; level++) {
                             if (that.state.mlmItems) {
-
                                 for (let i = 0; i < that.state.mlmItems.length; i++) {
-                                    // console.log(JSON.stringify(that.state.mlmItems));
-                                    // console.log("serial no",i,"->",that.state.mlmItems[i]);
                                     let item = that.state.mlmItems[i];
-                                    // console.log(JSON.stringify(item));
-                                    // console.log("istem mrgin id=>",item.role ,"margin->",role.id,"commison=>",item.commision_percent);
                                     if (item.margin.id == productMargin.id && item.level == level && role.id==item.role) {
                                        roledata[level]= item.commision_percent;
-                                        // console.log(JSON.stringify(roledata));
                                         break;
                                     }
                                 }
                             }
                         }
-                        // //console.log(JSON.stringify(roledata));
                     }
                     
                     datasource[productMargin.id].push(roledata);
                 })
             }
         });
-        // console.log(JSON.stringify(datasource));
         return <div>
             <Switch>
                 <Route exact path="/settings/mlm/generate"
-                       render={(route) => <MLMGenerate {...route} loadData={this.loadMlmData} {...this.state}/>}/>
+                    render={(route) => <MLMGenerate {...route} 
+                        loadData={this.loadMlmData} {...this.state}/>}/>
                 {this.state.editId && this.state.editRecord ?
-                    <Route exact path="/settings/mlm/edit"
-                           render={(route) => <MLMGenerate {...route}
-                                                           loadData={this.loadMlmData} {...this.state}/>}/> : null}
+                    <Route exact path="/settings/mlm/edit" 
+                        render={(route) => <MLMGenerate {...route}
+                            loadData={this.loadMlmData} {...this.state}/>}/> : null}
                 <Route>
                     <div>
                         <h2>MLM Commissions
