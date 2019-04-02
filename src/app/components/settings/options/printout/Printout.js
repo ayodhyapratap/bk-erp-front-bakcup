@@ -60,6 +60,5 @@ class Printout extends React.Component{
             </Tabs>
 		</div>);
 	}
-
 }
 export default Printout;

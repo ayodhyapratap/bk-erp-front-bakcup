@@ -9,10 +9,6 @@ class PatientSettingForm extends React.Component {
 		}
 	}
 
-
-	// test=(e)=>{
-	//   console.log(`checked = ${e.target.checked}`);
-	// };
   render() {
     const formItemLayout = {
       labelCol: {
@@ -26,7 +22,7 @@ class PatientSettingForm extends React.Component {
     };
     
     return (
-      <Form {...formItemLayout} >
+      <Form {...formItemLayout}>
       	<h2>Customize Patient Details</h2>
           <Form.Item>
             <Checkbox >Show Patient Details</Checkbox>
@@ -45,5 +41,4 @@ class PatientSettingForm extends React.Component {
     );
   }
 }
-
 export default PatientSettingForm;

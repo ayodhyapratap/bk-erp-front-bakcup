@@ -1,10 +1,11 @@
 import React from 'react';
 import {  Form, Select, Input, Radio ,InputNumber,Avatar, Button } from 'antd';
+
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
-
 const PaperSize =['A2','A3','A4','A5'];
 const OptionList=PaperSize.map((PaperSize)=><Select.Option value={PaperSize}>{PaperSize}</Select.Option>)
+
 class PageSettingForm extends React.Component {
 	constructor(props){
     super(props);
@@ -15,22 +16,12 @@ class PageSettingForm extends React.Component {
   }
 
   onChanged = (name ,value) => {
-    // console.log('radio checked', e.target.value);
     this.setState({
       [name]:value,
     });
 
   }
 
-  // onRotationChanged = (e)=>{
-  //   console.log('radio checked',e.target.value);
-  //   this.setState({
-  //    rotation:e.target.value
-  //   });
-  // }
-
-
-	
   render() {
     const formItemLayout = {
       labelCol: {
@@ -86,5 +77,4 @@ class PageSettingForm extends React.Component {
     );
   }
 }
-
 export default PageSettingForm;	

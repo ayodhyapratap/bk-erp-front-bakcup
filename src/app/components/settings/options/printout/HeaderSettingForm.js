@@ -17,7 +17,7 @@ class HeaderSettingForm extends React.Component {
         alignType:'rgt',
 	    };
 	  }
-	 changeImage = () => {
+	  changeImage = () => {
 	    const index = UserList.indexOf(this.state.user);
 	    this.setState({
 	      user: index < UserList.length - 1 ? UserList[index + 1] : UserList[0],
@@ -114,5 +114,4 @@ class HeaderSettingForm extends React.Component {
     );
   }
 }
-
 export default HeaderSettingForm;	
