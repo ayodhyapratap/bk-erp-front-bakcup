@@ -25,6 +25,7 @@ import SettingSider from "./SettingSider";
 import PermissionDenied from "../common/errors/PermissionDenied";
 import AddorEditLab from "./options/labs/AddorEditLab";
 import MlmBase from "./options/mlm/MlmBase";
+import Printout from "./options/printout/Printout";
 import IntegrationHome from "./options/integration/IntegrationHome";
 
 const Content = Layout.Content;
@@ -134,6 +135,11 @@ class SettingsDash extends React.Component {
                                                 {...this.props}
                                                 {...route}
                                                 key={this.state.active_practiceId}/> : <PermissionDenied/>
+                               )}/>
+                       <Route path ="/settings/printout"
+                             render={(route) => (
+                                    <Printout {...this.state}
+                                              {...this.props}/>
                                )}/>
                         <Route path="/settings/integration"
                                render={(route) => <IntegrationHome {...this.state}

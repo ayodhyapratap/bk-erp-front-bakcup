@@ -84,6 +84,11 @@ class SettingSider extends React.Component {
                         </Link>
                     </Menu.Item> : null}
 
+                    <Menu.Item key="18">
+                        <Link to="/settings/printout">
+                            <Icon type="printer"/> Printout
+                        </Link>
+                    </Menu.Item>
                     <Menu.Item key="20">
                         <Link to="/settings/integration">
                             <Icon type="link"/> My Integrations

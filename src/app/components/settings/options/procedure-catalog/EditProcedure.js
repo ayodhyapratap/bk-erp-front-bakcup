@@ -21,6 +21,7 @@ class EditProcedure extends React.Component {
             taxes: [],
             procedure_category: [],
             redirect:false,
+            productMargin:[],
             editingProcedureData:this.props.editingProcedureData,
         }
         this.loadTaxes = this.loadTaxes.bind(this);

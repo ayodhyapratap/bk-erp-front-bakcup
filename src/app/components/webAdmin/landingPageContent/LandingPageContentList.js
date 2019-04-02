@@ -68,7 +68,9 @@ export default class LandingPageContentList extends React.Component{
                           <List.Item.Meta
                               avatar={<Avatar style={{ backgroundColor: '#87d068' }} >{item.rank}</Avatar>}
                               title={item.title}
-                              description={item.content}
+                              description={<div dangerouslySetInnerHTML={{ __html: item.content }}/>}
+
+                              
                           />
                       </List.Item>}/>
             </Card>

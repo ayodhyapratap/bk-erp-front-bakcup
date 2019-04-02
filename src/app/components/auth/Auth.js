@@ -1,6 +1,7 @@
 import React from "react";
 import LoginForm from "./forms/LoginForm";
-import {Card, Col, Divider, Form, Layout, Row} from "antd";
+import LoginWithPhone from "./forms/LogintWithPhone";
+import {Card, Col, Divider, Form, Layout, Row,Button} from "antd";
 import {Link, Route, Switch} from "react-router-dom";
 import '../../assets/auth.css';
 import AppLogo from '../../assets/img/kidneycarelogo.png';
@@ -17,6 +18,7 @@ class Auth extends React.Component {
     render() {
         const LoginFormLayout = Form.create()(LoginForm);
         const PasswordResetForm = Form.create()(DynamicFieldsForm);
+        const LoginWithPhoneLayout =Form.create()(LoginWithPhone);
 
         let tokenDefaultValues = [{
             key: 'code',
@@ -64,9 +66,10 @@ class Auth extends React.Component {
                                 </Card>
                                 <Divider/>
                                 <h4>
-                                    <Link to="/login">Login </Link>
-                                    {/*<Divider type="vertical"/>*/}
-                                    {/*<Link to="/privacypolicy">Privacy Policy</Link>*/}
+                                    {/*<Link to="/login">Login </Link>
+                                    <Divider type="vertical"/>
+                                    <Link to="/privacypolicy">Privacy Policy</Link>
+                                    <Divider style={{margin:'0px'}}>Patient</Divider>*/}
                                 </h4>
                             </div>
                         </Col>
@@ -81,13 +84,26 @@ class Auth extends React.Component {
                              lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>
                             <div className="loginFormWrapper" style={{textAlign: 'center'}}>
                                 <img src={AppLogo} alt="" style={{maxWidth: '100%', minWidth: '50%', margin: '20px'}}/>
-                                <LoginFormLayout {...this.props} login={this.props.login}/>
+                                <Switch>    
+                              
                                 {/*<Divider/>*/}
-                                {/*<h4>*/}
-                                {/*<Link to="/terms">Terms & Conditions </Link>*/}
-                                {/*<Divider type="vertical"/>*/}
-                                {/*<Link to="/privacypolicy">Privacy Policy</Link></h4>*/}
-                                <Divider/>
+                                
+                                    <Route path="/loginwithphone">
+                                          <LoginWithPhoneLayout {...this.props}/>
+                                    </Route>
+
+                                
+                                 <Route >
+                                       <LoginFormLayout {...this.props} login={this.props.login}/>
+                                 </Route>
+
+                                <Route>
+                                  
+                                </Route>
+
+                                </Switch>
+
+                               
                                 <h4 style={{textAlign: 'center'}}>
                                     Powered By: <a href="https://plutonic.co.in/" target="_blank">Plutonic Services</a>
                                 </h4>

@@ -1,8 +1,9 @@
-import {Form, Icon, Input, Button, Modal,} from 'antd';
+import {Form, Icon, Input, Button, Modal,Divider} from 'antd';
 import React from 'react';
 import 'antd/dist/antd.css';
-import {EMAIL, PASSWORD} from "../../../constants/formLabels";
+import {EMAIL, PASSWORD, PHONE, OTP} from "../../../constants/formLabels";
 import {Redirect} from 'react-router';
+import{Link, Route, Switch} from "react-router-dom";
 import {displayMessage, makeURL, postOuterAPI} from "../../../utils/common";
 import {RESET_PASSWORD_MAIL} from "../../../constants/api";
 
@@ -96,7 +97,16 @@ class LoginForm extends React.Component {
                                placeholder="Password"/>
                     )}
                 </FormItem>
-
+               {/*<Divider style={{margin:'0px'}}>OR</Divider>
+                <FormItem>
+                    {getFieldDecorator('phone', {
+                        rules: [{required: true, message: 'Please input your Phone No!'}],
+                    })(
+                        <Input size="large" prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                               type="text"
+                               placeholder="Phone"/>
+                    )}
+                </FormItem>*/}
                 <FormItem>
                     <a style={{float: 'right'}} type="primary" onClick={this.showResetModal}>
                         Forgot Password ?
@@ -106,6 +116,17 @@ class LoginForm extends React.Component {
                         Log in
                     </Button>
                 </FormItem>
+                <Divider>OR</Divider>
+                    <h4>
+                        <Link to={"/loginwithphone"}> <Button size="large"  type="primary" htmlType="submit"
+                                className="login-form-button">Log in with phone</Button>
+                            
+                        </Link>
+                    </h4>
+                <Divider/>
+
+
+
                 <Modal
                     title="Email to Reset Password"
                     visible={this.state.resetModalVisible}

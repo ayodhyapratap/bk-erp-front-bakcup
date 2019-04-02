@@ -95,9 +95,10 @@ export default class AddContacts extends React.Component {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
-                    console.log(data);
+                    that.setState({
+                        redirect: true
+                    });
                     that.props.loadData();
-                    that.changeRedirect();
                 },
                 errorFn: function () {
 
@@ -112,9 +113,10 @@ export default class AddContacts extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-                that.props.loadData();
-                that.changeRedirect();
-                console.log(data);
+                that.setState({
+                        redirect: true
+                    });
+                    that.props.loadData();
             },
             errorFn: function () {
 
@@ -138,7 +140,7 @@ export default class AddContacts extends React.Component {
 
 
             </Card>
-            {this.state.redirect && <Redirect to={'/web/blog'}/>}
+            {this.state.redirect && <Redirect to={'/web/contact'}/>}
         </Row>
 
     }

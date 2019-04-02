@@ -1,7 +1,7 @@
-import {Button, Card,Icon} from "antd";
+import {Button, Card,Icon,Divider,Popconfirm} from "antd";
 import React from "react";
-import {getAPI} from "../../../utils/common";
-import {MANUFACTURER_API} from "../../../constants/api";
+import {getAPI,deleteAPI,interpolate} from "../../../utils/common";
+import {MANUFACTURER_API,SINGLE_MANUFACTURER_API} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddManufacture from "./AddManufacture";
 import {Link} from "react-router-dom";
@@ -15,6 +15,7 @@ export default class ManufactureList extends React.Component {
             manufactures: null
         };
         this.loadData = this.loadData.bind(this);
+        this.deleteManufacture =this.deleteManufacture.bind(this);
     }
 
     componentDidMount() {
@@ -34,16 +35,24 @@ export default class ManufactureList extends React.Component {
         getAPI(MANUFACTURER_API, successFn, errorFn);
     }
 
+    deleteManufacture(value) {
+        var that = this;
+        let successFn = function (data) {
+            that.loadData();
+        };
+        let errorFn = function () {
+        };
+        deleteAPI(interpolate(SINGLE_MANUFACTURER_API, [value]), successFn, errorFn);
+
+    }
+
+
     render() {
         let that = this;
         const manufactureColoumns = [{
             title: 'Name',
             key: 'name',
             dataIndex: 'name'
-        }, {
-            title: 'Clinic',
-            key: 'practice',
-            dataIndex: 'practice'
         }, {
             title: 'Details',
             key: 'details',
@@ -53,6 +62,13 @@ export default class ManufactureList extends React.Component {
             render: function (record) {
                 return <div>
                     <Link to={'/inventory/manufacture/edit/' + record.id}>Edit</Link>
+                    <Divider type="vertical"/>
+                    <Popconfirm title="Are you sure delete this item?"
+                                onConfirm={() => that.deleteManufacture(record.id)} okText="Yes" cancelText="No">
+                        <a>Delete</a>
+                    </Popconfirm>
+
+                    
                 </div>
             }
         }];

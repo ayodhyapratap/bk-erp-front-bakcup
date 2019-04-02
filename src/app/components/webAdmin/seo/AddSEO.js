@@ -60,7 +60,7 @@ export default class AddSEO extends React.Component {
             key: "name",
             initialValue: this.state.editBlogData ? this.state.editBlogData.name : null,
             type: INPUT_FIELD,
-            disabled: true
+            disabled: false //true
         }, {
             label: "Page Title",
             key: "title",
@@ -85,9 +85,11 @@ export default class AddSEO extends React.Component {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
+                        that.setState({
+                            redirect: true
+                        });
+                        that.props.loadData();
                     console.log(data);
-                    that.props.loadData();
-                    that.changeRedirect();
                 },
                 errorFn: function () {
 
@@ -102,8 +104,11 @@ export default class AddSEO extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-
-                console.log(data);
+                    that.setState({
+                        redirect: true
+                    });
+                    that.props.loadData();
+                    console.log(data);
             },
             errorFn: function () {
 

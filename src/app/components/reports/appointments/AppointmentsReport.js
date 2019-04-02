@@ -25,12 +25,12 @@ export default class AppointmentsReport extends React.Component {
             that.setState({
                 appointmentReports: data.data,
             });
+            console.log(that.state.appointmentReports);
         };
         let errorFn = function () {
         };
         getAPI(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId, "start=" + this.props.startDate + "&end=" + this.props.endDate]), successFn, errorFn);
     }
-
 
     render() {
         const columns = [{

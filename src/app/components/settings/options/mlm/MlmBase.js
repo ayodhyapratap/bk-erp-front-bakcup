@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Icon, Table, Tabs} from "antd";
-import {getAPI, interpolate, postAPI} from "../../../../utils/common";
+import {getAPI, interpolate, postAPI,patchAPI,deleteAPI,putAPI} from "../../../../utils/common";
 import MLMGenerate from "./MLMGenerate"
 import {Link, Route, Switch} from "react-router-dom";
 import {PRODUCT_MARGIN, ROLE_COMMISION, SINGLE_PRODUCT_MARGIN, STAFF_ROLES} from "../../../../constants/api";
@@ -17,6 +17,7 @@ export default class MlmBase extends React.Component {
         }
         this.loadMlmData = this.loadMlmData.bind(this);
         this.loadRoles = this.loadRoles.bind(this);
+        this.deleteObject = this.deleteObject.bind(this);
     }
 
     componentDidMount() {
@@ -75,14 +76,21 @@ export default class MlmBase extends React.Component {
 
     deleteObject(record) {
         let that = this;
-        let reqData = record;
+        let reqData = {...record,is_active:false};
         reqData.is_active = false;
         let successFn = function (data) {
             that.loadProductMargin();
         }
         let errorFn = function () {
         }
-        postAPI(interpolate(SINGLE_PRODUCT_MARGIN, [record.id]), reqData, successFn, errorFn);
+        putAPI(interpolate(SINGLE_PRODUCT_MARGIN, [record.id]), reqData, successFn, errorFn);
+    }
+
+    changeRedirect(){
+        var redirectVar=this.state.redirect;
+      this.setState({
+        redirect:  !redirectVar,
+      })  ;
     }
 
     render() {
@@ -111,10 +119,14 @@ export default class MlmBase extends React.Component {
             }
         })
 
+        
+
 
         let datasource = {};
+        
         that.state.productMargin.forEach(function (productMargin) {
             datasource[productMargin.id] = [];
+
             if (that.state.staffRoles) {
                 that.state.staffRoles.forEach(function (role) {
                     let roledata = {"role": role.name};
@@ -123,14 +135,15 @@ export default class MlmBase extends React.Component {
                             if (that.state.mlmItems) {
                                 for (let i = 0; i < that.state.mlmItems.length; i++) {
                                     let item = that.state.mlmItems[i];
-                                    if (item.role == role.id && item.level == level) {
-                                        roledata[level] = item.commision_percent;
+                                    if (item.margin.id == productMargin.id && item.level == level && role.id==item.role) {
+                                       roledata[level]= item.commision_percent;
                                         break;
                                     }
                                 }
                             }
                         }
                     }
+                    
                     datasource[productMargin.id].push(roledata);
                 })
             }
@@ -138,11 +151,12 @@ export default class MlmBase extends React.Component {
         return <div>
             <Switch>
                 <Route exact path="/settings/mlm/generate"
-                       render={(route) => <MLMGenerate {...route} loadData={this.loadMlmData} {...this.state}/>}/>
+                    render={(route) => <MLMGenerate {...route} 
+                        loadData={this.loadMlmData} {...this.state}/>}/>
                 {this.state.editId && this.state.editRecord ?
-                    <Route exact path="/settings/mlm/edit"
-                           render={(route) => <MLMGenerate {...route}
-                                                           loadData={this.loadMlmData} {...this.state}/>}/> : null}
+                    <Route exact path="/settings/mlm/edit" 
+                        render={(route) => <MLMGenerate {...route}
+                            loadData={this.loadMlmData} {...this.state}/>}/> : null}
                 <Route>
                     <div>
                         <h2>MLM Commissions

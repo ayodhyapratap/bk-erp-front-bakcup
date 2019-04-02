@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Row, Radio} from "antd";
-import {getAPI, interpolate, deleteAPI} from "../../../utils/common";
+import {getAPI, interpolate, deleteAPI,patchAPI} from "../../../utils/common";
 import {
     INVENTORY_ITEM_API,
     SINGLE_INVENTORY_ITEM_API,
@@ -30,6 +30,7 @@ export default class InventoryItemList extends React.Component {
         this.showAddOrConsumeModal = this.showAddOrConsumeModal.bind(this);
         this.setActionType = this.setActionType.bind(this);
         this.changeFilter = this.changeFilter.bind(this);
+        this.deleteObject = this.deleteObject.bind(this)
     }
 
     componentDidMount() {

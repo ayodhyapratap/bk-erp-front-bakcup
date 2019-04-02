@@ -1,7 +1,7 @@
 import {Button, Card, Divider, Icon, Popconfirm, Table} from "antd";
 import React from "react";
 import {getAPI, interpolate, patchAPI} from "../../../utils/common";
-import {BLOG_EVENTS, BLOG_POST, SINGLE_CONTACT} from "../../../constants/api";
+import {BLOG_EVENTS, BLOG_POST,SINGLE_EVENTS} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import {Link} from "react-router-dom";
 import AddEvent from "./AddEvent";
@@ -43,7 +43,7 @@ export default class DiseaseList extends React.Component {
         };
         let errorFn = function () {
         };
-        patchAPI(interpolate(SINGLE_CONTACT, [record.id]), reqData, successFn, errorFn)
+        patchAPI(interpolate(SINGLE_EVENTS, [record.id]), reqData, successFn, errorFn)
     }
 
     render() {

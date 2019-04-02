@@ -77,9 +77,10 @@ export default class AddLandingPageContent extends React.Component {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
-                    that.loadData();
-                    that.changeRedirect();
-                    console.log(data);
+                    that.setState({
+                        redirect: true
+                    });
+                    that.props.loadData();
                 },
                 errorFn: function () {
 
@@ -94,8 +95,10 @@ export default class AddLandingPageContent extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-
-                console.log(data);
+                that.setState({
+                        redirect: true
+                    });
+                    that.props.loadData();
             },
             errorFn: function () {
 

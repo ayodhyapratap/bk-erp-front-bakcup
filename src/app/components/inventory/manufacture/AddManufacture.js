@@ -3,6 +3,7 @@ import React from "react";
 import {
     INPUT_FIELD,
     SUCCESS_MSG_TYPE,
+    TEXT_FIELD,
 } from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
@@ -46,7 +47,7 @@ export default class AddManufacture extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_VENDOR_API, [this.props.match.params.id]), successFn, errorFn);
+        getAPI(interpolate(SINGLE_MANUFACTURER_API, [this.props.match.params.id]), successFn, errorFn);
 
 
     }
@@ -59,7 +60,12 @@ export default class AddManufacture extends React.Component {
             key: "name",
             initialValue: this.state.editData ? this.state.editData.name : null,
             type: INPUT_FIELD
-        },];
+        },{
+            label: 'Details',
+            key: 'description',
+            type:TEXT_FIELD
+        }, 
+        ];
 
 
         let editformProp;

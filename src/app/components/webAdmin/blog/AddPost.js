@@ -15,6 +15,7 @@ import {
 } from "../../../constants/api";
 import {Route} from "react-router";
 import {Redirect} from "react-router-dom";
+import moment from "moment";
 
 
 export default class AddPost extends React.Component {
@@ -56,6 +57,7 @@ export default class AddPost extends React.Component {
 
 
     render(){
+        let that =this;
         const  fields= [{
             label: "Blog Title",
             key: "title",
@@ -79,9 +81,8 @@ export default class AddPost extends React.Component {
         },{
             label: "Posted On",
             key: "posted_on",
-            initialValue:this.state.editBlogData?this.state.editBlogData.posted_on:null,
-            type: DATE_PICKER,
-            format:"YYYY/MM/DD HH:mm"
+            initialValue:this.state.editBlogData?moment(this.state.editBlogData.posted_on):null,
+            type: DATE_PICKER
 
         },{
             label: "SEO Description",
@@ -106,6 +107,10 @@ export default class AddPost extends React.Component {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
+                    that.setState({
+                        redirect: true
+                    });
+                    that.props.loadData();
                     console.log(data);
                 },
                 errorFn: function () {
@@ -121,7 +126,10 @@ export default class AddPost extends React.Component {
         const formProp={
             successFn:function(data){
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-
+                that.setState({
+                        redirect: true
+                    });
+                    that.props.loadData();
                 console.log(data);
             },
             errorFn:function(){

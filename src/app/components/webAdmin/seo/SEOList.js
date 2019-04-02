@@ -1,7 +1,7 @@
-import { Card, Table} from "antd";
+import { Card, Table, Button, Icon,Divider,Popconfirm } from "antd";
 import React from "react";
-import {getAPI} from "../../../utils/common";
-import {BLOG_PAGE_SEO} from "../../../constants/api";
+import {getAPI, interpolate, patchAPI} from "../../../utils/common";
+import {BLOG_PAGE_SEO, SINGLE_PAGE_SEO} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddSEO from "./AddSEO";
 import {Link} from "react-router-dom";
@@ -29,7 +29,9 @@ export default class SEOList extends React.Component{
         }
         getAPI(BLOG_PAGE_SEO ,successFn, errorFn);
     }
+  
     render(){
+        let that = this;
         let coloumns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -56,13 +58,10 @@ export default class SEOList extends React.Component{
                 }
             }];
         return<div><Switch>
-                {/*<Route exact path='/web/pageseo/add'*/}
-                   {/*render={(route) => <AddSEO {...this.state} {...route}/>}/>*/}
-            <Route exact path='/web/pageseo/edit/:id'
+                <Route exact path='/web/pageseo/edit/:id'
                    render={(route) => <AddSEO loadData={this.loadData} {...this.state} {...route}/>}/>
-            <Card title="Pages SEO"
-                  // extra={<Link to={"/web/pageseo/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}
-            >
+     
+                <Card title="Pages SEO">
                 <Table dataSource={this.state.pageSEO} columns={coloumns}/>
             </Card>
         </Switch>
