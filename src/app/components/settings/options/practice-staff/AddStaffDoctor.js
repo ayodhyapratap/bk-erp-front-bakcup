@@ -99,7 +99,7 @@ class AddStaffDoctor extends React.Component {
                 required: true,
                 initialValue: this.state.editStaff ? this.state.editStaff.role : null,
                 type: SELECT_FIELD,
-                options: this.state.roles.map(role => ({label: role.name, value: [role.id]}))
+                options: this.state.roles.map(role => ({label: role.name, value: [role.name]}))
             }, {
                 label: "Calendar Colour",
                 key: "calender_colour",
