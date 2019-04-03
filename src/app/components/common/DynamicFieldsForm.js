@@ -83,6 +83,7 @@ class DynamicFieldsForm extends React.Component {
         this.colorChange = this.colorChange.bind(this);
         this.loadCountryData = this.loadCountryData.bind(this);
         this.addSMSTag = this.addSMSTag.bind(this);
+        // this.onFormFieldDataChange = this.onFormFieldDataChange.bind(this)
     }
 
     componentDidMount() {
@@ -105,10 +106,18 @@ class DynamicFieldsForm extends React.Component {
         })
     }
 
+    // onFormFieldDataChange() {
+    //     if (this.props.formProp.onFieldsDataChange) {
+    //         let values = this.props.form.getFieldsValue();
+    //         console.log(values);
+    //         this.props.formProp.onFieldsDataChange(values);
+    //     }
+    // }
+
     handleSubmit = (e) => {
         let that = this;
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+        this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log(values);
                 if (this.props.defaultValues) {
@@ -247,22 +256,21 @@ class DynamicFieldsForm extends React.Component {
                 {this.state.fields ? this.state.fields.map(function (field) {
                     switch (field.type) {
                         case PASSWORD_FIELD:
-                            return <Form.Item key={field.key} label={field.label}  {...formItemLayout}
-                                              extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                    <Input prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                                           type="password"
-                                           placeholder={field.placeholder}
-                                           disabled={field.disabled ? field.disabled : that.state.disabled}/>
-                                )}
-                            </Form.Item>;
+                                return <Form.Item key={field.key} label={field.label}  {...formItemLayout}
+                                                  extra={field.extra}>
+                                    {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                        <Input prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                                               type="password"
+                                               placeholder={field.placeholder}
+                                               disabled={field.disabled ? field.disabled : that.state.disabled}/>
+                                    )}
+                                </Form.Item>;
                         case INPUT_FIELD:
                             return <FormItem key={field.key} label={field.label}  {...formItemLayout}
                                              extra={field.extra}>
                                 {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
                                     <Input placeholder={field.placeholder}
-                                           disabled={field.disabled ? field.disabled : that.state.disabled}
-                                           onChange={that.inputChange}/>
+                                           disabled={field.disabled ? field.disabled : that.state.disabled}/>
                                 )}
                                 {field.follow ? <span className="ant-form-text">{field.follow}</span> : null}
                             </FormItem>;

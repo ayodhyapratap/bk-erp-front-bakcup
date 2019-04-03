@@ -74,7 +74,7 @@ class AddPrescription extends React.Component {
                 label: "Drug Type",
                 key: "drug_type_extra",
                 required: true,
-                initialValue: this.state.editPrescreption ? this.state.editPrescreption.drug_type : null,
+                initialValue: this.state.editPrescreption ? this.state.editPrescreption.drug_type_extra : null,
                 type: INPUT_FIELD,
                 follow: <a onClick={() => that.setFormParams('drugType', SELECT_FIELD)}>Choose Drug Type</a>
             } : {
@@ -91,7 +91,7 @@ class AddPrescription extends React.Component {
                 label: "Dosage Unit",
                 key: "unit_type_extra",
                 required: true,
-                initialValue: this.state.editPrescreption ? this.state.editPrescreption.unit : null,
+                initialValue: this.state.editPrescreption ? this.state.editPrescreption.unit_type_extra : null,
                 type: INPUT_FIELD,
                 follow: <a onClick={() => that.setFormParams('drugUnit', SELECT_FIELD)}>Choose Drug Type</a>
             } : {
@@ -101,7 +101,7 @@ class AddPrescription extends React.Component {
                 initialValue: this.state.editPrescreption ? this.state.editPrescreption.unit : null,
                 type: SELECT_FIELD,
                 options: [],
-                follow: <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Drug Type</a>
+                follow: <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Drug Unit</a>
             });
         const fields = [{
             label: "Name",
@@ -144,10 +144,18 @@ class AddPrescription extends React.Component {
             errorFn: function () {
 
             },
+            // onFieldsDataChange:
+            // },
             action: interpolate(DRUG_CATALOG, [this.props.active_practiceId]),
             method: "post",
         }
-        const TestFormLayout = Form.create()(DynamicFieldsForm);
+        const TestFormLayout = Form.create({
+            onValuesChange: function (props, changedValues, allValues) {
+                console.log(changedValues,allValues);
+                that.setState(function (prevState) {
+                    return {editPrescreption: {...prevState.editPrescreption, ...changedValues}}
+                });
+            }})(DynamicFieldsForm);
         let defaultValues = []
         if (this.state.editPrescreption) {
             defaultValues.push({key: 'id', value: this.state.editPrescreption.id})
@@ -159,8 +167,8 @@ class AddPrescription extends React.Component {
                                                      changeRedirect={this.changeRedirect}
                                                      fields={fields}/>}/>
                 <Route exact path="/settings/prescriptions/edit"
-                       render={(route) => this.state.editPrescreption ?
-                           <TestFormLayout title="Add Prescriptions"
+                       render={(route) => this.state.editPrescreption && this.state.editPrescreption.id ?
+                           <TestFormLayout title="Edit Prescriptions"
                                            defaultValues={defaultValues} formProp={formProp}
                                            changeRedirect={this.changeRedirect}
                                            fields={fields}/> : null}/>
