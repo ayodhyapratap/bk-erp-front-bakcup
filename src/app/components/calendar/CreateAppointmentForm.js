@@ -1,5 +1,5 @@
 import React from "react";
-import {Form, Input, Select, CheckBox, DatePicker, Icon, TimePicker, InputNumber, Card, List, Avatar} from 'antd';
+import {Form, Input, Select, CheckBox, DatePicker,Button, Icon, TimePicker, InputNumber, Card, List, Avatar} from 'antd';
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import moment from "moment/moment";
 import {DOCTORS_ROLE} from "../../constants/dataKeys";
@@ -9,16 +9,20 @@ import {
     EMR_TREATMENTNOTES,
     FILE_UPLOAD_API,
     PRACTICESTAFF, PROCEDURE_CATEGORY,
-    SEARCH_PATIENT
+    SEARCH_PATIENT,
+    ALL_APPOINTMENT_API,
+    PATIENT_PROFILE
+
 } from "../../constants/api";
 import {Checkbox, message, Radio} from "antd/lib/index";
-import {getAPI, interpolate, makeURL} from "../../utils/common";
+import {getAPI, interpolate, makeURL, postAPI} from "../../utils/common";
 import {Redirect} from "react-router-dom";
 
 const {TextArea} = Input;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
+const { Meta } = Card;
 export default class CreateAppointmentForm extends React.Component {
     constructor(props) {
         super(props);
@@ -31,7 +35,8 @@ export default class CreateAppointmentForm extends React.Component {
             practice_staff: [],
             appointment: null,
             loading: false,
-            patientListData: []
+            patientListData: [],
+            patientDetails : null
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.loadDoctors = this.loadDoctors.bind(this);
@@ -162,11 +167,50 @@ export default class CreateAppointmentForm extends React.Component {
         getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
     }
 
+    handleSubmit = (e) => {
+        let that =this;
+        let successFn = function(data){
+            that.setState({
+                appointment:data
+            })
+            
+        };
+
+        let errorFn = function () {
+        };
+        postAPI(ALL_APPOINTMENT_API,  successFn, errorFn);
+
+    }
+    handleChange = (event) => {
+        let that =this;
+        let successFn = function(data){
+            that.setState({
+                patientDetails: data
+            });
+            console.log("event",that.state.patientDetails);
+        };
+        let errorFn = function () {
+        };
+        getAPI(interpolate(PATIENT_PROFILE, [event]), successFn, errorFn);
+
+        // this.setState({ value: event.target.value });
+    };
+    handleClick = (e)=>{
+
+        this.setState({
+            patientDetails:null
+        })
+
+    }
+     
     render() {
         const that = this;
         const formItemLayout = (this.props.formLayout ? this.props.formLayout : {
             labelCol: {span: 6},
             wrapperCol: {span: 14},
+        });
+        const formPatients =(this.props.formLayout? this.props.formLayout:{
+            wrapperCol: {offset:6 ,span: 14},
         });
         const {getFieldDecorator} = this.props.form;
         console.log(this.state.practice_doctors)
@@ -223,53 +267,79 @@ export default class CreateAppointmentForm extends React.Component {
                     )}
                     <span className="ant-form-text">mins</span>
                 </FormItem>
-                <FormItem key="patient_name" label="Patient Name"  {...formItemLayout}>
-                    {getFieldDecorator("patient_name", {initialValue: this.state.appointment ? this.state.appointment.patient_name : null}, {
-                        rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
-                    })(
-                        <Select placeholder="Patient Name"
-                                showSearch
-                                onSearch={this.searchPatient}
-                                defaultActiveFirstOption={false}
-                                showArrow={false}
-                                filterOption={false}>
-                            {this.state.patientListData.map((option) => <Select.Option
-                                value={option.id}>
-                                <List.Item style={{padding:0}}>
-                                    <List.Item.Meta
-                                        avatar={<Avatar
-                                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
-                                        title={option.name + " ("+option.id+")"}
-                                        description={option.mobile}
-                                    />
+                {this.state.patientDetails ?true 
 
-                                </List.Item>
-                            </Select.Option>)}
-                        </Select>
-                    )}
-                </FormItem>
+                        :<div>
+                            <FormItem key="patient_name" label="Patient Name"  {...formItemLayout}>
+                                {getFieldDecorator("patient_name", {initialValue: this.state.appointment ? this.state.appointment.patient_name : null}, {
+                                    rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
+                                })(
+                                    <Select placeholder="Patient Name"
+                                            showSearch
+                                            onSearch={this.searchPatient}
+                                            defaultActiveFirstOption={false}
+                                            showArrow={false}
+                                            filterOption={false}
+                                            onChange={this.handleChange.bind(this)}>
+                                        {this.state.patientListData.map((option) => <Select.Option
+                                            value={option.id}>
+                                            <List.Item style={{padding:0}}>
+                                                <List.Item.Meta
+                                                    avatar={<Avatar
+                                                        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                                    title={option.name + " ("+option.id+")"}
+                                                    // description={option.mobile}
+                                                />
+
+                                            </List.Item>
+                                        </Select.Option>)}
+                                    </Select>
+                                )}
+                            </FormItem>
+                        </div>
+
+                    }
+                
+                {this.state.patientDetails?
+                        <FormItem key="patient_name" {...formPatients}>
+                           <Card bordered={false} style={{ background: '#ECECEC'}}>
+                                <Meta
+                                  avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                                  title={this.state.patientDetails.name}
+                                  description={this.state.patientDetails.email}
+
+                                />
+
+                            </Card>
+                            <Button type="primary" className="float-right" onClick={this.handleClick}>Add New Patient</Button>
+                        </FormItem>
+                      :<div>
+                          <FormItem key="patient_mobile" label="Mobile Number"   {...formItemLayout}>
+                                {getFieldDecorator("patient_mobile", {initialValue: this.state.appointment ? this.state.appointment.patient_mobile : null}, {
+                                    rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
+                                })(
+                                    <Input placeholder="Mobile Number"
+                                    />
+                                )}
+                            </FormItem>
+                            <FormItem key="email" label="Email Address"  {...formItemLayout}>
+                                {getFieldDecorator("email", {initialValue: this.state.appointment ? this.state.appointment.email : null}, {
+                                    rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
+                                })(
+                                    <Input placeholder="Email Address"/>
+                                )}
+                            </FormItem>
+
+                        </div>}
                 {/*// {*/}
+
                 {/*//     label: "Patient Id",*/}
                 {/*//     key: "patient_id",*/}
                 {/*//     required: true,*/}
                 {/*//     initialValue: this.state.appointment ? this.state.appointment.patient_id : null,*/}
                 {/*//     type: INPUT_FIELD*/}
                 {/*// },*/}
-                <FormItem key="patient_mobile" label="Mobile Number"  {...formItemLayout}>
-                    {getFieldDecorator("patient_mobile", {initialValue: this.state.appointment ? this.state.appointment.patient_mobile : null}, {
-                        rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
-                    })(
-                        <Input placeholder="Mobile Number"
-                        />
-                    )}
-                </FormItem>
-                <FormItem key="email" label="Email Address"  {...formItemLayout}>
-                    {getFieldDecorator("email", {initialValue: this.state.appointment ? this.state.appointment.email : null}, {
-                        rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
-                    })(
-                        <Input placeholder="Email Address"/>
-                    )}
-                </FormItem>
+                
                 {/*{*/}
                 {/*label: "Notify Patient",*/}
                 {/*key: "notify_via_sms",*/}
@@ -322,6 +392,9 @@ export default class CreateAppointmentForm extends React.Component {
                                 value={option.value}>{option.label}</Select.Option>)}
                         </Select>
                     )}
+                </FormItem>
+                <FormItem>
+                    <Button type="primary" htmlType="submit" >Submit</Button>
                 </FormItem>
             </Form>
             {this.state.redirect && <Redirect to='/patients/appointments/'/>}
