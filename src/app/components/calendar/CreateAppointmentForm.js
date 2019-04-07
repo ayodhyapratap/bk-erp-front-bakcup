@@ -1,5 +1,5 @@
 import React from "react";
-import {Form, Input, Select, CheckBox, DatePicker,Button, Icon, TimePicker, InputNumber, Card, List, Avatar} from 'antd';
+import {Form, Input, Select, CheckBox, DatePicker,Button, Icon, TimePicker, InputNumber, Card, List, Avatar,AutoComplete} from 'antd';
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import moment from "moment/moment";
 import {DOCTORS_ROLE} from "../../constants/dataKeys";
@@ -43,6 +43,7 @@ export default class CreateAppointmentForm extends React.Component {
         this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
         this.loadTreatmentNotes = this.loadTreatmentNotes.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -168,17 +169,20 @@ export default class CreateAppointmentForm extends React.Component {
     }
 
     handleSubmit = (e) => {
-        let that =this;
-        let successFn = function(data){
-            that.setState({
-                appointment:data
-            })
-            
-        };
+        // let that =this;
+        e.preventDefault();
+        this.props.form.validateFields((err,values) => {
+            if (!err) {
+                
+                console.log("fast data",values);
+            }
+        });
 
-        let errorFn = function () {
-        };
-        postAPI(ALL_APPOINTMENT_API,  successFn, errorFn);
+
+
+        // let errorFn = function () {
+        // };
+        // postAPI(ALL_APPOINTMENT_API,  successFn, errorFn);
 
     }
     handleChange = (event) => {
@@ -187,7 +191,7 @@ export default class CreateAppointmentForm extends React.Component {
             that.setState({
                 patientDetails: data
             });
-            console.log("event",that.state.patientDetails);
+            // console.log("event",that.state.patientDetails);
         };
         let errorFn = function () {
         };
@@ -267,38 +271,9 @@ export default class CreateAppointmentForm extends React.Component {
                     )}
                     <span className="ant-form-text">mins</span>
                 </FormItem>
-                {this.state.patientDetails ?true 
-
-                        :<div>
-                            <FormItem key="patient_name" label="Patient Name"  {...formItemLayout}>
-                                {getFieldDecorator("patient_name", {initialValue: this.state.appointment ? this.state.appointment.patient_name : null}, {
-                                    rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
-                                })(
-                                    <Select placeholder="Patient Name"
-                                            showSearch
-                                            onSearch={this.searchPatient}
-                                            defaultActiveFirstOption={false}
-                                            showArrow={false}
-                                            filterOption={false}
-                                            onChange={this.handleChange.bind(this)}>
-                                        {this.state.patientListData.map((option) => <Select.Option
-                                            value={option.id}>
-                                            <List.Item style={{padding:0}}>
-                                                <List.Item.Meta
-                                                    avatar={<Avatar
-                                                        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
-                                                    title={option.name + " ("+option.id+")"}
-                                                    // description={option.mobile}
-                                                />
-
-                                            </List.Item>
-                                        </Select.Option>)}
-                                    </Select>
-                                )}
-                            </FormItem>
-                        </div>
-
-                    }
+            
+               
+                     
                 
                 {this.state.patientDetails?
                         <FormItem key="patient_name" {...formPatients}>
@@ -314,6 +289,32 @@ export default class CreateAppointmentForm extends React.Component {
                             <Button type="primary" className="float-right" onClick={this.handleClick}>Add New Patient</Button>
                         </FormItem>
                       :<div>
+                          <FormItem key="patient_name" label="Patient Name"  {...formItemLayout}>
+                             {getFieldDecorator("patient_name", {initialValue: this.state.appointment ? this.state.appointment.patient_name : null}, {
+                        rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
+                    })(
+                        <AutoComplete placeholder="Patient Name"
+                                showSearch
+                                onSearch={this.searchPatient}
+                                defaultActiveFirstOption={false}
+                                showArrow={false}
+                                filterOption={false}
+                                onChange={this.handleChange.bind(this)}>
+                            {this.state.patientListData.map((option) => <AutoComplete.Option
+                                value={option.id.toString()}>
+                                <List.Item style={{padding:0}}>
+                                    <List.Item.Meta
+                                        avatar={<Avatar
+                                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                        title={option.name + " ("+option.id+")"}
+                                        // description={option.mobile}
+                                    />
+
+                                </List.Item>
+                            </AutoComplete.Option>)}
+                        </AutoComplete>
+                    )}
+                </FormItem>
                           <FormItem key="patient_mobile" label="Mobile Number"   {...formItemLayout}>
                                 {getFieldDecorator("patient_mobile", {initialValue: this.state.appointment ? this.state.appointment.patient_mobile : null}, {
                                     rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
@@ -397,7 +398,6 @@ export default class CreateAppointmentForm extends React.Component {
                     <Button type="primary" htmlType="submit" >Submit</Button>
                 </FormItem>
             </Form>
-            {this.state.redirect && <Redirect to='/patients/appointments/'/>}
         </Card>
     }
 }
