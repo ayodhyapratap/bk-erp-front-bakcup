@@ -119,7 +119,7 @@ class EditPatientDetails extends React.Component {
             initialValue:this.props.currentPatient?this.props.currentPatient.city:null,
             type: INPUT_FIELD
         },  {
-            label: "PINCODE",
+            label: "Pincode",
             key: "pincode",
             initialValue:this.props.currentPatient?this.props.currentPatient.pincode:null,
             type: INPUT_FIELD

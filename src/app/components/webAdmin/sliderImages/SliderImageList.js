@@ -61,7 +61,7 @@ export default class SliderImageList extends React.Component {
                 <List itemLayout="vertical" dataSource={this.state.slider} renderItem={item =>
                     <List.Item key={item.id}
                                extra={<img src={item.silder_image}
-                                           alt=""
+                                           alt={item.title}
                                            style={{
                                                maxWidth: '100%',
                                                width: '400px'

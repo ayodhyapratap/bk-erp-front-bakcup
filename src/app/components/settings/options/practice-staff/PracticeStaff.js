@@ -1,6 +1,6 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Checkbox, Card, Form, Icon, Tabs, Divider, Tag, Row, Table, Modal} from "antd";
+import {Button, Checkbox, Card, Form, Icon, Tabs, Divider, Tag, Row, Table, Modal,Popconfirm} from "antd";
 import {CHECKBOX_FIELD, DOCTORS_ROLE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {
     PRACTICESTAFF,
@@ -263,7 +263,10 @@ class PracticeDetails extends React.Component {
                         <a disabled={!(record.user && record.user.is_active)}
                            onClick={() => that.editPermissions(record.user.id)}>Permissions</a>
                     <Divider type="vertical"/>
-              <a onClick={() => this.deleteStaff(record.id)}>Delete</a>
+                    <Popconfirm title="Are you sure delete this item?"
+                                 onConfirm={() => that.deleteStaff(record.id)} okText="Yes" cancelText="No">
+                         <a>Delete</a>
+                    </Popconfirm>
             </span>)
             }
         }];

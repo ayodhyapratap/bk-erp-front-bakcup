@@ -61,6 +61,7 @@ export default class AddPost extends React.Component {
         const  fields= [{
             label: "Blog Title",
             key: "title",
+            required:true,
             initialValue:this.state.editBlogData?this.state.editBlogData.title:null,
             type: INPUT_FIELD
         },{
@@ -71,6 +72,7 @@ export default class AddPost extends React.Component {
         },{
             label: "Blog URL ",
             key: "slug",
+            required:true,
             initialValue:this.state.editBlogData?this.state.editBlogData.slug:null,
             type: INPUT_FIELD
         },{
@@ -92,11 +94,13 @@ export default class AddPost extends React.Component {
         },{
             label: "SEO Keywords",
             key: "keywords",
+            required:true,
             initialValue:this.state.editBlogData?this.state.editBlogData.keywords:null,
             type: TEXT_FIELD,
         },{
             label: "Content",
             key: "content",
+            required:true,
             initialValue:this.state.editBlogData?this.state.editBlogData.content:null,
             type: QUILL_TEXT_FIELD,
         }, ];

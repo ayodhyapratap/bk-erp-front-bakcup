@@ -57,6 +57,7 @@ export default class AddContacts extends React.Component {
         const fields = [{
             label: "Name",
             key: "name",
+            required:true,
             initialValue: this.state.editBlogData ? this.state.editBlogData.name : null,
             type: INPUT_FIELD
         }, {
@@ -79,11 +80,13 @@ export default class AddContacts extends React.Component {
         },{
             label: "Email",
             key: "email",
+            required:true,
             initialValue: this.state.editBlogData ? this.state.editBlogData.email : null,
             type: INPUT_FIELD,
         }, {
             label: "Address",
             key: "address",
+            required:true,
             initialValue: this.state.editBlogData ? this.state.editBlogData.address : null,
             type: TEXT_FIELD,
             minRows: 3,

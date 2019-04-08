@@ -99,7 +99,7 @@ class AddStaffDoctor extends React.Component {
                 required: true,
                 initialValue: this.state.editStaff ? this.state.editStaff.role : null,
                 type: SELECT_FIELD,
-                options: this.state.roles.map(role => ({label: role.name, value: [role.name]}))
+                options: this.state.roles.map(role => ({label: role.name, value: [role.id]}))
             }, {
                 label: "Calendar Colour",
                 key: "calender_colour",
@@ -130,7 +130,11 @@ class AddStaffDoctor extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-                console.log(data);
+                console.log("all data",data);
+                this.setState({
+                    redirect: true
+                });
+                this.props.loadData();
             },
             errorFn: function () {
 
@@ -144,7 +148,10 @@ class AddStaffDoctor extends React.Component {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
-                    console.log(data);
+                    this.setState({
+                        redirect: true
+                    });
+                    this.props.loadData();
                 },
                 errorFn: function () {
 
