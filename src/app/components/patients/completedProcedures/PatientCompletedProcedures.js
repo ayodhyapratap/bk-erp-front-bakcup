@@ -104,7 +104,7 @@ class PatientCompletedProcedures extends React.Component {
             key: 'name',
             render: created_at => <span>{moment(created_at).format('LLL')}</span>,
         }, {
-            title: 'procedure',
+            title: 'Procedure',
             key: 'procedure',
             render: (text, record) => (
                 <span> {procedures[record.procedure]}</span>
@@ -114,7 +114,7 @@ class PatientCompletedProcedures extends React.Component {
             dataIndex: 'qunatity',
             key: 'quantity',
         }, {
-            title: 'Cost per  Unit',
+            title: 'Cost Per  Unit',
             dataIndex: 'cost',
             key: 'cost',
         }, {
@@ -156,7 +156,7 @@ class PatientCompletedProcedures extends React.Component {
                 <Route exact path='/patient/:id/emr/plans/edit'
                        render={(route) => <AddorEditPatientTreatmentPlans {...this.state} {...route}/>}/>
                 <Card
-                    title={this.state.currentPatient ? this.state.currentPatient.name + " completed Procedurees" : "completed Procedures"}
+                    title={this.state.currentPatient ? this.state.currentPatient.name + " Completed Procedures" : "Completed Procedures "}
                     extra={<Button.Group>
                         <Link to={"/patient/" + this.props.match.params.id + "/emr/plans/add"}><Button><Icon
                             type="plus"/>Add</Button></Link>

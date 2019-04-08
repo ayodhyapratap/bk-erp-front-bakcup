@@ -93,7 +93,7 @@ class PatientTreatmentPlans extends React.Component{
             key: 'name',
             render: created_at =><span>{moment(created_at).format('LLL')}</span>,
           }, {
-            title: 'procedure',
+            title: 'Procedure',
             key: 'procedure',
             render:(text, record) => (
               <span> {procedures[record.procedure]}</span>
@@ -137,7 +137,7 @@ class PatientTreatmentPlans extends React.Component{
              render={(route) => <AddorEditPatientTreatmentPlans{...this.state} {...route}/>}/>
       <Route exact path='/patient/:id/emr/plans/edit'
              render={(route) => <AddorEditPatientTreatmentPlans {...this.state} {...route}/>}/>
-      <Card title={ this.state.currentPatient?this.state.currentPatient.name + " treatmentPlans":"treatmentPlanss"}  extra={<Button.Group>
+      <Card title={ this.state.currentPatient?this.state.currentPatient.name + " TreatmentPlans":"TreatmentPlans"}  extra={<Button.Group>
           <Link to={"/patient/"+this.props.match.params.id+"/emr/plans/add"}><Button><Icon type="plus"/>Add</Button></Link>
       </Button.Group>}>
 

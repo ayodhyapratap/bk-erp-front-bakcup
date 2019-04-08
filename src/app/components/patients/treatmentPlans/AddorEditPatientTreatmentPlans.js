@@ -26,12 +26,15 @@ class AddorEditPatientTreatmentPlans extends React.Component {
         this.state = {
             redirect: false,
             vitalSign: null,
+            productMargin:[],
             procedure_category: this.props.procedure_category ? this.props.procedure_category : null,
             editTreatmentPlan: this.props.editTreatmentPlan ? this.props.editTreatmentPlan : null,
+
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
+        this.loadProductMargin = this.loadProductMargin.bind(this);
 
     }
 
@@ -47,6 +50,7 @@ class AddorEditPatientTreatmentPlans extends React.Component {
             that.setState({
                 productMargin: data
             })
+            console.log("log",that.state.productMargin);
         }
         let errorFn = function () {
 

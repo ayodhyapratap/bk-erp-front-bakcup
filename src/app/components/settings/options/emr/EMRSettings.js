@@ -41,7 +41,7 @@ class EMRSettings extends React.Component {
                         <TabPane tab={<span><Icon type="solution"/>Notes</span>} key="treatmentnotes">
                             <TableData {...this.props} id={EMR_TREATMENTNOTES} name="Treatment Notes"/>
                         </TabPane>
-                        <TabPane tab={<span><Icon type="file"/>FIle Labels</span>} key="filetags">
+                        <TabPane tab={<span><Icon type="file"/>File Labels</span>} key="filetags">
                             <TableData {...this.props} id={EMR_FILETAGS} name="File Labels"/>
                         </TabPane>
                     </Tabs>

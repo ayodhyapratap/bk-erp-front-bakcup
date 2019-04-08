@@ -36,7 +36,8 @@ export default class CreateAppointmentForm extends React.Component {
             appointment: null,
             loading: false,
             patientListData: [],
-            patientDetails : null
+            patientDetails : null,
+            appointmentDetail:null
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.loadDoctors = this.loadDoctors.bind(this);
@@ -169,20 +170,25 @@ export default class CreateAppointmentForm extends React.Component {
     }
 
     handleSubmit = (e) => {
-        // let that =this;
+        let that =this;
+        let patient={};
         e.preventDefault();
-        this.props.form.validateFields((err,values) => {
+        this.props.form.validateFields((err,formData) => {
             if (!err) {
-                
-                console.log("fast data",values);
+              formData.patient = patient
+                let successFn = function (data) {
+                    if (data) {
+                       console.log(data)
+                    }
+                };
+                let errorFn = function () {
+
+                };
+                // console.log("appointment",that.state.formData);
+
+                postAPI(ALL_APPOINTMENT_API,formData ,successFn,errorFn);
             }
         });
-
-
-
-        // let errorFn = function () {
-        // };
-        // postAPI(ALL_APPOINTMENT_API,  successFn, errorFn);
 
     }
     handleChange = (event) => {
@@ -190,6 +196,7 @@ export default class CreateAppointmentForm extends React.Component {
         let successFn = function(data){
             that.setState({
                 patientDetails: data
+
             });
             // console.log("event",that.state.patientDetails);
         };
@@ -279,14 +286,14 @@ export default class CreateAppointmentForm extends React.Component {
                         <FormItem key="patient_name" {...formPatients}>
                            <Card bordered={false} style={{ background: '#ECECEC'}}>
                                 <Meta
-                                  avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                                  avatar={<Avatar   style={{ backgroundColor: '#ffff' }} src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
                                   title={this.state.patientDetails.name}
                                   description={this.state.patientDetails.email}
 
                                 />
 
+                                <Button type="primary" style={{float: 'right'}}  onClick={this.handleClick}>Add New Patient</Button>
                             </Card>
-                            <Button type="primary" className="float-right" onClick={this.handleClick}>Add New Patient</Button>
                         </FormItem>
                       :<div>
                           <FormItem key="patient_name" label="Patient Name"  {...formItemLayout}>
@@ -342,8 +349,8 @@ export default class CreateAppointmentForm extends React.Component {
                 {/*// },*/}
                 
                 {/*{*/}
-                {/*label: "Notify Patient",*/}
-                {/*key: "notify_via_sms",*/}
+                {/*label: "Notify Patient",
+                {/*key: "notify_via_sms",
                 {/*type: SINGLE_CHECKBOX_FIELD,*/}
                 {/*initialValue: this.state.appointment ? this.state.appointment.notify_via_sms : false,*/}
                 {/*follow: "Via SMS"*/}

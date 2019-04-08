@@ -89,17 +89,17 @@ class PatientPayments extends React.Component{
           render: created_at =><span>{moment(created_at).format('LLL')}</span>,
           },
           {
-         title: 'AMOUNT PAID	',
+         title: 'Amount Paid	',
          dataIndex: 'amount',
          key: 'amount',
          },{
-          title: 'INVOICES	',
+          title: 'Invoices	',
           key: 'invoice	',
           render:(text, record) => (
               <span> {invoicelist[record.invoice]}</span>
           )
           }, {
-          title: 'MODE OF PAYMENT',
+          title: 'Mode of Payment ',
           key: 'payment_mode',
           render:(text, record) => (
               <span> {paymentmodes[record.payment_mode]}</span>
@@ -131,7 +131,7 @@ class PatientPayments extends React.Component{
                      render={(route) => <AddPayment{...this.state} {...route}/>}/>
               <Route exact path='/patient/:id/billing/payments/edit'
                      render={(route) => <AddPayment {...this.state} {...route}/>}/>
-              <Card title={ this.state.currentPatient?this.state.currentPatient.name + " payments":"Payments"}  extra={<Button.Group>
+              <Card title={ this.state.currentPatient?this.state.currentPatient.name + " Payments":"Payments"}  extra={<Button.Group>
                     <Link to={"/patient/"+this.props.match.params.id+"/billing/payments/add"}><Button><Icon type="plus"/>Add</Button></Link>
               </Button.Group>}>
 

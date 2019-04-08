@@ -60,27 +60,27 @@ class PatientClinicNotes extends React.Component {
             key: 'name',
             render: created_at => <span>{moment(created_at).format('LLL')}</span>,
         }, {
-            title: 'name',
+            title: 'Name',
             dataIndex: 'name',
             key: 'name',
         }, {
-            title: 'chief complaints',
+            title: 'Chief complaints',
             dataIndex: 'chief_complaints',
             key: 'chief_complaints',
         }, {
-            title: 'investigations',
+            title: 'Investigations',
             dataIndex: 'investigations',
             key: 'investigations',
         }, {
-            title: 'diagnosis',
+            title: 'Diagnosis',
             dataIndex: 'diagnosis',
             key: 'diagnosis',
         }, {
-            title: 'notes',
+            title: 'Notes',
             dataIndex: 'notes',
             key: 'notes',
         }, {
-            title: 'observations',
+            title: 'Observations',
             dataIndex: 'observations',
             key: 'observations',
         }, {
@@ -108,7 +108,7 @@ class PatientClinicNotes extends React.Component {
                 <Route exact path='/patient/:id/emr/clinicnotes/edit'
                        render={(route) => <AddClinicNotes {...this.state} {...route}/>}/>
                 <Card
-                    title={this.state.currentPatient ? this.state.currentPatient.name + " clinicnotes" : "clinicnotes"}
+                    title={this.state.currentPatient ? this.state.currentPatient.name + " ClinicNotes" : "ClinicNotes"}
                     extra={<Button.Group>
                         <Link to={"/patient/" + this.props.match.params.id + "/emr/clinicnotes/add"}><Button><Icon
                             type="plus"/>Add</Button></Link>

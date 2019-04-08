@@ -91,7 +91,7 @@ class PatientPrescriptions extends React.Component{
             dataIndex: 'qunatity',
             key: 'quantity',
           }, {
-            title: 'Cost per  Unit',
+            title: 'Cost Per  Unit',
             dataIndex: 'cost',
             key: 'cost',
           }, {
@@ -124,7 +124,7 @@ class PatientPrescriptions extends React.Component{
              render={(route) => <AddorEditPatientPrescriptions{...this.state} loadPrescriptions={this.loadPrescriptions()} {...route}/>}/>
       <Route exact path='/patient/:id/emr/prescriptions/edit'
              render={(route) => <AddorEditPatientPrescriptions {...this.state} {...route}/>}/>
-      <Card title={ this.state.currentPatient?this.state.currentPatient.name + " prescriptions":"prescriptions"}  extra={<Button.Group>
+      <Card title={ this.state.currentPatient?this.state.currentPatient.name + " Prescriptions":"Prescriptions"}  extra={<Button.Group>
           <Link to={"/patient/"+this.props.match.params.id+"/emr/prescriptions/add"}><Button><Icon type="plus"/>Add</Button></Link>
       </Button.Group>}>
 
