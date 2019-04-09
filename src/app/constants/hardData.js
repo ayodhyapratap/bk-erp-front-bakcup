@@ -60,3 +60,21 @@ export const APPOINTMENT_CANCELATION_SMS_TAG_OPTIONS = [{
     label: "APPOINTMENT CATEGORY",
     value: "{{CATEGORY}}"
 }];
+
+export const SUBTYPE = [
+  { title: 'PRESCRIPTION'},
+  { title: 'TREATMENT PLAN'},
+  { title: 'CASE SHEET' },
+  { title: 'MEDICAL LEAVE'},
+  { title: 'VITAL SIGNS' },
+  { title: 'LAB ORDER'},
+  { title: 'LAB ORDER RESULT'},
+];
+export const BILLINGSUBTYPE =[
+    { title:'INVOICE' },
+    { title:'RECEIPTS'},
+   ];
+
+export const CUSTOMIZE_PAPER_TYPE=[
+    'PAGE', 'HEADER', 'PATIENT', 'FOOTER'
+];
