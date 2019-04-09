@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form, Input,InputNumber } from 'antd';
+import {Form, Input,InputNumber ,Button} from 'antd';
 
 const {TextArea} =Input;
 class FooterSetting extends React.Component{
@@ -36,6 +36,9 @@ class FooterSetting extends React.Component{
     		<Form.Item label={(<span>Right Signature&nbsp;</span>)}>
     			<TextArea rows={2} />
         	</Form.Item>
+         <Form.Item>
+          <Button  type="primary" htmlType="submit">Submit</Button>
+        </Form.Item>
 
         </Form>
       );

@@ -74,12 +74,14 @@ class PracticeTimings extends React.Component {
         }, {
             label: "Practice open at",
             key: "start_time",
+            required:true,
             type: TIME_PICKER,
             initialValue: this.state.timings ? this.state.timings.start_time : null,
             format: "HH:mm"
         }, {
             label: "Practice close at",
             key: "end_time",
+            required:true,
             type: TIME_PICKER,
             initialValue: this.state.timings ? this.state.timings.end_time : null,
             format: "HH:mm"

@@ -6,16 +6,18 @@ import DocumentPdf from "./DocumentPdf";
 import PageSetting from "./PageSettingForm"
 import Patient from "./PatientSettingForm"
 import Footer from "./FooterSettingForm"
+import {CUSTOMIZE_PAPER_TYPE} from "../../../../constants/hardData";
 
+// console.log("==",cu);
 const { TextArea } = Input;
 
-const radioTab = ['Page','Header','Patient','Footer'];
-const  radioTabList= radioTab.map((radioTab)=><Radio.Button  value={radioTab}>{radioTab}</Radio.Button>);
+// const radioTabs = ['Page','Header','Patient','Footer'];
+const  radioTabList= CUSTOMIZE_PAPER_TYPE.map((radioTab)=><Radio.Button  value={radioTab}>{radioTab}</Radio.Button>);
 class PrintPreview extends React.Component{
   constructor(props){
     super(props);
     this.state={
-selectedFormType:'Header'
+    selectedFormType:'PAGE'
     }
   }
 
@@ -27,21 +29,21 @@ changeFormType=(e)=>{
 }
   render(){
 
-  const HeaderSettingFormObject = Form.create()(HeaderSettingForm);
-  const PageSettingObject = Form.create()(PageSetting);
-  const patientObject = Form.create()(Patient);
-  const FooterObject = Form.create()(Footer);
+    const HeaderSettingFormObject = Form.create()(HeaderSettingForm);
+    const PageSettingObject = Form.create()(PageSetting);
+    const patientObject = Form.create()(Patient);
+    const FooterObject = Form.create()(Footer);
 
      return (<Row>
         <Col span={12}>
-          <Radio.Group  buttonStyle="solid" size="small"  value={this.seader} onChange={this.changeFormType}>
-              {radioTabList}
+          <Radio.Group  buttonStyle="solid" size="small"onChange={this.changeFormType}>
+            {radioTabList}
           </Radio.Group>
           <div className="div_padding_top">
-            <RenderForm forms={{Header:HeaderSettingFormObject}} {...this.state}/>  
-            <RenderForm forms={{Page:PageSettingObject}} {...this.state}/>  
-            <RenderForm forms={{Patient:patientObject}} {...this.state}/>  
-            <RenderForm forms={{Footer:FooterObject}} {...this.state}/>  
+            <RenderForm forms={{PAGE:PageSettingObject}} {...this.state} {...this.props}/>  
+            <RenderForm forms={{HEADER:HeaderSettingFormObject}} {...this.state} {...this.props}/>  
+            <RenderForm forms={{PATIENT:patientObject}} {...this.state} {...this.props}/>  
+            <RenderForm forms={{FOOTER:FooterObject}} {...this.state} {...this.props}/>  
             
           </div>
 
@@ -60,7 +62,7 @@ export default PrintPreview;
 function RenderForm(props){
   if(props.forms[props.selectedFormType]){
     let Form = props.forms[props.selectedFormType];
-    return <Form/>  
+    return <Form {...props}/>  
   }
   return null;
 }

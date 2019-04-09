@@ -9,6 +9,7 @@ import {
 } from "../../../../constants/api"
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../../utils/common";
 import {SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
+import { Redirect } from 'react-router-dom';
 
 class MLMGenerate extends React.Component {
     constructor(props) {
@@ -18,8 +19,9 @@ class MLMGenerate extends React.Component {
             level_count: 1,
             margin: null,
             editRecord: (this.props.editRecord ? this.props.editRecord : null),
-            editId: (this.props.editId ? this.props.editId : null)
+            editId: (this.props.editId ? this.props.editId : null),
         }
+        this.changeRedirect= this.changeRedirect.bind(this);
     }
 
     componentDidMount() {
@@ -94,10 +96,9 @@ class MLMGenerate extends React.Component {
             reqData[values.margin_name].details = {level_count: that.state.level_count}
             if (!err) {
                 console.log(reqData);
-                that.setState({changePassLoading: true});
+                that.setState({changePassLoading: true, redirect:true});
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, data.message);
-                    
                     that.props.loadMlmData();
                     that.props.history.push('/mlm');
                 };
@@ -107,6 +108,13 @@ class MLMGenerate extends React.Component {
             }
         });
     };
+
+    changeRedirect(){
+        var redirectVar=this.state.redirect;
+        this.setState({
+            redirect:  !redirectVar,
+        })  ;
+    }
 
 
     add = (level_name) => {
@@ -206,6 +214,7 @@ class MLMGenerate extends React.Component {
                         </Button>
                     </Form.Item>
                 </Form>
+                {this.state.redirect&&    <Redirect to='/settings/mlm' />}
             </Card>
             
         );

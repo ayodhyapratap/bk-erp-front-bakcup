@@ -2,34 +2,18 @@ import React from 'react';
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Tabs,Divider,Table,Card , Icon ,Radio,Tag} from "antd";
 import PrintSettings from "./PrintSettings";
+import {} from "../../../../constants/api"
+import {getAPI, interpolate, postAPI} from "../../../../utils/common";
+import { Redirect } from 'react-router-dom';
+import {PRESCRIPTION} from "../../../../constants/dataKeys";
+import {SUBTYPE, BILLINGSUBTYPE, CUSTOMIZE_PAPER_TYPE} from "../../../../constants/hardData";
 
+// console.log("===",SUBTYPE);
 const TabPane = Tabs.TabPane;
 class Printout extends React.Component{
 	constructor(props){
 		super(props);
-		const emrPanes = [
-	      { title: 'Prescription', content: <PrintSettings/>	, key: '1' },
-	      { title: 'Treatment Plan', content: <PrintSettings/>, key: '2' },
-	      { title: 'Case Sheet', content: <PrintSettings/> , key: '3' },
-	      { title: 'Medical Leave', content: <PrintSettings/>, key: '4' },
-	      { title: 'Vital Signs', content: <PrintSettings/>, key: '5' },
-	      { title: 'Lab Order', content: <PrintSettings/>, key: '6' },
-	      { title: 'Lab Order Result', content: <PrintSettings/>, key: '7', closable: false,},
-	    ];
-	    const billingPanels =[
-	    { title:'Invoice' , content: <PrintSettings/>	, key: '1' },
-	    { title:'Receipts' , content: <PrintSettings/>	, key: '2' },
-	    ];
-
-	    this.state = {
-	      activeKey: emrPanes[0].key,
-	      activeKey:billingPanels[0].key,
-	      emrPanes,
-	      billingPanels,
-	    };
-
 	}
-
 
 	render(){
 		return (<div>
@@ -39,7 +23,9 @@ class Printout extends React.Component{
 		              	<h4>
 	                        <div>
 	                        	<Tabs size="small">
-	                        		{this.state.emrPanes.map(item=><TabPane tab={item.title} key={item.key}>{item.content}</TabPane>	)}
+	                        		{SUBTYPE.map((item,i) => {
+	                        			return (<TabPane tab={item.title} key={i}><PrintSettings subType={item.title} active_practiceId={this.props.active_practiceId} type={"emr"}/></TabPane>)
+	                        		})}
 								 </Tabs>
 	                        </div>
 	                    </h4>
@@ -50,7 +36,9 @@ class Printout extends React.Component{
 		               	<h4>
 	                        <div>
 	                        	<Tabs size="small">
-	                        		{this.state.billingPanels.map(item=><TabPane tab={item.title} key={item.key}>{item.content}</TabPane>	)}
+	                        		{BILLINGSUBTYPE.map((item,i) => {
+	                        			return (<TabPane tab={item.title} key={i}><PrintSettings subType={item.title} type={"billing"}/></TabPane>)
+	                        		})}
 	                        	</Tabs>
 	     							
 	                        </div>

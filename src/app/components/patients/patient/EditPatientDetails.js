@@ -27,12 +27,12 @@ class EditPatientDetails extends React.Component {
     }
 
 
-      changeRedirect(){
+    changeRedirect(){
         var redirectVar=this.state.redirect;
-      this.setState({
-        redirect:  !redirectVar,
-      })  ;
-      }
+        this.setState({
+            redirect:  !redirectVar,
+        })  ;
+    }
 
     render() {
       console.log(this.props.currentPatient);

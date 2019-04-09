@@ -50,6 +50,7 @@ export default class AddExpenses extends React.Component {
             that.setState({
                 paymentModes: data,
             })
+            console.log("payment mode",that.state.paymentModes);
         };
         let errorFn = function () {
         };

@@ -15,6 +15,7 @@ export default class MlmBase extends React.Component {
             productMargin: [],
             active_practiceId: this.props.active_practiceId,
         }
+        console.log("mlm",this.state.active_practiceId);
         this.loadMlmData = this.loadMlmData.bind(this);
         this.loadRoles = this.loadRoles.bind(this);
         this.deleteObject = this.deleteObject.bind(this);

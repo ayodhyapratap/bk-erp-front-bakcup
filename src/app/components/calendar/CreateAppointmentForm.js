@@ -162,6 +162,7 @@ export default class CreateAppointmentForm extends React.Component {
                 that.setState({
                     patientListData: data
                 })
+                // console.log("list",that.state.patientListData);
             }
         };
         let errorFn = function () {
@@ -184,7 +185,7 @@ export default class CreateAppointmentForm extends React.Component {
                 let errorFn = function () {
 
                 };
-                // console.log("appointment",that.state.formData);
+                console.log("appointment",that.state.formData);
 
                 postAPI(ALL_APPOINTMENT_API,formData ,successFn,errorFn);
             }
@@ -283,7 +284,7 @@ export default class CreateAppointmentForm extends React.Component {
                      
                 
                 {this.state.patientDetails?
-                        <FormItem key="patient_name" {...formPatients}>
+                        <FormItem key="id" value={this.state.patientDetails.id} {...formPatients}>
                            <Card bordered={false} style={{ background: '#ECECEC'}}>
                                 <Meta
                                   avatar={<Avatar   style={{ backgroundColor: '#ffff' }} src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}

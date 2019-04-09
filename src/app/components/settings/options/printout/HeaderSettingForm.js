@@ -109,6 +109,9 @@ class HeaderSettingForm extends React.Component {
             <Radio value={'ctr'}>Centre</Radio>
           </Radio.Group>  
         </Form.Item>
+         <Form.Item>
+          <Button  type="primary" htmlType="submit">Submit</Button>
+        </Form.Item>
 
       </Form>
     );
