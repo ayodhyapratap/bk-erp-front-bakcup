@@ -58,7 +58,7 @@ export const ALL_PRESCRIPTIONS_API = 'patients/prescriptions/%s/';
 export const INVOICES_API = 'patients/invoices/?id=%s';
 export const PATIENT_CLINIC_NOTES_API = 'patients/clinic_notes/?id=%s';
 export const PATIENT_PAYMENTS_API = 'patients/payment/?id=%s';
-export const PRACTICE_PRINT_SETTING_API ='clinics/%s/practice_print_settings/';
+export const PRACTICE_PRINT_SETTING_API ='clinics/%s/practice_print_settings/?type=%s&sub_type=%s';
 
 //search and advanced search API
 export const SEARCH_PATIENT = 'patients/search/?name=%s';
