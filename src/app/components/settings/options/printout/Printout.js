@@ -14,30 +14,31 @@ class Printout extends React.Component{
 	constructor(props){
 		super(props);
 	}
+	
 
 	render(){
 		return (<div>
-            <Tabs defaultActiveKey="emr" size="small">
-	            <TabPane tab={<span><Icon type="calculator" />EMR</span>} key="emr">
+            <Tabs defaultActiveKey="EMR" size="small">
+	            <TabPane tab={<span><Icon type="calculator" />EMR</span>} key="EMR">
 	              	<Card>
 		              	<h4>
 	                        <div>
 	                        	<Tabs size="small">
 	                        		{SUBTYPE.map((item,i) => {
-	                        			return (<TabPane tab={item.title} key={i}><PrintSettings subType={item.title} active_practiceId={this.props.active_practiceId} type={"emr"}/></TabPane>)
+	                        			return (<TabPane tab={item.title} key={i}><PrintSettings key={item.title} sub_type={item.title} active_practiceId={this.props.active_practiceId} type={"EMR"}/></TabPane>)
 	                        		})}
 								 </Tabs>
 	                        </div>
 	                    </h4>
 	             	</Card>
 	            </TabPane>
-                <TabPane tab={<span><Icon type="book" />BILLING</span>} key="billing">
+                <TabPane tab={<span><Icon type="book" />BILLING</span>} key="BILLING">
 	                <Card>
 		               	<h4>
 	                        <div>
 	                        	<Tabs size="small">
 	                        		{BILLINGSUBTYPE.map((item,i) => {
-	                        			return (<TabPane tab={item.title} key={i}><PrintSettings subType={item.title} type={"billing"}/></TabPane>)
+	                        			return (<TabPane tab={item.title} key={i}><PrintSettings key={item.title} sub_type={item.title} active_practiceId={this.props.active_practiceId} type={"BILLING"}/></TabPane>)
 	                        		})}
 	                        	</Tabs>
 	     							

@@ -62,7 +62,7 @@ export default PrintPreview;
 function RenderForm(props){
   if(props.forms[props.selectedFormType]){
     let Form = props.forms[props.selectedFormType];
-    return <Form {...props}/>  
+    return <Form key={props.selectedFormType} {...props}/>  
   }
   return null;
 }

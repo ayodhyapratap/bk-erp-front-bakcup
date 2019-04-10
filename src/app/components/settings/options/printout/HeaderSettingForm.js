@@ -1,5 +1,7 @@
 import React from 'react';
 import {  Form, Input, Radio ,Avatar, Button } from 'antd';
+import {postAPI, interpolate, getAPI} from "../../../../utils/common";
+import {PRACTICE_PRINT_SETTING_API} from "../../../../constants/api";
 
 const UserList = ['U', 'Lucy', 'Tom', 'Edward'];
 const colorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
@@ -25,6 +27,42 @@ class HeaderSettingForm extends React.Component {
 	    });
 	  }
 
+    handleSubmit = (e) => {
+      e.preventDefault();
+      let that = this;
+      let data={};
+      this.props.form.validateFields((err, formData) => {
+        if(!err){
+          let reqData = {type:this.state.type, sub_type:this.state.sub_type,...formData}
+          console.log("test",reqData);
+          let successFn = function (data) {
+              if (data) {
+                 console.log(data)
+              }
+          };
+          let errorFn = function () {
+              };
+          // console.log("id--",this.props.active_practiceId);
+          postAPI(interpolate(PRACTICE_PRINT_SETTING_API, [this.props.active_practiceId]), reqData, successFn, errorFn);
+        }
+      });
+    }
+    loadData(){
+    var that = this;
+      let successFn = function (data) {
+        if(data.length)
+        that.setState({
+          print_setting:data[0],
+        })
+        console.log("all retrive",JSON.stringify(that.state.print_setting));
+      };
+      let errorFn = function () {
+      };
+     getAPI(interpolate(PRACTICE_PRINT_SETTING_API, [this.props.active_practiceId,that.state.type,that.state.sub_type]), successFn, errorFn);
+  }
+
+
+
     onChanged = (name,value)=>{
       this.setState({
       [name]:value
@@ -42,31 +80,31 @@ class HeaderSettingForm extends React.Component {
         sm: { span: 16 },
       },
     };
-    
+    const { getFieldDecorator } = this.props.form;
     return (
-      <Form {...formItemLayout} >
+      <Form onSubmit={this.handleSubmit} >
       	<h2>Customize Header</h2>
-      	<Form.Item label={( <span>Include Haeder&nbsp;</span>)} >
-          <Radio.Group onChange={(e)=>this.onChanged('isHeaderNot',e.target.value)} value={this.state.isHeaderNot}>
+      	<Form.Item  {...formItemLayout} label={( <span>Include Header&nbsp;</span>)} >
+          <Radio.Group onChange={(e)=>this.onChanged('isHeaderNot',e.target.value)}>
         		<Radio value={1}>Yes</Radio>
         		<Radio value={0}>No , I already have a letter head.</Radio>
           </Radio.Group>
       	</Form.Item>
        
-        <Form.Item label={( <span>Header&nbsp;</span>)} >
-          {(
-            <Input />
-          )}
+        <Form.Item key={'header_text'} {...formItemLayout} label={( <span>Header&nbsp;</span>)} >
+           {getFieldDecorator('header_text',{ initialValue: this.state.print_setting.header_text})
+            (<Input /> )
+          }
         </Form.Item>
        
        
-        <Form.Item label={( <span>Left Text&nbsp;</span>)} >
+        <Form.Item {...formItemLayout} label={( <span>Left Text&nbsp;</span>)} >
           {(
             <Input />
           )}
         </Form.Item>
 
-         <Form.Item label={( <span>Right Text&nbsp;</span>)} >
+         <Form.Item {...formItemLayout} label={( <span>Right Text&nbsp;</span>)} >
           {(
             <Input />
           )}
