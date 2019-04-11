@@ -11,31 +11,40 @@ import SliderImageList from "./sliderImages/SliderImageList";
 import FacilityList from "./facilities/FacilityList";
 import LandingPageVideoList from "./landingPageVideos/LandingPageVideoList";
 import LandingPageContentList from "./landingPageContent/LandingPageContentList";
+import WebAdminSider from "./WebAdminSider";
 
 const {Content} = Layout;
 export default class WebAdminHome extends React.Component {
 
     render() {
         return <Content className="main-container" style={{
-            margin: '24px 16px',
+            // margin: '24px 16px',
             // padding: 24,
             minHeight: 280,
             // marginLeft: '200px'
         }}>
-
-            <Switch>
-                <Route path="/web/videos" render={(route) => <VideosList/>}/>
-                <Route path="/web/blog" render={(route) => <BlogList/>}/>
-                <Route path="/web/contact" render={(route) => <ContactsList/>}/>
-                <Route path="/web/disease" render={(route) => <DiseaseList/>}/>
-                <Route path="/web/event" render={(route) => <EventsList/>}/>
-                <Route path="/web/pageseo" render={(route) => <SEOList/>}/>
-                <Route path="/web/slider-image" render={(route) => <SliderImageList/>}/>
-                <Route path="/web/facilities" render={(route) => <FacilityList/>}/>
-                <Route path="/web/landingpagevideo" render={(route) => <LandingPageVideoList/>}/>
-                <Route path="/web/landingpagecontent" render={(route) => <LandingPageContentList/>}/>
-
-            </Switch>
+            <Layout>
+                <WebAdminSider {...this.props}/>
+                <Content style={{
+                    margin: '24px 16px',
+                    // padding: 24,
+                    minHeight: 280,
+                    // marginLeft: '200px'
+                }}>
+                    <Switch>
+                        <Route path="/web/videos" render={(route) => <VideosList/>}/>
+                        <Route path="/web/blog" render={(route) => <BlogList/>}/>
+                        <Route path="/web/contact" render={(route) => <ContactsList/>}/>
+                        <Route path="/web/disease" render={(route) => <DiseaseList/>}/>
+                        <Route path="/web/event" render={(route) => <EventsList/>}/>
+                        <Route path="/web/pageseo" render={(route) => <SEOList/>}/>
+                        <Route path="/web/slider-image" render={(route) => <SliderImageList/>}/>
+                        <Route path="/web/facilities" render={(route) => <FacilityList/>}/>
+                        <Route path="/web/landingpagevideo" render={(route) => <LandingPageVideoList/>}/>
+                        <Route path="/web/landingpagecontent" render={(route) => <LandingPageContentList/>}/>
+                    </Switch>
+                </Content>
+            </Layout>
         </Content>
     }
 }
