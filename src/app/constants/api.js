@@ -100,6 +100,10 @@ export const LANDING_PAGE_CONTENT = 'landing_page_content/';
 export const SINGLE_LANDING_PAGE_CONTENT = 'landing_page_content/%s/';
 export const LANDING_PAGE_VIDEO = 'landing_page_video/';
 export const SINGLE_LANDING_PAGE_VIDEO = 'landing_page_video/%s/';
+export const MANAGE_PRODUCT = 'product_content/';
+export const MANAGE_SINGLE_PRODUCT = 'product_content/%s/';
+export const MANAGE_THERAPY ='therapy_content/';
+export const MANAGE_SINGLE_THERAPY ='therapy_content/%s/';
 
 
 //inventory API
