@@ -50,7 +50,7 @@ export default class AddManageTherapy extends React.Component {
         const fields = [{
             label: "Therapy Name",
             key: "title",
-            initialValue: this.state.editProductData ? this.state.editProductData.title : null,
+            initialValue: this.state.editTherapyData ? this.state.editTherapyData.title : null,
             type: INPUT_FIELD
         },{
             label: "Therapy Image",
@@ -59,7 +59,7 @@ export default class AddManageTherapy extends React.Component {
         },{
             label: "Content",
             key: "content",
-            initialValue: this.state.editProductData ? this.state.editProductData.content : null,
+            initialValue: this.state.editTherapyData ? this.state.editTherapyData.content : null,
             type: QUILL_TEXT_FIELD,
         },];
 
