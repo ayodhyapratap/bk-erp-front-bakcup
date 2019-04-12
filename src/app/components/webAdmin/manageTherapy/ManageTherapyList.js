@@ -81,7 +81,7 @@ export default class ManageTherapyList extends React.Component{
         				render={(route) => <AddManageTherapy loadData={this.loadData} {...this.state} {...route}/>}/>
 	        	<Route exact path='/web/managetherapy/add'
 	                   render={(route) => <AddManageTherapy loadData={this.loadData} {...this.state} {...route}/>}/>
-	            <Card title="Products" extra={<Link to={"/web/managetherapy/add"}> <Button type="primary"><Icon
+	            <Card title="Therapy" extra={<Link to={"/web/managetherapy/add"}> <Button type="primary"><Icon
 	                type="plus"/> Add</Button></Link>}>
 	                <Table dataSource={this.state.therapyData} columns={coloumns}/>
 	            </Card>
