@@ -60,8 +60,10 @@ export const APPOINTMENT_CANCELATION_SMS_TAG_OPTIONS = [{
     label: "APPOINTMENT CATEGORY",
     value: "{{CATEGORY}}"
 }];
+export const EMR_TYPE = "EMR";
+export const BILLING_TYPE= "BILLING";
 
-export const SUBTYPE = [
+export const EMR_SUB_TYPE = [
   { title: 'PRESCRIPTION'},
   { title: 'TREATMENT PLAN'},
   { title: 'CASE SHEET' },
@@ -70,7 +72,7 @@ export const SUBTYPE = [
   { title: 'LAB ORDER'},
   { title: 'LAB ORDER RESULT'},
 ];
-export const BILLINGSUBTYPE =[
+export const BILLING_SUB_TYPE =[
     { title:'INVOICE' },
     { title:'RECEIPTS'},
    ];
@@ -78,3 +80,5 @@ export const BILLINGSUBTYPE =[
 export const CUSTOMIZE_PAPER_TYPE=[
     'PAGE', 'HEADER', 'PATIENT', 'FOOTER'
 ];
+
+export const PAPER_SIZE = ['A2','A3','A4','A5'];

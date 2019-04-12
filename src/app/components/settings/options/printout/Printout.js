@@ -6,7 +6,7 @@ import {} from "../../../../constants/api"
 import {getAPI, interpolate, postAPI} from "../../../../utils/common";
 import { Redirect } from 'react-router-dom';
 import {PRESCRIPTION} from "../../../../constants/dataKeys";
-import {SUBTYPE, BILLINGSUBTYPE, CUSTOMIZE_PAPER_TYPE} from "../../../../constants/hardData";
+import {EMR_TYPE, BILLING_TYPE, EMR_SUB_TYPE, BILLING_SUB_TYPE, CUSTOMIZE_PAPER_TYPE} from "../../../../constants/hardData";
 
 const TabPane = Tabs.TabPane;
 class Printout extends React.Component{
@@ -17,13 +17,13 @@ class Printout extends React.Component{
 
 	render(){
 		return (<div>
-            <Tabs defaultActiveKey="EMR" size="small">
-	            <TabPane tab={<span><Icon type="calculator" />EMR</span>} key="EMR">
+            <Tabs defaultActiveKey={EMR_TYPE} size="small">
+	            <TabPane tab={<span><Icon type="calculator" />{EMR_TYPE}</span>} key={EMR_TYPE}>
 	              	<Card>
 		              	<h4>
 	                        <div>
 	                        	<Tabs size="small">
-	                        		{SUBTYPE.map((item,i) => {
+	                        		{EMR_SUB_TYPE.map((item,i) => {
 	                        			return (<TabPane tab={item.title} key={i}><PrintSettings key={item.title} sub_type={item.title} active_practiceId={this.props.active_practiceId} type={"EMR"}/></TabPane>)
 	                        		})}
 								 </Tabs>
@@ -31,12 +31,12 @@ class Printout extends React.Component{
 	                    </h4>
 	             	</Card>
 	            </TabPane>
-                <TabPane tab={<span><Icon type="book" />BILLING</span>} key="BILLING">
+                <TabPane tab={<span><Icon type={BILLING_TYPE} />{BILLING_TYPE}</span>} key={BILLING_TYPE}>
 	                <Card>
 		               	<h4>
 	                        <div>
 	                        	<Tabs size="small">
-	                        		{BILLINGSUBTYPE.map((item,i) => {
+	                        		{BILLING_SUB_TYPE.map((item,i) => {
 	                        			return (<TabPane tab={item.title} key={i}><PrintSettings key={item.title} sub_type={item.title} active_practiceId={this.props.active_practiceId} type={"BILLING"}/></TabPane>)
 	                        		})}
 	                        	</Tabs>

@@ -4,9 +4,7 @@ import {  Form, Checkbox ,} from 'antd';
 class PatientSettingForm extends React.Component {
 	constructor(props){
 		super(props);
-		this.state={
-
-		}
+		this.state={}
 	}
 
   render() {
@@ -27,10 +25,10 @@ class PatientSettingForm extends React.Component {
           <Form.Item>
             <Checkbox >Show Patient Details</Checkbox>
             <ul className="subLists">
-                <li><Checkbox >Exclude Mediacal History</Checkbox></li>
-                <li><Checkbox >Exclude Patient Number</Checkbox></li>
-                <li><Checkbox >Exclude address</Checkbox></li>
-                <li><Checkbox >Exclude Blood Group</Checkbox></li>
+              <li><Checkbox >Exclude Mediacal History</Checkbox></li>
+              <li><Checkbox >Exclude Patient Number</Checkbox></li>
+              <li><Checkbox >Exclude address</Checkbox></li>
+              <li><Checkbox >Exclude Blood Group</Checkbox></li>
             </ul>
           </Form.Item>
         <Form.Item>

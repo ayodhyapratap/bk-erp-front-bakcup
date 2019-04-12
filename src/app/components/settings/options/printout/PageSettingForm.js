@@ -2,12 +2,11 @@ import React from 'react';
 import {Form, Select, Input, Radio ,InputNumber,Avatar, Button } from 'antd';
 import {postAPI, interpolate, getAPI} from "../../../../utils/common";
 import {PRACTICE_PRINT_SETTING_API} from "../../../../constants/api";
-
+import {PAPER_SIZE} from "../../../../constants/hardData";
 
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
-const PaperSize =['A2','A3','A4','A5'];
-const OptionList=PaperSize.map((PaperSize)=><Select.Option value={PaperSize}>{PaperSize}</Select.Option>)
+const OptionList=PAPER_SIZE.map((pageSize)=><Select.Option value={pageSize}>{pageSize}</Select.Option>)
 
 class PageSettingForm extends React.Component {
 	constructor(props){
