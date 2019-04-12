@@ -8,7 +8,6 @@ import { Redirect } from 'react-router-dom';
 import {PRESCRIPTION} from "../../../../constants/dataKeys";
 import {SUBTYPE, BILLINGSUBTYPE, CUSTOMIZE_PAPER_TYPE} from "../../../../constants/hardData";
 
-// console.log("===",SUBTYPE);
 const TabPane = Tabs.TabPane;
 class Printout extends React.Component{
 	constructor(props){

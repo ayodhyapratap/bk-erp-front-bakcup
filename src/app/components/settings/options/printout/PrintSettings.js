@@ -10,13 +10,12 @@ import {CUSTOMIZE_PAPER_TYPE} from "../../../../constants/hardData";
 
 const { TextArea } = Input;
 
-// const radioTabs = ['Page','Header','Patient','Footer'];
 const  radioTabList= CUSTOMIZE_PAPER_TYPE.map((radioTab)=><Radio.Button  value={radioTab}>{radioTab}</Radio.Button>);
 class PrintPreview extends React.Component{
   constructor(props){
     super(props);
     this.state={
-    selectedFormType:'PAGE'
+    selectedFormType:'FOOTER'
     }
   }
 

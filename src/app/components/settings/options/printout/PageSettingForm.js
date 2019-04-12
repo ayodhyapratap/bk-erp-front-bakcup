@@ -18,7 +18,7 @@ class PageSettingForm extends React.Component {
       print_setting:{
         page_size:'A4'
       }
-       // active_practiceId: this.props.active_practiceId,
+    
      }
     this.loadData = this.loadData.bind(this);
 
@@ -57,7 +57,7 @@ class PageSettingForm extends React.Component {
         that.setState({
           print_setting:data[0],
         })
-        // console.log("all retrive",JSON.stringify(that.state.print_setting));
+      
       };
       let errorFn = function () {
       };

@@ -11,14 +11,15 @@ class HeaderSettingForm extends React.Component {
   	constructor(props) {
       super(props);
       this.state = {
-        user: UserList[0],
-        color: colorList[0],
         type: this.props.type,
         sub_type:this.props.sub_type,
+        user: UserList[0],
+        color: colorList[0],
         isHeaderNot:'1',
         islogoNot:'1',
         shrinkType:'1',
         alignType:'rgt',
+        print_setting:{}
       };
 
       this.loadData = this.loadData.bind(this);
@@ -92,12 +93,13 @@ class HeaderSettingForm extends React.Component {
         sm: { span: 16 },
       },
     };
+
     const { getFieldDecorator } = this.props.form;
     const props = {
-    name: 'file',
-    action: makeURL(FILE_UPLOAD_API),
-    headers: {
-      authorization: 'authorization-text',
+      name: 'file',
+      action: makeURL(FILE_UPLOAD_API),
+      headers: {
+        authorization: 'authorization-text',
     },
     onChange(info) {
       if (info.file.status !== 'uploading') {
@@ -111,30 +113,34 @@ class HeaderSettingForm extends React.Component {
     },
   };
     return (
-      <Form onSubmit={this.handleSubmit} >
+      <Form onSubmit={this.handleSubmit} key={this.state.print_setting.id}>
       	<h2>Customize Header</h2>
-      	<Form.Item  {...formItemLayout} label={( <span>Include Header&nbsp;</span>)} >
-          <Radio.Group onChange={(e)=>this.onChanged('isHeaderNot',e.target.value)}>
-        		<Radio value={1}>Yes</Radio>
-        		<Radio value={0}>No , I already have a letter head.</Radio>
-          </Radio.Group>
+      	<Form.Item key={'header_include'} {...formItemLayout} label={( <span>Include Header&nbsp;</span>)} >
+          {getFieldDecorator('header_include', {initialValue: this.state.print_setting.header_include})
+          (
+            <Radio.Group onChange={(e)=>this.onChanged('isHeaderNot',e.target.value)}>
+          		<Radio value={'true'}>Yes</Radio>
+          		<Radio value={'false'}>No , I already have a letter head.</Radio>
+            </Radio.Group>
+          )
+          }
       	</Form.Item>
        
         <Form.Item key={'header_text'} {...formItemLayout} label={( <span>Header&nbsp;</span>)} >
-           {getFieldDecorator('header_text')
-            (<Input /> )
-          }
+           {getFieldDecorator('header_text',{initialValue: this.state.print_setting.header_text
+            })(
+              <Input/> 
+          )}
         </Form.Item>
-       
-       
-        <Form.Item key ={'header_left_text'} {...formItemLayout} label={( <span>Left Text&nbsp;</span>)} >
-          {getFieldDecorator('header_left_text')
-            (<Input />)
-          }
+        <Form.Item key={'header_left_text'} {...formItemLayout} label={( <span>Header&nbsp;</span>)} >
+           {getFieldDecorator('header_left_text',{initialValue: this.state.print_setting.header_left_text
+            })(
+              <Input/> 
+          )}
         </Form.Item>
 
          <Form.Item key={'header_right_text'} {...formItemLayout} label={( <span>Right Text&nbsp;</span>)} >
-          {getFieldDecorator('header_right_text')
+          {getFieldDecorator('header_right_text',{initialValue: this.state.print_setting.header_right_text})
             (<Input />)
           }
         </Form.Item>
@@ -154,7 +160,7 @@ class HeaderSettingForm extends React.Component {
 
         <Form.Item key={'logo_path'} label={(<span>Logo&nbsp;</span>)}>
           <span> 
-            <Upload >
+            <Upload {...props} >
               <Button>
                 <Icon type="upload" /> Click to Upload
               </Button>
@@ -170,20 +176,20 @@ class HeaderSettingForm extends React.Component {
           {getFieldDecorator('logo_type')
             (
             <Radio.Group onChange={(e)=>this.onChanged('shrinkType',e.target.value)}>
-              <Radio value={1}>Square</Radio>
-              <Radio value={2}>Narrow</Radio>
-              <Radio value={3}>Wide</Radio>
+              <Radio value="Square">Square</Radio>
+              <Radio value="Narrow">Narrow</Radio>
+              <Radio value="Wide">Wide</Radio>
             </Radio.Group>  
             )}
         </Form.Item>
 
         <Form.Item key={'logo_alignment'} label={(<span>Alignment&nbsp;</span>)}>
-          {getFieldDecorator('logo_alignment')
+          {getFieldDecorator('logo_alignment',{initialValue:this.state.print_setting.logo_alignment})
             (
             <Radio.Group onChange={(e)=>this.onChanged('alignType',e.target.value)}>
-              <Radio value="">Right</Radio>
-              <Radio value={'lgt'}>Left</Radio>
-              <Radio value={'ctr'}>Centre</Radio>
+              <Radio value="{'Right'}">Right</Radio>
+              <Radio value={'Left'}>Left</Radio>
+              <Radio value={'Centre'}>Centre</Radio>
             </Radio.Group>  
             )
           }
