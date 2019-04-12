@@ -1,6 +1,6 @@
 import React from "react";
 import {Card, Form, Row} from "antd";
-import {INPUT_FIELD, QUILL_TEXT_FIELD ,SUCCESS_MSG_TYPE, SINGLE_IMAGE_UPLOAD_FIELD} from "../../../constants/dataKeys";
+import {INPUT_FIELD, QUILL_TEXT_FIELD ,SUCCESS_MSG_TYPE, SINGLE_IMAGE_UPLOAD_FIELD, NUMBER_FIELD} from "../../../constants/dataKeys";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {MANAGE_PRODUCT, MANAGE_SINGLE_PRODUCT} from "../../../constants/api";
@@ -49,13 +49,15 @@ export default class AddManageProduct extends React.Component {
         const fields = [{
             label: "Product Name",
             key: "title",
+            required : true,
             initialValue: this.state.editProductData ? this.state.editProductData.title : null,
             type: INPUT_FIELD
         },{
             label: "Product Price",
             key: "price",
+            required : true,
             initialValue: this.state.editProductData ? this.state.editProductData.price : null,
-            type: INPUT_FIELD
+            type: NUMBER_FIELD
         }, {
             label: "Product Image",
             key: "image",
@@ -63,6 +65,7 @@ export default class AddManageProduct extends React.Component {
         },{
             label: "Content",
             key: "content",
+            required : true,
             initialValue: this.state.editProductData ? this.state.editProductData.content : null,
             type: QUILL_TEXT_FIELD,
         },];

@@ -50,15 +50,18 @@ export default class AddManageTherapy extends React.Component {
         const fields = [{
             label: "Therapy Name",
             key: "title",
+            required: true,
             initialValue: this.state.editTherapyData ? this.state.editTherapyData.title : null,
             type: INPUT_FIELD
         },{
             label: "Therapy Image",
             key: "image",
+            required: true,
             type: SINGLE_IMAGE_UPLOAD_FIELD,
         },{
             label: "Content",
             key: "content",
+            required: true,
             initialValue: this.state.editTherapyData ? this.state.editTherapyData.content : null,
             type: QUILL_TEXT_FIELD,
         },];
