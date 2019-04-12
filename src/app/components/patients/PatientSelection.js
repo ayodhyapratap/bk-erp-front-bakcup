@@ -146,11 +146,11 @@ function PatientCard(patient) {
         <Card onClick={() => patient.setCurrentPatient(patient)} style={{margin: '5px'}}>
             <Meta avatar={(patient.image ? <Avatar src={patient.image}/> :
                 <Avatar style={{backgroundColor: '#87d068'}}>
-                    {patient.name ? patient.name.charAt(0) :
+                    {patient.user.first_name ? patient.user.first_name.charAt(0) :
                         <Icon type="user"/>}
                 </Avatar>)}
-                  title={patient.name}
-                  description={<span>{patient.primary_mobile_no}<br/>{patient.email}</span>}/>
+                  title={patient.user.first_name}
+                  description={<span>{patient.user.mobile}<br/>{patient.user.email}</span>}/>
         </Card>
     </Col>;
 }

@@ -42,10 +42,10 @@ class PatientHeader extends React.Component {
                            onClick={() => this.togglePatientListModal(true)}>
                             {(this.props.currentPatient.image ? <Avatar src={this.props.currentPatient.image}/> :
                                 <Avatar style={{backgroundColor: '#87d068'}}>
-                                    {this.props.currentPatient.name ? this.props.currentPatient.name.charAt(0) :
+                                    {this.props.currentPatient.user.first_name ? this.props.currentPatient.user.first_name.charAt(0) :
                                         <Icon type="user"/>}
                                 </Avatar>)}
-                            &nbsp;&nbsp;{that.props.currentPatient.name}
+                            &nbsp;&nbsp;{that.props.currentPatient.user.first_name}
                         </a>
                     </div> :
                     <a style={{ padding: '8px', fontSize: '20px'}}

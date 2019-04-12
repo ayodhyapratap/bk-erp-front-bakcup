@@ -122,7 +122,8 @@ class DynamicFieldsForm extends React.Component {
                 console.log(values);
                 if (this.props.defaultValues) {
                     this.props.defaultValues.forEach(function (object) {
-                        values[object.key] = object.value;
+                        // values[object.key] = object.value;
+                        values = {...values,[object.key]:object.value}
                     })
                 }
                 if (this.state.colorPickerKey) {

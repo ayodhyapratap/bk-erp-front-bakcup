@@ -109,19 +109,19 @@ class App extends Component {
         const nextEvents = [...events]
         let changedEvent = {
             "id": event.id,
-            "shedule_at": moment(start),
+            "schedule_at": moment(start),
             "slot": parseInt((end - start) / 60000)
         };
         let successFn = function (data) {
             displayMessage(SUCCESS_MSG_TYPE, "time changed");
-            nextEvents.splice(idx, 1, updatedEvent)
+            nextEvents.splice(idx, 1, updatedEvent);
             that.setState({
                 events: nextEvents,
             })
         }
         let errorFn = function () {
         }
-        putAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
+        postAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
     }
 
     resizeEvent = ({event, start, end}) => {
@@ -133,7 +133,7 @@ class App extends Component {
             if (existingEvent.id == event.id) {
                 changedEvent = {
                     "id": event.id,
-                    "shedule_at": moment(start),
+                    "schedule_at": moment(start),
                     "slot": parseInt((end - start) / 60000)
                 };
             }
@@ -153,7 +153,7 @@ class App extends Component {
         }
         let errorFn = function () {
         }
-        putAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
+        postAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
     }
 
 
@@ -196,12 +196,12 @@ class App extends Component {
                 let newEvents = [];
                 // newEvents.concat(previousEvent);
                 data.forEach(function (appointment) {
-                    let endtime = new moment(appointment.shedule_at).add(appointment.slot, 'minutes')
-                    console.log(moment(appointment.shedule_at).format('LLL'));
+                    let endtime = new moment(appointment.schedule_at).add(appointment.slot, 'minutes')
+                    console.log(moment(appointment.schedule_at).format('LLL'));
                     console.log(endtime.format('LLL'));
                     // let event= that.state.events;
                     newEvents.push({
-                        start: new Date(moment(appointment.shedule_at)),
+                        start: new Date(moment(appointment.schedule_at)),
                         end: new Date(endtime),
                         title: appointment.patient_name,
                         id: appointment.id,
@@ -224,8 +224,8 @@ class App extends Component {
 
     eventStyleGetter(event, start, end, isSelected) {
         let doctor = event.doctor;
-        let doctor_object;
-        if (this.state.doctors_object != null) {
+        let doctor_object = {};
+        if (this.state.doctors_object != null && doctor) {
             console.log(this.state.doctors_object[doctor]);
             doctor_object = this.state.doctors_object[doctor].calender_colour;
         }
@@ -341,7 +341,7 @@ function AppointmentCard(appointment) {
     return <div style={{width: '100%'}}>
         <p>
             <span
-                style={{width: 'calc(100% - 60px)'}}>{moment(appointment.shedule_at).format("HH:mm")} &nbsp;{appointment.patient_name}</span>
+                style={{width: 'calc(100% - 60px)'}}>{moment(appointment.schedule_at).format("HH:mm")} &nbsp;{appointment.patient_name}</span>
             <span style={{width: '60px', float: 'right'}}><a> Check In</a></span>
         </p>
     </div>;
