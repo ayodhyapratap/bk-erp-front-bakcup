@@ -12,6 +12,9 @@ import FacilityList from "./facilities/FacilityList";
 import LandingPageVideoList from "./landingPageVideos/LandingPageVideoList";
 import LandingPageContentList from "./landingPageContent/LandingPageContentList";
 import WebAdminSider from "./WebAdminSider";
+import ManageProductList from "./manageProduct/ManageProductList";
+import ManageTherapyList from "./manageTherapy/ManageTherapyList";
+
 
 const {Content} = Layout;
 export default class WebAdminHome extends React.Component {
@@ -42,6 +45,8 @@ export default class WebAdminHome extends React.Component {
                         <Route path="/web/facilities" render={(route) => <FacilityList/>}/>
                         <Route path="/web/landingpagevideo" render={(route) => <LandingPageVideoList/>}/>
                         <Route path="/web/landingpagecontent" render={(route) => <LandingPageContentList/>}/>
+                        <Route path="/web/manageproduct" render={(route) => <ManageProductList/>}/>
+                        <Route path="/web/managetherapy" render={(route) => <ManageTherapyList/>}/>
                     </Switch>
                 </Content>
             </Layout>

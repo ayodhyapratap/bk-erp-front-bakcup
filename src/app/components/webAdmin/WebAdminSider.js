@@ -75,6 +75,18 @@ export default class WebAdminSider extends React.Component {
                             <span className="nav-text">Landing Page Content</span>
                         </Link>
                     </Menu.Item>
+                    <Menu.Item key="web-11">
+                        <Link to="/web/manageproduct">
+                            <Icon type="hdd"/>
+                            <span className="nav-text">Manage Product</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="web-12">
+                        <Link to="/web/managetherapy">
+                            <Icon type="box-plot"/>
+                            <span className="nav-text">Manage Therapy</span>
+                        </Link>
+                    </Menu.Item>
                 </Menu.ItemGroup>
             </Menu>
         </Sider>
