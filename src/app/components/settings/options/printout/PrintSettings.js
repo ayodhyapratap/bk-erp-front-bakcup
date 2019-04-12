@@ -8,7 +8,6 @@ import Patient from "./PatientSettingForm"
 import Footer from "./FooterSettingForm"
 import {CUSTOMIZE_PAPER_TYPE} from "../../../../constants/hardData";
 
-// console.log("==",cu);
 const { TextArea } = Input;
 
 // const radioTabs = ['Page','Header','Patient','Footer'];

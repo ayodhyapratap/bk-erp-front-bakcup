@@ -131,21 +131,21 @@ class PageSettingForm extends React.Component {
         </Form.Item>
 
         <Form.Item key={'page_margin_left'} label={(<span>Left Margin</span>)} {...formItemLayout}>
-            {getFieldDecorator('page_margin_left',{
+            {getFieldDecorator('page_margin_left',{initialValue: this.state.print_setting.page_margin_left
             })(
               <InputNumber  min={0} max={10}/> 
           )}
         </Form.Item>
 
         <Form.Item key={'page_margin_bottom'} label={(<span>Bottom Margin</span>)} {...formItemLayout}>
-            {getFieldDecorator('page_margin_bottom',{
+            {getFieldDecorator('page_margin_bottom',{initialValue: this.state.print_setting.page_margin_bottom
             })(
               <InputNumber  min={0} max={10}/> 
           )}
         </Form.Item>
 
         <Form.Item key={'page_margin_right'} label={(<span>Right Margin</span>)} {...formItemLayout}>
-            {getFieldDecorator('page_margin_right',{
+            {getFieldDecorator('page_margin_right',{initialValue: this.state.print_setting.page_margin_right
             })(
               <InputNumber  min={0} max={10}/> 
           )}
