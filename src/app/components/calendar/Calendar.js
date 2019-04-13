@@ -224,11 +224,13 @@ class App extends Component {
 
     eventStyleGetter(event, start, end, isSelected) {
         let doctor = event.doctor;
+        console.log("event",doctor);
         let doctor_object;
         if (this.state.doctors_object != null) {
-            console.log(this.state.doctors_object[doctor]);
-            doctor_object = this.state.doctors_object[doctor].calender_colour;
+            console.log("doctor", this.state.doctors_object[doctor]);
+            // doctor_object = this.state.doctors_object[doctor].calender_colour;
         }
+        console.log("doctor object",doctor_object);
         var backgroundColor = doctor_object;
         var style = {
             backgroundColor: backgroundColor,

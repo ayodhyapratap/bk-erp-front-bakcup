@@ -82,3 +82,39 @@ export const CUSTOMIZE_PAPER_TYPE=[
 ];
 
 export const PAPER_SIZE = ['A2','A3','A4','A5'];
+
+export const PAGE_ORIENTATION= [
+    {value: 'PORTRAIT'},
+    {value: 'LANDSCAPE'}
+];
+
+export const PRINTER_TYPE = [
+    {value: 'COLOR'},
+    {value: 'BLACK'}
+];
+export const HEADER_INCLUDE= [
+    {title:'Yes', value: 'true'},
+    {title: 'No , I already have a letter head.', value: 'false'}
+];
+export const LOGO_TYPE =[
+    {value: 'Square'},
+    {value: 'Narrow'},
+    {value: 'Wide'}
+];
+export const LOGO_ALIGMENT= [
+    {value: 'RIGHT'},
+    {value: 'LEFT'},
+    {value: 'CENTRE'} 
+];
+export const LOGO_INCLUDE= [
+    {title: 'Yes', value: 'TRUE'},
+    {title: 'No', value: 'FALSE'}
+];
+
+export const PATIENT_DETAILS_LIST =[
+    {value: 'Exclude Mediacal History'},
+    {value: 'Exclude Patient Number'},
+    {value: 'Exclude address'},
+    {value: 'Exclude Blood Group'}
+];
+export const EXCLUDE_PATIENT_DOB = "Exclude Patient Gender & DOB";

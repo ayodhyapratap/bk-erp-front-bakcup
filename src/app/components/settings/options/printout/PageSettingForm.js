@@ -2,7 +2,7 @@ import React from 'react';
 import {Form, Select, Input, Radio ,InputNumber,Avatar, Button } from 'antd';
 import {postAPI, interpolate, getAPI} from "../../../../utils/common";
 import {PRACTICE_PRINT_SETTING_API} from "../../../../constants/api";
-import {PAPER_SIZE} from "../../../../constants/hardData";
+import {PAPER_SIZE, PAGE_ORIENTATION , PRINTER_TYPE} from "../../../../constants/hardData";
 
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
@@ -37,13 +37,10 @@ class PageSettingForm extends React.Component {
         let reqData = {type:this.state.type, sub_type:this.state.sub_type, id: this.state.print_setting.id, ...formData}
         let successFn = function (data) {
             if (data) {
-               console.log(data)
             }
         };
         let errorFn = function () {
         };
-        console.log("test",reqData);
-        console.log("id",this.state.print_setting.id);
         postAPI(interpolate(PRACTICE_PRINT_SETTING_API, [this.props.active_practiceId]), reqData, successFn, errorFn);
       }
     });
@@ -90,6 +87,8 @@ class PageSettingForm extends React.Component {
 
 
     const { getFieldDecorator } = this.props.form;
+    const pageOrientation=PAGE_ORIENTATION.map((pageOrientation)=><Radio value={pageOrientation.value}>{pageOrientation.value}</Radio>)
+    const printer_type = PRINTER_TYPE.map((printerType) =><Radio value={printerType.value}>{printerType.value}</Radio>)
     return (
       <Form onSubmit={this.handleSubmit}   key={this.state.print_setting.id}>
       	<h2>Page Setup</h2>
@@ -105,8 +104,7 @@ class PageSettingForm extends React.Component {
       	<Form.Item label={"Orientation"} {...formItemLayout} >
           {getFieldDecorator('page_orientation', {  initialValue: this.state.print_setting.page_orientation
              })  ( <RadioGroup onChange={(e)=>this.onChanged('orientation',e.target.value)}>
-                  		<Radio value="PORTRAIT">Portrait</Radio>
-                  		<Radio value="LANDSCAPE">Landscape</Radio>
+                  		{pageOrientation}
                     </RadioGroup>
                    )
            }
@@ -115,8 +113,7 @@ class PageSettingForm extends React.Component {
         <Form.Item label={(<span>Printer Type&nbsp;</span>)} {...formItemLayout}>
           {getFieldDecorator('page_print_type',{ initialValue: this.state.print_setting.page_print_type
           })( <RadioGroup onChange={(e)=>this.onChanged('printerType',e.target.value)}>
-               <Radio value="COLOR">Color <span className="lightColor" >Inkjet/Laser</span></Radio>
-                <Radio value="BLACK">Black <span className="lightColor">Dot Matrix/Thermal Printers</span></Radio>
+                {printer_type}
               </RadioGroup>
           )}
        	

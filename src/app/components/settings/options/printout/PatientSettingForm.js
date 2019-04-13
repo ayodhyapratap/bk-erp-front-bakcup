@@ -1,5 +1,6 @@
 import React from 'react';
 import {  Form, Checkbox ,} from 'antd';
+import {PATIENT_DETAILS_LIST,  EXCLUDE_PATIENT_DOB} from "../../../../constants/hardData";
 
 class PatientSettingForm extends React.Component {
 	constructor(props){
@@ -19,20 +20,18 @@ class PatientSettingForm extends React.Component {
       },
     };
     
+    const patientDetailsList = PATIENT_DETAILS_LIST.map((patient_details)=> <li><Checkbox>{patient_details.value}</Checkbox></li>) 
     return (
       <Form {...formItemLayout}>
       	<h2>Customize Patient Details</h2>
           <Form.Item>
             <Checkbox >Show Patient Details</Checkbox>
             <ul className="subLists">
-              <li><Checkbox >Exclude Mediacal History</Checkbox></li>
-              <li><Checkbox >Exclude Patient Number</Checkbox></li>
-              <li><Checkbox >Exclude address</Checkbox></li>
-              <li><Checkbox >Exclude Blood Group</Checkbox></li>
+             {patientDetailsList}
             </ul>
           </Form.Item>
         <Form.Item>
-      		<Checkbox >Exclude Patient Gender & DOB</Checkbox>
+      		<Checkbox >{EXCLUDE_PATIENT_DOB}</Checkbox>
       	</Form.Item>
 
       </Form>

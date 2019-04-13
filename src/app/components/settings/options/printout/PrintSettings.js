@@ -15,7 +15,7 @@ class PrintPreview extends React.Component{
   constructor(props){
     super(props);
     this.state={
-    selectedFormType:'FOOTER'
+    selectedFormType:'PAGE'
     }
   }
 
