@@ -229,16 +229,16 @@ class PracticeDetails extends React.Component {
         let that = this;
         const columns = [{
             title: "Name",
-            dataIndex: "name",
+            dataIndex: "user.first_name",
             key: "name",
         }, {
             title: "Email",
-            dataIndex: "email",
+            dataIndex: "user.email",
             key: "email",
             render: (value, record) => (record.user && record.user.is_active ? record.user.email : value)
         }, {
             title: "Mobile",
-            dataIndex: "mobile",
+            dataIndex: "user.mobile",
             key: "mobile",
         }, {
             title: "Registration Number",
@@ -260,7 +260,8 @@ class PracticeDetails extends React.Component {
               <a>Edit</a>
             </Link>
                      <Divider type="vertical"/>
-                        <a disabled={!(record.user && record.user.is_active)}
+                        <a
+                            // disabled={!(record.user && record.user.is_active)}
                            onClick={() => that.editPermissions(record.user.id)}>Permissions</a>
                     <Divider type="vertical"/>
                     <Popconfirm title="Are you sure delete this item?"
@@ -333,7 +334,7 @@ class PracticeDetails extends React.Component {
                     <TabPane tab={<span><Icon type="schedule"/>Doctors visit Timing</span>} key="timing">
                         <Table>
                             <Column title="Name"
-                                    dataIndex="name"
+                                    dataIndex="user.name"
                                     key="name"
                             />
                             <Column title="Visit Timing"

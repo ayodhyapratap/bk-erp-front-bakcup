@@ -5,10 +5,6 @@ import {Link} from "react-router-dom";
 
 const Sider = Layout.Sider;
 export default class WebAdminSider extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return <Sider
             style={{overflow: 'auto', minHeight: '100vh', background: '#fff'}}

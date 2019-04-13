@@ -43,7 +43,7 @@ class LoginForm extends React.Component {
         var errorFn = function () {
 
         }
-        postOuterAPI(makeURL(RESET_PASSWORD_MAIL), {email: this.state.userMail}, successFn, errorFn);
+        postOuterAPI(makeURL(RESET_PASSWORD_MAIL), {mobile: this.state.userMail}, successFn, errorFn);
     }
 
     handleCancel = (e) => {
@@ -84,8 +84,8 @@ class LoginForm extends React.Component {
                     {getFieldDecorator('email', {
                         rules: [{required: true, message: 'Please input your username!'}],
                     })(
-                        <Input size="large" prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                               placeholder="Username or Email"/>
+                        <Input size="large" prefix={<Icon type="phone" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                               placeholder="Mobile NUmber"/>
                     )}
                 </FormItem>
                 <FormItem>
@@ -120,7 +120,7 @@ class LoginForm extends React.Component {
                     <h4>
                         <Link to={"/loginwithphone"}> <Button size="large"  type="primary" htmlType="submit"
                                 className="login-form-button">Log in with phone</Button>
-                            
+
                         </Link>
                     </h4>
                 <Divider/>
@@ -135,8 +135,8 @@ class LoginForm extends React.Component {
                     okText="Reset Password"
                 >
                     <Input
-                        placeholder="Enter your Email"
-                        prefix={<Icon type="message" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                        placeholder="Enter your Mobile Number"
+                        prefix={<Icon type="mobile" style={{color: 'rgba(0,0,0,.25)'}}/>}
                         onChange={this.changeUserMail}
                     />
                 </Modal>

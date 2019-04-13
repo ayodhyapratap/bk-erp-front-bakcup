@@ -1,10 +1,8 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Card, Divider, Form, Icon, Popconfirm, Row, Table} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {Link, Route, Switch} from "react-router-dom";
 import {DRUG_CATALOG,} from "../../../../constants/api";
-import {getAPI, deleteAPI, interpolate, postAPI} from "../../../../utils/common";
+import {getAPI, interpolate, postAPI} from "../../../../utils/common";
 import AddPrescription from "./AddPrescription";
 
 class Prescriptions extends React.Component {

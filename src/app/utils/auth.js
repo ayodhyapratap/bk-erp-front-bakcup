@@ -86,11 +86,11 @@ export const getSuperUserPermissions = function (){
 }
 export const logInUser = function (data, successFn, errorFn) {
     console.log("workign");
-    var data = {
-        [EMAIL]: data.email,
+    var reqData = {
+        'mobile': data.email,
         [PASSWORD]: data.password
     };
-    axios.post(makeURL(LOGIN_URL), data).then(function (response) {
+    axios.post(makeURL(LOGIN_URL), reqData).then(function (response) {
         // console.log(response);
         let data = response.data;
         lockr.set(ROLE, data.user);

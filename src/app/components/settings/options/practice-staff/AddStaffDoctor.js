@@ -68,25 +68,27 @@ class AddStaffDoctor extends React.Component {
     }
 
     render() {
+        let that = this;
         const fields = [
             {
                 label: "Doctor/Staff Name",
-                key: "name",
+                key: "user.first_name",
                 required: true,
-                initialValue: this.state.editStaff ? this.state.editStaff.name : null,
+                initialValue: this.state.editStaff ? this.state.editStaff.user.first_name : null,
                 type: INPUT_FIELD
             }, {
                 label: "Mobile Number",
-                key: "mobile",
+                key: "user.mobile",
                 required: true,
-                initialValue: this.state.editStaff ? this.state.editStaff.mobile : null,
-                type: INPUT_FIELD
+                initialValue: this.state.editStaff ? this.state.editStaff.user.mobile : null,
+                type: INPUT_FIELD,
+                disabled: !!this.state.editStaff
             }, {
                 label: "Email Id",
-                key: "email",
+                key: "user.email",
                 required: true,
-                disabled: this.state.editStaff ? true : false,
-                initialValue: this.state.editStaff ? this.state.editStaff.email : null,
+                disabled: !!this.state.editStaff,
+                initialValue: this.state.editStaff ? this.state.editStaff.user.email : null,
                 type: EMAIL_FIELD
             }, {
                 label: "Registration Number",
@@ -130,11 +132,11 @@ class AddStaffDoctor extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-                console.log("all data",data);
-                this.setState({
+                console.log("all data", data);
+                that.setState({
                     redirect: true
                 });
-                this.props.loadData();
+                that.props.loadData();
             },
             errorFn: function () {
 
@@ -148,15 +150,15 @@ class AddStaffDoctor extends React.Component {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
-                    this.setState({
+                    that.setState({
                         redirect: true
                     });
-                    this.props.loadData();
+                    that.props.loadData();
                 },
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_PRACTICE_STAFF_API, [this.props.match.params.doctorid]),
+                action: interpolate(SINGLE_PRACTICE_STAFF_API, [that.props.match.params.doctorid]),
                 method: "put",
             }
         }

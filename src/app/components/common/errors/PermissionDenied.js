@@ -4,11 +4,6 @@ import {Link} from "react-router-dom";
 import img403 from '../../../assets/img/403.svg';
 
 class PermissionDenied extends React.Component {
-    constructor(props) {
-        super(props);
-
-    }
-
     render() {
         return <Row style={{marginTop: '20px'}}>
             <Col xs={24} sm={24} md={24} lg={12} xl={12} style={{textAlign: 'center', float: 'right'}}>
