@@ -68,6 +68,7 @@ class AddStaffDoctor extends React.Component {
     }
 
     render() {
+        let that = this;
         const fields = [
             {
                 label: "Doctor/Staff Name",
@@ -132,10 +133,10 @@ class AddStaffDoctor extends React.Component {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 console.log("all data", data);
-                this.setState({
+                that.setState({
                     redirect: true
                 });
-                this.props.loadData();
+                that.props.loadData();
             },
             errorFn: function () {
 
@@ -149,15 +150,15 @@ class AddStaffDoctor extends React.Component {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
-                    this.setState({
+                    that.setState({
                         redirect: true
                     });
-                    this.props.loadData();
+                    that.props.loadData();
                 },
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_PRACTICE_STAFF_API, [this.props.match.params.doctorid]),
+                action: interpolate(SINGLE_PRACTICE_STAFF_API, [that.props.match.params.doctorid]),
                 method: "put",
             }
         }

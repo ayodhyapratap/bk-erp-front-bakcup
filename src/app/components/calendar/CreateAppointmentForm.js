@@ -26,7 +26,7 @@ import {
 
 } from "../../constants/api";
 import {Checkbox,  Radio} from "antd/lib/index";
-import {displayMessage, getAPI, interpolate,  postAPI} from "../../utils/common";
+import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../utils/common";
 import {Redirect} from "react-router-dom";
 
 const {TextArea} = Input;
@@ -76,6 +76,7 @@ export default class CreateAppointmentForm extends React.Component {
         let successFn = function (data) {
             that.setState({
                 appointment: data,
+                patientDetails:data.patient,
                 loading: false,
             });
         }
@@ -210,8 +211,11 @@ export default class CreateAppointmentForm extends React.Component {
                 let errorFn = function () {
 
                 };
-
-                postAPI(ALL_APPOINTMENT_API, formData, successFn, errorFn);
+                // if(this.state.appointment){
+                //     putAPI(interpolate(APPOINTMENT_API, [this.state.appointment.id]), formData, successFn, errorFn);
+                // }else {
+                    postAPI(ALL_APPOINTMENT_API, formData, successFn, errorFn);
+                // }
             }
         });
 

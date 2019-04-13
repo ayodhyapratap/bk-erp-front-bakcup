@@ -290,7 +290,7 @@ class App extends Component {
                                                   width: '5px',
                                                   marginRight: '2px',
                                                   backgroundColor: item.calender_colour
-                                              }}/>{item.name}</List.Item>)}
+                                              }}/>{item.user.first_name}</List.Item>)}
                                           size={"small"}/>
 
                                 </Col>

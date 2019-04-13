@@ -220,23 +220,23 @@ class Appointment extends React.Component {
         const columns = [{
             title: 'Schedule Time',
             key: 'name',
-            render: (text, record) => (<span>{moment(record.shedule_at).format('LLL')},{record.slot}mins</span>
+            render: (text, record) => (<span>{moment(record.schedule_at).format('LLL')},{record.slot}mins</span>
             )
         }, {
             title: 'Patient ID',
-            dataIndex: 'patient_id',
+            dataIndex: 'patient.id',
             key: 'patient_id',
         }, {
             title: 'Patient Name',
-            dataIndex: 'patient_name',
+            dataIndex: 'patient.user.first_name',
             key: 'patient_name',
         }, {
             title: 'Patient Mobile',
-            dataIndex: 'patient_mobile',
+            dataIndex: 'patient.user.mobile',
             key: 'patient_mobile',
         }, {
             title: 'Email',
-            dataIndex: 'email',
+            dataIndex: 'patient.user.email',
             key: 'email',
         }, {
             title: 'Doctor',
