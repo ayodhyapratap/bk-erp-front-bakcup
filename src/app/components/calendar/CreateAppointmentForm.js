@@ -6,8 +6,6 @@ import {
     CheckBox,
     DatePicker,
     Button,
-    Icon,
-    TimePicker,
     InputNumber,
     Card,
     List,
@@ -16,20 +14,19 @@ import {
 } from 'antd';
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import moment from "moment/moment";
-import {DOCTORS_ROLE} from "../../constants/dataKeys";
+import {DOCTORS_ROLE, SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
 import {
     APPOINTMENT_API,
     APPOINTMENT_CATEGORIES,
     EMR_TREATMENTNOTES,
-    FILE_UPLOAD_API,
     PRACTICESTAFF, PROCEDURE_CATEGORY,
     SEARCH_PATIENT,
     ALL_APPOINTMENT_API,
     PATIENT_PROFILE
 
 } from "../../constants/api";
-import {Checkbox, message, Radio} from "antd/lib/index";
-import {getAPI, interpolate, makeURL, postAPI} from "../../utils/common";
+import {Checkbox,  Radio} from "antd/lib/index";
+import {displayMessage, getAPI, interpolate,  postAPI} from "../../utils/common";
 import {Redirect} from "react-router-dom";
 
 const {TextArea} = Input;
@@ -207,6 +204,7 @@ export default class CreateAppointmentForm extends React.Component {
                 let successFn = function (data) {
                     if (data) {
                         console.log(data)
+                        displayMessage(SUCCESS_MSG_TYPE, "Appointment Created Successfully");
                     }
                 };
                 let errorFn = function () {

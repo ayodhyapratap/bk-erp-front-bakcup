@@ -107,19 +107,3 @@ class PatientVitalSign extends React.Component {
 }
 
 export default PatientVitalSign;
-
-function VitalSignCard(sign) {
-    return <Col span={24}>
-        <Card style={{margin: '5px'}}>
-            <Meta
-                avatar={(sign.image ? <Avatar src={sign.image}/> :
-                    <Avatar style={{backgroundColor: '#87d068'}}>
-
-                    </Avatar>)}
-                title={sign.id}
-            />
-            <h2>pulse: {sign.pulse}</h2>
-
-        </Card>
-    </Col>;
-}

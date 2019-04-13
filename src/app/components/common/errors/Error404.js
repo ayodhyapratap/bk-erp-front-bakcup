@@ -4,10 +4,6 @@ import {Button, Col, Row} from "antd";
 import {Link} from "react-router-dom";
 
 class Error404 extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return <Row style={{marginTop: '20px'}} gutter={24}>
             <Col xs={24} sm={24} md={24} lg={12} xl={12} style={{textAlign: 'center', float: 'right'}}>
@@ -17,7 +13,7 @@ class Error404 extends React.Component {
                 <h4><Link to="/"><Button type="primary">Go to Home</Button></Link></h4>
             </Col>
             <Col xs={24} sm={24} md={24} lg={12} xl={12} style={{textAlign: 'center'}}>
-                <img src={img404} alt="" style={{width:'100%'}}/>
+                <img src={img404} alt="" style={{width: '100%'}}/>
             </Col>
         </Row>
     }

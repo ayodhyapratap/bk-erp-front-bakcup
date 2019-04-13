@@ -5,17 +5,10 @@ import {Layout} from "antd";
 import AppFooter from "./AppFooter";
 import AppSider from "./AppSider";
 import {
-    loggedInUser,
     loggedInactivePractice,
-    loggedInUserGroup,
-    loggedInPermissions,
     loggedInUserPractices,
-    logInUser,
-    logOutUser,
     setCurrentPractice, loadUserDetails
 } from "../../utils/auth";
-import {getAPI, deleteAPI, interpolate} from "../../utils/common";
-import {ALL_PRACTICE, PRACTICE} from "../../constants/api";
 import SettingsDash from "../settings/SettingsDash"
 import Calendar from "../calendar/Calendar";
 import PatientHome from "../patients/PatientHome";
@@ -24,7 +17,6 @@ import ReportsHome from "../reports/ReportsHome";
 import WebAdminHome from "../webAdmin/WebAdminHome";
 import InventoryHome from "../inventory/InventoryHome";
 import Profile from "../auth/Profile";
-import MlmBase from "../settings/options/mlm/MlmBase"
 
 class AppBase extends React.Component {
     constructor(props) {

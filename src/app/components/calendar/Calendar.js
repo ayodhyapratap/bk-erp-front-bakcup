@@ -11,7 +11,7 @@ import {Route, Link, Switch} from "react-router-dom";
 import CreateAppointment from "./CreateAppointment";
 import TimeGrid from 'react-big-calendar/lib/TimeGrid'
 import dates from 'date-arithmetic'
-import {getAPI, postAPI, putAPI, interpolate, displayMessage} from "../../utils/common";
+import {getAPI, putAPI, interpolate, displayMessage} from "../../utils/common";
 import {APPOINTMENT_PERPRACTICE_API, APPOINTMENT_API, PRACTICESTAFF, CALENDER_SETTINGS} from "../../constants/api";
 
 const localizer = BigCalendar.momentLocalizer(moment)
@@ -40,7 +40,7 @@ class App extends Component {
         this.eventStyleGetter = this.eventStyleGetter.bind(this);
         this.loadCalendarTimings = this.loadCalendarTimings.bind(this);
         this.loadDoctors();
-        this.appointmentList(moment(), moment());
+        this.appointmentList(moment().subtract(1, 'days'), moment().add(5, 'days'));
         this.loadCalendarTimings()
     }
 
@@ -108,8 +108,8 @@ class App extends Component {
         const updatedEvent = {...event, start, end, allDay}
         const nextEvents = [...events]
         let changedEvent = {
-            "id": event.id,
-            "schedule_at": moment(start),
+            // "id": event.id,
+            "schedule_at": moment(start).format("YYYY-MM-DD HH:mm:ss"),
             "slot": parseInt((end - start) / 60000)
         };
         let successFn = function (data) {
@@ -121,7 +121,7 @@ class App extends Component {
         }
         let errorFn = function () {
         }
-        postAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
+        putAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
     }
 
     resizeEvent = ({event, start, end}) => {
@@ -132,8 +132,8 @@ class App extends Component {
         events.forEach((existingEvent) => {
             if (existingEvent.id == event.id) {
                 changedEvent = {
-                    "id": event.id,
-                    "schedule_at": moment(start),
+                    // "id": event.id,
+                    "schedule_at": moment(start).format("YYYY-MM-DD HH:mm:ss"),
                     "slot": parseInt((end - start) / 60000)
                 };
             }
@@ -153,7 +153,7 @@ class App extends Component {
         }
         let errorFn = function () {
         }
-        postAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
+        putAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
     }
 
 
@@ -247,9 +247,9 @@ class App extends Component {
         console.log(e)
         if (e.start && e.end) {
             this.appointmentList(moment(e.start), moment(e.end));
-        }else if(e.length == 1){
+        } else if (e.length == 1) {
             this.appointmentList(moment(e[0]), moment(e[0]));
-        }else if(e.length == 7){
+        } else if (e.length == 7) {
             this.appointmentList(moment(e[0]), moment(e[6]));
         }
     }
@@ -286,7 +286,11 @@ class App extends Component {
                                     <Divider>Doctors</Divider>
                                     <List dataSource={this.state.practice_doctors}
                                           renderItem={item => (
-                                              <List.Item style={{textOverflow: "ellipsis"}}><span style={{width:'5px',marginRight:'2px',backgroundColor:item.calender_colour}}/>{item.name}</List.Item>)}
+                                              <List.Item style={{textOverflow: "ellipsis"}}><span style={{
+                                                  width: '5px',
+                                                  marginRight: '2px',
+                                                  backgroundColor: item.calender_colour
+                                              }}/>{item.name}</List.Item>)}
                                           size={"small"}/>
 
                                 </Col>

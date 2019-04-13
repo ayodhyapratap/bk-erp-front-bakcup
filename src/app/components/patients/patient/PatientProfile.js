@@ -3,8 +3,7 @@ import PatientSelection from "../PatientSelection";
 import {Avatar, Button, Card, Col, Divider, Icon, List, Row} from "antd";
 import {Link} from "react-router-dom";
 import {getAPI, interpolate} from "../../../utils/common";
-import {MEDICAL_HISTORY, PATIENT_GROUPS, PATIENT_PROFILE} from "../../../constants/api";
-import {MEDICAL_HISTORY_KEY} from "../../../constants/dataKeys";
+import {MEDICAL_HISTORY, PATIENT_PROFILE} from "../../../constants/api";
 
 class PatientProfile extends React.Component {
     constructor(props) {

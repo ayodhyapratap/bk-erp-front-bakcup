@@ -1,10 +1,8 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Card, Divider, Form, Icon, Popconfirm, Row, Table} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {Button, Card, Icon, Popconfirm, Row,} from "antd";
 import {Link} from "react-router-dom";
-import {ALL_PRACTICE, OFFERS} from "../../../../constants/api";
-import {getAPI, deleteAPI, interpolate, postAPI} from "../../../../utils/common";
+import {OFFERS} from "../../../../constants/api";
+import {getAPI, interpolate, postAPI} from "../../../../utils/common";
 import CustomizedTable from "../../../common/CustomizedTable";
 
 class Offers extends React.Component {
