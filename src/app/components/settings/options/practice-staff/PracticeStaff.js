@@ -26,7 +26,8 @@ class PracticeDetails extends React.Component {
             roles: null,
             permissionEditModal: false,
             editPermissions: {},
-            allPermissions: getAllPermissions()
+            allPermissions: getAllPermissions(),
+            loading:true
         }
         this.setPermission = this.setPermission.bind(this);
         this.staffRoles();
@@ -162,9 +163,13 @@ class PracticeDetails extends React.Component {
             that.setState({
                 practice_doctors: doctor,
                 practice_staff: staff,
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         };
         getAPI(interpolate(PRACTICESTAFF, [this.props.active_practiceId]), successFn, errorFn);
     }
@@ -319,20 +324,20 @@ class PracticeDetails extends React.Component {
                                 <Icon type="plus"/>&nbsp;Add Doctor/Staff
                             </Button>
                         </Link></h2>
-                        <Table pagination={false} columns={columns} dataSource={this.state.practice_doctors}/>
+                        <Table loading={this.state.loading}  pagination={false} columns={columns} dataSource={this.state.practice_doctors}/>
                         <h2>Staff </h2>
-                        <Table pagination={false} columns={columns} dataSource={this.state.practice_staff}/>
+                        <Table loading={this.state.loading}  pagination={false} columns={columns} dataSource={this.state.practice_staff}/>
                     </TabPane>
                     <TabPane tab={<span><Icon type="team"/>Staff Notification</span>} key="notification">
                         <h2>Doctors</h2>
-                        <Table pagination={false} columns={notification_columns}
+                        <Table loading={this.state.loading}  pagination={false} columns={notification_columns}
                                dataSource={this.state.practice_doctors}/>
                         <h2>Staff</h2>
-                        <Table pagination={false} columns={notification_columns}
+                        <Table loading={this.state.loading}  pagination={false} columns={notification_columns}
                                dataSource={this.state.practice_staff}/>
                     </TabPane>
                     <TabPane tab={<span><Icon type="schedule"/>Doctors visit Timing</span>} key="timing">
-                        <Table>
+                        <Table loading={this.state.loading} >
                             <Column title="Name"
                                     dataIndex="user.name"
                                     key="name"

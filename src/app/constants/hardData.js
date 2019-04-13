@@ -93,8 +93,8 @@ export const PRINTER_TYPE = [
     {value: 'BLACK'}
 ];
 export const HEADER_INCLUDE= [
-    {title:'Yes', value: 'true'},
-    {title: 'No , I already have a letter head.', value: 'false'}
+    {title:'Yes', value: true},
+    {title: 'No , I already have a letter head.', value: false}
 ];
 export const LOGO_TYPE =[
     {value: 'Square'},
@@ -107,8 +107,8 @@ export const LOGO_ALIGMENT= [
     {value: 'CENTRE'} 
 ];
 export const LOGO_INCLUDE= [
-    {title: 'Yes', value: 'TRUE'},
-    {title: 'No', value: 'FALSE'}
+    {title: 'Yes', value: true},
+    {title: 'No', value: false}
 ];
 
 export const PATIENT_DETAILS_LIST =[

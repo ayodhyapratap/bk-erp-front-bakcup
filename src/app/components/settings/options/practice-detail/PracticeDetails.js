@@ -11,6 +11,7 @@ class PracticeDetails extends React.Component {
         this.state = {
             practiceList: [],
             specialisations: null,
+            loading:true
         };
         this.deletePractice = this.deletePractice.bind(this);
     }
@@ -32,9 +33,13 @@ class PracticeDetails extends React.Component {
             that.setState({
                 practiceList: data,
                 specialisations: specialisations,
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         };
         getAPI(ALL_PRACTICE, successFn, errorFn);
 
@@ -119,7 +124,7 @@ class PracticeDetails extends React.Component {
                     </Button>
                 </Link>
             </h2>
-            <Card>
+            <Card loading={this.state.loading}>
                 <Table pagination={false} columns={columns} dataSource={this.state.practiceList}/>
             </Card>
         </Row>

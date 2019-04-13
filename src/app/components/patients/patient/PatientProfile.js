@@ -11,7 +11,8 @@ class PatientProfile extends React.Component {
         this.state = {
             patientProfile: null,
             currentPatient: this.props.currentPatient,
-            medicalHistory: {}
+            medicalHistory: {},
+            loading:true
         };
         this.loadProfile = this.loadProfile.bind(this);
         this.getMedicalHistory = this.getMedicalHistory.bind(this);
@@ -33,10 +34,11 @@ class PatientProfile extends React.Component {
                 medicalHistoryData[history.id] = history
             });
             that.setState({
-                medicalHistory: medicalHistoryData
+                medicalHistory: medicalHistoryData,
             })
         }
         let errorFn = function () {
+
         }
         getAPI(interpolate(MEDICAL_HISTORY, [that.props.active_practiceId]), successFn, errorFn);
     }
@@ -46,7 +48,7 @@ class PatientProfile extends React.Component {
         if (newProps.currentPatient && newProps.currentPatient != this.state.currentPatient) {
 
             this.setState({
-                currentPatient: newProps.currentPatient
+                currentPatient: newProps.currentPatient,
             }, function () {
                 that.loadProfile();
             })
@@ -57,11 +59,14 @@ class PatientProfile extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                patientProfile: data
+                patientProfile: data,
+                loading:false
             });
         };
         let errorFn = function () {
-
+            that.setState({
+                loading:false
+            })
         };
         if (that.state.currentPatient)
             getAPI(interpolate(PATIENT_PROFILE, [that.state.currentPatient.id]), successFn, errorFn);

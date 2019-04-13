@@ -65,7 +65,7 @@ class EditPatientDetails extends React.Component {
             label: "Aadhar ID",
             key: "aadhar_id",
             required: true,
-            initialValue: this.props.currentPatient ? this.props.currentPatient.addhar_id : null,
+            initialValue: this.props.currentPatient ? this.props.currentPatient.aadhar_id : null,
             type: INPUT_FIELD
         }, {
             label: "Gender",
