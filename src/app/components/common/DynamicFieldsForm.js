@@ -133,7 +133,7 @@ class DynamicFieldsForm extends React.Component {
                     if (formFields.type == SINGLE_IMAGE_UPLOAD_FIELD) {
                         let key = formFields.key;
                         if (values[key] && values[key].file && values[key].file.response)
-                            values[key] = values[key].file.response.image;
+                            values[key] = values[key].file.response.image_path;
                         else
                             values[key] = formFields.initialValue;
                     } else if (formFields.type == MULTI_IMAGE_UPLOAD_FIELD) {
