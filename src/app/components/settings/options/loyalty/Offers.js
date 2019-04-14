@@ -9,7 +9,8 @@ class Offers extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            offers: null
+            offers: null,
+            loading:true
         }
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -25,9 +26,13 @@ class Offers extends React.Component {
             console.log("get table");
             that.setState({
                 offers: data,
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:true
+            })
         };
         getAPI(interpolate(OFFERS, [this.props.active_practiceId]), successFn, errorFn);
     }
@@ -83,7 +88,7 @@ class Offers extends React.Component {
                 </Link>
             </h2>
             <Card>
-                <CustomizedTable columns={columns} dataSource={this.state.offers}/>
+                <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.offers}/>
 
             </Card>
         </Row>

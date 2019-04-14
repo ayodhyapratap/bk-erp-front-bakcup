@@ -9,7 +9,8 @@ export default class InventoryReport extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            inventoryList: []
+            inventoryList: [],
+            loading:true
         }
         this.loadData = this.loadData.bind(this);
     }
@@ -22,10 +23,14 @@ export default class InventoryReport extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                inventoryList: data
+                inventoryList: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         }
         getAPI(STOCK_ENTRY, successFn, errorFn);
     }
@@ -60,7 +65,7 @@ export default class InventoryReport extends React.Component {
         return <div>
             <h2>Inventory Report</h2>
             <Card>
-                <CustomizedTable bordered={true} pagination={false} columns={columns} dataSource={this.state.inventoryList}/>
+                <CustomizedTable loading={this.state.loading} bordered={true} pagination={false} columns={columns} dataSource={this.state.inventoryList}/>
             </Card>
         </div>
     }

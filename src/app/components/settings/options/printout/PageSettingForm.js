@@ -14,6 +14,7 @@ class PageSettingForm extends React.Component {
     this.state={
       type: this.props.type,
       sub_type:this.props.sub_type,
+      loading:true,
       print_setting:{
         page_size:'A4'
       }
@@ -52,10 +53,14 @@ class PageSettingForm extends React.Component {
         if(data.length)
         that.setState({
           print_setting:data[0],
+          loading:false
         })
       
       };
       let errorFn = function () {
+        that.setState({
+          loading:false
+        })
       };
      getAPI(interpolate(PRACTICE_PRINT_SETTING_API, [this.props.active_practiceId,that.state.type,that.state.sub_type]), successFn, errorFn);
   }

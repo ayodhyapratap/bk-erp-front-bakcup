@@ -17,7 +17,8 @@ class PatientCompletedProcedures extends React.Component {
             treatmentPlans: [],
             procedure_category: null,
             completedTreatmentPlans: [],
-            productMargin: []
+            productMargin: [],
+            loading:true
         }
         this.loadtreatmentPlanss = this.loadtreatmentPlanss.bind(this);
         this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
@@ -36,10 +37,14 @@ class PatientCompletedProcedures extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                productMargin: data
+                productMargin: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         }
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
@@ -49,7 +54,8 @@ class PatientCompletedProcedures extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                treatmentPlans: data
+                treatmentPlans: data,
+                loading:false
             })
             data.forEach(function (treatmentplan) {
                 if (treatmentplan.is_completed) {
@@ -58,9 +64,13 @@ class PatientCompletedProcedures extends React.Component {
             })
             that.setState({
                 completedTreatmentPlans: completed,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         }
         getAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id]), successFn, errorFn)
     }
@@ -69,10 +79,14 @@ class PatientCompletedProcedures extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                procedure_category: data
+                procedure_category: data,
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn)
@@ -162,7 +176,7 @@ class PatientCompletedProcedures extends React.Component {
                             type="plus"/>Add</Button></Link>
                     </Button.Group>}>
 
-                    <Table columns={columns} dataSource={this.state.completedTreatmentPlans}/>
+                    <Table loading={this.state.loading} columns={columns} dataSource={this.state.completedTreatmentPlans}/>
 
                 </Card>
             </Switch>

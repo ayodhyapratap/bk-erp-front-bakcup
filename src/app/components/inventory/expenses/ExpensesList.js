@@ -13,7 +13,8 @@ export default class ExpensesList extends React.Component {
         super(props);
         this.state = {
             active_practiceId: this.props.active_practiceId,
-            expenses: null
+            expenses: null,
+            loading:true
         };
         this.loadData = this.loadData.bind(this);
     }
@@ -26,11 +27,14 @@ export default class ExpensesList extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                expenses: data
+                expenses: data,
+                loading:false
             })
-            console.log("data cash",JSON.stringify(that.state.expenses));
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(EXPENSES_API, successFn, errorFn);
@@ -79,7 +83,7 @@ export default class ExpensesList extends React.Component {
                    render={(route) => <AddExpenses {...this.state} {...route} loadData={this.loadData}/>}/>
             <Card title="Expensess" extra={<Link to={"/inventory/expenses/add"}> <Button type="primary"><Icon
                 type="plus"/> Add</Button></Link>}>
-                <CustomizedTable dataSource={this.state.expenses} columns={expenseColoumns}/>
+                <CustomizedTable loading={this.state.loading} dataSource={this.state.expenses} columns={expenseColoumns}/>
             </Card>
         </Switch>
         </div>

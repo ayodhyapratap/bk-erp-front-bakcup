@@ -10,7 +10,8 @@ class Prescriptions extends React.Component {
         super(props);
         this.state = {
             catalog: null,
-            editCatalog: null
+            editCatalog: null,
+            loading:true
         }
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -26,9 +27,13 @@ class Prescriptions extends React.Component {
             console.log("get table");
             that.setState({
                 catalog: data,
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         };
         getAPI(interpolate(DRUG_CATALOG, [this.props.active_practiceId]), successFn, errorFn);
     }
@@ -47,7 +52,8 @@ class Prescriptions extends React.Component {
 
     editCatalog(record) {
         this.setState({
-            editCatalog: record
+            editCatalog: record,
+            loading:false
         });
         this.props.history.push('/settings/prescriptions/edit')
     }
@@ -97,7 +103,7 @@ class Prescriptions extends React.Component {
                             </Link>
                         </h2>
                         <Card>
-                            <Table columns={columns} dataSource={this.state.catalog}/>
+                            <Table loading={this.state.loading} columns={columns} dataSource={this.state.catalog}/>
                         </Card>
                     </div>
                 </Route>

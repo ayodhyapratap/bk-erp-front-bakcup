@@ -12,7 +12,8 @@ class PatientFiles extends React.Component {
         this.state = {
             files: [],
             tags: [],
-            showAddModal: false
+            showAddModal: false,
+            loading:true
         };
         this.loadData = this.loadData.bind(this);
     }
@@ -26,10 +27,14 @@ class PatientFiles extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                files: data
+                files: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         }
         if (this.props.match.params.id)
             getAPI(interpolate(PATIENT_FILES, [this.props.match.params.id]), successFn, errorFn);
@@ -41,10 +46,14 @@ class PatientFiles extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                tags: data
+                tags: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         }
         getAPI(interpolate(EMR_FILETAGS, [this.props.active_practiceId]), successFn, errorFn);
     }
@@ -116,7 +125,7 @@ class PatientFiles extends React.Component {
                     </Radio.Group>
                 </Col>
                 <Col span={18}>
-                    <List
+                    <List loading={this.state.loading}
                         grid={{gutter: 16, column: 3}}
                         dataSource={this.state.files}
                         renderItem={item => (

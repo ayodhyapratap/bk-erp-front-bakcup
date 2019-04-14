@@ -11,7 +11,8 @@ export default class DiseaseList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            events: null
+            events: null,
+            loading:true
         };
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -25,10 +26,14 @@ export default class DiseaseList extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                events: data
+                events: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(BLOG_EVENTS, successFn, errorFn);
@@ -79,7 +84,7 @@ export default class DiseaseList extends React.Component {
                    render={(route) => <AddEvent {...this.state} loadData={this.loadData} {...route}/>}/>
             <Card title="Events"
                   extra={<Link to={"/web/event/add"}><Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <Table dataSource={this.state.events} columns={coloumns}/>
+                <Table loading={this.state.loading} dataSource={this.state.events} columns={coloumns}/>
             </Card>
         </Switch>
         </div>

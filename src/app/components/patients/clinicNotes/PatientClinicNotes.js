@@ -16,6 +16,7 @@ class PatientClinicNotes extends React.Component {
             active_practiceId: this.props.active_practiceId,
             clinicNotes: [],
             editClinicNotes: null,
+            loading:true
         }
         this.loadClinicNotes = this.loadClinicNotes.bind(this);
         this.editClinicNotesData = this.editClinicNotesData.bind(this);
@@ -33,10 +34,14 @@ class PatientClinicNotes extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                clinicNotes: data
+                clinicNotes: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(interpolate(PATIENT_CLINIC_NOTES_API, [this.props.match.params.id]), successFn, errorFn)
@@ -46,6 +51,7 @@ class PatientClinicNotes extends React.Component {
     editClinicNotesData(record) {
         this.setState({
             editClinicNotes: record,
+            loading:false
         });
         let id = this.props.match.params.id
         this.props.history.push("/patient/" + id + "/emr/clinicnotes/edit")
@@ -108,13 +114,13 @@ class PatientClinicNotes extends React.Component {
                 <Route exact path='/patient/:id/emr/clinicnotes/edit'
                        render={(route) => <AddClinicNotes {...this.state} {...route}/>}/>
                 <Card
-                    title={this.state.currentPatient ? this.state.currentPatient.name + " ClinicNotes" : "ClinicNotes"}
+                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " ClinicNotes" : "ClinicNotes"}
                     extra={<Button.Group>
                         <Link to={"/patient/" + this.props.match.params.id + "/emr/clinicnotes/add"}><Button><Icon
                             type="plus"/>Add</Button></Link>
                     </Button.Group>}>
 
-                    <Table columns={columns} dataSource={this.state.clinicNotes}/>
+                    <Table loading={this.state.loading} columns={columns} dataSource={this.state.clinicNotes}/>
 
                 </Card>
             </Switch>

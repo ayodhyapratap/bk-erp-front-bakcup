@@ -18,6 +18,7 @@ class PatientPrescriptions extends React.Component{
           prescription:[],
           drug_catalog:null,
           editPrescription: null,
+          loading:true
         }
         this.loadPrescriptions =this.loadPrescriptions.bind(this);
         this.loadDrugCatalog =this.loadDrugCatalog.bind(this);
@@ -35,10 +36,14 @@ class PatientPrescriptions extends React.Component{
       let that = this;
       let successFn =function (data){
         that.setState({
-          prescription:data
+          prescription:data,
+          loading:false
         })
       }
       let errorFn = function (){
+        that.setState({
+          loading:false
+        })
 
       }
       getAPI(interpolate(PRESCRIPTIONS_API,[this.props.match.params.id]), successFn, errorFn)
@@ -47,11 +52,15 @@ class PatientPrescriptions extends React.Component{
       let that = this;
       let successFn =function (data){
         that.setState({
-          drug_catalog:data
+          drug_catalog:data,
+          loading:false
         })
 
       }
       let errorFn = function (){
+        that.setState({
+          loading:false
+        })
 
       }
       getAPI(interpolate(DRUG_CATALOG,[this.props.active_practiceId]), successFn, errorFn)
@@ -124,11 +133,11 @@ class PatientPrescriptions extends React.Component{
              render={(route) => <AddorEditPatientPrescriptions{...this.state} loadPrescriptions={this.loadPrescriptions()} {...route}/>}/>
       <Route exact path='/patient/:id/emr/prescriptions/edit'
              render={(route) => <AddorEditPatientPrescriptions {...this.state} {...route}/>}/>
-      <Card title={ this.state.currentPatient?this.state.currentPatient.name + " Prescriptions":"Prescriptions"}  extra={<Button.Group>
+      <Card title={ this.state.currentPatient?this.state.currentPatient.user.first_name + " Prescriptions":"Prescriptions"}  extra={<Button.Group>
           <Link to={"/patient/"+this.props.match.params.id+"/emr/prescriptions/add"}><Button><Icon type="plus"/>Add</Button></Link>
       </Button.Group>}>
 
-      <Table columns={columns}  dataSource={this.state.prescription} />
+      <Table loading={this.state.loading} columns={columns}  dataSource={this.state.prescription} />
 
       </Card>
       </Switch>

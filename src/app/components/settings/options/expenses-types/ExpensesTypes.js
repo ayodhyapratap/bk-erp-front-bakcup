@@ -13,7 +13,8 @@ class ExpensesTypes extends React.Component {
         this.state = {
           redirect: false,
           visible: false,
-          expenses:null
+          expenses:null,
+          loading:true
         };
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -28,6 +29,7 @@ class ExpensesTypes extends React.Component {
           console.log("get table");
           that.setState({
             expenses:data,
+            loading:false
           })
         };
         let errorFn = function () {
@@ -45,7 +47,7 @@ class ExpensesTypes extends React.Component {
         editingId:value.id,
         editingName: value.name,
         editingValue:value.tax_value,
-
+        loading:false,
         visible: true,
       })
     }
@@ -119,7 +121,7 @@ class ExpensesTypes extends React.Component {
         return <div><Card>
             <TestFormLayout title="Expenses Types" defaultValues={defaultValues} formProp={formProp}  fields={fields}/>
             <Divider/>
-            <CustomizedTable columns={columns}  dataSource={this.state.expenses}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.expenses}/>
             </Card>
             <Modal
              title="Basic Modal"

@@ -12,7 +12,8 @@ export default class ManufactureList extends React.Component {
         super(props);
         this.state = {
             active_practiceId: this.props.active_practiceId,
-            manufactures: null
+            manufactures: null,
+            loading:true
         };
         this.loadData = this.loadData.bind(this);
         this.deleteManufacture =this.deleteManufacture.bind(this);
@@ -26,10 +27,14 @@ export default class ManufactureList extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                manufactures: data
+                manufactures: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(MANUFACTURER_API, successFn, errorFn);
@@ -79,7 +84,7 @@ export default class ManufactureList extends React.Component {
                    render={(route) => <AddManufacture {...this.state} {...route} loadData={that.loadData}/>}/>
             <Card title="Manufactures" extra={<Link to={"/inventory/manufacture/add"}> <Button type="primary"><Icon
                 type="plus"/> Add</Button></Link>}>
-                <CustomizedTable dataSource={this.state.manufactures} columns={manufactureColoumns}/>
+                <CustomizedTable loading={this.state.loading} dataSource={this.state.manufactures} columns={manufactureColoumns}/>
             </Card>
         </Switch>
         </div>

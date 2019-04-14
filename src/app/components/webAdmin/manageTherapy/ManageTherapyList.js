@@ -12,7 +12,8 @@ export default class ManageTherapyList extends React.Component{
 	constructor(props){
 		super(props);
 		this.state= {
-			therapyData:null
+			therapyData:null,
+            loading:true
 		};
 		this.loadData = this.loadData.bind(this);
 		this.deleteObject = this.deleteObject.bind(this);
@@ -28,9 +29,13 @@ export default class ManageTherapyList extends React.Component{
         	console.log("data a",data);
             that.setState({
                 therapyData: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         console.log("product Data",that.state.therapyData);
@@ -83,7 +88,7 @@ export default class ManageTherapyList extends React.Component{
 	                   render={(route) => <AddManageTherapy loadData={this.loadData} {...this.state} {...route}/>}/>
 	            <Card title="Therapy" extra={<Link to={"/web/managetherapy/add"}> <Button type="primary"><Icon
 	                type="plus"/> Add</Button></Link>}>
-	                <Table dataSource={this.state.therapyData} columns={coloumns}/>
+	                <Table loading={this.state.loading} dataSource={this.state.therapyData} columns={coloumns}/>
 	            </Card>
 	        </Switch>
         </div>

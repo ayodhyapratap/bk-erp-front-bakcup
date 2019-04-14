@@ -30,7 +30,8 @@ class App extends Component {
             practice_doctors: [],
             practice_staff: [],
             doctors_object: null,
-            calendarTimings: null
+            calendarTimings: null,
+            loading:true
         };
         this.onSelectSlot = this.onSelectSlot.bind(this);
         this.onSelectEvent = this.onSelectEvent.bind(this);
@@ -84,9 +85,13 @@ class App extends Component {
             console.log("get table");
             that.setState({
                 calendarTimings: data[0],
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         };
         getAPI(interpolate(CALENDER_SETTINGS, [this.props.active_practiceId]), successFn, errorFn);
     }
@@ -206,16 +211,21 @@ class App extends Component {
                         end: new Date(endtime),
                         title: appointment.patient_name,
                         id: appointment.id,
-                        doctor: appointment.doctor
+                        doctor: appointment.doctor,
+                        loading:false
                     })
                 });
                 return {events: newEvents}
             });
             that.setState({
                 appointments: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         }
         getAPI(interpolate(APPOINTMENT_PERPRACTICE_API, [this.props.active_practiceId]), successFn, errorFn, {
             start: start.format('YYYY-MM-DD'),
@@ -287,7 +297,7 @@ class App extends Component {
                             <Row gutter={16} style={{margin: '5px'}}>
                                 <Col span={3}>
                                     <Divider>Doctors</Divider>
-                                    <List dataSource={this.state.practice_doctors}
+                                    <List loading={this.state.loading} dataSource={this.state.practice_doctors}
                                           renderItem={item => (
                                               <List.Item style={{textOverflow: "ellipsis"}}><span style={{
                                                   width: '5px',
@@ -324,7 +334,7 @@ class App extends Component {
                                         <Button block type="primary"> Walkin Appointment</Button>
                                     </Link>
                                     <Divider>Appointments</Divider>
-                                    <Timeline>
+                                    <Timeline loading={this.state.loading}>
                                         {this.state.appointments.length ?
                                             this.state.appointments.map((apppointment) =>
                                                 <Timeline.Item style={{padding: 0}}><AppointmentCard {...apppointment}/></Timeline.Item>) :

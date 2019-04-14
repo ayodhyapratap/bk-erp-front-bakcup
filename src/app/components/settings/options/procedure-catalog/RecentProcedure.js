@@ -16,7 +16,8 @@ class RecentProcedure extends React.Component {
         this.state = {
             current: 'staff',
             procedure_category: null,
-            editingProcedureData: null
+            editingProcedureData: null,
+            loading:true
         };
         this.loadProcedures = this.loadProcedures.bind(this);
     }
@@ -30,6 +31,7 @@ class RecentProcedure extends React.Component {
         let successFn = function (data) {
             that.setState({
                 procedure_category: data,
+                loading:false
             })
         };
         let errorFn = function () {
@@ -60,6 +62,7 @@ class RecentProcedure extends React.Component {
     editProcedure(record) {
         this.setState({
             editingProcedureData: record,
+            loading:false
         });
         let url = '/settings/procedures/' + record.id + '/editprocedure';
         this.props.history.push(url);
@@ -86,7 +89,7 @@ class RecentProcedure extends React.Component {
                 <Card>
                     <Tabs defaultActiveKey="procedurecatalog">
                         <TabPane tab={<span><Icon type="android"/>Procedure Catalog</span>} key="procedurecatalog">
-                            <Table dataSource={this.state.procedure_category}>
+                            <Table loading={this.state.loading} dataSource={this.state.procedure_category}>
                                 <Column
                                     title="Procedure Name"
                                     dataIndex="name"
@@ -119,7 +122,7 @@ class RecentProcedure extends React.Component {
                                 />
                                 <Column
                                     title="Action"
-                                    key="action"
+                                     key="action"
                                     render={(text, record) => (
                                         <span>
                                             <a onClick={() => this.editProcedure(record)}>Edit</a>

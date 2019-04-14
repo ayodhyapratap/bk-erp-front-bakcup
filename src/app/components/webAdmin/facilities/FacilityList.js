@@ -12,7 +12,8 @@ export default class FacilityList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            facility: null
+            facility: null,
+            loading:true
         };
         this.loadData = this.loadData.bind(this);
     }
@@ -25,10 +26,14 @@ export default class FacilityList extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                facility: data
+                facility: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(BLOG_FACILITY, successFn, errorFn);
@@ -72,7 +77,7 @@ export default class FacilityList extends React.Component {
                    render={(route) => <AddFacility loadData={this.loadData} {...this.state} {...route}/>}/>
             <Card title="Facilities" extra={<Link to={"/web/facilities/add"}> <Button type="primary"><Icon
                 type="plus"/> Add</Button></Link>}>
-                <Table dataSource={this.state.facility} columns={coloumns}/>
+                <Table loading={this.state.loading} dataSource={this.state.facility} columns={coloumns}/>
             </Card>
         </Switch>
         </div>

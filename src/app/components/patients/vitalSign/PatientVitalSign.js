@@ -15,6 +15,7 @@ class PatientVitalSign extends React.Component {
         this.state = {
             currentPatient: this.props.currentPatient,
             vitalsign: [],
+            loading:true
         }
         this.loadVitalsigns = this.loadVitalsigns.bind(this);
 
@@ -31,7 +32,8 @@ class PatientVitalSign extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                vitalsign: data
+                vitalsign: data,
+                loading:false
             })
         }
         let errorFn = function () {
@@ -84,7 +86,7 @@ class PatientVitalSign extends React.Component {
 
         if (this.props.match.params.id) {
             return <Card
-                title={this.state.currentPatient ? this.state.currentPatient.name + " Vital Sign" : "PatientVitalSign"}
+                title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Vital Sign" : "PatientVitalSign"}
                 extra={<Button.Group>
                     <Link to={"/patient/" + this.props.match.params.id + "/emr/vitalsigns/add"}><Button><Icon
                         type="plus"/>Add</Button></Link>
@@ -93,7 +95,7 @@ class PatientVitalSign extends React.Component {
             this.state.vitalsign.map((sign) => <VitalSignCard {...sign}/>) :
             <p style={{textAlign: 'center'}}>No Data Found</p>
         */}
-                <Table columns={columns} dataSource={this.state.vitalsign}/>
+                <Table loading={this.state.loading} columns={columns} dataSource={this.state.vitalsign}/>
 
             </Card>
         }

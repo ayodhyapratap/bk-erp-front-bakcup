@@ -19,7 +19,8 @@ class TaxCatalog extends React.Component {
         this.state = {
             redirect: false,
             visible: false,
-            taxes: null
+            taxes: null,
+            loading:true
         };
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -36,9 +37,13 @@ class TaxCatalog extends React.Component {
             console.log("get table");
             that.setState({
                 taxes: data,
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
     }
@@ -155,7 +160,7 @@ class TaxCatalog extends React.Component {
         return <div>
             <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
             <Divider/>
-            <Table columns={columns} dataSource={this.state.taxes}/>
+            <Table loading={this.state.loading} columns={columns} dataSource={this.state.taxes}/>
             <Modal
                 title="Edit Tax"
                 visible={this.state.visible}

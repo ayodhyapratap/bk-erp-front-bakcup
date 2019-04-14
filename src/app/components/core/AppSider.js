@@ -57,8 +57,9 @@ class AppSider extends React.Component {
                     </Link>
                 </Menu.Item>
                 <Menu.Item key="26">
-                    <Link to="/patients">
-                        <Icon type="user"/>
+                    <Link
+                        to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/profile" : "/patients/profile"}>
+                       <Icon type="user"/>
                         <span className="nav-text">Patients</span>
                     </Link>
                 </Menu.Item>

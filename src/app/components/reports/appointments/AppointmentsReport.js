@@ -10,6 +10,7 @@ export default class AppointmentsReport extends React.Component {
         super(props);
         this.state = {
             appointmentReports: [],
+            loading:true
         }
         this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
         this.loadAppointmentReport();
@@ -24,10 +25,14 @@ export default class AppointmentsReport extends React.Component {
             console.log(data);
             that.setState({
                 appointmentReports: data.data,
+                loading:false
             });
             console.log(that.state.appointmentReports);
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         };
         getAPI(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId, "start=" + this.props.startDate + "&end=" + this.props.endDate]), successFn, errorFn);
     }
@@ -101,7 +106,7 @@ export default class AppointmentsReport extends React.Component {
             <Card>
                 <Row gutter={16}>
                     <Col span={16}>
-                        <CustomizedTable columns={columns} size={'small'} dataSource={this.state.appointmentReports}/>
+                        <CustomizedTable loading={this.state.loading} columns={columns} size={'small'} dataSource={this.state.appointmentReports}/>
                     </Col>
                     <Col span={8}>
                         <Radio.Group buttonStyle="solid" defaultValue="all">

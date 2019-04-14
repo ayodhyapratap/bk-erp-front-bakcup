@@ -10,6 +10,7 @@ export default class PatientsReport extends React.Component {
         super(props);
         this.state = {
             report: [],
+            loading:true
         }
         this.report = this.report.bind(this);
         this.report();
@@ -21,9 +22,13 @@ export default class PatientsReport extends React.Component {
             console.log(data);
             that.setState({
                 report: data.data,
+                loading:false
             });
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         };
         getAPI(interpolate(PATIENTS_REPORTS, [this.props.active_practiceId, "start=" + this.props.startDate + "&end=" + this.props.endDate]), successFn, errorFn);
     }
@@ -68,10 +73,12 @@ export default class PatientsReport extends React.Component {
             <Card>
                 <Row gutter={16}>
                     <Col span={16}>
-                        <CustomizedTable columns={columns}
-                                         size={'small'}
-                                         pagination={true}
-                                         dataSource={this.state.report}/>
+                        <CustomizedTable
+                                        loading={this.state.loading} 
+                                        columns={columns}
+                                        size={'small'}
+                                        pagination={true}
+                                        dataSource={this.state.report}/>
                     </Col>
                     <Col span={8}>
                         <Radio.Group buttonStyle="solid" defaultValue="all">

@@ -19,7 +19,8 @@ class AppointmentCategories extends React.Component {
         this.state = {
             redirect: false,
             visible: false,
-            appointmentCategories: null
+            appointmentCategories: null,
+            loading:true
         };
         this.loadAppointmentCategories = this.loadAppointmentCategories.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -34,7 +35,9 @@ class AppointmentCategories extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                appointmentCategories: data
+                appointmentCategories: data,
+                loading:false
+
             })
 
         }
@@ -55,8 +58,8 @@ class AppointmentCategories extends React.Component {
         this.setState({
             editingId: value.id,
             editingName: value.name,
-
             visible: true,
+            loading:false
         })
     }
 
@@ -130,7 +133,7 @@ class AppointmentCategories extends React.Component {
         return <div>
             <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
             <Divider/>
-            <Table columns={columns} dataSource={this.state.appointmentCategories}/>
+            <Table loading={this.state.loading} columns={columns} dataSource={this.state.appointmentCategories}/>
             <Modal
                 title="ADD Appointment Category"
                 visible={this.state.visible}

@@ -17,7 +17,8 @@ export default class LandingPageVideoList extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            videos:[]
+            videos:[],
+            loading:true
         };
         this.loadData=this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -29,10 +30,14 @@ export default class LandingPageVideoList extends React.Component{
         let that =this;
         let successFn = function (data) {
             that.setState({
-                videos:data
+                videos:data,
+                loading:false
             })
         }
         let errorFn = function () {
+          that.setState({
+            loading:false
+          })
 
         }
         getAPI(LANDING_PAGE_VIDEO ,successFn, errorFn);
@@ -63,7 +68,7 @@ export default class LandingPageVideoList extends React.Component{
             <Route exact path='/web/landingpagevideo/edit/:id'
                    render={(route) => <AddLandingPageVideo {...this.state} loadData={this.loadData} {...route}/>}/>
             <Card title="Landing Page Video" extra={<Link to={"/web/landingpagevideo/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <List dataSource={this.state.videos}
+                <List loading={this.state.loading} dataSource={this.state.videos}
                       itemLayout="vertical"
                       renderItem={item => <List.Item key={item.id}
 

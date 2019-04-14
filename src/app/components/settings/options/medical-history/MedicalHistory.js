@@ -13,7 +13,8 @@ class MedicalHistory extends React.Component {
         this.state = {
           redirect: false,
           visible: false,
-          history:null
+          history:null,
+          loading:true
         };
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -28,25 +29,28 @@ class MedicalHistory extends React.Component {
           console.log("get table");
           that.setState({
             history:data,
+            loading:false
           })
         };
         let errorFn = function () {
+          that.setState({
+            loading:false
+          })
         };
        getAPI(interpolate( MEDICAL_HISTORY, [this.props.active_practiceId]), successFn, errorFn);
     }
     changeRedirect(){
-      var redirectVar=this.state.redirect;
-    this.setState({
-      redirect:  !redirectVar,
-    })  ;
+        var redirectVar=this.state.redirect;
+      this.setState({
+        redirect:  !redirectVar,
+      })  ;
     }
     editTax(value){
       this.setState({
         editingId:value.id,
         editingName: value.name,
-
-
         visible: true,
+        loading:false
       })
     }
     handleCancel = () => {
@@ -120,7 +124,7 @@ class MedicalHistory extends React.Component {
         <Card>
               <TestFormLayout title="Medical History" defaultValues={defaultValues}  formProp={formProp}  fields={fields}/>
               <Divider/>
-              <CustomizedTable columns={columns}  dataSource={this.state.history}/>
+              <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.history}/>
             </Card>
             <Modal
              title="Basic Modal"

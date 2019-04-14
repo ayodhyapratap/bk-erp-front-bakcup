@@ -10,7 +10,8 @@ export default class ContactsList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            contacts: null
+            contacts: null,
+            loading:true
         };
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -24,7 +25,8 @@ export default class ContactsList extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                contacts: data
+                contacts: data,
+                loading:false
             })
         }
         let errorFn = function () {
@@ -84,7 +86,7 @@ export default class ContactsList extends React.Component {
                    render={(route) => <AddContacts {...this.state} {...route} loadData={this.loadData}/>}/>
             <Card title="Contacts"
                   extra={<Link to={"/web/contact/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <Table dataSource={this.state.contacts} columns={coloumns}/>
+                <Table loading={this.state.loading} dataSource={this.state.contacts} columns={coloumns}/>
             </Card>
         </Switch>
         </div>

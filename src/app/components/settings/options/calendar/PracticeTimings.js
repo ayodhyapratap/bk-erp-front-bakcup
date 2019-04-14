@@ -21,7 +21,8 @@ class PracticeTimings extends React.Component {
         this.state = {
             redirect: false,
             visible: false,
-            timings: null
+            timings: null,
+            loading:true
         };
         this.loadData = this.loadData.bind(this);
 
@@ -36,9 +37,13 @@ class PracticeTimings extends React.Component {
         let successFn = function (data) {
             that.setState({
                 timings: data[0],
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         };
         getAPI(interpolate(CALENDER_SETTINGS, [this.props.active_practiceId]), successFn, errorFn);
     }

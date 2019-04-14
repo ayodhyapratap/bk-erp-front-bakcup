@@ -21,6 +21,7 @@ class TableData extends React.Component {
             redirect: false,
             visible: false,
             data: null,
+            loading:true
         }
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -35,9 +36,13 @@ class TableData extends React.Component {
         let successFn = function (data) {
             that.setState({
                 data: data,
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         };
         getAPI(interpolate(this.props.id, [this.props.active_practiceId]), successFn, errorFn);
     }
@@ -54,6 +59,7 @@ class TableData extends React.Component {
             editingId: value.id,
             editingName: value.name,
             visible: true,
+            loading:false
         })
     }
 
@@ -133,7 +139,7 @@ class TableData extends React.Component {
         return <div>
             <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
             <Divider/>
-            <CustomizedTable columns={columns} dataSource={this.state.data}/>
+            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.data}/>
             <Modal
                 title={"Edit " + this.props.name}
                 visible={this.state.visible}

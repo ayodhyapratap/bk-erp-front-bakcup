@@ -35,9 +35,13 @@ class PatientProfile extends React.Component {
             });
             that.setState({
                 medicalHistory: medicalHistoryData,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(interpolate(MEDICAL_HISTORY, [that.props.active_practiceId]), successFn, errorFn);
@@ -77,8 +81,8 @@ class PatientProfile extends React.Component {
         if (this.props.currentPatient) {
             let patient = this.state.patientProfile;
             if (!patient)
-                return <Card loading={true}/>;
-            return <Card title="Patient Profile"
+                return <Card loading={this.state.loading}/>;
+            return <Card loading={this.state.loading} title="Patient Profile"
                          extra={<Link to={"/patient/" + this.state.currentPatient.id + "/profile/edit"}>
                              <Button type="primary">
                                  <Icon type="edit"/>&nbsp;Edit Patient Profile</Button>
@@ -109,15 +113,15 @@ class PatientProfile extends React.Component {
                     </Col>
                     <Col span={6} style={{borderLeft: '1 px solid #ccc'}}>
                         <Divider>Medical History</Divider>
-                        {this.state.medicalHistory && <List dataSource={patient.medical_history}
+                        {this.state.medicalHistory && <List loading={this.state.loading} dataSource={patient.medical_history}
                                                                     renderItem={(item) =>
                                                                         <List.Item>{this.state.medicalHistory[item].name}</List.Item>}/>}
 
                         <Divider>Groups</Divider>
-                        <List dataSource={patient.patient_group}
+                        <List loading={this.state.loading} dataSource={patient.patient_group}
                               renderItem={(item) => <List.Item>{item}</List.Item>}/>
                         <Divider>Medical Membership</Divider>
-                        <List dataSource={patient.medical_membership}
+                        <List loading={this.state.loading} dataSource={patient.medical_membership}
                               renderItem={(item) => <List.Item>{item}</List.Item>}/>
                     </Col>
                 </Row>

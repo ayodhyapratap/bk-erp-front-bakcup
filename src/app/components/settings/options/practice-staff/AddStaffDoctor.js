@@ -22,7 +22,8 @@ class AddStaffDoctor extends React.Component {
         this.state = {
             redirect: false,
             editStaff: null,
-            roles: []
+            roles: [],
+            loading:true
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -52,9 +53,13 @@ class AddStaffDoctor extends React.Component {
         let successFn = function (data) {
             that.setState({
                 editStaff: data,
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         }
         getAPI(interpolate(SINGLE_PRACTICE_STAFF_API, [doctorid]), successFn, errorFn)
 
@@ -134,7 +139,8 @@ class AddStaffDoctor extends React.Component {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 console.log("all data", data);
                 that.setState({
-                    redirect: true
+                    redirect: false
+
                 });
                 that.props.loadData();
             },
@@ -151,7 +157,8 @@ class AddStaffDoctor extends React.Component {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     that.setState({
-                        redirect: true
+                        redirect: true,
+                        loading:false
                     });
                     that.props.loadData();
                 },
@@ -166,7 +173,7 @@ class AddStaffDoctor extends React.Component {
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <Row>
-            <Card>
+            <Card loading={this.state.loading}>
                 <Route exact path='/settings/clinics-staff/:doctorid/edit'
                        render={() => (this.props.match.params.doctorid ?
                            <TestFormLayout defaultValues={defaultValues} title="Edit Doctor/Staff"

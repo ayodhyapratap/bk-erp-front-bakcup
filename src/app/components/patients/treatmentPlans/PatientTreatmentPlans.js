@@ -18,6 +18,7 @@ class PatientTreatmentPlans extends React.Component{
           treatmentPlans:[],
           procedure_category:null,
           incompletedTreatmentPlans:[],
+          loading:true
         }
         this.loadtreatmentPlanss =this.loadtreatmentPlanss.bind(this);
         this.loadProcedureCategory =this.loadProcedureCategory.bind(this);
@@ -36,7 +37,8 @@ class PatientTreatmentPlans extends React.Component{
       let that = this;
       let successFn =function (data){
         that.setState({
-          treatmentPlans:data
+          treatmentPlans:data,
+          loading:false
         })
           data.forEach(function (treatmentplan) {
               if(!treatmentplan.is_completed){
@@ -45,9 +47,13 @@ class PatientTreatmentPlans extends React.Component{
           })
           that.setState({
               incompletedTreatmentPlans:incompleted,
+              loading:false
           })
       }
       let errorFn = function (){
+        that.setState({
+          loading:false
+        })
 
       }
       getAPI(interpolate(TREATMENTPLANS_API,[this.props.match.params.id]), successFn, errorFn)
@@ -56,11 +62,15 @@ class PatientTreatmentPlans extends React.Component{
       let that = this;
       let successFn =function (data){
         that.setState({
-          procedure_category:data
+          procedure_category:data,
+          loading:false
         })
 
       }
       let errorFn = function (){
+        that.setState({
+          loading:false
+        })
 
       }
       getAPI(interpolate(PROCEDURE_CATEGORY,[this.props.active_practiceId]), successFn, errorFn)
@@ -70,6 +80,7 @@ class PatientTreatmentPlans extends React.Component{
     editTreatmentPlanData(record){
         this.setState({
             editTreatmentPlan:record,
+            loading:false
         });
         let id=this.props.match.params.id
         this.props.history.push("/patient/"+id+"/emr/plans/edit")
@@ -137,11 +148,11 @@ class PatientTreatmentPlans extends React.Component{
              render={(route) => <AddorEditPatientTreatmentPlans{...this.state} {...route}/>}/>
       <Route exact path='/patient/:id/emr/plans/edit'
              render={(route) => <AddorEditPatientTreatmentPlans {...this.state} {...route}/>}/>
-      <Card title={ this.state.currentPatient?this.state.currentPatient.name + " TreatmentPlans":"TreatmentPlans"}  extra={<Button.Group>
+      <Card title={ this.state.currentPatient?this.state.currentPatient.user.first_name + " TreatmentPlans":"TreatmentPlans"}  extra={<Button.Group>
           <Link to={"/patient/"+this.props.match.params.id+"/emr/plans/add"}><Button><Icon type="plus"/>Add</Button></Link>
       </Button.Group>}>
 
-      <Table columns={columns}  dataSource={this.state.incompletedTreatmentPlans} />
+      <Table loading={this.state.loading} columns={columns}  dataSource={this.state.incompletedTreatmentPlans} />
 
       </Card>
       </Switch>

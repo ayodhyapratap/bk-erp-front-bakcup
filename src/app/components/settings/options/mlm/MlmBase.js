@@ -14,6 +14,7 @@ export default class MlmBase extends React.Component {
             mlmItems: [],
             productMargin: [],
             active_practiceId: this.props.active_practiceId,
+            loading:true
         }
         console.log("mlm",this.state.active_practiceId);
         this.loadMlmData = this.loadMlmData.bind(this);
@@ -31,10 +32,14 @@ export default class MlmBase extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                mlmItems: data
+                mlmItems: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(ROLE_COMMISION, successFn, errorFn);
@@ -44,11 +49,14 @@ export default class MlmBase extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                staffRoles: data
+                staffRoles: data,
+                loading:false
             })
         }
         let errorFn = function () {
-
+            that.setState({
+                loading:false
+            })
         }
         getAPI(STAFF_ROLES, successFn, errorFn);
     }
@@ -69,7 +77,8 @@ export default class MlmBase extends React.Component {
     editObject(id, record) {
         this.setState({
             editId: id,
-            editRecord: record
+            editRecord: record,
+            loading:false
         }, function () {
             this.props.history.push('/settings/mlm/edit');
         })
@@ -184,7 +193,7 @@ export default class MlmBase extends React.Component {
                                                     </Button.Group>
                                                 </div>
                                             </h4>
-                                            <Table pagination={false} dataSource={datasource[marginType.id]}
+                                            <Table loading={this.state.loading} pagination={false} dataSource={datasource[marginType.id]}
                                                    rowKey="role"
                                                    columns={columns[marginType.id]}
                                                    bordered/>

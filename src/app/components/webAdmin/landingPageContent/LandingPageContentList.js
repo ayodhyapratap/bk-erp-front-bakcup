@@ -16,7 +16,8 @@ export default class LandingPageContentList extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            pageContent:[]
+            pageContent:[],
+            loading:true
         };
         this.loadData=this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -28,10 +29,14 @@ export default class LandingPageContentList extends React.Component{
         let that =this;
         let successFn = function (data) {
             that.setState({
-                pageContent:data
+                pageContent:data,
+                loading:false
             })
         }
         let errorFn = function () {
+          that.setState({
+            loading:false
+          })
 
         }
         getAPI(LANDING_PAGE_CONTENT ,successFn, errorFn);
@@ -55,7 +60,7 @@ export default class LandingPageContentList extends React.Component{
             <Route exact path='/web/landingpagecontent/edit/:id'
                    render={(route) => <AddLandingPageContent {...this.state} {...route}/>}/>
             <Card title="Landing Page Content" extra={<Link to={"/web/landingpagecontent/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <List dataSource={this.state.pageContent}
+                <List loading={this.state.loading} dataSource={this.state.pageContent}
                       itemLayout="vertical"
                       renderItem={item => <List.Item key={item.id}
 

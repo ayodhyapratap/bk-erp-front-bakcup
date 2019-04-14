@@ -20,6 +20,7 @@ class MLMGenerate extends React.Component {
             margin: null,
             editRecord: (this.props.editRecord ? this.props.editRecord : null),
             editId: (this.props.editId ? this.props.editId : null),
+            loading:true
         }
         this.changeRedirect= this.changeRedirect.bind(this);
     }
@@ -38,10 +39,14 @@ class MLMGenerate extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                margin: data
+                margin: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:true
+            })
 
         }
         getAPI(interpolate(SINGLE_PRODUCT_MARGIN, [this.state.editId]), successFn, errorFn);
@@ -51,10 +56,14 @@ class MLMGenerate extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                staffRoles: data
+                staffRoles: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(STAFF_ROLES, successFn, errorFn);
@@ -206,7 +215,7 @@ class MLMGenerate extends React.Component {
                             <InputNumber min={1} max={5} placeholder="Level Count" onChange={this.setLevelCount}/>
                         )}
                     </Form.Item>
-                    <Table bordered={true} pagination={false} columns={columns} dataSource={this.state.staffRoles}/>
+                    <Table loading={this.state.loading} bordered={true} pagination={false} columns={columns} dataSource={this.state.staffRoles}/>
                     <Form.Item>
                         <br/>
                         <Button type="primary" htmlType="submit" className="login-form-button">

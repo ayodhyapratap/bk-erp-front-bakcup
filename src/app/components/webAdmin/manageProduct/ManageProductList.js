@@ -12,7 +12,8 @@ export default class ManageProductList extends React.Component{
 	constructor(props){
 		super(props);
 		this.state= {
-			productData:null
+			productData:null,
+            loading:true
 		};
 		this.loadData = this.loadData.bind(this);
 		this.deleteObject = this.deleteObject.bind(this);
@@ -28,9 +29,13 @@ export default class ManageProductList extends React.Component{
         	console.log("data a",data);
             that.setState({
                 productData: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         console.log("product Data",that.state.product);
@@ -83,7 +88,7 @@ export default class ManageProductList extends React.Component{
 	                   render={(route) => <AddManageProduct loadData={this.loadData} {...this.state} {...route}/>}/>
 	            <Card title="Products" extra={<Link to={"/web/manageproduct/add"}> <Button type="primary"><Icon
 	                type="plus"/> Add</Button></Link>}>
-	                <Table dataSource={this.state.productData} columns={coloumns}/>
+	                <Table loading={this.state.loading} dataSource={this.state.productData} columns={coloumns}/>
 	            </Card>
 	        </Switch>
         </div>

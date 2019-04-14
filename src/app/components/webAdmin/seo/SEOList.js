@@ -10,7 +10,8 @@ export default class SEOList extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            pageSEO:null
+            pageSEO:null,
+            loading:true
         };
         this.loadData=this.loadData.bind(this);
     }
@@ -21,10 +22,14 @@ export default class SEOList extends React.Component{
         let that =this;
         let successFn = function (data) {
             that.setState({
-                pageSEO:data
+                pageSEO:data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(BLOG_PAGE_SEO ,successFn, errorFn);
@@ -62,7 +67,7 @@ export default class SEOList extends React.Component{
                    render={(route) => <AddSEO loadData={this.loadData} {...this.state} {...route}/>}/>
      
                 <Card title="Pages SEO">
-                <Table dataSource={this.state.pageSEO} columns={coloumns}/>
+                <Table loading={this.state.loading} dataSource={this.state.pageSEO} columns={coloumns}/>
             </Card>
         </Switch>
         </div>

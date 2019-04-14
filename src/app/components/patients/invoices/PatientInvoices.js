@@ -20,6 +20,7 @@ class PatientInvoices extends React.Component{
             procedure_category:null,
             taxes_list: null,
             editInvoice: null,
+            loading:true
         }
         this.loadInvoices =this.loadInvoices.bind(this);
         this.loadDrugCatalog =this.loadDrugCatalog.bind(this);
@@ -41,10 +42,14 @@ class PatientInvoices extends React.Component{
         let that = this;
         let successFn =function (data){
             that.setState({
-                invoices:data
+                invoices:data,
+                loading:false
             })
         }
         let errorFn = function (){
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(interpolate(INVOICES_API, [this.props.match.params.id]), successFn, errorFn);
@@ -53,11 +58,15 @@ class PatientInvoices extends React.Component{
         let that = this;
         let successFn =function (data){
             that.setState({
-                drug_catalog:data
+                drug_catalog:data,
+                loading:false
             })
 
         }
         let errorFn = function (){
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(interpolate(DRUG_CATALOG,[this.props.active_practiceId]), successFn, errorFn)
@@ -66,11 +75,15 @@ class PatientInvoices extends React.Component{
         let that = this;
         let successFn =function (data){
             that.setState({
-                procedure_category:data
+                procedure_category:data,
+                loading:false
             })
 
         }
         let errorFn = function (){
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
@@ -82,9 +95,13 @@ class PatientInvoices extends React.Component{
             console.log("get table");
             that.setState({
                 taxes_list:data,
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         };
         getAPI(interpolate( TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
@@ -182,7 +199,7 @@ class PatientInvoices extends React.Component{
                     <Link to={"/patient/"+this.props.match.params.id+"/billing/invoices/add"}><Button><Icon type="plus"/>Add</Button></Link>
                 </Button.Group>}>
 
-                    <Table columns={columns}  dataSource={this.state.invoices} />
+                    <Table loading={this.state.loading} columns={columns}  dataSource={this.state.invoices} />
 
                 </Card>
             </Switch>

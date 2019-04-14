@@ -7,7 +7,8 @@ export default class ActivityList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            activity: null
+            activity: null,
+            loading:true
         }
         this.loadActivityLog = this.loadActivityLog.bind(this)
     }
@@ -20,10 +21,14 @@ export default class ActivityList extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                activity: data
+                activity: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(ACTIVITY_API, successFn, errorFn);
@@ -31,7 +36,7 @@ export default class ActivityList extends React.Component {
 
     render() {
         return <Card title="Activity Log">
-            <Table dataSource={this.state.activity}/>
+            <Table loading={this.state.loading} dataSource={this.state.activity}/>
         </Card>
     }
 }

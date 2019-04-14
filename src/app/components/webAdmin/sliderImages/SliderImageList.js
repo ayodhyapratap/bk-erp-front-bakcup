@@ -10,7 +10,8 @@ export default class SliderImageList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            slider: []
+            slider: [],
+            loading:true
         };
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this)
@@ -25,10 +26,14 @@ export default class SliderImageList extends React.Component {
         let successFn = function (data) {
             console.log(data);
             that.setState({
-                slider: data
+                slider: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(BLOG_SLIDER, successFn, errorFn);
@@ -58,7 +63,7 @@ export default class SliderImageList extends React.Component {
                     <Icon type="plus"/> Add
                 </Button>
             </Link>}>
-                <List itemLayout="vertical" dataSource={this.state.slider} renderItem={item =>
+                <List loading={this.state.loading} itemLayout="vertical" dataSource={this.state.slider} renderItem={item =>
                     <List.Item key={item.id}
                                extra={<img src={item.silder_image}
                                            alt={item.title}

@@ -11,7 +11,8 @@ export default class LabList extends React.Component {
         super(props);
         this.state = {
             active_practiceId: this.props.active_practiceId,
-            lab: null
+            lab: null,
+            loading:true
         };
         this.loadData = this.loadData.bind(this);
     }
@@ -24,10 +25,14 @@ export default class LabList extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                lab: data
+                lab: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(LAB_API, successFn, errorFn);
@@ -39,7 +44,7 @@ export default class LabList extends React.Component {
                    render={(route) => <AddLab {...this.state} {...route}/>}/>
             <Route exact path='/inventory/expenses/lab/:id'
                    render={(route) => <AddLab {...this.state} {...route}/>}/>
-            <Card title="Lab" extra={<Link to={"/inventory/lab/add"}> <Button type="primary"><Icon
+            <Card loading={this.state.loading} title="Lab" extra={<Link to={"/inventory/lab/add"}> <Button type="primary"><Icon
                 type="plus"/> Add</Button></Link>}>
 
             </Card>

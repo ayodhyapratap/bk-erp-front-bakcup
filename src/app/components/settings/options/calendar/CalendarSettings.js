@@ -16,6 +16,7 @@ class CalendarSettings extends React.Component {
     constructor(props) {
         super(props);
         this.state={
+          loading:true
         }
     }
     componentDidMount() {
@@ -25,7 +26,7 @@ class CalendarSettings extends React.Component {
     render() {
         return <div>
           <Row>
-          <Card>
+          <Card >
             <Tabs defaultActiveKey="timings" >
               <TabPane tab={<span><Icon type="schedule" />Calender Timings Settings</span>} key="timings">
                <PracticeTimings {...this.state} {...this.props}/>

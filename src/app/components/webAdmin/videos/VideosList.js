@@ -11,7 +11,8 @@ export default class VideosList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            videos: []
+            videos: [],
+            loading:true
         };
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -25,10 +26,14 @@ export default class VideosList extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                videos: data
+                videos: data,
+                loading:false
             })
         }
         let errorFn = function () {
+          that.setState({
+            loading:false
+          })
 
         }
         getAPI(BLOG_VIDEOS, successFn, errorFn);
@@ -66,7 +71,7 @@ export default class VideosList extends React.Component {
                    render={(route) => <AddVideo {...this.state} {...route} loadData={this.loadData}/>}/>
             <Card title="Videos"
                   extra={<Link to={"/web/videos/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <List dataSource={this.state.videos}
+                <List loading={this.state.loading} dataSource={this.state.videos}
                       itemLayout="vertical"
                       renderItem={item => <List.Item key={item.id}
                                                      actions={[<Link to={"/web/videos/edit/" + item.id}>Edit</Link>,

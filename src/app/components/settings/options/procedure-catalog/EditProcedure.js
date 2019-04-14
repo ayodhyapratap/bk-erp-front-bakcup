@@ -23,6 +23,7 @@ class EditProcedure extends React.Component {
             redirect:false,
             productMargin:[],
             editingProcedureData:this.props.editingProcedureData,
+            loading:true
         }
         this.loadTaxes = this.loadTaxes.bind(this);
         this.loadProcedures = this.loadProcedures.bind(this)
@@ -33,7 +34,8 @@ class EditProcedure extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                productMargin: data
+                productMargin: data,
+                loading:false
             })
         }
         let errorFn = function () {
@@ -68,9 +70,13 @@ class EditProcedure extends React.Component {
             console.log("get table",data);
             that.setState({
                 procedure_category: data,
+                loading:false
             })
         };
         let errorFn = function () {
+            this.setState({
+                loading:false
+            })
         };
 
         getAPI(url, successFn, errorFn);
@@ -161,7 +167,7 @@ class EditProcedure extends React.Component {
          defaultValues = [{"key": "id", "value": this.props.editingProcedureData.id}];
        }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>{that.props.editingProcedureData?<Card>
+        return <div>{that.props.editingProcedureData?<Card loading={that.state.loading}>
                 <TestFormLayout title="Edit Procedure" defaultValues={defaultValues} changeRedirect={this.changeRedirect}  formProp={formProp} fields={formFields}/>
                 {this.state.redirect && <Redirect to='/settings/procedures'/>}
             </Card>: <Redirect to='/settings/procedures'/>}

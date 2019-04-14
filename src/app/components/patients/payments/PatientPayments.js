@@ -15,6 +15,7 @@ class PatientPayments extends React.Component{
         this.state = {
           payments:[],
           active_practiceId:this.props.active_practiceId,
+          loading:true
         }
 
     }
@@ -29,10 +30,14 @@ class PatientPayments extends React.Component{
         let that = this;
         let successFn =function (data){
             that.setState({
-                payments:data
+                payments:data,
+                loading:false
             })
         }
         let errorFn = function (){
+          that.setState({
+            loading:false
+          })
 
         }
         getAPI(interpolate(PATIENT_PAYMENTS_API, [this.props.match.params.id]), successFn, errorFn);
@@ -41,10 +46,14 @@ class PatientPayments extends React.Component{
         let that = this;
         let successFn =function (data){
             that.setState({
-                invoices:data
+                invoices:data,
+                loading:false
             })
         }
         let errorFn = function (){
+          that.setState({
+            loading:false
+          })
 
         }
         getAPI(interpolate(INVOICES_API, [this.props.match.params.id]), successFn, errorFn);
@@ -55,9 +64,13 @@ class PatientPayments extends React.Component{
           console.log("get table");
           that.setState({
             paymentModes:data,
+            loading:false
           })
         };
         let errorFn = function () {
+          that.setState({
+            loading:false
+          })
         };
         getAPI(interpolate( PAYMENT_MODES, [this.props.active_practiceId]), successFn, errorFn);
     }
@@ -135,7 +148,7 @@ class PatientPayments extends React.Component{
                     <Link to={"/patient/"+this.props.match.params.id+"/billing/payments/add"}><Button><Icon type="plus"/>Add</Button></Link>
               </Button.Group>}>
 
-                  <Table columns={columns}  dataSource={this.state.payments} />
+                  <Table loading={this.state.loading} columns={columns}  dataSource={this.state.payments} />
 
               </Card>
           </Switch>

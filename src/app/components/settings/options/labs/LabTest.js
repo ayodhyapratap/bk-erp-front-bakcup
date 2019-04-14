@@ -12,7 +12,8 @@ class LabTest extends React.Component {
         super(props);
         this.state = {
             tests: null,
-            editTest: null
+            editTest: null,
+            loading:true
         };
         this.editLabs = this.editLabs.bind(this);
         this.loadData = this.loadData.bind(this);
@@ -29,9 +30,13 @@ class LabTest extends React.Component {
             console.log("get table");
             that.setState({
                 tests: data,
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         };
         getAPI(interpolate(LABTEST_API, [that.props.active_practiceId]), successFn, errorFn);
     }
@@ -39,7 +44,8 @@ class LabTest extends React.Component {
     editLabs(record) {
         let that = this;
         this.setState({
-            editTest: record
+            editTest: record,
+            loading:false
         }, function () {
             that.props.history.push('/settings/labs/edit');
         })
@@ -107,7 +113,7 @@ class LabTest extends React.Component {
                             </Link>
                         </h2>
                         <Card>
-                            <Table columns={columns} dataSource={this.state.tests}/>
+                            <Table loading={this.state.loading} columns={columns} dataSource={this.state.tests}/>
                         </Card>
                     </div>
                 </Route>

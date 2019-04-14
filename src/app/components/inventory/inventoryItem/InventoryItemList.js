@@ -24,7 +24,8 @@ export default class InventoryItemList extends React.Component {
             active_practiceId: this.props.active_practiceId,
             stockModalVisibility: false,
             itemTypeFilter: "ALL",
-            itemStockFilter: "ALL"
+            itemStockFilter: "ALL",
+            loading:true
         }
         this.loadData = this.loadData.bind(this);
         this.showAddOrConsumeModal = this.showAddOrConsumeModal.bind(this);
@@ -47,6 +48,7 @@ export default class InventoryItemList extends React.Component {
                 let inventoryItemList = [];
                 if (prevState.itemTypeFilter == "ALL") {
                     inventoryItemList = data
+
                 } else {
                     data.forEach(function (item) {
                         if (item.item_type == prevState.itemTypeFilter)
@@ -55,11 +57,16 @@ export default class InventoryItemList extends React.Component {
                 }
                 return {
                     invantoryItems: data,
-                    inventoryItemList: inventoryItemList
+                    inventoryItemList: inventoryItemList,
+                    loading:false
                 }
+               
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         }
         getAPI(INVENTORY_ITEM_API, successFn, errorFn);
     }
@@ -68,10 +75,14 @@ export default class InventoryItemList extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                manufacture_list: data
+                manufacture_list: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         }
         getAPI(MANUFACTURER_API, successFn, errorFn);
     }
@@ -82,9 +93,13 @@ export default class InventoryItemList extends React.Component {
             console.log("get table");
             that.setState({
                 taxes_list: data,
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
@@ -94,10 +109,14 @@ export default class InventoryItemList extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                vendor_list: data
+                vendor_list: data,
+                loading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(VENDOR_API, successFn, errorFn);
@@ -310,7 +329,7 @@ export default class InventoryItemList extends React.Component {
                                 <Radio.Button value={"EXPIRED"}>Expired</Radio.Button>
                             </Radio.Group>
                         </Row>
-                        <CustomizedTable pagination={false} bordered={true} dataSource={this.state.inventoryItemList}
+                        <CustomizedTable loading={this.state.loading} pagination={false} bordered={true} dataSource={this.state.inventoryItemList}
                                          columns={columns}/>
                         <Modal visible={this.state.stockModalVisibility}
                                title={"Stock" + this.state.actionType}
