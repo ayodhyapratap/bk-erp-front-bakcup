@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import moment from "moment";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import BigCalendar from 'react-big-calendar'
-import {Card, Row, Timeline, Col, Popover, Button, List, Divider, Layout, Badge} from "antd"
+import {Card, Row, Timeline, Col, Popover, Button, List, Divider, Layout, Badge, Spin} from "antd"
 import {DOCTORS_ROLE, SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -334,12 +334,14 @@ class App extends Component {
                                         <Button block type="primary"> Walkin Appointment</Button>
                                     </Link>
                                     <Divider>Appointments</Divider>
-                                    <Timeline loading={this.state.loading}>
-                                        {this.state.appointments.length ?
-                                            this.state.appointments.map((apppointment) =>
-                                                <Timeline.Item style={{padding: 0}}><AppointmentCard {...apppointment}/></Timeline.Item>) :
-                                            <p style={{textAlign: 'center'}}>No Data Found</p>}
-                                    </Timeline>
+                                    <Spin spinning={this.state.loading}>
+                                        <Timeline>
+                                            {this.state.appointments.length ?
+                                                this.state.appointments.map((apppointment) =>
+                                                    <Timeline.Item style={{padding: 0}}><AppointmentCard {...apppointment}/></Timeline.Item>) :
+                                                <p style={{textAlign: 'center'}}>No Data Found</p>}
+                                        </Timeline>
+                                    </Spin>
                                     <h3>Today's Apointment <Badge>{counter}</Badge></h3>
                                 </Col>
                             </Row>

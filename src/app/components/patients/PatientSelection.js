@@ -1,5 +1,5 @@
 import React from "react";
-import {Avatar, Input, Card, Col, Icon, Radio, Row, Button} from "antd";
+import {Avatar, Input, Card, Col, Icon, Radio, Row, Button, Spin} from "antd";
 import {getAPI, interpolate, postAPI} from "../../utils/common";
 import {PATIENT_GROUPS, SEARCH_PATIENT, PATIENTS_LIST} from "../../constants/api";
 
@@ -12,7 +12,8 @@ class PatientSelection extends React.Component {
         this.state = {
             patientListData: [],
             patientGroup: [],
-            morePatients: null
+            morePatients: null,
+            loading:true
         }
         this.getPatientListData = this.getPatientListData.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
@@ -28,10 +29,14 @@ class PatientSelection extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                patientGroup: data
+                patientGroup: data,
+                loading:false
             });
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         };
         getAPI(interpolate(PATIENT_GROUPS, [this.props.active_practiceId]), successFn, errorFn);
@@ -43,10 +48,14 @@ class PatientSelection extends React.Component {
             that.setState({
                 patientListData: data.results,
                 morePatients: data.next,
-                currentPage: data.current
+                currentPage: data.current,
+                loading:false
             })
         };
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         };
         getAPI(PATIENTS_LIST, successFn, errorFn);
@@ -125,15 +134,17 @@ class PatientSelection extends React.Component {
                 <Search placeholder="input search text"
                         onChange={value => this.searchPatient(value)}
                         enterButton/>
-
+                <Spin spinning={this.state.loading}>    
                 {this.state.patientListData.length ?
-                    this.state.patientListData.map((patient) => <PatientCard {...patient}
+                    this.state.patientListData.map((patient) => <PatientCard {...patient} 
                                                                              setCurrentPatient={that.props.setCurrentPatient}/>) :
                     <p style={{textAlign: 'center'}}>No Data Found</p>
                 }
+                  </Spin>
                 {this.state.morePatients ?
-                    <div style={{textAlign: 'center'}}><Button type="primary" onClick={this.getMorePatient}>Load
+                    <div style={{textAlign: 'center'}}><Button type="primary" disabled={this.state.loading} onClick={this.getMorePatient}>Load
                         More...</Button></div> : null}
+
             </Col>
         </Row>
     }
@@ -143,7 +154,7 @@ export default PatientSelection;
 
 function PatientCard(patient) {
     return <Col span={8}>
-        <Card onClick={() => patient.setCurrentPatient(patient)} style={{margin: '5px'}}>
+        <Card  onClick={() => patient.setCurrentPatient(patient)} style={{margin: '5px'}}>
             <Meta avatar={(patient.image ? <Avatar src={patient.image}/> :
                 <Avatar style={{backgroundColor: '#87d068'}}>
                     {patient.user.first_name ? patient.user.first_name.charAt(0) :
