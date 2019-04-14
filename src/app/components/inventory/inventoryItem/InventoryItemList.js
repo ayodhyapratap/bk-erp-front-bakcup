@@ -21,7 +21,7 @@ export default class InventoryItemList extends React.Component {
         this.state = {
             invantoryItems: [], //All List
             inventoryItemList: [], // Filtered List
-            active_practiceId: this.props.active_practiceId,
+            // active_practiceId: this.props.active_practiceId,
             stockModalVisibility: false,
             itemTypeFilter: "ALL",
             itemStockFilter: "ALL",
@@ -119,7 +119,7 @@ export default class InventoryItemList extends React.Component {
             })
 
         }
-        getAPI(VENDOR_API, successFn, errorFn);
+        getAPI(interpolate(VENDOR_API, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     deleteObject(value) {
