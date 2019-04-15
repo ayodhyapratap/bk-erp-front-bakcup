@@ -79,6 +79,7 @@ export default class CreateAppointmentForm extends React.Component {
                 patientDetails:data.patient,
                 loading: false,
             });
+            console.log("appointment list",that.state.appointment);
         }
 
         let errorFn = function () {
@@ -123,6 +124,7 @@ export default class CreateAppointmentForm extends React.Component {
             that.setState({
                 procedure_category: data
             })
+            // console.log("category",that.state.procedure_category);
 
         }
         let errorFn = function () {
@@ -211,11 +213,11 @@ export default class CreateAppointmentForm extends React.Component {
                 let errorFn = function () {
 
                 };
-                // if(this.state.appointment){
-                //     putAPI(interpolate(APPOINTMENT_API, [this.state.appointment.id]), formData, successFn, errorFn);
-                // }else {
+                if(this.state.patientDetails){
+                    putAPI(interpolate(APPOINTMENT_API, [this.state.patientDetails.id]), formData, successFn, errorFn);
+                }else {
                     postAPI(ALL_APPOINTMENT_API, formData, successFn, errorFn);
-                // }
+                }
             }
         });
 

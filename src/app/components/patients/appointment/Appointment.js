@@ -161,11 +161,15 @@ class Appointment extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                treatmentNotes: data
+                treatmentNotes: data,
+                loading:false
             })
 
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         getAPI(interpolate(EMR_TREATMENTNOTES, [this.props.active_practiceId]), successFn, errorFn)
