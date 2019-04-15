@@ -68,8 +68,6 @@ export default class AddExpenses extends React.Component {
 
         }
         getAPI(interpolate(SINGLE_EXPENSES_API, [this.props.match.params.id]), successFn, errorFn);
-
-
     }
 
     loadExpensetypes() {

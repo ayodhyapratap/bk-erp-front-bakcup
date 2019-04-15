@@ -30,6 +30,7 @@ export default class ExpensesList extends React.Component {
                 expenses: data,
                 loading:false
             })
+            console.log("log data",that.state.expenses)
         }
         let errorFn = function () {
             that.setState({
@@ -54,7 +55,7 @@ export default class ExpensesList extends React.Component {
         }, {
             title: 'Expense Type',
             key: 'expense_type',
-            dataIndex: 'expense_type',
+            dataIndex: 'expense_type.name',
 
         }, {
             title: 'Vendor',
@@ -63,7 +64,7 @@ export default class ExpensesList extends React.Component {
         }, {
             title: 'Payment Mode',
             key: 'payment_mode',
-            dataIndex: 'payment_mode'
+            dataIndex: 'payment_mode.mode'
         }, {
             title: 'Amount',
             key: 'amount',
