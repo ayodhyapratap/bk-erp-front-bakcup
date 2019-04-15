@@ -3,7 +3,7 @@ import {message} from 'antd';
 import {getAuthToken} from "./auth";
 import CONFIG from "../../app.config";
 import {API_URL} from "../constants/api";
-
+import {IMAGE_BASE_URL} from "../config/connect";
 import {
     ERROR_MESSAGE_404,
     ERROR_MESSAGE_500,
@@ -17,7 +17,9 @@ import {ERROR_MSG_TYPE, INFO_MSG_TYPE, SUCCESS_MSG_TYPE, WARNING_MSG_TYPE} from 
 export const makeURL = function (URL) {
     return API_URL + '/' + URL;
 };
-
+export const makeFileURL = function(URL){
+    return IMAGE_BASE_URL + '/' + URL;
+}
 export const putAPI = function (URL, data, successFn, errorFn, headerConfig = {}) {
     // console.log("sending to " + makeURL(URL), data);
     axios({
