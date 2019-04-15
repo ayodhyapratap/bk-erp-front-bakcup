@@ -1,6 +1,6 @@
 import {Avatar, Button, Card, Icon, List, Popconfirm} from "antd";
 import React from "react";
-import {getAPI, interpolate, patchAPI, postAPI} from "../../../utils/common";
+import {getAPI, interpolate, patchAPI, postAPI, makeFileURL} from "../../../utils/common";
 import {
     BLOG_POST,
     BLOG_VIDEOS,
@@ -69,7 +69,7 @@ export default class LandingPageContentList extends React.Component{
                                                                      onConfirm={() => that.deleteObject(item)} okText="Yes" cancelText="No">
                                                              <a>Delete</a>
                                                          </Popconfirm>]}
-                                                     extra={<img src={item.image} style={{width:'300px'}}/>}>
+                                                     extra={<img src={makeFileURL(item.image)} style={{width:'300px'}}/>}>
                           <List.Item.Meta
                               avatar={<Avatar style={{ backgroundColor: '#87d068' }} >{item.rank}</Avatar>}
                               title={item.title}

@@ -1,6 +1,6 @@
 import {Avatar, Button, Card, Icon, List, Popconfirm} from "antd";
 import React from "react";
-import {getAPI, interpolate, patchAPI} from "../../../utils/common";
+import {getAPI, interpolate, patchAPI, makeFileURL} from "../../../utils/common";
 import {BLOG_PAGE_SEO, BLOG_POST, BLOG_SLIDER, SINGLE_LANDING_PAGE_VIDEO, SINGLE_SLIDER} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddSliderImage from "./AddSliderImage";
@@ -65,7 +65,7 @@ export default class SliderImageList extends React.Component {
             </Link>}>
                 <List loading={this.state.loading} itemLayout="vertical" dataSource={this.state.slider} renderItem={item =>
                     <List.Item key={item.id}
-                               extra={<img src={item.silder_image}
+                               extra={<img src={makeFileURL(item.silder_image)}
                                            alt={item.title}
                                            style={{
                                                maxWidth: '100%',

@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Col, Icon, List, Modal, Radio, Row} from "antd";
-import {getAPI, interpolate} from "../../../utils/common";
+import {getAPI, interpolate,makeFileURL} from "../../../utils/common";
 import {ALL_PATIENT_FILES, EMR_FILETAGS, PATIENT_FILES} from "../../../constants/api";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Form} from "antd/lib/index";
@@ -15,6 +15,8 @@ class PatientFiles extends React.Component {
             showAddModal: false,
             loading:true
         };
+
+        console.log("props",this.props)
         this.loadData = this.loadData.bind(this);
     }
 
@@ -130,7 +132,7 @@ class PatientFiles extends React.Component {
                         dataSource={this.state.files}
                         renderItem={item => (
                             <List.Item style={{textAlign:'center'}}>
-                                <img src={item.file_type} alt="" style={{maxWidth:'100%',height:'100px'}}/>
+                                <img src={makeFileURL(item.file_type)} alt="" style={{maxWidth:'100%',height:'100px'}}/>
                             </List.Item>
                         )}
                     />

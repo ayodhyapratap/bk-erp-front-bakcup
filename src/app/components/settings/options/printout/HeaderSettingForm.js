@@ -38,10 +38,12 @@ class HeaderSettingForm extends React.Component {
       e.preventDefault();
       let that = this;
       let data={};
-      this.props.form.validateFields((err, formData) => {
+      this.props.form.validateFields((err, formData ) => {
         if(!err){
-          let reqData = {type:this.state.type, sub_type:this.state.sub_type, id:this.state.print_setting.id,...formData}
-          // console.log("test",reqData);
+          let image =formData['logo_path'].file.response.image_path;
+        
+          let reqData = {type:this.state.type, sub_type:this.state.sub_type, id:this.state.print_setting.id,...formData, logo_path:image}
+         
           let successFn = function (data) {
               if (data) {
                  console.log(data)
@@ -49,7 +51,8 @@ class HeaderSettingForm extends React.Component {
           };
           let errorFn = function () {
               };
-          console.log("id--",reqData);
+         
+
           postAPI(interpolate(PRACTICE_PRINT_SETTING_API, [this.props.active_practiceId]), reqData, successFn, errorFn);
         }
       });
@@ -92,8 +95,13 @@ class HeaderSettingForm extends React.Component {
     };
 
     const { getFieldDecorator } = this.props.form;
-    const props = {
-      name: 'file',
+    const singleUploadprops = {
+      name: 'image',
+      data: {
+        name: 'hello',
+        // logo_path:file.response.image_path,
+      },
+
       action: makeURL(FILE_UPLOAD_API),
       headers: {
         authorization: 'authorization-text',
@@ -108,6 +116,7 @@ class HeaderSettingForm extends React.Component {
         message.error(`${info.file.name} file upload failed.`);
       }
     },
+
   };
     const headerInclude = HEADER_INCLUDE.map((header_include) =><Radio value={header_include.value}>{header_include.title}</Radio>)
     const logoType = LOGO_TYPE.map((logo_type) =><Radio value={logo_type.value}>{logo_type.value}</Radio>)
@@ -158,11 +167,16 @@ class HeaderSettingForm extends React.Component {
 
         <Form.Item key={'logo_path'} label={(<span>Logo&nbsp;</span>)}>
           <span> 
-            <Upload {...props} >
-              <Button>
-                <Icon type="upload" /> Click to Upload
-              </Button>
-            </Upload>
+          {getFieldDecorator('logo_path')
+            ( <Upload {...singleUploadprops} >
+                <Button>
+                  <Icon type="upload" /> Click to Upload
+                </Button>
+              </Upload>
+            )
+
+
+          }
           </span>
       		<Avatar style={{ backgroundColor: this.state.color}} size="large">
           		{this.state.user}
