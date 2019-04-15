@@ -110,7 +110,7 @@ export const MANAGE_SINGLE_THERAPY ='therapy_content/%s/';
 
 export const EXPENSES_API = "expenses/";
 export const SINGLE_EXPENSES_API = "expenses/%s/";
-export const VENDOR_API = "clinics/1/vendor/";
+export const VENDOR_API = "clinics/%s/vendor/";
 export const SINGLE_VENDOR_API = "vendor/%s/";
 export const ACTIVITY_API = "activity/";
 export const SINGLE_ACTIVITY_API = "activity/%s/";
