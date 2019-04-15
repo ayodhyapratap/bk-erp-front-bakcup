@@ -69,7 +69,7 @@ class App extends Component {
                     doctor_object[drug.id] = drug;
                 })
             }
-            console.log(doctor_object);
+            // console.log(doctor_object);
             that.setState({
                 doctors_object: doctor_object,
             })
@@ -82,7 +82,7 @@ class App extends Component {
     loadCalendarTimings() {
         var that = this;
         let successFn = function (data) {
-            console.log("get table");
+            // console.log("get table");
             that.setState({
                 calendarTimings: data[0],
                 loading:false
@@ -145,7 +145,7 @@ class App extends Component {
             }
         })
 
-        console.log(changedEvent);
+        // console.log(changedEvent);
         let successFn = function (data) {
             displayMessage(SUCCESS_MSG_TYPE, "time changed");
             events.forEach((existingEvent) => {
@@ -164,7 +164,7 @@ class App extends Component {
 
 
     onSelectSlot(value) {
-        console.log(value);
+        // console.log(value);
         let time = moment(value.start).format();
 
         console.log(time);
@@ -179,9 +179,9 @@ class App extends Component {
 
 
     onSelectEvent(event, e) {
-        console.log("wokring");
-        console.log(e);
-        console.log(event);
+        // console.log("wokring");
+        // console.log(e);
+        // console.log(event);
         this.setState({
             visiblePopover: true
         })
@@ -203,8 +203,8 @@ class App extends Component {
                 // newEvents.concat(previousEvent);
                 data.forEach(function (appointment) {
                     let endtime = new moment(appointment.schedule_at).add(appointment.slot, 'minutes')
-                    console.log(moment(appointment.schedule_at).format('LLL'));
-                    console.log(endtime.format('LLL'));
+                    // console.log(moment(appointment.schedule_at).format('LLL'));
+                    // console.log(endtime.format('LLL'));
                     // let event= that.state.events;
                     newEvents.push({
                         start: new Date(moment(appointment.schedule_at)),
@@ -234,11 +234,11 @@ class App extends Component {
     }
 
     eventStyleGetter(event, start, end, isSelected) {
-        console.log(event,this.state.doctors_object);
+        // console.log(event,this.state.doctors_object);
         let doctor = event.doctor;
         let doctor_object = null;
         if (this.state.doctors_object && this.state.doctors_object[doctor] && doctor) {
-            console.log(this.state.doctors_object[doctor]);
+            // console.log(this.state.doctors_object[doctor]);
             doctor_object = this.state.doctors_object[doctor].calender_colour;
         }
         // console.log("doctor object",doctor_object);
@@ -257,7 +257,6 @@ class App extends Component {
     }
 
     onRangeChange = (e) => {
-        console.log(e)
         if (e.start && e.end) {
             this.appointmentList(moment(e.start), moment(e.end));
         } else if (e.length == 1) {
@@ -271,14 +270,16 @@ class App extends Component {
         let startTime;
         let endTime;
         if (this.state.calendarTimings) {
-            console.log(new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss')));
+            // console.log(new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss')));
             startTime = new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss'));
             endTime = new Date(new moment(this.state.calendarTimings.end_time, 'HH:mm:ss'))
+            console.log("start time",startTime);
+
         }
         let counter = 0;
         this.state.events.forEach(function (event) {
             let today = new Date();
-            console.log(today)
+            console.log("today",today)
             if (moment(event.start).format("YYYY-MM-DD") == moment(today).format("YYYY-MM-DD")) {
                 counter++;
             }

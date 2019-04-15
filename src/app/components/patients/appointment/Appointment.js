@@ -21,7 +21,7 @@ import {
     PROCEDURE_CATEGORY,
     PRACTICESTAFF, EMR_TREATMENTNOTES, APPOINTMENT_API
 } from "../../../constants/api";
-import {getAPI, interpolate, displayMessage, deleteAPI} from "../../../utils/common";
+import {getAPI, interpolate, displayMessage, putAPI} from "../../../utils/common";
 import {Redirect, Link} from 'react-router-dom'
 import moment from 'moment';
 
@@ -191,6 +191,7 @@ class Appointment extends React.Component {
 
     deleteAppointment(record) {
         let that = this;
+        let reqData = {...record,is_active:false}
         let successFn = function (data) {
             displayMessage(SUCCESS_MSG_TYPE, data);
             that.componentDidMount();
@@ -198,7 +199,7 @@ class Appointment extends React.Component {
         }
         let errorFn = function () {
         }
-        deleteAPI(interpolate(APPOINTMENT_API, [record.id]), successFn, errorFn);
+        putAPI(interpolate(APPOINTMENT_API, [record.id]), reqData,successFn, errorFn);
     }
 
     render() {

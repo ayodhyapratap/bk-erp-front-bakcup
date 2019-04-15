@@ -22,7 +22,8 @@ import {
     PRACTICESTAFF, PROCEDURE_CATEGORY,
     SEARCH_PATIENT,
     ALL_APPOINTMENT_API,
-    PATIENT_PROFILE
+    PATIENT_PROFILE,
+    APPOINTMENT_PERPRACTICE_API
 
 } from "../../constants/api";
 import {Checkbox,  Radio} from "antd/lib/index";
@@ -48,7 +49,8 @@ export default class CreateAppointmentForm extends React.Component {
             loading: false,
             patientListData: [],
             patientDetails: null,
-            appointmentDetail: null
+            appointmentDetail: null,
+            appointments: null
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.loadDoctors = this.loadDoctors.bind(this);
@@ -56,6 +58,7 @@ export default class CreateAppointmentForm extends React.Component {
         this.loadTreatmentNotes = this.loadTreatmentNotes.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.loadAppointment = this.loadAppointment.bind(this);
     }
 
     componentDidMount() {
@@ -68,6 +71,7 @@ export default class CreateAppointmentForm extends React.Component {
         }
     }
 
+  
     loadAppointment() {
         let that = this;
         this.setState({
@@ -79,7 +83,7 @@ export default class CreateAppointmentForm extends React.Component {
                 patientDetails:data.patient,
                 loading: false,
             });
-            console.log("appointment list",that.state.appointment);
+            console.log("appointment list");
         }
 
         let errorFn = function () {
@@ -213,8 +217,9 @@ export default class CreateAppointmentForm extends React.Component {
                 let errorFn = function () {
 
                 };
-                if(this.state.patientDetails){
-                    putAPI(interpolate(APPOINTMENT_API, [this.state.patientDetails.id]), formData, successFn, errorFn);
+                // console.log("null",this.state.patientDetails );
+                if(this.state.appointment){
+                    putAPI(interpolate(APPOINTMENT_API, [this.state.appointment.id]), formData, successFn, errorFn);
                 }else {
                     postAPI(ALL_APPOINTMENT_API, formData, successFn, errorFn);
                 }
