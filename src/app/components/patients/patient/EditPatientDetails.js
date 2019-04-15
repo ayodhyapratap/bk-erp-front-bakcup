@@ -79,14 +79,14 @@ class EditPatientDetails extends React.Component {
         }, {
             label: "DOB",
             key: "dob",
-            initialValue: this.props.currentPatient ? moment(this.props.currentPatient.dob) : null,
+            initialValue: this.props.currentPatient && this.props.currentPatient.dob ? moment(this.props.currentPatient.dob).format("YYYY-MM-DD") : '',
             format: "YYYY-MM-DD",
             type: DATE_PICKER
         },
             {
                 label: "Anniversary",
                 key: "anniversary",
-                initialValue: this.props.currentPatient ? moment(this.props.currentPatient.anniversary) : null,
+                initialValue: this.props.currentPatient && this.props.currentPatient.anniversary ? moment(this.props.currentPatient.anniversary) : null,
                 format: "YYYY-MM-DD",
                 type: DATE_PICKER
             }, {
@@ -94,11 +94,6 @@ class EditPatientDetails extends React.Component {
                 key: "blood_group",
                 initialValue: this.props.currentPatient ? this.props.currentPatient.blood_group : null,
                 type: INPUT_FIELD
-            }, {
-                label: "Age",
-                key: "age",
-                initialValue: this.props.currentPatient ? this.props.currentPatient.age : null,
-                type: NUMBER_FIELD
             }, {
                 label: "Family Relation",
                 key: "family_relation",
