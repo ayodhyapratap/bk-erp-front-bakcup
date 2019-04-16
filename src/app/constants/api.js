@@ -50,6 +50,7 @@ export const CALENDER_SETTINGS = 'clinics/%s/calender_settings/';
 export const ALL_APPOINTMENT_API = 'appointment/';
 export const APPOINTMENT_API = 'appointment/%s/';
 export const APPOINTMENT_PERPRACTICE_API = 'appointment/?id=%s';
+export const SINGLE_APPOINTMENT_PERPRACTICE_API = 'appointment/?id=%s&patient=%s';
 export const PATIENT_GROUPS = 'patients/group/?id=%s';
 export const VITAL_SIGNS_API = 'patients/vital_sign/?id=%s';
 export const PRESCRIPTIONS_API = 'patients/prescriptions/?id=%s';
