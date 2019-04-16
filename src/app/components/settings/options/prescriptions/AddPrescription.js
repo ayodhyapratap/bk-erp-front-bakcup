@@ -25,6 +25,7 @@ class AddPrescription extends React.Component {
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.setFormParams = this.setFormParams.bind(this);
+        this.loadDrugType = this.loadDrugType.bind(this);
     }
 
     componentWillMount() {
@@ -68,6 +69,12 @@ class AddPrescription extends React.Component {
     }
 
     render() {
+        // const drugTypeOptions = []
+        // if (this.state.drugType) {
+        //     this.state.drugType.forEach(function (drug) {
+        //         drugTypeOptions.push({label: (drug.name), value: drug.id});
+        //     })
+        // }
         let that = this;
         let drugTypeField = (this.state.drugType && this.state.drugType == INPUT_FIELD ?
             {
@@ -83,7 +90,7 @@ class AddPrescription extends React.Component {
                 required: true,
                 initialValue: this.state.editPrescreption ? this.state.editPrescreption.drug_type : null,
                 type: SELECT_FIELD,
-                options: [],
+                options: this.state.drugType.map(drug => ({label: drug.name, value: drug.id})),
                 follow: <a onClick={() => that.setFormParams('drugType', INPUT_FIELD)}>Add New Drug Type</a>
             });
         let drugUnitField = (this.state.drugUnit && this.state.drugUnit == INPUT_FIELD ?
@@ -100,7 +107,7 @@ class AddPrescription extends React.Component {
                 required: true,
                 initialValue: this.state.editPrescreption ? this.state.editPrescreption.unit : null,
                 type: SELECT_FIELD,
-                options: [],
+                options: this.state.drugType.map(drug => ({label: drug.name, value: drug.id})),
                 follow: <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Drug Unit</a>
             });
         const fields = [{

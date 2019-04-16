@@ -195,7 +195,7 @@ class PatientInvoices extends React.Component{
                        render={(route) => <AddInvoicedynamic{...this.state} {...route}/>}/>
                 <Route exact path='/patient/:id/billing/invoices/edit'
                        render={(route) => <AddInvoice {...this.state} {...route}/>}/>
-                <Card title={ this.state.currentPatient?this.state.currentPatient.name + " Invoice":"Invoice"}  extra={<Button.Group>
+                <Card title={ this.state.currentPatient?this.state.currentPatient.user.first_name + " Invoice":"Invoice"}  extra={<Button.Group>
                     <Link to={"/patient/"+this.props.match.params.id+"/billing/invoices/add"}><Button><Icon type="plus"/>Add</Button></Link>
                 </Button.Group>}>
 

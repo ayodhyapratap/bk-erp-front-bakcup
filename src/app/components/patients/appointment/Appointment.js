@@ -3,7 +3,7 @@ import {Route} from "react-router";
 import {} from "react-router-dom";
 
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
-import {Button, Card, Checkbox, Divider, Form, Icon, Row, Table, Tag} from "antd";
+import {Button, Card, Checkbox, Divider, Form, Icon, Row, Table, Tag, Popconfirm} from "antd";
 import {
     CHECKBOX_FIELD,
     DATE_PICKER,
@@ -19,9 +19,9 @@ import {
     PATIENT_PROFILE,
     APPOINTMENT_PERPRACTICE_API,
     PROCEDURE_CATEGORY,
-    PRACTICESTAFF, EMR_TREATMENTNOTES, APPOINTMENT_API
+    PRACTICESTAFF, EMR_TREATMENTNOTES, APPOINTMENT_API,APPOINTMENT_REPORTS
 } from "../../../constants/api";
-import {getAPI, interpolate, displayMessage, putAPI} from "../../../utils/common";
+import {getAPI, interpolate, displayMessage, putAPI, postAPI} from "../../../utils/common";
 import {Redirect, Link} from 'react-router-dom'
 import moment from 'moment';
 
@@ -43,6 +43,8 @@ class Appointment extends React.Component {
         this.changeRedirect = this.changeRedirect.bind(this);
         this.editAppointment = this.editAppointment.bind(this);
         this.deleteAppointment = this.deleteAppointment.bind(this);
+        this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
+        this.loadDoctors = this.loadDoctors.bind(this);
 
     }
 
@@ -50,13 +52,14 @@ class Appointment extends React.Component {
         this.loadProcedureCategory();
         this.loadDoctors();
         this.loadTreatmentNotes();
-        if (this.props.match.params.appointmentid) {
+        if (this.props.match.params.id) {
             this.loadAppointment();
         }
         else {
             this.loadAllAppointments();
         }
 
+        console.log("id",this.props.match.params.id);
     }
 
     loadAllAppointments() {
@@ -71,6 +74,7 @@ class Appointment extends React.Component {
                 loading: false,
 
             });
+            console.log("log",that.state.appointments)
 
         }
 
@@ -81,7 +85,7 @@ class Appointment extends React.Component {
             })
 
         }
-        getAPI(interpolate(APPOINTMENT_PERPRACTICE_API, [this.props.active_practiceId]), successFn, errorFn);
+        getAPI(interpolate(APPOINTMENT_API, [this.props.active_practiceId ]), successFn, errorFn);
 
     }
 
@@ -91,15 +95,15 @@ class Appointment extends React.Component {
             loading: true,
         })
         let successFn = function (data) {
-            let appointmentArray = [];
-            appointmentArray.push(data);
-            console.log(appointmentArray);
+            let appointmentArray = data;
+            // appointmentArray.push(data);
+            console.log(JSON.stringify(appointmentArray));
             that.setState({
-                appointments: appointmentArray,
+                appointments: appointmentArray.data,
                 loading: false,
 
             });
-            console.log("appointment", that.state.appointments);
+            // console.log("appointment", JSON.stringify(that.state.appointments));
 
         }
 
@@ -111,7 +115,7 @@ class Appointment extends React.Component {
 
 
         }
-        getAPI(interpolate(APPOINTMENT_API, [this.props.match.params.appointmentid]), successFn, errorFn);
+        getAPI(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId ,this.props.match.params.id]), successFn, errorFn);
 
     }
 
@@ -191,15 +195,15 @@ class Appointment extends React.Component {
 
     deleteAppointment(record) {
         let that = this;
-        let reqData = {...record,is_active:false}
+        let reqData = {'is_active':false}
+        console.log("regData",reqData);
         let successFn = function (data) {
             displayMessage(SUCCESS_MSG_TYPE, data);
-            that.componentDidMount();
 
         }
         let errorFn = function () {
         }
-        putAPI(interpolate(APPOINTMENT_API, [record.id]), reqData,successFn, errorFn);
+        putAPI(interpolate(APPOINTMENT_API, [record.id]), reqData, successFn, errorFn);
     }
 
     render() {
@@ -268,13 +272,13 @@ class Appointment extends React.Component {
                 <span> {categories[record.category]}</span>
             )
         }, {
-            title: 'notify_via_email',
+            title: 'NotifyByEmail',
             key: 'notify_via_email',
             render: (text, record) => (
                 <Checkbox disabled checked={record.notify_via_email}/>
             )
         }, {
-            title: 'notify_via_sms',
+            title: 'NotifyBySMS',
             key: 'notify_via_sms',
             render: (text, record) => (
                 <Checkbox disabled checked={record.notify_via_sms}/>
@@ -288,7 +292,12 @@ class Appointment extends React.Component {
                     <span>
                 <a onClick={() => this.editAppointment(record)}>Edit</a>
                 <Divider type="vertical"/>
-                <a onClick={() => this.deleteAppointment(record)}>Delete</a>
+                <Popconfirm title="Are you sure delete this item?"
+                            onConfirm={() => this.deleteAppointment(record)} okText="Yes" cancelText="No">
+                    <a>Delete</a>
+                </Popconfirm>
+
+                 
               </span>
                 ),
             }];
