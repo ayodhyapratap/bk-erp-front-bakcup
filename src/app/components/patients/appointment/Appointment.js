@@ -19,7 +19,7 @@ import {
     PATIENT_PROFILE,
     APPOINTMENT_PERPRACTICE_API,
     PROCEDURE_CATEGORY,
-    PRACTICESTAFF, EMR_TREATMENTNOTES, APPOINTMENT_API,APPOINTMENT_REPORTS
+    PRACTICESTAFF, EMR_TREATMENTNOTES, APPOINTMENT_API,APPOINTMENT_REPORTS,SINGLE_APPOINTMENT_PERPRACTICE_API
 } from "../../../constants/api";
 import {getAPI, interpolate, displayMessage, putAPI, postAPI} from "../../../utils/common";
 import {Redirect, Link} from 'react-router-dom'
@@ -216,9 +216,10 @@ class Appointment extends React.Component {
         const doctors = []
         if (this.state.practice_doctors.length) {
             this.state.practice_doctors.forEach(function (doctor) {
-                doctors[doctor.id] = doctor.name
+                doctors[doctor.id] = doctor.user.first_name
             })
         }
+        console.log("doctor",doctors);
         const treatmentNotes = [];
         if (this.state.treatmentNotes) {
             this.state.treatmentNotes.forEach(function (treatmentNote) {

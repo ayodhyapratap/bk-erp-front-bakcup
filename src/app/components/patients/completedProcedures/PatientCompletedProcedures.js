@@ -66,6 +66,7 @@ class PatientCompletedProcedures extends React.Component {
                 completedTreatmentPlans: completed,
                 loading:false
             })
+                console.log("woow",that.state.completedTreatmentPlans);
         }
         let errorFn = function () {
             that.setState({
@@ -105,12 +106,11 @@ class PatientCompletedProcedures extends React.Component {
     render() {
         const procedures = {}
         if (this.state.procedure_category) {
-
             this.state.procedure_category.forEach(function (procedure) {
                 procedures[procedure.id] = (procedure.name)
             })
+
         }
-        console.log(this.state.procedure_category);
 
         const columns = [{
             title: 'Time',
@@ -125,7 +125,7 @@ class PatientCompletedProcedures extends React.Component {
             )
         }, {
             title: 'Quantity',
-            dataIndex: 'qunatity',
+            dataIndex: 'quantity',
             key: 'quantity',
         }, {
             title: 'Cost Per  Unit',
@@ -170,7 +170,7 @@ class PatientCompletedProcedures extends React.Component {
                 <Route exact path='/patient/:id/emr/plans/edit'
                        render={(route) => <AddorEditPatientTreatmentPlans {...this.state} {...route}/>}/>
                 <Card
-                    title={this.state.currentPatient ? this.state.currentPatient.name + " Completed Procedures" : "Completed Procedures "}
+                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Completed Procedures" : "Completed Procedures "}
                     extra={<Button.Group>
                         <Link to={"/patient/" + this.props.match.params.id + "/emr/plans/add"}><Button><Icon
                             type="plus"/>Add</Button></Link>

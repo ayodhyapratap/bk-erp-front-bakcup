@@ -50,7 +50,6 @@ export default class CreateAppointmentForm extends React.Component {
             patientListData: [],
             patientDetails: null,
             appointmentDetail: null,
-            appointments: null
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.loadDoctors = this.loadDoctors.bind(this);
@@ -286,7 +285,7 @@ export default class CreateAppointmentForm extends React.Component {
                 treatmentNotesOption.push({label:drug.name , value: drug.id});
             })
         }
-        console.log("doctor list",JSON.stringify(this.state.treatmentNotes));
+        // console.log("doctor list",JSON.stringify(this.state.treatmentNotes));
         const categoryOptions = [];
         if (this.state.appointmentCategories) {
             this.state.appointmentCategories.forEach(function (category) {

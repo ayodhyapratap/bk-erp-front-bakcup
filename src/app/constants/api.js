@@ -54,7 +54,8 @@ export const SINGLE_APPOINTMENT_PERPRACTICE_API = 'appointment/?id=%s&patient=%s
 export const PATIENT_GROUPS = 'patients/group/?id=%s';
 export const VITAL_SIGNS_API = 'patients/vital_sign/?id=%s';
 export const PRESCRIPTIONS_API = 'patients/prescriptions/?id=%s';
-export const TREATMENTPLANS_API = 'patients/procedure/?id=%s';
+// export const TREATMENTPLANS_API = 'patients/procedure/?id=%s';
+export const TREATMENTPLANS_API = 'patients/procedure/?id=%s&complete=true';
 export const ALL_PRESCRIPTIONS_API = 'patients/prescriptions/%s/';
 export const INVOICES_API = 'patients/invoices/?id=%s';
 export const PATIENT_CLINIC_NOTES_API = 'patients/clinic_notes/?id=%s';
@@ -70,7 +71,7 @@ export const EXTRA_DATA = 'clinics/extra_data';
 
 //reports
 
-export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/?%s'
+export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/?patient=%s'
 export const EXPENSE_REPORT = 'clinics/%s/expense_report/?%s'
 export const INVOICE_REPORTS = 'clinics/%s/invoice_report/?%s'
 export const PATIENTS_REPORTS = 'clinics/%s/patients_report/?%s'
