@@ -97,7 +97,7 @@ class TaxCatalog extends React.Component {
             key: 'action',
             render: (text, record) => (
                 <span>
-              <a onClick={() => this.editTax(record)}>  Edit</a>
+              {/*<a onClick={() => this.editTax(record)}>  Edit</a>*/}
                 <Divider type="vertical"/>
                     <Popconfirm title="Are you sure delete this?"
                                 onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">

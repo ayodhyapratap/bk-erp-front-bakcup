@@ -25,7 +25,7 @@ class AddorEditPatientPrescriptions extends React.Component {
             redirect: false,
             vitalSign: null,
             drug_catalog: this.props.drug_catalog ? this.props.drug_catalog : null,
-            editPrescription:this.props.editPrescription ? this.props.editPrescription : null,
+            editPrescription: this.props.editPrescription ? this.props.editPrescription : null,
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
@@ -48,7 +48,6 @@ class AddorEditPatientPrescriptions extends React.Component {
             getAPI(interpolate(DRUG_CATALOG, [this.props.active_practiceId]), successFn, errorFn)
         }
     }
-
 
 
     changeRedirect() {
@@ -76,10 +75,10 @@ class AddorEditPatientPrescriptions extends React.Component {
             options: drugOption
         }, {
             label: "Quantity",
-            key: "qunatity",
+            key: "quantity",
             required: true,
-            initialValue: this.state.editPrescription ? this.state.editPrescription.qunatity : null,
-            type: INPUT_FIELD
+            initialValue: this.state.editPrescription ? this.state.editPrescription.quantity : null,
+            type: NUMBER_FIELD
         }, {
             label: "cost",
             key: "cost",
@@ -89,6 +88,7 @@ class AddorEditPatientPrescriptions extends React.Component {
             label: "total",
             key: "total",
             initialValue: this.state.editPrescription ? this.state.editPrescription.total : null,
+            disabled:true,
             type: INPUT_FIELD,
         }, {
             label: "active",
@@ -117,14 +117,18 @@ class AddorEditPatientPrescriptions extends React.Component {
         }
 
 
-        let defaultValues=[]
-        if(this.state.editPrescription){
-            defaultValues = [{"key":"id", "value":this.state.editPrescription.id}];}
+        let defaultValues = []
+        if (this.state.editPrescription) {
+            defaultValues = [{"key": "id", "value": this.state.editPrescription.id}];
+        }
 
-            return <Row>
+        return <Row>
             <Card>
                 <Route exact path='/patient/:id/emr/prescriptions/edit'
-                           render={() => (this.state.editPrescription?<TestFormLayout defaultValues={defaultValues} title="Edit Invoive" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>: <Redirect to={'/patient/' + this.props.match.params.id + '/emr/prescriptions'} />)}/>
+                       render={() => (this.state.editPrescription ?
+                           <TestFormLayout defaultValues={defaultValues} title="Edit Invoive"
+                                           changeRedirect={this.changeRedirect} formProp={formProp} fields={fields}/> :
+                           <Redirect to={'/patient/' + this.props.match.params.id + '/emr/prescriptions'}/>)}/>
 
                 <Route exact path='/patient/:id/emr/prescriptions/add'
                        render={() => <TestFormLayout title="Add Prescriptions"
@@ -132,7 +136,7 @@ class AddorEditPatientPrescriptions extends React.Component {
                                                      formProp={formProp}
                                                      fields={fields}/>}/>
             </Card>
-                {this.state.redirect && <Redirect to={'/patient/' + this.props.match.params.id + '/emr/prescriptions'}/>}
+            {this.state.redirect && <Redirect to={'/patient/' + this.props.match.params.id + '/emr/prescriptions'}/>}
         </Row>
 
     }

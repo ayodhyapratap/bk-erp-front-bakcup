@@ -6,6 +6,7 @@ import {getAPI,interpolate, displayMessage} from "../../../utils/common";
 import  moment from "moment";
 import AddorEditPatientTreatmentPlans from './AddorEditPatientTreatmentPlans';
 import {Redirect,Switch, Route} from "react-router";
+import AddorEditDynamicTreatmentPlans from "./AddorEditDynamicTreatmentPlans";
 
 
 class PatientTreatmentPlans extends React.Component{
@@ -111,7 +112,7 @@ class PatientTreatmentPlans extends React.Component{
             )
           }, {
             title: 'Quantity',
-            dataIndex: 'qunatity',
+            dataIndex: 'quantity',
             key: 'quantity',
           }, {
             title: 'Cost per  Unit',
@@ -145,7 +146,7 @@ class PatientTreatmentPlans extends React.Component{
       if(this.props.match.params.id){
       return <div><Switch>
       <Route exact path='/patient/:id/emr/plans/add'
-             render={(route) => <AddorEditPatientTreatmentPlans{...this.state} {...route}/>}/>
+             render={(route) => <AddorEditDynamicTreatmentPlans {...this.state} {...route}/>}/>
       <Route exact path='/patient/:id/emr/plans/edit'
              render={(route) => <AddorEditPatientTreatmentPlans {...this.state} {...route}/>}/>
       <Card title={ this.state.currentPatient?this.state.currentPatient.user.first_name + " TreatmentPlans":"TreatmentPlans"}  extra={<Button.Group>

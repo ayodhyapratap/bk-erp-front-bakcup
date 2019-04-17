@@ -11,9 +11,18 @@ import {
     Tabs,
     InputNumber, Select, DatePicker,
 } from "antd";
-import {displayMessage,interpolate, getAPI, postAPI} from "../../../utils/common";
+import {displayMessage, interpolate, getAPI, postAPI} from "../../../utils/common";
 
-import {INVOICE_ITEM_TYPE, PROCEDURES,DRUG, PRESCRIPTIONS, INVENTORY, EQUIPMENT, ADD_STOCK, CONSUME_STOCK} from "../../../constants/hardData";
+import {
+    INVOICE_ITEM_TYPE,
+    PROCEDURES,
+    DRUG,
+    PRESCRIPTIONS,
+    INVENTORY,
+    EQUIPMENT,
+    ADD_STOCK,
+    CONSUME_STOCK
+} from "../../../constants/hardData";
 import {INVENTORY_ITEM_API, BULK_STOCK_ENTRY, TAXES, DRUG_CATALOG, PROCEDURE_CATEGORY} from "../../../constants/api";
 import moment from "moment";
 
@@ -33,7 +42,7 @@ class Addinvoicedynamic extends React.Component {
             classType: props.type,
             tableFormValues: [],
             maxQuantityforConsume: {},
-            items:{},
+            items: {},
         }
 
     }
@@ -54,11 +63,11 @@ class Addinvoicedynamic extends React.Component {
             data.forEach(function (item) {
                 if (item.item_type == DRUG) {
                     drugItems.push(item);
-                  }
+                }
             });
-            let items=that.state.items;
+            let items = that.state.items;
             console.log(items);
-            items[INVENTORY]=drugItems;
+            items[INVENTORY] = drugItems;
             that.setState({
                 items: items,
             })
@@ -71,9 +80,9 @@ class Addinvoicedynamic extends React.Component {
     loadProcedures() {
         var that = this;
         let successFn = function (data) {
-            let items=that.state.items;
+            let items = that.state.items;
             console.log(items);
-            items[PROCEDURES]=data;
+            items[PROCEDURES] = data;
             that.setState({
                 items: items,
             })
@@ -83,15 +92,16 @@ class Addinvoicedynamic extends React.Component {
 
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
     }
+
     loadPrescriptions() {
         var that = this;
         let successFn = function (data) {
-          let items=that.state.items;
-          console.log(items);
-          items[PRESCRIPTIONS]=data;
-          that.setState({
-              items: items,
-          })
+            let items = that.state.items;
+            console.log(items);
+            items[PRESCRIPTIONS] = data;
+            that.setState({
+                items: items,
+            })
         };
         let errorFn = function () {
         };
@@ -145,39 +155,40 @@ class Addinvoicedynamic extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                let reqData = [];
+                let reqData = {};
                 that.state.tableFormValues.forEach(function (item) {
-                    let itemObject = {
-                        inventory_item: item.id,
-                    };
-
-
-                    reqData.push(itemObject);
+                    item.quantity = values.quantity[item._id];
+                    item.taxes = values.taxes[item._id];
+                    item.unit_cost = values.unit_cost[item._id];
+                    item.discount = values.discount[item._id];
+                    if (reqData[item.item_type])
+                        reqData[item.item_type].push(item);
+                    else
+                        reqData[item.item_type] = [item];
                 });
                 console.log(reqData);
                 let successFn = function (data) {
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
-                    let url='/patient/' + this.props.match.params.id + '/billing/invoices';
+                    let url = '/patient/' + this.props.match.params.id + '/billing/invoices';
                     that.props.history.push(url);
                 }
                 let errorFn = function () {
 
                 }
-                postAPI("ll", reqData, successFn, errorFn);
+                // postAPI("ll", reqData, successFn, errorFn);
             }
         });
     }
 
 
-
     render() {
-      const taxesOption = []
-      if (this.state.taxes_list) {
-          this.state.taxes_list.forEach(function (tax) {
-              taxesOption.push( <Select.Option value={tax.id}>{tax.name}</Select.Option>);
-          })
-      }
+        const taxesOption = []
+        if (this.state.taxes_list) {
+            this.state.taxes_list.forEach(function (tax) {
+                taxesOption.push(<Select.Option value={tax.id}>{tax.name}</Select.Option>);
+            })
+        }
         let that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const formItemLayout = {
@@ -204,73 +215,86 @@ class Addinvoicedynamic extends React.Component {
         let consumeRow = [{
             title: 'Item Name',
             key: 'item_name',
-            dataIndex: 'name'
+            dataIndex: 'name',
+            render:(name,record)=> <Form.Item
+                key={`name[${record._id}]`}
+                {...formItemLayout}>
+                {getFieldDecorator(`quantity[${record._id}]`, {
+                    validateTrigger: ['onChange', 'onBlur'],
+                    rules: [{
+                        required: true,
+                        message: "This field is required.",
+                    }],
+                })(
+                    <InputNumber min={0} placeholder="quantity" size={'small'}/>
+                )}
+            </Form.Item>
         }];
-            consumeRow = consumeRow.concat([{
-                title: 'Unit',
-                key: 'unit',
-                dataIndex: 'unit',
-                render: (item, record) => <Form.Item
-                    key={`quantity[${record._id}]`}
-                    {...formItemLayout}>
-                    {getFieldDecorator(`Unit[${record._id}]`, {
-                        validateTrigger: ['onChange', 'onBlur'],
-                        rules: [{
-                            required: true,
-                            message: "This field is required.",
-                        }],
-                    })(
-                        <InputNumber min={0} placeholder="quantity"/>
-                    )}
-                </Form.Item>
-            },{
-                title: 'discount %',
-                key: 'discount',
-                dataIndex: 'discount',
-                render: (item, record) => <Form.Item
-                    key={`discount[${record._id}]`}
-                    {...formItemLayout}>
-                    {getFieldDecorator(`discount[${record._id}]`, {
-                        rules: [{
-                            required: true,
-                            message: "This field is required.",
-                        }],
-                    })(
-                      <InputNumber min={0} max={100} placeholder="discount"/>
-                    )}
-                </Form.Item>
-            }, {
-                title: 'Unit Cost',
-                key: 'unit_cost',
-                dataIndex: 'unit_cost',
-                render: (item, record) => <Form.Item
-                    key={`unit_cost[${record._id}]`}
-                    {...formItemLayout}>
-                    {getFieldDecorator(`unit_cost[${record._id}]`, {
-                        // validateTrigger: ['onChange', 'onBlur'],
-                        rules: [{
-                            required: true,
-                            message: "This field is required.",
-                        }],
-                    })(
-                        <InputNumber placeholder="Unit Cost"/>
-                    )}
-                </Form.Item>
-            }, {
-                title: 'Taxes',
-                key: 'taxes',
-                dataIndex: 'taxes',
-                render: (item, record) => <Form.Item
-                    key={`batch[${record._id}]`}
-                    {...formItemLayout}>
-                    {getFieldDecorator(`taxes[${record._id}]`, {
-                        validateTrigger: ['onChange', 'onBlur'],
+        consumeRow = consumeRow.concat([{
+            title: 'Unit',
+            key: 'unit',
+            dataIndex: 'unit',
+            render: (item, record) => <Form.Item
+                key={`quantity[${record._id}]`}
+                {...formItemLayout}>
+                {getFieldDecorator(`quantity[${record._id}]`, {
+                    validateTrigger: ['onChange', 'onBlur'],
+                    rules: [{
+                        required: true,
+                        message: "This field is required.",
+                    }],
+                })(
+                    <InputNumber min={0} placeholder="quantity" size={'small'}/>
+                )}
+            </Form.Item>
+        }, {
+            title: 'discount %',
+            key: 'discount',
+            dataIndex: 'discount',
+            render: (item, record) => <Form.Item
+                key={`discount[${record._id}]`}
+                {...formItemLayout}>
+                {getFieldDecorator(`discount[${record._id}]`, {
+                    rules: [{
+                        required: true,
+                        message: "This field is required.",
+                    }],
+                })(
+                    <InputNumber min={0} max={100} placeholder="discount" size={'small'}/>
+                )}
+            </Form.Item>
+        }, {
+            title: 'Unit Cost',
+            key: 'unit_cost',
+            dataIndex: 'unit_cost',
+            render: (item, record) => <Form.Item
+                key={`unit_cost[${record._id}]`}
+                {...formItemLayout}>
+                {getFieldDecorator(`unit_cost[${record._id}]`, {
+                    // validateTrigger: ['onChange', 'onBlur'],
+                    rules: [{
+                        required: true,
+                        message: "This field is required.",
+                    }],
+                })(
+                    <InputNumber placeholder="Unit Cost" size={'small'}/>
+                )}
+            </Form.Item>
+        }, {
+            title: 'Taxes',
+            key: 'taxes',
+            dataIndex: 'taxes',
+            render: (item, record) => <Form.Item
+                key={`taxes[${record._id}]`}
+                {...formItemLayout}>
+                {getFieldDecorator(`taxes[${record._id}]`, {
+                    validateTrigger: ['onChange', 'onBlur'],
 
-                    })(
-                        <Select placeholder="Batch Number">{taxesOption}</Select>
-                    )}
-                </Form.Item>
-            }, ]);
+                })(
+                    <Select placeholder="Batch Number" size={'small'}>{taxesOption}</Select>
+                )}
+            </Form.Item>
+        },]);
 
         consumeRow = consumeRow.concat([{
             title: 'Action',
@@ -291,9 +315,10 @@ class Addinvoicedynamic extends React.Component {
                                           <List.Item>
                                               <List.Item.Meta
                                                   title={item.name}
-                                                  />
+                                              />
                                               <Button type="primary" size="small" shape="circle"
-                                                      onClick={() => this.add(item)} icon={"arrow-right"}/>
+                                                      onClick={() => this.add({...item, item_type: itemType.value})}
+                                                      icon={"arrow-right"}/>
                                           </List.Item>)}/>
                             </TabPane>)}
                         </Tabs>
