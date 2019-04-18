@@ -142,7 +142,7 @@ class AddorEditPatientTreatmentPlans extends React.Component {
             beforeSend: function (values){
               return
             },
-            action: interpolate(TREATMENTPLANS_API, [this.props.match.params.id]),
+            action: interpolate(TREATMENTPLANS_API, [this.props.match.params.id,true]),
             method: "post",
         }
 

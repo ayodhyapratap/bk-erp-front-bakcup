@@ -1,7 +1,7 @@
 import React from "react";
-import {Button, Card, Checkbox, Divider, Icon, Table} from "antd";
-import {getAPI, interpolate} from "../../../utils/common";
-import {PROCEDURE_CATEGORY, PRODUCT_MARGIN, TREATMENTPLANS_API} from "../../../constants/api";
+import {Button, Card, Checkbox, Divider, Icon, Table, Popconfirm} from "antd";
+import {getAPI, interpolate, putAPI} from "../../../utils/common";
+import {PROCEDURE_CATEGORY, PRODUCT_MARGIN, TREATMENTPLANS_API, SINGLE_REATMENTPLANS_API} from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
 import AddorEditPatientTreatmentPlans from "../treatmentPlans/AddorEditPatientTreatmentPlans";
@@ -104,6 +104,19 @@ class PatientCompletedProcedures extends React.Component {
 
     }
 
+    deleteTreatmentPlans(record) {
+      let that = this;
+      let reqData = record;
+      reqData.is_active = false;
+      let successFn = function (data) {
+        that.loadData();
+      }
+      let errorFn = function () {
+
+      };
+      putAPI(interpolate(SINGLE_REATMENTPLANS_API, [record.id]), reqData, successFn, errorFn);
+    }
+
     render() {
         const procedures = {}
         if (this.state.procedure_category) {
@@ -164,7 +177,10 @@ class PatientCompletedProcedures extends React.Component {
                <a onClick={() => this.editTreatmentPlanData(record)}>Edit</a>
 
                 <Divider type="vertical"/>
-                <a href="javascript:;">Delete</a>
+               <Popconfirm title="Are you sure delete this item?"
+                            onConfirm={() => this.deleteTreatmentPlans(record)} okText="Yes" cancelText="No">
+                    <a>Delete</a>
+                </Popconfirm>
               </span>
             ),
         }];

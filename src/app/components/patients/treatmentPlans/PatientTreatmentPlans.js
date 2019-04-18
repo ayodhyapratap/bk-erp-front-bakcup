@@ -1,7 +1,7 @@
 import React from "react";
 import {Avatar, Input, Checkbox, Divider, Table, Col,Button, Form,  Row, Card, Icon, Skeleton, Popconfirm} from "antd";
 import {Link} from "react-router-dom";
-import {All_TREATMENTPLANS_API,PROCEDURE_CATEGORY, PATIENT_PROFILE, SINGLE_D_TREATMENTPLANS_API, TREATMENTPLANS_API} from "../../../constants/api";
+import {PROCEDURE_CATEGORY, PATIENT_PROFILE, SINGLE_REATMENTPLANS_API, TREATMENTPLANS_API} from "../../../constants/api";
 import {getAPI,interpolate, displayMessage, putAPI} from "../../../utils/common";
 import  moment from "moment";
 import AddorEditPatientTreatmentPlans from './AddorEditPatientTreatmentPlans';
@@ -19,12 +19,13 @@ class PatientTreatmentPlans extends React.Component {
             treatmentPlans: [],
             procedure_category: null,
             incompletedTreatmentPlans: [],
-            loading: true
+            loading: true,
+            selectedTreatments:{}
         }
         this.loadtreatmentPlanss = this.loadtreatmentPlanss.bind(this);
         this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
         this.editTreatmentPlanData = this.editTreatmentPlanData.bind(this);
-
+this.submitCompleteTreatment = this.submitCompleteTreatment.bind(this);
     }
 
     componentDidMount() {
@@ -59,7 +60,7 @@ class PatientTreatmentPlans extends React.Component {
         })
 
       }
-      getAPI(interpolate(All_TREATMENTPLANS_API,[this.props.match.params.id]), successFn, errorFn)
+      getAPI(interpolate(TREATMENTPLANS_API,[this.props.match.params.id,null]), successFn, errorFn)
     }
 
     loadtreatmentPlanss() {
@@ -79,6 +80,8 @@ class PatientTreatmentPlans extends React.Component {
                 incompletedTreatmentPlans: incompleted,
                 loading: false
             })
+
+            
         }
         let errorFn = function () {
             that.setState({
@@ -129,11 +132,32 @@ class PatientTreatmentPlans extends React.Component {
       let errorFn = function () {
 
       };
-      putAPI(interpolate(SINGLE_D_TREATMENTPLANS_API, [record.id]), reqData, successFn, errorFn);
+      putAPI(interpolate(SINGLE_REATMENTPLANS_API, [record.id]), reqData, successFn, errorFn);
     }
 
+    treatmentCompleteToggle(id,option){
+        this.setState(function(prevState){
+            return {selectedTreatments:{...prevState.selectedTreatments,[id]:!!option}}
+        });
+    }
+    submitCompleteTreatment(){
+        let selectedTreatments = this.state.selectedTreatments;
+        let treatmentKeys = Object.keys(selectedTreatments);
+        let reqTreatmentsArray = [];
+        treatmentKeys.forEach(function(item){
+            let treatmentObj = {id:item,is_completed:selectedTreatments[item]};
+            reqTreatmentsArray.push(treatmentObj);
+        });
+        let successFn = function(data){
+
+        }
+        let errorFn=function(){
+
+        }
+        putAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id]),reqTreatmentsArray ,successFn, errorFn)
+    }
     render(){
-      console.log(this.state.incompletedTreatmentPlans);
+
       const procedures={}
         if(this.state.procedure_category){
             this.state.procedure_category.forEach(function (procedure) {
@@ -145,8 +169,8 @@ class PatientTreatmentPlans extends React.Component {
         const columns = [{
             title: '',
             key: 'is_completed',
-            render: (text, record) => (record.is_completed?<Icon type="check-circle" theme="twoTone" twoToneColor={"#0f0"}/>:
-                <Checkbox />
+            render: (text, record) => (record.is_completed?<Icon type="check-circle" theme="twoTone" twoToneColor="#0f0" />:
+                <Checkbox onChange={(e)=>this.treatmentCompleteToggle(record.id,e.target.checked)} value={this.state.selectedTreatments[record.id]}/>
             )
         }, {
             title: 'Time',
@@ -167,12 +191,6 @@ class PatientTreatmentPlans extends React.Component {
             title: 'Cost per  Unit',
             dataIndex: 'cost',
             key: 'cost',
-        }, {
-            title: 'Active',
-            key: 'is_active',
-            render: (text, record) => (
-                <Checkbox disabled checked={record.is_active}/>
-            )
         }, {
             title: 'Action',
             key: 'action',
@@ -198,12 +216,15 @@ class PatientTreatmentPlans extends React.Component {
                 <Card
                     title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " TreatmentPlans" : "TreatmentPlans"}
                     extra={<Button.Group>
-                        <Link to={"/patient/" + this.props.match.params.id + "/emr/plans/add"}><Button><Icon
-                            type="plus"/>Add</Button></Link>
-                    </Button.Group>}>
+                        <Button  onClick={this.submitCompleteTreatment}> <Icon type="save"/>Save</Button>
+                        <Link to={"/patient/" + this.props.match.params.id + "/emr/plans/add"}>
+                            <Button><Icon type="plus"/>Add</Button>
+                        </Link>
+                    </Button.Group>
+                    }>
 
                     <Table loading={this.state.loading} columns={columns}
-                           dataSource={this.state.incompletedTreatmentPlans}/>
+                           dataSource={this.state.treatmentPlans}/>
 
                 </Card>
             </Switch>
