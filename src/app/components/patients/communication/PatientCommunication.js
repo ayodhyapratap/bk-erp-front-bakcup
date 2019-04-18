@@ -11,15 +11,7 @@ class PatientCommunication extends React.Component{
         };
     }
     render(){
-	        return <Card title="Patient Communication" extra={<Link to="/patient/communication">
-            			<Button type="primary"> <Icon type="save"/>Save Communication Setting</Button>
-        				</Link>}>
-                        <div>
-        				    <PatientCommunicationSetting   {...this.state} {...this.props} />
-                        </div>
-        			</Card>
-
-	       
+	        return <PatientCommunicationSetting   {...this.state} {...this.props} />   
     }
 }
 export default PatientCommunication;

@@ -3,7 +3,7 @@ import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Button, List, Card, Form, Icon, Row, Table, Divider, Col, Radio} from "antd";
 import {SINGLE_CHECKBOX_FIELD} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
+import {getAPI, displayMessage, interpolate, putAPI} from "../../../utils/common";
 import {PATIENT_COMMUNICATION_HISTORY_API, PATIENT_PROFILE} from "../../../constants/api";
 import {SMS_ENABLE, BIRTHDAY_SMS_ENABLE, EMAIL_ENABLE} from "../../../constants/hardData";
 import moment from "moment";
@@ -23,14 +23,12 @@ class PatientCommunicationSetting extends React.Component {
       if(this.props.currentPatient){
         this.loadCommunication();
         this.loadProfile();
-       
       }
     }
 
     loadProfile() {
       let that = this;
       let successFn = function (data) {
-        console.log("userdata",JSON.stringify(data));
           that.setState({
               patientProfile: data,
               loading:false
@@ -72,6 +70,25 @@ class PatientCommunicationSetting extends React.Component {
         [name]:value,
       });
     }
+
+    handleSubmit = (e) => {
+      let that = this;
+      e.preventDefault();
+      this.props.form.validateFields((err, values) => {
+          if (!err) {
+              console.log('Received values of form: ', values);
+              let reqData = {...values};
+             
+              let successFn = function (data) {
+              }
+              let errorFn = function () {
+
+              }
+              putAPI(interpolate(PATIENT_PROFILE, [this.props.currentPatient.id]), reqData, successFn, errorFn);
+          }
+      });
+    }
+
 
     render() {
             const { getFieldDecorator } = this.props.form;
@@ -115,49 +132,49 @@ class PatientCommunicationSetting extends React.Component {
         const sms_enabled = SMS_ENABLE.map((isSMS) =><Radio value={isSMS.value}>{isSMS.title}</Radio>)
         const email_enabled = EMAIL_ENABLE.map((isEmail) =><Radio value={isEmail.value}>{isEmail.title}</Radio>)
         const bithday_sms_enabled = BIRTHDAY_SMS_ENABLE.map((isBirth_SMS) =><Radio value={isBirth_SMS.value}>{isBirth_SMS.title}</Radio>)
-        return (<Form >
-                    <Form.Item {...formItemLayout} key={'sms_enable'}> <label><span className="ant-form-text">{'Enable SMS the patient'} : </span>
-                      {getFieldDecorator('sms_enable',{initialValue:this.state.patientProfile? this.state.patientProfile.sms_enable:null})
-                        (
-                          <Radio.Group onChange={(e)=>this.onChanged('sms_enable',e.target.value)}>
-                              {sms_enabled}
-                          </Radio.Group>
-                        )
-                      }
-                      </label>
-                    </Form.Item>
+        return (<Form onSubmit={this.handleSubmit}>
+            <Card title={this.props.currentPatient? this.props.currentPatient.user.first_name + " Communication":"Patient Communication"} extra={<Button  type="primary" htmlType="submit"> <Icon type="save"/>Save Communication Setting</Button>
+                    }>
+                        <Form.Item {...formItemLayout} key={'sms_enable'}> <label><span className="ant-form-text">{'Enable SMS the patient'} : </span>
+                          {getFieldDecorator('sms_enable',{initialValue:this.state.patientProfile? this.state.patientProfile.sms_enable:null})
+                            (
+                              <Radio.Group onChange={(e)=>this.onChanged('sms_enable',e.target.value)}>
+                                  {sms_enabled}
+                              </Radio.Group>
+                            )
+                          }
+                          </label>
+                        </Form.Item>
 
-                    <Form.Item {...formItemLayout} key={'email_enable'}> <label> <span className="ant-form-text">{'Enable Email the patient'} : </span>
-                            {getFieldDecorator('email_enable',{initialValue:this.state.patientProfile? this.state.patientProfile.email_enable:null})
-                              (
-                                <Radio.Group onChange={(e)=>this.onChanged('email_enable',e.target.value)}>
-                                    {email_enabled}
-                                </Radio.Group>
-                              )
-                            }
-                            </label>
-                    </Form.Item>
+                        <Form.Item {...formItemLayout} key={'email_enable'}> <label> <span className="ant-form-text">{'Enable Email the patient'} : </span>
+                                {getFieldDecorator('email_enable',{initialValue:this.state.patientProfile? this.state.patientProfile.email_enable:null})
+                                  (
+                                    <Radio.Group onChange={(e)=>this.onChanged('email_enable',e.target.value)}>
+                                        {email_enabled}
+                                    </Radio.Group>
+                                  )
+                                }
+                                </label>
+                        </Form.Item>
 
-                    <Form.Item {...formItemLayout} key={'birthday_sms_email'}> <label> <span className="ant-form-text"> {"Send Birthday wish SMS & Email"} : </span>
-                            {getFieldDecorator('birthday_sms_email',{initialValue:this.state.patientProfile? this.state.patientProfile.birthday_sms_email:null})
-                              (
-                                <Radio.Group onChange={(e)=>this.onChanged('birthday_sms_email',e.target.value)}>
-                                    {bithday_sms_enabled}
-                                </Radio.Group>
-                              )
-                            }
-                            </label>
-                    </Form.Item>
-                    
-                    <div>
-                         <Divider dashed />
-                        <h2>Past Communication</h2>
-                        <Table loading={this.state.loading} columns={columns} dataSource={this.state.parient_communication_history}/>
+                        <Form.Item {...formItemLayout} key={'birthday_sms_email'}> <label> <span className="ant-form-text"> {"Send Birthday wish SMS & Email"} : </span>
+                                {getFieldDecorator('birthday_sms_email',{initialValue:this.state.patientProfile? this.state.patientProfile.birthday_sms_email:null})
+                                  (
+                                    <Radio.Group onChange={(e)=>this.onChanged('birthday_sms_email',e.target.value)}>
+                                        {bithday_sms_enabled}
+                                    </Radio.Group>
+                                  )
+                                }
+                                </label>
+                        </Form.Item>
                         
-
-                    </div>
-
-                </Form>
+                        <div>
+                             <Divider dashed />
+                            <h2>Past Communication</h2>
+                            <Table loading={this.state.loading} columns={columns} dataSource={this.state.parient_communication_history}/>
+                        </div>
+            </Card>
+           </Form>
            );
 
     }
