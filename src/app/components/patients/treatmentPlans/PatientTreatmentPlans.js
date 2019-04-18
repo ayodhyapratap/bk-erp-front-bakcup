@@ -1,8 +1,8 @@
 import React from "react";
-import {Avatar, Input, Checkbox, Divider, Table, Col,Button, Form,  Row, Card, Icon, Skeleton} from "antd";
+import {Avatar, Input, Checkbox, Divider, Table, Col,Button, Form,  Row, Card, Icon, Skeleton, Popconfirm} from "antd";
 import {Link} from "react-router-dom";
-import {TREATMENTPLANS_API,PROCEDURE_CATEGORY, PATIENT_PROFILE} from "../../../constants/api";
-import {getAPI,interpolate, displayMessage} from "../../../utils/common";
+import {All_TREATMENTPLANS_API,PROCEDURE_CATEGORY, PATIENT_PROFILE, SINGLE_D_TREATMENTPLANS_API} from "../../../constants/api";
+import {getAPI,interpolate, displayMessage, putAPI} from "../../../utils/common";
 import  moment from "moment";
 import AddorEditPatientTreatmentPlans from './AddorEditPatientTreatmentPlans';
 import {Redirect,Switch, Route} from "react-router";
@@ -57,7 +57,7 @@ class PatientTreatmentPlans extends React.Component{
         })
 
       }
-      getAPI(interpolate(TREATMENTPLANS_API,[this.props.match.params.id]), successFn, errorFn)
+      getAPI(interpolate(All_TREATMENTPLANS_API,[this.props.match.params.id]), successFn, errorFn)
     }
     loadProcedureCategory(){
       let that = this;
@@ -86,6 +86,19 @@ class PatientTreatmentPlans extends React.Component{
         let id=this.props.match.params.id
         this.props.history.push("/patient/"+id+"/emr/plans/edit")
 
+    }
+
+    deleteTreatmentPlans(record) {
+      let that = this;
+      let reqData = record;
+      reqData.is_active = false;
+      let successFn = function (data) {
+        that.loadData();
+      }
+      let errorFn = function () {
+
+      };
+      putAPI(interpolate(SINGLE_D_TREATMENTPLANS_API, [record.id]), reqData, successFn, errorFn);
     }
 
     render(){
@@ -138,7 +151,10 @@ class PatientTreatmentPlans extends React.Component{
                <a onClick={()=>this.editTreatmentPlanData(record)}>Edit</a>
 
                 <Divider type="vertical" />
-                <a href="javascript:;">Delete</a>
+                <Popconfirm title="Are you sure delete this item?"
+                            onConfirm={() => this.deleteTreatmentPlans(record)} okText="Yes" cancelText="No">
+                    <a>Delete</a>
+                </Popconfirm>
               </span>
             ),
           }];

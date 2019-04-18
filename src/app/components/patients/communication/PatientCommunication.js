@@ -7,15 +7,16 @@ class PatientCommunication extends React.Component{
     constructor(props){
         super(props);
         this.state={
-        	loading:false,
-        }
+
+        };
     }
     render(){
-	        return <Card title="Patient Communication" extra={<Link to="/calendar/create-appointment">
+	        return <Card title="Patient Communication" extra={<Link to="/patient/communication">
             			<Button type="primary"> <Icon type="save"/>Save Communication Setting</Button>
         				</Link>}>
-
-        				<PatientCommunicationSetting {...this.state} />
+                        <div>
+        				    <PatientCommunicationSetting   {...this.state} {...this.props} />
+                        </div>
         			</Card>
 
 	       

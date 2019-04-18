@@ -4,15 +4,63 @@ import {Button, List, Card, Form, Icon, Row, Table, Divider, Col, Radio} from "a
 import {SINGLE_CHECKBOX_FIELD} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
+import {PATIENT_COMMUNICATION_HISTORY_API, PATIENT_PROFILE} from "../../../constants/api";
+import {SMS_ENABLE, BIRTHDAY_SMS_ENABLE, EMAIL_ENABLE} from "../../../constants/hardData";
+import moment from "moment";
 
 class PatientCommunicationSetting extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+          parient_communication_history:null,
+          patientProfile:null,
         };
 
+        this.loadCommunication =this.loadCommunication.bind(this);
+        this.loadProfile =this.loadProfile.bind(this);
+    }
+    componentDidMount(){
+      if(this.props.currentPatient){
+        this.loadCommunication();
+        this.loadProfile();
+       
+      }
     }
 
+    loadProfile() {
+      let that = this;
+      let successFn = function (data) {
+        console.log("userdata",JSON.stringify(data));
+          that.setState({
+              patientProfile: data,
+              loading:false
+          });
+      };
+      let errorFn = function () {
+          that.setState({
+              loading:false
+          })
+      };
+       console.log("props",that.props.match.params.id);
+      getAPI(interpolate(PATIENT_PROFILE, [that.props.match.params.id]), successFn, errorFn);
+    }
+
+    loadCommunication(){
+      let that = this;
+      let successFn =function (data){
+        that.setState({
+          parient_communication_history:data.user_sms,
+          loading:false
+        })
+      }
+      let errorFn = function (){
+        that.setState({
+          loading:false
+        })
+
+      }
+      getAPI(interpolate(PATIENT_COMMUNICATION_HISTORY_API,[this.props.currentPatient.user.id]), successFn, errorFn)
+    }
     
     changeRedirect() {
         var redirectVar = this.state.redirect;
@@ -20,9 +68,14 @@ class PatientCommunicationSetting extends React.Component {
             redirect: !redirectVar,
         });
     }
+    onChanged = (name ,value) => {
+      this.setState({
+        [name]:value,
+      });
+    }
 
     render() {
-            // const { getFieldDecorator } = this.props.form;
+            const { getFieldDecorator } = this.props.form;
             const formItemLayout = {
               labelCol: {
                 xs: { span: 8 },
@@ -38,79 +91,71 @@ class PatientCommunicationSetting extends React.Component {
               },
             };
 
-            const dataSource = [{
-              key: '1',
-              name: '13 Apr 2019 12:30 PM',
-              age: 32,
-              address: '10 Downing Street'
-            }, {
-              key: '2',
-              name: '13 Apr 2019 12:30 PM',
-              age: 42,
-              address: '10 Downing Street'
-            }];
+            
 
             const columns = [{
               title: 'SENT TIME',
-              dataIndex: 'name',
-              key: 'name',
+              dataIndex: 'created_at',
+              key: 'created_at',
+              render: created_at => <span>{moment(created_at).format('LLL')}</span>,
             }, {
               title: 'MESSAGE',
-              dataIndex: 'age',
-              key: 'age',
-            }, {
-              title: 'DELIVERY TIME',
-              dataIndex: 'address',
-              key: 'address',
+              dataIndex: 'body',
+              key: 'body',
             },{
               title: 'TYPE',
-              dataIndex: 'age',
-              key: 'age',
+              dataIndex: 'sms_type',
+              key: 'sms_type',
             },{
               title: 'MESSAGE STATUS',
-              dataIndex: 'age',
-              key: 'age',
-            }
-            ];
-        return (<Form>
-                    <Form.Item {...formItemLayout} key={'active'}> <label><span className="ant-form-text">{'Enable SMS the patient'} : </span>
-                            <Radio.Group>
-                                <Radio value="a">Yes</Radio>
-                                <Radio value="b">No</Radio>
-                            </Radio.Group>
+              dataIndex: 'status',
+              key: 'status',
+            }];
+
+
+        const sms_enabled = SMS_ENABLE.map((isSMS) =><Radio value={isSMS.value}>{isSMS.title}</Radio>)
+        const email_enabled = EMAIL_ENABLE.map((isEmail) =><Radio value={isEmail.value}>{isEmail.title}</Radio>)
+        const bithday_sms_enabled = BIRTHDAY_SMS_ENABLE.map((isBirth_SMS) =><Radio value={isBirth_SMS.value}>{isBirth_SMS.title}</Radio>)
+        return (<Form >
+                    <Form.Item {...formItemLayout} key={'sms_enable'}> <label><span className="ant-form-text">{'Enable SMS the patient'} : </span>
+                      {getFieldDecorator('sms_enable',{initialValue:this.state.patientProfile? this.state.patientProfile.sms_enable:null})
+                        (
+                          <Radio.Group onChange={(e)=>this.onChanged('sms_enable',e.target.value)}>
+                              {sms_enabled}
+                          </Radio.Group>
+                        )
+                      }
+                      </label>
+                    </Form.Item>
+
+                    <Form.Item {...formItemLayout} key={'email_enable'}> <label> <span className="ant-form-text">{'Enable Email the patient'} : </span>
+                            {getFieldDecorator('email_enable',{initialValue:this.state.patientProfile? this.state.patientProfile.email_enable:null})
+                              (
+                                <Radio.Group onChange={(e)=>this.onChanged('email_enable',e.target.value)}>
+                                    {email_enabled}
+                                </Radio.Group>
+                              )
+                            }
                             </label>
                     </Form.Item>
 
-                    <Form.Item {...formItemLayout} key={'active'}> <label> <span className="ant-form-text">{'Enable Email the patient'} : </span>
-                            <Radio.Group>
-                                <Radio value="a">Yes</Radio>
-                                <Radio value="b">No</Radio>
-                            </Radio.Group>
+                    <Form.Item {...formItemLayout} key={'birthday_sms_email'}> <label> <span className="ant-form-text"> {"Send Birthday wish SMS & Email"} : </span>
+                            {getFieldDecorator('birthday_sms_email',{initialValue:this.state.patientProfile? this.state.patientProfile.birthday_sms_email:null})
+                              (
+                                <Radio.Group onChange={(e)=>this.onChanged('birthday_sms_email',e.target.value)}>
+                                    {bithday_sms_enabled}
+                                </Radio.Group>
+                              )
+                            }
                             </label>
                     </Form.Item>
-
-                    <Form.Item {...formItemLayout} key={'active'}> <label> <span className="ant-form-text"> {"Send Birthday wish SMS & Email"} : </span>
-                            <Radio.Group>
-                                <Radio value="a">Yes</Radio>
-                                <Radio value="b">No</Radio>
-                            </Radio.Group>
-                            </label>
-                    </Form.Item>
-                    <h3>{'Next Follow-up To go on 12-09-2019'} <Button type="dashed">change</Button></h3>
-
                     
-                    <div>
-                        <p>Recent Appointments</p>
-                        <Divider  style={{marginTop:0, marginBottom:5}}/>
-
-                        <List><span>{'25-09-2019'}</span></List>
-                        <List>{'25-09-2019'}</List>
-                    </div>
                     <div>
                          <Divider dashed />
                         <h2>Past Communication</h2>
-                        <span>SMS</span>
-                        <Table dataSource={dataSource} columns={columns} />
+                        <Table loading={this.state.loading} columns={columns} dataSource={this.state.parient_communication_history}/>
+                        
+
                     </div>
 
                 </Form>
@@ -119,4 +164,4 @@ class PatientCommunicationSetting extends React.Component {
     }
 }
 
-export default PatientCommunicationSetting;
+export default Form.create()(PatientCommunicationSetting);

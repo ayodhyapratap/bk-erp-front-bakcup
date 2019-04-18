@@ -95,6 +95,7 @@ class PatientCompletedProcedures extends React.Component {
 
 
     editTreatmentPlanData(record) {
+        console.log("array record",record);
         this.setState({
             editTreatmentPlan: record,
         });
@@ -120,16 +121,19 @@ class PatientCompletedProcedures extends React.Component {
         }, {
             title: 'Procedure',
             key: 'procedure',
+            initialValue: (this.state.editFields ? this.state.editFields.procedure : null),
             render: (text, record) => (
                 <span> {procedures[record.procedure]}</span>
             )
         }, {
             title: 'Quantity',
             dataIndex: 'quantity',
+            initialValue: (this.state.editFields ? this.state.editFields.quantity : null),
             key: 'quantity',
         }, {
             title: 'Cost Per  Unit',
             dataIndex: 'cost',
+            initialValue: (this.state.editFields ? this.state.editFields.cost : null),
             key: 'cost',
         }, {
             label: 'MLM Margin Type',
@@ -141,12 +145,14 @@ class PatientCompletedProcedures extends React.Component {
         }, {
             title: 'Active',
             key: 'is_active',
+            initialValue: (this.state.editFields ? this.state.editFields.is_active : null),
             render: (text, record) => (
                 <Checkbox disabled checked={record.is_active}/>
             )
         }, {
             title: 'Completed',
             key: 'is_completed',
+            initialValue: (this.state.editFields ? this.state.editFields.is_completed : null),
             render: (text, record) => (
                 <Checkbox disabled checked={record.is_completed}/>
             )

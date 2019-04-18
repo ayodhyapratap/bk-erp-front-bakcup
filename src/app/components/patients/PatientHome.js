@@ -91,7 +91,7 @@ class PatientHome extends React.Component {
                             {/*<Redirect to={"/patient/" + this.state.currentPatient.id + "/communications"}/> :*/}
                             {/*<PatientCommunication/>)}/>*/}
                             <Route exact path='/patient/:id/communications'
-                                   render={() => <PatientCommunication/>}/>
+                                   render={(route) => <PatientCommunication {...this.state} {...route}/>}/>
 
                             {/*** Patient Vital Sign Routes*/}
                             <Route exact path='/patients/emr/vitalsigns'

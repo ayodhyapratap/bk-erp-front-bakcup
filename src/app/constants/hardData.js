@@ -110,7 +110,6 @@ export const LOGO_INCLUDE= [
     {title: 'Yes', value: true},
     {title: 'No', value: false}
 ];
-
 export const PATIENT_DETAILS_LIST =[
     {value: 'Exclude Mediacal History'},
     {value: 'Exclude Patient Number'},
@@ -118,3 +117,18 @@ export const PATIENT_DETAILS_LIST =[
     {value: 'Exclude Blood Group'}
 ];
 export const EXCLUDE_PATIENT_DOB = "Exclude Patient Gender & DOB";
+
+export const SMS_ENABLE=[
+    {title:'Yes' , value:true},
+    {title:'No' , value:false}
+]
+
+export const EMAIL_ENABLE=[
+    {title:'Yes' , value:true},
+    {title:'No' , value:false}
+]
+
+export const BIRTHDAY_SMS_ENABLE=[
+    {title:'Yes' , value:true},
+    {title:'No' , value:false}
+]
