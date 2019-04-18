@@ -13,7 +13,7 @@ class PatientCommunicationSetting extends React.Component {
 
     }
 
-    
+
     changeRedirect() {
         var redirectVar = this.state.redirect;
         this.setState({
@@ -96,26 +96,26 @@ class PatientCommunicationSetting extends React.Component {
                             </Radio.Group>
                             </label>
                     </Form.Item>
-                    <h3>{'Next Follow-up To go on 12-09-2019'} <Button type="dashed">change</Button></h3>
+                    {/*<h3>{'Next Follow-up To go on 12-09-2019'} <Button type="dashed">change</Button></h3>*/}
 
-                    
-                    <div>
-                        <p>Recent Appointments</p>
-                        <Divider  style={{marginTop:0, marginBottom:5}}/>
 
-                        <List><span>{'25-09-2019'}</span></List>
-                        <List>{'25-09-2019'}</List>
-                    </div>
+                    {/*<div>*/}
+                        {/*<p>Recent Appointments</p>*/}
+                        {/*<Divider  style={{marginTop:0, marginBottom:5}}/>*/}
+
+                        {/*<List><span>{'25-09-2019'}</span></List>*/}
+                        {/*<List>{'25-09-2019'}</List>*/}
+                    {/*</div>*/}
                     <div>
                          <Divider dashed />
                         <h2>Past Communication</h2>
-                        <span>SMS</span>
+                        {/*<span>SMS</span>*/}
                         <Table dataSource={dataSource} columns={columns} />
                     </div>
 
                 </Form>
            );
-       
+
     }
 }
 
