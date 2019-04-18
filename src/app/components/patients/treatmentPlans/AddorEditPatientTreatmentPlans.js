@@ -22,16 +22,15 @@ import moment from 'moment';
 class AddorEditPatientTreatmentPlans extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             redirect: false,
             vitalSign: null,
             productMargin:[],
             procedure_category: this.props.procedure_category ? this.props.procedure_category : null,
             editTreatmentPlan: this.props.editTreatmentPlan ? this.props.editTreatmentPlan : null,
-
-
+            currentPatient:this.props.match.params.id,
         }
+            console.log("currentid",this.state.currentPatient);
         this.changeRedirect = this.changeRedirect.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
         this.loadProductMargin = this.loadProductMargin.bind(this);
@@ -134,14 +133,20 @@ class AddorEditPatientTreatmentPlans extends React.Component {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
 
-                console.log(data);
+                console.log("value nahi aa",this.state.currentPatient);
             },
             errorFn: function () {
 
             },
             beforeSend: function (values){
-              return
+                let reqData={
+                    treatment:[],
+                    // patient:this.props.match.params.id/*props value not fetch error match not define*/
+                }
+                reqData.treatment.push(values);
+                return reqData;
             },
+
             action: interpolate(TREATMENTPLANS_API, [this.props.match.params.id,true]),
             method: "post",
         }

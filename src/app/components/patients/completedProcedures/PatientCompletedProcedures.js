@@ -103,6 +103,7 @@ class PatientCompletedProcedures extends React.Component {
         this.props.history.push("/patient/" + id + "/emr/plans/edit")
 
     }
+    
 
     deleteTreatmentPlans(record) {
       let that = this;

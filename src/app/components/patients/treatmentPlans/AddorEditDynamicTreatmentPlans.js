@@ -114,6 +114,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                 let errorFn = function () {
 
                 }
+                console.log("Same adta",JSON.stringify(reqData));
                 postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
             }
         });

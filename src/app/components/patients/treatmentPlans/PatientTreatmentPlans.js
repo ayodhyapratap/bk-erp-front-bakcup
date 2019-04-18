@@ -2,7 +2,7 @@ import React from "react";
 import {Avatar, Input, Checkbox, Divider, Table, Col,Button, Form,  Row, Card, Icon, Skeleton, Popconfirm} from "antd";
 import {Link} from "react-router-dom";
 import {PROCEDURE_CATEGORY, PATIENT_PROFILE, SINGLE_REATMENTPLANS_API, TREATMENTPLANS_API} from "../../../constants/api";
-import {getAPI,interpolate, displayMessage, putAPI} from "../../../utils/common";
+import {getAPI,interpolate, displayMessage, putAPI, postAPI} from "../../../utils/common";
 import  moment from "moment";
 import AddorEditPatientTreatmentPlans from './AddorEditPatientTreatmentPlans';
 import {Redirect, Switch, Route} from "react-router";
@@ -25,7 +25,7 @@ class PatientTreatmentPlans extends React.Component {
         this.loadtreatmentPlanss = this.loadtreatmentPlanss.bind(this);
         this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
         this.editTreatmentPlanData = this.editTreatmentPlanData.bind(this);
-this.submitCompleteTreatment = this.submitCompleteTreatment.bind(this);
+        this.submitCompleteTreatment = this.submitCompleteTreatment.bind(this);
     }
 
     componentDidMount() {
@@ -124,15 +124,20 @@ this.submitCompleteTreatment = this.submitCompleteTreatment.bind(this);
 
     deleteTreatmentPlans(record) {
       let that = this;
-      let reqData = record;
-      reqData.is_active = false;
+      let obj={...record,is_active:false}
+      let reqData = {
+          treatment:[],
+          patient: that.props.match.params.id
+      }
+      reqData.treatment.push(obj);
+
       let successFn = function (data) {
         that.loadData();
       }
       let errorFn = function () {
 
       };
-      putAPI(interpolate(SINGLE_REATMENTPLANS_API, [record.id]), reqData, successFn, errorFn);
+      postAPI(interpolate(TREATMENTPLANS_API, [record.id],null), reqData, successFn, errorFn);
     }
 
     treatmentCompleteToggle(id,option){
@@ -141,12 +146,17 @@ this.submitCompleteTreatment = this.submitCompleteTreatment.bind(this);
         });
     }
     submitCompleteTreatment(){
+        let that = this;
         let selectedTreatments = this.state.selectedTreatments;
         let treatmentKeys = Object.keys(selectedTreatments);
-        let reqTreatmentsArray = [];
+        // let reqTreatmentsArray = [];
+        let reqData = {
+                    treatment: [],
+                    patient: that.props.match.params.id
+                };
         treatmentKeys.forEach(function(item){
             let treatmentObj = {id:item,is_completed:selectedTreatments[item]};
-            reqTreatmentsArray.push(treatmentObj);
+            reqData.treatment.push(treatmentObj);
         });
         let successFn = function(data){
 
@@ -154,7 +164,8 @@ this.submitCompleteTreatment = this.submitCompleteTreatment.bind(this);
         let errorFn=function(){
 
         }
-        putAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id]),reqTreatmentsArray ,successFn, errorFn)
+        console.log("Data",JSON.stringify(reqData));
+        postAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id]),reqData ,successFn, errorFn)
     }
     render(){
 
