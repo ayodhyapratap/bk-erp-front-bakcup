@@ -56,8 +56,8 @@ class PatientHeader extends React.Component {
             </div>
             <Drawer
                 title="Select Patient"
-                width={720}
-                placement="left"s
+                width={1220}
+                placement="left"
                 onClose={() =>
                     this.togglePatientListModal(false)
                 }

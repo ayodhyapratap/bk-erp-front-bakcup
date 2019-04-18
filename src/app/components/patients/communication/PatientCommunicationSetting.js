@@ -57,7 +57,6 @@ class PatientCommunicationSetting extends React.Component {
         that.setState({
           loading:false
         })
-
       }
       getAPI(interpolate(PATIENT_COMMUNICATION_HISTORY_API,[this.props.currentPatient.user.id]), successFn, errorFn)
     }
@@ -160,7 +159,7 @@ class PatientCommunicationSetting extends React.Component {
 
                 </Form>
            );
-       
+
     }
 }
 

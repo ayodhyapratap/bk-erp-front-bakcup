@@ -139,6 +139,9 @@ class AddorEditPatientTreatmentPlans extends React.Component {
             errorFn: function () {
 
             },
+            beforeSend: function (values){
+              return
+            },
             action: interpolate(TREATMENTPLANS_API, [this.props.match.params.id]),
             method: "post",
         }
