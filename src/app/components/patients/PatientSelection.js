@@ -13,7 +13,7 @@ class PatientSelection extends React.Component {
             patientListData: [],
             patientGroup: [],
             morePatients: null,
-            loading:true
+            loading: true
         }
         this.getPatientListData = this.getPatientListData.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
@@ -30,12 +30,12 @@ class PatientSelection extends React.Component {
         let successFn = function (data) {
             that.setState({
                 patientGroup: data,
-                loading:false
+                loading: false
             });
         };
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
 
         };
@@ -49,12 +49,12 @@ class PatientSelection extends React.Component {
                 patientListData: data.results,
                 morePatients: data.next,
                 currentPage: data.current,
-                loading:false
+                loading: false
             })
         };
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
 
         };
@@ -135,14 +135,15 @@ class PatientSelection extends React.Component {
                         onChange={value => this.searchPatient(value)}
                         enterButton/>
                 <Spin spinning={this.state.loading}>
-                {this.state.patientListData.length ?
-                    this.state.patientListData.map((patient) => <PatientCard {...patient}
-                                                                             setCurrentPatient={that.props.setCurrentPatient}/>) :
-                    <p style={{textAlign: 'center'}}>No Data Found</p>
-                }
-                  </Spin>
+                    {this.state.patientListData.length ?
+                        this.state.patientListData.map((patient) => <PatientCard {...patient}
+                                                                                 setCurrentPatient={that.props.setCurrentPatient}/>) :
+                        <p style={{textAlign: 'center'}}>No Data Found</p>
+                    }
+                </Spin>
                 {this.state.morePatients ?
-                    <div style={{textAlign: 'center'}}><Button type="primary" disabled={this.state.loading} onClick={this.getMorePatient}>Load
+                    <div style={{textAlign: 'center'}}><Button type="primary" disabled={this.state.loading}
+                                                               onClick={this.getMorePatient}>Load
                         More...</Button></div> : null}
 
             </Col>
@@ -153,8 +154,8 @@ class PatientSelection extends React.Component {
 export default PatientSelection;
 
 function PatientCard(patient) {
-    return <Col span={8}>
-        <Card  onClick={() => patient.setCurrentPatient(patient)} style={{margin: '5px'}}>
+    return <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6}>
+        <Card onClick={() => patient.setCurrentPatient(patient)} style={{margin: '5px'}}>
             <Meta avatar={(patient.image ? <Avatar src={patient.image}/> :
                 <Avatar style={{backgroundColor: '#87d068'}}>
                     {patient.user.first_name ? patient.user.first_name.charAt(0) :
