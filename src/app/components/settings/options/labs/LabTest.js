@@ -3,7 +3,7 @@ import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Card, Divider, Form, Icon, Popconfirm, Row, Table} from "antd";
 import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {Link, Route, Switch} from "react-router-dom";
-import {LABTEST_API, OFFERS} from "../../../../constants/api";
+import {LABTEST_API, OFFERS, PRODUCT_MARGIN} from "../../../../constants/api";
 import {getAPI, deleteAPI, interpolate, postAPI} from "../../../../utils/common";
 import AddorEditLab from "./AddorEditLab";
 
@@ -13,15 +13,18 @@ class LabTest extends React.Component {
         this.state = {
             tests: null,
             editTest: null,
-            loading:true
+            loading:true,
+            productMargin:null
         };
         this.editLabs = this.editLabs.bind(this);
         this.loadData = this.loadData.bind(this);
         this.deleteTest = this.deleteTest.bind(this);
+        this.loadProductMargin =this.loadProductMargin.bind(this);
     }
 
     componentDidMount() {
         this.loadData();
+        this.loadProductMargin();
     }
 
     loadData() {
@@ -64,9 +67,28 @@ class LabTest extends React.Component {
         postAPI(interpolate(LABTEST_API, [this.props.active_practiceId]), reqData, successFn, errorFn);
     }
 
+    loadProductMargin() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                productMargin: data
+            })
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(PRODUCT_MARGIN, successFn, errorFn);
+    }
 
     render() {
         let that = this;
+        const product_margin={}
+        if(this.state.productMargin){
+            this.state.productMargin.forEach(function (margin) {
+                product_margin[margin.id] = (margin.name)
+            })
+        }
+        console.log("table",product_margin)
         const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -81,8 +103,10 @@ class LabTest extends React.Component {
             key: 'instruction',
         }, {
             title: ' MLM Margin',
-            dataIndex: 'margin',
             key: 'margin',
+            render: (text, record) => (
+                <span> {product_margin[record.margin]}</span>
+            )
         }, {
             title: 'Action',
             key: 'action',
