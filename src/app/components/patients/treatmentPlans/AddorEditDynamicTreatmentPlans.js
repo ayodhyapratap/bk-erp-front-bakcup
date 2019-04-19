@@ -1,9 +1,10 @@
 import React from "react";
-import {Card, Row, Form, Col, List, Button, Table, InputNumber, Input, Icon} from 'antd';
+import {Card, Row, Form, Col, List, Button, Table, InputNumber, Input, Icon, Affix, Dropdown, Menu} from 'antd';
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
-import {PROCEDURE_CATEGORY, TREATMENTPLANS_API} from "../../../constants/api";
+import {PRACTICESTAFF, PROCEDURE_CATEGORY, TREATMENTPLANS_API} from "../../../constants/api";
 import {remove} from 'lodash';
-import { Redirect } from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
+import {DOCTORS_ROLE} from "../../../constants/dataKeys";
 
 
 class AddorEditDynamicTreatmentPlans extends React.Component {
@@ -13,12 +14,15 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
             loadingProcedures: true,
             procedure_category: [],
             tableFormValues: [],
-            addNotes: {}
+            addNotes: {},
+            practiceDoctors: [],
+            selectedDoctor: {}
         }
     }
 
     componentDidMount() {
         this.loadProcedures();
+        this.loadDoctors();
     }
 
     calculateItem = (_id) => {
@@ -46,6 +50,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
         });
     }
     add = (item) => {
+        let that = this;
         this.setState(function (prevState) {
             let randId = Math.random().toFixed(7);
             return {
@@ -55,6 +60,9 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                     _id: randId,
                 }]
             }
+        }, function () {
+            if (that.bottomPoint)
+                that.bottomPoint.scrollIntoView({behavior: 'smooth'});
         });
     };
 
@@ -75,7 +83,30 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
     }
 
+    loadDoctors() {
+        let that = this;
+        let successFn = function (data) {
+            let doctor = [];
+            data.staff.forEach(function (usersdata) {
+                if (usersdata.role == DOCTORS_ROLE) {
+                    doctor.push(usersdata);
+                }
+            })
+            that.setState({
+                practiceDoctors: doctor,
+                selectedDoctor: doctor.length ? doctor[0] : {}
+            });
+        };
+        let errorFn = function () {
+        };
+        getAPI(interpolate(PRACTICESTAFF, [this.props.active_practiceId]), successFn, errorFn);
+    }
 
+    selectDoctor = (doctor) => {
+        this.setState({
+            selectedDoctor: doctor
+        })
+    }
     handleSubmit = (e) => {
         let that = this;
         e.preventDefault();
@@ -103,7 +134,8 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                         "is_completed": false,
                         "practice": that.props.active_practiceId,
                         "discount": item.discount,
-                        "discount_type": "%"
+                        "discount_type": "%",
+                        "doctor": that.state.selectedDoctor.id
                     };
                     reqData.treatment.push(sendingItem);
                 });
@@ -236,23 +268,26 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
         }];
         return <div>
             <Form onSubmit={this.handleSubmit}>
-                <Card title={"Treatment Plans"} bodyStyle={{padding: 0}}
+                <Card title={"Treatment Plans"}
                       extra={<Form.Item {...formItemLayoutWithOutLabel} style={{marginBottom: 0}}>
                           <Button type="primary" htmlType="submit">Save Treatment Plan</Button>
                       </Form.Item>}>
-                    <Row gutter={16}>
+                    <Row >
                         <Col span={7}>
-                            <List size={"small"}
-                                  itemLayout="horizontal"
-                                  dataSource={this.state.procedure_category}
-                                  renderItem={item => (
-                                      <List.Item>
-                                          <List.Item.Meta
-                                              title={item.name}/>
-                                          <Button type="primary" size="small" shape="circle"
-                                                  onClick={() => this.add(item)}
-                                                  icon={"arrow-right"}/>
-                                      </List.Item>)}/>
+                            <Affix offsetTop={0}>
+                                <List size={"small"}
+                                      style={{maxHeight: '100vh', overflowX: 'scroll'}}
+                                      itemLayout="horizontal"
+                                      dataSource={this.state.procedure_category}
+                                      renderItem={item => (
+                                          <List.Item>
+                                              <List.Item.Meta
+                                                  title={item.name}/>
+                                              <Button type="primary" size="small" shape="circle"
+                                                      onClick={() => this.add(item)}
+                                                      icon={"arrow-right"}/>
+                                          </List.Item>)}/>
+                            </Affix>
                         </Col>
                         <Col span={17}>
 
@@ -261,7 +296,28 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                                    dataSource={this.state.tableFormValues}
                                    columns={consumeRow}/>
 
+                            <Affix offsetBottom={0}>
+                                <Card>
+                                    <span>by &nbsp;&nbsp;</span>
+                                    <Dropdown overlay={<Menu>
+                                        {this.state.practiceDoctors.map(doctor =>
+                                            <Menu.Item key="0">
+                                                <a onClick={() => this.selectDoctor(doctor)}>{doctor.user.first_name}</a>
+                                            </Menu.Item>)}
+                                    </Menu>} trigger={['click']}>
+                                        <a className="ant-dropdown-link" href="#">
+                                            <b>
+                                                {this.state.selectedDoctor.user ? this.state.selectedDoctor.user.first_name : 'No DOCTORS Found'}
+                                            </b>
+                                        </a>
+                                    </Dropdown>
+                                    <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
 
+                                </Card>
+                            </Affix>
+                            <div ref={el => {
+                                that.bottomPoint = el;
+                            }}/>
                         </Col>
                     </Row>
                 </Card>

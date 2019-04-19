@@ -43,7 +43,7 @@ class PatientLabOrders extends React.Component{
             });
         });
     }
-    
+
     removeTests = (_id,item) => {
         this.setState(function (prevState) {
             return {
@@ -94,13 +94,13 @@ class PatientLabOrders extends React.Component{
                         "is_active":true,
                         "practice":item.practice,
                         "margin":item.margin,
-                        
+
                     };
                     reqData.treatment.push(sendingItem);
                 });
                 let successFn = function (data) {
                     displayMessage("Inventory updated successfully");
-                    
+
                 }
                 let errorFn = function () {
 
@@ -140,19 +140,7 @@ class PatientLabOrders extends React.Component{
             dataIndex: 'name',
             key: 'name',
             render: (name, record) => <span>
-                <b>{name}</b><br/>
-                    <Form.Item
-                        key={`default_notes[${record._id}]`}
-                        {...formItemLayout}>
-                        {getFieldDecorator(`notes[${record._id}]`, {
-                            validateTrigger: ['onChange', 'onBlur'],
-                            rules: [{
-                                message: "This field is required.",
-                            }],
-                            initialValue: record.default_notes
-                        })}
-                    </Form.Item>
-                   
+                <b>{name}</b>
                 </span>
         }, {
             title: 'Cost',

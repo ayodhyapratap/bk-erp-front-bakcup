@@ -1,9 +1,14 @@
 import React from "react";
-import {Avatar, Input, Checkbox, Divider, Table, Col,Button, Form,  Row, Card, Icon, Skeleton, Popconfirm} from "antd";
+import {Avatar, Input, Checkbox, Divider, Table, Col, Button, Form, Row, Card, Icon, Skeleton, Popconfirm} from "antd";
 import {Link} from "react-router-dom";
-import {PROCEDURE_CATEGORY, PATIENT_PROFILE, SINGLE_REATMENTPLANS_API, TREATMENTPLANS_API} from "../../../constants/api";
-import {getAPI,interpolate, displayMessage, putAPI, postAPI} from "../../../utils/common";
-import  moment from "moment";
+import {
+    PROCEDURE_CATEGORY,
+    PATIENT_PROFILE,
+    SINGLE_REATMENTPLANS_API,
+    TREATMENTPLANS_API
+} from "../../../constants/api";
+import {getAPI, interpolate, displayMessage, putAPI, postAPI} from "../../../utils/common";
+import moment from "moment";
 import AddorEditPatientTreatmentPlans from './AddorEditPatientTreatmentPlans';
 import {Redirect, Switch, Route} from "react-router";
 import AddorEditDynamicTreatmentPlans from "./AddorEditDynamicTreatmentPlans";
@@ -20,7 +25,7 @@ class PatientTreatmentPlans extends React.Component {
             procedure_category: null,
             incompletedTreatmentPlans: [],
             loading: true,
-            selectedTreatments:{}
+            selectedTreatments: {}
         }
         this.loadTreatmentPlans = this.loadTreatmentPlans.bind(this);
         this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
@@ -36,34 +41,34 @@ class PatientTreatmentPlans extends React.Component {
 
     }
 
-    loadTreatmentPlans(){
-        let incompleted=[];
-      let that = this;
-      let successFn =function (data){
-        that.setState({
-          treatmentPlans:data,
-          loading:false
-        })
-          data.forEach(function (treatmentplan) {
-              if(!treatmentplan.is_completed){
-                  incompleted.push(treatmentplan)
-              }
-          })
-          that.setState({
-              incompletedTreatmentPlans:incompleted,
-              loading:false
-          })
-      }
-      let errorFn = function (){
-        that.setState({
-          loading:false
-        })
+    loadTreatmentPlans() {
+        let incompleted = [];
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                treatmentPlans: data,
+                loading: false
+            })
+            data.forEach(function (treatmentplan) {
+                if (!treatmentplan.is_completed) {
+                    incompleted.push(treatmentplan)
+                }
+            })
+            that.setState({
+                incompletedTreatmentPlans: incompleted,
+                loading: false
+            })
+        }
+        let errorFn = function () {
+            that.setState({
+                loading: false
+            })
 
-      }
-      getAPI(interpolate(TREATMENTPLANS_API,[this.props.match.params.id,null]), successFn, errorFn)
+        }
+        getAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id, null]), successFn, errorFn)
     }
 
-    
+
     loadProcedureCategory() {
         let that = this;
         let successFn = function (data) {
@@ -95,54 +100,56 @@ class PatientTreatmentPlans extends React.Component {
 
 
     deleteTreatmentPlans(record) {
-      let that = this;
-      let obj={...record,is_active:false}
-      let reqData = {
-          treatment:[],
-          patient: that.props.match.params.id
-      }
-      reqData.treatment.push(obj);
+        let that = this;
+        let obj = {...record, is_active: false}
+        let reqData = {
+            treatment: [],
+            patient: that.props.match.params.id
+        }
+        reqData.treatment.push(obj);
 
-      let successFn = function (data) {
-        that.loadTreatmentPlans();
-      }
-      let errorFn = function () {
+        let successFn = function (data) {
+            that.loadTreatmentPlans();
+        }
+        let errorFn = function () {
 
-      };
-      postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id],null), reqData, successFn, errorFn);
+        };
+        postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id], null), reqData, successFn, errorFn);
     }
 
-    treatmentCompleteToggle(id,option){
-        this.setState(function(prevState){
-            return {selectedTreatments:{...prevState.selectedTreatments,[id]:!!option}}
+    treatmentCompleteToggle(id, option) {
+        this.setState(function (prevState) {
+            return {selectedTreatments: {...prevState.selectedTreatments, [id]: !!option}}
         });
     }
-    submitCompleteTreatment(){
+
+    submitCompleteTreatment() {
         let that = this;
         let selectedTreatments = this.state.selectedTreatments;
         let treatmentKeys = Object.keys(selectedTreatments);
         // let reqTreatmentsArray = [];
         let reqData = {
-                    treatment: [],
-                    patient: that.props.match.params.id
-                };
-        treatmentKeys.forEach(function(item){
-            let treatmentObj = {id:item,is_completed:selectedTreatments[item]};
+            treatment: [],
+            patient: that.props.match.params.id
+        };
+        treatmentKeys.forEach(function (item) {
+            let treatmentObj = {id: item, is_completed: selectedTreatments[item]};
             reqData.treatment.push(treatmentObj);
         });
-        let successFn = function(data){
+        let successFn = function (data) {
             that.loadTreatmentPlans();
         }
-        let errorFn=function(){
+        let errorFn = function () {
 
         }
         // console.log("Data",JSON.stringify(reqData));
-        postAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id]),reqData ,successFn, errorFn)
+        postAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id]), reqData, successFn, errorFn)
     }
-    render(){
 
-      const procedures={}
-        if(this.state.procedure_category){
+    render() {
+
+        const procedures = {}
+        if (this.state.procedure_category) {
             this.state.procedure_category.forEach(function (procedure) {
                 procedures[procedure.id] = (procedure.name)
             })
@@ -152,8 +159,10 @@ class PatientTreatmentPlans extends React.Component {
         const columns = [{
             title: '',
             key: 'is_completed',
-            render: (text, record) => (record.is_completed?<Icon type="check-circle" theme="twoTone" twoToneColor="#0f0" />:
-                <Checkbox onChange={(e)=>this.treatmentCompleteToggle(record.id,e.target.checked)} value={this.state.selectedTreatments[record.id]}/>
+            render: (text, record) => (record.is_completed ?
+                    <Icon type="check-circle" theme="twoTone"  style={{marginLeft:'8px',fontSize:'20px'}}/> :
+                    <Checkbox onChange={(e) => this.treatmentCompleteToggle(record.id, e.target.checked)}
+                              value={this.state.selectedTreatments[record.id]}/>
             )
         }, {
             title: 'Time',
@@ -181,7 +190,7 @@ class PatientTreatmentPlans extends React.Component {
                 <span>
                <a onClick={() => this.editTreatmentPlanData(record)}>Edit</a>
 
-                <Divider type="vertical" />
+                <Divider type="vertical"/>
                 <Popconfirm title="Are you sure delete this item?"
                             onConfirm={() => this.deleteTreatmentPlans(record)} okText="Yes" cancelText="No">
                     <a>Delete</a>
@@ -199,7 +208,7 @@ class PatientTreatmentPlans extends React.Component {
                 <Card
                     title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " TreatmentPlans" : "TreatmentPlans"}
                     extra={<Button.Group>
-                        <Button  onClick={this.submitCompleteTreatment}> <Icon type="save"/>Save</Button>
+                        <Button onClick={this.submitCompleteTreatment}> <Icon type="save"/>Save</Button>
                         <Link to={"/patient/" + this.props.match.params.id + "/emr/plans/add"}>
                             <Button><Icon type="plus"/>Add</Button>
                         </Link>

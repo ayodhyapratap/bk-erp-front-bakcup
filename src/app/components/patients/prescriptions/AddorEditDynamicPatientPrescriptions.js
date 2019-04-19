@@ -1,9 +1,10 @@
 import React from "react";
 import {Card, Row, Col, Form, Table, Divider, Tabs, List, Button, Input, Select, Radio, InputNumber, Icon} from 'antd';
-import {DRUG_CATALOG} from "../../../constants/api";
-import {getAPI, interpolate} from "../../../utils/common";
+import {DRUG_CATALOG, LABTEST_API} from "../../../constants/api";
+import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {remove} from "lodash";
 import {DURATIONS_UNIT} from "../../../constants/hardData";
+import {WARNING_MSG_TYPE} from "../../../constants/dataKeys";
 
 const TabPane = Tabs.TabPane;
 
@@ -12,14 +13,31 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         super(props);
         this.state = {
             drugList: [],
+            labList: [],
             formDrugList: [],
+            formLabList: [],
             addInstructions: {},
-            changeDurationUnits: {}
+            changeDurationUnits: {},
+            addedLabs: {}
         }
     }
 
     componentDidMount() {
         this.loadDrugList();
+        this.loadLabList()
+    }
+
+    loadLabList() {
+        var that = this;
+        let successFn = function (data) {
+            that.setState({
+                labList: data,
+            })
+        };
+        let errorFn = function () {
+
+        };
+        getAPI(interpolate(LABTEST_API, [that.props.active_practiceId]), successFn, errorFn);
     }
 
     loadDrugList() {
@@ -65,9 +83,59 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             }
         });
     }
+    removeLabs = (_id, item) => {
+        this.setState(function (prevState) {
+            return {
+                addedLabs: {...prevState.addedLabs, [item.id]: false},
+                formLabList: [...remove(prevState.formLabList, function (item) {
+                    return item._id != _id;
+                })]
+            }
+        });
+    }
+    addLabs = (item) => {
+        console.log("item", item);
+        this.setState(function (prevState) {
+            console.log("preview", prevState);
+            let randId = Math.random().toFixed(7);
+            if (prevState.addedLabs[item.id]) {
+                displayMessage(WARNING_MSG_TYPE, "Item Already Added");
+                return false;
+            }
+            return {
+                addedLabs: {...prevState.addedLabs, [item.id]: true},
+                // addNotes: {...prevState.addNotes, [randId]: !!item.default_notes},
+                formLabList: [...prevState.formLabList, {
+                    ...item,
+                    _id: randId,
+                }]
+            }
+            // console.log("ide",this.state.tableFormValues);
+        });
+    };
 
     render() {
         let that = this;
+        const formItemLayout = {
+            labelCol: {
+                xs: {span: 24},
+                sm: {span: 4},
+            },
+            wrapperCol: {
+                xs: {span: 24},
+                sm: {span: 20},
+            },
+        };
+        const formItemLayoutWithOutLabel = {
+            labelCol: {
+                xs: {span: 24},
+                sm: {span: 24},
+            },
+            wrapperCol: {
+                xs: {span: 24},
+                sm: {span: 24},
+            },
+        };
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const drugTableColumns = [{
             title: 'Drug Name',
@@ -123,8 +191,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         <InputNumber min={0} size={"small"}/>
                     )}
                 </Form.Item>
-                {/*{this.state.changeDurationUnits[record._id] ?*/}
-                    <Form.Item
+                <Form.Item
                     key={`duration_unit[${record._id}]`}>
                     {getFieldDecorator(`duration_unit[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
@@ -138,73 +205,117 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                 value={item.value}>{item.label}</Select.Option>)}
                         </Select>
                     )}
-                    </Form.Item>
-                {/*: <a onClick={() => this.changeDurationUnits(record._id, true)}>Change</a>*/}
-                    </div>
-                    }, {
-                title: 'Instructions',
-                dataIndex: 'instructions',
-                key: 'instructions',
-                render: (instructions, record) =>
-                <div>
-                {/*<Form.Item>*/}
-                {/*<Input/>*/}
-                {/*</Form.Item>*/}
-                {this.state.addInstructions[record._id] ?
-                    <Form.Item
-                        extra={<a onClick={() => this.addInstructions(record._id, false)}>Remove Instructions</a>}
-                        key={`instructions[${record._id}]`}>
-                        {getFieldDecorator(`instructions[${record._id}]`, {
-                            validateTrigger: ['onChange', 'onBlur'],
-                            rules: [{
-                                message: "This field is required.",
-                            }],
-                        })(
-                            <Input.TextArea min={0} placeholder={"Instructions..."} size={"small"}/>
-                        )}
-
-                    </Form.Item>
-                    : <a onClick={() => this.addInstructions(record._id, true)}>+ Add Instructions</a>}
-                </div>
-            }, {
-                title: '',
-                dataIndex: 'action',
-                key: 'action',
-                render: (instructions, record) => <Form.Item>
-                <Button icon={"close"} onClick={() => this.removeDrug(record._id)} type={"danger"} shape="circle" size="small"/>
                 </Form.Item>
-            }];
-                return <Card>
-                <Row>
-                    <Col span={18}>
-                        <Form>
-                            <Table pagination={false} bordered={false} columns={drugTableColumns}
-                                   dataSource={this.state.formDrugList}/>
+            </div>
+        }, {
+            title: 'Instructions',
+            dataIndex: 'instructions',
+            key: 'instructions',
+            render: (instructions, record) =>
+                <div>
+                    {/*<Form.Item>*/}
+                    {/*<Input/>*/}
+                    {/*</Form.Item>*/}
+                    {this.state.addInstructions[record._id] ?
+                        <Form.Item
+                            extra={<a onClick={() => this.addInstructions(record._id, false)}>Remove Instructions</a>}
+                            key={`instructions[${record._id}]`}>
+                            {getFieldDecorator(`instructions[${record._id}]`, {
+                                validateTrigger: ['onChange', 'onBlur'],
+                                rules: [{
+                                    message: "This field is required.",
+                                }],
+                            })(
+                                <Input.TextArea min={0} placeholder={"Instructions..."} size={"small"}/>
+                            )}
 
-                            <Divider> Lab Test</Divider>
-                            <Table pagination={false} bordered={false} columns={drugTableColumns}
-                                   dataSource={this.state.formDrugList}/>
-                        </Form>
-                    </Col>
-                    <Col span={6}>
-                        <Tabs type="card">
-                            <TabPane tab="Drugs" key="1">
-                                <List size={"small"}
-                                      itemLayout="horizontal"
-                                      dataSource={this.state.drugList}
-                                      renderItem={item => (
-                                          <List.Item onClick={() => this.addDrug(item)}>
-                                              <List.Item.Meta
-                                                  title={item.name}/>
-                                          </List.Item>)}/>
-                            </TabPane>
-                            <TabPane tab="Tab 2" key="2">Content of Tab Pane 2</TabPane>
-                            <TabPane tab="Tab 3" key="3">Content of Tab Pane 3</TabPane>
-                        </Tabs>
-                    </Col>
-                </Row>
-            </Card>
-                }
-                }
+                        </Form.Item>
+                        : <a onClick={() => this.addInstructions(record._id, true)}>+ Add Instructions</a>}
+                </div>
+        }, {
+            title: '',
+            dataIndex: 'action',
+            key: 'action',
+            render: (instructions, record) => <Form.Item>
+                <Button icon={"close"} onClick={() => this.removeDrug(record._id)} type={"danger"} shape="circle"
+                        size="small"/>
+            </Form.Item>
+        }];
+        const labTablecolums = [{
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+            render: (name, record) => <span>
+                <b>{name}</b>
+                </span>
+        }, {
+            title: 'Cost',
+            dataIndex: 'cost',
+            key: 'cost',
+            render: (name, record) => <span><Form.Item
+                key={`cost[${record._id}]`}
+                {...formItemLayout}>
+                {getFieldDecorator(`cost[${record._id}]`, {
+                    validateTrigger: ['onChange', 'onBlur'],
+                    rules: [{
+                        required: true,
+                        message: "This field is required.",
+                    }],
+                    initialValue: record.cost
+                })}
+            </Form.Item>
+            </span>
+        }, {
+            title: 'Total',
+            dataIndex: 'total',
+            key: 'total',
+            render: (total, record) => <span>
+                {total}
+                <Button icon={"close"} onClick={() => this.removeLabs(record._id, record)} type={"danger"}
+                        shape="circle"
+                        size="small"/>
+            </span>
+        }];
+        return <Card>
+            <Row>
+                <Col span={18}>
+                    <Form>
+                        <Table pagination={false} bordered={false} columns={drugTableColumns}
+                               dataSource={this.state.formDrugList}/>
 
-                export default Form.create()(AddorEditDynamicPatientPrescriptions);
+                        <Divider> Lab Test</Divider>
+                        <Table pagination={false} bordered={false} columns={labTablecolums}
+                               dataSource={this.state.formLabList}/>
+                    </Form>
+                </Col>
+                <Col span={6}>
+                    <Tabs type="card">
+                        <TabPane tab="Drugs" key="1">
+                            <List size={"small"}
+                                  itemLayout="horizontal"
+                                  dataSource={this.state.drugList}
+                                  renderItem={item => (
+                                      <List.Item onClick={() => this.addDrug(item)}>
+                                          <List.Item.Meta
+                                              title={item.name}/>
+                                      </List.Item>)}/>
+                        </TabPane>
+                        <TabPane tab="Labs" key="2">
+                            <List size={"small"}
+                                  itemLayout="horizontal"
+                                  dataSource={this.state.labList}
+                                  renderItem={item => (
+                                      <List.Item onClick={() => this.addLabs(item)}>
+                                          <List.Item.Meta
+                                              title={item.name}/>
+                                      </List.Item>)}/>
+                        </TabPane>
+                        {/*<TabPane tab="Tab 3" key="3">Content of Tab Pane 3</TabPane>*/}
+                    </Tabs>
+                </Col>
+            </Row>
+        </Card>
+    }
+}
+
+export default Form.create()(AddorEditDynamicPatientPrescriptions);
