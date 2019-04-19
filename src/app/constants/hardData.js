@@ -104,7 +104,7 @@ export const LOGO_TYPE =[
 export const LOGO_ALIGMENT= [
     {value: 'RIGHT'},
     {value: 'LEFT'},
-    {value: 'CENTRE'} 
+    {value: 'CENTRE'}
 ];
 export const LOGO_INCLUDE= [
     {title: 'Yes', value: true},
@@ -131,4 +131,15 @@ export const EMAIL_ENABLE=[
 export const BIRTHDAY_SMS_ENABLE=[
     {title:'Yes' , value:true},
     {title:'No' , value:false}
+]
+
+export const DURATIONS_UNIT = [
+    {label:'day(s)',value:'day(s)'},
+    {label:'week(s)',value:'week(s)'},
+    {label:'month(s)',value:'month(s)'},
+    {label:'year(s)',value:'year(s)'},
+];
+
+export const DOSE_FREQUENCIES = [
+    {label:'day(s)',value:'day(s)'},
 ]

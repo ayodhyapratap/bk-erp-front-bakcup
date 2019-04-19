@@ -35,7 +35,7 @@ class AppSider extends React.Component {
             collapsible
             collapsed={this.props.collapsed}
             style={{zIndex: 1}}
-            breakpoint="xl"
+            breakpoint="xxl"
             // collapsedWidth="0"
             onBreakpoint={(broken) => {
                 // console.log(broken);
