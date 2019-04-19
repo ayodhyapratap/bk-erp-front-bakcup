@@ -99,7 +99,7 @@ class PatientSelection extends React.Component {
     render() {
         let that = this;
         return <Row>
-            <Col span={6}
+            <Col span={5}
                  style={{
                      height: 'calc(100vh - 55px)',
                      overflow: 'auto',
@@ -130,13 +130,13 @@ class PatientSelection extends React.Component {
                     <p><b>Membership</b></p>
                 </Radio.Group>
             </Col>
-            <Col span={18} style={{overflow: 'scroll'}}>
+            <Col span={19} style={{overflow: 'scroll'}}>
                 <Search placeholder="input search text"
                         onChange={value => this.searchPatient(value)}
                         enterButton/>
-                <Spin spinning={this.state.loading}>    
+                <Spin spinning={this.state.loading}>
                 {this.state.patientListData.length ?
-                    this.state.patientListData.map((patient) => <PatientCard {...patient} 
+                    this.state.patientListData.map((patient) => <PatientCard {...patient}
                                                                              setCurrentPatient={that.props.setCurrentPatient}/>) :
                     <p style={{textAlign: 'center'}}>No Data Found</p>
                 }

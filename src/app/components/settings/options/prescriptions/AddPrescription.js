@@ -20,7 +20,7 @@ class AddPrescription extends React.Component {
         this.state = {
             redirect: false,
             editPrescreption: this.props.editCatalog ? this.props.editCatalog : null,
-            drugType: []
+            drugTypeList: []
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -54,7 +54,7 @@ class AddPrescription extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                drugType: data
+                drugTypeList: data
             })
         }
         let errorFn = function () {
@@ -90,7 +90,7 @@ class AddPrescription extends React.Component {
                 required: true,
                 initialValue: this.state.editPrescreption ? this.state.editPrescreption.drug_type : null,
                 type: SELECT_FIELD,
-                options: this.state.drugType.map(drug => ({label: drug.name, value: drug.id})),
+                options: that.state.drugTypeList.map(drug => ({label: drug.name, value: drug.id})),
                 follow: <a onClick={() => that.setFormParams('drugType', INPUT_FIELD)}>Add New Drug Type</a>
             });
         let drugUnitField = (this.state.drugUnit && this.state.drugUnit == INPUT_FIELD ?
@@ -107,7 +107,7 @@ class AddPrescription extends React.Component {
                 required: true,
                 initialValue: this.state.editPrescreption ? this.state.editPrescreption.unit : null,
                 type: SELECT_FIELD,
-                options: this.state.drugType.map(drug => ({label: drug.name, value: drug.id})),
+                options: that.state.drugTypeList.map(drug => ({label: drug.name, value: drug.id})),
                 follow: <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Drug Unit</a>
             });
         const fields = [{
@@ -158,11 +158,12 @@ class AddPrescription extends React.Component {
         }
         const TestFormLayout = Form.create({
             onValuesChange: function (props, changedValues, allValues) {
-                console.log(changedValues,allValues);
+                console.log(changedValues, allValues);
                 that.setState(function (prevState) {
                     return {editPrescreption: {...prevState.editPrescreption, ...changedValues}}
                 });
-            }})(DynamicFieldsForm);
+            }
+        })(DynamicFieldsForm);
         let defaultValues = []
         if (this.state.editPrescreption) {
             defaultValues.push({key: 'id', value: this.state.editPrescreption.id})
@@ -170,12 +171,15 @@ class AddPrescription extends React.Component {
         return <div>
             <Card>
                 <Route exact path="/settings/prescriptions/add"
-                       render={() => <TestFormLayout title="Add Prescriptions" formProp={formProp}
+                       render={() => <TestFormLayout key={"Add Prescriptions"}
+                                                     title="Add Prescriptions"
+                                                     formProp={formProp}
                                                      changeRedirect={this.changeRedirect}
                                                      fields={fields}/>}/>
                 <Route exact path="/settings/prescriptions/edit"
                        render={(route) => this.state.editPrescreption && this.state.editPrescreption.id ?
-                           <TestFormLayout title="Edit Prescriptions"
+                           <TestFormLayout key={"Edit Prescriptions"}
+                                           title="Edit Prescriptions"
                                            defaultValues={defaultValues} formProp={formProp}
                                            changeRedirect={this.changeRedirect}
                                            fields={fields}/> : null}/>

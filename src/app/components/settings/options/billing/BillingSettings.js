@@ -25,6 +25,7 @@ class BillingSettings extends React.Component {
     render() {
         return <div>
           <Row>
+              <h2>Billing</h2>
           <Card>
             <Tabs defaultActiveKey="taxcatalog" >
               <TabPane tab={<span><Icon type="cluster" />Tax Catalog</span>} key="taxcatalog">

@@ -9,7 +9,7 @@ class PatientSider extends React.Component {
         return <Sider trigger={null}
                       collapsible
                       collapsed={this.props.collapsed}
-                      style={{overflow: 'auto', minHeight: '100vh', background: '#fff'}}>
+                      style={{overflow: 'auto', minHeight: 'calc(100vh - 64px)', background: '#fff'}}>
             {/*<div className="logo"/>*/}
             <Menu mode="inline">
                 <Menu.ItemGroup key="g1" title={<Divider style={{margin:'0px'}}>Patient</Divider>}>

@@ -25,7 +25,7 @@ class AddorEditPatientTreatmentPlans extends React.Component {
         this.state = {
             redirect: false,
             vitalSign: null,
-            productMargin:[],
+            productMargin: [],
             procedure_category: this.props.procedure_category ? this.props.procedure_category : null,
             editTreatmentPlan: this.props.editTreatmentPlan ? this.props.editTreatmentPlan : null,
             currentPatient:this.props.match.params.id,
@@ -75,7 +75,7 @@ class AddorEditPatientTreatmentPlans extends React.Component {
             that.setState({
                 productMargin: data
             })
-            console.log("log",that.state.productMargin);
+            console.log("log", that.state.productMargin);
         }
         let errorFn = function () {
 
@@ -155,6 +155,7 @@ class AddorEditPatientTreatmentPlans extends React.Component {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 that.loadTreatmentPlans();
+                console.log(data);
             },
             errorFn: function () {
 

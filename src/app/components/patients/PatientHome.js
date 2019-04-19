@@ -30,22 +30,31 @@ class PatientHome extends React.Component {
         this.state = {
             currentPatient: null,
             active_practiceId: this.props.active_practiceId,
-            medicalHistory: []
+            medicalHistory: [],
+            listModalVisible: false
         };
         this.setCurrentPatient = this.setCurrentPatient.bind(this);
+        this.togglePatientListModal = this.togglePatientListModal.bind(this);
     }
 
 
     setCurrentPatient(patientObj) {
         this.setState({
-            currentPatient: patientObj
+            currentPatient: patientObj,
+            listModalVisible: false
         });
     }
 
+    togglePatientListModal(option) {
+        this.setState({
+            listModalVisible: !!option
+        });
+    }
 
     render() {
         return <Content>
-            <PatientHeader {...this.state} setCurrentPatient={this.setCurrentPatient}/>
+            <PatientHeader {...this.state} togglePatientListModal={this.togglePatientListModal}
+                           setCurrentPatient={this.setCurrentPatient}/>
 
             <Layout>
                 <PatientSider {...this.state}/>
@@ -64,24 +73,27 @@ class PatientHome extends React.Component {
                                        (this.state.currentPatient ?
                                            <Redirect to={"/patient/" + this.state.currentPatient.id + "/profile"}/> :
                                            <PatientProfile {...this.state}
+                                                           key={this.state.currentPatient}
                                                            setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
                             <Route exact path='/patients/profile/add'
-                                   render={() => <EditPatientDetails/>}/>
+                                   render={() => <EditPatientDetails key={this.state.currentPatient}/>}/>
                             <Route exact path='/patient/:id/profile'
                                    render={() => <PatientProfile {...this.state}
+                                                                 key={this.state.currentPatient}
                                                                  setCurrentPatient={this.setCurrentPatient} {...this.props}/>}/>
                             <Route exact path='/patient/:id/profile/edit'
-                                   render={() => <EditPatientDetails {...this.state} />}/>
+                                   render={() => <EditPatientDetails
+                                       key={this.state.currentPatient}{...this.state} />}/>
 
                             {/*** Patient Appointment Routes*/}
                             <Route exact path='/patients/appointments'
                                    render={(route) => (this.state.currentPatient ?
                                        <Redirect to={"/patient/" + this.state.currentPatient.id + "/appointments"}/> :
-                                       <Appointment  {...this.state} {...route}/>)}/>
+                                       <Appointment  key={this.state.currentPatient} {...this.state} {...route}/>)}/>
                             <Route exact path='/patient/:id/appointments'
-                                   render={(route) => <Appointment  {...this.state} {...route}/>}/>
+                                   render={(route) => <Appointment  key={this.state.currentPatient} {...this.state} {...route}/>}/>
                             <Route exact path='/patients/appointments/:appointmentid'
-                                   render={(route) => <Appointment  {...this.state} {...route}/>}/>
+                                   render={(route) => <Appointment  key={this.state.currentPatient} {...this.state} {...route}/>}/>
                             {/*      <Route exact path='/patients/appointments/create'
                            render={() => <CreateAppointment {...this.props} />}/>*/}
 
@@ -91,59 +103,59 @@ class PatientHome extends React.Component {
                             {/*<Redirect to={"/patient/" + this.state.currentPatient.id + "/communications"}/> :*/}
                             {/*<PatientCommunication/>)}/>*/}
                             <Route exact path='/patient/:id/communications'
-                                   render={(route) => <PatientCommunication {...this.state} {...route}/>}/>
+                                   render={(route) => <PatientCommunication key={this.state.currentPatient} {...this.state} {...route}/>}/>
 
                             {/*** Patient Vital Sign Routes*/}
                             <Route exact path='/patients/emr/vitalsigns'
                                    render={(route) => (this.state.currentPatient ?
                                        <Redirect to={"/patient/" + this.state.currentPatient.id + "/emr/vitalsigns"}/> :
-                                       <PatientVitalSign {...this.state} {...route}/>)}/>
+                                       <PatientVitalSign key={this.state.currentPatient} {...this.state} {...route}/>)}/>
                             <Route exact path='/patient/:id/emr/vitalsigns'
-                                   render={(route) => <PatientVitalSign {...this.state} {...route} />}/>
+                                   render={(route) => <PatientVitalSign key={this.state.currentPatient} {...this.state} {...route} />}/>
                             <Route exact path='/patient/:id/emr/vitalsigns/add'
-                                   render={(route) => <AddorEditPatientVitalSigns {...this.state} {...route}/>}/>
+                                   render={(route) => <AddorEditPatientVitalSigns key={this.state.currentPatient} {...this.state} {...route}/>}/>
                             <Route exact path='/patient/:id/emr/vitalsigns/edit'
-                                   render={(route) => <AddorEditPatientVitalSigns {...this.state} {...route}/>}/>
+                                   render={(route) => <AddorEditPatientVitalSigns key={this.state.currentPatient} {...this.state} {...route}/>}/>
 
                             {/*** Patient Clinic Notes Routes*/}
                             <Route path={"/patients/emr/clinicnotes"}
-                                   render={(route) => <PatientClinicNotes {...this.props} {...route}/>}/>
+                                   render={(route) => <PatientClinicNotes key={this.state.currentPatient} {...this.props} {...route}/>}/>
                             <Route path={"/patient/:id/emr/clinicnotes"}
                                    render={(route) =>
-                                       <PatientClinicNotes {...this.state} {...this.props} {...route}/>}/>
+                                       <PatientClinicNotes key={this.state.currentPatient} {...this.state} {...this.props} {...route}/>}/>
 
                             {/*** Patient Completed Procedures Routes*/}
                             <Route exact path='/patients/emr/workdone'
                                    render={(route) => (this.state.currentPatient ?
                                        <Redirect to={"/patient/" + this.state.currentPatient.id + "/emr/workdone"}/> :
-                                       <PatientCompletedProcedures {...this.state} {...route} />)}/>
+                                       <PatientCompletedProcedures key={this.state.currentPatient} {...this.state} {...route} />)}/>
                             <Route exact path='/patient/:id/emr/workdone'
-                                   render={(route) => <PatientCompletedProcedures {...this.state} {...route}/>}/>
+                                   render={(route) => <PatientCompletedProcedures key={this.state.currentPatient} {...this.state} {...route}/>}/>
 
                             {/*** Patient Files Routes*/}
                             <Route exact path='/patients/emr/files'
                                    render={(route) => (this.state.currentPatient ?
                                        <Redirect to={"/patient/" + this.state.currentPatient.id + "/emr/files"}/> :
-                                       <PatientFiles {...route} {...this.state}/>)}/>
+                                       <PatientFiles key={this.state.currentPatient} {...route} {...this.state}/>)}/>
                             <Route path={"/patient/:id/emr/files"}
-                                   render={(route) => <PatientFiles {...route} {...this.state}/>}/>
+                                   render={(route) => <PatientFiles key={this.state.currentPatient} {...route} {...this.state}/>}/>
 
                             {/*** Patient Prescriptions Routes*/}
                             <Route exact path='/patients/emr/prescriptions'
                                    render={(route) => (this.state.currentPatient ?
                                        <Redirect
                                            to={"/patient/" + this.state.currentPatient.id + "/emr/prescriptions"}/> :
-                                       <PatientPrescriptions   {...this.state} {...route}/>)}/>
+                                       <PatientPrescriptions   key={this.state.currentPatient} {...this.state} {...route}/>)}/>
                             <Route path='/patient/:id/emr/prescriptions'
-                                   render={(route) => <PatientPrescriptions {...this.state} {...route} />}/>
+                                   render={(route) => <PatientPrescriptions key={this.state.currentPatient} {...this.state} {...route} />}/>
 
                             {/*** Patient Treatment Plan Routes*/}
                             <Route exact path='/patients/emr/plans'
                                    render={(route) => (this.state.currentPatient ?
                                        <Redirect to={"/patient/" + this.state.currentPatient.id + "/emr/plans"}/> :
-                                       <PatientTreatmentPlans   {...this.state} {...route}/>)}/>
+                                       <PatientTreatmentPlans   key={this.state.currentPatient} {...this.state} {...route}/>)}/>
                             <Route path='/patient/:id/emr/plans'
-                                   render={(route) => <PatientTreatmentPlans {...this.state} {...route} />}/>
+                                   render={(route) => <PatientTreatmentPlans key={this.state.currentPatient} {...this.state} {...route} />}/>
 
                             {/*** Patient Timeline Routes*/}
                             <Route path={"/patient/:id/emr/timeline"} component={PatientTimeline}/>
@@ -156,22 +168,22 @@ class PatientHome extends React.Component {
                                    render={(route) => (this.state.currentPatient ?
                                        <Redirect
                                            to={"/patient/" + this.state.currentPatient.id + "/billing/invoices"}/> :
-                                       <PatientInvoices {...this.state} {...route}/>)}/>
+                                       <PatientInvoices key={this.state.currentPatient} {...this.state} {...route}/>)}/>
                             <Route path='/patient/:id/billing/invoices'
-                                   render={(route) => <PatientInvoices {...this.state} {...route}/>}/>
+                                   render={(route) => <PatientInvoices key={this.state.currentPatient} {...this.state} {...route}/>}/>
 
                             {/*** Patient Payments Routes*/}
                             <Route path='/patients/billing/payments'
                                    render={(route) => (this.state.currentPatient ?
                                        <Redirect
                                            to={"/patient/" + this.state.currentPatient.id + "/billing/payments"}/> :
-                                       <PatientPayments {...this.state} {...route}/>)}/>
+                                       <PatientPayments key={this.state.currentPatient} {...this.state} {...route}/>)}/>
                             <Route path='/patient/:id/billing/payments'
-                                   render={(route) => <PatientPayments {...this.state} {...route}/>}/>
+                                   render={(route) => <PatientPayments key={this.state.currentPatient} {...this.state} {...route}/>}/>
 
                             {/*** Patient Ledger Routes*/}
                             <Route exact path='/patient/:id/billing/ledger'
-                                   render={() => <PatientLedgers/>}/>
+                                   render={() => <PatientLedgers key={this.state.currentPatient}/>}/>
                         </Switch>
                     </Content>
                 </Layout>

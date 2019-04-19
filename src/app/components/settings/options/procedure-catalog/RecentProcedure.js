@@ -79,7 +79,7 @@ class RecentProcedure extends React.Component {
                         loadProcedures={that.loadProcedures}/> : <PermissionDenied/>
                    )}/>
             <Row>
-                <h2>Procedures
+                <h2>Procedures Catalog
                     <Link to="/settings/procedures/addprocedure">
                         <Button type="primary" style={{float: 'right'}}>
                             <Icon type="plus"/>&nbsp;Add Procedure
@@ -87,8 +87,8 @@ class RecentProcedure extends React.Component {
                     </Link>
                 </h2>
                 <Card>
-                    <Tabs defaultActiveKey="procedurecatalog">
-                        <TabPane tab={<span><Icon type="android"/>Procedure Catalog</span>} key="procedurecatalog">
+                    {/*<Tabs defaultActiveKey="procedurecatalog">*/}
+                        {/*<TabPane tab={<span><Icon type="android"/>Procedure Catalog</span>} key="procedurecatalog">*/}
                             <Table loading={this.state.loading} dataSource={this.state.procedure_category}>
                                 <Column
                                     title="Procedure Name"
@@ -137,9 +137,9 @@ class RecentProcedure extends React.Component {
                                 />
 
                             </Table>
-                        </TabPane>
+                        {/*</TabPane>*/}
 
-                    </Tabs>
+                    {/*</Tabs>*/}
 
                 </Card>
             </Row>

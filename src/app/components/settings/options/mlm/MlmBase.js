@@ -1,6 +1,6 @@
 import React from "react";
-import {Button, Card, Icon, Table, Tabs} from "antd";
-import {getAPI, interpolate, postAPI,patchAPI,deleteAPI,putAPI} from "../../../../utils/common";
+import {Button, Card, Icon, Table, Tabs, Row} from "antd";
+import {getAPI, interpolate, postAPI, patchAPI, deleteAPI, putAPI} from "../../../../utils/common";
 import MLMGenerate from "./MLMGenerate"
 import {Link, Route, Switch} from "react-router-dom";
 import {PRODUCT_MARGIN, ROLE_COMMISION, SINGLE_PRODUCT_MARGIN, STAFF_ROLES} from "../../../../constants/api";
@@ -14,9 +14,9 @@ export default class MlmBase extends React.Component {
             mlmItems: [],
             productMargin: [],
             active_practiceId: this.props.active_practiceId,
-            loading:true
+            loading: true
         }
-        console.log("mlm",this.state.active_practiceId);
+        console.log("mlm", this.state.active_practiceId);
         this.loadMlmData = this.loadMlmData.bind(this);
         this.loadRoles = this.loadRoles.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -33,12 +33,12 @@ export default class MlmBase extends React.Component {
         let successFn = function (data) {
             that.setState({
                 mlmItems: data,
-                loading:false
+                loading: false
             })
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
 
         }
@@ -50,12 +50,12 @@ export default class MlmBase extends React.Component {
         let successFn = function (data) {
             that.setState({
                 staffRoles: data,
-                loading:false
+                loading: false
             })
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         }
         getAPI(STAFF_ROLES, successFn, errorFn);
@@ -78,7 +78,7 @@ export default class MlmBase extends React.Component {
         this.setState({
             editId: id,
             editRecord: record,
-            loading:false
+            loading: false
         }, function () {
             this.props.history.push('/settings/mlm/edit');
         })
@@ -86,7 +86,7 @@ export default class MlmBase extends React.Component {
 
     deleteObject(record) {
         let that = this;
-        let reqData = {...record,is_active:false};
+        let reqData = {...record, is_active: false};
         reqData.is_active = false;
         let successFn = function (data) {
             that.loadProductMargin();
@@ -96,11 +96,11 @@ export default class MlmBase extends React.Component {
         putAPI(interpolate(SINGLE_PRODUCT_MARGIN, [record.id]), reqData, successFn, errorFn);
     }
 
-    changeRedirect(){
-        var redirectVar=this.state.redirect;
-      this.setState({
-        redirect:  !redirectVar,
-      })  ;
+    changeRedirect() {
+        var redirectVar = this.state.redirect;
+        this.setState({
+            redirect: !redirectVar,
+        });
     }
 
     render() {
@@ -129,11 +129,9 @@ export default class MlmBase extends React.Component {
             }
         })
 
-        
-
 
         let datasource = {};
-        
+
         that.state.productMargin.forEach(function (productMargin) {
             datasource[productMargin.id] = [];
 
@@ -145,15 +143,15 @@ export default class MlmBase extends React.Component {
                             if (that.state.mlmItems) {
                                 for (let i = 0; i < that.state.mlmItems.length; i++) {
                                     let item = that.state.mlmItems[i];
-                                    if (item.margin.id == productMargin.id && item.level == level && role.id==item.role) {
-                                       roledata[level]= item.commision_percent;
+                                    if (item.margin.id == productMargin.id && item.level == level && role.id == item.role) {
+                                        roledata[level] = item.commision_percent;
                                         break;
                                     }
                                 }
                             }
                         }
                     }
-                    
+
                     datasource[productMargin.id].push(roledata);
                 })
             }
@@ -161,12 +159,12 @@ export default class MlmBase extends React.Component {
         return <div>
             <Switch>
                 <Route exact path="/settings/mlm/generate"
-                    render={(route) => <MLMGenerate {...route} 
-                        loadData={this.loadMlmData} {...this.state}/>}/>
+                       render={(route) => <MLMGenerate {...route}
+                                                       loadData={this.loadMlmData} {...this.state}/>}/>
                 {this.state.editId && this.state.editRecord ?
-                    <Route exact path="/settings/mlm/edit" 
-                        render={(route) => <MLMGenerate {...route}
-                            loadData={this.loadMlmData} {...this.state}/>}/> : null}
+                    <Route exact path="/settings/mlm/edit"
+                           render={(route) => <MLMGenerate {...route}
+                                                           loadData={this.loadMlmData} {...this.state}/>}/> : null}
                 <Route>
                     <div>
                         <h2>MLM Commissions
@@ -181,19 +179,18 @@ export default class MlmBase extends React.Component {
                                 <Tabs type="card">
                                     {this.state.productMargin.map(marginType =>
                                         <TabPane tab={marginType.name} key={marginType.id}>
-                                            <h4>
-                                                <div>
-                                                    <Button.Group>
-                                                        <Button type="primary"
-                                                                onClick={() => this.editObject(marginType.id, datasource[marginType.id])}><Icon
-                                                            type="edit"/> Edit</Button>
-                                                        <Button type="danger"
-                                                                onClick={() => that.deleteObject(marginType)}><Icon
-                                                            type="delete"/> Delete</Button>
-                                                    </Button.Group>
-                                                </div>
-                                            </h4>
-                                            <Table loading={this.state.loading} pagination={false} dataSource={datasource[marginType.id]}
+                                            <Row>
+                                                <Button.Group>
+                                                    <Button type="primary"
+                                                            onClick={() => this.editObject(marginType.id, datasource[marginType.id])}><Icon
+                                                        type="edit"/> Edit</Button>
+                                                    <Button type="danger"
+                                                            onClick={() => that.deleteObject(marginType)}><Icon
+                                                        type="delete"/> Delete</Button>
+                                                </Button.Group>
+                                            </Row>
+                                            <Table loading={this.state.loading} pagination={false}
+                                                   dataSource={datasource[marginType.id]}
                                                    rowKey="role"
                                                    columns={columns[marginType.id]}
                                                    bordered/>

@@ -118,8 +118,10 @@ class ExpensesTypes extends React.Component {
       const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}];
       const editFormDefaultValues = [{"key":"practice", "value":this.props.active_practiceId}, {"key":"id", "value":this.state.editingId}];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div><Card>
-            <TestFormLayout title="Expenses Types" defaultValues={defaultValues} formProp={formProp}  fields={fields}/>
+        return <div>
+            <h2>Expenses Types</h2>
+            <Card>
+            <TestFormLayout defaultValues={defaultValues} formProp={formProp}  fields={fields}/>
             <Divider/>
             <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.expenses}/>
             </Card>

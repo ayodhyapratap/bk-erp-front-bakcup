@@ -86,6 +86,10 @@ class DynamicFieldsForm extends React.Component {
         // this.onFormFieldDataChange = this.onFormFieldDataChange.bind(this)
     }
 
+    componentWillReceiveProps(nextProps) {
+        console.log("Recieved New Props in Dynamic Form", nextProps);
+    }
+
     componentDidMount() {
         let that = this;
         this.resetFormData();
@@ -123,7 +127,7 @@ class DynamicFieldsForm extends React.Component {
                 if (this.props.defaultValues) {
                     this.props.defaultValues.forEach(function (object) {
                         // values[object.key] = object.value;
-                        values = {[object.key]:object.value,...values}
+                        values = {[object.key]: object.value, ...values}
                     })
                 }
                 if (this.state.colorPickerKey) {
@@ -147,14 +151,14 @@ class DynamicFieldsForm extends React.Component {
                         if (formFields.format) {
                             values[key] = moment(values[key]).format(formFields.format);
                         }
-                    }else if (formFields.type ==DATE_PICKER) {
+                    } else if (formFields.type == DATE_PICKER) {
                         let key = formFields.key;
                         if (formFields.format) {
                             values[key] = moment(values[key]).format(formFields.format);
                         }
                     }
                 });
-                if(that.state.formProp.beforeSend){
+                if (that.state.formProp.beforeSend) {
                     values = that.state.formProp.beforeSend(values);
                 }
                 console.log("Fields in the form", values);
@@ -260,15 +264,15 @@ class DynamicFieldsForm extends React.Component {
                 {this.state.fields ? this.state.fields.map(function (field) {
                     switch (field.type) {
                         case PASSWORD_FIELD:
-                                return <Form.Item key={field.key} label={field.label}  {...formItemLayout}
-                                                  extra={field.extra}>
-                                    {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
-                                        <Input prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                                               type="password"
-                                               placeholder={field.placeholder}
-                                               disabled={field.disabled ? field.disabled : that.state.disabled}/>
-                                    )}
-                                </Form.Item>;
+                            return <Form.Item key={field.key} label={field.label}  {...formItemLayout}
+                                              extra={field.extra}>
+                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                    <Input prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                                           type="password"
+                                           placeholder={field.placeholder}
+                                           disabled={field.disabled ? field.disabled : that.state.disabled}/>
+                                )}
+                            </Form.Item>;
                         case INPUT_FIELD:
                             return <FormItem key={field.key} label={field.label}  {...formItemLayout}
                                              extra={field.extra}>

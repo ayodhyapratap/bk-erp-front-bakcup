@@ -13,11 +13,12 @@ class Printout extends React.Component{
 	constructor(props){
 		super(props);
 	}
-	
+
 
 	render(){
 		return (<div>
-            <Tabs defaultActiveKey={EMR_TYPE} size="small">
+            <h2>Print Settings</h2>
+            <Tabs defaultActiveKey={EMR_TYPE} size="small" type="card">
 	            <TabPane tab={<span><Icon type="calculator" />{EMR_TYPE}</span>} key={EMR_TYPE}>
 	              	<Card>
 		              	<h4>
@@ -40,7 +41,7 @@ class Printout extends React.Component{
 	                        			return (<TabPane tab={item.title} key={i}><PrintSettings key={item.title} sub_type={item.title} active_practiceId={this.props.active_practiceId} type={"BILLING"}/></TabPane>)
 	                        		})}
 	                        	</Tabs>
-	     							
+
 	                        </div>
 	                    </h4>
 	             	</Card>

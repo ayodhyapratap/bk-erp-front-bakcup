@@ -41,9 +41,9 @@ class HeaderSettingForm extends React.Component {
       this.props.form.validateFields((err, formData ) => {
         if(!err){
           let image =formData['logo_path'].file.response.image_path;
-        
+
           let reqData = {type:this.state.type, sub_type:this.state.sub_type, id:this.state.print_setting.id,...formData, logo_path:image}
-         
+
           let successFn = function (data) {
               if (data) {
                  console.log(data)
@@ -51,7 +51,7 @@ class HeaderSettingForm extends React.Component {
           };
           let errorFn = function () {
               };
-         
+
 
           postAPI(interpolate(PRACTICE_PRINT_SETTING_API, [this.props.active_practiceId]), reqData, successFn, errorFn);
         }
@@ -72,7 +72,7 @@ class HeaderSettingForm extends React.Component {
    getAPI(interpolate(PRACTICE_PRINT_SETTING_API, [this.props.active_practiceId,that.state.type,that.state.sub_type]), successFn, errorFn);
   }
 
-    
+
 
 
 
@@ -80,7 +80,7 @@ class HeaderSettingForm extends React.Component {
       this.setState({
       [name]:value
       });
-   
+
     }
   render() {
     const formItemLayout = {
@@ -135,17 +135,17 @@ class HeaderSettingForm extends React.Component {
           )
           }
       	</Form.Item>
-       
+
         <Form.Item key={'header_text'} {...formItemLayout} label={( <span>Header&nbsp;</span>)} >
            {getFieldDecorator('header_text',{initialValue: this.state.print_setting.header_text
             })(
-              <Input/> 
+              <Input/>
           )}
         </Form.Item>
         <Form.Item key={'header_left_text'} {...formItemLayout} label={( <span>Left Text&nbsp;</span>)} >
            {getFieldDecorator('header_left_text',{initialValue: this.state.print_setting.header_left_text
             })(
-              <Input/> 
+              <Input/>
           )}
         </Form.Item>
 
@@ -165,8 +165,7 @@ class HeaderSettingForm extends React.Component {
         }
         </Form.Item>
 
-        <Form.Item key={'logo_path'} label={(<span>Logo&nbsp;</span>)}>
-          <span> 
+        <Form.Item key={'logo_path'} {...formItemLayout} label={(<span>Logo&nbsp;</span>)}>
           {getFieldDecorator('logo_path')
             ( <Upload {...singleUploadprops} >
                 <Button>
@@ -174,31 +173,27 @@ class HeaderSettingForm extends React.Component {
                 </Button>
               </Upload>
             )
-
-
           }
-          </span>
       		<Avatar style={{ backgroundColor: this.state.color}} size="large">
           		{this.state.user}
        		</Avatar>
-        	 
+
         </Form.Item>
 
-        <Form.Item key={'logo_type'} label={(<span>Type&nbsp;</span>)}>
-          {getFieldDecorator('logo_type',{initialValue: this.state.print_setting.logo_type})
-            (
+        <Form.Item key={'logo_type'} {...formItemLayout} label={(<span>Type&nbsp;</span>)}>
+          {getFieldDecorator('logo_type',{initialValue: this.state.print_setting.logo_type})(
             <Radio.Group onChange={(e)=>this.onChanged('logo_type',e.target.value)}>
               {logoType}
-            </Radio.Group>  
+            </Radio.Group>
             )}
         </Form.Item>
 
-        <Form.Item key={'logo_alignment'} label={(<span>Alignment&nbsp;</span>)}>
+        <Form.Item key={'logo_alignment'} {...formItemLayout} label={(<span>Alignment&nbsp;</span>)}>
           {getFieldDecorator('logo_alignment',{initialValue:this.state.print_setting.logo_alignment})
             (
             <Radio.Group onChange={(e)=>this.onChanged('alignType',e.target.value)}>
              {logoAlignment}
-            </Radio.Group>  
+            </Radio.Group>
             )
           }
         </Form.Item>
@@ -210,4 +205,4 @@ class HeaderSettingForm extends React.Component {
     );
   }
 }
-export default HeaderSettingForm;	
+export default HeaderSettingForm;
