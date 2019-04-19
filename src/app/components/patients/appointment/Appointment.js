@@ -196,10 +196,11 @@ class Appointment extends React.Component {
     deleteAppointment(record) {
         let that = this;
         console.log("data",record);
-        let reqData = {'is_active':false}
+        let reqData = {'is_active':false, 'status':"Cancelled"}
         console.log("regData",reqData);
         let successFn = function (data) {
-            displayMessage(SUCCESS_MSG_TYPE, data);
+            that.setState({
+            })
 
         }
         let errorFn = function () {
@@ -221,12 +222,14 @@ class Appointment extends React.Component {
             })
         }
         console.log("doctor",doctors);
+        console.log("doctor",procedures);
         const treatmentNotes = [];
         if (this.state.treatmentNotes) {
             this.state.treatmentNotes.forEach(function (treatmentNote) {
                 treatmentNotes[treatmentNote.id] = treatmentNote.name
             })
         }
+        console.log("doctor",treatmentNotes);
         const categories = {1: "fast", 2: "Full Stomach", 3: "No Liquids"}
         const columns = [{
             title: 'Schedule Time',
