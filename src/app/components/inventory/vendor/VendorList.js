@@ -1,6 +1,6 @@
 import {Button, Card, Icon,Popconfirm,Divider} from "antd";
 import React from "react";
-import {getAPI, interpolate,deleteAPI} from "../../../utils/common";
+import {getAPI, interpolate,putAPI} from "../../../utils/common";
 import {VENDOR_API ,SINGLE_VENDOR_API}from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddVendor from "./AddVendor";
@@ -35,13 +35,15 @@ export default class VendorList extends React.Component {
     }
     deleteVendor(value){
         var that = this;
+        let reqData={...value, 'is_active':false}
+        console.log("is_active",reqData);
         let successFn = function (data) {
             that.loadData();
             console.log("Deleted");
-        };
+        }
         let errorFn = function () {
         };
-        deleteAPI(interpolate(SINGLE_VENDOR_API, [value]), successFn, errorFn);
+        putAPI(interpolate(SINGLE_VENDOR_API, [value]),reqData, successFn, errorFn);
     }
     render() {
         let that = this;

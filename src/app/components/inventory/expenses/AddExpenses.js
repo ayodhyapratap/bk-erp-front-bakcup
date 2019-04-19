@@ -134,7 +134,7 @@ export default class AddExpenses extends React.Component {
             key: "payment_mode",
             type: SELECT_FIELD,
             required: true,
-            initialValue: this.state.editData ? this.state.editData.paymentModes : null,
+            initialValue: this.state.editData ? this.state.editData.payment_mode.id : null,
             options: paymentModesOptions
         }, {
             label: "Vendor",
@@ -146,7 +146,7 @@ export default class AddExpenses extends React.Component {
             label: "Expense type",
             key: "expense_type",
             type: SELECT_FIELD,
-            initialValue: this.state.editData ? this.state.editData.expenses : null,
+            initialValue: this.state.editData ? this.state.editData.expense_type.id : null,
             options: expenseTypesOptions
         },];
 
