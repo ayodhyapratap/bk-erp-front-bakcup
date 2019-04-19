@@ -195,6 +195,7 @@ class Appointment extends React.Component {
 
     deleteAppointment(record) {
         let that = this;
+        console.log("data",record);
         let reqData = {'is_active':false}
         console.log("regData",reqData);
         let successFn = function (data) {
