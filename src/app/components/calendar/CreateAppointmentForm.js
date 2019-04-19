@@ -209,7 +209,7 @@ export default class CreateAppointmentForm extends React.Component {
                 console.log(formData);
                 let successFn = function (data) {
                     if (data) {
-                        console.log(data)
+                        // console.log(data)
                         displayMessage(SUCCESS_MSG_TYPE, "Appointment Created Successfully");
                     }
                 };

@@ -3,6 +3,7 @@ import {Card, Row, Form, Col, List, Button, Table, InputNumber, Input, Icon} fro
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
 import {PROCEDURE_CATEGORY, TREATMENTPLANS_API} from "../../../constants/api";
 import {remove} from 'lodash';
+import { Redirect } from 'react-router-dom';
 
 
 class AddorEditDynamicTreatmentPlans extends React.Component {
@@ -74,6 +75,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
     }
 
+
     handleSubmit = (e) => {
         let that = this;
         e.preventDefault();
@@ -107,14 +109,14 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                 });
                 let successFn = function (data) {
                     displayMessage("Inventory updated successfully");
-                    that.props.loadData();
-                    let url = '/patient/' + that.props.match.params.id + '/billing/invoices';
+                    // that.props.loadData();
+                    let url = '/patient/' + that.props.match.params.id + '/emr/plans';
                     that.props.history.push(url);
+                    // return <Redirect to={url} />;
                 }
                 let errorFn = function () {
 
                 }
-                console.log("Same adta",JSON.stringify(reqData));
                 postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
             }
         });

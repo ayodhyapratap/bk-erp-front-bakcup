@@ -30,10 +30,10 @@ class AddorEditPatientTreatmentPlans extends React.Component {
             editTreatmentPlan: this.props.editTreatmentPlan ? this.props.editTreatmentPlan : null,
             currentPatient:this.props.match.params.id,
         }
-            console.log("currentid",this.state.currentPatient);
         this.changeRedirect = this.changeRedirect.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
         this.loadProductMargin = this.loadProductMargin.bind(this);
+        this.loadTreatmentPlans =this.loadTreatmentPlans.bind(this);
 
     }
 
@@ -43,6 +43,32 @@ class AddorEditPatientTreatmentPlans extends React.Component {
 
     }
 
+    loadTreatmentPlans(){
+        let incompleted=[];
+      let that = this;
+      let successFn =function (data){
+        that.setState({
+          treatmentPlans:data,
+          loading:false
+        })
+          data.forEach(function (treatmentplan) {
+              if(!treatmentplan.is_completed){
+                  incompleted.push(treatmentplan)
+              }
+          })
+          that.setState({
+              incompletedTreatmentPlans:incompleted,
+              loading:false
+          })
+      }
+      let errorFn = function (){
+        that.setState({
+          loading:false
+        })
+
+      }
+      getAPI(interpolate(TREATMENTPLANS_API,[this.props.match.params.id,null]), successFn, errorFn)
+    }
     loadProductMargin() {
         let that = this;
         let successFn = function (data) {
@@ -95,9 +121,9 @@ class AddorEditPatientTreatmentPlans extends React.Component {
             options: drugOption
         }, {
             label: "Quantity",
-            key: "qunatity",
+            key: "quantity",
             required: true,
-            initialValue: this.state.editTreatmentPlan ? this.state.editTreatmentPlan.qunatity : null,
+            initialValue: this.state.editTreatmentPlan ? this.state.editTreatmentPlan.quantity : null,
             type: INPUT_FIELD
         }, {
             label: "cost",
@@ -107,7 +133,7 @@ class AddorEditPatientTreatmentPlans extends React.Component {
         }, {
             label: 'MLM Margin Type',
             type: SELECT_FIELD,
-            initialValue: (this.state.editFields ? this.state.editFields.margin : null),
+            initialValue: (this.state.editTreatmentPlan ? this.state.editTreatmentPlan.margin : null),
             key: 'margin',
             required: true,
             options: this.state.productMargin.map(margin => ({label: margin.name, value: margin.id}))
@@ -117,11 +143,6 @@ class AddorEditPatientTreatmentPlans extends React.Component {
             initialValue: this.state.editTreatmentPlan ? this.state.editTreatmentPlan.total : null,
             type: INPUT_FIELD,
         }, {
-            label: "active",
-            key: "is_active",
-            initialValue: this.state.editTreatmentPlan ? this.state.editTreatmentPlan.is_active : false,
-            type: SINGLE_CHECKBOX_FIELD,
-        }, {
             label: "Completed",
             key: "is_completed",
             initialValue: this.state.editTreatmentPlan ? this.state.editTreatmentPlan.is_completed : false,
@@ -129,11 +150,11 @@ class AddorEditPatientTreatmentPlans extends React.Component {
         },];
 
 
+        let that =this;
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
-
-                console.log("value nahi aa",this.state.currentPatient);
+                that.loadTreatmentPlans();
             },
             errorFn: function () {
 
@@ -141,7 +162,7 @@ class AddorEditPatientTreatmentPlans extends React.Component {
             beforeSend: function (values){
                 let reqData={
                     treatment:[],
-                    // patient:this.props.match.params.id/*props value not fetch error match not define*/
+                    patient:that.props.match.params.id
                 }
                 reqData.treatment.push(values);
                 return reqData;

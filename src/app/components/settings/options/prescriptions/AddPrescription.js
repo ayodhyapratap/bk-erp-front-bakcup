@@ -69,12 +69,12 @@ class AddPrescription extends React.Component {
     }
 
     render() {
-        // const drugTypeOptions = []
-        // if (this.state.drugType) {
-        //     this.state.drugType.forEach(function (drug) {
-        //         drugTypeOptions.push({label: (drug.name), value: drug.id});
-        //     })
-        // }
+        const drugTypeOptions = []
+        if (this.state.drugType) {
+            this.state.drugType.forEach(function (drug) {
+                drugTypeOptions.push({label: (drug.name), value: drug.id});
+            })
+        }
         let that = this;
         let drugTypeField = (this.state.drugType && this.state.drugType == INPUT_FIELD ?
             {

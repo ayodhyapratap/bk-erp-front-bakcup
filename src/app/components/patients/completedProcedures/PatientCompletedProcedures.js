@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Checkbox, Divider, Icon, Table, Popconfirm} from "antd";
-import {getAPI, interpolate, putAPI} from "../../../utils/common";
+import {getAPI, interpolate, putAPI, postAPI} from "../../../utils/common";
 import {PROCEDURE_CATEGORY, PRODUCT_MARGIN, TREATMENTPLANS_API, SINGLE_REATMENTPLANS_API} from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
@@ -20,14 +20,14 @@ class PatientCompletedProcedures extends React.Component {
             productMargin: [],
             loading:true
         }
-        this.loadtreatmentPlanss = this.loadtreatmentPlanss.bind(this);
+        this.loadTreatmentPlans = this.loadTreatmentPlans.bind(this);
         this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
         this.editTreatmentPlanData = this.editTreatmentPlanData.bind(this);
     }
 
     componentDidMount() {
         if (this.props.match.params.id) {
-            this.loadtreatmentPlanss();
+            this.loadTreatmentPlans();
             this.loadProcedureCategory();
             this.loadProductMargin();
         }
@@ -49,7 +49,7 @@ class PatientCompletedProcedures extends React.Component {
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
 
-    loadtreatmentPlanss() {
+    loadTreatmentPlans() {
         let completed = [];
         let that = this;
         let successFn = function (data) {
@@ -99,23 +99,28 @@ class PatientCompletedProcedures extends React.Component {
         this.setState({
             editTreatmentPlan: record,
         });
+        // console.log("props history",this.props);
         let id = this.props.match.params.id;
-        this.props.history.push("/patient/" + id + "/emr/plans/edit")
+        this.props.history.push("/patient/" + id + "/emr/plans/edit");
 
     }
     
-
     deleteTreatmentPlans(record) {
       let that = this;
-      let reqData = record;
-      reqData.is_active = false;
+      let obj={...record,is_active:false}
+      let reqData = {
+          treatment:[],
+          patient: that.props.match.params.id
+      }
+      reqData.treatment.push(obj);
+
       let successFn = function (data) {
-        that.loadData();
+        that.loadTreatmentPlans();
       }
       let errorFn = function () {
 
       };
-      putAPI(interpolate(SINGLE_REATMENTPLANS_API, [record.id]), reqData, successFn, errorFn);
+      postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id],null), reqData, successFn, errorFn);
     }
 
     render() {
@@ -156,20 +161,6 @@ class PatientCompletedProcedures extends React.Component {
             key: 'margin',
             required: true,
             options: this.state.productMargin.map(margin => ({label: margin.name, value: margin.id}))
-        }, {
-            title: 'Active',
-            key: 'is_active',
-            initialValue: (this.state.editFields ? this.state.editFields.is_active : null),
-            render: (text, record) => (
-                <Checkbox disabled checked={record.is_active}/>
-            )
-        }, {
-            title: 'Completed',
-            key: 'is_completed',
-            initialValue: (this.state.editFields ? this.state.editFields.is_completed : null),
-            render: (text, record) => (
-                <Checkbox disabled checked={record.is_completed}/>
-            )
         }, {
             title: 'Action',
             key: 'action',

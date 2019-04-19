@@ -22,7 +22,7 @@ class PatientTreatmentPlans extends React.Component {
             loading: true,
             selectedTreatments:{}
         }
-        this.loadtreatmentPlanss = this.loadtreatmentPlanss.bind(this);
+        this.loadTreatmentPlans = this.loadTreatmentPlans.bind(this);
         this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
         this.editTreatmentPlanData = this.editTreatmentPlanData.bind(this);
         this.submitCompleteTreatment = this.submitCompleteTreatment.bind(this);
@@ -30,13 +30,13 @@ class PatientTreatmentPlans extends React.Component {
 
     componentDidMount() {
         if (this.props.match.params.id) {
-            this.loadtreatmentPlanss();
+            this.loadTreatmentPlans();
             this.loadProcedureCategory();
         }
 
     }
 
-    loadtreatmentPlanss(){
+    loadTreatmentPlans(){
         let incompleted=[];
       let that = this;
       let successFn =function (data){
@@ -63,35 +63,7 @@ class PatientTreatmentPlans extends React.Component {
       getAPI(interpolate(TREATMENTPLANS_API,[this.props.match.params.id,null]), successFn, errorFn)
     }
 
-    loadtreatmentPlanss() {
-        let incompleted = [];
-        let that = this;
-        let successFn = function (data) {
-            that.setState({
-                treatmentPlans: data,
-                loading: false
-            })
-            data.forEach(function (treatmentplan) {
-                if (!treatmentplan.is_completed) {
-                    incompleted.push(treatmentplan)
-                }
-            })
-            that.setState({
-                incompletedTreatmentPlans: incompleted,
-                loading: false
-            })
-
-            
-        }
-        let errorFn = function () {
-            that.setState({
-                loading: false
-            })
-
-        }
-        getAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id]), successFn, errorFn)
-    }
-
+    
     loadProcedureCategory() {
         let that = this;
         let successFn = function (data) {
@@ -132,12 +104,12 @@ class PatientTreatmentPlans extends React.Component {
       reqData.treatment.push(obj);
 
       let successFn = function (data) {
-        that.loadData();
+        that.loadTreatmentPlans();
       }
       let errorFn = function () {
 
       };
-      postAPI(interpolate(TREATMENTPLANS_API, [record.id],null), reqData, successFn, errorFn);
+      postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id],null), reqData, successFn, errorFn);
     }
 
     treatmentCompleteToggle(id,option){
@@ -159,12 +131,12 @@ class PatientTreatmentPlans extends React.Component {
             reqData.treatment.push(treatmentObj);
         });
         let successFn = function(data){
-
+            that.loadTreatmentPlans();
         }
         let errorFn=function(){
 
         }
-        console.log("Data",JSON.stringify(reqData));
+        // console.log("Data",JSON.stringify(reqData));
         postAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id]),reqData ,successFn, errorFn)
     }
     render(){
