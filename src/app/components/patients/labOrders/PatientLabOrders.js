@@ -10,7 +10,6 @@ class PatientLabOrders extends React.Component{
         super(props);
         this.state={
         	lab_test:[],
-        	addNotes: {},
         	tableFormValues: [],
         	addedLabs : {}
         }
@@ -65,13 +64,11 @@ class PatientLabOrders extends React.Component{
             }
             return {
             	addedLabs:{...prevState.addedLabs,[item.id]:true},
-                // addNotes: {...prevState.addNotes, [randId]: !!item.default_notes},
                 tableFormValues: [...prevState.tableFormValues, {
                     ...item,
                     _id: randId,
                 }]
             }
-                // console.log("ide",this.state.tableFormValues);
         });
     };
 
@@ -80,7 +77,6 @@ class PatientLabOrders extends React.Component{
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
                 let reqData = {
                     treatment: [],
                     patient: that.props.match.params.id
