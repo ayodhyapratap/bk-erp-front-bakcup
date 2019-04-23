@@ -1,10 +1,11 @@
 import React from "react";
-import {Card, Row, Col, Form, Table, Divider, Tabs, List, Button, Input, Select, Radio, InputNumber, Icon} from 'antd';
+import {Card, Row, Col, Form, Table, Divider, Tabs, List, Button, Input, Select, Radio, InputNumber, Icon, Affix} from 'antd';
 import {DRUG_CATALOG, LABTEST_API} from "../../../constants/api";
-import {displayMessage, getAPI, interpolate} from "../../../utils/common";
+import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
 import {remove} from "lodash";
 import {DURATIONS_UNIT} from "../../../constants/hardData";
 import {WARNING_MSG_TYPE} from "../../../constants/dataKeys";
+import {PRESCRIPTIONS_API} from "../../../constants/api";
 
 const TabPane = Tabs.TabPane;
 
@@ -114,6 +115,56 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         });
     };
 
+     handleSubmit = (e) => {
+        let that = this;
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            console.log("form",values);
+            if (!err) {
+                let reqData = {
+                    drugs: [],
+                    labs:[],
+                    patient: that.props.match.params.id,
+                    practice:that.props.active_practiceId,
+                };
+
+                that.state.formDrugList.forEach(function (item){
+                       console.log("drug h",item);
+                    item.dosage = values.does[item._id];
+                    item.duration_type = values.duration_unit[item._id];
+
+                    if(values.instruction)
+                        item.instructions =values.instruction[item._id];
+                    const drugIitem ={
+                        "drug": item.id,
+                        "name":item.name,
+                        "dosage": item.dosage,
+                        "frequency": item.frequency,
+                        "duration_type": item.duration_type,
+                        "instuction" :item.instructions,
+                        "before_food":true,
+                        "after_food":false,
+                        "is_active" :true,
+                    };
+                    reqData.drugs.push(drugIitem)
+                });
+
+                that.state.formLabList.forEach(function (item) {
+                    
+                    reqData.labs.push(item);
+                });
+                // console.log("data set",JSON.stringify(reqData));
+                let successFn = function (data) {
+                }
+                let errorFn = function () {
+
+                }
+                postAPI(interpolate(PRESCRIPTIONS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
+            }
+        });
+    }
+
+
     render() {
         let that = this;
         const formItemLayout = {
@@ -150,10 +201,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 extra={<span>does(s)</span>}
                 key={`does[${record._id}]`}>
                 {getFieldDecorator(`does[${record._id}]`, {
-                    validateTrigger: ['onChange', 'onBlur'],
-                    rules: [{
-                        message: "This field is required.",
-                    }],
+                    validateTrigger: ['onChange', 'onBlur']},
+                    { rules: [{ message: "This field is required.",}],
                 })(
                     <InputNumber min={0} size={"small"}/>
                 )}
@@ -183,10 +232,9 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 <Form.Item
                     key={`duration[${record._id}]`}>
                     {getFieldDecorator(`duration[${record._id}]`, {
-                        validateTrigger: ['onChange', 'onBlur'],
-                        rules: [{
-                            message: "This field is required.",
-                        }],
+                        validateTrigger: ['onChange', 'onBlur']},
+                       {
+                        rules: [{ message: "This field is required.",}],
                     })(
                         <InputNumber min={0} size={"small"}/>
                     )}
@@ -232,7 +280,12 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         </Form.Item>
                         : <a onClick={() => this.addInstructions(record._id, true)}>+ Add Instructions</a>}
                 </div>
-        }, {
+        },
+         // 
+        //     title:'time'
+
+        // },
+        {
             title: '',
             dataIndex: 'action',
             key: 'action',
@@ -276,16 +329,21 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         size="small"/>
             </span>
         }];
-        return <Card>
+        return <Card title={"Prescriptions"}>
             <Row>
                 <Col span={18}>
-                    <Form>
+                    <Form onSubmit={this.handleSubmit}> 
                         <Table pagination={false} bordered={false} columns={drugTableColumns}
                                dataSource={this.state.formDrugList}/>
 
                         <Divider> Lab Test</Divider>
                         <Table pagination={false} bordered={false} columns={labTablecolums}
                                dataSource={this.state.formLabList}/>
+                         <Affix target={() => this.container}>
+                           <Button type="primary" htmlType="submit">
+                              Save
+                            </Button>
+                          </Affix>
                     </Form>
                 </Col>
                 <Col span={6}>
