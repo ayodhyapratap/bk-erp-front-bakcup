@@ -1,10 +1,26 @@
 import React from "react";
-import {Card, Row, Form, Col, List, Button, Table, InputNumber, Input, Icon, Affix, Dropdown, Menu} from 'antd';
+import {
+    Card,
+    Row,
+    Form,
+    Col,
+    List,
+    Button,
+    Table,
+    InputNumber,
+    Input,
+    Icon,
+    Affix,
+    Dropdown,
+    Menu,
+    DatePicker
+} from 'antd';
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
 import {PRACTICESTAFF, PROCEDURE_CATEGORY, TREATMENTPLANS_API} from "../../../constants/api";
 import {remove} from 'lodash';
 import {Redirect} from 'react-router-dom';
 import {DOCTORS_ROLE} from "../../../constants/dataKeys";
+import moment from "moment";
 
 
 class AddorEditDynamicTreatmentPlans extends React.Component {
@@ -16,7 +32,8 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
             tableFormValues: [],
             addNotes: {},
             practiceDoctors: [],
-            selectedDoctor: {}
+            selectedDoctor: {},
+            selectedDate: moment()
         }
     }
 
@@ -105,6 +122,11 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
     selectDoctor = (doctor) => {
         this.setState({
             selectedDoctor: doctor
+        })
+    }
+    selectedDate = (date) => {
+        this.setState({
+            selectedDate: date
         })
     }
     handleSubmit = (e) => {
@@ -247,7 +269,6 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                 {getFieldDecorator(`discount[${record._id}]`, {
                     validateTrigger: ['onChange', 'onBlur'],
                     rules: [{
-                        required: true,
                         message: "This field is required.",
                     }],
                 })(
@@ -261,9 +282,9 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
             key: 'total',
             render: (total, record) => <span>
                 {total}
-                <a onClick={() => this.removeTreatment(record._id)}>
-                    <Icon type="close-circle" theme="twoTone" twoToneColor={"#f00"}/>
-                </a>
+                <Button icon={"close"} onClick={() => this.removeTreatment(record._id)} type={"danger"}
+                        shape="circle"
+                        size="small"/>
             </span>
         }];
         return <div>
@@ -272,20 +293,18 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                       extra={<Form.Item {...formItemLayoutWithOutLabel} style={{marginBottom: 0}}>
                           <Button type="primary" htmlType="submit">Save Treatment Plan</Button>
                       </Form.Item>}>
-                    <Row >
+                    <Row>
                         <Col span={7}>
                             <Affix offsetTop={0}>
                                 <List size={"small"}
+
                                       style={{maxHeight: '100vh', overflowX: 'scroll'}}
                                       itemLayout="horizontal"
                                       dataSource={this.state.procedure_category}
                                       renderItem={item => (
-                                          <List.Item>
+                                          <List.Item onClick={() => this.add(item)}>
                                               <List.Item.Meta
                                                   title={item.name}/>
-                                              <Button type="primary" size="small" shape="circle"
-                                                      onClick={() => this.add(item)}
-                                                      icon={"arrow-right"}/>
                                           </List.Item>)}/>
                             </Affix>
                         </Col>
@@ -299,7 +318,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                             <Affix offsetBottom={0}>
                                 <Card>
                                     <span>by &nbsp;&nbsp;</span>
-                                    <Dropdown overlay={<Menu>
+                                    <Dropdown placement="topCenter" overlay={<Menu>
                                         {this.state.practiceDoctors.map(doctor =>
                                             <Menu.Item key="0">
                                                 <a onClick={() => this.selectDoctor(doctor)}>{doctor.user.first_name}</a>
@@ -312,7 +331,8 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                                         </a>
                                     </Dropdown>
                                     <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
-
+                                    <DatePicker value={this.state.selectedDate}
+                                                onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}/>
                                 </Card>
                             </Affix>
                             <div ref={el => {

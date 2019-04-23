@@ -106,13 +106,8 @@ class PatientPrescriptions extends React.Component {
             title: 'Cost Per  Unit',
             dataIndex: 'cost',
             key: 'cost',
-        }, {
-            title: 'Completed',
-            key: 'is_completed',
-            render: (text, record) => (
-                <Checkbox checked={record.is_completed}/>
-            )
-        }, {
+        }, 
+         {
             title: 'Action',
             key: 'action',
             render: (text, record) => (

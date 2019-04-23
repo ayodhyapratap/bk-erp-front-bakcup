@@ -124,6 +124,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 let reqData = {
                     drugs: [],
                     labs:[],
+                    advice_data:[],
                     patient: that.props.match.params.id,
                     practice:that.props.active_practiceId,
                 };
@@ -150,8 +151,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 });
 
                 that.state.formLabList.forEach(function (item) {
-                    
-                    reqData.labs.push(item);
+                    // console.log("lab",item.id);
+                    reqData.labs.push(item.id);
                 });
                 // console.log("data set",JSON.stringify(reqData));
                 let successFn = function (data) {
