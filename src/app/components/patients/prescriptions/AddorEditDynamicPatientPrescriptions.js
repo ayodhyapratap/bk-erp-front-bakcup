@@ -113,9 +113,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         });
     }
     addLabs = (item) => {
-        console.log("item", item);
         this.setState(function (prevState) {
-            console.log("preview", prevState);
             let randId = Math.random().toFixed(7);
             if (prevState.addedLabs[item.id]) {
                 displayMessage(WARNING_MSG_TYPE, "Item Already Added");
@@ -123,7 +121,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             }
             return {
                 addedLabs: {...prevState.addedLabs, [item.id]: true},
-                // addNotes: {...prevState.addNotes, [randId]: !!item.default_notes},
                 formLabList: [...prevState.formLabList, {
                     ...item,
                     _id: randId,
@@ -134,9 +131,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     };
 
     addTemplate = (item) => {
-        console.log("item", item);
         this.setState(function (prevState) {
-            console.log("pr    eview", prevState);
             let randId = Math.random().toFixed(7);
             if (prevState.addTemplate[item.id]) {
                 displayMessage(WARNING_MSG_TYPE, "Item Already Added");
@@ -149,6 +144,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                     _id: randId,
                 }]
             }
+
         });
     };
     removeTemplates = (_id, item) => {
@@ -165,7 +161,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            console.log("form",values);
             if (!err) {
                 let reqData = {
                     drugs: [],
@@ -176,7 +171,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 };
 
                 that.state.formDrugList.forEach(function (item){
-                       console.log("drug h",item);
                     item.dosage = values.does[item._id];
                     item.duration_type = values.duration_unit[item._id];
 
@@ -197,10 +191,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 });
 
                 that.state.formLabList.forEach(function (item) {
-                    // console.log("lab",item.id);
                     reqData.labs.push(item.id);
                 });
-                // console.log("data set",JSON.stringify(reqData));
                 let successFn = function (data) {
                 }
                 let errorFn = function () {
@@ -213,6 +205,9 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
 
 
     render() {
+        console.log("template",this.state.formTemplateList);
+        console.log("lab",this.state.formLabList);
+        console.log("drug",this.state.formDrugList);
         let that = this;
         const formItemLayout = {
             labelCol: {
@@ -308,9 +303,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             key: 'instructions',
             render: (instructions, record) =>
                 <div>
-                    {/*<Form.Item>*/}
-                    {/*<Input/>*/}
-                    {/*</Form.Item>*/}
                     {this.state.addInstructions[record._id] ?
                         <Form.Item
                             extra={<a onClick={() => this.addInstructions(record._id, false)}>Remove Instructions</a>}
@@ -328,10 +320,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         : <a onClick={() => this.addInstructions(record._id, true)}>+ Add Instructions</a>}
                 </div>
         },
-         // 
-        //     title:'time'
-
-        // },
+         
         {
             title: '',
             dataIndex: 'action',
@@ -376,21 +365,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         size="small"/>
             </span>
         }];
-        const templateTableColums=[{
-            title: 'name',
-            dataIndex:'name',
-            key:'name'
-        },{
-            title: 'Total',
-            dataIndex: 'total',
-            key: 'total',
-            render: (total, record) => <span>
-                {total}
-                <Button icon={"close"} onClick={() => this.removeTemplates(record._id, record)} type={"danger"}
-                        shape="circle"
-                        size="small"/>
-            </span>
-        }];
+        
         return <Card title={"Prescriptions"}>
             <Row>
                 <Col span={18}>
@@ -401,9 +376,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         <Divider> Lab Test</Divider>
                         <Table pagination={false} bordered={false} columns={labTablecolums}
                                dataSource={this.state.formLabList}/>
-                        <Divider>Template</Divider>
-                        <Table pagination={false} bordered={false} columns={templateTableColums}
-                               dataSource={this.state.formTemplateList}/>
+                        
 
                          <Affix target={() => this.container}>
                            <Button type="primary" htmlType="submit">

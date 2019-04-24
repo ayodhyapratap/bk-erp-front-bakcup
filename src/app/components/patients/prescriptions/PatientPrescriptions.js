@@ -1,8 +1,8 @@
 import React from "react";
-import {Avatar, Input, Checkbox, Divider, Table, Col, Button, Form, Row, Card, Icon, Skeleton} from "antd";
+import {Avatar, Input, Checkbox, Divider, Table, Col, Button, Form, Row, Card, Icon, Skeleton, Popconfirm} from "antd";
 import {Link} from "react-router-dom";
 import {PRESCRIPTIONS_API, DRUG_CATALOG, PATIENT_PROFILE} from "../../../constants/api";
-import {getAPI, interpolate, displayMessage} from "../../../utils/common";
+import {getAPI, interpolate, displayMessage, postAPI, putAPI} from "../../../utils/common";
 import moment from "moment";
 import AddorEditPatientPrescriptions from './AddorEditPatientPrescriptions';
 import {Redirect, Switch, Route} from "react-router";
@@ -77,6 +77,16 @@ class PatientPrescriptions extends React.Component {
         this.props.history.push("/patient/" + id + "/emr/prescriptions/edit")
 
     }
+    deletePrescriptions(record){
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+        }
+        let errorFn = function () {
+        }
+        putAPI(interpolate(PRESCRIPTIONS_API, [this.props.match.params.id]), reqData, successFn, errorFn);
+    }
 
     render() {
         const drugs = {}
@@ -114,7 +124,10 @@ class PatientPrescriptions extends React.Component {
                 <span>
                 <a onClick={() => this.editPrescriptionData(record)}>Edit</a>
                 <Divider type="vertical"/>
-                <a href="javascript:;">Delete</a>
+                <Popconfirm title="Are you sure delete this item?"
+                            onConfirm={() => this.deletePrescriptions(record)} okText="Yes" cancelText="No">
+                    <a>Delete</a>
+                </Popconfirm>
               </span>
             ),
         }];

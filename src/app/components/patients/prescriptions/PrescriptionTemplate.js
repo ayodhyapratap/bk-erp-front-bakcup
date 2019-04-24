@@ -15,7 +15,7 @@ export default class PrescriptionTemplate extends React.Component {
 		}
 		this.changeRedirect = this.changeRedirect.bind(this);
 		this.loadDrug =this.loadDrug.bind(this);
-		this.loadDrug = this.loadLab.bind(this);
+		this.loadLab = this.loadLab.bind(this);
 	}
 
 	componentDidMount() {
