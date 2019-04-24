@@ -21,6 +21,7 @@ import PatientInvoices from "./invoices/PatientInvoices";
 import PatientPayments from "./payments/PatientPayments";
 import PatientLedgers from "./ledgers/PatientLedgers";
 import {Switch} from "react-router-dom";
+import PrescriptionTemplate from "./prescriptions/PrescriptionTemplate";
 
 const {Content} = Layout;
 
@@ -192,6 +193,9 @@ class PatientHome extends React.Component {
                             {/*** Patient Ledger Routes*/}
                             <Route exact path='/patient/:id/billing/ledger'
                                    render={() => <PatientLedgers key={this.state.currentPatient}/>}/>
+
+                            <Route exact path='/patient/:id/prescriptions/template/add'
+                                   render={(route) => <PrescriptionTemplate {...this.state} {...route}/>}/>
                         </Switch>
                     </Content>
                 </Layout>

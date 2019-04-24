@@ -62,6 +62,7 @@ export const PATIENT_CLINIC_NOTES_API = 'patients/clinic_notes/?id=%s';
 export const PATIENT_PAYMENTS_API = 'patients/payment/?id=%s';
 export const PRACTICE_PRINT_SETTING_API ='clinics/%s/practice_print_settings/?type=%s&sub_type=%s';
 export const PATIENT_COMMUNICATION_HISTORY_API='users/sms_status_update/?user=%s';
+export const PRESCRIPTION_TEMPLATE = "clinics/%s/prescription_template/"
 
 //search and advanced search API
 export const SEARCH_PATIENT = 'patients/search/?name=%s';

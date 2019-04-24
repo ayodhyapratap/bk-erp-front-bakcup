@@ -142,4 +142,4 @@ export const DURATIONS_UNIT = [
 
 export const DOSE_FREQUENCIES = [
     {label:'day(s)',value:'day(s)'},
-]
+];

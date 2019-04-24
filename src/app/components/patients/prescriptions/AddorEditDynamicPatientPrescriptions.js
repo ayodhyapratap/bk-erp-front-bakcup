@@ -5,7 +5,9 @@ import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/commo
 import {remove} from "lodash";
 import {DURATIONS_UNIT} from "../../../constants/hardData";
 import {WARNING_MSG_TYPE} from "../../../constants/dataKeys";
-import {PRESCRIPTIONS_API} from "../../../constants/api";
+import {PRESCRIPTIONS_API, PRESCRIPTION_TEMPLATE} from "../../../constants/api";
+import PrescriptionTemplate from "./PrescriptionTemplate";
+import {Link, Route, Switch} from "react-router-dom";
 
 const TabPane = Tabs.TabPane;
 
@@ -19,15 +21,31 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             formLabList: [],
             addInstructions: {},
             changeDurationUnits: {},
-            addedLabs: {}
+            addedLabs: {},
+            prescriptionTemplate:[],
+            addTemplate:{},
+            formTemplateList:[],
+
         }
     }
 
     componentDidMount() {
         this.loadDrugList();
-        this.loadLabList()
+        this.loadLabList();
+        this.loadPrescriptionTemplate();
     }
+    loadPrescriptionTemplate(){
+        var that = this;
+        let successFn = function(data){
+            that.setState({
+                prescriptionTemplate:data,
+            })
+        };
+        let errorFn= function(){
 
+        };
+        getAPI(interpolate(PRESCRIPTION_TEMPLATE,[that.props.active_practiceId]), successFn, errorFn)
+    }
     loadLabList() {
         var that = this;
         let successFn = function (data) {
@@ -115,6 +133,34 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         });
     };
 
+    addTemplate = (item) => {
+        console.log("item", item);
+        this.setState(function (prevState) {
+            console.log("pr    eview", prevState);
+            let randId = Math.random().toFixed(7);
+            if (prevState.addTemplate[item.id]) {
+                displayMessage(WARNING_MSG_TYPE, "Item Already Added");
+                return false;
+            }
+            return {
+                addTemplate: {...prevState.addTemplate, [item.id]: true},
+                formTemplateList: [...prevState.formTemplateList, {
+                    ...item,
+                    _id: randId,
+                }]
+            }
+        });
+    };
+    removeTemplates = (_id, item) => {
+        this.setState(function (prevState) {
+            return {
+                addTemplate: {...prevState.addTemplate, [item.id]: false},
+                formTemplateList: [...remove(prevState.formTemplateList, function (item) {
+                    return item._id != _id;
+                })]
+            }
+        });
+    }
      handleSubmit = (e) => {
         let that = this;
         e.preventDefault();
@@ -330,6 +376,21 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         size="small"/>
             </span>
         }];
+        const templateTableColums=[{
+            title: 'name',
+            dataIndex:'name',
+            key:'name'
+        },{
+            title: 'Total',
+            dataIndex: 'total',
+            key: 'total',
+            render: (total, record) => <span>
+                {total}
+                <Button icon={"close"} onClick={() => this.removeTemplates(record._id, record)} type={"danger"}
+                        shape="circle"
+                        size="small"/>
+            </span>
+        }];
         return <Card title={"Prescriptions"}>
             <Row>
                 <Col span={18}>
@@ -340,6 +401,10 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         <Divider> Lab Test</Divider>
                         <Table pagination={false} bordered={false} columns={labTablecolums}
                                dataSource={this.state.formLabList}/>
+                        <Divider>Template</Divider>
+                        <Table pagination={false} bordered={false} columns={templateTableColums}
+                               dataSource={this.state.formTemplateList}/>
+
                          <Affix target={() => this.container}>
                            <Button type="primary" htmlType="submit">
                               Save
@@ -369,9 +434,31 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                               title={item.name}/>
                                       </List.Item>)}/>
                         </TabPane>
-                        {/*<TabPane tab="Tab 3" key="3">Content of Tab Pane 3</TabPane>*/}
+                       <TabPane tab="Template" key="3">
+                           <div>
+                                <Link to={"/patient/" + this.props.match.params.id + "/prescriptions/template/add"}>
+                                    <Button type="primary">
+                                        <Icon type="plus"/>&nbsp;Add Template
+                                    </Button>
+                                </Link>
+
+                           </div>
+                            <Divider/>
+                           <List size={"small"}
+                                  itemLayout="horizontal"
+                                  dataSource={this.state.prescriptionTemplate}
+                                  renderItem={item => (
+                                      <List.Item onClick={() => this.addTemplate(item)}>
+                                          <List.Item.Meta
+                                              title={item.name}/>
+                                      </List.Item>)}/>
+                        </TabPane>
                     </Tabs>
                 </Col>
+                <Switch>
+                      <Route exact path='/patient/:id/prescriptions/template/add'
+                       render={(route) => <PrescriptionTemplate {...this.state} {...route}/>}/>
+                </Switch>
             </Row>
         </Card>
     }
