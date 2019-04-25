@@ -1,17 +1,19 @@
 import React from 'react';
-import {Form, Row, Card} from "antd";
-import DynamicFieldsForm from "../../common/DynamicFieldsForm";
+import {Form, Row, Card, Input, Button, InputNumber, Select, Icon} from "antd";
 import {INPUT_FIELD, NUMBER_FIELD, SUCCESS_MSG_TYPE, MULTI_SELECT_FIELD} from "../../../constants/dataKeys";
 import {displayMessage, interpolate, getAPI} from "../../../utils/common";
 import {Link,Redirect, Route, Switch} from "react-router-dom";
 import {PRESCRIPTION_TEMPLATE, LABTEST_API, DRUG_CATALOG} from "../../../constants/api";
-export default class PrescriptionTemplate extends React.Component {
+const { Option } = Select;
+
+class PrescriptionTemplate extends React.Component {
 	constructor(props){
 		super(props);
 		this.state={
 			redirect: false,
 			drugList: [],
             labList: [],
+            inputMultiple: [{ advice: "" }]
 		}
 		this.changeRedirect = this.changeRedirect.bind(this);
 		this.loadDrug =this.loadDrug.bind(this);
@@ -47,7 +49,15 @@ export default class PrescriptionTemplate extends React.Component {
         }
         getAPI(interpolate(DRUG_CATALOG, [this.props.active_practiceId]), successFn, errorFn);
     }
-
+   
+    handleAddFields= ()=>{
+        this.setState({
+            inputMultiple:this.state.inputMultiple.concat([{ advice: "" }])
+        })
+    };
+    handleSubmit(){
+        console.log("hello");
+    }
 	changeRedirect() {
         var redirectVar = this.state.redirect;
         this.setState({
@@ -56,57 +66,76 @@ export default class PrescriptionTemplate extends React.Component {
         });
     }
 	render(){ 
-		let that =this;
-		const TestFormLayout = Form.create()(DynamicFieldsForm);
-        const fields = [{
-            label: "Template Name",
-            key: "name",
-            type: INPUT_FIELD,
-            // required: true
-        },{
-            label: "Schedule",
-            key: "schedule",
-            type: NUMBER_FIELD,
-            // required: true
-        },{
-        	label:"Advice",
-        	key: "advice_data",
-        	type: INPUT_FIELD,
-        },{
-        	label: "Drugs",
-        	key:"drug",
-        	type:MULTI_SELECT_FIELD,
-        	options: this.state.drugList.map(drug => ({label: drug.name, value: drug.id})),
-        },{
-        	label:"Labs",
-        	key:"labs",
-        	type:MULTI_SELECT_FIELD,
-        	options: this.state.labList.map(lab => ({label: lab.name, value: lab.id})),
-        }
-        ];
-        const formProp = {
-            successFn: function (data) {
-            	displayMessage(SUCCESS_MSG_TYPE, "success");
-            	console.log("data",data);
-            },
-            errorFn: function () {
-
-            },
-            action: interpolate(PRESCRIPTION_TEMPLATE, [that.props.active_practiceId]),
-            method: "post",
+        const { getFieldDecorator } = this.props.form;
+        const formItemLayout = {
+          labelCol: {
+            xs: { span: 24 },
+            sm: { span: 4 },
+          },
+          wrapperCol: {
+            xs: { span: 24 },
+            sm: { span: 9 },
+          },
         };
-        const defaultValues = [];
-        if(this.props.currentPatient)
-            defaultValues.push({key: 'practice', value: this.props.active_practiceId});
-		return <Row>
-            <Card>
-                <Route exact path='/patient/:id/prescriptions/template/add'
-                       render={() => <TestFormLayout title="Add Template" changeRedirect={this.changeRedirect}
-                                                     formProp={formProp} fields={fields}/>}/>
-               
-            </Card>
-            {this.state.redirect && <Redirect to={"/patient/"+ this.props.match.params.id + "/emr/prescriptions/add"}/>}
-        </Row>
+		return (
+            <Form onSubmit={this.handleSubmit}>
+                <Card title={"Prescription Template"}
+                      extra={<Form.Item style={{marginBottom: 0}}>
+                          <Button type="primary" htmlType="submit">Save</Button>
+                      </Form.Item>}>
+
+                    <Form.Item {...formItemLayout} label={"Template Name"}>
+                      {getFieldDecorator('namename', {
+                       
+                      })(
+                        <Input />
+                      )}
+                    </Form.Item>
+
+                    <Form.Item {...formItemLayout} label={"Schedule"}>
+                        {getFieldDecorator('schedule', { initialValue: 3 })(
+                        <InputNumber min={1} max={10} />
+                        )}
+                   
+                    </Form.Item>
+
+                    <Form.Item {...formItemLayout} label="Drugs">
+                        {getFieldDecorator('drug', {})
+                        (
+                            <Select mode="multiple" placeholder="Please select favourite Drugs">
+                            <Option value="red">Red</Option>
+                            <Option value="green">Green</Option>
+                            <Option value="blue">Blue</Option>
+                            </Select>
+                        )}
+                    </Form.Item>
+
+                    <Form.Item {...formItemLayout} label="Labs">
+                        {getFieldDecorator('Labs', {})
+                        (
+                            <Select mode="multiple" placeholder="Please select favourite Labs">
+                            <Option value="red">Red</Option>
+                            <Option value="green">Green</Option>
+                            <Option value="blue">Blue</Option>
+                            </Select>
+                        )}
+                    </Form.Item>
+                    {this.state.inputMultiple.map((value ,key)=>(
+                        <div>
+                            <Form.Item {...formItemLayout} label={"Advice"}>
+                                {getFieldDecorator('advice')(
+                                <Input suffix={<Icon onClick={this.handleAddFields} type="plus-circle" style={{ color: 'rgba(0,0,0,.25)' }} />}/>
+                                )}
+                           
+                            </Form.Item>
+                        </div>
+                        ))}
+
+
+                </Card>
+            </Form>
+        )
 	}
 
 }
+export default Form.create()(PrescriptionTemplate);
