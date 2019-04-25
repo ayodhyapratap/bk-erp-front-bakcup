@@ -143,3 +143,15 @@ export const DURATIONS_UNIT = [
 export const DOSE_FREQUENCIES = [
     {label:'day(s)',value:'day(s)'},
 ];
+
+export const DOSE_REQUIRED =[
+    {label:'twice daily' , value:'twice daily'},
+    {label:'three times a day' , value:'three times a day'},
+    {label:'four times a day' , value:'four times a day'},
+    {label:'every four hours' , value:'every four hours'},
+    {label:'as needed' , value:'as needed'},
+    {label:'every 2 hour(s)' , value:'every 2 hour(s)'},
+    {label:'every other hour' , value:'every other hour'},
+    {label:'every day' , value:'every day'},
+    {label:'every other day' , value:'every other day'},
+];
