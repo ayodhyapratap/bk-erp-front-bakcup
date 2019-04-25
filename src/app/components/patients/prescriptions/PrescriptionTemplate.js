@@ -74,7 +74,7 @@ export default class PrescriptionTemplate extends React.Component {
         	type: INPUT_FIELD,
         },{
         	label: "Drugs",
-        	key:"drugs",
+        	key:"drug",
         	type:MULTI_SELECT_FIELD,
         	options: this.state.drugList.map(drug => ({label: drug.name, value: drug.id})),
         },{

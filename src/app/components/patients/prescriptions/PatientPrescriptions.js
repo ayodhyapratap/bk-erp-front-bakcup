@@ -23,6 +23,7 @@ class PatientPrescriptions extends React.Component {
         this.loadPrescriptions = this.loadPrescriptions.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
         this.editPrescriptionData = this.editPrescriptionData.bind(this);
+        this.deletePrescriptions =this.deletePrescriptions.bind(this);
 
     }
 
@@ -78,14 +79,15 @@ class PatientPrescriptions extends React.Component {
 
     }
     deletePrescriptions(record){
+        console.log("record",record);
         let that = this;
-        let reqData = record;
-        reqData.is_active = false;
+        let reqData = {...record ,is_active:false};
         let successFn = function (data) {
+            that.loadPrescriptions();
         }
         let errorFn = function () {
         }
-        putAPI(interpolate(PRESCRIPTIONS_API, [this.props.match.params.id]), reqData, successFn, errorFn);
+        putAPI(interpolate(PRESCRIPTIONS_API, [this.props.active_practiceId]), reqData, successFn, errorFn);
     }
 
     render() {
@@ -96,7 +98,7 @@ class PatientPrescriptions extends React.Component {
                 drugs[drug.id] = (drug.name + "," + drug.strength)
             })
         }
-
+        let that= this;
         const columns = [{
             title: 'Time',
             dataIndex: 'created_at',
@@ -125,7 +127,7 @@ class PatientPrescriptions extends React.Component {
                 <a onClick={() => this.editPrescriptionData(record)}>Edit</a>
                 <Divider type="vertical"/>
                 <Popconfirm title="Are you sure delete this item?"
-                            onConfirm={() => this.deletePrescriptions(record)} okText="Yes" cancelText="No">
+                            onConfirm={() => that.deletePrescriptions(record)} okText="Yes" cancelText="No">
                     <a>Delete</a>
                 </Popconfirm>
               </span>
