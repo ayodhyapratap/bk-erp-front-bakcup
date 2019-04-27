@@ -1,11 +1,11 @@
 import React from 'react';
 import {Form, Row, Card, Input, Button, InputNumber, Select, Icon} from "antd";
 import {INPUT_FIELD, NUMBER_FIELD, SUCCESS_MSG_TYPE, MULTI_SELECT_FIELD} from "../../../constants/dataKeys";
-import {displayMessage, interpolate, getAPI} from "../../../utils/common";
+import {displayMessage, interpolate, getAPI, postAPI} from "../../../utils/common";
 import {Link,Redirect, Route, Switch} from "react-router-dom";
 import {PRESCRIPTION_TEMPLATE, LABTEST_API, DRUG_CATALOG} from "../../../constants/api";
 const { Option } = Select;
-
+let id = 0;
 class PrescriptionTemplate extends React.Component {
 	constructor(props){
 		super(props);
@@ -13,7 +13,6 @@ class PrescriptionTemplate extends React.Component {
 			redirect: false,
 			drugList: [],
             labList: [],
-            inputMultiple: [{ advice: "" }]
 		}
 		this.changeRedirect = this.changeRedirect.bind(this);
 		this.loadDrug =this.loadDrug.bind(this);
@@ -50,14 +49,45 @@ class PrescriptionTemplate extends React.Component {
         getAPI(interpolate(DRUG_CATALOG, [this.props.active_practiceId]), successFn, errorFn);
     }
    
-    handleAddFields= ()=>{
-        this.setState({
-            inputMultiple:this.state.inputMultiple.concat([{ advice: "" }])
-        })
+    handleAddFields = () => {
+        const { form } = this.props;
+        const keys = form.getFieldValue("keys");
+        const nextKeys = keys.concat(id++);
+        form.setFieldsValue({
+          keys: nextKeys
+        });
     };
-    handleSubmit(){
-        console.log("hello");
+    remove = (k) => {
+        const { form } = this.props;
+        const keys = form.getFieldValue('keys');
+        if (keys.length === 1) {
+          return;
+        }
+        form.setFieldsValue({
+          keys: keys.filter(key => key !== k),
+        });
     }
+    handleSubmit = (e) => {
+        let that = this;
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                console.log('Received values of form: ', values);
+                let reqData = {...values, practice:that.props.active_practiceId
+
+                };
+             
+                let successFn = function (data) {
+                }
+                let errorFn = function () {
+
+                }
+                console.log("Data",reqData);
+            postAPI(interpolate(PRESCRIPTION_TEMPLATE, [this.props.active_practiceId]), reqData, successFn, errorFn);
+          }
+      });
+    }
+
 	changeRedirect() {
         var redirectVar = this.state.redirect;
         this.setState({
@@ -66,26 +96,53 @@ class PrescriptionTemplate extends React.Component {
         });
     }
 	render(){ 
-        const { getFieldDecorator } = this.props.form;
+        const  { getFieldDecorator, getFieldValue } = this.props.form;
         const formItemLayout = {
           labelCol: {
             xs: { span: 24 },
-            sm: { span: 4 },
+            sm: { span: 4 }
           },
           wrapperCol: {
             xs: { span: 24 },
-            sm: { span: 9 },
-          },
+            sm: { span: 12 }
+          }
         };
+        const formItemLayoutWithOutLabel = {
+          wrapperCol: {
+            xs: { span: 24, offset: 0 },
+            sm: { span: 12, offset: 4 }
+          }
+        };
+        getFieldDecorator('keys',{ initialValue: [] } );
+        const keys = getFieldValue('keys');
+        const formItems = keys.map((k, index) => (
+          <Form.Item  {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}  label={index === 0 ? 'Advice' : ''}
+            required={false}
+            key={k}
+          >
+            {getFieldDecorator(`advice_data[${k}]`, {
+              validateTrigger: ['onChange', 'onBlur'],
+             
+            })(
+                <Input style={{ width: '60%', marginRight: 8 }} />
+            )}
+            {keys.length > 1 ? (
+              <Icon
+                className="dynamic-delete-button"
+                type="minus-circle-o"
+                onClick={() => this.remove(k)}
+              />
+            ) : null}
+          </Form.Item>
+        ));
 		return (
             <Form onSubmit={this.handleSubmit}>
                 <Card title={"Prescription Template"}
                       extra={<Form.Item style={{marginBottom: 0}}>
                           <Button type="primary" htmlType="submit">Save</Button>
                       </Form.Item>}>
-
                     <Form.Item {...formItemLayout} label={"Template Name"}>
-                      {getFieldDecorator('namename', {
+                      {getFieldDecorator('name', {
                        
                       })(
                         <Input />
@@ -93,8 +150,8 @@ class PrescriptionTemplate extends React.Component {
                     </Form.Item>
 
                     <Form.Item {...formItemLayout} label={"Schedule"}>
-                        {getFieldDecorator('schedule', { initialValue: 3 })(
-                        <InputNumber min={1} max={10} />
+                        {getFieldDecorator('schedule', {})(
+                        <InputNumber min={1} />
                         )}
                    
                     </Form.Item>
@@ -102,34 +159,29 @@ class PrescriptionTemplate extends React.Component {
                     <Form.Item {...formItemLayout} label="Drugs">
                         {getFieldDecorator('drug', {})
                         (
-                            <Select mode="multiple" placeholder="Please select favourite Drugs">
-                            <Option value="red">Red</Option>
-                            <Option value="green">Green</Option>
-                            <Option value="blue">Blue</Option>
+                            <Select mode="multiple" placeholder="Please select  Drugs">
+                                {this.state.drugList.map((drug) => <option key={drug.id} value={drug.id}>{drug.name}</option>)}
                             </Select>
                         )}
                     </Form.Item>
 
                     <Form.Item {...formItemLayout} label="Labs">
-                        {getFieldDecorator('Labs', {})
+                        {getFieldDecorator('labs', {})
                         (
-                            <Select mode="multiple" placeholder="Please select favourite Labs">
-                            <Option value="red">Red</Option>
-                            <Option value="green">Green</Option>
-                            <Option value="blue">Blue</Option>
+                            <Select mode="multiple" placeholder="Please select Labs">
+                                {this.state.labList.map((lab) => <option key={lab.id} value={lab.id}>{lab.name}</option>)}
                             </Select>
                         )}
                     </Form.Item>
-                    {this.state.inputMultiple.map((value ,key)=>(
-                        <div>
-                            <Form.Item {...formItemLayout} label={"Advice"}>
-                                {getFieldDecorator('advice')(
-                                <Input suffix={<Icon onClick={this.handleAddFields} type="plus-circle" style={{ color: 'rgba(0,0,0,.25)' }} />}/>
-                                )}
-                           
-                            </Form.Item>
-                        </div>
-                        ))}
+
+                    {formItems}
+                    <Form.Item {...formItemLayoutWithOutLabel}>
+                      <Button type="dashed" onClick={this.handleAddFields} style={{ width: '60%' }}>
+                        <Icon type="plus" /> Add advice field
+                      </Button>
+                    </Form.Item>
+                   
+                  
 
 
                 </Card>
