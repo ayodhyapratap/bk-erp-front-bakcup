@@ -481,7 +481,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                               title={item.name}/>
                                       </List.Item>)}/>
                         </TabPane>
-                       <TabPane tab="Template" key="3">
+                        <TabPane tab="Template" key="3">
                            <div>
                                 <Link to={"/patient/" + this.props.match.params.id + "/prescriptions/template/add"}>
                                     <Button type="primary">
