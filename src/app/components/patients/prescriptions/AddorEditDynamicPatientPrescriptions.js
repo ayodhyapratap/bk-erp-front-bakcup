@@ -142,7 +142,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     };
 
     addTemplate = (item) => {
-        console.log("item",item);
         this.setState(function (prevState) {
         // console.log("templateData state",prevState);
             let randId = Math.random().toFixed(7);
@@ -212,6 +211,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 };
 
                 that.state.formDrugList.forEach(function (item){
+                    console.log("advice search",item);
                     item.dosage = values.does[item._id];
                     item.duration_type = values.duration_unit[item._id];
                     item.frequency = values.does_frequency[item._id];
@@ -224,6 +224,12 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                     } else {
                       item.before_food = true;
                       item.after_food=false;
+                    }
+
+                    if(item.advice_data){
+                        item.advice_data.map(function(advice){
+                            reqData.advice_data.push(advice.id)
+                        })
                     }
                     const drugIitem ={
                         "drug": item.id,
@@ -243,12 +249,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 that.state.formLabList.forEach(function (item) {
                     reqData.labs.push(item.id);
                 });
-                if(that.state.prescriptionTemplate.advice_data){
-                    that.state.prescriptionTemplate.advice_data.map(function(advice){
-                        reqData.advice_data.push(advice.id)
-                    })
-
-                }
                 let successFn = function (data) {
                 }
                 let errorFn = function () {
@@ -260,7 +260,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         });
     }
     deletePrescriptionTemplate(id){
-        console.log("delete",id);
          var that = this;
          let reqData={id:id ,is_active: false};
         let successFn = function (data) {
@@ -275,7 +274,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         this.setState({});
     };
     render() {
-         console.log("temp",this.state.prescriptionTemplate);
         let that = this;
         const formItemLayout = {
             labelCol: {
