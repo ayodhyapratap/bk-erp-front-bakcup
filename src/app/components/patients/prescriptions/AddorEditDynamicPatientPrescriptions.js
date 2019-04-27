@@ -208,13 +208,15 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                     advice_data:[],
                     patient: that.props.match.params.id,
                     practice:that.props.active_practiceId,
+
                 };
 
                 that.state.formDrugList.forEach(function (item){
                     item.dosage = values.does[item._id];
                     item.duration_type = values.duration_unit[item._id];
+                    item.frequency = values.does_frequency[item._id];
                     if(values.instruction){
-                        item.instructions =values.instruction[item._id];
+                        item.instruction=values.instruction[item._id];
                     }
                     if (values.food_time[item._id]) {
                       item.after_food = true;
@@ -229,9 +231,10 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         "dosage": item.dosage,
                         "frequency": item.frequency,
                         "duration_type": item.duration_type,
-                        "instuction" :item.instructions,
+                        "instruction" :item.instruction,
                         "before_food":item.before_food,
                         "after_food":item.after_food,
+                        "advice_data":that.state.prescriptionTemplate.advice_data,
                         "is_active" :true,
                     };
                     reqData.drugs.push(drugIitem)
