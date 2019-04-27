@@ -25,7 +25,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             addedLabs: {},
             addTemplate:{},
             formTemplateList:[],
-            prescriptionTemplate:null,
 
         }
         this.loadPrescriptionTemplate = this.loadPrescriptionTemplate.bind(this);
@@ -47,6 +46,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         let errorFn= function(){
 
         };
+        console.log("template",that.state.prescriptionTemplate);
         getAPI(interpolate(PRESCRIPTION_TEMPLATE,[that.props.active_practiceId]), successFn, errorFn)
     }
     loadLabList() {
@@ -144,7 +144,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     addTemplate = (item) => {
         console.log("item",item);
         this.setState(function (prevState) {
-        console.log("templateData state",prevState);
+        // console.log("templateData state",prevState);
             let randId = Math.random().toFixed(7);
             if (prevState.addTemplate[item.id]) {
                 displayMessage(WARNING_MSG_TYPE, "Item Already Added");
@@ -161,17 +161,19 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                prevAddedLabs = {...prevAddedLabs,[lab.id]:true}
            });
 
-           let prevDrugs = [...prevState.formDrugList];
-           let prevAddedDrugs ={...prevState.addedDrugs};
-           item.drug.forEach(function(drugs){
+            let prevDrugs = [...prevState.formDrugList];
+            let prevAddedDrugs ={...prevState.addedDrugs};
+            item.drug.forEach(function(drugs){
                let randId = Math.random().toFixed(7);
                prevDrugs.push({
                    ...drugs,
                    _id:randId,
+                   advice_data:item.advice_data,
                });
                prevAddedLabs = {...prevAddedDrugs, [drugs.id]:true}
 
-           })
+            })
+
 
             return {
               addedLabs : prevAddedLabs,
@@ -192,11 +194,14 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             }
         });
     }
-     handleSubmit = (e) => {
+    handleSubmit = (e) => {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
+        console.log("value form",values);
+            
             if (!err) {
+                
                 let reqData = {
                     drugs: [],
                     labs:[],
@@ -208,32 +213,45 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 that.state.formDrugList.forEach(function (item){
                     item.dosage = values.does[item._id];
                     item.duration_type = values.duration_unit[item._id];
-
-                    if(values.instruction)
+                    if(values.instruction){
                         item.instructions =values.instruction[item._id];
+                    }
+                    if (values.food_time[item._id]) {
+                      item.after_food = true;
+                      item.before_food =false;
+                    } else {
+                      item.before_food = true;
+                      item.after_food=false;
+                    }
                     const drugIitem ={
-                        "id": item.id,
+                        "drug": item.id,
                         "name":item.name,
                         "dosage": item.dosage,
                         "frequency": item.frequency,
                         "duration_type": item.duration_type,
                         "instuction" :item.instructions,
-                        "before_food":true,
-                        "after_food":false,
+                        "before_food":item.before_food,
+                        "after_food":item.after_food,
                         "is_active" :true,
                     };
                     reqData.drugs.push(drugIitem)
+                console.log("item drug",item);
                 });
-
                 that.state.formLabList.forEach(function (item) {
                     reqData.labs.push(item.id);
                 });
+                if(that.state.prescriptionTemplate.advice_data){
+                    that.state.prescriptionTemplate.advice_data.map(function(advice){
+                        reqData.advice_data.push(advice.id)
+                    })
+
+                }
                 let successFn = function (data) {
                 }
                 let errorFn = function () {
 
                 }
-                // console.log("final",reqData);
+                console.log("final",reqData);
                 postAPI(interpolate(PRESCRIPTIONS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
             }
         });
@@ -250,9 +268,11 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         postAPI(interpolate(PRESCRIPTION_TEMPLATE, [that.props.active_practiceId]), reqData ,successFn, errorFn);
 
     }
-
+    onChange = e => {
+        this.setState({});
+    };
     render() {
-
+         console.log("temp",this.state.prescriptionTemplate);
         let that = this;
         const formItemLayout = {
             labelCol: {
@@ -344,17 +364,19 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                     )}
                 </Form.Item>
             </div>
-        }, {
+        }, 
+            // {this.state.prescriptionTemplate.advice_data ? true:false},
+        {
             title: 'Instructions',
-            dataIndex: 'instructions',
-            key: 'instructions',
-            render: (instructions, record) =>
+            dataIndex: 'instruction',
+            key: 'instruction',
+            render: (instruction, record) =>
                 <div>
                     {this.state.addInstructions[record._id] ?
                         <Form.Item
                             extra={<a onClick={() => this.addInstructions(record._id, false)}>Remove Instructions</a>}
-                            key={`instructions[${record._id}]`}>
-                            {getFieldDecorator(`instructions[${record._id}]`, {
+                            key={`instruction[${record._id}]`}>
+                            {getFieldDecorator(`instruction[${record._id}]`, {
                                 validateTrigger: ['onChange', 'onBlur'],
                                 rules: [{
                                     message: "This field is required.",
@@ -367,10 +389,18 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         : <a onClick={() => this.addInstructions(record._id, true)}>+ Add Instructions</a>}
                 </div>
         },{
-            title:"Advice",
-            dataIndex:"advice",
-            key:'advice',
-            render:(advice, record) => <div>
+            title:"Timing",
+            dataIndex:"food_time",
+            key:'food_time',
+            render:(timing, record) => <div>
+                <Form.Item key={`food_time[${record._id}]`}>
+                  {getFieldDecorator(`food_time[${record._id}]`)(
+                    <Radio.Group onChange={this.onChange}>
+                      <Radio value={1}>after</Radio>
+                      <Radio value={0}>before</Radio>
+                    </Radio.Group>
+                  )}
+                </Form.Item>
                 
             </div>
 
