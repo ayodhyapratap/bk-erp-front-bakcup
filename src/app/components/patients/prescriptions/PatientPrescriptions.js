@@ -81,13 +81,13 @@ class PatientPrescriptions extends React.Component {
     deletePrescriptions(record){
         console.log("record",record);
         let that = this;
-        let reqData = {...record ,is_active:false};
+        let reqData = {"id":record.id , is_active:false};
         let successFn = function (data) {
             that.loadPrescriptions();
         }
         let errorFn = function () {
         }
-        putAPI(interpolate(PRESCRIPTIONS_API, [this.props.active_practiceId]), reqData, successFn, errorFn);
+        postAPI(interpolate(PRESCRIPTIONS_API, [this.props.match.params.id]), reqData, successFn, errorFn);
     }
 
     render() {
