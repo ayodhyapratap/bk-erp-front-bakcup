@@ -68,7 +68,8 @@ class Addinvoicedynamic extends React.Component {
 
     loadInventoryItemList() {
         let that = this;
-        let successFn = function (data) {
+        let successFn = function (reqData) {
+            let data = reqData.results;
             let drugItems = [];
             let equipmentItems = [];
             let supplesItems = [];

@@ -105,7 +105,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                drugList: data
+                drugList: data.results
             })
         }
         let errorFn = function () {
