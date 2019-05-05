@@ -149,68 +149,48 @@ class PatientInvoices extends React.Component {
             key: 'name',
             render: created_at => <span>{moment(created_at).format('LLL')}</span>,
         }, {
-            title: 'Drug',
+            title: 'Treatment & Products',
             key: 'drug',
             render: (text, record) => (
-                <span> {drugs[record.drug]}</span>
-            )
-        }, {
-            title: 'Procedure',
-            key: 'preocedure',
-            render: (text, record) => (
-                <span> {procedures[record.procedure]}</span>
+                <span> <b>{record.inventory ? record.inventory_item_data.name : null}{record.procedure ? record.procedure_data.name : null}</b>
+                    <br/> {record.doctor_data ?
+                        <Tag color={record.doctor_data ? record.doctor_data.calendar_colour : null}>
+                            <b>{"prescribed by  " + record.doctor_data.user.first_name} </b>
+                        </Tag> : null}
+                </span>
+
             )
         }, {
             title: 'Cost',
-            dataIndex: 'cost',
+            dataIndex: 'unit_cost',
             key: 'cost',
-        }, {
-            title: 'Taxes',
-            key: 'taxes',
-            dataIndex: "taxes",
-            render: taxes => (
-                <span>
-                  {/*{taxes.map(tax => <Tag color="blue" key={tax}>{taxesdata[tax]}</Tag>)}*/}
-                </span>
-            ),
-
-        }, {
-            title: 'Pending',
-            key: 'is_pending',
-            render: (text, record) => (
-                <Checkbox disabled checked={record.is_pending}/>
-            )
-        },
-
-            {
-                title: 'Action',
-                key: 'action',
-                render: (text, record) => (
-                    <span>
-                <a onClick={() => this.editInvoiceData(record)}>Edit</a>
-                <Divider type="vertical"/>
-                <a href="javascript:;">Delete</a>
-              </span>
-                ),
-            }];
+            render: (item, record) => <span>{record.unit_cost * record.unit}</span>
+        },];
 
         if (this.props.match.params.id) {
             return <div><Switch>
                 <Route exact path='/patient/:id/billing/invoices/add'
-                       render={(route) => <AddInvoicedynamic {...this.state} {...this.props} {...route} loadData={this.loadInvoices}/>}/>
+                       render={(route) => <AddInvoicedynamic {...this.state} {...this.props} {...route}
+                                                             loadData={this.loadInvoices}/>}/>
                 <Route exact path='/patient/:id/billing/invoices/edit'
                        render={(route) => <AddInvoice {...this.state} {...route}/>}/>
-                <Card
-                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Invoice" : "Invoice"}
-                    extra={<Button.Group>
-                        <Link to={"/patient/" + this.props.match.params.id + "/billing/invoices/add"}><Button><Icon
-                            type="plus"/>Add</Button></Link>
-                    </Button.Group>}>
-                    {this.state.invoices.map(invoice => <Table loading={this.state.loading} columns={columns}
-                                                               dataSource={this.state.invoice}/>)}
+                <Route>
+                    <Card
+                        title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Invoice" : "Invoice"}
+                        extra={<Button.Group>
+                            <Link to={"/patient/" + this.props.match.params.id + "/billing/invoices/add"}><Button><Icon
+                                type="plus"/>Add</Button></Link>
+                        </Button.Group>}>
+                        {this.state.invoices.map(invoice => <div style={{marginBottom: '20px'}}>
+                            <Divider>INV{invoice.id}</Divider>
+                            <Table
+                                pagination={false} loading={this.state.loading}
+                                columns={columns}
+                                dataSource={[...invoice.inventory, ...invoice.procedure]}/>
+                        </div>)}
+                    </Card>
 
-
-                </Card>
+                </Route>
             </Switch>
 
             </div>
