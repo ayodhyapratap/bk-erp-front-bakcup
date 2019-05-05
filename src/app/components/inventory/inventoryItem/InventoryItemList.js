@@ -43,7 +43,8 @@ export default class InventoryItemList extends React.Component {
 
     loadData() {
         let that = this;
-        let successFn = function (data) {
+        let successFn = function (recData) {
+            let data = recData.results;
             that.setState(function (prevState) {
                 let inventoryItemList = [];
                 if (prevState.itemTypeFilter == "ALL") {
@@ -60,7 +61,7 @@ export default class InventoryItemList extends React.Component {
                     inventoryItemList: inventoryItemList,
                     loading:false
                 }
-               
+
             })
         }
         let errorFn = function () {
@@ -68,7 +69,7 @@ export default class InventoryItemList extends React.Component {
                 loading:false
             })
         }
-        getAPI(INVENTORY_ITEM_API, successFn, errorFn);
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn,{maintain_inventory:true});
     }
 
     loadManufactureList() {

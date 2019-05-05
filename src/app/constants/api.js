@@ -54,16 +54,18 @@ export const SINGLE_APPOINTMENT_PERPRACTICE_API = 'appointment/?id=%s&patient=%s
 export const PATIENT_GROUPS = 'patients/group/?id=%s';
 export const VITAL_SIGNS_API = 'patients/vital_sign/?id=%s';
 export const PRESCRIPTIONS_API = 'patients/prescriptions/?id=%s';
-export const SINGLE_REATMENTPLANS_API = 'patients/procedure/?id=%s';/*DELETE OBJECT*/
+export const SINGLE_REATMENTPLANS_API = 'patients/procedure/?id=%s';
+/*DELETE OBJECT*/
 export const TREATMENTPLANS_API = 'patients/procedure/?id=%s&complete=%s';
 export const ALL_PRESCRIPTIONS_API = 'patients/prescriptions/%s/';
-export const INVOICES_API = 'patients/invoices/?id=%s';
+export const INVOICES_API = 'invoice/?id=%s';
+export const CREATE_OR_EDIT_INVOICES = 'invoice/';
 export const PATIENT_CLINIC_NOTES_API = 'patients/clinic_notes/?id=%s';
 export const PATIENT_PAYMENTS_API = 'patients/payment/?id=%s';
-export const PRACTICE_PRINT_SETTING_API ='clinics/%s/practice_print_settings/?type=%s&sub_type=%s';
-export const PATIENT_COMMUNICATION_HISTORY_API='users/sms_status_update/?user=%s';
-export const PRESCRIPTION_TEMPLATE = "clinics/%s/prescription_template/"
-
+export const PRACTICE_PRINT_SETTING_API = 'clinics/%s/practice_print_settings/?type=%s&sub_type=%s';
+export const PATIENT_COMMUNICATION_HISTORY_API = 'users/sms_status_update/?user=%s';
+export const PRESCRIPTION_TEMPLATE = "clinics/%s/prescription_template/";
+export const UNPAID_PRESCRIPTIONS = "patients/unpaid_prescriptions/?id=%s";
 //search and advanced search API
 export const SEARCH_PATIENT = 'patients/search/?name=%s';
 
@@ -81,8 +83,10 @@ export const PAYMENTS_REPORTS = 'clinics/%s/payments_report/?%s'
 export const TREATMENT_REPORTS = 'clinics/%s/treatment_report/?%s'
 export const DRUG_TYPE_API = 'drug_type/';
 export const DRUG_UNIT_API = '';
-//blogs APT
 
+/**
+ * Blogs API
+ * */
 
 export const BLOG_POST = 'post/';
 export const SINGLE_POST = 'post/%s/';
@@ -106,11 +110,13 @@ export const LANDING_PAGE_VIDEO = 'landing_page_video/';
 export const SINGLE_LANDING_PAGE_VIDEO = 'landing_page_video/%s/';
 export const MANAGE_PRODUCT = 'product_content/';
 export const MANAGE_SINGLE_PRODUCT = 'product_content/%s/';
-export const MANAGE_THERAPY ='therapy_content/';
-export const MANAGE_SINGLE_THERAPY ='therapy_content/%s/';
+export const MANAGE_THERAPY = 'therapy_content/';
+export const MANAGE_SINGLE_THERAPY = 'therapy_content/%s/';
 
 
-//inventory API
+/**
+ * INVENTORY API
+ * */
 
 export const EXPENSES_API = "expenses/";
 export const SINGLE_EXPENSES_API = "expenses/%s/";
@@ -132,7 +138,9 @@ export const STOCK_ENTRY = "stock_entry/";
 export const BULK_STOCK_ENTRY = "stock_entry/bulk/";
 
 
-// MLM API_URL
+/**
+ * MLM API
+ * */
 export const ROLE_COMMISION = "role_commission/";
 export const PRODUCT_LEVEL = "product_level";
 export const PRODUCT_MARGIN = "product_margin/";

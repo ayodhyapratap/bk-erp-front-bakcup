@@ -9,9 +9,11 @@ import {
     NUMBER_FIELD,
     SELECT_FIELD
 } from "../../../../constants/dataKeys";
-import {DRUG_CATALOG, DRUG_TYPE_API, OFFERS, SINGLE_DRUG_CATALOG} from "../../../../constants/api";
+import {DRUG_CATALOG, DRUG_TYPE_API, INVENTORY_ITEM_API, OFFERS, SINGLE_DRUG_CATALOG} from "../../../../constants/api";
 import {getAPI, displayMessage, deleteAPI, interpolate} from "../../../../utils/common";
 import {Redirect, Route} from 'react-router-dom'
+import {DRUG} from "../../../../constants/hardData";
+import AddorEditPrescriptionForm from "./AddorEditPrescriptionForm";
 
 
 class AddPrescription extends React.Component {
@@ -103,9 +105,9 @@ class AddPrescription extends React.Component {
                 follow: <a onClick={() => that.setFormParams('drugUnit', SELECT_FIELD)}>Choose Drug Type</a>
             } : {
                 label: "Dosage Unit",
-                key: "unit",
+                key: "stength_unit",
                 required: true,
-                initialValue: this.state.editPrescreption ? this.state.editPrescreption.unit : null,
+                initialValue: this.state.editPrescreption ? this.state.editPrescreption.stength_unit : null,
                 type: SELECT_FIELD,
                 options: that.state.drugTypeList.map(drug => ({label: drug.name, value: drug.id})),
                 follow: <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Drug Unit</a>
@@ -124,9 +126,9 @@ class AddPrescription extends React.Component {
             type: NUMBER_FIELD
         }, drugUnitField, {
             label: "Instructions ",
-            key: "instruction",
+            key: "instructions",
             required: true,
-            initialValue: this.state.editPrescreption ? this.state.editPrescreption.instruction : null,
+            initialValue: this.state.editPrescreption ? this.state.editPrescreption.instructions : null,
             type: INPUT_FIELD
         },];
         // const formProp={
@@ -153,7 +155,7 @@ class AddPrescription extends React.Component {
             },
             // onFieldsDataChange:
             // },
-            action: interpolate(DRUG_CATALOG, [this.props.active_practiceId]),
+            action: INVENTORY_ITEM_API,
             method: "post",
         }
         const TestFormLayout = Form.create({
@@ -164,14 +166,14 @@ class AddPrescription extends React.Component {
                 });
             }
         })(DynamicFieldsForm);
-        let defaultValues = []
+        let defaultValues = [{key: 'practice', value: this.props.active_practiceId}, {key: 'item_type', value: DRUG}];
         if (this.state.editPrescreption) {
             defaultValues.push({key: 'id', value: this.state.editPrescreption.id})
         }
         return <div>
             <Card>
                 <Route exact path="/settings/prescriptions/add"
-                       render={() => <TestFormLayout key={"Add Prescriptions"}
+                       render={() => <AddorEditPrescriptionForm key={"Add Prescriptions"}
                                                      title="Add Prescriptions"
                                                      formProp={formProp}
                                                      changeRedirect={this.changeRedirect}

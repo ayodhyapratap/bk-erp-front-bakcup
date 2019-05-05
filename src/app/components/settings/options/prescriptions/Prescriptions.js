@@ -1,9 +1,11 @@
 import React from "react";
 import {Button, Card, Divider, Form, Icon, Popconfirm, Row, Table} from "antd";
 import {Link, Route, Switch} from "react-router-dom";
-import {DRUG_CATALOG,} from "../../../../constants/api";
+import {DRUG_CATALOG, INVENTORY_ITEM_API,} from "../../../../constants/api";
 import {getAPI, interpolate, postAPI} from "../../../../utils/common";
 import AddPrescription from "./AddPrescription";
+import {DRUG} from "../../../../constants/hardData";
+import AddorEditPrescriptionForm from "./AddorEditPrescriptionForm";
 
 class Prescriptions extends React.Component {
     constructor(props) {
@@ -11,7 +13,7 @@ class Prescriptions extends React.Component {
         this.state = {
             catalog: null,
             editCatalog: null,
-            loading:true
+            loading: true
         }
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -27,15 +29,19 @@ class Prescriptions extends React.Component {
             console.log("get table");
             that.setState({
                 catalog: data,
-                loading:false
+                loading: false
             })
         };
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         };
-        getAPI(interpolate(DRUG_CATALOG, [this.props.active_practiceId]), successFn, errorFn);
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn, {
+            practice: this.props.active_practiceId,
+            item_type: DRUG,
+            maintain_inventory: false
+        });
     }
 
     deleteObject(record) {
@@ -47,13 +53,13 @@ class Prescriptions extends React.Component {
         }
         let errorFn = function () {
         }
-        postAPI(interpolate(DRUG_CATALOG, [this.props.active_practiceId]), reqData, successFn, errorFn);
+        postAPI(INVENTORY_ITEM_API, reqData, successFn, errorFn);
     }
 
     editCatalog(record) {
         this.setState({
             editCatalog: record,
-            loading:false
+            loading: false
         });
         this.props.history.push('/settings/prescriptions/edit')
     }
@@ -68,10 +74,11 @@ class Prescriptions extends React.Component {
             title: 'Dosage',
             dataIndex: 'strength',
             key: 'strength',
+            render:(strength,record)=><span>{strength}&nbsp;{record.stength_unit}</span>
         }, {
             title: ' Drug Instructions',
-            dataIndex: 'instruction',
-            key: 'instruction',
+            dataIndex: 'instructions',
+            key: 'instructions',
         }, {
             title: 'Action',
             key: 'action',
@@ -90,9 +97,10 @@ class Prescriptions extends React.Component {
         return <Row>
             <Switch>
                 <Route exact path="/settings/prescriptions/add"
-                       render={() => <AddPrescription  {...this.props} loadData={this.loadData}/>}/>
+                       render={() => <AddorEditPrescriptionForm  {...this.props} loadData={this.loadData}/>}/>
                 <Route exact path="/settings/prescriptions/edit"
-                       render={(route) => <AddPrescription  {...this.state} loadData={this.loadData} {...this.props} {...route}/>}/>
+                       render={(route) => <AddPrescription  {...this.state}
+                                                            loadData={this.loadData} {...this.props} {...route}/>}/>
                 <Route>
                     <div>
                         <h2>All presciptions

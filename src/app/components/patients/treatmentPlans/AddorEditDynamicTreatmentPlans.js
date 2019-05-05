@@ -105,7 +105,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
         let successFn = function (data) {
             let doctor = [];
             data.staff.forEach(function (usersdata) {
-                if (usersdata.role == DOCTORS_ROLE) {
+                if (usersdata.role.index(DOCTORS_ROLE) > -1) {
                     doctor.push(usersdata);
                 }
             })
@@ -157,7 +157,8 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                         "practice": that.props.active_practiceId,
                         "discount": item.discount,
                         "discount_type": "%",
-                        "doctor": that.state.selectedDoctor.id
+                        "doctor": that.state.selectedDoctor.id,
+                        "date": that.state.selectedDate ? that.state.selectedDate : null
                     };
                     reqData.treatment.push(sendingItem);
                 });

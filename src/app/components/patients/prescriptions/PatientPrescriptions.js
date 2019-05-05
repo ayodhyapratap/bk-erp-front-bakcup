@@ -1,7 +1,23 @@
 import React from "react";
-import {Avatar, Input, Checkbox, Divider, Table, Col, Button, Form, Row, Card, Icon, Skeleton, Popconfirm} from "antd";
+import {
+    Avatar,
+    Input,
+    Checkbox,
+    Divider,
+    Badge,
+    Table,
+    Col,
+    Button,
+    Form,
+    Row,
+    Card,
+    Icon,
+    Skeleton,
+    Popconfirm,
+    Tag
+} from "antd";
 import {Link} from "react-router-dom";
-import {PRESCRIPTIONS_API, DRUG_CATALOG, PATIENT_PROFILE} from "../../../constants/api";
+import {PRESCRIPTIONS_API, DRUG_CATALOG, PATIENT_PROFILE, PATIENTS_LIST} from "../../../constants/api";
 import {getAPI, interpolate, displayMessage, postAPI, putAPI} from "../../../utils/common";
 import moment from "moment";
 import AddorEditPatientPrescriptions from './AddorEditPatientPrescriptions';
@@ -23,7 +39,7 @@ class PatientPrescriptions extends React.Component {
         this.loadPrescriptions = this.loadPrescriptions.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
         this.editPrescriptionData = this.editPrescriptionData.bind(this);
-        this.deletePrescriptions =this.deletePrescriptions.bind(this);
+        this.deletePrescriptions = this.deletePrescriptions.bind(this);
 
     }
 
@@ -39,7 +55,8 @@ class PatientPrescriptions extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState({
-                prescription: data,
+                prescription: data.results,
+                nextPrescriptionPage: data.next,
                 loading: false
             })
         }
@@ -50,6 +67,24 @@ class PatientPrescriptions extends React.Component {
 
         }
         getAPI(interpolate(PRESCRIPTIONS_API, [this.props.match.params.id]), successFn, errorFn)
+    }
+
+    getMorePriscriptions() {
+        let that = this;
+        let next = this.state.nextPrescriptionPage;
+        let successFn = function (data) {
+            if (data.current == next)
+                that.setState(function (prevState) {
+                    return {
+                        prescription: [...prevState.prescription, ...data.results],
+                        nextPrescriptionPage: data.next,
+                    }
+                })
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(PATIENTS_LIST, successFn, errorFn, {page: parseInt(next)});
     }
 
     loadDrugCatalog() {
@@ -78,10 +113,11 @@ class PatientPrescriptions extends React.Component {
         this.props.history.push("/patient/" + id + "/emr/prescriptions/edit")
 
     }
-    deletePrescriptions(record){
-        console.log("record",record);
+
+    deletePrescriptions(record) {
+        console.log("record", record);
         let that = this;
-        let reqData = {"id":record.id , is_active:false};
+        let reqData = {"id": record.id, is_active: false};
         let successFn = function (data) {
             that.loadPrescriptions();
         }
@@ -98,41 +134,55 @@ class PatientPrescriptions extends React.Component {
                 drugs[drug.id] = (drug.name + "," + drug.strength)
             })
         }
-        let that= this;
-        const columns = [{
-            title: 'Time',
-            dataIndex: 'created_at',
-            key: 'name',
-            render: created_at => <span>{moment(created_at).format('LLL')}</span>,
-        }, {
-            title: 'Drug',
-            key: 'drug',
-            render: (text, record) => (
-                <span> {drugs[record.drug]}</span>
-            )
-        }, {
-            title: 'Quantity',
-            dataIndex: 'qunatity',
-            key: 'quantity',
-        }, {
-            title: 'Cost Per  Unit',
-            dataIndex: 'cost',
-            key: 'cost',
-        }, 
-         {
-            title: 'Action',
-            key: 'action',
-            render: (text, record) => (
-                <span>
-                <a onClick={() => this.editPrescriptionData(record)}>Edit</a>
-                <Divider type="vertical"/>
-                <Popconfirm title="Are you sure delete this item?"
-                            onConfirm={() => that.deletePrescriptions(record)} okText="Yes" cancelText="No">
-                    <a>Delete</a>
-                </Popconfirm>
-              </span>
-            ),
-        }];
+        let that = this;
+        const columns = [
+            {
+                dataIndex: 'doctor',
+                key: 'doctor',
+                width: 5,
+
+                // onCell : doctor => <span style={{backgroundColor: doctor ? doctor.calendar_colour : null, width: 10, height: 10}}/>,
+                render: doctor => <div
+                    style={{backgroundColor: doctor ? doctor.calendar_colour : 'red', width: '5px', height: '100%'}}/>,
+            }, {
+                title: 'Drug',
+                key: 'name',
+                dataIndex: 'name',
+            }, {
+                title: 'Frequency',
+                dataIndex: 'frequency',
+                key: 'frequency',
+                render: (frequency, record) => <span>{record.dosage}&nbsp;{record.frequency}</span>
+            }, {
+                title: 'Duration',
+                dataIndex: 'duration',
+                key: 'duration',
+                render: (duration, record) => <span>{duration}&nbsp;{record.duration_type}</span>
+            }, {
+                title: 'Instruction',
+                dataIndex: 'instruction',
+                key: 'instruction',
+                render: (instruction, record) => <span>
+                    {record.before_food ? <Tag>before food </Tag> : null}
+                    {record.after_food ? <Tag>after food</Tag> : null}
+                    {instruction}
+                </span>
+            },
+            // {
+            //     title: 'Action',
+            //     key: 'action',
+            //     render: (text, record) => (
+            //         <span>
+            //     <a onClick={() => this.editPrescriptionData(record)}>Edit</a>
+            //     <Divider type="vertical"/>
+            //     <Popconfirm title="Are you sure delete this item?"
+            //                 onConfirm={() => that.deletePrescriptions(record)} okText="Yes" cancelText="No">
+            //         <a>Delete</a>
+            //     </Popconfirm>
+            //   </span>
+            //     ),
+            // }
+        ];
 
         if (this.props.match.params.id) {
             return <div><Switch>
@@ -141,17 +191,37 @@ class PatientPrescriptions extends React.Component {
                                                                                 loadPrescriptions={this.loadPrescriptions} {...route}/>}/>
                 <Route exact path='/patient/:id/emr/prescriptions/edit'
                        render={(route) => <AddorEditPatientPrescriptions {...this.state} {...route}/>}/>
-                <Card
-                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Prescriptions" : "Prescriptions"}
-                    extra={<Button.Group>
-                        <Link to={"/patient/" + this.props.match.params.id + "/emr/prescriptions/add"}>
-                            <Button type={"primary"}><Icon type="plus"/>Add</Button>
-                        </Link>
-                    </Button.Group>}>
-
-                    <Table loading={this.state.loading} columns={columns} dataSource={this.state.prescription}/>
-
-                </Card>
+                <Route>
+                    <div>
+                        <Card>
+                            <h3>
+                                {this.state.currentPatient ? this.state.currentPatient.user.first_name + " Prescriptions" : "Prescriptions"}
+                                <Button.Group style={{float: 'right'}}>
+                                    <Link to={"/patient/" + this.props.match.params.id + "/emr/prescriptions/add"}>
+                                        <Button type={"primary"}><Icon type="plus"/>Add</Button>
+                                    </Link>
+                                </Button.Group>
+                            </h3>
+                        </Card>
+                        {this.state.prescription.map((presc) => <div>
+                            {presc.date ? <p>&nbsp;&nbsp;{presc.date}</p> : null}
+                            <Card style={{margin: 10, marginBottom: 20}}
+                                  bodyStyle={{padding: 0}}>
+                                <Table columns={columns} dataSource={presc.drugs} pagination={false}
+                                       header={() => prescriptionHeader(presc)}
+                                    // size={'small'}
+                                       footer={() => prescriptonFooter(presc)}
+                                       key={presc.id}/>
+                            </Card></div>)}
+                        {this.state.nextPrescriptionPage ?
+                            <div style={{textAlign: 'center'}}>
+                                <Button type="primary" disabled={this.state.loading}
+                                        onClick={this.getMorePriscriptions}>
+                                    Load More...
+                                </Button>
+                            </div> : null}
+                    </div>
+                </Route>
             </Switch>
 
             </div>
@@ -166,3 +236,26 @@ class PatientPrescriptions extends React.Component {
 }
 
 export default PatientPrescriptions;
+
+function prescriptonFooter(presc) {
+    if (presc) {
+
+        return <div>
+            {presc.doctor ? <Tag color={presc.doctor ? presc.doctor.calendar_colour : null}>
+                <b>{"prescribed by  " + presc.doctor.user.first_name} </b>
+            </Tag> : null}
+            {presc.labs.length ? <div>
+                +{presc.labs.length}&nbsp;Lab Orders
+                {/*<Divider style={{margin:0}}/>*/}
+            </div> : null}
+        </div>
+    }
+    return null
+}
+
+function prescriptionHeader(presc) {
+    if (presc) {
+        return <span>{presc.date ? moment(presc.date).format('lll') : null}</span>
+    }
+    return null;
+}

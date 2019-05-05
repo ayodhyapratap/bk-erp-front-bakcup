@@ -43,7 +43,8 @@ class AddOrConsumeStock extends React.Component {
 
     loadInventoryItemList() {
         let that = this;
-        let successFn = function (data) {
+        let successFn = function (recData) {
+            let data = recData.results;
             let drugItems = [];
             let equipmentItems = [];
             let supplesItems = [];
@@ -68,7 +69,7 @@ class AddOrConsumeStock extends React.Component {
         }
         let errorFn = function () {
         }
-        getAPI(INVENTORY_ITEM_API, successFn, errorFn);
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn,{maintain_inventory:true});
     }
 
     remove = (k) => {
