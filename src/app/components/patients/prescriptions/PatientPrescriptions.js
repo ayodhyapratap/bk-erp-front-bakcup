@@ -23,6 +23,7 @@ import moment from "moment";
 import AddorEditPatientPrescriptions from './AddorEditPatientPrescriptions';
 import {Redirect, Switch, Route} from "react-router";
 import AddorEditDynamicPatientPrescriptions from "./AddorEditDynamicPatientPrescriptions";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 
 class PatientPrescriptions extends React.Component {
@@ -213,6 +214,9 @@ class PatientPrescriptions extends React.Component {
                                        footer={() => prescriptonFooter(presc)}
                                        key={presc.id}/>
                             </Card></div>)}
+                        <InfiniteFeedLoaderButton loading={this.state.loading}
+                                                  loaderFunction={this.getMorePriscriptions}
+                                                  hidden={!this.state.nextPrescriptionPage}/>
                         {this.state.nextPrescriptionPage ?
                             <div style={{textAlign: 'center'}}>
                                 <Button type="primary" disabled={this.state.loading}

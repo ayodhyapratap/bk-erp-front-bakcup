@@ -63,7 +63,7 @@ class PatientHome extends React.Component {
                     <Content className="main-container"
                              style={{
                                  // margin: '24px 16px',
-                                 // padding: 24,
+                                 padding: 10,
                                  minHeight: 280,
                                  // marginLeft: '200px'
                              }}>

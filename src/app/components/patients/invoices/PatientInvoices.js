@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Checkbox, Divider, Icon, Table, Tag} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Table, Tag, Row, Col, Statistic, Alert} from "antd";
 import {getAPI, interpolate} from "../../../utils/common";
 import {DRUG_CATALOG, INVOICES_API, PROCEDURE_CATEGORY, TAXES} from "../../../constants/api";
 import moment from "moment";
@@ -7,6 +7,7 @@ import {Link} from "react-router-dom";
 import {Route, Switch} from "react-router";
 import AddInvoice from "./AddInvoice";
 import AddInvoicedynamic from "./AddInvoicedynamic";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 class PatientInvoices extends React.Component {
     constructor(props) {
@@ -42,10 +43,14 @@ class PatientInvoices extends React.Component {
 
     loadInvoices() {
         let that = this;
+        that.setState({
+            loading: true
+        });
         let successFn = function (data) {
             that.setState({
                 invoices: data.results,
-                loading: false
+                loading: false,
+                loadMoreInvoice: data.next
             })
         }
         let errorFn = function () {
@@ -54,7 +59,7 @@ class PatientInvoices extends React.Component {
             })
 
         }
-        getAPI(interpolate(INVOICES_API, [this.props.match.params.id]), successFn, errorFn);
+        getAPI(interpolate(INVOICES_API, [this.props.match.params.id]), successFn, errorFn, {page: that.state.loadMoreInvoice || 1});
     }
 
     loadDrugCatalog() {
@@ -62,14 +67,10 @@ class PatientInvoices extends React.Component {
         let successFn = function (data) {
             that.setState({
                 drug_catalog: data,
-                loading: false
             })
 
         }
         let errorFn = function () {
-            that.setState({
-                loading: false
-            })
 
         }
         getAPI(interpolate(DRUG_CATALOG, [this.props.active_practiceId]), successFn, errorFn)
@@ -80,14 +81,11 @@ class PatientInvoices extends React.Component {
         let successFn = function (data) {
             that.setState({
                 procedure_category: data,
-                loading: false
             })
 
         }
         let errorFn = function () {
-            that.setState({
-                loading: false
-            })
+
 
         }
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
@@ -99,13 +97,9 @@ class PatientInvoices extends React.Component {
             console.log("get table");
             that.setState({
                 taxes_list: data,
-                loading: false
             })
         };
         let errorFn = function () {
-            that.setState({
-                loading: false
-            })
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
@@ -165,6 +159,21 @@ class PatientInvoices extends React.Component {
             dataIndex: 'unit_cost',
             key: 'cost',
             render: (item, record) => <span>{record.unit_cost * record.unit}</span>
+        }, {
+            title: 'Discount',
+            dataIndex: 'unit_cost',
+            key: 'cost',
+            render: (item, record) => <span>{record.unit_cost * record.unit}</span>
+        }, {
+            title: 'Tax',
+            dataIndex: 'unit_cost',
+            key: 'cost',
+            render: (item, record) => <span>{record.unit_cost * record.unit}</span>
+        }, {
+            title: 'Total',
+            dataIndex: 'unit_cost',
+            key: 'cost',
+            render: (item, record) => <span>{record.unit_cost * record.unit}</span>
         },];
 
         if (this.props.match.params.id) {
@@ -175,20 +184,38 @@ class PatientInvoices extends React.Component {
                 <Route exact path='/patient/:id/billing/invoices/edit'
                        render={(route) => <AddInvoice {...this.state} {...route}/>}/>
                 <Route>
-                    <Card
-                        title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Invoice" : "Invoice"}
-                        extra={<Button.Group>
-                            <Link to={"/patient/" + this.props.match.params.id + "/billing/invoices/add"}><Button><Icon
-                                type="plus"/>Add</Button></Link>
-                        </Button.Group>}>
+                    <div>
+                        {/*<Card*/}
+                        {/*title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Invoice" : "Invoice"}*/}
+                        {/*extra={<Button.Group>*/}
+                        {/*<Link to={"/patient/" + this.props.match.params.id + "/billing/invoices/add"}><Button><Icon*/}
+                        {/*type="plus"/>Add</Button></Link>*/}
+                        {/*</Button.Group>}>*/}
                         {this.state.invoices.map(invoice => <div style={{marginBottom: '20px'}}>
-                            <Divider>INV{invoice.id}</Divider>
-                            <Table
-                                pagination={false} loading={this.state.loading}
-                                columns={columns}
-                                dataSource={[...invoice.inventory, ...invoice.procedure]}/>
+                            <Card>
+                                <Row gutter={8}>
+                                    <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4}>
+                                        {invoice.is_cancelled ?
+                                            <Alert message="Cancelled" type="error" showIcon/> : null}
+                                        <Divider>INV{invoice.id}</Divider>
+                                        <Statistic title="Paid / Total " value={93} suffix={"/ " + invoice.total}/>
+                                    </Col>
+                                    <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
+                                        <Table
+                                            bordered={true}
+                                            pagination={false} loading={this.state.loading}
+                                            columns={columns}
+                                            dataSource={[...invoice.inventory, ...invoice.procedure]}/>
+                                    </Col>
+                                </Row>
+
+                            </Card>
                         </div>)}
-                    </Card>
+                        <InfiniteFeedLoaderButton loaderFunction={this.loadInvoices}
+                                                  loading={this.state.loading}
+                                                  hidden={!this.state.loadMoreInvoice}/>
+                        {/*</Card>*/}
+                    </div>
 
                 </Route>
             </Switch>

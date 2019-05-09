@@ -1,7 +1,6 @@
 import axios from "axios/index";
 import {message} from 'antd';
 import {getAuthToken} from "./auth";
-import CONFIG from "../../app.config";
 import {API_URL} from "../constants/api";
 import {IMAGE_BASE_URL} from "../config/connect";
 import {

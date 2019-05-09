@@ -10,7 +10,6 @@ import AddClinicNotes from "./AddClinicNotes";
 class PatientClinicNotes extends React.Component {
     constructor(props) {
         super(props);
-        super(props);
         this.state = {
             currentPatient: this.props.currentPatient,
             active_practiceId: this.props.active_practiceId,

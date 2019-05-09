@@ -7,6 +7,7 @@ import moment from "moment";
 import {Link} from "react-router-dom";
 import {Route, Switch} from "react-router";
 import AddPayment from "./AddPayment";
+import AddPaymentForm from "./AddPaymentForm";
 
 
 class PatientPayments extends React.Component{
@@ -30,7 +31,7 @@ class PatientPayments extends React.Component{
         let that = this;
         let successFn =function (data){
             that.setState({
-                payments:data,
+                payments:data.results,
                 loading:false
             })
         }
@@ -40,7 +41,7 @@ class PatientPayments extends React.Component{
           })
 
         }
-        getAPI(interpolate(PATIENT_PAYMENTS_API, [this.props.match.params.id]), successFn, errorFn);
+        getAPI(PATIENT_PAYMENTS_API, successFn, errorFn,{id:this.props.match.params.id,practice:this.props.active_practiceId});
     }
     loadInvoices(){
         let that = this;
@@ -90,11 +91,11 @@ class PatientPayments extends React.Component{
           })
       }
       const invoicelist={}
-      if(this.state.invoices){
-          this.state.invoices.forEach(function (mode) {
-              invoicelist[mode.id]=mode.id;
-          })
-      }
+      // if(this.state.invoices){
+      //     this.state.invoices.forEach(function (mode) {
+      //         invoicelist[mode.id]=mode.id;
+      //     })
+      // }
       const columns = [{
           title: 'Time',
           dataIndex: 'created_at',
@@ -141,7 +142,7 @@ class PatientPayments extends React.Component{
       if(this.props.match.params.id){
           return <div><Switch>
               <Route exact path='/patient/:id/billing/payments/add'
-                     render={(route) => <AddPayment{...this.state} {...route}/>}/>
+                     render={(route) => <AddPaymentForm {...this.state} {...route}/>}/>
               <Route exact path='/patient/:id/billing/payments/edit'
                      render={(route) => <AddPayment {...this.state} {...route}/>}/>
               <Card title={ this.state.currentPatient?this.state.currentPatient.name + " Payments":"Payments"}  extra={<Button.Group>
