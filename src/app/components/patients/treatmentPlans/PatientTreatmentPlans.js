@@ -17,7 +17,6 @@ import AddorEditDynamicTreatmentPlans from "./AddorEditDynamicTreatmentPlans";
 class PatientTreatmentPlans extends React.Component {
     constructor(props) {
         super(props);
-        super(props);
         this.state = {
             currentPatient: this.props.currentPatient,
             active_practiceId: this.props.active_practiceId,

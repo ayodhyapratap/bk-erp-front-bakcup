@@ -136,7 +136,7 @@ class AppBase extends React.Component {
                     <Route path="/patient/:id" render={(route) => <PatientHome {...this.state}
                                                                                {...this.props}
                                                                                {...route}
-                                                                               key={this.state.active_practiceId}/>}/>
+                                                                               key={this.state.active_practiceId + "|" + route.match.params.id}/>}/>
                     <Route path="/patients" render={(route) => <PatientHome {...this.state}
                                                                             {...this.props}
                                                                             {...route}

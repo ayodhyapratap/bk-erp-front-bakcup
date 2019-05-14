@@ -23,7 +23,7 @@ class AddStaffDoctor extends React.Component {
             redirect: false,
             editStaff: null,
             roles: [],
-          
+
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -107,8 +107,8 @@ class AddStaffDoctor extends React.Component {
                 options: this.state.roles.map(role => ({label: role.name, value: [role.id]}))
             }, {
                 label: "Calendar Colour",
-                key: "calender_colour",
-                initialValue: this.state.editStaff ? this.state.editStaff.calender_colour : null,
+                key: "calendar_colour",
+                initialValue: this.state.editStaff ? this.state.editStaff.calendar_colour : null,
                 type: COLOR_PICKER,
 
             }, {

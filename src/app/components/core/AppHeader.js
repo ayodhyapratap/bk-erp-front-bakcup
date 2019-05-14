@@ -1,12 +1,60 @@
 import React from "react";
-import {Avatar, Dropdown, Icon, Select, Layout, Menu} from "antd";
+import {Avatar, Dropdown, Icon, Select, Layout, Menu, Button, List, AutoComplete} from "antd";
 import {Route, Link, Switch} from 'react-router-dom';
+import {SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
+import {getAPI, interpolate, postAPI, putAPI} from "../../utils/common";
+import {ALL_APPOINTMENT_API, APPOINTMENT_API, PATIENT_PROFILE, SEARCH_PATIENT} from "../../constants/api";
 
 const {Header} = Layout;
 
 class AppHeader extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            patientListData: [],
+            searchPatientString: null
+        }
+    }
+
+    searchPatient = (value) => {
+        this.setState({
+            searchPatientString: value
+        })
+        // console.log(e.target.value);
+        let that = this;
+        let successFn = function (data) {
+            if (data) {
+                that.setState({
+                    patientListData: data,
+
+                })
+                // console.log("list",that.state.patientListData);
+            }
+        };
+        let errorFn = function () {
+        };
+        getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
+    }
+
+    handlePatientSelect = (event) => {
+        console.log(event);
+        if (event) {
+            this.props.history.push("/patient/" + event + "/profile");
+            this.setState({
+                searchPatientString: null
+            })
+            // let that = this;
+            // let successFn = function (data) {
+            //     that.setState({
+            //         patientDetails: data
+            //
+            //     });
+            //     // console.log("event",that.state.patientDetails);
+            // };
+            // let errorFn = function () {
+            // };
+            // getAPI(interpolate(PATIENT_PROFILE, [event]), successFn, errorFn);
+        }
     }
 
     render() {
@@ -31,17 +79,48 @@ class AppHeader extends React.Component {
                 <Icon
                     className="trigger"
                     type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}
-                    onClick={()=>this.props.toggleSider(!this.props.collapsed)}
+                    onClick={() => this.props.toggleSider(!this.props.collapsed)}
                 />
             </div>
             <Menu mode="horizontal"
                   style={{lineHeight: '64px'}}>
+                <Menu.Item key="5">
+                    <AutoComplete placeholder="Patient Name"
+                                  showSearch
+                                  onSearch={this.searchPatient}
+                                  defaultActiveFirstOption={false}
+                                  showArrow={false}
+                                  value={this.state.searchPatientString}
+                                  filterOption={false}
+                        // onChange={this.handleChange}
+                                  onSelect={this.handlePatientSelect}>
+                        {this.state.patientListData.map((option) => <AutoComplete.Option
+                            value={option.id.toString()}>
+                            <List.Item style={{padding: 0}}>
+                                <List.Item.Meta
+                                    avatar={<Avatar
+                                        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                    title={option.user.first_name + " (" + option.user.id + ")"}
+                                    description={<small>{option.user.mobile}</small>}
+                                />
 
+                            </List.Item>
+                        </AutoComplete.Option>)}
+                    </AutoComplete>
+                </Menu.Item>
                 <Menu.Item key="4">
-                    <Link to="/">
-                        <div className="logo"/>
-                    </Link>
-
+                    <Button.Group>
+                        <Link to={"/patients/profile/add"}>
+                            <Button type={"primary"}>
+                                <Icon type={"plus"}/>Add Patient
+                            </Button>
+                        </Link>
+                        <Link to={"/patients/merge"}>
+                            <Button type={"primary"}>
+                                <Icon type={"user-add"}/>Merge Patients
+                            </Button>
+                        </Link>
+                    </Button.Group>
                 </Menu.Item>
                 <Menu.Item key="3">
                     <Select onChange={this.props.switchPractice} defaultValue={this.props.active_practiceId}

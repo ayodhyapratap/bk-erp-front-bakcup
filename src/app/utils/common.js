@@ -33,6 +33,8 @@ export const putAPI = function (URL, data, successFn, errorFn, headerConfig = {}
         // console.log(response);
         let data = response.data;
         successFn(data);
+        if(data.detail)
+            displayMessage(SUCCESS_MSG_TYPE,data.detail)
     }).catch(function (error) {
         handleErrorResponse(error);
         errorFn(data);
@@ -50,9 +52,12 @@ export const postAPI = function (URL, data, successFn, errorFn, headerConfig = {
             ...headerConfig
         }
     }).then(function (response) {
+
         // console.log(response);
         let data = response.data;
         successFn(data);
+        if(data.detail)
+            displayMessage(SUCCESS_MSG_TYPE,data.detail)
     }).catch(function (error) {
         console.log(error);
         handleErrorResponse(error);
@@ -72,6 +77,8 @@ export const postOuterAPI = function (URL, data, successFn, errorFn, headerConfi
         // console.log(response);
         let data = response.data;
         successFn(data);
+        if(data.detail)
+            displayMessage(SUCCESS_MSG_TYPE,data.detail)
     }).catch(function (error) {
         console.log(error);
         handleErrorResponse(error);
@@ -111,6 +118,8 @@ export const getAPI = function (URL, successFn, errorFn, params = {}) {
         console.log(response);
         let data = response.data;
         successFn(data);
+        if(data.detail)
+            displayMessage(SUCCESS_MSG_TYPE,data.detail)
     }).catch(function (error) {
         console.log("Error aa rhi ", error);
         handleErrorResponse(error);
@@ -129,6 +138,8 @@ export const deleteAPI = function (URL, successFn, errorFn) {
         console.log(response);
         let data = response.data;
         successFn(data);
+        if(data.detail)
+            displayMessage(SUCCESS_MSG_TYPE,data.detail)
     }).catch(function (error) {
         console.log("Error aa rhi ", error);
         handleErrorResponse(error);

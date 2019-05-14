@@ -53,8 +53,8 @@ class App extends Component {
                 <Route exact path="/login" render={() => <Auth {...this.state} login={this.login}/>}/>
                 <Route exact path="/password-reset/:token"
                        render={(route) => <Auth {...route} {...this.state} login={this.login}/>}/>
-                <Route render={() => (this.state.user ?
-                    <AppBase {...this.state} logout={this.logout}/> :
+                <Route render={(route) => (this.state.user ?
+                    <AppBase {...this.state} {...route} logout={this.logout}/> :
                     <Auth {...this.state} login={this.login}/>)}/>
             </Switch>
         </Layout>

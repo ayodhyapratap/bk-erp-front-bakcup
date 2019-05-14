@@ -31,7 +31,7 @@ class App extends Component {
             practice_staff: [],
             doctors_object: null,
             calendarTimings: null,
-            loading:true
+            loading: true
         };
         this.onSelectSlot = this.onSelectSlot.bind(this);
         this.onSelectEvent = this.onSelectEvent.bind(this);
@@ -85,12 +85,12 @@ class App extends Component {
             // console.log("get table");
             that.setState({
                 calendarTimings: data[0],
-                loading:false
+                loading: false
             })
         };
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         };
         getAPI(interpolate(CALENDER_SETTINGS, [this.props.active_practiceId]), successFn, errorFn);
@@ -212,19 +212,19 @@ class App extends Component {
                         title: appointment.patient_name,
                         id: appointment.id,
                         doctor: appointment.doctor,
-                        loading:false
+                        loading: false
                     })
                 });
                 return {events: newEvents}
             });
             that.setState({
                 appointments: data,
-                loading:false
+                loading: false
             })
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         }
         getAPI(interpolate(APPOINTMENT_PERPRACTICE_API, [this.props.active_practiceId]), successFn, errorFn, {
@@ -239,7 +239,7 @@ class App extends Component {
         let doctor_object = null;
         if (this.state.doctors_object && this.state.doctors_object[doctor] && doctor) {
             // console.log(this.state.doctors_object[doctor]);
-            doctor_object = this.state.doctors_object[doctor].calender_colour;
+            doctor_object = this.state.doctors_object[doctor].calendar_colour;
         }
         // console.log("doctor object",doctor_object);
         var backgroundColor = doctor_object;
@@ -273,13 +273,13 @@ class App extends Component {
             // console.log(new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss')));
             startTime = new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss'));
             endTime = new Date(new moment(this.state.calendarTimings.end_time, 'HH:mm:ss'))
-            console.log("start time",startTime);
+            console.log("start time", startTime);
 
         }
         let counter = 0;
         this.state.events.forEach(function (event) {
             let today = new Date();
-            console.log("today",today)
+            console.log("today", today)
             if (moment(event.start).format("YYYY-MM-DD") == moment(today).format("YYYY-MM-DD")) {
                 counter++;
             }
@@ -299,12 +299,16 @@ class App extends Component {
                                 <Col span={3}>
                                     <Divider>Doctors</Divider>
                                     <List loading={this.state.loading} dataSource={this.state.practice_doctors}
+                                          size={"small"}
                                           renderItem={item => (
-                                              <List.Item style={{textOverflow: "ellipsis"}}><span style={{
-                                                  width: '5px',
-                                                  marginRight: '2px',
-                                                  backgroundColor: item.calender_colour
-                                              }}/>{item.user.first_name}</List.Item>)}
+                                              <List.Item  style={{
+                                                  // width: '5px',
+                                                  textOverflow: "ellipsis",
+                                                  // marginRight: '2px',
+                                                  borderLeft: '5px solid '+item.calendar_colour
+                                                  // backgroundColor: item.calendar_colour
+                                              }}>&nbsp;{item.user.first_name}
+                                              </List.Item>)}
                                           size={"small"}/>
 
                                 </Col>
@@ -339,7 +343,8 @@ class App extends Component {
                                         <Timeline>
                                             {this.state.appointments.length ?
                                                 this.state.appointments.map((apppointment) =>
-                                                    <Timeline.Item style={{padding: 0}}><AppointmentCard {...apppointment}/></Timeline.Item>) :
+                                                    <Timeline.Item
+                                                        style={{padding: 0}}><AppointmentCard {...apppointment}/></Timeline.Item>) :
                                                 <p style={{textAlign: 'center'}}>No Data Found</p>}
                                         </Timeline>
                                     </Spin>
