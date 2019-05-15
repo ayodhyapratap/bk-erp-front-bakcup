@@ -19,7 +19,7 @@ import {
     PATIENT_PROFILE,
     APPOINTMENT_PERPRACTICE_API,
     PROCEDURE_CATEGORY,
-    PRACTICESTAFF, EMR_TREATMENTNOTES, APPOINTMENT_API,APPOINTMENT_REPORTS,SINGLE_APPOINTMENT_PERPRACTICE_API
+    PRACTICESTAFF, EMR_TREATMENTNOTES, APPOINTMENT_API, APPOINTMENT_REPORTS, SINGLE_APPOINTMENT_PERPRACTICE_API
 } from "../../../constants/api";
 import {getAPI, interpolate, displayMessage, putAPI, postAPI} from "../../../utils/common";
 import {Redirect, Link} from 'react-router-dom'
@@ -52,17 +52,17 @@ class Appointment extends React.Component {
         this.loadProcedureCategory();
         this.loadDoctors();
         this.loadTreatmentNotes();
-        if (this.props.match.params.id) {
-            this.loadAppointment();
+        if (this.props.match.params.appointmentid) {
+            this.loadAppointment(this.props.match.params.appointmentid);
         }
         else {
             this.loadAllAppointments();
         }
 
-        console.log("id",this.props.match.params.id);
+        console.log("id", this.props.match.params.id);
     }
 
-    loadAllAppointments() {
+    loadAppointment(id) {
         let that = this;
         this.setState({
             loading: true,
@@ -70,11 +70,11 @@ class Appointment extends React.Component {
         let successFn = function (data) {
 
             that.setState({
-                appointments: data,
+                appointments: [data],
                 loading: false,
 
             });
-            console.log("log",that.state.appointments)
+            console.log("log", that.state.appointments)
 
         }
 
@@ -85,11 +85,11 @@ class Appointment extends React.Component {
             })
 
         }
-        getAPI(interpolate(APPOINTMENT_API, [this.props.active_practiceId ]), successFn, errorFn);
+        getAPI(interpolate(APPOINTMENT_API, [id]), successFn, errorFn);
 
     }
 
-    loadAppointment() {
+    loadAllAppointments() {
         let that = this;
         this.setState({
             loading: true,
@@ -115,7 +115,7 @@ class Appointment extends React.Component {
 
 
         }
-        getAPI(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId ,this.props.match.params.id]), successFn, errorFn);
+        getAPI(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId]), successFn, errorFn, this.props.match.params.id ? {"patient": this.props.match.params.id} : {});
 
     }
 
@@ -166,13 +166,13 @@ class Appointment extends React.Component {
         let successFn = function (data) {
             that.setState({
                 treatmentNotes: data,
-                loading:false
+                loading: false
             })
 
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
 
         }
@@ -195,12 +195,11 @@ class Appointment extends React.Component {
 
     deleteAppointment(record) {
         let that = this;
-        console.log("data",record);
-        let reqData = {'is_active':false, 'status':"Cancelled"}
-        console.log("regData",reqData);
+        console.log("data", record);
+        let reqData = {'is_active': false, 'status': "Cancelled"}
+        console.log("regData", reqData);
         let successFn = function (data) {
-            that.setState({
-            })
+            that.setState({})
 
         }
         let errorFn = function () {
@@ -221,15 +220,15 @@ class Appointment extends React.Component {
                 doctors[doctor.id] = doctor.user.first_name
             })
         }
-        console.log("doctor",doctors);
-        console.log("doctor",procedures);
+        console.log("doctor", doctors);
+        console.log("doctor", procedures);
         const treatmentNotes = [];
         if (this.state.treatmentNotes) {
             this.state.treatmentNotes.forEach(function (treatmentNote) {
                 treatmentNotes[treatmentNote.id] = treatmentNote.name
             })
         }
-        console.log("doctor",treatmentNotes);
+        console.log("doctor", treatmentNotes);
         const categories = {1: "fast", 2: "Full Stomach", 3: "No Liquids"}
         const columns = [{
             title: 'Schedule Time',
@@ -302,7 +301,7 @@ class Appointment extends React.Component {
                     <a>Delete</a>
                 </Popconfirm>
 
-                 
+
               </span>
                 ),
             }];

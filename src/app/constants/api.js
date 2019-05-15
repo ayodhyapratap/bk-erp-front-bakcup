@@ -76,7 +76,7 @@ export const EXTRA_DATA = 'clinics/extra_data';
 
 //reports
 
-export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/?patient=%s'
+export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/'
 export const EXPENSE_REPORT = 'clinics/%s/expense_report/?%s'
 export const INVOICE_REPORTS = 'clinics/%s/invoice_report/?%s'
 export const PATIENTS_REPORTS = 'clinics/%s/patients_report/?%s'

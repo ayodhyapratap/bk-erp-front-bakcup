@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import moment from "moment";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import BigCalendar from 'react-big-calendar'
-import {Card, Row, Timeline, Col, Popover, Button, List, Divider, Layout, Badge, Spin} from "antd"
+import {Card, Row, Timeline, Col, Popover, Button, List, Divider, Layout, Badge, Spin, Menu} from "antd"
 import {DOCTORS_ROLE, SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -13,6 +13,7 @@ import TimeGrid from 'react-big-calendar/lib/TimeGrid'
 import dates from 'date-arithmetic'
 import {getAPI, putAPI, interpolate, displayMessage} from "../../utils/common";
 import {APPOINTMENT_PERPRACTICE_API, APPOINTMENT_API, PRACTICESTAFF, CALENDER_SETTINGS} from "../../constants/api";
+import EventComponent from "./EventComponent";
 
 const localizer = BigCalendar.momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(BigCalendar)
@@ -26,12 +27,14 @@ class App extends Component {
             startTime: null,
             visiblePopover: false,
             events: [],
+            filteredEvent:[],
             appointments: [],
             practice_doctors: [],
             practice_staff: [],
             doctors_object: null,
             calendarTimings: null,
-            loading: true
+            loading: true,
+            selectedDoctor: 'ALL'
         };
         this.onSelectSlot = this.onSelectSlot.bind(this);
         this.onSelectEvent = this.onSelectEvent.bind(this);
@@ -43,6 +46,23 @@ class App extends Component {
         this.loadDoctors();
         this.appointmentList(moment().subtract(1, 'days'), moment().add(5, 'days'));
         this.loadCalendarTimings()
+    }
+
+    changeDoctorFilter = (e) => {
+        this.setState(function (prevState) {
+            let filteredEvent = [];
+            prevState.events.forEach(function (event) {
+                if (e.key == 'ALL') {
+                    filteredEvent.push(event)
+                } else if (event.doctor == e.key) {
+                    filteredEvent.push(event)
+                }
+            })
+            return {
+                selectedDoctor: e.key,
+                filteredEvent: filteredEvent
+            }
+        })
     }
 
     loadDoctors() {
@@ -200,22 +220,30 @@ class App extends Component {
             that.setState(function (prevState) {
                 let previousEvent = prevState.events;
                 let newEvents = [];
+                let filteredEvent = [];
                 // newEvents.concat(previousEvent);
                 data.forEach(function (appointment) {
                     let endtime = new moment(appointment.schedule_at).add(appointment.slot, 'minutes')
                     // console.log(moment(appointment.schedule_at).format('LLL'));
                     // console.log(endtime.format('LLL'));
                     // let event= that.state.events;
-                    newEvents.push({
+                    let event = {
+                        appointment: appointment,
                         start: new Date(moment(appointment.schedule_at)),
                         end: new Date(endtime),
-                        title: appointment.patient_name,
+                        title: appointment.patient.user.first_name,
                         id: appointment.id,
                         doctor: appointment.doctor,
                         loading: false
-                    })
+                    }
+                    newEvents.push(event)
+                    if (prevState.selectedDoctor == 'ALL') {
+                        filteredEvent.push(event)
+                    } else if (event.doctor == prevState.selectedDoctor) {
+                        filteredEvent.push(event)
+                    }
                 });
-                return {events: newEvents}
+                return {events: newEvents, filteredEvent: filteredEvent}
             });
             that.setState({
                 appointments: data,
@@ -298,19 +326,32 @@ class App extends Component {
                             <Row gutter={16} style={{margin: '5px'}}>
                                 <Col span={3}>
                                     <Divider>Doctors</Divider>
-                                    <List loading={this.state.loading} dataSource={this.state.practice_doctors}
-                                          size={"small"}
-                                          renderItem={item => (
-                                              <List.Item  style={{
-                                                  // width: '5px',
-                                                  textOverflow: "ellipsis",
-                                                  // marginRight: '2px',
-                                                  borderLeft: '5px solid '+item.calendar_colour
-                                                  // backgroundColor: item.calendar_colour
-                                              }}>&nbsp;{item.user.first_name}
-                                              </List.Item>)}
-                                          size={"small"}/>
-
+                                    <Spin spinning={this.state.loading}>
+                                        <Menu selectedKeys={[this.state.selectedDoctor]}
+                                              size={'small'}
+                                              onClick={this.changeDoctorFilter}>
+                                            <Menu.Item key={"ALL"} style={{
+                                                marginBottom: 2,
+                                                textOverflow: "ellipsis",
+                                                borderLeft: '5px solid black',
+                                                borderRight: 'none'
+                                            }}>
+                                                <span> All Doctors</span>
+                                            </Menu.Item>
+                                            {this.state.practice_doctors.map(item =>
+                                                <Menu.Item key={item.id} style={{
+                                                    textOverflow: "ellipsis",
+                                                    borderRight: 'none',
+                                                    borderLeft: '5px solid ' + item.calendar_colour,
+                                                    backgroundColor: this.state.selectedDoctor == item.id ? item.calendar_colour : 'inherit',
+                                                    color: this.state.selectedDoctor == item.id ? 'white' : 'inherit',
+                                                    fontWeight: this.state.selectedDoctor == item.id ? 'bold' : 'inherit',
+                                                }}>
+                                                    <span>{item.user.first_name}</span>
+                                                </Menu.Item>
+                                            )}
+                                        </Menu>
+                                    </Spin>
                                 </Col>
                                 <Col span={16}>
                                     <DragAndDropCalendar
@@ -319,20 +360,23 @@ class App extends Component {
                                         defaultView="week"
                                         step={10}
                                         timeslots={1}
-                                        events={this.state.events}
+                                        events={this.state.filteredEvent}
                                         onEventDrop={this.moveEvent}
                                         onEventResize={this.resizeEvent}
                                         resizable
                                         selectable
                                         popup={this.onSelectEvent}
                                         onSelectSlot={this.onSelectSlot}
-                                        onSelectEvent={this.onSelectEvent}
+                                        // onSelectEvent={this.onSelectEvent}
                                         views={{month: true, week: MyWeek, day: true, agenda: true}}
                                         style={{height: "calc(100vh - 85px)"}}
                                         eventPropGetter={(this.eventStyleGetter)}
                                         min={startTime}
                                         max={endTime}
-                                        onRangeChange={this.onRangeChange}/>
+                                        onRangeChange={this.onRangeChange}
+                                        components={{
+                                            event: EventComponent
+                                        }}/>
                                 </Col>
                                 <Col span={5}>
                                     <Link to='/calendar/create-appointment'>
