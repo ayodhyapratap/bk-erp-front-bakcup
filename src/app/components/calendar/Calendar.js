@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import moment from "moment";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import BigCalendar from 'react-big-calendar'
-import {Card, Row, Timeline, Col, Popover, Button, List, Divider, Layout, Badge, Spin, Menu} from "antd"
+import {Card, Row, Timeline, Col, Popover, Button, List, Divider, Layout, Badge, Spin, Menu, Dropdown, Icon} from "antd"
 import {DOCTORS_ROLE, SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -14,6 +14,7 @@ import dates from 'date-arithmetic'
 import {getAPI, putAPI, interpolate, displayMessage} from "../../utils/common";
 import {APPOINTMENT_PERPRACTICE_API, APPOINTMENT_API, PRACTICESTAFF, CALENDER_SETTINGS} from "../../constants/api";
 import EventComponent from "./EventComponent";
+import {calendarSettingMenu} from "./calendarUtils";
 
 const localizer = BigCalendar.momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(BigCalendar)
@@ -27,7 +28,7 @@ class App extends Component {
             startTime: null,
             visiblePopover: false,
             events: [],
-            filteredEvent:[],
+            filteredEvent: [],
             appointments: [],
             practice_doctors: [],
             practice_staff: [],
@@ -312,7 +313,6 @@ class App extends Component {
                 counter++;
             }
         });
-
         return (<Content className="main-container">
                 <Switch>
                     <Route exact path="/calendar/create-appointment"
@@ -379,8 +379,13 @@ class App extends Component {
                                         }}/>
                                 </Col>
                                 <Col span={5}>
+                                    <Dropdown overlay={calendarSettingMenu}>
+                                        <Button block style={{margin: 5}}>
+                                            <Icon type="setting"/> Settings <Icon type="down"/>
+                                        </Button>
+                                    </Dropdown>
                                     <Link to='/calendar/create-appointment'>
-                                        <Button block type="primary"> Walkin Appointment</Button>
+                                        <Button block type="primary" style={{margin: 5}}> Walkin Appointment</Button>
                                     </Link>
                                     <Divider>Appointments</Divider>
                                     <Spin spinning={this.state.loading}>

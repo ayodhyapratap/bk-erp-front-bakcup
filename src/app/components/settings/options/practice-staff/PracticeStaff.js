@@ -27,7 +27,8 @@ class PracticeDetails extends React.Component {
             permissionEditModal: false,
             editPermissions: {},
             allPermissions: getAllPermissions(),
-            loading: true
+            loading: true,
+            defaultActiveTab: this.props.location.hash
         }
         this.setPermission = this.setPermission.bind(this);
         this.staffRoles();
@@ -288,7 +289,7 @@ class PracticeDetails extends React.Component {
             render: confirmation_sms => (
                 <span>
             <Checkbox
-                      checked={confirmation_sms}/>
+                checked={confirmation_sms}/>
             </span>),
         }, {
             title: "Schedule SMS",
@@ -296,7 +297,7 @@ class PracticeDetails extends React.Component {
             key: "schedule_sms",
             render: schedule_sms => (
                 <span>
-            <Checkbox  checked={schedule_sms}/>
+            <Checkbox checked={schedule_sms}/>
             </span>)
         }, {
             title: "Confirmation EMAIL",
@@ -304,7 +305,7 @@ class PracticeDetails extends React.Component {
             key: "confirmation_email",
             render: confirmation_email => (
                 <span>
-            <Checkbox  checked={confirmation_email}/>
+            <Checkbox checked={confirmation_email}/>
             </span>)
         }, {
             title: "Online Appointment SMS",
@@ -329,8 +330,8 @@ class PracticeDetails extends React.Component {
         return <Row>
             <h2>Practice Staff</h2>
             <Card>
-                <Tabs defaultActiveKey="staff">
-                    <TabPane tab={<span><Icon type="user-add"/>Manage Staff</span>} key="staff">
+                <Tabs defaultActiveKey={this.state.defaultActiveTab}>
+                    <TabPane tab={<span><Icon type="user-add"/>Manage Staff</span>} key="#staff">
                         <h2>Doctors <Link to="/settings/clinics-staff/adddoctor">
                             <Button type="primary" style={{float: 'right'}}>
                                 <Icon type="plus"/>&nbsp;Add Doctor/Staff
@@ -342,7 +343,7 @@ class PracticeDetails extends React.Component {
                         <Table loading={this.state.loading} pagination={false} columns={columns}
                                dataSource={this.state.practice_staff}/>
                     </TabPane>
-                    <TabPane tab={<span><Icon type="team"/>Staff Notification</span>} key="notification">
+                    <TabPane tab={<span><Icon type="team"/>Staff Notification</span>} key="#notification">
                         <h2>Doctors</h2>
                         <Table loading={this.state.loading} pagination={false} columns={notification_columns}
                                dataSource={this.state.practice_doctors}/>
@@ -350,7 +351,7 @@ class PracticeDetails extends React.Component {
                         <Table loading={this.state.loading} pagination={false} columns={notification_columns}
                                dataSource={this.state.practice_staff}/>
                     </TabPane>
-                    <TabPane tab={<span><Icon type="schedule"/>Doctors visit Timing</span>} key="timing">
+                    <TabPane tab={<span><Icon type="schedule"/>Doctors visit Timing</span>} key="#timing">
                         <Table loading={this.state.loading}>
                             <Column title="Name"
                                     dataIndex="user.name"
