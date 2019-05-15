@@ -371,6 +371,7 @@ class App extends Component {
                                         views={{month: true, week: MyWeek, day: true, agenda: true}}
                                         style={{height: "calc(100vh - 85px)"}}
                                         eventPropGetter={(this.eventStyleGetter)}
+                                        // date={new Date(2015, 3, 1)}
                                         min={startTime}
                                         max={endTime}
                                         onRangeChange={this.onRangeChange}

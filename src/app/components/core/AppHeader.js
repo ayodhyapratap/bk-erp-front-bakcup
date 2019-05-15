@@ -66,9 +66,11 @@ class AppHeader extends React.Component {
                 <Menu.Item key="profile">
                     <Link to="/profile">Profile</Link>
                 </Menu.Item>
-                {/*<Menu.Item>*/}
-                {/*<Link to="/settings">Settings</Link>*/}
-                {/*</Menu.Item>*/}
+                <Menu.Divider />
+                <Menu.Item key={"website"}>
+                    <a href={'https://bkarogyam.com'}><small>Switch to Website ></small></a>
+                </Menu.Item>
+                <Menu.Divider />
                 <Menu.Item key="logout">
                     <a onClick={this.props.logout}>Log out</a>
                 </Menu.Item>
