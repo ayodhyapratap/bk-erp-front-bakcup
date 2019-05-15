@@ -51,7 +51,7 @@ export default class AppointmentsReport extends React.Component {
             key: 'time',
             render: (text, record) => (
                 <span>
-                  {moment(record.shedule_at).format('HH:mm')}
+                  {moment(record.schedule_at).format('HH:mm')}
 
                   </span>
             ),
@@ -73,15 +73,16 @@ export default class AppointmentsReport extends React.Component {
             key: 'age',
         }, {
             title: 'Patient',
-            dataIndex: 'patient_name',
+            dataIndex: 'patient',
             key: 'patient_name',
+            render:(item,record)=><span>{item.user.first_name}</span>
         }, {
             title: 'Doctor',
-            dataIndex: 'address',
+            dataIndex: 'doctor',
             key: 'address',
         }, {
             title: 'Category',
-            dataIndex: 'address',
+            dataIndex: 'category',
             key: 'address',
         }];
 

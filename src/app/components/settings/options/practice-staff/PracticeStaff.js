@@ -1,6 +1,6 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Checkbox, Card, Form, Icon, Tabs, Divider, Tag, Row, Table, Modal,Popconfirm} from "antd";
+import {Button, Checkbox, Card, Form, Icon, Tabs, Divider, Tag, Row, Table, Modal, Popconfirm} from "antd";
 import {CHECKBOX_FIELD, DOCTORS_ROLE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {
     PRACTICESTAFF,
@@ -27,7 +27,7 @@ class PracticeDetails extends React.Component {
             permissionEditModal: false,
             editPermissions: {},
             allPermissions: getAllPermissions(),
-            loading:true
+            loading: true
         }
         this.setPermission = this.setPermission.bind(this);
         this.staffRoles();
@@ -163,12 +163,12 @@ class PracticeDetails extends React.Component {
             that.setState({
                 practice_doctors: doctor,
                 practice_staff: staff,
-                loading:false
+                loading: false
             })
         };
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         };
         getAPI(interpolate(PRACTICESTAFF, [this.props.active_practiceId]), successFn, errorFn);
@@ -267,10 +267,10 @@ class PracticeDetails extends React.Component {
                      <Divider type="vertical"/>
                         <a
                             // disabled={!(record.user && record.user.is_active)}
-                           onClick={() => that.editPermissions(record.user.id)}>Permissions</a>
+                            onClick={() => that.editPermissions(record.user.id)}>Permissions</a>
                     <Divider type="vertical"/>
                     <Popconfirm title="Are you sure delete this item?"
-                                 onConfirm={() => that.deleteStaff(record.id)} okText="Yes" cancelText="No">
+                                onConfirm={() => that.deleteStaff(record.id)} okText="Yes" cancelText="No">
                          <a>Delete</a>
                     </Popconfirm>
             </span>)
@@ -279,7 +279,7 @@ class PracticeDetails extends React.Component {
 
         const notification_columns = [{
             title: "Name",
-            dataIndex: "name",
+            dataIndex: "user.first_name",
             key: "name",
         }, {
             title: "Confirmation SMS",
@@ -287,7 +287,7 @@ class PracticeDetails extends React.Component {
             key: "confirmation_sms",
             render: confirmation_sms => (
                 <span>
-            <Checkbox disabled
+            <Checkbox
                       checked={confirmation_sms}/>
             </span>),
         }, {
@@ -296,7 +296,7 @@ class PracticeDetails extends React.Component {
             key: "schedule_sms",
             render: schedule_sms => (
                 <span>
-            <Checkbox disabled checked={schedule_sms}/>
+            <Checkbox  checked={schedule_sms}/>
             </span>)
         }, {
             title: "Confirmation EMAIL",
@@ -304,15 +304,27 @@ class PracticeDetails extends React.Component {
             key: "confirmation_email",
             render: confirmation_email => (
                 <span>
-            <Checkbox disabled checked={confirmation_email}/>
+            <Checkbox  checked={confirmation_email}/>
             </span>)
         }, {
-            title: "online_appointment_sms",
+            title: "Online Appointment SMS",
             dataIndex: "online_appointment_sms",
             key: "online_appointment_sms",
             render: online_appointment_sms => (
-                <Checkbox disabled checked={online_appointment_sms}/>
+                <Checkbox checked={online_appointment_sms}/>
             )
+        }, {
+            title: "Action",
+            key: "action",
+            render: function (text, record) {
+                return (record.user && record.is_superuser ?
+                    <Tag> Not Allowed</Tag> :
+                    <span>
+            <Link to={"/settings/clinics-staff/" + record.id + "/edit"}>
+              <a>Edit</a>
+            </Link>
+            </span>)
+            }
         }];
         return <Row>
             <h2>Practice Staff</h2>
@@ -324,20 +336,22 @@ class PracticeDetails extends React.Component {
                                 <Icon type="plus"/>&nbsp;Add Doctor/Staff
                             </Button>
                         </Link></h2>
-                        <Table loading={this.state.loading}  pagination={false} columns={columns} dataSource={this.state.practice_doctors}/>
+                        <Table loading={this.state.loading} pagination={false} columns={columns}
+                               dataSource={this.state.practice_doctors}/>
                         <h2>Staff </h2>
-                        <Table loading={this.state.loading}  pagination={false} columns={columns} dataSource={this.state.practice_staff}/>
+                        <Table loading={this.state.loading} pagination={false} columns={columns}
+                               dataSource={this.state.practice_staff}/>
                     </TabPane>
                     <TabPane tab={<span><Icon type="team"/>Staff Notification</span>} key="notification">
                         <h2>Doctors</h2>
-                        <Table loading={this.state.loading}  pagination={false} columns={notification_columns}
+                        <Table loading={this.state.loading} pagination={false} columns={notification_columns}
                                dataSource={this.state.practice_doctors}/>
                         <h2>Staff</h2>
-                        <Table loading={this.state.loading}  pagination={false} columns={notification_columns}
+                        <Table loading={this.state.loading} pagination={false} columns={notification_columns}
                                dataSource={this.state.practice_staff}/>
                     </TabPane>
                     <TabPane tab={<span><Icon type="schedule"/>Doctors visit Timing</span>} key="timing">
-                        <Table loading={this.state.loading} >
+                        <Table loading={this.state.loading}>
                             <Column title="Name"
                                     dataIndex="user.name"
                                     key="name"
