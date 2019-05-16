@@ -19,8 +19,8 @@ class AddProcedure extends React.Component {
         this.state = {
             taxes: [],
             procedure_category: [],
-            redirect:false,
-            productMargin:[]
+            redirect: false,
+            productMargin: []
         }
         this.loadTaxes = this.loadTaxes.bind(this);
         this.loadProcedures = this.loadProcedures.bind(this)
@@ -28,12 +28,14 @@ class AddProcedure extends React.Component {
         this.loadProcedures();
         this.loadProductMargin();
     }
+
     changeRedirect() {
         var redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
     }
+
     loadProductMargin() {
         let that = this;
         let successFn = function (data) {
@@ -46,6 +48,7 @@ class AddProcedure extends React.Component {
         }
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
+
     loadProcedures() {
         var that = this;
         let successFn = function (data) {
@@ -94,11 +97,11 @@ class AddProcedure extends React.Component {
             key: "taxes",
             type: CHECKBOX_FIELD,
             options: this.state.taxes.map(tax => Object.create({
-                    label: tax.name,
+                    label: tax.name + (tax.tax_value ? "(" + tax.tax_value + "%)" : ''),
                     value: tax.id
                 })
             )
-        },{
+        }, {
             label: 'MLM Margin Type',
             type: SELECT_FIELD,
             initialValue: (this.state.editFields ? this.state.editFields.margin : null),
@@ -138,7 +141,9 @@ class AddProcedure extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
             <Card>
-                <TestFormLayout title="Add Procedure" changeRedirect={this.changeRedirect}  formProp={formProp} fields={formFields}/>
+                <TestFormLayout title="Add Procedure" changeRedirect={this.changeRedirect} formProp={formProp}
+                                {...this.props}
+                                fields={formFields}/>
                 {this.state.redirect && <Redirect to='/settings/procedures'/>}
             </Card>
         </div>

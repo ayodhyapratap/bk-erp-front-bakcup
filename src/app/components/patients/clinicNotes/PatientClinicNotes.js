@@ -69,7 +69,7 @@ class PatientClinicNotes extends React.Component {
             dataIndex: 'name',
             key: 'name',
         }, {
-            title: 'Chief complaints',
+            title: 'Chief Complaints',
             dataIndex: 'chief_complaints',
             key: 'chief_complaints',
         }, {
@@ -88,12 +88,6 @@ class PatientClinicNotes extends React.Component {
             title: 'Observations',
             dataIndex: 'observations',
             key: 'observations',
-        }, {
-            title: 'Active',
-            key: 'is_active',
-            render: (text, record) => (
-                <Checkbox disabled={true} checked={record.is_active}/>
-            )
         }, {
             title: 'Action',
             key: 'action',

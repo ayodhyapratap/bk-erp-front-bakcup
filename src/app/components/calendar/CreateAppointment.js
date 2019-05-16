@@ -70,14 +70,14 @@ class CreateAppointment extends React.Component {
         const TestFormLayout = Form.create()(CreateAppointmentForm);
         return <Row>
             <Route exact path='/calendar/:appointmentid/edit-appointment'
-                   render={() => (this.props.match.params.appointmentid ?
-                       <TestFormLayout {...this.props} defaultValues={defaultValues} title="Edit Appointment"
+                   render={(route) => (this.props.match.params.appointmentid ?
+                       <TestFormLayout {...route} {...this.props} defaultValues={defaultValues} title="Edit Appointment"
                                        changeRedirect={this.changeRedirect}/> :
                        <Redirect to={'/patients/appointments/'}/>)}/>
 
             <Route exact path='/calendar/create-appointment'
-                   render={() => <TestFormLayout {...this.props} defaultValues={defaultValues} changeRedirect={this.changeRedirect}
-                                                 title="ADD Appointmnt "/>}/>
+                   render={(route) => <TestFormLayout {...this.props} defaultValues={defaultValues} changeRedirect={this.changeRedirect} {...route}
+                                                 title="ADD Appointment "/>}/>
 
         </Row>
     }

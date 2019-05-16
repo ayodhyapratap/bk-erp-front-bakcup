@@ -75,9 +75,9 @@ export default class DiseaseList extends React.Component {
         }];
         return <div><Switch>
             <Route exact path='/web/disease/add'
-                   render={(route) => <AddDisease{...this.state} {...route}/>}/>
+                   render={(route) => <AddDisease{...this.state} {...route} loadData={this.loadDiseases}/>}/>
             <Route exact path='/web/disease/edit/:id'
-                   render={(route) => <AddDisease{...this.state} {...route}/>}/>
+                   render={(route) => <AddDisease{...this.state} {...route} loadData={this.loadDiseases}/>}/>
             <Card title="Disease"
                   extra={<Link to={"/web/disease/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
                 <Table loading={this.state.loading} columns={coloumns} dataSource={this.state.disease}/>

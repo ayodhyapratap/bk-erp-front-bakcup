@@ -13,13 +13,13 @@ class LabTest extends React.Component {
         this.state = {
             tests: null,
             editTest: null,
-            loading:true,
-            productMargin:null
+            loading: true,
+            productMargin: null
         };
         this.editLabs = this.editLabs.bind(this);
         this.loadData = this.loadData.bind(this);
         this.deleteTest = this.deleteTest.bind(this);
-        this.loadProductMargin =this.loadProductMargin.bind(this);
+        this.loadProductMargin = this.loadProductMargin.bind(this);
     }
 
     componentDidMount() {
@@ -33,12 +33,12 @@ class LabTest extends React.Component {
             console.log("get table");
             that.setState({
                 tests: data,
-                loading:false
+                loading: false
             })
         };
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         };
         getAPI(interpolate(LABTEST_API, [that.props.active_practiceId]), successFn, errorFn);
@@ -48,13 +48,14 @@ class LabTest extends React.Component {
         let that = this;
         this.setState({
             editTest: record,
-            loading:false
+            loading: false
         }, function () {
             that.props.history.push('/settings/labs/edit');
         })
 
 
     }
+
     deleteTest(record) {
         let that = this;
         let reqData = record;
@@ -82,13 +83,13 @@ class LabTest extends React.Component {
 
     render() {
         let that = this;
-        const product_margin={}
-        if(this.state.productMargin){
+        const product_margin = {}
+        if (this.state.productMargin) {
             this.state.productMargin.forEach(function (margin) {
                 product_margin[margin.id] = (margin.name)
             })
         }
-        console.log("table",product_margin)
+        console.log("table", product_margin)
         const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -124,9 +125,11 @@ class LabTest extends React.Component {
         return <Row>
             <Switch>
                 <Route exact path={'/settings/labs/add'}
-                       render={() => <AddorEditLab {...that.state} loadData={this.loadData}{...this.props}/>}/>
+                       render={(route) => <AddorEditLab {...that.state}
+                                                        loadData={this.loadData}{...this.props} {...route}/>}/>
                 <Route exact path={'/settings/labs/edit'}
-                       render={() => <AddorEditLab {...that.state} loadData={this.loadData} {...this.props}/>}/>
+                       render={(route) => <AddorEditLab {...that.state}
+                                                        loadData={this.loadData} {...this.props} {...route}/>}/>
                 <Route exact path={'/settings/labs'}>
                     <div>
                         <h2>Lab Tests

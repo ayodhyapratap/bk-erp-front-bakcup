@@ -40,7 +40,7 @@ class AddorEditPatientVitalSigns extends React.Component {
             key: "pulse",
             required: true,
             //initialValue:this.props.currentPatient?this.props.currentPatient.addhar_id:null,
-            type: INPUT_FIELD
+            type: NUMBER_FIELD
         },{
             label: "Temperature",
             key: "temperature",

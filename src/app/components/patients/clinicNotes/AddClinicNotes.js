@@ -100,38 +100,34 @@ class AddClinicNotes extends React.Component {
         const fields = [{
             label: "Name",
             key: "name",
+            required: true,
             initialValue: this.state.editClinicNotes ? this.state.editClinicNotes.name : null,
             type: INPUT_FIELD
         }, {
-            label: "chief_complaints",
+            label: "Chief Complaints",
             key: "chief_complaints",
             initialValue: this.state.editClinicNotes ? this.state.editClinicNotes.chief_complaints : null,
             type: INPUT_FIELD
         }, {
-            label: "investigations",
+            label: "Investigations",
             key: "investigations",
             initialValue: this.state.editClinicNotes ? this.state.editClinicNotes.investigations : null,
             type: INPUT_FIELD,
         }, {
-            label: "diagnosis",
+            label: "Diagnosis",
             key: "diagnosis",
             initialValue: this.state.editClinicNotes ? this.state.editClinicNotes.diagnosis : null,
             type: INPUT_FIELD,
         }, {
-            label: "notes",
+            label: "Notes",
             key: "notes",
             initialValue: this.state.editClinicNotes ? this.state.editClinicNotes.notes : null,
             type: INPUT_FIELD,
         }, {
-            label: "observations",
+            label: "Observations",
             key: "observations",
             initialValue: this.state.editClinicNotes ? this.state.editClinicNotes.observations : null,
             type: INPUT_FIELD,
-        }, {
-            label: "Active",
-            key: "is_active",
-            type: SINGLE_CHECKBOX_FIELD,
-            initialValue: this.state.editClinicNotes ? this.state.editClinicNotes.is_active : false,
         }];
 
 
@@ -150,9 +146,9 @@ class AddClinicNotes extends React.Component {
             action: interpolate(PATIENT_CLINIC_NOTES_API, [this.props.match.params.id]),
             method: "post",
         }
-        let defaultValues = []
+        let defaultValues = [{key: 'is_active', value: true}]
         if (this.state.editClinicNotes) {
-            defaultValues = [{"key": "id", "value": this.state.editClinicNotes.id}];
+            defaultValues = [{key: 'is_active', value: true}, {"key": "id", "value": this.state.editClinicNotes.id}];
         }
         return <Row>
             <Card>

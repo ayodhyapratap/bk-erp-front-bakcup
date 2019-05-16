@@ -1,13 +1,15 @@
 import React from "react";
-import {Row, Col, Table, Button, Icon} from "antd";
+import {Row, Col, Table, Button, Icon, Input} from "antd";
 import {exportToExcel, exportToPDF} from "../../utils/export";
 import moment from "moment";
+import Highlighter from 'react-highlight-words';
 
 export default class CustomizedTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            ...props
+            ...props,
+            searchText: '',
         };
         this.excelExport = this.excelExport.bind(this);
         this.pdfExport = this.pdfExport.bind(this);
@@ -55,7 +57,71 @@ export default class CustomizedTable extends React.Component {
         exportToExcel(excelColumns, dataArrayForExcel, "Export" + moment());
     }
 
+    getColumnSearchProps = dataIndex => ({
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
+            <div style={{padding: 8}}>
+                <Input
+                    ref={node => {
+                        this.searchInput = node;
+                    }}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+                    style={{width: 188, marginBottom: 8, display: 'block'}}
+                />
+                <Button
+                    type="primary"
+                    onClick={() => this.handleSearch(selectedKeys, confirm)}
+                    icon="search"
+                    size="small"
+                    style={{width: 90, marginRight: 8}}
+                >
+                    Search
+                </Button>
+                <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{width: 90}}>
+                    Reset
+                </Button>
+            </div>
+        ),
+        filterIcon: filtered => (<Icon type="search" style={{color: filtered ? '#1890ff' : undefined}}/>),
+        onFilter: (value, record) =>
+            record[dataIndex]
+                .toString()
+                .toLowerCase()
+                .includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: visible => {
+            if (visible) {
+                setTimeout(() => this.searchInput.select());
+            }
+        },
+        render: text => (
+            <Highlighter
+                highlightStyle={{backgroundColor: '#ffc069', padding: 0}}
+                searchWords={[this.state.searchText]}
+                autoEscape
+                textToHighlight={text.toString()}
+            />
+        ),
+    });
+    handleSearch = (selectedKeys, confirm) => {
+        confirm();
+        this.setState({searchText: selectedKeys[0]});
+    };
+
+    handleReset = clearFilters => {
+        clearFilters();
+        this.setState({searchText: ''});
+    };
+
     render() {
+        let that = this;
+        const columns = this.state.columns.map(item => {
+                if (!item.render)
+                    return {...item, ...that.getColumnSearchProps(item.dataIndex)}
+                return {...item};
+            }
+        )
         return <div>
             <Row style={{marginBottom: '5px'}}>
                 <Col>
@@ -68,7 +134,7 @@ export default class CustomizedTable extends React.Component {
                 </Col>
             </Row>
             <Row>
-                <Table {...this.state} />
+                <Table {...this.state} columns={columns}/>
             </Row>
         </div>
     }

@@ -149,12 +149,12 @@ class DynamicFieldsForm extends React.Component {
                     } else if (formFields.type == TIME_PICKER) {
                         let key = formFields.key;
                         if (formFields.format) {
-                            values[key] = moment(values[key]).format(formFields.format);
+                            values[key] = moment(values[key]).isValid() ? moment(values[key]).format(formFields.format) : null;
                         }
                     } else if (formFields.type == DATE_PICKER) {
                         let key = formFields.key;
                         if (formFields.format) {
-                            values[key] = moment(values[key]).format(formFields.format);
+                            values[key] = moment(values[key]).isValid() ? moment(values[key]).format(formFields.format) : null;
                         }
                     }
                 });
@@ -563,9 +563,13 @@ class DynamicFieldsForm extends React.Component {
                 }) : null}
                 <FormItem {...formItemLayout}>
                     {/*<Button onClick={this.resetFormData}>Reset</Button>*/}
-                    <Button loading={that.state.loading} type="primary" htmlType="submit">
+                    <Button loading={that.state.loading} type="primary" htmlType="submit" style={{margin: 5}}>
                         Submit
                     </Button>
+                    {that.props.history ?
+                        <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
+                            Cancel
+                        </Button> : null}
                 </FormItem>
             </Form>
         </div>

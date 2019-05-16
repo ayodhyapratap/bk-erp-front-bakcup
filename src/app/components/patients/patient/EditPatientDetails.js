@@ -10,7 +10,7 @@ import {
     SUCCESS_MSG_TYPE,
     INPUT_FIELD,
     RADIO_FIELD,
-    SELECT_FIELD
+    SELECT_FIELD, EMAIL_FIELD
 } from "../../../constants/dataKeys";
 import {PATIENTS_LIST, PATIENT_PROFILE} from "../../../constants/api";
 import {getAPI, interpolate, displayMessage} from "../../../utils/common";
@@ -55,7 +55,7 @@ class EditPatientDetails extends React.Component {
             key: "user.referer_code",
             initialValue: this.props.currentPatient ? this.props.currentPatient.user.referer_code : null,
             type: INPUT_FIELD
-        },{
+        }, {
             //     label: "Patient ID",
             //     key: "patient_id",
             //     required: true,
@@ -82,65 +82,66 @@ class EditPatientDetails extends React.Component {
             initialValue: this.props.currentPatient && this.props.currentPatient.dob ? moment(this.props.currentPatient.dob).format("YYYY-MM-DD") : '',
             format: "YYYY-MM-DD",
             type: DATE_PICKER
-        },
-            {
-                label: "Anniversary",
-                key: "anniversary",
-                initialValue: this.props.currentPatient && this.props.currentPatient.anniversary ? moment(this.props.currentPatient.anniversary) : null,
-                format: "YYYY-MM-DD",
-                type: DATE_PICKER
-            }, {
-                label: "Blood Group",
-                key: "blood_group",
-                initialValue: this.props.currentPatient ? this.props.currentPatient.blood_group : null,
-                type: INPUT_FIELD
-            }, {
-                label: "Family Relation",
-                key: "family_relation",
-                initialValue: this.props.currentPatient ? this.props.currentPatient.family_relation : null,
-                type: INPUT_FIELD,
-            }, {
-                label: "Mobile (Primary)",
-                key: "user.mobile",
-                initialValue: this.props.currentPatient ? this.props.currentPatient.user.mobile : null,
-                type: INPUT_FIELD,
-                disabled: !!this.props.currentPatient
-            }, {
-                label: "Mobile (Secondary)",
-                key: "secondary_mobile_no",
-                initialValue: this.props.currentPatient ? this.props.currentPatient.secondary_mobile_no : null,
-                type: INPUT_FIELD,
-            }, {
-                label: "Landline",
-                key: "landline_no",
-                initialValue: this.props.currentPatient ? this.props.currentPatient.landline_no : null,
-                type: INPUT_FIELD,
-            }, {
-                label: "Address",
-                key: "address",
-                initialValue: this.props.currentPatient ? this.props.currentPatient.address : null,
-                type: INPUT_FIELD,
-            }, {
-                label: "Locality",
-                key: "locality",
-                initialValue: this.props.currentPatient ? this.props.currentPatient.locality : null,
-                type: INPUT_FIELD,
-            }, {
-                label: "City",
-                key: "city",
-                initialValue: this.props.currentPatient ? this.props.currentPatient.city : null,
-                type: INPUT_FIELD
-            }, {
-                label: "Pincode",
-                key: "pincode",
-                initialValue: this.props.currentPatient ? this.props.currentPatient.pincode : null,
-                type: INPUT_FIELD
-            }, {
-                label: "Email",
-                key: "user.email",
-                initialValue: this.props.currentPatient ? this.props.currentPatient.user.email : null,
-                type: INPUT_FIELD
-            },];
+        }, {
+            label: "Anniversary",
+            key: "anniversary",
+            initialValue: this.props.currentPatient && this.props.currentPatient.anniversary ? moment(this.props.currentPatient.anniversary) : null,
+            format: "YYYY-MM-DD",
+            type: DATE_PICKER
+        }, {
+            label: "Blood Group",
+            key: "blood_group",
+            initialValue: this.props.currentPatient ? this.props.currentPatient.blood_group : null,
+            type: INPUT_FIELD
+        }, {
+            label: "Family Relation",
+            key: "family_relation",
+            initialValue: this.props.currentPatient ? this.props.currentPatient.family_relation : null,
+            type: INPUT_FIELD,
+        }, {
+            label: "Mobile (Primary)",
+            key: "user.mobile",
+            initialValue: this.props.currentPatient ? this.props.currentPatient.user.mobile : null,
+            type: INPUT_FIELD,
+            required: true,
+            disabled: !!this.props.currentPatient
+        }, {
+            label: "Mobile (Secondary)",
+            key: "secondary_mobile_no",
+            initialValue: this.props.currentPatient ? this.props.currentPatient.secondary_mobile_no : null,
+            type: INPUT_FIELD,
+        }, {
+            label: "Landline",
+            key: "landline_no",
+            initialValue: this.props.currentPatient ? this.props.currentPatient.landline_no : null,
+            type: INPUT_FIELD,
+        }, {
+            label: "Address",
+            key: "address",
+            initialValue: this.props.currentPatient ? this.props.currentPatient.address : null,
+            type: INPUT_FIELD,
+        }, {
+            label: "Locality",
+            key: "locality",
+            initialValue: this.props.currentPatient ? this.props.currentPatient.locality : null,
+            type: INPUT_FIELD,
+        }, {
+            label: "City",
+            key: "city",
+            initialValue: this.props.currentPatient ? this.props.currentPatient.city : null,
+            type: INPUT_FIELD
+        }, {
+            label: "Pincode",
+            key: "pincode",
+            initialValue: this.props.currentPatient ? this.props.currentPatient.pincode : null,
+            type: INPUT_FIELD
+        }, {
+            label: "Email",
+            required: true,
+            key: "user.email",
+            initialValue: this.props.currentPatient ? this.props.currentPatient.user.email : null,
+            type: EMAIL_FIELD
+        },];
 
 
         let editformProp;
@@ -172,7 +173,7 @@ class EditPatientDetails extends React.Component {
             method: "post",
         }
         const defaultValues = [];
-        if(this.props.currentPatient)
+        if (this.props.currentPatient)
             defaultValues.push({key: 'user', value: this.props.currentPatient.user});
         return <Row>
             <Card>

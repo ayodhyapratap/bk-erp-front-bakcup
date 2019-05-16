@@ -32,7 +32,7 @@ class SettingSider extends React.Component {
                         </Link>
                     </Menu.Item> : null}
                     {this.props.activePracticePermissions.SettingsCalendar ? <Menu.Item key="17">
-                        <Link to="/settings/calendarsettings">
+                        <Link to="/settings/calendarsettings#timings">
                             <Icon type="schedule"/>Calendar
                         </Link>
                     </Menu.Item> : null}

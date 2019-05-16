@@ -2,7 +2,7 @@ import React from "react";
 import {Avatar, Input, Table, Col, Button, Card, Icon} from "antd";
 import {Link} from "react-router-dom";
 import {VITAL_SIGNS_API} from "../../../constants/api";
-import {getAPI, interpolate} from "../../../utils/common";
+import {getAPI, interpolate, patchAPI, putAPI} from "../../../utils/common";
 import moment from 'moment';
 
 const {Meta} = Card;
@@ -15,7 +15,7 @@ class PatientVitalSign extends React.Component {
         this.state = {
             currentPatient: this.props.currentPatient,
             vitalsign: [],
-            loading:true
+            loading: true
         }
         this.loadVitalsigns = this.loadVitalsigns.bind(this);
 
@@ -33,7 +33,7 @@ class PatientVitalSign extends React.Component {
         let successFn = function (data) {
             that.setState({
                 vitalsign: data,
-                loading:false
+                loading: false
             })
         }
         let errorFn = function () {
@@ -42,7 +42,20 @@ class PatientVitalSign extends React.Component {
         getAPI(interpolate(VITAL_SIGNS_API, [this.props.match.params.id]), successFn, errorFn)
     }
 
+    deleteVitalSign = (record) => {
+        let that = this;
+        let reqData = {...record, is_active: false}
+        let successFn = function (data) {
+
+        }
+        let errorFn = function () {
+
+        }
+        patchAPI(interpolate(VITAL_SIGNS_API, [record.id]), reqData, successFn, errorFn)
+    }
+
     render() {
+        let that = this;
         const columns = [{
             title: 'Time',
             dataIndex: 'created_at',
@@ -79,7 +92,7 @@ class PatientVitalSign extends React.Component {
                 <span>
                   {/*<a href="javascript:;">Invite {record.name}</a>*/}
                     {/*<Divider type="vertical" />*/}
-                    <a href="javascript:;">Delete</a>
+                    <a onClick={() => that.deleteVitalSign(record)}>Delete</a>
                 </span>
             ),
         }];

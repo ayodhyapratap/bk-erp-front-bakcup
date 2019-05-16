@@ -93,12 +93,13 @@ export default class AddorEditLab extends React.Component {
         return <Row>
             <Card>
                 <Route exact path='/settings/labs/add'
-                       render={() => <TestFormLayout title="Add Lab" changeRedirect={this.changeRedirect}
-                                                     formProp={formProp} fields={fields}/>}/>
+                       render={(route) => <TestFormLayout title="Add Lab" changeRedirect={this.changeRedirect}
+                                                     formProp={formProp} fields={fields} {...route}/>}/>
                 <Route exact path='/settings/labs/edit'
-                       render={() => (this.state.editFields ?
+                       render={(route) => (this.state.editFields ?
                            <TestFormLayout title="Add Lab" defaultValues={defaultValues}
                                            changeRedirect={this.changeRedirect}
+                                           {...route}
                                            formProp={formProp} fields={fields}/> : <Redirect to={'/settings/labs'}/>)}/>
             </Card>
             {this.state.redirect && <Redirect to={'/settings/labs'}/>}

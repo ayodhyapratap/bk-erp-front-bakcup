@@ -62,19 +62,22 @@ class PatientSelection extends React.Component {
     }
 
     searchPatient(e) {
-        console.log(e.target.value);
-        let that = this;
-        let successFn = function (data) {
-            if (data) {
-                that.setState({
-                    patientListData: data
-                })
-            }
-        };
-        let errorFn = function () {
+        if(e.target.value) {
+            let that = this;
+            let successFn = function (data) {
+                if (data) {
+                    that.setState({
+                        patientListData: data
+                    })
+                }
+            };
+            let errorFn = function () {
 
-        };
-        getAPI(interpolate(SEARCH_PATIENT, [e.target.value]), successFn, errorFn);
+            };
+            getAPI(interpolate(SEARCH_PATIENT, [e.target.value]), successFn, errorFn);
+        }else{
+            this.getPatientListData();
+        }
     }
 
     getMorePatient() {

@@ -20,22 +20,23 @@ class EditProcedure extends React.Component {
         this.state = {
             taxes: [],
             procedure_category: [],
-            redirect:false,
-            productMargin:[],
-            editingProcedureData:this.props.editingProcedureData,
-            loading:true
+            redirect: false,
+            productMargin: [],
+            editingProcedureData: this.props.editingProcedureData,
+            loading: true
         }
         this.loadTaxes = this.loadTaxes.bind(this);
         this.loadProcedures = this.loadProcedures.bind(this)
         this.loadTaxes();
         this.loadProductMargin();
     }
+
     loadProductMargin() {
         let that = this;
         let successFn = function (data) {
             that.setState({
                 productMargin: data,
-                loading:false
+                loading: false
             })
         }
         let errorFn = function () {
@@ -43,6 +44,7 @@ class EditProcedure extends React.Component {
         }
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
+
     changeRedirect() {
         var redirectVar = this.state.redirect;
         this.setState({
@@ -52,30 +54,31 @@ class EditProcedure extends React.Component {
 
     componentDidMount() {
         this.setState({
-          procedure_category:this.props.procedure_category,
+            procedure_category: this.props.procedure_category,
 
         })
-        if (this.props.match.params.id!=null) {
+        if (this.props.match.params.id != null) {
 
 
-          //     this.loadProcedures(this.props.match.params.id);
+            //     this.loadProcedures(this.props.match.params.id);
 
         }
     }
+
     loadProcedures(id) {
         var that = this;
-        var url=`${interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId])}`;
-        console.log("url",url);
+        var url = `${interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId])}`;
+        console.log("url", url);
         let successFn = function (data) {
-            console.log("get table",data);
+            console.log("get table", data);
             that.setState({
                 procedure_category: data,
-                loading:false
+                loading: false
             })
         };
         let errorFn = function () {
             this.setState({
-                loading:false
+                loading: false
             })
         };
 
@@ -86,7 +89,7 @@ class EditProcedure extends React.Component {
         let that = this;
         let successFn = function (data) {
             console.log(data.map(tax => Object.create({
-                    label: tax.name,
+                    label: tax.name + (tax.tax_value ? "(" + tax.tax_value + "%)" : ''),
                     value: tax.id
                 })
             ));
@@ -105,19 +108,19 @@ class EditProcedure extends React.Component {
             label: "Procedure Name",
             key: "name",
             required: true,
-            initialValue:this.state.editingProcedureData?this.state.editingProcedureData.name:null,
+            initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.name : null,
             type: INPUT_FIELD
         }, {
             label: "Procedure Cost",
             key: "cost",
             follow: "INR",
-            initialValue:this.state.editingProcedureData?this.state.editingProcedureData.cost:null,
+            initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.cost : null,
             required: true,
             type: NUMBER_FIELD,
         }, {
             label: "Applicable Taxes",
             key: "taxes",
-            initialValue:this.state.editingProcedureData?this.state.editingProcedureData.taxes:null,
+            initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.taxes : null,
             type: CHECKBOX_FIELD,
             options: this.state.taxes.map(tax => Object.create({
                     label: tax.name,
@@ -131,7 +134,7 @@ class EditProcedure extends React.Component {
             key: 'margin',
             required: true,
             options: that.state.productMargin.map(margin => ({label: margin.name, value: margin.id}))
-        },{
+        }, {
             label: "Add Under",
             key: "under",
             type: SELECT_FIELD,
@@ -142,11 +145,11 @@ class EditProcedure extends React.Component {
                 label: procedure.name,
                 value: procedure.id
             }))),
-            initialValue:this.state.editingProcedureData?this.state.editingProcedureData.under:null,
+            initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.under : null,
         }, {
             label: "Default Note",
             key: "default_notes",
-            initialValue:this.state.editingProcedureData?this.state.editingProcedureData.default_notes:null,
+            initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.default_notes : null,
             type: INPUT_FIELD
         },];
         const formProp = {
@@ -163,14 +166,15 @@ class EditProcedure extends React.Component {
             method: "post",
         }
         let defaultValues;
-        if(this.props.editingProcedureData){
-         defaultValues = [{"key": "id", "value": this.props.editingProcedureData.id}];
-       }
+        if (this.props.editingProcedureData) {
+            defaultValues = [{"key": "id", "value": this.props.editingProcedureData.id}];
+        }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>{that.props.editingProcedureData?<Card loading={that.state.loading}>
-                <TestFormLayout title="Edit Procedure" defaultValues={defaultValues} changeRedirect={this.changeRedirect}  formProp={formProp} fields={formFields}/>
-                {this.state.redirect && <Redirect to='/settings/procedures'/>}
-            </Card>: <Redirect to='/settings/procedures'/>}
+        return <div>{that.props.editingProcedureData ? <Card loading={that.state.loading}>
+            <TestFormLayout {...this.props} title="Edit Procedure" defaultValues={defaultValues}
+                            changeRedirect={this.changeRedirect} formProp={formProp} fields={formFields}/>
+            {this.state.redirect && <Redirect to='/settings/procedures'/>}
+        </Card> : <Redirect to='/settings/procedures'/>}
         </div>
     }
 }

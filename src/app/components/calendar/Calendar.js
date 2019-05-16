@@ -314,96 +314,99 @@ class App extends Component {
             }
         });
         return (<Content className="main-container">
-                <Switch>
-                    <Route exact path="/calendar/create-appointment"
-                           render={(route) => <CreateAppointment {...this.props} {...route}
-                                                                 startTime={this.state.startTime}/>}/>
-                    <Route exact path="/calendar/:appointmentid/edit-appointment"
-                           render={(route) => <CreateAppointment {...this.props} {...route}
-                                                                 startTime={this.state.startTime}/>}/>
-                    <Route>
-                        <div style={{backgroundColor: '#fff', margin: '10px', padding: '5px'}}>
-                            <Row gutter={16} style={{margin: '5px'}}>
-                                <Col span={3}>
-                                    <Divider>Doctors</Divider>
-                                    <Spin spinning={this.state.loading}>
-                                        <Menu selectedKeys={[this.state.selectedDoctor]}
-                                              size={'small'}
-                                              onClick={this.changeDoctorFilter}>
-                                            <Menu.Item key={"ALL"} style={{
-                                                marginBottom: 2,
-                                                textOverflow: "ellipsis",
-                                                borderLeft: '5px solid black',
-                                                borderRight: 'none'
-                                            }}>
-                                                <span> All Doctors</span>
-                                            </Menu.Item>
-                                            {this.state.practice_doctors.map(item =>
-                                                <Menu.Item key={item.id} style={{
+                <div style={{margin: '10px', padding: '5px'}}>
+                    <Switch>
+                        <Route exact path="/calendar/create-appointment"
+                               render={(route) => <CreateAppointment {...this.props} {...route}
+                                                                     startTime={this.state.startTime}/>}/>
+                        <Route exact path="/calendar/:appointmentid/edit-appointment"
+                               render={(route) => <CreateAppointment {...this.props} {...route}
+                                                                     startTime={this.state.startTime}/>}/>
+                        <Route>
+                            <div style={{backgroundColor: '#fff'}}>
+                                <Row gutter={16} style={{margin: '5px'}}>
+                                    <Col span={3}>
+                                        <Divider>Doctors</Divider>
+                                        <Spin spinning={this.state.loading}>
+                                            <Menu selectedKeys={[this.state.selectedDoctor]}
+                                                  size={'small'}
+                                                  onClick={this.changeDoctorFilter}>
+                                                <Menu.Item key={"ALL"} style={{
+                                                    marginBottom: 2,
                                                     textOverflow: "ellipsis",
-                                                    borderRight: 'none',
-                                                    borderLeft: '5px solid ' + item.calendar_colour,
-                                                    backgroundColor: this.state.selectedDoctor == item.id ? item.calendar_colour : 'inherit',
-                                                    color: this.state.selectedDoctor == item.id ? 'white' : 'inherit',
-                                                    fontWeight: this.state.selectedDoctor == item.id ? 'bold' : 'inherit',
+                                                    borderLeft: '5px solid black',
+                                                    borderRight: 'none'
                                                 }}>
-                                                    <span>{item.user.first_name}</span>
+                                                    <span> All Doctors</span>
                                                 </Menu.Item>
-                                            )}
-                                        </Menu>
-                                    </Spin>
-                                </Col>
-                                <Col span={16}>
-                                    <DragAndDropCalendar
-                                        defaultDate={new Date()}
-                                        localizer={localizer}
-                                        defaultView="week"
-                                        step={10}
-                                        timeslots={1}
-                                        events={this.state.filteredEvent}
-                                        onEventDrop={this.moveEvent}
-                                        onEventResize={this.resizeEvent}
-                                        resizable
-                                        selectable
-                                        popup={this.onSelectEvent}
-                                        onSelectSlot={this.onSelectSlot}
-                                        // onSelectEvent={this.onSelectEvent}
-                                        views={{month: true, week: MyWeek, day: true, agenda: true}}
-                                        style={{height: "calc(100vh - 85px)"}}
-                                        eventPropGetter={(this.eventStyleGetter)}
-                                        // date={new Date(2015, 3, 1)}
-                                        min={startTime}
-                                        max={endTime}
-                                        onRangeChange={this.onRangeChange}
-                                        components={{
-                                            event: EventComponent
-                                        }}/>
-                                </Col>
-                                <Col span={5}>
-                                    <Dropdown overlay={calendarSettingMenu}>
-                                        <Button block style={{margin: 5}}>
-                                            <Icon type="setting"/> Settings <Icon type="down"/>
-                                        </Button>
-                                    </Dropdown>
-                                    <Link to='/calendar/create-appointment'>
-                                        <Button block type="primary" style={{margin: 5}}> Walkin Appointment</Button>
-                                    </Link>
-                                    <Divider>Appointments</Divider>
-                                    <Spin spinning={this.state.loading}>
-                                        <Timeline>
-                                            {this.state.appointments.length ?
-                                                this.state.appointments.map((apppointment) =>
-                                                    <Timeline.Item
-                                                        style={{padding: 0}}><AppointmentCard {...apppointment}/></Timeline.Item>) :
-                                                <p style={{textAlign: 'center'}}>No Data Found</p>}
-                                        </Timeline>
-                                    </Spin>
-                                    <h3>Today's Apointment <Badge>{counter}</Badge></h3>
-                                </Col>
-                            </Row>
-                        </div>
-                    </Route>
-                </Switch>
+                                                {this.state.practice_doctors.map(item =>
+                                                    <Menu.Item key={item.id} style={{
+                                                        textOverflow: "ellipsis",
+                                                        borderRight: 'none',
+                                                        borderLeft: '5px solid ' + item.calendar_colour,
+                                                        backgroundColor: this.state.selectedDoctor == item.id ? item.calendar_colour : 'inherit',
+                                                        color: this.state.selectedDoctor == item.id ? 'white' : 'inherit',
+                                                        fontWeight: this.state.selectedDoctor == item.id ? 'bold' : 'inherit',
+                                                    }}>
+                                                        <span>{item.user.first_name}</span>
+                                                    </Menu.Item>
+                                                )}
+                                            </Menu>
+                                        </Spin>
+                                    </Col>
+                                    <Col span={16}>
+                                        <DragAndDropCalendar
+                                            defaultDate={new Date()}
+                                            localizer={localizer}
+                                            defaultView="week"
+                                            step={10}
+                                            timeslots={1}
+                                            events={this.state.filteredEvent}
+                                            onEventDrop={this.moveEvent}
+                                            onEventResize={this.resizeEvent}
+                                            resizable
+                                            selectable
+                                            popup={this.onSelectEvent}
+                                            onSelectSlot={this.onSelectSlot}
+                                            // onSelectEvent={this.onSelectEvent}
+                                            views={{month: true, week: MyWeek, day: true, agenda: true}}
+                                            style={{height: "calc(100vh - 85px)"}}
+                                            eventPropGetter={(this.eventStyleGetter)}
+                                            // date={new Date(2015, 3, 1)}
+                                            min={startTime}
+                                            max={endTime}
+                                            onRangeChange={this.onRangeChange}
+                                            components={{
+                                                event: EventComponent
+                                            }}/>
+                                    </Col>
+                                    <Col span={5}>
+                                        <Dropdown overlay={calendarSettingMenu}>
+                                            <Button block style={{margin: 5}}>
+                                                <Icon type="setting"/> Settings <Icon type="down"/>
+                                            </Button>
+                                        </Dropdown>
+                                        <Link to='/calendar/create-appointment'>
+                                            <Button block type="primary" style={{margin: 5}}> Walkin
+                                                Appointment</Button>
+                                        </Link>
+                                        <Divider>Appointments</Divider>
+                                        <Spin spinning={this.state.loading}>
+                                            <Timeline>
+                                                {this.state.appointments.length ?
+                                                    this.state.appointments.map((apppointment) =>
+                                                        <Timeline.Item
+                                                            style={{padding: 0}}><AppointmentCard {...apppointment}/></Timeline.Item>) :
+                                                    <p style={{textAlign: 'center'}}>No Data Found</p>}
+                                            </Timeline>
+                                        </Spin>
+                                        <h3>Today's Apointment <Badge>{counter}</Badge></h3>
+                                    </Col>
+                                </Row>
+                            </div>
+                        </Route>
+                    </Switch>
+                </div>
             </Content>
         );
     }

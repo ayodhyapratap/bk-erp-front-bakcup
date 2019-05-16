@@ -16,7 +16,7 @@ import {ERROR_MSG_TYPE, INFO_MSG_TYPE, SUCCESS_MSG_TYPE, WARNING_MSG_TYPE} from 
 export const makeURL = function (URL) {
     return API_URL + '/' + URL;
 };
-export const makeFileURL = function(URL){
+export const makeFileURL = function (URL) {
     return IMAGE_BASE_URL + '/' + URL;
 }
 export const putAPI = function (URL, data, successFn, errorFn, headerConfig = {}) {
@@ -33,8 +33,8 @@ export const putAPI = function (URL, data, successFn, errorFn, headerConfig = {}
         // console.log(response);
         let data = response.data;
         successFn(data);
-        if(data.detail)
-            displayMessage(SUCCESS_MSG_TYPE,data.detail)
+        if (data.detail)
+            displayMessage(SUCCESS_MSG_TYPE, data.detail)
     }).catch(function (error) {
         handleErrorResponse(error);
         errorFn(data);
@@ -56,8 +56,8 @@ export const postAPI = function (URL, data, successFn, errorFn, headerConfig = {
         // console.log(response);
         let data = response.data;
         successFn(data);
-        if(data.detail)
-            displayMessage(SUCCESS_MSG_TYPE,data.detail)
+        if (data.detail)
+            displayMessage(SUCCESS_MSG_TYPE, data.detail)
     }).catch(function (error) {
         console.log(error);
         handleErrorResponse(error);
@@ -77,8 +77,8 @@ export const postOuterAPI = function (URL, data, successFn, errorFn, headerConfi
         // console.log(response);
         let data = response.data;
         successFn(data);
-        if(data.detail)
-            displayMessage(SUCCESS_MSG_TYPE,data.detail)
+        if (data.detail)
+            displayMessage(SUCCESS_MSG_TYPE, data.detail)
     }).catch(function (error) {
         console.log(error);
         handleErrorResponse(error);
@@ -118,8 +118,8 @@ export const getAPI = function (URL, successFn, errorFn, params = {}) {
         console.log(response);
         let data = response.data;
         successFn(data);
-        if(data.detail)
-            displayMessage(SUCCESS_MSG_TYPE,data.detail)
+        if (data.detail)
+            displayMessage(SUCCESS_MSG_TYPE, data.detail)
     }).catch(function (error) {
         console.log("Error aa rhi ", error);
         handleErrorResponse(error);
@@ -138,8 +138,8 @@ export const deleteAPI = function (URL, successFn, errorFn) {
         console.log(response);
         let data = response.data;
         successFn(data);
-        if(data.detail)
-            displayMessage(SUCCESS_MSG_TYPE,data.detail)
+        if (data.detail)
+            displayMessage(SUCCESS_MSG_TYPE, data.detail)
     }).catch(function (error) {
         console.log("Error aa rhi ", error);
         handleErrorResponse(error);
@@ -157,6 +157,10 @@ export const handleErrorResponse = function (error) {
                 message.error(response.data.detail);
             }
         } else if (status == 401) {
+            if (response.data.detail) {
+                message.error(response.data.detail);
+            }
+        } else if (status == 403) {
             if (response.data.detail) {
                 message.error(response.data.detail);
             }

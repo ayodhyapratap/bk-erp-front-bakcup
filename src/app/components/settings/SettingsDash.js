@@ -91,7 +91,7 @@ class SettingsDash extends React.Component {
                                )}/>
                         <Route exact path="/settings/procedures/addprocedure"
                                render={(route) => (this.props.activePracticePermissions.SettingsProcedureCatalog || this.props.allowAllPermissions ?
-                                       <AddProcedure  {...this.props} /> : <PermissionDenied/>
+                                       <AddProcedure  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
                         <Route path="/settings/procedures"
                                render={(route) => (this.props.activePracticePermissions.SettingsProcedureCatalog || this.props.allowAllPermissions ?
