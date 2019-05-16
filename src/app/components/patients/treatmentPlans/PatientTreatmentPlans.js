@@ -137,6 +137,9 @@ class PatientTreatmentPlans extends React.Component {
         });
         let successFn = function (data) {
             that.loadTreatmentPlans();
+            that.setState({
+                selectedTreatments : {}
+            })
         }
         let errorFn = function () {
 

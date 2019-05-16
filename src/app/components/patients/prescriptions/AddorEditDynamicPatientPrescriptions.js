@@ -302,7 +302,9 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
 
                 }
                 console.log("final", reqData);
-                // postAPI(interpolate(PRESCRIPTIONS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
+                postAPI(interpolate(PRESCRIPTIONS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
+            }else{
+                console.log(err);
             }
         });
     }
@@ -458,9 +460,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
 
                 </div>
 
-            },
-
-            {
+            }, {
                 title: '',
                 dataIndex: 'action',
                 key: 'action',
@@ -523,7 +523,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                 <DatePicker value={this.state.selectedDate}
                                             onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}/>
 
-                                <Button type="primary" htmlType="submit" style={{float:'right'}}>
+                                <Button type="primary" htmlType="submit" style={{float: 'right'}}>
                                     Save
                                 </Button>
                             </Card>
@@ -560,7 +560,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                     </Button>
                                 </Link>
                             </div>
-                            <Divider style={{margin:0}}/>
+                            <Divider style={{margin: 0}}/>
                             <List size={"small"}
                                   itemLayout="horizontal"
                                   dataSource={this.state.prescriptionTemplate}

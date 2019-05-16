@@ -86,10 +86,10 @@ export default class CustomizedTable extends React.Component {
         ),
         filterIcon: filtered => (<Icon type="search" style={{color: filtered ? '#1890ff' : undefined}}/>),
         onFilter: (value, record) =>
-            record[dataIndex]
+            record[dataIndex] ? record[dataIndex]
                 .toString()
                 .toLowerCase()
-                .includes(value.toLowerCase()),
+                .includes(value.toLowerCase()) : '',
         onFilterDropdownVisibleChange: visible => {
             if (visible) {
                 setTimeout(() => this.searchInput.select());
@@ -100,7 +100,7 @@ export default class CustomizedTable extends React.Component {
                 highlightStyle={{backgroundColor: '#ffc069', padding: 0}}
                 searchWords={[this.state.searchText]}
                 autoEscape
-                textToHighlight={text.toString()}
+                textToHighlight={text ? text.toString() : ''}
             />
         ),
     });

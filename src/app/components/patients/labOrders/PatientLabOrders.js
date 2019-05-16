@@ -24,7 +24,7 @@ class PatientLabOrders extends React.Component{
         }, {
             title: 'Drug',
             key: 'drug',
-            
+
         }, {
             title: 'Quantity',
             dataIndex: 'qunatity',
@@ -54,7 +54,7 @@ class PatientLabOrders extends React.Component{
     	return <div><Switch>
               <Route exact path='/patient/:id/emr/labtrackings/add'
                      render={(route) => <AddPatientLabOrders{...this.state} {...route} />}/>
-              <Card title={ this.state.currentPatient?this.state.currentPatient.name + " LabOrder":"PatientLabOrder"}  extra={<Button.Group>
+              <Card title={ this.state.currentPatient?this.state.currentPatient.user.first_name + " Lab Order":"Patients Lab Order"}  extra={<Button.Group>
                     <Link to={"/patient/"+this.props.match.params.id+"/emr/labtrackings/add"}><Button><Icon type="plus"/>Add</Button></Link>
               </Button.Group>}>
 

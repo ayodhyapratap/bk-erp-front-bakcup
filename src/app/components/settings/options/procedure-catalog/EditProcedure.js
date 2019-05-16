@@ -123,7 +123,7 @@ class EditProcedure extends React.Component {
             initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.taxes : null,
             type: CHECKBOX_FIELD,
             options: this.state.taxes.map(tax => Object.create({
-                    label: tax.name,
+                    label: tax.name + (tax.tax_value ? "(" + tax.tax_value + "%)" : ''),
                     value: tax.id
                 })
             )

@@ -133,11 +133,12 @@ class AddClinicNotes extends React.Component {
 
         let editformProp;
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-
+        let that = this;
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
-
+                if (that.props.loadData)
+                    that.props.loadData()
                 console.log(data);
             },
             errorFn: function () {

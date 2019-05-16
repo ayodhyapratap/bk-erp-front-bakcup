@@ -6,6 +6,7 @@ import {getAPI, interpolate, postAPI} from "../../../../utils/common";
 import AddPrescription from "./AddPrescription";
 import {DRUG} from "../../../../constants/hardData";
 import AddorEditPrescriptionForm from "./AddorEditPrescriptionForm";
+import InfiniteFeedLoaderButton from "../../../common/InfiniteFeedLoaderButton";
 
 class Prescriptions extends React.Component {
     constructor(props) {
@@ -13,10 +14,12 @@ class Prescriptions extends React.Component {
         this.state = {
             catalog: null,
             editCatalog: null,
-            loading: true
+            loading: true,
+            loadMorePrescriptions: null
         }
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
+        this.loadInitialData = this.loadInitialData.bind(this);
     }
 
     componentDidMount() {
@@ -28,7 +31,8 @@ class Prescriptions extends React.Component {
         let successFn = function (data) {
             console.log("get table");
             that.setState({
-                catalog: data,
+                catalog: data.results,
+                loadMorePrescriptions: data.next,
                 loading: false
             })
         };
@@ -40,8 +44,18 @@ class Prescriptions extends React.Component {
         getAPI(INVENTORY_ITEM_API, successFn, errorFn, {
             practice: this.props.active_practiceId,
             item_type: DRUG,
-            maintain_inventory: false
+            maintain_inventory: false,
+            page: that.state.loadMorePrescriptions || 1
         });
+    }
+
+    loadInitialData() {
+        let that = this;
+        this.setState({
+            loadMorePrescriptions: null
+        }, function () {
+            that.loadData();
+        })
     }
 
     deleteObject(record) {
@@ -74,7 +88,7 @@ class Prescriptions extends React.Component {
             title: 'Dosage',
             dataIndex: 'strength',
             key: 'strength',
-            render:(strength,record)=><span>{strength}&nbsp;{record.stength_unit}</span>
+            render: (strength, record) => <span>{strength}&nbsp;{record.stength_unit}</span>
         }, {
             title: ' Drug Instructions',
             dataIndex: 'instructions',
@@ -97,10 +111,10 @@ class Prescriptions extends React.Component {
         return <Row>
             <Switch>
                 <Route exact path="/settings/prescriptions/add"
-                       render={() => <AddorEditPrescriptionForm  {...this.props} loadData={this.loadData}/>}/>
+                       render={() => <AddorEditPrescriptionForm  {...this.props} loadData={this.loadInitialData}/>}/>
                 <Route exact path="/settings/prescriptions/edit"
                        render={(route) => <AddPrescription  {...this.state}
-                                                            loadData={this.loadData} {...this.props} {...route}/>}/>
+                                                            loadData={this.loadInitialData} {...this.props} {...route}/>}/>
                 <Route>
                     <div>
                         <h2>All presciptions
@@ -111,8 +125,12 @@ class Prescriptions extends React.Component {
                             </Link>
                         </h2>
                         <Card>
-                            <Table loading={this.state.loading} columns={columns} dataSource={this.state.catalog}/>
+                            <Table loading={this.state.loading} columns={columns} dataSource={this.state.catalog}
+                                   pagination={false}/>
                         </Card>
+                        <InfiniteFeedLoaderButton loaderFunction={this.loadData}
+                                                  loading={this.state.loading}
+                                                  hidden={!this.state.loadMorePrescriptions}/>
                     </div>
                 </Route>
             </Switch>

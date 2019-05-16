@@ -15,11 +15,10 @@ class PatientClinicNotes extends React.Component {
             active_practiceId: this.props.active_practiceId,
             clinicNotes: [],
             editClinicNotes: null,
-            loading:true
+            loading: true
         }
         this.loadClinicNotes = this.loadClinicNotes.bind(this);
         this.editClinicNotesData = this.editClinicNotesData.bind(this);
-
     }
 
     componentDidMount() {
@@ -34,12 +33,12 @@ class PatientClinicNotes extends React.Component {
         let successFn = function (data) {
             that.setState({
                 clinicNotes: data,
-                loading:false
+                loading: false
             })
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
 
         }
@@ -50,7 +49,7 @@ class PatientClinicNotes extends React.Component {
     editClinicNotesData(record) {
         this.setState({
             editClinicNotes: record,
-            loading:false
+            loading: false
         });
         let id = this.props.match.params.id
         this.props.history.push("/patient/" + id + "/emr/clinicnotes/edit")
@@ -103,9 +102,10 @@ class PatientClinicNotes extends React.Component {
         if (this.props.match.params.id) {
             return <div><Switch>
                 <Route exact path='/patient/:id/emr/clinicnotes/add'
-                       render={(route) => <AddClinicNotes{...this.state} {...route}/>}/>
+                       render={(route) => <AddClinicNotes{...this.state} {...route} loadData={this.loadClinicNotes}/>}/>
                 <Route exact path='/patient/:id/emr/clinicnotes/edit'
-                       render={(route) => <AddClinicNotes {...this.state} {...route}/>}/>
+                       render={(route) => <AddClinicNotes {...this.state} {...route}
+                                                          loadData={this.loadClinicNotes}/>}/>
                 <Card
                     title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " ClinicNotes" : "ClinicNotes"}
                     extra={<Button.Group>

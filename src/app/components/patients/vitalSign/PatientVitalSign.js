@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import {VITAL_SIGNS_API} from "../../../constants/api";
 import {getAPI, interpolate, patchAPI, putAPI} from "../../../utils/common";
 import moment from 'moment';
+import PatientRequiredNoticeCard from "../PatientRequiredNoticeCard";
 
 const {Meta} = Card;
 const Search = Input.Search;
@@ -113,9 +114,7 @@ class PatientVitalSign extends React.Component {
             </Card>
         }
         else {
-            return <Card>
-                <h2> select patient to further continue</h2>
-            </Card>
+            return <PatientRequiredNoticeCard/>
         }
     }
 
