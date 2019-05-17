@@ -86,17 +86,19 @@ class AppBase extends React.Component {
         that.setState(function (prevState) {
             let returnObj = {}
             let practices = loggedInUserPractices();
+            let flag = true;
             practices.forEach(function (practiceObj) {
                 if (prevState.active_practiceId && prevState.active_practiceId == practiceObj.pratice.id) {
                     let permissions = {};
                     practiceObj.permissions_data.forEach(function (permission) {
                         permissions[permission.codename] = permission
                     });
+                    flag = false;
                     returnObj = {
                         activePracticeData: practiceObj.pratice,
                         activePracticePermissions: permissions
                     }
-                } else {
+                } else if(flag) {
                     let permissions = {};
                     practiceObj.permissions_data.forEach(function (permission) {
                         permissions[permission.codename] = permission

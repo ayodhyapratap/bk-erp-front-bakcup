@@ -111,12 +111,12 @@ class AppointmentSMS extends React.Component {
             key: "send_on_day_of_appointment",
             initialValue: this.state.data ? this.state.data.send_on_day_of_appointment : false,
             type: SINGLE_CHECKBOX_FIELD,
-            follow: "SEND ON DAY OF APPOINTMENT AT 7:30 AM",
+            follow: "Send reminder SMS on the day of appointment at 7:30 AM",
         }, {
             key: "send_on_day_of_appointment_time",
             initialValue: "send_on_day_of_appointment_time",
-            extra: " Send reminder SMS on the day of appointment at",
-            type: INPUT_FIELD,
+            follow: " Send reminder SMS on the day before the appointment at",
+            type: SINGLE_CHECKBOX_FIELD,
         }, {
             key: "follow_up_reminder_sms",
             initialValue: this.state.data ? this.state.data.follow_up_reminder_sms : false,
