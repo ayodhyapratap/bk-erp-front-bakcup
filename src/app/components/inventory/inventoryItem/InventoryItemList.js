@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Row, Radio} from "antd";
-import {getAPI, interpolate, deleteAPI,patchAPI} from "../../../utils/common";
+import {getAPI, interpolate, deleteAPI, patchAPI} from "../../../utils/common";
 import {
     INVENTORY_ITEM_API,
     SINGLE_INVENTORY_ITEM_API,
@@ -25,7 +25,7 @@ export default class InventoryItemList extends React.Component {
             stockModalVisibility: false,
             itemTypeFilter: "ALL",
             itemStockFilter: "ALL",
-            loading:true
+            loading: true
         }
         this.loadData = this.loadData.bind(this);
         this.showAddOrConsumeModal = this.showAddOrConsumeModal.bind(this);
@@ -59,17 +59,17 @@ export default class InventoryItemList extends React.Component {
                 return {
                     invantoryItems: data,
                     inventoryItemList: inventoryItemList,
-                    loading:false
+                    loading: false
                 }
 
             })
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         }
-        getAPI(INVENTORY_ITEM_API, successFn, errorFn,{maintain_inventory:true});
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn, {maintain_inventory: true});
     }
 
     loadManufactureList() {
@@ -77,12 +77,12 @@ export default class InventoryItemList extends React.Component {
         let successFn = function (data) {
             that.setState({
                 manufacture_list: data,
-                loading:false
+                loading: false
             })
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         }
         getAPI(MANUFACTURER_API, successFn, errorFn);
@@ -94,12 +94,12 @@ export default class InventoryItemList extends React.Component {
             console.log("get table");
             that.setState({
                 taxes_list: data,
-                loading:false
+                loading: false
             })
         };
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
@@ -111,12 +111,12 @@ export default class InventoryItemList extends React.Component {
         let successFn = function (data) {
             that.setState({
                 vendor_list: data,
-                loading:false
+                loading: false
             })
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
 
         }
@@ -330,8 +330,13 @@ export default class InventoryItemList extends React.Component {
                                 <Radio.Button value={"EXPIRED"}>Expired</Radio.Button>
                             </Radio.Group>
                         </Row>
-                        <CustomizedTable loading={this.state.loading} pagination={false} bordered={true} dataSource={this.state.inventoryItemList}
-                                         columns={columns}/>
+                        <Row>
+
+
+                            <CustomizedTable loading={this.state.loading} bordered={true}
+                                             dataSource={this.state.inventoryItemList}
+                                             columns={columns}/>
+                        </Row>
                         <Modal visible={this.state.stockModalVisibility}
                                title={"Stock" + this.state.actionType}
                                onOk={() => this.showAddOrConsumeModal(false)}

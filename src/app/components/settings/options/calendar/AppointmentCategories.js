@@ -12,6 +12,7 @@ import {
 import {APPOINTMENT_CATEGORIES} from "../../../../constants/api"
 import {Link} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
+import CustomizedTable from "../../../common/CustomizedTable";
 
 class AppointmentCategories extends React.Component {
     constructor(props) {
@@ -131,15 +132,15 @@ class AppointmentCategories extends React.Component {
         const editFormDefaultValues = [{"key": "id", "value": this.state.editingId}];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
-            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
+            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields} {...this.props}/>
             <Divider/>
-            <Table loading={this.state.loading} columns={columns} dataSource={this.state.appointmentCategories}/>
+            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.appointmentCategories}/>
             <Modal
                 title="ADD Appointment Category"
                 visible={this.state.visible}
                 footer={null}
             >
-                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields}/>
+                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields} />
                 <Button key="back" onClick={this.handleCancel}>Return</Button>,
 
             </Modal>

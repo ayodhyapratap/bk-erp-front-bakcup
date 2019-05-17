@@ -10,6 +10,7 @@ import {
 import {PAYMENT_MODES} from "../../../../constants/api"
 import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
 import {PAYMENT_TYPES} from "../../../../constants/hardData";
+import CustomizedTable from "../../../common/CustomizedTable";
 
 class PaymentModes extends React.Component {
     constructor(props) {
@@ -164,9 +165,9 @@ class PaymentModes extends React.Component {
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
-            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
+            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields} {...this.props}/>
             <Divider/>
-            <Table columns={columns} dataSource={this.state.modes}/>
+            <CustomizedTable columns={columns} dataSource={this.state.modes}/>
             <Modal
                 title="Edit Payment Mode"
                 visible={this.state.visible}

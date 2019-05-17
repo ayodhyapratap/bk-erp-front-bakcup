@@ -1,7 +1,8 @@
 import React from "react";
-import {Avatar, Button, Drawer, Icon, Layout, Tooltip} from "antd";
+import {Avatar, Button, Drawer, Icon, Layout, Tooltip,Dropdown} from "antd";
 import PatientSelection from "./PatientSelection";
 import {Link} from "react-router-dom";
+import {patientSettingMenu} from "../../utils/clinicUtils";
 
 const {Header, Content, Sider} = Layout;
 
@@ -39,9 +40,17 @@ class PatientHeader extends React.Component {
                        onClick={() => this.props.togglePatientListModal(true)}>
                         <div style={{display: 'inline'}}><Icon type="solution"/> &nbsp; All Patient</div>
                     </a>}
-                <Link to="/patients/profile/add"><Button type="primary"
-                                                         style={{float: 'right', marginTop: '10px'}}><Icon
-                    type="plus"/> Add Patient</Button></Link>
+                <Dropdown overlay={patientSettingMenu}>
+                    <Button style={{float: 'right', margin: '15px'}}>
+                        <Icon type="setting"/> Settings <Icon type="down"/>
+                    </Button>
+                </Dropdown>
+                <Link to="/patients/profile/add">
+                    <Button type="primary" style={{float: 'right', margin: '15px'}}>
+                        <Icon type="plus"/> Add Patient
+                    </Button>
+                </Link>
+
             </div>
             <Drawer
                 title="Select Patient"

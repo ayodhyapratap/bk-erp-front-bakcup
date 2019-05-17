@@ -142,7 +142,7 @@ class PatientCommunicationSetting extends React.Component {
         const sms_enabled = SMS_ENABLE.map((isSMS) => <Radio value={isSMS.value}>{isSMS.title}</Radio>)
         const email_enabled = EMAIL_ENABLE.map((isEmail) => <Radio value={isEmail.value}>{isEmail.title}</Radio>)
         const bithday_sms_enabled = BIRTHDAY_SMS_ENABLE.map((isBirth_SMS) => <Radio
-            value={isBirth_SMS.value}>{isBirth_SMS.title}</Radio>)
+            value={isBirth_SMS.value}>{isBirth_SMS.title}</Radio>);
         return (<Form onSubmit={this.handleSubmit}>
                 <Card
                     title={this.props.currentPatient ? this.props.currentPatient.user.first_name + " Communication" : "Patient Communication"}

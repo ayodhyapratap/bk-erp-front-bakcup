@@ -18,7 +18,7 @@ class PageSettingForm extends React.Component {
       print_setting:{
         page_size:'A4'
       }
-    
+
      }
     this.loadData = this.loadData.bind(this);
 
@@ -55,7 +55,7 @@ class PageSettingForm extends React.Component {
           print_setting:data[0],
           loading:false
         })
-      
+
       };
       let errorFn = function () {
         that.setState({
@@ -65,7 +65,7 @@ class PageSettingForm extends React.Component {
      getAPI(interpolate(PRACTICE_PRINT_SETTING_API, [this.props.active_practiceId,that.state.type,that.state.sub_type]), successFn, errorFn);
   }
 
-  
+
   onChanged = (name ,value) => {
     this.setState({
       [name]:value,
@@ -88,7 +88,7 @@ class PageSettingForm extends React.Component {
           lg: { span: 16 },
       },
     };
-   
+
 
 
     const { getFieldDecorator } = this.props.form;
@@ -121,38 +121,42 @@ class PageSettingForm extends React.Component {
                 {printer_type}
               </RadioGroup>
           )}
-       	
+
         </Form.Item>
-       
+
         <Form.Item key={'page_margin_top'} label={(<span>Top Margin</span>)} {...formItemLayout}>
             {getFieldDecorator('page_margin_top',{initialValue: this.state.print_setting.page_margin_top
             })(
-              <InputNumber  min={0} max={10}/> 
+              <InputNumber  min={0} max={10}/>
           )}
+          <span className="ant-form-text">Inches</span>
         </Form.Item>
 
         <Form.Item key={'page_margin_left'} label={(<span>Left Margin</span>)} {...formItemLayout}>
             {getFieldDecorator('page_margin_left',{initialValue: this.state.print_setting.page_margin_left
             })(
-              <InputNumber  min={0} max={10}/> 
+              <InputNumber  min={0} max={10}/>
           )}
+            <span className="ant-form-text">Inches</span>
         </Form.Item>
 
         <Form.Item key={'page_margin_bottom'} label={(<span>Bottom Margin</span>)} {...formItemLayout}>
             {getFieldDecorator('page_margin_bottom',{initialValue: this.state.print_setting.page_margin_bottom
             })(
-              <InputNumber  min={0} max={10}/> 
+              <InputNumber  min={0} max={10}/>
           )}
+            <span className="ant-form-text">Inches</span>
         </Form.Item>
 
         <Form.Item key={'page_margin_right'} label={(<span>Right Margin</span>)} {...formItemLayout}>
             {getFieldDecorator('page_margin_right',{initialValue: this.state.print_setting.page_margin_right
             })(
-              <InputNumber  min={0} max={10}/> 
+              <InputNumber  min={0} max={10}/>
           )}
+            <span className="ant-form-text">Inches</span>
         </Form.Item>
 
-     
+
         <Form.Item {...formItemLayout}>
           <Button  type="primary" htmlType="submit">Submit</Button>
         </Form.Item>
@@ -161,4 +165,4 @@ class PageSettingForm extends React.Component {
     );
   }
 }
-export default PageSettingForm;	
+export default PageSettingForm;

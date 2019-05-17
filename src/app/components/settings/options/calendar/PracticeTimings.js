@@ -124,7 +124,7 @@ class PracticeTimings extends React.Component {
             const TestFormLayout = Form.create()(DynamicFieldsForm);
             return <div>
                 <TestFormLayout title="Set Practice Timings" defaultValues={editFormDefaultValues} formProp={formProp}
-                                fields={editfields}/>
+                                fields={editfields} {...this.props}/>
             </div>
         }
     }

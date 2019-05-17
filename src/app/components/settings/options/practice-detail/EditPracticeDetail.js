@@ -139,7 +139,7 @@ class EditPracticeDetail extends React.Component {
             return <Row>
                 <Card>
                     <TestFormLayout title="Edit Practice Details" changeRedirect={this.changeRedirect}
-                                    formProp={formProp} fields={fields}/>
+                                    formProp={formProp} fields={fields} {...this.props}/>
                     {this.state.redirect && <Redirect to='/settings/clinics'/>}
                 </Card>
             </Row>

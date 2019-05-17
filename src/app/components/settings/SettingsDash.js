@@ -74,20 +74,20 @@ class SettingsDash extends React.Component {
                                )}/>
                         <Route exact path="/settings/clinics/add"
                                render={(route) => (this.props.activePracticePermissions.SettingsPracticeDetail || this.props.allowAllPermissions ?
-                                       <AddPracticeDetails  {...this.props} /> : <PermissionDenied/>
+                                       <AddPracticeDetails  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/clinics/:id/edit"
                                render={(route) => (this.props.activePracticePermissions.SettingsPracticeDetail || this.props.allowAllPermissions ?
-                                       <EditPracticeDetail {...this.props} practiceId={route.match.params.id}/> :
+                                       <EditPracticeDetail {...this.props} practiceId={route.match.params.id} {...route}/> :
                                        <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/communication-settings"
                                render={(route) => (this.props.activePracticePermissions.SettingsCommunincations || this.props.allowAllPermissions ?
-                                       <CommunicationSettings  {...this.props} /> : <PermissionDenied/>
+                                       <CommunicationSettings  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/calendarsettings"
                                render={(route) => (this.props.activePracticePermissions.SettingsCalendar || this.props.allowAllPermissions ?
-                                       <CalendarSettings  {...this.props} /> : <PermissionDenied/>
+                                       <CalendarSettings  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/procedures/addprocedure"
                                render={(route) => (this.props.activePracticePermissions.SettingsProcedureCatalog || this.props.allowAllPermissions ?
@@ -97,17 +97,17 @@ class SettingsDash extends React.Component {
                                render={(route) => (this.props.activePracticePermissions.SettingsProcedureCatalog || this.props.allowAllPermissions ?
                                        <RecentProcedure  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
-                        <Route exact path="/settings/billing"
+                        <Route  path="/settings/billing"
                                render={(route) => (this.props.activePracticePermissions.SettingsBilling || this.props.allowAllPermissions ?
-                                       <BillingSettings  {...this.props} /> : <PermissionDenied/>
+                                       <BillingSettings  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/loyalty"
                                render={(route) => (this.props.activePracticePermissions.SettingsLoyalty || this.props.allowAllPermissions ?
                                        <Offers  {...this.props} /> : <PermissionDenied/>
                                )}/>
-                        <Route exact path="/settings/emr"
+                        <Route  path="/settings/emr"
                                render={(route) => (this.props.activePracticePermissions.SettingsEMR || this.props.allowAllPermissions ?
-                                       <EMRSettings  {...this.props} /> : <PermissionDenied/>
+                                       <EMRSettings  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/loyalty/add"
                                render={(route) => (this.props.activePracticePermissions.SettingsLoyalty || this.props.allowAllPermissions ?

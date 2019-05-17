@@ -18,6 +18,9 @@ const TabPane = Tabs.TabPane;
 class EMRSettings extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            defaultActiveKey: this.props.location.hash
+        }
     }
 
     render() {
@@ -25,23 +28,23 @@ class EMRSettings extends React.Component {
             <Row>
                 <h2>EMR Settings</h2>
                 <Card>
-                    <Tabs defaultActiveKey="Complaints">
-                        <TabPane tab={<span><Icon type="sound"/>Complaints</span>} key="Complaints">
+                    <Tabs defaultActiveKey={this.state.defaultActiveKey}>
+                        <TabPane tab={<span><Icon type="sound"/>Complaints</span>} key="#complaints">
                             <TableData {...this.props} id={EMR_COMPLAINTS} name="Complaints"/>
                         </TabPane>
-                        <TabPane tab={<span><Icon type="eye"/>Observations</span>} key="observations">
+                        <TabPane tab={<span><Icon type="eye"/>Observations</span>} key="#observations">
                             <TableData {...this.props} id={EMR_OBSERVATIONS} name="Observations"/>
                         </TabPane>
-                        <TabPane tab={<span><Icon type="plus-square"/>Diagnoses</span>} key="diagnoses">
+                        <TabPane tab={<span><Icon type="plus-square"/>Diagnoses</span>} key="#diagnoses">
                             <TableData {...this.props} id={EMR_DIAGNOSES} name="Diagnoses"/>
                         </TabPane>
-                        <TabPane tab={<span><Icon type="laptop"/>Investigations</span>} key="investigations">
+                        <TabPane tab={<span><Icon type="laptop"/>Investigations</span>} key="#investigations">
                             <TableData {...this.props} id={EMR_INVESTIGATIONS} name="Investigations"/>
                         </TabPane>
-                        <TabPane tab={<span><Icon type="solution"/>Notes</span>} key="treatmentnotes">
+                        <TabPane tab={<span><Icon type="solution"/>Notes</span>} key="#treatmentnotes">
                             <TableData {...this.props} id={EMR_TREATMENTNOTES} name="Treatment Notes"/>
                         </TabPane>
-                        <TabPane tab={<span><Icon type="file"/>File Labels</span>} key="filetags">
+                        <TabPane tab={<span><Icon type="file"/>File Labels</span>} key="#filetags">
                             <TableData {...this.props} id={EMR_FILETAGS} name="File Labels"/>
                         </TabPane>
                     </Tabs>

@@ -42,7 +42,7 @@ class SettingSider extends React.Component {
                             Catalog</Link>
                     </Menu.Item> : null}
                     {this.props.activePracticePermissions.SettingsBilling ? <Menu.Item key="9">
-                        <Link to="/settings/billing">
+                        <Link to="/settings/billing#taxcatalog">
                             <Icon type="audit"/>Billing
                         </Link>
                     </Menu.Item> : null}
@@ -59,7 +59,7 @@ class SettingSider extends React.Component {
                     </Menu.Item> : null}
                     {/*<Menu.Item key="11"><Link to="/settings/contacts"> Contacts</Link></Menu.Item>*/}
                     {this.props.activePracticePermissions.SettingsEMR ? <Menu.Item key="12">
-                        <Link to="/settings/emr">
+                        <Link to="/settings/emr#complaints">
                             <Icon type="file-text"/> EMR
                         </Link>
                     </Menu.Item> : null}

@@ -6,6 +6,7 @@ import {Link, Route, Switch} from "react-router-dom";
 import {LABTEST_API, OFFERS, PRODUCT_MARGIN} from "../../../../constants/api";
 import {getAPI, deleteAPI, interpolate, postAPI} from "../../../../utils/common";
 import AddorEditLab from "./AddorEditLab";
+import CustomizedTable from "../../../common/CustomizedTable";
 
 class LabTest extends React.Component {
     constructor(props) {
@@ -140,7 +141,7 @@ class LabTest extends React.Component {
                             </Link>
                         </h2>
                         <Card>
-                            <Table loading={this.state.loading} columns={columns} dataSource={this.state.tests}/>
+                            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.tests}/>
                         </Card>
                     </div>
                 </Route>

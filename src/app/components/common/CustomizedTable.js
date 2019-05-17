@@ -134,7 +134,13 @@ export default class CustomizedTable extends React.Component {
                 </Col>
             </Row>
             <Row>
-                <Table {...this.state} columns={columns}/>
+                <Table pagination={{
+                    position: 'both',
+                    pageSizeOptions: ['10', '20', '30', '40', '50', '100'],
+                    showSizeChanger: true,
+                    showQuickJumper: true,
+                    size: "small"
+                }} {...this.state} columns={columns}/>
             </Row>
         </div>
     }
