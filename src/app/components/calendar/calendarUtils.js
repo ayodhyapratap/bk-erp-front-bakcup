@@ -1,6 +1,9 @@
 import {Menu} from "antd";
 import React from 'react';
 import {Link} from "react-router-dom";
+import {getAPI, interpolate} from "../../utils/common";
+import {APPOINTMENT_CATEGORIES} from "../../constants/api";
+import {hashCode, intToRGB} from "../../utils/clinicUtils";
 
 export const calendarSettingMenu = (<Menu>
         <Menu.Item key="1">
@@ -30,3 +33,22 @@ export const calendarSettingMenu = (<Menu>
         </Menu.Item>
     </Menu>
 );
+export const loadAppointmentCategories = function (that) {
+    let successFn = function (data) {
+        let categories_object = {}
+        let categories = data.map((item) => {
+                categories_object[item.id] = {...item, calendar_colour: intToRGB(hashCode(item.name))}
+                return categories_object[item.id]
+            }
+        )
+        that.setState({
+            categories_object:categories_object,
+            practice_categories: categories,
+        })
+
+    }
+    let errorFn = function () {
+
+    }
+    getAPI(interpolate(APPOINTMENT_CATEGORIES, [that.props.active_practiceId]), successFn, errorFn)
+}

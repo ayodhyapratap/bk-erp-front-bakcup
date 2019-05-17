@@ -2,7 +2,23 @@ import React, {Component} from "react";
 import moment from "moment";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import BigCalendar from 'react-big-calendar'
-import {Card, Row, Timeline, Col, Popover, Button, List, Divider, Layout, Badge, Spin, Menu, Dropdown, Icon} from "antd"
+import {
+    Card,
+    Row,
+    Timeline,
+    Col,
+    Popover,
+    Button,
+    List,
+    Divider,
+    Layout,
+    Badge,
+    Spin,
+    Menu,
+    Dropdown,
+    Icon,
+    DatePicker
+} from "antd"
 import {DOCTORS_ROLE, SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -14,7 +30,7 @@ import dates from 'date-arithmetic'
 import {getAPI, putAPI, interpolate, displayMessage} from "../../utils/common";
 import {APPOINTMENT_PERPRACTICE_API, APPOINTMENT_API, PRACTICESTAFF, CALENDER_SETTINGS} from "../../constants/api";
 import EventComponent from "./EventComponent";
-import {calendarSettingMenu} from "./calendarUtils";
+import {calendarSettingMenu, loadAppointmentCategories} from "./calendarUtils";
 
 const localizer = BigCalendar.momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(BigCalendar)
@@ -31,11 +47,16 @@ class App extends Component {
             filteredEvent: [],
             appointments: [],
             practice_doctors: [],
+            practice_categories: [],
             practice_staff: [],
             doctors_object: null,
+            categories_object: null,
             calendarTimings: null,
             loading: true,
-            selectedDoctor: 'ALL'
+            selectedDoctor: 'ALL',
+            selectedCategory: 'ALL',
+            selectedDate: moment(),
+            filterType: 'DOCTOR',
         };
         this.onSelectSlot = this.onSelectSlot.bind(this);
         this.onSelectEvent = this.onSelectEvent.bind(this);
@@ -44,26 +65,13 @@ class App extends Component {
         this.loadDoctors = this.loadDoctors.bind(this);
         this.eventStyleGetter = this.eventStyleGetter.bind(this);
         this.loadCalendarTimings = this.loadCalendarTimings.bind(this);
-        this.loadDoctors();
-        this.appointmentList(moment().subtract(1, 'days'), moment().add(5, 'days'));
         this.loadCalendarTimings()
     }
 
-    changeDoctorFilter = (e) => {
-        this.setState(function (prevState) {
-            let filteredEvent = [];
-            prevState.events.forEach(function (event) {
-                if (e.key == 'ALL') {
-                    filteredEvent.push(event)
-                } else if (event.doctor == e.key) {
-                    filteredEvent.push(event)
-                }
-            })
-            return {
-                selectedDoctor: e.key,
-                filteredEvent: filteredEvent
-            }
-        })
+    componentDidMount() {
+        this.loadDoctors();
+        loadAppointmentCategories(this);
+        this.appointmentList(moment().subtract(1, 'days'), moment().add(5, 'days'));
     }
 
     loadDoctors() {
@@ -263,15 +271,24 @@ class App extends Component {
     }
 
     eventStyleGetter(event, start, end, isSelected) {
-        // console.log(event,this.state.doctors_object);
+        console.log(event,this.state.categories_object);
         let doctor = event.doctor;
-        let doctor_object = null;
-        if (this.state.doctors_object && this.state.doctors_object[doctor] && doctor) {
-            // console.log(this.state.doctors_object[doctor]);
-            doctor_object = this.state.doctors_object[doctor].calendar_colour;
+        let category = event.appointment.category;
+        let color_object = null;
+        if (this.state.filterType == 'DOCTOR') {
+            if (doctor && this.state.doctors_object && this.state.doctors_object[doctor]) {
+                color_object = this.state.doctors_object[doctor].calendar_colour;
+            }else{
+                color_object = 'black';
+            }
+        } else if (this.state.filterType == 'CATEGORY') {
+            if (category && this.state.categories_object && this.state.categories_object[category]) {
+                color_object = '#' + this.state.categories_object[category].calendar_colour;
+            }else{
+                color_object = 'black';
+            }
         }
-        // console.log("doctor object",doctor_object);
-        var backgroundColor = doctor_object;
+        var backgroundColor = color_object;
         var style = {
             backgroundColor: backgroundColor,
             borderRadius: '0px',
@@ -286,15 +303,63 @@ class App extends Component {
     }
 
     onRangeChange = (e) => {
+        console.log(e);
         if (e.start && e.end) {
             this.appointmentList(moment(e.start), moment(e.end));
-        } else if (e.length == 1) {
-            this.appointmentList(moment(e[0]), moment(e[0]));
-        } else if (e.length == 7) {
-            this.appointmentList(moment(e[0]), moment(e[6]));
+            if (moment(e.start).date() == 1) {
+                this.setState({
+                    selectedDate: moment(e.start)
+                })
+            } else {
+                let newDate = moment(e.start);
+                this.setState({
+                    selectedDate: newDate.month(newDate.month() + 1).date(1)
+                })
+            }
+        } else if (e.length) {
+            this.appointmentList(moment(e[0]), moment(e[e.length - 1]));
+            this.setState({
+                selectedDate: moment(e[0])
+            });
         }
     }
-
+    onSelectedDateChange = (e) => {
+        this.setState({
+            selectedDate: moment(e)
+        });
+    }
+    setFilterType = (e) => {
+        let that = this;
+        this.setState({
+            filterType: e.key,
+            selectedDoctor:'ALL',
+            selectedCategory:'ALL'
+        },function(){
+            if(e.key=='DOCTOR') {
+                that.changeFilter('selectedDoctor', 'ALL')
+            }else if(e.key=='CATEGORY'){
+                that.changeFilter('selectedCategory', 'ALL')
+            }
+        })
+    }
+    changeFilter = (type, value) => {
+        this.setState(function (prevState) {
+            let filteredEvent = [];
+            prevState.events.forEach(function (event) {
+                if (value == 'ALL') {
+                    filteredEvent.push(event)
+                } else if (type == "selectedDoctor" && event.doctor == value) {
+                    filteredEvent.push(event)
+                } else if (type == "selectedCategory" && event.appointment.category == value) {
+                    filteredEvent.push(event)
+                }
+            })
+            return {
+                [type]: value,
+                filteredEvent: filteredEvent
+            }
+        })
+    }
     render() {
         let startTime;
         let endTime;
@@ -323,35 +388,76 @@ class App extends Component {
                                render={(route) => <CreateAppointment {...this.props} {...route}
                                                                      startTime={this.state.startTime}/>}/>
                         <Route>
-                            <div style={{backgroundColor: '#fff'}}>
-                                <Row gutter={16} style={{margin: '5px'}}>
+                            <div style={{backgroundColor: '#fff', padding: '5px 10px'}}>
+                                <Row gutter={16}>
                                     <Col span={3}>
-                                        <Divider>Doctors</Divider>
-                                        <Spin spinning={this.state.loading}>
-                                            <Menu selectedKeys={[this.state.selectedDoctor]}
-                                                  size={'small'}
-                                                  onClick={this.changeDoctorFilter}>
-                                                <Menu.Item key={"ALL"} style={{
-                                                    marginBottom: 2,
-                                                    textOverflow: "ellipsis",
-                                                    borderLeft: '5px solid black',
-                                                    borderRight: 'none'
-                                                }}>
-                                                    <span> All Doctors</span>
+                                        <DatePicker onChange={this.onSelectedDateChange} value={this.state.selectedDate}
+                                                    format={"DD-MM-YYYY"} style={{margin: 5}}/>
+                                        <Dropdown overlay={
+                                            <Menu onClick={this.setFilterType}>
+                                                <Menu.Item key={"DOCTOR"}>
+                                                    DOCTOR
                                                 </Menu.Item>
-                                                {this.state.practice_doctors.map(item =>
-                                                    <Menu.Item key={item.id} style={{
-                                                        textOverflow: "ellipsis",
-                                                        borderRight: 'none',
-                                                        borderLeft: '5px solid ' + item.calendar_colour,
-                                                        backgroundColor: this.state.selectedDoctor == item.id ? item.calendar_colour : 'inherit',
-                                                        color: this.state.selectedDoctor == item.id ? 'white' : 'inherit',
-                                                        fontWeight: this.state.selectedDoctor == item.id ? 'bold' : 'inherit',
-                                                    }}>
-                                                        <span>{item.user.first_name}</span>
-                                                    </Menu.Item>
-                                                )}
+                                                <Menu.Item key={"CATEGORY"}>
+                                                    CATEGORY
+                                                </Menu.Item>
                                             </Menu>
+                                        }>
+                                            <Button block style={{margin: 5}}>
+                                                {this.state.filterType} <Icon type={"caret-down"}/>
+                                            </Button>
+                                        </Dropdown>
+
+                                        <Spin spinning={this.state.loading}>
+                                            {this.state.filterType == 'DOCTOR' ?
+                                                <Menu selectedKeys={[this.state.selectedDoctor]}
+                                                      size={'small'}
+                                                      onClick={(e) => this.changeFilter('selectedDoctor', e.key)}>
+                                                    <Menu.Item key={"ALL"} style={{
+                                                        marginBottom: 2,
+                                                        textOverflow: "ellipsis",
+                                                        borderLeft: '5px solid black',
+                                                        borderRight: 'none'
+                                                    }}>
+                                                        <span> All Doctors</span>
+                                                    </Menu.Item>
+                                                    {this.state.practice_doctors.map(item =>
+                                                        <Menu.Item key={item.id} style={{
+                                                            textOverflow: "ellipsis",
+                                                            borderRight: 'none',
+                                                            borderLeft: '5px solid ' + item.calendar_colour,
+                                                            backgroundColor: this.state.selectedDoctor == item.id ? item.calendar_colour : 'inherit',
+                                                            color: this.state.selectedDoctor == item.id ? 'white' : 'inherit',
+                                                            fontWeight: this.state.selectedDoctor == item.id ? 'bold' : 'inherit',
+                                                        }}>
+                                                            <span>{item.user.first_name}</span>
+                                                        </Menu.Item>
+                                                    )}
+                                                </Menu>
+                                                : <Menu selectedKeys={[this.state.selectedCategory]}
+                                                        size={'small'}
+                                                        onClick={(e) => this.changeFilter('selectedCategory', e.key)}>
+                                                    <Menu.Item key={"ALL"} style={{
+                                                        marginBottom: 2,
+                                                        textOverflow: "ellipsis",
+                                                        borderLeft: '5px solid black',
+                                                        borderRight: 'none'
+                                                    }}>
+                                                        <span> All Categories</span>
+                                                    </Menu.Item>
+                                                    {this.state.practice_categories.map(item =>
+                                                        <Menu.Item key={item.id} style={{
+                                                            textOverflow: "ellipsis",
+                                                            borderRight: 'none',
+                                                            borderLeft: '5px solid #' + item.calendar_colour,
+                                                            backgroundColor: this.state.selectedCategory == item.id ? '#' + item.calendar_colour : 'inherit',
+                                                            color: this.state.selectedCategory == item.id ? 'white' : 'inherit',
+                                                            fontWeight: this.state.selectedCategory == item.id ? 'bold' : 'inherit',
+                                                        }}>
+                                                            <span>{item.name}</span>
+                                                        </Menu.Item>
+                                                    )}
+                                                </Menu>}
                                         </Spin>
                                     </Col>
                                     <Col span={16}>
@@ -370,9 +476,9 @@ class App extends Component {
                                             onSelectSlot={this.onSelectSlot}
                                             // onSelectEvent={this.onSelectEvent}
                                             views={{month: true, week: MyWeek, day: true, agenda: true}}
-                                            style={{height: "calc(100vh - 85px)"}}
+                                            style={{minHeight: "calc(100vh - 85px)"}}
                                             eventPropGetter={(this.eventStyleGetter)}
-                                            // date={new Date(2015, 3, 1)}
+                                            date={new Date(this.state.selectedDate.format())}
                                             min={startTime}
                                             max={endTime}
                                             onRangeChange={this.onRangeChange}
