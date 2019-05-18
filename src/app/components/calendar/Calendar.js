@@ -57,6 +57,8 @@ class App extends Component {
             selectedCategory: 'ALL',
             selectedDate: moment(),
             filterType: 'DOCTOR',
+            doctorsAppointmentCount: {},
+            categoriesAppointmentCount: {}
         };
         this.onSelectSlot = this.onSelectSlot.bind(this);
         this.onSelectEvent = this.onSelectEvent.bind(this);
@@ -225,11 +227,16 @@ class App extends Component {
 
     appointmentList(start, end) {
         let that = this;
+        that.setState({
+            loading: true
+        });
         let successFn = function (data) {
             that.setState(function (prevState) {
                 let previousEvent = prevState.events;
                 let newEvents = [];
                 let filteredEvent = [];
+                let doctorsAppointmentCount = {};
+                let categoriesAppointmentCount = {};
                 // newEvents.concat(previousEvent);
                 data.forEach(function (appointment) {
                     let endtime = new moment(appointment.schedule_at).add(appointment.slot, 'minutes')
@@ -244,20 +251,35 @@ class App extends Component {
                         id: appointment.id,
                         doctor: appointment.doctor,
                         loading: false
+                    };
+                    if (appointment.doctor && doctorsAppointmentCount[appointment.doctor]) {
+                        doctorsAppointmentCount[appointment.doctor] += 1
+                    } else {
+                        doctorsAppointmentCount[appointment.doctor] = 1;
                     }
-                    newEvents.push(event)
-                    if (prevState.selectedDoctor == 'ALL') {
+                    if (appointment.category && doctorsAppointmentCount[appointment.category]) {
+                        categoriesAppointmentCount[appointment.category] += 1
+                    } else {
+                        categoriesAppointmentCount[appointment.category] = 1;
+                    }
+                    if ((prevState.filterType == 'DOCTOR' && prevState.selectedDoctor == 'ALL') || (prevState.filterType == 'CATEGORY' && prevState.selectedCategory == 'ALL')) {
                         filteredEvent.push(event)
-                    } else if (event.doctor == prevState.selectedDoctor) {
+                    } else if (prevState.filterType == 'DOCTOR' && event.doctor == prevState.selectedDoctor) {
+                        filteredEvent.push(event)
+                    } else if (prevState.filterType == 'CATEGORY' && event.appointment.category == prevState.selectedCategory) {
                         filteredEvent.push(event)
                     }
+                    newEvents.push(event);
                 });
-                return {events: newEvents, filteredEvent: filteredEvent}
+                return {
+                    events: newEvents,
+                    filteredEvent: filteredEvent,
+                    doctorsAppointmentCount: {...doctorsAppointmentCount, 'ALL': data.length},
+                    categoriesAppointmentCount: {...categoriesAppointmentCount, 'ALL': data.length},
+                    appointments: data,
+                    loading: false
+                }
             });
-            that.setState({
-                appointments: data,
-                loading: false
-            })
         }
         let errorFn = function () {
             that.setState({
@@ -271,20 +293,20 @@ class App extends Component {
     }
 
     eventStyleGetter(event, start, end, isSelected) {
-        console.log(event,this.state.categories_object);
+        console.log(event, this.state.categories_object);
         let doctor = event.doctor;
         let category = event.appointment.category;
         let color_object = null;
         if (this.state.filterType == 'DOCTOR') {
             if (doctor && this.state.doctors_object && this.state.doctors_object[doctor]) {
                 color_object = this.state.doctors_object[doctor].calendar_colour;
-            }else{
+            } else {
                 color_object = 'black';
             }
         } else if (this.state.filterType == 'CATEGORY') {
             if (category && this.state.categories_object && this.state.categories_object[category]) {
                 color_object = '#' + this.state.categories_object[category].calendar_colour;
-            }else{
+            } else {
                 color_object = 'black';
             }
         }
@@ -332,12 +354,12 @@ class App extends Component {
         let that = this;
         this.setState({
             filterType: e.key,
-            selectedDoctor:'ALL',
-            selectedCategory:'ALL'
-        },function(){
-            if(e.key=='DOCTOR') {
+            selectedDoctor: 'ALL',
+            selectedCategory: 'ALL'
+        }, function () {
+            if (e.key == 'DOCTOR') {
                 that.changeFilter('selectedDoctor', 'ALL')
-            }else if(e.key=='CATEGORY'){
+            } else if (e.key == 'CATEGORY') {
                 that.changeFilter('selectedCategory', 'ALL')
             }
         })
@@ -360,6 +382,7 @@ class App extends Component {
             }
         })
     }
+
     render() {
         let startTime;
         let endTime;
@@ -419,7 +442,7 @@ class App extends Component {
                                                         borderLeft: '5px solid black',
                                                         borderRight: 'none'
                                                     }}>
-                                                        <span> All Doctors</span>
+                                                        <span>({this.state.doctorsAppointmentCount['ALL'] ? this.state.doctorsAppointmentCount['ALL'] : 0}) All Doctors</span>
                                                     </Menu.Item>
                                                     {this.state.practice_doctors.map(item =>
                                                         <Menu.Item key={item.id} style={{
@@ -430,7 +453,7 @@ class App extends Component {
                                                             color: this.state.selectedDoctor == item.id ? 'white' : 'inherit',
                                                             fontWeight: this.state.selectedDoctor == item.id ? 'bold' : 'inherit',
                                                         }}>
-                                                            <span>{item.user.first_name}</span>
+                                                            <span>({this.state.doctorsAppointmentCount[item.id] ? this.state.doctorsAppointmentCount[item.id] : 0}) {item.user.first_name}</span>
                                                         </Menu.Item>
                                                     )}
                                                 </Menu>
@@ -443,7 +466,7 @@ class App extends Component {
                                                         borderLeft: '5px solid black',
                                                         borderRight: 'none'
                                                     }}>
-                                                        <span> All Categories</span>
+                                                        <span>({this.state.categoriesAppointmentCount['ALL'] ? this.state.categoriesAppointmentCount['ALL'] : 0}) All Categories</span>
                                                     </Menu.Item>
                                                     {this.state.practice_categories.map(item =>
                                                         <Menu.Item key={item.id} style={{
@@ -454,37 +477,39 @@ class App extends Component {
                                                             color: this.state.selectedCategory == item.id ? 'white' : 'inherit',
                                                             fontWeight: this.state.selectedCategory == item.id ? 'bold' : 'inherit',
                                                         }}>
-                                                            <span>{item.name}</span>
+                                                            <span>({this.state.categoriesAppointmentCount[item.id] ? this.state.categoriesAppointmentCount[item.id] : 0}) {item.name}</span>
                                                         </Menu.Item>
                                                     )}
                                                 </Menu>}
                                         </Spin>
                                     </Col>
                                     <Col span={16}>
-                                        <DragAndDropCalendar
-                                            defaultDate={new Date()}
-                                            localizer={localizer}
-                                            defaultView="week"
-                                            step={10}
-                                            timeslots={1}
-                                            events={this.state.filteredEvent}
-                                            onEventDrop={this.moveEvent}
-                                            onEventResize={this.resizeEvent}
-                                            resizable
-                                            selectable
-                                            popup={this.onSelectEvent}
-                                            onSelectSlot={this.onSelectSlot}
-                                            // onSelectEvent={this.onSelectEvent}
-                                            views={{month: true, week: MyWeek, day: true, agenda: true}}
-                                            style={{minHeight: "calc(100vh - 85px)"}}
-                                            eventPropGetter={(this.eventStyleGetter)}
-                                            date={new Date(this.state.selectedDate.format())}
-                                            min={startTime}
-                                            max={endTime}
-                                            onRangeChange={this.onRangeChange}
-                                            components={{
-                                                event: EventComponent
-                                            }}/>
+                                        <Spin size="large" spinning={this.state.loading}>
+                                            <DragAndDropCalendar
+                                                defaultDate={new Date()}
+                                                localizer={localizer}
+                                                defaultView="week"
+                                                step={10}
+                                                timeslots={1}
+                                                events={this.state.filteredEvent}
+                                                onEventDrop={this.moveEvent}
+                                                onEventResize={this.resizeEvent}
+                                                resizable
+                                                selectable
+                                                popup={this.onSelectEvent}
+                                                onSelectSlot={this.onSelectSlot}
+                                                // onSelectEvent={this.onSelectEvent}
+                                                views={{month: true, week: MyWeek, day: true, agenda: true}}
+                                                style={{minHeight: "calc(100vh - 85px)"}}
+                                                eventPropGetter={(this.eventStyleGetter)}
+                                                date={new Date(this.state.selectedDate.format())}
+                                                min={startTime}
+                                                max={endTime}
+                                                onRangeChange={this.onRangeChange}
+                                                components={{
+                                                    event: EventComponent
+                                                }}/>
+                                        </Spin>
                                     </Col>
                                     <Col span={5}>
                                         <Dropdown overlay={calendarSettingMenu}>

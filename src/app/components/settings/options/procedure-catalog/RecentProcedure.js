@@ -17,7 +17,7 @@ class RecentProcedure extends React.Component {
             current: 'staff',
             procedure_category: null,
             editingProcedureData: null,
-            loading:true
+            loading: true
         };
         this.loadProcedures = this.loadProcedures.bind(this);
     }
@@ -31,7 +31,7 @@ class RecentProcedure extends React.Component {
         let successFn = function (data) {
             that.setState({
                 procedure_category: data,
-                loading:false
+                loading: false
             })
         };
         let errorFn = function () {
@@ -62,7 +62,7 @@ class RecentProcedure extends React.Component {
     editProcedure(record) {
         this.setState({
             editingProcedureData: record,
-            loading:false
+            loading: false
         });
         let url = '/settings/procedures/' + record.id + '/editprocedure';
         this.props.history.push(url);
@@ -74,9 +74,9 @@ class RecentProcedure extends React.Component {
         let that = this;
         return <Switch>
             <Route exact path="/settings/procedures/:id/editprocedure"
-                render={(route) => (that.props.activePracticePermissions.SettingsProcedureCatalog || that.props.allowAllPermissions ?
-                    <EditProcedure  {...that.props} {...that.state} {...route}
-                        loadProcedures={that.loadProcedures}/> : <PermissionDenied/>
+                   render={(route) => (that.props.activePracticePermissions.SettingsProcedureCatalog || that.props.allowAllPermissions ?
+                           <EditProcedure  {...that.props} {...that.state} {...route}
+                                           loadProcedures={that.loadProcedures}/> : <PermissionDenied/>
                    )}/>
             <Row>
                 <h2>Procedures Catalog
@@ -88,43 +88,49 @@ class RecentProcedure extends React.Component {
                 </h2>
                 <Card>
                     {/*<Tabs defaultActiveKey="procedurecatalog">*/}
-                        {/*<TabPane tab={<span><Icon type="android"/>Procedure Catalog</span>} key="procedurecatalog">*/}
-                            <Table loading={this.state.loading} dataSource={this.state.procedure_category}>
-                                <Column
-                                    title="Procedure Name"
-                                    dataIndex="name"
-                                    key="name"
-                                />
-                                <Column
-                                    title="Procedure Unit Cost"
-                                    dataIndex="cost"
-                                    key="cost"
-                                />
-                                <Column
-                                    title="MLM Margin"
-                                    dataIndex="margin"
-                                    key="margin"
-                                />
-                                <Column
-                                    title="Applicable Taxes"
-                                    dataIndex="taxes"
-                                    key="taxes"
-                                    render={taxes => (
-                                        <span>
-                                        {taxes.map(tag => <Tag color="blue" key={tag}>{tag}</Tag>)}
+                    {/*<TabPane tab={<span><Icon type="android"/>Procedure Catalog</span>} key="procedurecatalog">*/}
+                    <Table loading={this.state.loading} dataSource={this.state.procedure_category}>
+                        <Column
+                            title="Procedure Name"
+                            dataIndex="name"
+                            key="name"
+                        />
+                        <Column
+                            title="Procedure Unit Cost"
+                            dataIndex="cost"
+                            key="cost"
+                        />
+                        <Column
+                            title="MLM Margin"
+                            dataIndex="margin"
+                            key="margin"
+                            render={taxes => (
+                                <span>
+                                            {taxes ? taxes.name : null}
                                     </span>
-                                    )}
-                                />
-                                <Column
-                                    title="Standard Notes"
-                                    dataIndex="default_notes"
-                                    key="default_notes"
-                                />
-                                <Column
-                                    title="Action"
-                                     key="action"
-                                    render={(text, record) => (
-                                        <span>
+                            )}
+                        />
+                        <Column
+                            title="Applicable Taxes"
+                            dataIndex="taxes"
+                            key="taxes"
+                            render={taxes => (
+                                <span>
+                                    {taxes && taxes.length ? taxes.map(tax => <Tag> {tax.name}</Tag>) : null}
+                                    </span>
+                            )}
+                        />
+                        <Column
+                            title="Standard Notes"
+                            dataIndex="default_notes"
+                            key="default_notes"
+                        />
+                        <Column
+                            title="Action"
+                            key="action"
+                            render={(text, record) => (
+                                <span><Link to={"/settings/procedures/addprocedure?under=" + record.id}>Add SubCategory</Link>
+                                        <Divider type="vertical"/>
                                             <a onClick={() => this.editProcedure(record)}>Edit</a>
                                         <Divider type="vertical"/>
                                         <Popconfirm title="Are you sure delete this?"
@@ -133,11 +139,11 @@ class RecentProcedure extends React.Component {
                                             <a>Delete</a>
                                         </Popconfirm>
                                     </span>
-                                    )}
-                                />
+                            )}
+                        />
 
-                            </Table>
-                        {/*</TabPane>*/}
+                    </Table>
+                    {/*</TabPane>*/}
 
                     {/*</Tabs>*/}
 

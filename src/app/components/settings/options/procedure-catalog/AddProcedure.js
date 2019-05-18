@@ -24,6 +24,9 @@ class AddProcedure extends React.Component {
         }
         this.loadTaxes = this.loadTaxes.bind(this);
         this.loadProcedures = this.loadProcedures.bind(this)
+
+    }
+    componentDidMount(){
         this.loadTaxes();
         this.loadProcedures();
         this.loadProductMargin();

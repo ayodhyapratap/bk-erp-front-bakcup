@@ -61,7 +61,8 @@ export const patientSettingMenu = (<Menu>
 export const hashCode = function (str) { // java String#hashCode
     var hash = 0;
     for (var i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        hash = str.charCodeAt(i) + ((hash << 6) - hash);
+        hash = (hash >> 6) + hash
     }
     return hash;
 }

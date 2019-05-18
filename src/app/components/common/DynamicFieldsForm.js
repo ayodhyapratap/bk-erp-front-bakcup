@@ -44,25 +44,7 @@ const {TextArea} = Input;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
-var fieldDecorators = function (field, formData) {
-    if (field.type == MULTI_SELECT_FIELD) {
-        return {
-            initialValue: formData[field.key],
-            rules: [{
-                required: field.required,
-                message: REQUIRED_FIELD_MESSAGE,
-                type: 'array'
-            }]
-        }
-    }
-    return {
-        initialValue: formData[field.key],
-        rules: [{
-            required: field.required,
-            message: REQUIRED_FIELD_MESSAGE
-        }]
-    }
-}
+
 
 class DynamicFieldsForm extends React.Component {
     constructor(props) {
@@ -76,7 +58,8 @@ class DynamicFieldsForm extends React.Component {
             countryOptions: [],
             stateOptions: [],
             cityOptions: [],
-            smsFields: {}
+            smsFields: {},
+            urlInitialValues: {}
         }
         this.resetFormData = this.resetFormData.bind(this);
         this.submitForm = this.submitForm.bind(this);
@@ -90,6 +73,28 @@ class DynamicFieldsForm extends React.Component {
         console.log("Recieved New Props in Dynamic Form", nextProps);
     }
 
+    fieldDecorators = (field, formData) => {
+        let urlInitialValues = this.state.urlInitialValues;
+        console.log(urlInitialValues);
+        if (field.type == MULTI_SELECT_FIELD) {
+            return {
+                initialValue: formData[field.key] ? formData[field.key] : (urlInitialValues[field.key] ? urlInitialValues[field.key] : formData[field.key]),
+                rules: [{
+                    required: field.required,
+                    message: REQUIRED_FIELD_MESSAGE,
+                    type: 'array'
+                }]
+            }
+        }
+        return {
+            initialValue: formData[field.key] ? formData[field.key] : (urlInitialValues[field.key] ? urlInitialValues[field.key] : formData[field.key]),
+            rules: [{
+                required: field.required,
+                message: REQUIRED_FIELD_MESSAGE
+            }]
+        }
+    }
+
     componentDidMount() {
         let that = this;
         this.resetFormData();
@@ -97,7 +102,28 @@ class DynamicFieldsForm extends React.Component {
             if (field.type == COUNTRY_FIELD) {
                 that.loadCountryData();
             }
-        })
+        });
+        if (this.props.history && this.props.history.location.search) {
+            let pairValueArray = this.props.history.location.search.substr(1).split('&');
+            if (pairValueArray.length) {
+                let urlInitialValue = {};
+                pairValueArray.forEach(function (item) {
+                    let keyValue = item.split('=');
+                    if (keyValue && keyValue.length == 2) {
+                        if (!isNaN(keyValue[1]) && keyValue[1].toString().indexOf('.') != -1) {
+                            urlInitialValue[keyValue[0]] = parseFloat(keyValue[1]);
+                        } else if (!isNaN(keyValue[1])) {
+                            urlInitialValue[keyValue[0]] = parseInt(keyValue[1]);
+                        } else {
+                            urlInitialValue[keyValue[0]] = keyValue[1];
+                        }
+                    }
+                });
+                this.setState({
+                    urlInitialValues: urlInitialValue
+                })
+            }
+        }
     }
 
     resetFormData() {
@@ -266,7 +292,7 @@ class DynamicFieldsForm extends React.Component {
                         case PASSWORD_FIELD:
                             return <Form.Item key={field.key} label={field.label}  {...formItemLayout}
                                               extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                     <Input prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
                                            type="password"
                                            placeholder={field.placeholder}
@@ -276,7 +302,7 @@ class DynamicFieldsForm extends React.Component {
                         case INPUT_FIELD:
                             return <FormItem key={field.key} label={field.label}  {...formItemLayout}
                                              extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                     <Input placeholder={field.placeholder}
                                            disabled={field.disabled ? field.disabled : that.state.disabled}/>
                                 )}
@@ -285,7 +311,7 @@ class DynamicFieldsForm extends React.Component {
                         case SELECT_FIELD:
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
                                              extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                     <Select placeholder={field.placeholder}
                                             disabled={field.disabled ? field.disabled : that.state.disabled}
                                             mode={field.mode ? field.mode : "default"}>
@@ -298,7 +324,7 @@ class DynamicFieldsForm extends React.Component {
                         case MULTI_SELECT_FIELD:
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
                                              extra={field.extra}>
-                                {getFieldDecorator(field.key, {...fieldDecorators(field, that.state.formData)})(
+                                {getFieldDecorator(field.key, {...that.fieldDecorators(field, that.state.formData)})(
                                     <Select mode="multiple" placeholder={field.placeholder}
                                             disabled={field.disabled ? field.disabled : that.state.disabled}>
                                         {field.options.map((option) => <Select.Option
@@ -310,7 +336,7 @@ class DynamicFieldsForm extends React.Component {
                         case RADIO_FIELD:
                             return <FormItem key={field.key} label={field.label} {...formItemLayout}
                                              extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                     <RadioGroup disabled={field.disabled ? field.disabled : that.state.disabled}>
                                         {field.options.map((option) => <Radio
                                             value={option.value}>{option.label}</Radio>)}
@@ -320,7 +346,7 @@ class DynamicFieldsForm extends React.Component {
                         case CHECKBOX_FIELD:
                             return <FormItem key={field.key} label={field.label} {...formItemLayout}
                                              extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                     <CheckboxGroup options={field.options}
                                                    disabled={field.disabled ? field.disabled : that.state.disabled}/>
                                 )}
@@ -343,7 +369,7 @@ class DynamicFieldsForm extends React.Component {
                             return <FormItem key={field.key}
                                              {...formItemLayout}
                                              label={field.label} extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                     <InputNumber min={field.min} max={field.max}
                                                  disabled={field.disabled ? field.disabled : that.state.disabled}/>
                                 )}
@@ -363,7 +389,7 @@ class DynamicFieldsForm extends React.Component {
                         case TEXT_FIELD:
                             return <div>
                                 <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
-                                    {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                    {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                         <TextArea autosize={{minRows: field.minRows, maxRows: field.maxRows}}
                                                   placeholder={field.placeholder}
                                                   disabled={field.disabled ? field.disabled : that.state.disabled}
@@ -375,7 +401,7 @@ class DynamicFieldsForm extends React.Component {
                         case SMS_FIELD:
                             return <div>
                                 <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
-                                    {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                    {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                         <TextArea autosize={{minRows: field.minRows, maxRows: field.maxRows}}
                                                   placeholder={field.placeholder}
                                                   disabled={field.disabled ? field.disabled : that.state.disabled}
@@ -413,7 +439,7 @@ class DynamicFieldsForm extends React.Component {
                         case COLOR_PICKER:
                             return <FormItem key={field.key} label={field.label}  {...formItemLayout}
                                              extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                     <div>
                                         <SwatchesPicker style={{width: '100%'}}
                                                         onChange={(color) => that.colorChange(color, field.key)}/>
@@ -499,7 +525,7 @@ class DynamicFieldsForm extends React.Component {
                         case COUNTRY_FIELD:
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
                                              extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                     <Select placeholder={field.placeholder}
                                             disabled={field.disabled ? field.disabled : that.state.disabled}
                                             mode={field.mode ? field.mode : "default"}
@@ -512,7 +538,7 @@ class DynamicFieldsForm extends React.Component {
                         case STATE_FIELD:
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
                                              extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                     <Select placeholder={field.placeholder}
                                             disabled={field.disabled ? field.disabled : that.state.disabled}
                                             mode={field.mode ? field.mode : "default"}
@@ -547,7 +573,7 @@ class DynamicFieldsForm extends React.Component {
                         case CITY_FIELD:
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
                                              extra={field.extra}>
-                                {getFieldDecorator(field.key, fieldDecorators(field, that.state.formData))(
+                                {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                     <Select placeholder={field.placeholder}
                                             disabled={field.disabled ? field.disabled : that.state.disabled}
                                             mode={field.mode ? field.mode : "default"}>
