@@ -12,6 +12,7 @@ import {
 import {Link} from "react-router-dom";
 import {deleteAPI, getAPI, interpolate, patchAPI, postAPI} from "../../../../utils/common";
 import {getAllPermissions, loggedInUserPractices} from "../../../../utils/auth";
+import moment from "moment";
 
 const {Column, ColumnGroup} = Table;
 const TabPane = Tabs.TabPane;
@@ -251,12 +252,12 @@ class PracticeDetails extends React.Component {
             dataIndex: "registration_number",
             key: "registration_number",
         }, {
-            title: "Status",
+            title: "Last Login",
             key: "user",
-            render: (text, record) => (record.user && record.user.is_active ? <Tag color="#87d068">Active</Tag> :
-                <Tag color="#f50">Pending</Tag>),
+            render: (text, record) => (record.user && record.user.is_active ? (record.user.last_login ? moment(record.user.last_login).fromNow():'--' ) :
+                <Tag color="#f50">Activation Pending</Tag>),
         }, {
-            title: "Action	",
+            title: "Action",
             key: "action",
             render: function (text, record) {
                 return (record.user && record.is_superuser ?
@@ -270,7 +271,7 @@ class PracticeDetails extends React.Component {
                             // disabled={!(record.user && record.user.is_active)}
                             onClick={() => that.editPermissions(record.user.id)}>Permissions</a>
                     <Divider type="vertical"/>
-                    <Popconfirm title="Are you sure delete this item?"
+                    <Popconfirm title="Are you sure delete this staff?"
                                 onConfirm={() => that.deleteStaff(record.id)} okText="Yes" cancelText="No">
                          <a>Delete</a>
                     </Popconfirm>

@@ -7,6 +7,7 @@ import AddPrescription from "./AddPrescription";
 import {DRUG} from "../../../../constants/hardData";
 import AddorEditPrescriptionForm from "./AddorEditPrescriptionForm";
 import InfiniteFeedLoaderButton from "../../../common/InfiniteFeedLoaderButton";
+import CustomizedTable from "../../../common/CustomizedTable";
 
 class Prescriptions extends React.Component {
     constructor(props) {
@@ -113,7 +114,7 @@ class Prescriptions extends React.Component {
                 <Route exact path="/settings/prescriptions/add"
                        render={() => <AddorEditPrescriptionForm  {...this.props} loadData={this.loadInitialData}/>}/>
                 <Route exact path="/settings/prescriptions/edit"
-                       render={(route) => <AddPrescription  {...this.state}
+                       render={(route) => <AddorEditPrescriptionForm  {...this.state}
                                                             loadData={this.loadInitialData} {...this.props} {...route}/>}/>
                 <Route>
                     <div>
@@ -125,7 +126,7 @@ class Prescriptions extends React.Component {
                             </Link>
                         </h2>
                         <Card>
-                            <Table loading={this.state.loading} columns={columns} dataSource={this.state.catalog}
+                            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.catalog}
                                    pagination={false}/>
                         </Card>
                         <InfiniteFeedLoaderButton loaderFunction={this.loadData}

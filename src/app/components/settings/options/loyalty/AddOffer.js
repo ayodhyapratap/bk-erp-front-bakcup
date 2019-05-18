@@ -27,7 +27,6 @@ class AddOffer extends React.Component {
             }, {
                 label: "Description ",
                 key: "description",
-                required: true,
                 type: INPUT_FIELD
             }, {
                 label: "Discount",
@@ -39,7 +38,9 @@ class AddOffer extends React.Component {
                 label: "Discount Unit",
                 key: 'unit',
                 required: true,
-                options: [{label: 'Percent', value: '%'}, {label: 'Rupees', value: 'INR'}]
+                options: [{label: 'Percent', value: '%'}, {label: 'Rupees', value: 'INR'}],
+                type:SELECT_FIELD,
+                initialValue:'%'
             }]
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -72,7 +73,7 @@ class AddOffer extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div><Card>
             <TestFormLayout title="Add Offer" formProp={formProp} changeRedirect={this.changeRedirect}
-                            fields={this.state.fields}/>
+                            fields={this.state.fields} {...this.props}/>
             {this.state.redirect && <Redirect to='/settings/loyalty'/>}
 
         </Card>

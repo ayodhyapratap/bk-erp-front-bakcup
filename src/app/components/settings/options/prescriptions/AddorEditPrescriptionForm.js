@@ -169,6 +169,11 @@ class AddorEditPrescriptionForm extends React.Component {
                     <Button onClick={() => this.handleSubmit(false)}>Save Drug</Button>
                     &nbsp;&nbsp;&nbsp;
                     <Button onClick={() => this.handleSubmit(false)} type={'primary'}>Save & Add to Inventory</Button>
+                    &nbsp;&nbsp;&nbsp;
+                    {that.props.history ?
+                        <Button onClick={() => that.props.history.goBack()}>
+                            Cancel
+                        </Button> : null}
                 </Form.Item>
             </Form>
         </Card>
