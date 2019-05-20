@@ -17,7 +17,7 @@ import {
     Menu,
     Dropdown,
     Icon,
-    DatePicker
+    DatePicker,
 } from "antd"
 import {DOCTORS_ROLE, SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
@@ -58,7 +58,8 @@ class App extends Component {
             selectedDate: moment(),
             filterType: 'DOCTOR',
             doctorsAppointmentCount: {},
-            categoriesAppointmentCount: {}
+            categoriesAppointmentCount: {},
+            todaysAppointments: []
         };
         this.onSelectSlot = this.onSelectSlot.bind(this);
         this.onSelectEvent = this.onSelectEvent.bind(this);
@@ -74,6 +75,7 @@ class App extends Component {
         this.loadDoctors();
         loadAppointmentCategories(this);
         this.appointmentList(moment().subtract(1, 'days'), moment().add(5, 'days'));
+        // this.todaysAppointments(moment(), moment());
     }
 
     loadDoctors() {
@@ -224,6 +226,28 @@ class App extends Component {
     /***
      * List and style settings
      * */
+    todaysAppointments() {
+        let that = this;
+        that.setState({
+            loading: true
+        });
+        let successFn = function (data) {
+            that.setState(function (prevState) {
+                return {
+                    todaysAppointments: data,
+                }
+            });
+        }
+        let errorFn = function () {
+            that.setState({
+                loading: false
+            })
+        }
+        getAPI(interpolate(APPOINTMENT_PERPRACTICE_API, [this.props.active_practiceId]), successFn, errorFn, {
+            start: moment().format('YYYY-MM-DD'),
+            end: moment().format('YYYY-MM-DD')
+        });
+    }
 
     appointmentList(start, end) {
         let that = this;
@@ -290,6 +314,7 @@ class App extends Component {
             start: start.format('YYYY-MM-DD'),
             end: end.format('YYYY-MM-DD')
         });
+        this.todaysAppointments();
     }
 
     eventStyleGetter(event, start, end, isSelected) {
@@ -384,23 +409,15 @@ class App extends Component {
     }
 
     render() {
+        let that = this;
         let startTime;
         let endTime;
         if (this.state.calendarTimings) {
             // console.log(new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss')));
             startTime = new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss'));
             endTime = new Date(new moment(this.state.calendarTimings.end_time, 'HH:mm:ss'))
-            console.log("start time", startTime);
 
         }
-        let counter = 0;
-        this.state.events.forEach(function (event) {
-            let today = new Date();
-            console.log("today", today)
-            if (moment(event.start).format("YYYY-MM-DD") == moment(today).format("YYYY-MM-DD")) {
-                counter++;
-            }
-        });
         return (<Content className="main-container">
                 <div style={{margin: '10px', padding: '5px'}}>
                     <Switch>
@@ -521,17 +538,64 @@ class App extends Component {
                                             <Button block type="primary" style={{margin: 5}}> Walkin
                                                 Appointment</Button>
                                         </Link>
-                                        <Divider>Appointments</Divider>
+                                        <Row gutter={8}>
+                                            <Col span={6} style={{
+                                                textAlign: 'center',
+                                                border: '1px solid #ccc',
+                                                borderRadius: '3px'
+                                            }}>
+                                                <small>Scheduled</small>
+                                                <h2>0</h2>
+                                            </Col>
+                                            <Col span={6} style={{
+                                                textAlign: 'center',
+                                                border: '1px solid #ccc',
+                                                borderRadius: '3px'
+                                            }}>
+                                                <small>Waiting</small>
+                                                <h2>0</h2>
+                                            </Col>
+                                            <Col span={6} style={{
+                                                textAlign: 'center',
+                                                border: '1px solid #ccc',
+                                                borderRadius: '3px'
+                                            }}>
+                                                <small>Engaged</small>
+                                                <h2>0</h2>
+                                            </Col>
+                                            <Col span={6} style={{
+                                                textAlign: 'center',
+                                                border: '1px solid #ccc',
+                                                borderRadius: '3px'
+                                            }}>
+                                                <small>Checkout</small>
+                                                <h2>0</h2>
+                                            </Col>
+                                        </Row>
+                                        <Divider>Today's Apointment ({this.state.todaysAppointments.length})
+                                        </Divider>
                                         <Spin spinning={this.state.loading}>
-                                            <Timeline>
-                                                {this.state.appointments.length ?
-                                                    this.state.appointments.map((apppointment) =>
-                                                        <Timeline.Item
-                                                            style={{padding: 0}}><AppointmentCard {...apppointment}/></Timeline.Item>) :
-                                                    <p style={{textAlign: 'center'}}>No Data Found</p>}
-                                            </Timeline>
+                                            <List
+                                                size={'small'}
+                                                dataSource={this.state.todaysAppointments}
+                                                renderItem={(apppointment) => <List.Item
+                                                    color={'transparent'}
+                                                    style={{padding: 0}}>
+                                                    <div
+                                                        style={{
+                                                            border: '1px solid #ddd',
+                                                            borderRadius: '5px',
+                                                            backgroundColor: '#eee',
+                                                            width: '100%',
+                                                            marginTop: '2px',
+                                                            borderLeft: '5px solid' + (apppointment.doctor && that.state.doctors_object && that.state.doctors_object[apppointment.doctor] ? that.state.doctors_object[apppointment.doctor].calendar_colour : 'transparent')
+                                                        }}>
+                                                        <AppointmentCard {...apppointment}/>
+                                                    </div>
+                                                </List.Item>
+                                                }/>
                                         </Spin>
-                                        <h3>Today's Apointment <Badge>{counter}</Badge></h3>
+                                        <h3></h3>
                                     </Col>
                                 </Row>
                             </div>
@@ -548,9 +612,10 @@ export default App;
 
 function AppointmentCard(appointment) {
     return <div style={{width: '100%'}}>
-        <p>
-            <span
-                style={{width: 'calc(100% - 60px)'}}>{moment(appointment.schedule_at).format("HH:mm")} &nbsp;{appointment.patient_name}</span>
+        <p style={{marginBottom: 0}}>
+        <span
+            style={{width: 'calc(100% - 60px)'}}><b>{moment(appointment.schedule_at).format("LT")}</b>&nbsp;
+            {appointment.patient.user.first_name}</span>
             <span style={{width: '60px', float: 'right'}}><a> Check In</a></span>
         </p>
     </div>;
