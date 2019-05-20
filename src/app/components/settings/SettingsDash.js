@@ -27,6 +27,7 @@ import AddorEditLab from "./options/labs/AddorEditLab";
 import MlmBase from "./options/mlm/MlmBase";
 import Printout from "./options/printout/Printout";
 import IntegrationHome from "./options/integration/IntegrationHome";
+import MailPDFSettings from "./options/mailPDF/MailPDFSettings";
 
 const Content = Layout.Content;
 
@@ -139,7 +140,14 @@ class SettingsDash extends React.Component {
                        <Route path ="/settings/printout"
                              render={(route) => (
                                     <Printout {...this.state}
+                                              {...route}
                                               {...this.props}/>
+                               )}/>
+                        <Route path ="/settings/mailpdfsettings"
+                               render={(route) => (
+                                   <MailPDFSettings {...this.state}
+                                                    {...route}
+                                             {...this.props}/>
                                )}/>
                         <Route path="/settings/integration"
                                render={(route) => <IntegrationHome {...this.state}

@@ -79,6 +79,11 @@ class SettingSider extends React.Component {
                             <Icon type="printer"/> Printout
                         </Link>
                     </Menu.Item>
+                    <Menu.Item key="21">
+                        <Link to="/settings/mailpdfsettings">
+                            <Icon type="mail"/> Email PDF Settings
+                        </Link>
+                    </Menu.Item>
                     {this.props.activePracticePermissions.SettingsMedicalHistory ? <Menu.Item key="15">
                         <Link to="/settings/medical-history">
                             <Icon type="file-text"/> Medical History

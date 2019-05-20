@@ -21,6 +21,7 @@ import {remove} from 'lodash';
 import {Redirect} from 'react-router-dom';
 import {DOCTORS_ROLE} from "../../../constants/dataKeys";
 import moment from "moment";
+import {loadDoctors} from "../../../utils/clinicUtils";
 
 
 class AddorEditDynamicTreatmentPlans extends React.Component {
@@ -39,7 +40,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
 
     componentDidMount() {
         this.loadProcedures();
-        this.loadDoctors();
+        loadDoctors(this);
     }
 
     calculateItem = (_id) => {
@@ -100,25 +101,6 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
     }
 
-    loadDoctors() {
-        let that = this;
-        let successFn = function (data) {
-            let doctor = [];
-            data.staff.forEach(function (usersdata) {
-                if (usersdata.role.index(DOCTORS_ROLE) > -1) {
-                    doctor.push(usersdata);
-                }
-            })
-            that.setState({
-                practiceDoctors: doctor,
-                selectedDoctor: doctor.length ? doctor[0] : {}
-            });
-        };
-        let errorFn = function () {
-        };
-        getAPI(interpolate(PRACTICESTAFF, [this.props.active_practiceId]), successFn, errorFn);
-    }
-
     selectDoctor = (doctor) => {
         this.setState({
             selectedDoctor: doctor
@@ -136,8 +118,11 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
             if (!err) {
                 console.log('Received values of form: ', values);
                 let reqData = {
-                    treatment: [],
-                    patient: that.props.match.params.id
+                    treatment_plans: [],
+                    patient: that.props.match.params.id,
+                    "doctor": that.state.selectedDoctor.id,
+                    "date": that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
+                    "practice": that.props.active_practiceId,
                 };
                 that.state.tableFormValues.forEach(function (item) {
                     console.log(item);
@@ -154,13 +139,11 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                         "default_notes": item.notes,
                         "is_active": true,
                         "is_completed": false,
-                        "practice": that.props.active_practiceId,
                         "discount": item.discount,
                         "discount_type": "%",
-                        "doctor": that.state.selectedDoctor.id,
-                        "date": that.state.selectedDate ? that.state.selectedDate : null
+
                     };
-                    reqData.treatment.push(sendingItem);
+                    reqData.treatment_plans.push(sendingItem);
                 });
                 let successFn = function (data) {
                     displayMessage("Inventory updated successfully");

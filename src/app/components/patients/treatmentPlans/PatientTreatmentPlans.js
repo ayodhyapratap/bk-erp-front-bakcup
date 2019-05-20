@@ -1,5 +1,20 @@
 import React from "react";
-import {Avatar, Input, Checkbox, Divider, Table, Col, Button, Form, Row, Card, Icon, Skeleton, Popconfirm} from "antd";
+import {
+    Avatar,
+    Input,
+    Checkbox,
+    Divider,
+    Table,
+    Col,
+    Button,
+    Form,
+    Row,
+    Card,
+    Icon,
+    Skeleton,
+    Popconfirm,
+    Tag
+} from "antd";
 import {Link} from "react-router-dom";
 import {
     PROCEDURE_CATEGORY,
@@ -138,7 +153,7 @@ class PatientTreatmentPlans extends React.Component {
         let successFn = function (data) {
             that.loadTreatmentPlans();
             that.setState({
-                selectedTreatments : {}
+                selectedTreatments: {}
             })
         }
         let errorFn = function () {
@@ -162,21 +177,15 @@ class PatientTreatmentPlans extends React.Component {
             title: '',
             key: 'is_completed',
             render: (text, record) => (record.is_completed ?
-                    <Icon type="check-circle" theme="twoTone"  style={{marginLeft:'8px',fontSize:'20px'}}/> :
+                    <Icon type="check-circle" theme="twoTone" style={{marginLeft: '8px', fontSize: '20px'}}/> :
                     <Checkbox onChange={(e) => this.treatmentCompleteToggle(record.id, e.target.checked)}
                               value={this.state.selectedTreatments[record.id]}/>
             )
         }, {
-            title: 'Time',
-            dataIndex: 'created_at',
-            key: 'name',
-            render: created_at => <span>{moment(created_at).format('LLL')}</span>,
-        }, {
             title: 'Procedure',
-            key: 'procedure',
-            render: (text, record) => (
-                <span> {procedures[record.procedure]}</span>
-            )
+            key: 'procedure.name',
+            dataIndex: 'procedure.name',
+
         }, {
             title: 'Quantity',
             dataIndex: 'quantity',
@@ -207,20 +216,28 @@ class PatientTreatmentPlans extends React.Component {
                        render={(route) => <AddorEditDynamicTreatmentPlans {...this.state} {...route}/>}/>
                 <Route exact path='/patient/:id/emr/plans/edit'
                        render={(route) => <AddorEditPatientTreatmentPlans {...this.state} {...route}/>}/>
-                <Card
-                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " TreatmentPlans" : "TreatmentPlans"}
-                    extra={<Button.Group>
-                        <Button onClick={this.submitCompleteTreatment}> <Icon type="save"/>Save</Button>
-                        <Link to={"/patient/" + this.props.match.params.id + "/emr/plans/add"}>
-                            <Button><Icon type="plus"/>Add</Button>
-                        </Link>
-                    </Button.Group>
-                    }>
+                <div>
+                    <Card
+                        title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " TreatmentPlans" : "TreatmentPlans"}
+                        extra={<Button.Group>
+                            <Button onClick={this.submitCompleteTreatment}> <Icon type="save"/>Save</Button>
+                            <Link to={"/patient/" + this.props.match.params.id + "/emr/plans/add"}>
+                                <Button><Icon type="plus"/>Add</Button>
+                            </Link>
+                        </Button.Group>
+                        }/>
+                    {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
+                                                                        style={{marginTop: 15}}>
+                            <h4>{treatment.date ? moment(treatment.date).format('lll') : null}</h4>
+                            <Table loading={this.state.loading} columns={columns}
+                                   dataSource={treatment.treatment_plans}
+                                   footer={() => treatmentFooter(treatment)}
+                                   pagination={false}
+                                   key={treatment.id}/>
 
-                    <Table loading={this.state.loading} columns={columns}
-                           dataSource={this.state.treatmentPlans}/>
-
-                </Card>
+                        </Card>
+                    )}
+                </div>
             </Switch>
 
             </div>
@@ -235,3 +252,16 @@ class PatientTreatmentPlans extends React.Component {
 }
 
 export default PatientTreatmentPlans;
+
+
+function treatmentFooter(presc) {
+    if (presc) {
+
+        return <div>
+            {presc.doctor ? <Tag color={presc.doctor ? presc.doctor.calendar_colour : null}>
+                <b>{"prescribed by  " + presc.doctor.user.first_name} </b>
+            </Tag> : null}
+        </div>
+    }
+    return null
+}

@@ -42,7 +42,7 @@ class PageSettingForm extends React.Component {
         };
         let errorFn = function () {
         };
-        postAPI(interpolate(PRACTICE_PRINT_SETTING_API, [this.props.active_practiceId]), reqData, successFn, errorFn);
+        postAPI(interpolate(PRACTICE_PRINT_SETTING_API, [this.props.active_practiceId,that.state.type,that.state.sub_type]), reqData, successFn, errorFn);
       }
     });
   }

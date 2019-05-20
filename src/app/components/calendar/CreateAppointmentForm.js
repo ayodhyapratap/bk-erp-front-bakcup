@@ -434,10 +434,7 @@ export default class CreateAppointmentForm extends React.Component {
                         {getFieldDecorator("notes", {initialValue: this.state.appointment ? this.state.appointment.notes : null}, {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
-                            <Select placeholder="Notes">
-                                {treatmentNotesOption.map((option) => <Select.Option
-                                    value={option.value}>{option.label}</Select.Option>)}
-                            </Select>
+                            <Input placeholder="Notes"/>
                         )}
                     </FormItem>
                     <FormItem {...formItemLayout}>
