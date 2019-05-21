@@ -7,6 +7,7 @@ import {getAPI, displayMessage, interpolate, putAPI} from "../../../utils/common
 import {PATIENT_COMMUNICATION_HISTORY_API, PATIENT_PROFILE} from "../../../constants/api";
 import {SMS_ENABLE, BIRTHDAY_SMS_ENABLE, EMAIL_ENABLE} from "../../../constants/hardData";
 import moment from "moment";
+import CustomizedTable from "../../common/CustomizedTable";
 
 class PatientCommunicationSetting extends React.Component {
     constructor(props) {
@@ -185,7 +186,7 @@ class PatientCommunicationSetting extends React.Component {
                     <div>
                         <Divider dashed/>
                         <h2>Past Communication</h2>
-                        <Table loading={this.state.loading} columns={columns}
+                        <CustomizedTable loading={this.state.loading} columns={columns}
                                dataSource={this.state.parient_communication_history}/>
                     </div>
                 </Card>

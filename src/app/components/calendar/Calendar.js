@@ -31,6 +31,7 @@ import {getAPI, putAPI, interpolate, displayMessage} from "../../utils/common";
 import {APPOINTMENT_PERPRACTICE_API, APPOINTMENT_API, PRACTICESTAFF, CALENDER_SETTINGS} from "../../constants/api";
 import EventComponent from "./EventComponent";
 import {calendarSettingMenu, loadAppointmentCategories} from "./calendarUtils";
+import {CHECKOUT_STATUS, ENGAGED_STATUS, SCHEDULE_STATUS, WAITING_STATUS} from "../../constants/hardData";
 
 const localizer = BigCalendar.momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(BigCalendar)
@@ -59,7 +60,10 @@ class App extends Component {
             filterType: 'DOCTOR',
             doctorsAppointmentCount: {},
             categoriesAppointmentCount: {},
-            todaysAppointments: []
+            todaysAppointments: [],
+            todaysFilteredAppointments: [],
+            todaysAppointmentOverview: {},
+            todaysAppointmentFilter: 'ALL'
         };
         this.onSelectSlot = this.onSelectSlot.bind(this);
         this.onSelectEvent = this.onSelectEvent.bind(this);
@@ -233,8 +237,24 @@ class App extends Component {
         });
         let successFn = function (data) {
             that.setState(function (prevState) {
+                let appointmentOverview = {};
+                let filteredAppointment = [];
+                data.forEach(function (appointment) {
+                    if (appointmentOverview[appointment.status]) {
+                        appointmentOverview[appointment.status] += 1
+                    } else {
+                        appointmentOverview[appointment.status] = 1;
+                    }
+                    if (prevState.todaysAppointmentFilter == 'ALL') {
+                        filteredAppointment.push(appointment)
+                    } else if (prevState.todaysAppointmentFilter == appointment.status) {
+                        filteredAppointment.push(appointment)
+                    }
+                });
                 return {
                     todaysAppointments: data,
+                    todaysAppointmentOverview: appointmentOverview,
+                    todaysFilteredAppointments: filteredAppointment
                 }
             });
         }
@@ -407,6 +427,22 @@ class App extends Component {
             }
         })
     }
+    filterTodaysAppointment = (filterType) => {
+        this.setState(function (prevState) {
+            let filteredAppointment = [];
+            prevState.todaysAppointments.forEach(function (appointment) {
+                if (filterType == 'ALL') {
+                    filteredAppointment.push(appointment)
+                } else if (filterType == appointment.status) {
+                    filteredAppointment.push(appointment)
+                }
+            });
+            return {
+                todaysFilteredAppointments: filteredAppointment,
+                todaysAppointmentFilter: filterType
+            }
+        });
+    }
 
     render() {
         let that = this;
@@ -431,7 +467,8 @@ class App extends Component {
                             <div style={{backgroundColor: '#fff', padding: '5px 10px'}}>
                                 <Row gutter={16}>
                                     <Col span={3}>
-                                        <DatePicker onChange={this.onSelectedDateChange} value={this.state.selectedDate}
+                                        <DatePicker onChange={this.onSelectedDateChange}
+                                                    value={this.state.selectedDate}
                                                     format={"DD-MM-YYYY"} style={{margin: 5}}/>
                                         <Dropdown overlay={
                                             <Menu onClick={this.setFilterType}>
@@ -539,45 +576,57 @@ class App extends Component {
                                                 Appointment</Button>
                                         </Link>
                                         <Row gutter={8}>
-                                            <Col span={6} style={{
-                                                textAlign: 'center',
-                                                border: '1px solid #ccc',
-                                                borderRadius: '3px'
-                                            }}>
-                                                <small>Scheduled</small>
-                                                <h2>0</h2>
+                                            <Col span={6}
+                                                 onClick={() => this.filterTodaysAppointment(this.state.todaysAppointmentFilter == SCHEDULE_STATUS ? 'ALL' : SCHEDULE_STATUS)}
+                                                 style={{
+                                                     textAlign: 'center',
+                                                     border: '1px solid #ccc',
+                                                     borderRadius: '3px',
+                                                     backgroundColor: (this.state.todaysAppointmentFilter == SCHEDULE_STATUS ? '#ddd' : null)
+                                                 }}>
+                                                <small>{SCHEDULE_STATUS}</small>
+                                                <h2>{this.state.todaysAppointmentOverview[SCHEDULE_STATUS] ? this.state.todaysAppointmentOverview[SCHEDULE_STATUS] : 0}</h2>
                                             </Col>
-                                            <Col span={6} style={{
-                                                textAlign: 'center',
-                                                border: '1px solid #ccc',
-                                                borderRadius: '3px'
-                                            }}>
-                                                <small>Waiting</small>
-                                                <h2>0</h2>
+                                            <Col span={6}
+                                                 onClick={() => this.filterTodaysAppointment(this.state.todaysAppointmentFilter == WAITING_STATUS ? 'ALL' : WAITING_STATUS)}
+                                                 style={{
+                                                     textAlign: 'center',
+                                                     border: '1px solid #ccc',
+                                                     borderRadius: '3px',
+                                                     backgroundColor: (this.state.todaysAppointmentFilter == WAITING_STATUS ? '#ddd' : null)
+                                                 }}>
+                                                <small>{WAITING_STATUS}</small>
+                                                <h2>{this.state.todaysAppointmentOverview[WAITING_STATUS] ? this.state.todaysAppointmentOverview[WAITING_STATUS] : 0}</h2>
                                             </Col>
-                                            <Col span={6} style={{
-                                                textAlign: 'center',
-                                                border: '1px solid #ccc',
-                                                borderRadius: '3px'
-                                            }}>
-                                                <small>Engaged</small>
-                                                <h2>0</h2>
+                                            <Col span={6}
+                                                 onClick={() => this.filterTodaysAppointment(this.state.todaysAppointmentFilter == ENGAGED_STATUS ? 'ALL' : ENGAGED_STATUS)}
+                                                 style={{
+                                                     textAlign: 'center',
+                                                     border: '1px solid #ccc',
+                                                     borderRadius: '3px',
+                                                     backgroundColor: (this.state.todaysAppointmentFilter == ENGAGED_STATUS ? '#ddd' : null)
+                                                 }}>
+                                                <small>{ENGAGED_STATUS}</small>
+                                                <h2>{this.state.todaysAppointmentOverview[ENGAGED_STATUS] ? this.state.todaysAppointmentOverview[ENGAGED_STATUS] : 0}</h2>
                                             </Col>
-                                            <Col span={6} style={{
-                                                textAlign: 'center',
-                                                border: '1px solid #ccc',
-                                                borderRadius: '3px'
-                                            }}>
-                                                <small>Checkout</small>
-                                                <h2>0</h2>
+                                            <Col span={6}
+                                                 onClick={() => this.filterTodaysAppointment(this.state.todaysAppointmentFilter == CHECKOUT_STATUS ? 'ALL' : CHECKOUT_STATUS)}
+                                                 style={{
+                                                     textAlign: 'center',
+                                                     border: '1px solid #ccc',
+                                                     borderRadius: '3px',
+                                                     backgroundColor: (this.state.todaysAppointmentFilter == CHECKOUT_STATUS ? '#ddd' : null)
+                                                 }}>
+                                                <small>{CHECKOUT_STATUS}</small>
+                                                <h2>{this.state.todaysAppointmentOverview[CHECKOUT_STATUS] ? this.state.todaysAppointmentOverview[CHECKOUT_STATUS] : 0}</h2>
                                             </Col>
                                         </Row>
-                                        <Divider>Today's Apointment ({this.state.todaysAppointments.length})
+                                        <Divider>Today's Apointment ({this.state.todaysFilteredAppointments.length})
                                         </Divider>
                                         <Spin spinning={this.state.loading}>
                                             <List
                                                 size={'small'}
-                                                dataSource={this.state.todaysAppointments}
+                                                dataSource={this.state.todaysFilteredAppointments}
                                                 renderItem={(apppointment) => <List.Item
                                                     color={'transparent'}
                                                     style={{padding: 0}}>
@@ -610,7 +659,9 @@ class App extends Component {
 export default App;
 
 
-function AppointmentCard(appointment) {
+function
+
+AppointmentCard(appointment) {
     return <div style={{width: '100%'}}>
         <p style={{marginBottom: 0}}>
         <span
@@ -622,7 +673,9 @@ function AppointmentCard(appointment) {
 }
 
 
-class MyWeek extends React.Component {
+class MyWeek
+    extends React
+        .Component {
     render() {
         let {date} = this.props
         let range = MyWeek.range(date)

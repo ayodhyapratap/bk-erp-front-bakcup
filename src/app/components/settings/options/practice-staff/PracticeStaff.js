@@ -352,25 +352,25 @@ class PracticeDetails extends React.Component {
                         <Table loading={this.state.loading} pagination={false} columns={notification_columns}
                                dataSource={this.state.practice_staff}/>
                     </TabPane>
-                    <TabPane tab={<span><Icon type="schedule"/>Doctors visit Timing</span>} key="#timing">
-                        <Table loading={this.state.loading}>
-                            <Column title="Name"
-                                    dataIndex="user.name"
-                                    key="name"
-                            />
-                            <Column title="Visit Timing"
-                                    dataIndex="loginstatus"
-                                    key="VisitTiming"
-                            />
-                            <Column title="Action"
-                                    key="action"
-                                    render={(text, record) => (
-                                        <Link to="/settings/clinics-staff/adddoctor">
-                                            <a>Edit</a>
-                                        </Link>
-                                    )}/>
-                        </Table>
-                    </TabPane>
+                    {/*<TabPane tab={<span><Icon type="schedule"/>Doctors visit Timing</span>} key="#timing">*/}
+                        {/*<Table loading={this.state.loading}>*/}
+                            {/*<Column title="Name"*/}
+                                    {/*dataIndex="user.name"*/}
+                                    {/*key="name"*/}
+                            {/*/>*/}
+                            {/*<Column title="Visit Timing"*/}
+                                    {/*dataIndex="loginstatus"*/}
+                                    {/*key="VisitTiming"*/}
+                            {/*/>*/}
+                            {/*<Column title="Action"*/}
+                                    {/*key="action"*/}
+                                    {/*render={(text, record) => (*/}
+                                        {/*<Link to="/settings/clinics-staff/adddoctor">*/}
+                                            {/*<a>Edit</a>*/}
+                                        {/*</Link>*/}
+                                    {/*)}/>*/}
+                        {/*</Table>*/}
+                    {/*</TabPane>*/}
                 </Tabs>
                 <Modal title="Edit Permissions"
                        visible={this.state.permissionEditModal}

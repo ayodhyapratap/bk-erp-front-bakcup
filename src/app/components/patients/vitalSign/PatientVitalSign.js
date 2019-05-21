@@ -5,6 +5,7 @@ import {VITAL_SIGNS_API} from "../../../constants/api";
 import {getAPI, interpolate, patchAPI, putAPI} from "../../../utils/common";
 import moment from 'moment';
 import PatientRequiredNoticeCard from "../PatientRequiredNoticeCard";
+import CustomizedTable from "../../common/CustomizedTable";
 
 const {Meta} = Card;
 const Search = Input.Search;
@@ -109,7 +110,7 @@ class PatientVitalSign extends React.Component {
             this.state.vitalsign.map((sign) => <VitalSignCard {...sign}/>) :
             <p style={{textAlign: 'center'}}>No Data Found</p>
         */}
-                <Table loading={this.state.loading} columns={columns} dataSource={this.state.vitalsign}/>
+                <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.vitalsign}/>
 
             </Card>
         }

@@ -155,3 +155,8 @@ export const DOSE_REQUIRED =[
     {label:'every day' , value:'every day'},
     {label:'every other day' , value:'every other day'},
 ];
+
+export const SCHEDULE_STATUS = 'Scheduled';
+export const WAITING_STATUS = 'Waiting';
+export const ENGAGED_STATUS = 'Engaged';
+export const CHECKOUT_STATUS = 'CheckOut';

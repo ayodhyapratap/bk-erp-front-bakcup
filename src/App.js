@@ -18,7 +18,7 @@ class App extends Component {
             user: loggedInUser(),
             redirect: false,
         };
-        momenttz.tz.setDefault('Etc/UTC');
+        // momenttz.tz.setDefault('Asia/Kolkata');
         console.log(moment().format('lll'));
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);

@@ -205,9 +205,10 @@ class PatientPrescriptions extends React.Component {
                             </h3>
                         </Card>
                         {this.state.prescription.map((presc) => <div>
-                            {presc.date ? <p>&nbsp;&nbsp;{presc.date}</p> : null}
+
                             <Card style={{margin: 10, marginBottom: 20}}
                                   bodyStyle={{padding: 0}}>
+                                <h4>{presc.date ? <p>&nbsp;&nbsp;{presc.date}</p> : null}</h4>
                                 <Table columns={columns} dataSource={presc.drugs} pagination={false}
                                        header={() => prescriptionHeader(presc)}
                                     // size={'small'}
