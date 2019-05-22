@@ -1,6 +1,6 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm} from "antd";
+import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm, Tag} from "antd";
 import {
     SUCCESS_MSG_TYPE,
     CHECKBOX_FIELD,
@@ -13,6 +13,7 @@ import {APPOINTMENT_CATEGORIES} from "../../../../constants/api"
 import {Link} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
 import CustomizedTable from "../../../common/CustomizedTable";
+import {hashCode, intToRGB} from "../../../../utils/clinicUtils";
 
 class AppointmentCategories extends React.Component {
     constructor(props) {
@@ -21,7 +22,7 @@ class AppointmentCategories extends React.Component {
             redirect: false,
             visible: false,
             appointmentCategories: null,
-            loading:true
+            loading: true
         };
         this.loadAppointmentCategories = this.loadAppointmentCategories.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -35,12 +36,15 @@ class AppointmentCategories extends React.Component {
     loadAppointmentCategories() {
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                appointmentCategories: data,
-                loading:false
-
+            that.setState(function (prevState) {
+                data.forEach(function (obj) {
+                    obj.color = intToRGB(hashCode(obj.name))
+                });
+                return {
+                    appointmentCategories: data,
+                    loading: false
+                }
             })
-
         }
         let errorFn = function () {
 
@@ -60,7 +64,7 @@ class AppointmentCategories extends React.Component {
             editingId: value.id,
             editingName: value.name,
             visible: true,
-            loading:false
+            loading: false
         })
     }
 
@@ -84,6 +88,11 @@ class AppointmentCategories extends React.Component {
     render() {
         let that = this;
         const columns = [{
+            // title: 'Name',
+            dataIndex: 'color',
+            key: 'color',
+            render: (color) => <Tag color={'#' + color}>#</Tag>
+        }, {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
@@ -134,13 +143,14 @@ class AppointmentCategories extends React.Component {
         return <div>
             <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields} {...this.props}/>
             <Divider/>
-            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.appointmentCategories}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}
+                             dataSource={this.state.appointmentCategories}/>
             <Modal
                 title="ADD Appointment Category"
                 visible={this.state.visible}
                 footer={null}
             >
-                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields} />
+                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields}/>
                 <Button key="back" onClick={this.handleCancel}>Return</Button>,
 
             </Modal>

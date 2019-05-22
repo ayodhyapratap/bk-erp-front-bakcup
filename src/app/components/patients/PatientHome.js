@@ -134,7 +134,7 @@ class PatientHome extends React.Component {
                                                                key={this.state.currentPatient}
                                                                setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
                                 <Route exact path='/patients/profile/add'
-                                       render={() => <EditPatientDetails key={this.state.currentPatient}/>}/>
+                                       render={() => <EditPatientDetails key={this.state.currentPatient} {...this.props}/>}/>
                                 <Route exact path='/patient/:id/profile'
                                        render={() => <PatientProfile {...this.state}
                                                                      key={this.state.currentPatient}

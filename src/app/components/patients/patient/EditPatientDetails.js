@@ -10,9 +10,9 @@ import {
     SUCCESS_MSG_TYPE,
     INPUT_FIELD,
     RADIO_FIELD,
-    SELECT_FIELD, EMAIL_FIELD
+    SELECT_FIELD, EMAIL_FIELD, MULTI_SELECT_FIELD
 } from "../../../constants/dataKeys";
-import {PATIENTS_LIST, PATIENT_PROFILE} from "../../../constants/api";
+import {PATIENTS_LIST, PATIENT_PROFILE, MEDICAL_HISTORY} from "../../../constants/api";
 import {getAPI, interpolate, displayMessage} from "../../../utils/common";
 import {Link, Redirect} from 'react-router-dom'
 import moment from 'moment';
@@ -24,6 +24,7 @@ class EditPatientDetails extends React.Component {
 
         this.state = {
             redirect: false,
+            history: []
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -32,8 +33,24 @@ class EditPatientDetails extends React.Component {
     }
 
     componentDidMount() {
+        this.loadMedicalHistory();
     }
 
+    loadMedicalHistory = () => {
+        var that = this;
+        let successFn = function (data) {
+            console.log("get table");
+            that.setState({
+                history: data,
+            })
+        };
+        let errorFn = function () {
+
+        };
+
+        getAPI(interpolate(MEDICAL_HISTORY, [this.props.active_practiceId]), successFn, errorFn);
+
+    }
 
     changeRedirect() {
         var redirectVar = this.state.redirect;
@@ -56,15 +73,9 @@ class EditPatientDetails extends React.Component {
             initialValue: this.props.currentPatient ? this.props.currentPatient.user.referer_code : null,
             type: INPUT_FIELD
         }, {
-            //     label: "Patient ID",
-            //     key: "patient_id",
-            //     required: true,
-            //     initialValue:this.props.currentPatient?this.props.currentPatient.patient_id:null,
-            //     type: INPUT_FIELD
-            // }, {
             label: "Aadhar ID",
             key: "aadhar_id",
-            required: true,
+            // required: true,
             initialValue: this.props.currentPatient ? this.props.currentPatient.aadhar_id : null,
             type: INPUT_FIELD
         }, {
@@ -141,7 +152,16 @@ class EditPatientDetails extends React.Component {
             key: "user.email",
             initialValue: this.props.currentPatient ? this.props.currentPatient.user.email : null,
             type: EMAIL_FIELD
-        },];
+        }, {
+            label: "Medical History",
+            key: "medical_history",
+            options: this.state.history.map(item => Object.create({
+                label: item.name,
+                value: item.id
+            })),
+            initialValue: this.props.currentPatient ? this.props.currentPatient.user.medical_history : null,
+            type: MULTI_SELECT_FIELD
+        }];
 
 
         let editformProp;
@@ -184,9 +204,12 @@ class EditPatientDetails extends React.Component {
                                            formProp={editformProp} fields={fields} {...route}/> :
                            <Redirect to='/patients/profile'/>)}/>
                 <Route exact path='/patients/profile/add'
-                       render={(route) => <TestFormLayout title={<div>Add Patient <Link to={"/patients/patientprintform"}>print registration form</Link></div>} changeRedirect={this.changeRedirect}
-                                                     defaultValues={defaultValues}
-                                                     formProp={newformProp} fields={fields} {...route}/>}/>
+                       render={(route) => <TestFormLayout
+                           title={<div>Add Patient <Link style={{float: 'right'}} to={"/patients/patientprintform"}>
+                               <small>Print Patient Registration Form</small>
+                           </Link></div>} changeRedirect={this.changeRedirect}
+                           defaultValues={defaultValues}
+                           formProp={newformProp} fields={fields} {...route}/>}/>
 
 
             </Card>

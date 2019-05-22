@@ -123,7 +123,7 @@ class PatientSelection extends React.Component {
                     </Radio.Button>
                     <p><br/></p>
                     <h2>Groups</h2>
-                    <p><b>My Groups</b></p>
+                    <p><b>My Groups</b> <a style={{float:'right'}}>Manage</a></p>
                     {this.state.patientGroup.map((group) => <Radio.Button
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={group.id}>
                         {group.name}
