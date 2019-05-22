@@ -21,7 +21,10 @@ class MedicalHistory extends React.Component {
             redirect: false,
             visible: false,
             history: null,
-            loading: true
+            loading: true,
+            deletedHistory: [],
+            showDeleted: false,
+            deletedLoading: false
         };
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -32,21 +35,32 @@ class MedicalHistory extends React.Component {
         this.loadData();
     }
 
-    loadData() {
+    loadData(deleted = false) {
         var that = this;
         let successFn = function (data) {
             console.log("get table");
-            that.setState({
-                history: data,
-                loading: false
-            })
+            if (deleted) {
+                that.setState({
+                    deletedHistory: data,
+                    deletedLoading: false
+                })
+            } else {
+                that.setState({
+                    history: data,
+                    loading: false
+                })
+            }
         };
         let errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        getAPI(interpolate(MEDICAL_HISTORY, [this.props.active_practiceId]), successFn, errorFn);
+        if (deleted) {
+            getAPI(interpolate(MEDICAL_HISTORY, [this.props.active_practiceId]), successFn, errorFn, {deleted: true});
+        } else {
+            getAPI(interpolate(MEDICAL_HISTORY, [this.props.active_practiceId]), successFn, errorFn);
+        }
     }
 
     changeRedirect() {
@@ -69,37 +83,53 @@ class MedicalHistory extends React.Component {
         this.setState({visible: false});
     }
 
-    deleteObject(record) {
+    deleteObject(record,type) {
         let that = this;
         let reqData = record;
-        reqData.is_active = false;
+        reqData.is_active = type;
         let successFn = function (data) {
             that.loadData();
+            if (that.state.showDeleted) {
+                that.loadData(true);
+            }
         }
         let errorFn = function () {
         };
         postAPI(interpolate(MEDICAL_HISTORY, [this.props.active_practiceId]), reqData, successFn, errorFn)
     }
 
+    showDeletedMedicalHistory = () => {
+        this.setState({
+            showDeleted: true,
+            deletedLoading: true
+        });
+        this.loadData(true)
+    }
 
     render() {
         let that = this;
         const columns = [{
-            title: 'Expance Name',
+            title: 'Medical History',
             dataIndex: 'name',
             key: 'name',
         }, {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-                <span>
+                record.is_active?<span>
+
               <a onClick={() => this.editTax(record)}>  Edit</a>
                 <Divider type="vertical"/>
-                <Popconfirm title="Are you sure delete this?"
-                            onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
+                <Popconfirm title="Are you sure to delete this?"
+                            onConfirm={() => that.deleteObject(record,false)} okText="Yes" cancelText="No">
                   <a>Delete</a>
               </Popconfirm>
-              </span>
+              </span> : <span>
+                    <Popconfirm title="Are you sure show this?"
+                                onConfirm={() => that.deleteObject(record,true)} okText="Yes" cancelText="No">
+                  <a>Show</a>
+              </Popconfirm>
+                </span>
             ),
         }];
         const fields = [{
@@ -138,6 +168,12 @@ class MedicalHistory extends React.Component {
                 <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
                 <Divider/>
                 <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.history}/>
+                {this.state.showDeleted ?
+                    <div>
+                        <CustomizedTable loading={this.state.deletedLoading} columns={columns}
+                                         dataSource={this.state.deletedHistory}/>
+                    </div> :
+                    <h4><a onClick={() => this.showDeletedMedicalHistory()}>Show Deleted Medical History</a></h4>}
             </Card>
             <Modal
                 title="Basic Modal"

@@ -81,14 +81,8 @@ class AppBase extends React.Component {
     switchPractice(practiceId) {
         let that = this;
         that.setState(function (prevState) {
-            // let activePracticeObj = null;
-            // prevState.practiceList.forEach(function (practiceObj) {
-            //     if (practiceObj.id == practiceId)
-            //         activePracticeObj = practiceObj;
-            // });
             return {
                 active_practiceId: practiceId,
-                // activePracticeData: activePracticeObj,
             }
         }, function () {
             setCurrentPractice(practiceId);
@@ -193,7 +187,7 @@ class AppBase extends React.Component {
                                 <Route component={Error404}/>
 
                             </Switch>
-                            <AppFooter/>
+                            {/*<AppFooter/>*/}
                         </Layout>
                     </Layout>
                 </Route>

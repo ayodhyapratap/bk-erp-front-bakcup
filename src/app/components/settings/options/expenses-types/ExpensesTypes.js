@@ -1,7 +1,14 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm} from "antd";
-import {SUCCESS_MSG_TYPE, CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, NUMBER_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {
+    SUCCESS_MSG_TYPE,
+    CHECKBOX_FIELD,
+    INPUT_FIELD,
+    RADIO_FIELD,
+    NUMBER_FIELD,
+    SELECT_FIELD
+} from "../../../../constants/dataKeys";
 import {EXPENSE_TYPE} from "../../../../constants/api"
 import {Link} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
@@ -11,130 +18,175 @@ class ExpensesTypes extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          redirect: false,
-          visible: false,
-          expenses:null,
-          loading:true
+            redirect: false,
+            visible: false,
+            expenses: null,
+            loading: true,
+            showDeleted: false,
+            deletedLoading: false,
+            deletedExpenses: []
         };
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
 
     }
-    componentDidMount(){
-      this.loadData();
+
+    componentDidMount() {
+        this.loadData();
     }
-    loadData(){
-      var that = this;
+
+    loadData(deleted = false) {
+        var that = this;
         let successFn = function (data) {
-          console.log("get table");
-          that.setState({
-            expenses:data,
-            loading:false
-          })
+            console.log("get table");
+            if (deleted) {
+                that.setState({
+                    deletedExpenses: data,
+                    deletedLoading: false
+                })
+            } else {
+                that.setState({
+                    expenses: data,
+                    loading: false
+                })
+            }
         };
         let errorFn = function () {
         };
-       getAPI(interpolate( EXPENSE_TYPE, [this.props.active_practiceId]), successFn, errorFn);
+        if (deleted) {
+            getAPI(interpolate(EXPENSE_TYPE, [this.props.active_practiceId]), successFn, errorFn, {deleted: true});
+        } else {
+            getAPI(interpolate(EXPENSE_TYPE, [this.props.active_practiceId]), successFn, errorFn);
+        }
     }
-    changeRedirect(){
-      var redirectVar=this.state.redirect;
-    this.setState({
-      redirect:  !redirectVar,
-    })  ;
+
+    changeRedirect() {
+        var redirectVar = this.state.redirect;
+        this.setState({
+            redirect: !redirectVar,
+        });
     }
-    editTax(value){
-      this.setState({
-        editingId:value.id,
-        editingName: value.name,
-        editingValue:value.tax_value,
-        loading:false,
-        visible: true,
-      })
+
+    editTax(value) {
+        this.setState({
+            editingId: value.id,
+            editingName: value.name,
+            editingValue: value.tax_value,
+            loading: false,
+            visible: true,
+        })
     }
+
     handleCancel = () => {
-        this.setState({ visible: false });
+        this.setState({visible: false});
     }
-    deleteObject(record) {
+
+    deleteObject(record,type) {
         let that = this;
         let reqData = record;
-        reqData.is_active = false;
+        reqData.is_active = type;
         let successFn = function (data) {
             that.loadData();
+            if (that.state.showDeleted) {
+                that.loadData(true);
+            }
         }
         let errorFn = function () {
         };
         postAPI(interpolate(EXPENSE_TYPE, [this.props.active_practiceId]), reqData, successFn, errorFn)
     }
 
-
+    showDeletedExpenses = () => {
+        this.setState({
+            showDeleted: true,
+            deletedLoading: true
+        });
+        this.loadData(true)
+    }
 
     render() {
-      let that =this;
-      const columns = [{
+        let that = this;
+        const columns = [{
             title: 'Expense Name',
             dataIndex: 'name',
             key: 'name',
-          },{
+        }, {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-              <span>
-              <a onClick={()=>this.editTax(record)}>  Edit</a>
-                <Divider type="vertical" />
-                <Popconfirm title="Are you sure delete this?"
-                            onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
+                record.is_active?<span>
+
+              <a onClick={() => this.editTax(record)}>  Edit</a>
+                <Divider type="vertical"/>
+                <Popconfirm title="Are you sure to delete this?"
+                            onConfirm={() => that.deleteObject(record,false)} okText="Yes" cancelText="No">
                   <a>Delete</a>
               </Popconfirm>
-              </span>
+              </span> : <span>
+                    <Popconfirm title="Are you sure show this?"
+                                onConfirm={() => that.deleteObject(record,true)} okText="Yes" cancelText="No">
+                  <a>Show</a>
+              </Popconfirm>
+                </span>
             ),
-          }];
-      const   fields= [{
+        }];
+        const fields = [{
             label: "Expense name",
             key: "name",
             required: true,
             type: INPUT_FIELD
         },];
-      const   editfields= [{
-              label: "Expense name",
-              key: "name",
-              required: true,
-              initialValue:this.state.editingName,
-              type: INPUT_FIELD
-          },];
-      const formProp={
-        successFn:function(data){
-          that.handleCancel();
-          that.loadData();
-          console.log(data);
-          console.log("sucess");
-          displayMessage(SUCCESS_MSG_TYPE, "success")
-        },
-        errorFn:function(){
+        const editfields = [{
+            label: "Expense name",
+            key: "name",
+            required: true,
+            initialValue: this.state.editingName,
+            type: INPUT_FIELD
+        },];
+        const formProp = {
+            successFn: function (data) {
+                that.handleCancel();
+                that.loadData();
+                console.log(data);
+                console.log("sucess");
+                displayMessage(SUCCESS_MSG_TYPE, "success")
+            },
+            errorFn: function () {
 
-        },
-        action: interpolate(EXPENSE_TYPE,[this.props.active_practiceId]),
-        method: "post",
-      }
-      const defaultValues = [{"key":"practice", "value":this.props.active_practiceId}];
-      const editFormDefaultValues = [{"key":"practice", "value":this.props.active_practiceId}, {"key":"id", "value":this.state.editingId}];
+            },
+            action: interpolate(EXPENSE_TYPE, [this.props.active_practiceId]),
+            method: "post",
+        }
+        const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
+        const editFormDefaultValues = [{"key": "practice", "value": this.props.active_practiceId}, {
+            "key": "id",
+            "value": this.state.editingId
+        }];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
             <h2>Expenses Types</h2>
             <Card>
-            <TestFormLayout defaultValues={defaultValues} formProp={formProp}  fields={fields}/>
-            <Divider/>
-            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.expenses}/>
+                <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
+                <Divider/>
+                <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.expenses}/>
+                {this.state.showDeleted ?
+                    <div>
+                        <CustomizedTable loading={this.state.deletedLoading} columns={columns}
+                                         dataSource={this.state.deletedExpenses}/>
+                    </div> :
+                    <h4><a onClick={() => this.showDeletedExpenses()}>Show Deleted Expenses</a></h4>}
             </Card>
             <Modal
-             title="Basic Modal"
-             visible={this.state.visible}
-             footer={null}
-             >
+                title="Basic Modal"
+                visible={this.state.visible}
+                footer={null}
+            >
 
-              <TestFormLayout title="edit Expence" defaultValues={editFormDefaultValues} formProp={formProp}  fields={editfields}/>
-              <Button key="back" onClick={this.handleCancel}>Return</Button>,
+                <TestFormLayout title="edit Expence" defaultValues={editFormDefaultValues} formProp={formProp}
+                                fields={editfields}/>
+                <Button key="back" onClick={this.handleCancel}>Return</Button>,
 
-           </Modal>
+            </Modal>
         </div>
     }
 }
