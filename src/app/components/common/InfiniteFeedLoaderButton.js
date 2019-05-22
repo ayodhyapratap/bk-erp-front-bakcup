@@ -1,4 +1,4 @@
-import {Button} from "antd";
+import {Button, Row} from "antd";
 import React from "react";
 
 export default class InfiniteFeedLoaderButton extends React.Component {
@@ -32,15 +32,19 @@ export default class InfiniteFeedLoaderButton extends React.Component {
     }
 
     render() {
-        if(this.props.hidden){
-            return <div style={{textAlign: 'center', margin: '15px 0px'}}>
-                <small>No More Data Found</small>
-            </div>
+        if (this.props.hidden) {
+            return <Row>
+                <div style={{textAlign: 'center', margin: '15px 0px'}}>
+                    <small>No More Data Found</small>
+                </div>
+            </Row>
         }
-        return <div style={{textAlign: 'center', margin: '15px 0px'}}>
-            <Button type={'primary'} onClick={this.startLoading} loading={this.props.loading} >
-                {this.props.loading ? 'Loading'+this.state.extraLoadingLabel : 'Load More'}
-            </Button>
-        </div>
+        return <Row>
+            <div style={{textAlign: 'center', margin: '15px 0px'}}>
+                <Button type={'primary'} onClick={this.startLoading} loading={this.props.loading}>
+                    {this.props.loading ? 'Loading' + this.state.extraLoadingLabel : 'Load More'}
+                </Button>
+            </div>
+        </Row>
     }
 }

@@ -2,6 +2,7 @@ import React from "react";
 import {Avatar, Input, Card, Col, Icon, Radio, Row, Button, Spin} from "antd";
 import {getAPI, interpolate, postAPI} from "../../utils/common";
 import {PATIENT_GROUPS, SEARCH_PATIENT, PATIENTS_LIST} from "../../constants/api";
+import InfiniteFeedLoaderButton from "../common/InfiniteFeedLoaderButton";
 
 const {Meta} = Card;
 const Search = Input.Search;
@@ -62,7 +63,7 @@ class PatientSelection extends React.Component {
     }
 
     searchPatient(e) {
-        if(e.target.value) {
+        if (e.target.value) {
             let that = this;
             let successFn = function (data) {
                 if (data) {
@@ -75,7 +76,7 @@ class PatientSelection extends React.Component {
 
             };
             getAPI(interpolate(SEARCH_PATIENT, [e.target.value]), successFn, errorFn);
-        }else{
+        } else {
             this.getPatientListData();
         }
     }
@@ -123,7 +124,7 @@ class PatientSelection extends React.Component {
                     </Radio.Button>
                     <p><br/></p>
                     <h2>Groups</h2>
-                    <p><b>My Groups</b> <a style={{float:'right'}}>Manage</a></p>
+                    <p><b>My Groups</b> <a style={{float: 'right'}}>Manage</a></p>
                     {this.state.patientGroup.map((group) => <Radio.Button
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={group.id}>
                         {group.name}
@@ -138,16 +139,19 @@ class PatientSelection extends React.Component {
                         onChange={value => this.searchPatient(value)}
                         enterButton/>
                 <Spin spinning={this.state.loading}>
-                    {this.state.patientListData.length ?
-                        this.state.patientListData.map((patient) => <PatientCard {...patient}
-                                                                                 setCurrentPatient={that.props.setCurrentPatient}/>) :
-                        <p style={{textAlign: 'center'}}>No Data Found</p>
-                    }
+                    <Row>
+
+
+                        {this.state.patientListData.length ?
+                            this.state.patientListData.map((patient) => <PatientCard {...patient}
+                                                                                     setCurrentPatient={that.props.setCurrentPatient}/>) :
+                            <p style={{textAlign: 'center'}}>No Data Found</p>
+                        }
+                    </Row>
                 </Spin>
-                {this.state.morePatients ?
-                    <div style={{textAlign: 'center'}}><Button type="primary" disabled={this.state.loading}
-                                                               onClick={this.getMorePatient}>Load
-                        More...</Button></div> : null}
+                <InfiniteFeedLoaderButton loaderFunction={this.getMorePatient}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.morePatients}/>
 
             </Col>
         </Row>

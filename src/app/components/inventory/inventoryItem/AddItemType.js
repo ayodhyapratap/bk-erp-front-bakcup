@@ -208,6 +208,7 @@ export default class AddItemType extends React.Component {
             return <Row>
                 <Card>
                     <AddInventoryFormLayout defaultValues={defaultValues} title="Edit Inventory Item type"
+                                            {...this.props}
                                             changeRedirect={this.changeRedirect} formProp={editformProp}
                                             fields={fields}/>
                 </Card>
@@ -217,6 +218,7 @@ export default class AddItemType extends React.Component {
             return <Row>
                 <Card>
                     <AddInventoryFormLayout title="Add Inventory Item type" defaultValues={defaultValues}
+                                            {...this.props}
                                             changeRedirect={this.changeRedirect} formProp={formProp} fields={fields}/>
                 </Card>
                 {this.state.redirect && <Redirect to={'/inventory'}/>}

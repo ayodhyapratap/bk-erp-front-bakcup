@@ -164,17 +164,18 @@ export default class InventoryItemList extends React.Component {
                         if (prevState.itemTypeFilter == "ALL" || prevState.itemTypeFilter == item.item_type) {
                             approved += 1
                         }
-                        if (prevState.itemStockFilter == 'All') {
+                        if (prevState.itemStockFilter == 'ALL') {
                             approved += 1
-                        } else if (prevState.itemStockFilter == 'LOW' && item.item_stock_type.item_stock) {
-                            let sum = item.item_stock_type.item_stock.reduce(function (a, b) {
-                                return a.quantity + b.quantity;
+                        } else if (prevState.itemStockFilter == 'LOW' && item.re_order_level && item.item_type_stock.item_stock) {
+                            let sum = item.item_type_stock.item_stock.reduce(function (total, itemObj) {
+                                return total + itemObj.quantity;
                             }, 0);
-                            if (sum < item.re_order_level) {
+                            console.log(sum, item.re_order_level);
+                            if (sum <= parseInt(item.re_order_level)) {
                                 approved += 1
                             }
                         }
-                        if (approved >= 1) {
+                        if (approved > 1) {
                             filteredList.push(item)
                         }
                     });
@@ -324,7 +325,7 @@ export default class InventoryItemList extends React.Component {
                                     </Radio.Button>)}
                             </Radio.Group>
                             <Radio.Group name="itemStockFilter" size="small" defaultValue={"ALL"} buttonStyle="solid"
-                                         style={{margin: '10px', float: 'right'}}>
+                                         style={{margin: '10px', float: 'right'}} onChange={this.changeFilter}>
                                 <Radio.Button value={"ALL"}>ALL</Radio.Button>
                                 <Radio.Button value={"LOW"}>Low</Radio.Button>
                                 <Radio.Button value={"EXPIRED"}>Expired</Radio.Button>

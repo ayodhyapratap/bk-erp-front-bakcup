@@ -176,12 +176,10 @@ class PatientHome extends React.Component {
                                                to={"/patient/" + this.state.currentPatient.id + "/emr/vitalsigns"}/> :
                                            <PatientRequiredNoticeCard
                                                togglePatientListModal={this.togglePatientListModal}/>)}/>
-                                <Route exact path='/patient/:id/emr/vitalsigns'
+                                <Route  path='/patient/:id/emr/vitalsigns'
                                        render={(route) => <PatientVitalSign
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />}/>
-                                <Route exact path='/patient/:id/emr/vitalsigns/add'
-                                       render={(route) => <AddorEditPatientVitalSigns
-                                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+
                                 <Route exact path='/patient/:id/emr/vitalsigns/edit'
                                        render={(route) => <AddorEditPatientVitalSigns
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>

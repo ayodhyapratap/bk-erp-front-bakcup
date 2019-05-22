@@ -219,14 +219,17 @@ export default class AddorEditInventoryItem extends React.Component {
         return <Row>
             <Card>
                 <Route exact path='/inventory/edit/:id'
-                       render={() => (this.props.match.params.id ?
+                       render={(route) => (this.props.match.params.id ?
                            <AddInventoryFormLayout defaultValues={defaultValues} title="Edit Post"
+                                                   {...route}
                                                    changeRedirect={this.changeRedirect} formProp={editformProp}
                                                    fields={fields}/> : <Redirect to={'/web/blog'}/>)}/>
                 <Route exact path='/inventory/add'
-                       render={() => <AddInventoryFormLayout title="Add Inventory Item"
-                                                             changeRedirect={this.changeRedirect} formProp={formProp}
-                                                             fields={fields}/>}/>
+                       render={(route) => <AddInventoryFormLayout title="Add Inventory Item"
+                                                                  {...route}
+                                                                  changeRedirect={this.changeRedirect}
+                                                                  formProp={formProp}
+                                                                  fields={fields}/>}/>
 
 
             </Card>

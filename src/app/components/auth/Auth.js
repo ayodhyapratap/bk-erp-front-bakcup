@@ -57,7 +57,7 @@ class Auth extends React.Component {
                         <Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}
                              lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}}>
                             <div className="loginFormWrapper" style={{textAlign: 'center'}}>
-                                <img src={AppLogo} alt="" style={{maxWidth: '100%', minWidth: '50%', margin: '20px'}}/>
+                                <img src={AppLogo} alt="" style={{maxWidth: '70%', minWidth: '50%', padding: '20px'}}/>
                                 <Card>
                                     <PasswordResetForm {...this.props}
                                                        formProp={formProp}
@@ -83,27 +83,27 @@ class Auth extends React.Component {
                         <Col xs={{span: 20, offset: 2}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}}
                              lg={{span: 8, offset: 8}} xl={{span: 8, offset: 8}} style={{padding: '35px'}}>
                             <div className="loginFormWrapper" style={{textAlign: 'center'}}>
-                                <img src={AppLogo} alt="" style={{maxWidth: '100%', minWidth: '50%', margin: '20px'}}/>
-                                <Switch>    
-                              
+                                <img src={AppLogo} alt="" style={{maxWidth: '70%', minWidth: '50%', padding: '20px'}}/>
+                                <Switch>
+
                                 {/*<Divider/>*/}
-                                
+
                                     <Route path="/loginwithphone">
                                           <LoginWithPhoneLayout {...this.props}/>
                                     </Route>
 
-                                
+
                                  <Route >
                                        <LoginFormLayout {...this.props} login={this.props.login}/>
                                  </Route>
 
                                 <Route>
-                                  
+
                                 </Route>
 
                                 </Switch>
 
-                               
+
                                 <h4 style={{textAlign: 'center'}}>
                                     Powered By: <a href="https://plutonic.co.in/" target="_blank">Plutonic Services</a>
                                 </h4>

@@ -33,8 +33,8 @@ class AddOrConsumeStock extends React.Component {
             classType: props.type,
             tableFormValues: [],
             maxQuantityforConsume: {},
+            searchStrings: {}
         }
-
     }
 
     componentDidMount() {
@@ -64,12 +64,17 @@ class AddOrConsumeStock extends React.Component {
                     [DRUG]: drugItems,
                     [EQUIPMENT]: equipmentItems,
                     [SUPPLIES]: supplesItems,
+                },
+                filteredItems: {
+                    [DRUG]: drugItems,
+                    [EQUIPMENT]: equipmentItems,
+                    [SUPPLIES]: supplesItems,
                 }
             })
         }
         let errorFn = function () {
         }
-        getAPI(INVENTORY_ITEM_API, successFn, errorFn,{maintain_inventory:true});
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn, {maintain_inventory: true});
     }
 
     remove = (k) => {
@@ -148,6 +153,39 @@ class AddOrConsumeStock extends React.Component {
             });
             return {
                 maxQuantityforConsume: newMaxQuantityforConsume
+            }
+        });
+    }
+
+    searchValues = (type, value) => {
+        let that = this;
+        this.setState(function (prevState) {
+            let searchValues = {...prevState.searchStrings};
+            searchValues[type] = value;
+            return {searchStrings: searchValues}
+        }, function () {
+            that.filterValues(type);
+        });
+    }
+    filterValues = (type) => {
+        this.setState(function (prevState) {
+            let filteredItemOfGivenType = [];
+            if (prevState.items[type]) {
+                if (prevState.searchStrings[type]) {
+                    prevState.items[type].forEach(function (item) {
+                        if (item.name
+                            .toString()
+                            .toLowerCase()
+                            .includes(prevState.searchStrings[type].toLowerCase())) {
+                            filteredItemOfGivenType.push(item);
+                        }
+                    });
+                } else {
+                    filteredItemOfGivenType = prevState.items[type];
+                }
+            }
+            return {
+                filteredItems: {...prevState.filteredItems, [type]: filteredItemOfGivenType}
             }
         });
     }
@@ -311,9 +349,16 @@ class AddOrConsumeStock extends React.Component {
                     <Col span={7}>
                         <Tabs size="small" type="card">
                             {INVENTORY_ITEM_TYPE.map(itemType => <TabPane tab={itemType.label} key={itemType.value}>
+                                <div style={{backgroundColor: '#ddd', padding: 8}}>
+
+
+                                    <Input.Search key={itemType.label}
+                                                  placeholder={"Search in " + itemType.label + "..."}
+                                                  onSearch={value => this.searchValues(itemType.label, value)}/>
+                                </div>
                                 <List size={"small"}
                                       itemLayout="horizontal"
-                                      dataSource={this.state.items ? this.state.items[itemType.value] : []}
+                                      dataSource={this.state.filteredItems ? this.state.filteredItems[itemType.value] : []}
                                       renderItem={item => (
                                           <List.Item>
                                               <List.Item.Meta

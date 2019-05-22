@@ -123,7 +123,7 @@ export default class CustomizedTable extends React.Component {
             }
         )
         return <div>
-            <Row style={{marginBottom: '5px'}}>
+            <Row >
                 <Col>
                     <Button.Group size="small">
                         <Button disabled={this.state.loading} type="primary" onClick={this.excelExport}><Icon

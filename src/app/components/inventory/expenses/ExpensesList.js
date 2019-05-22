@@ -1,7 +1,7 @@
-import {Button, Card, Icon} from "antd";
+import {Button, Card, Divider, Icon, Popconfirm} from "antd";
 import React from "react";
-import {getAPI} from "../../../utils/common";
-import {EXPENSES_API} from "../../../constants/api";
+import {getAPI, interpolate, postAPI} from "../../../utils/common";
+import {EXPENSE_TYPE, EXPENSES_API, SINGLE_EXPENSES_API} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddExpenses from "./AddExpenses";
 import {Link} from "react-router-dom";
@@ -40,8 +40,22 @@ export default class ExpensesList extends React.Component {
         }
         getAPI(EXPENSES_API, successFn, errorFn);
     }
-
+    deleteObject(record,type) {
+        let that = this;
+        let reqData = record;
+        reqData.is_active = type;
+        let successFn = function (data) {
+            that.loadData();
+            if (that.state.showDeleted) {
+                that.loadData(true);
+            }
+        }
+        let errorFn = function () {
+        };
+        postAPI(interpolate(SINGLE_EXPENSES_API, [record.id]), reqData, successFn, errorFn)
+    }
     render() {
+        let that = this;
         const expenseColoumns = [{
             title: 'Expense Date',
             key: 'expense_date',
@@ -74,6 +88,11 @@ export default class ExpensesList extends React.Component {
             render: function (record) {
                 return <div>
                     <Link to={'/inventory/expenses/edit/' + record.id}>Edit</Link>
+                    <Divider type={"vertical"}/>
+                    <Popconfirm title="Are you sure to delete this?"
+                                onConfirm={() => that.deleteObject(record,false)} okText="Yes" cancelText="No">
+                        <a>Delete</a>
+                    </Popconfirm>
                 </div>
             }
         }]

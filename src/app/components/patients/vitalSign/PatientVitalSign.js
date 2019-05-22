@@ -1,11 +1,12 @@
 import React from "react";
-import {Avatar, Input, Table, Col, Button, Card, Icon} from "antd";
-import {Link} from "react-router-dom";
+import {Avatar, Input, Table, Col, Button, Card, Icon, Divider} from "antd";
+import {Link, Route, Switch} from "react-router-dom";
 import {VITAL_SIGNS_API} from "../../../constants/api";
 import {getAPI, interpolate, patchAPI, putAPI} from "../../../utils/common";
 import moment from 'moment';
 import PatientRequiredNoticeCard from "../PatientRequiredNoticeCard";
 import CustomizedTable from "../../common/CustomizedTable";
+import AddorEditPatientVitalSigns from "./AddorEditPatientVitalSigns";
 
 const {Meta} = Card;
 const Search = Input.Search;
@@ -55,7 +56,15 @@ class PatientVitalSign extends React.Component {
         }
         patchAPI(interpolate(VITAL_SIGNS_API, [record.id]), reqData, successFn, errorFn)
     }
+    editClinicNotesData(record) {
+        this.setState({
+            editVitalsign: record,
+            loading: false
+        });
+        let id = this.props.match.params.id
+        this.props.history.push("/patient/" + id + "/emr/vitalsigns/edit")
 
+    }
     render() {
         let that = this;
         const columns = [{
@@ -92,27 +101,38 @@ class PatientVitalSign extends React.Component {
             key: 'action',
             render: (text, record) => (
                 <span>
-                  {/*<a href="javascript:;">Invite {record.name}</a>*/}
-                    {/*<Divider type="vertical" />*/}
+                  <a onClick={() => this.editObject(record)}>Edit</a>
+                    <Divider type="vertical" />
                     <a onClick={() => that.deleteVitalSign(record)}>Delete</a>
                 </span>
             ),
         }];
 
         if (this.props.match.params.id) {
-            return <Card
-                title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Vital Sign" : "PatientVitalSign"}
-                extra={<Button.Group>
-                    <Link to={"/patient/" + this.props.match.params.id + "/emr/vitalsigns/add"}><Button><Icon
-                        type="plus"/>Add</Button></Link>
-                </Button.Group>}>
-                {/*this.state.vitalsign.length ?
+            return <Switch>
+                <Route path='/patient/:id/emr/vitalsigns/add'
+                       render={(route) => <AddorEditPatientVitalSigns
+                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                <Route path='/patient/:id/emr/vitalsigns/edit'
+                       render={(route) => <AddorEditPatientVitalSigns
+                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                <Route>
+                    <Card
+                        title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Vital Sign" : "PatientVitalSign"}
+                        extra={<Button.Group>
+                            <Link to={"/patient/" + this.props.match.params.id + "/emr/vitalsigns/add"}><Button><Icon
+                                type="plus"/>Add</Button></Link>
+                        </Button.Group>}>
+                        {/*this.state.vitalsign.length ?
             this.state.vitalsign.map((sign) => <VitalSignCard {...sign}/>) :
             <p style={{textAlign: 'center'}}>No Data Found</p>
         */}
-                <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.vitalsign}/>
+                        <CustomizedTable loading={this.state.loading} columns={columns}
+                                         dataSource={this.state.vitalsign}/>
 
-            </Card>
+                    </Card>
+                </Route>
+            </Switch>
         }
         else {
             return <PatientRequiredNoticeCard/>
