@@ -1,7 +1,15 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon, Row} from "antd";
-import {CHECKBOX_FIELD,EMAIL_FIELD, SUCCESS_MSG_TYPE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {
+    CHECKBOX_FIELD,
+    EMAIL_FIELD,
+    SUCCESS_MSG_TYPE,
+    INPUT_FIELD,
+    RADIO_FIELD,
+    SELECT_FIELD,
+    SINGLE_IMAGE_UPLOAD_FIELD
+} from "../../../../constants/dataKeys";
 import {PRACTICE} from "../../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
 import {Redirect} from 'react-router-dom'
@@ -52,6 +60,11 @@ class EditPracticeDetail extends React.Component {
 
         if (this.state.practiceDetail) {
             const fields = [{
+                label: "Practice Logo",
+                key: "logo",
+                type: SINGLE_IMAGE_UPLOAD_FIELD,
+                initialValue: this.state.practiceDetail.logo,
+            },{
                 label: "Practice Name",
                 key: "name",
                 required: true,

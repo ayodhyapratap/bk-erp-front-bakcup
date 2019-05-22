@@ -107,6 +107,7 @@ export const logInUser = function (data, successFn, errorFn) {
 export const loadUserDetails = function (callBackFn) {
     let successFn = function (data) {
         lockr.set(ROLE, data.user);
+        lockr.set(PRACTICE, data.practice_permissions);
         callBackFn();
     }
     let errorFn = function () {

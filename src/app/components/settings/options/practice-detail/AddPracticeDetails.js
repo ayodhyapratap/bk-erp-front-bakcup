@@ -8,7 +8,7 @@ import {
     EMAIL_FIELD,
     RADIO_FIELD,
     SELECT_FIELD,
-    COUNTRY_FIELD, STATE_FIELD, CITY_FIELD
+    COUNTRY_FIELD, STATE_FIELD, CITY_FIELD, SINGLE_IMAGE_UPLOAD_FIELD
 } from "../../../../constants/dataKeys";
 import {ALL_PRACTICE, EXTRA_DATA} from "../../../../constants/api";
 import {getAPI, displayMessage} from "../../../../utils/common";
@@ -62,6 +62,10 @@ class AddPracticeDetails extends React.Component {
             })
         }
         const fields = [{
+            label: "Practice Logo",
+            key: "logo",
+            type: SINGLE_IMAGE_UPLOAD_FIELD
+        }, {
             label: "Practice Name",
             key: "name",
             required: true,

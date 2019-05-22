@@ -33,7 +33,7 @@ import {
     CITY_FIELD, PASSWORD_FIELD, MULTI_SELECT_FIELD, MULTI_IMAGE_UPLOAD_FIELD, SMS_FIELD
 } from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
-import {getAPI, makeURL, postAPI, putAPI} from "../../utils/common";
+import {getAPI, makeFileURL, makeURL, postAPI, putAPI} from "../../utils/common";
 import moment from "moment";
 import {SwatchesPicker} from 'react-color';
 import ReactQuill from 'react-quill';
@@ -485,7 +485,7 @@ class DynamicFieldsForm extends React.Component {
                                             <Icon type="upload"/> Select File
                                         </Button>
                                         {field.initialValue ?
-                                            <img src={field.initialValue} style={{maxWidth: '100%'}}/> : null}
+                                            <img src={makeFileURL(field.initialValue)} style={{maxWidth: '100%'}}/> : null}
                                     </Upload>
                                 )}
                             </Form.Item>;

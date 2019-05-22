@@ -14,7 +14,7 @@ import {
 } from "../../../constants/dataKeys";
 import {PATIENTS_LIST, PATIENT_PROFILE} from "../../../constants/api";
 import {getAPI, interpolate, displayMessage} from "../../../utils/common";
-import {Redirect} from 'react-router-dom'
+import {Link, Redirect} from 'react-router-dom'
 import moment from 'moment';
 
 
@@ -184,7 +184,7 @@ class EditPatientDetails extends React.Component {
                                            formProp={editformProp} fields={fields} {...route}/> :
                            <Redirect to='/patients/profile'/>)}/>
                 <Route exact path='/patients/profile/add'
-                       render={(route) => <TestFormLayout title="Add Patient" changeRedirect={this.changeRedirect}
+                       render={(route) => <TestFormLayout title={<div>Add Patient <Link to={"/patients/patientprintform"}>print registration form</Link></div>} changeRedirect={this.changeRedirect}
                                                      defaultValues={defaultValues}
                                                      formProp={newformProp} fields={fields} {...route}/>}/>
 
