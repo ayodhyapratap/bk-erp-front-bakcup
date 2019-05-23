@@ -106,10 +106,10 @@ export default class AppointmentsReport extends React.Component {
             </h2>
             <Card>
                 <Row gutter={16}>
-                    <Col span={16}>
+                    <Col span={18}>
                         <CustomizedTable loading={this.state.loading} columns={columns} size={'small'} dataSource={this.state.appointmentReports}/>
                     </Col>
-                    <Col span={8}>
+                    <Col span={6}>
                         <Radio.Group buttonStyle="solid" defaultValue="all">
                             <h2>Appointments</h2>
                             <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}

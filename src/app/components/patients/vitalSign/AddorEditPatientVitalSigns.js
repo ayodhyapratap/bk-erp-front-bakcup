@@ -47,18 +47,18 @@ class AddorEditPatientVitalSigns extends React.Component {
             label: "Pulse",
             key: "pulse",
             required: true,
-            initialValue:this.props.editVitalSign?this.props.editVitalSign.pulse:null,
+            initialValue: this.props.editVitalSign ? this.props.editVitalSign.pulse : null,
             type: NUMBER_FIELD
         }, {
             label: "Temperature",
             key: "temperature",
-             initialValue:this.props.editVitalSign?this.props.editVitalSign.temperature:null,
+            initialValue: this.props.editVitalSign ? this.props.editVitalSign.temperature : null,
             type: INPUT_FIELD
         }, {
             label: "Temperature Part",
             key: "temperature_part",
             type: SELECT_FIELD,
-            initialValue:this.props.editVitalSign?this.props.editVitalSign.temperature_part:null,
+            initialValue: this.props.editVitalSign ? this.props.editVitalSign.temperature_part : null,
             options: [{label: "forehead", value: "forehead"}, {label: "armpit", value: "armpit"}, {
                 label: "oral ",
                 value: "oral"
@@ -66,48 +66,51 @@ class AddorEditPatientVitalSigns extends React.Component {
         }, {
             label: "Blood Pressure",
             key: "blood_pressure",
-             initialValue:this.props.editVitalSign?this.props.editVitalSign.blood_pressure:null,
+            initialValue: this.props.editVitalSign ? this.props.editVitalSign.blood_pressure : null,
             type: INPUT_FIELD,
         }, {
             label: "Position",
             key: "position",
             type: SELECT_FIELD,
-            initialValue:this.props.editVitalSign?this.props.editVitalSign.position:null,
+            initialValue: this.props.editVitalSign ? this.props.editVitalSign.position : null,
             options: [{label: "standing", value: "standing"}, {label: "sitting", value: "sitting"}]
         }, {
             label: "Weight",
             key: "weight",
-               initialValue:this.props.editVitalSign?this.props.editVitalSign.weight:null,
+            initialValue: this.props.editVitalSign ? this.props.editVitalSign.weight : null,
             type: INPUT_FIELD,
         }, {
             label: "Resp Rate",
             key: "resp_rate",
-               initialValue:this.props.editVitalSign?this.props.editVitalSign.resp_rate:null,
+            initialValue: this.props.editVitalSign ? this.props.editVitalSign.resp_rate : null,
             type: INPUT_FIELD,
         },];
 
 
         let editformProp;
+        let defaultValues = []
+        let that = this;
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        // if(this.props.currentPatient){
-        //    editformProp={
-        //     successFn:function(data){
-        //       displayMessage(SUCCESS_MSG_TYPE, "success")
-        //
-        //       console.log(data);
-        //     },
-        //     errorFn:function(){
-        //
-        //     },
-        //     action: interpolate(PATIENT_PROFILE, [this.props.currentPatient.id]),
-        //     method: "put",
-        //   }
-        // }
+        if (this.state.editVitalSign) {
+            editformProp = {
+                successFn: function (data) {
+                    displayMessage(SUCCESS_MSG_TYPE, "success")
+                    if (that.props.loadData)
+                        that.props.loadData();
+                },
+                errorFn: function () {
+
+                },
+                action: interpolate(VITAL_SIGNS_API, [this.props.match.params.id]),
+                method: "post",
+            }
+            defaultValues.push({"key": "id", "value": this.state.editVitalSign.id})
+        }
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
-
-                console.log(data);
+                if (that.props.loadData)
+                    that.props.loadData();
             },
             errorFn: function () {
 
@@ -116,14 +119,14 @@ class AddorEditPatientVitalSigns extends React.Component {
             method: "post",
         }
 
-        const defaultValues = [{"key": "id", "value": [this.state.vitalsign]}];
 
         return <Row>
             <Card>
                 <Route exact path='/patient/:id/emr/vitalsigns/edit'
-                       render={() => (this.state.vitalsign ?
+                       render={() => (this.state.editVitalSign ?
                            <TestFormLayout defaultValues={defaultValues} title="Edit vital sign"
-                                           changeRedirect={this.changeRedirect} formProp={formProp} fields={fields}/> :
+                                           changeRedirect={this.changeRedirect} formProp={editformProp}
+                                           fields={fields}/> :
                            <Redirect to='/patients/profile'/>)}/>
                 <Route exact path='/patient/:id/emr/vitalsigns/add'
                        render={() => <TestFormLayout title="Add vital sign" changeRedirect={this.changeRedirect}

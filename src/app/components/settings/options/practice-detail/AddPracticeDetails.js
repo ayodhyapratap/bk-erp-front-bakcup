@@ -8,7 +8,7 @@ import {
     EMAIL_FIELD,
     RADIO_FIELD,
     SELECT_FIELD,
-    COUNTRY_FIELD, STATE_FIELD, CITY_FIELD, SINGLE_IMAGE_UPLOAD_FIELD
+    COUNTRY_FIELD, STATE_FIELD, CITY_FIELD, SINGLE_IMAGE_UPLOAD_FIELD, NUMBER_FIELD
 } from "../../../../constants/dataKeys";
 import {ALL_PRACTICE, EXTRA_DATA} from "../../../../constants/api";
 import {getAPI, displayMessage} from "../../../../utils/common";
@@ -117,18 +117,28 @@ class AddPracticeDetails extends React.Component {
             key: "website",
             type: INPUT_FIELD
         },
-        //     {
-        //     label: "Timezone",
-        //     key: "timezone",
-        //     type: SELECT_FIELD,
-        //     options: [{label: "GMT +05:30", value: 12}],
-        //     initialValue:12
-        // },
+            //     {
+            //     label: "Timezone",
+            //     key: "timezone",
+            //     type: SELECT_FIELD,
+            //     options: [{label: "GMT +05:30", value: 12}],
+            //     initialValue:12
+            // },
             {
-            label: "GSTIN",
-            key: "gstin",
-            type: INPUT_FIELD
-        },];
+                label: "GSTIN",
+                key: "gstin",
+                type: INPUT_FIELD
+            }, {
+                label: "Normal Bed Count",
+                key: "normal_seats",
+                type: NUMBER_FIELD,
+                min: 0
+            }, {
+                label: "Tatkal Bed Count",
+                key: "tatkal_seats",
+                type: NUMBER_FIELD,
+                min: 0
+            },];
 
         const formProp = {
             successFn: function (data) {

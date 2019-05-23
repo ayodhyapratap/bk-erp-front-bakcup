@@ -160,3 +160,17 @@ export const SCHEDULE_STATUS = 'Scheduled';
 export const WAITING_STATUS = 'Waiting';
 export const ENGAGED_STATUS = 'Engaged';
 export const CHECKOUT_STATUS = 'CheckOut';
+
+export const TYPE_OF_CONSUMPTION = [
+    {label:"Sales",value:"SALES"},
+    {label:"Services",value:"SERVICES"},
+    {label:"Damaged",value:"DAMAGED"},
+    {label:"Returned",value:"RETURNED"},
+    {label:"Adjustment",value:"ADJUSTMENT"},
+];
+
+export const TYPES_OF_BED_PACKAGES_ROOM_TYPE= [
+    {label:"Private",value:"PRIVATE"},
+    {label:"Dormitory",value:"DORMITORY"},
+    {label:"Semi Private",value:"SEMI PRIVATE"},
+]

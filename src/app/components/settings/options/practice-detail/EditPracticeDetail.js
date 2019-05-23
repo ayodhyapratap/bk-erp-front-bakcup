@@ -8,7 +8,7 @@ import {
     INPUT_FIELD,
     RADIO_FIELD,
     SELECT_FIELD,
-    SINGLE_IMAGE_UPLOAD_FIELD
+    SINGLE_IMAGE_UPLOAD_FIELD, NUMBER_FIELD
 } from "../../../../constants/dataKeys";
 import {PRACTICE} from "../../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
@@ -64,7 +64,7 @@ class EditPracticeDetail extends React.Component {
                 key: "logo",
                 type: SINGLE_IMAGE_UPLOAD_FIELD,
                 initialValue: this.state.practiceDetail.logo,
-            },{
+            }, {
                 label: "Practice Name",
                 key: "name",
                 required: true,
@@ -97,7 +97,7 @@ class EditPracticeDetail extends React.Component {
                 initialValue: this.state.practiceDetail.City,
                 key: "city",
                 type: INPUT_FIELD,
-            //     options: [{label: "Hello", value: "1"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
+                //     options: [{label: "Hello", value: "1"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
             }, {
                 label: "Practice state",
                 key: "state",
@@ -134,6 +134,18 @@ class EditPracticeDetail extends React.Component {
                 initialValue: this.state.practiceDetail.gstin,
                 key: "gstin",
                 type: INPUT_FIELD
+            }, {
+                label: "Normal Bed Count",
+                key: "normal_seats",
+                initialValue: this.state.practiceDetail.normal_seats,
+                type: NUMBER_FIELD,
+                min: 0
+            }, {
+                label: "Tatkal Bed Count",
+                initialValue: this.state.practiceDetail.tatkal_seats,
+                key: "tatkal_seats",
+                type: NUMBER_FIELD,
+                min: 0
             },];
             const TestFormLayout = Form.create()(DynamicFieldsForm);
             const formProp = {

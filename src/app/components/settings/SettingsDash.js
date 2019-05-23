@@ -28,6 +28,7 @@ import MlmBase from "./options/mlm/MlmBase";
 import Printout from "./options/printout/Printout";
 import IntegrationHome from "./options/integration/IntegrationHome";
 import MailPDFSettings from "./options/mailPDF/MailPDFSettings";
+import BedPackages from "./options/bed-packages/BedPackages";
 
 const Content = Layout.Content;
 
@@ -151,6 +152,10 @@ class SettingsDash extends React.Component {
                                )}/>
                         <Route path="/settings/integration"
                                render={(route) => <IntegrationHome {...this.state}
+                                                                   {...this.props}
+                                                                   {...route}/>}/>
+                        <Route path="/settings/bed-packages"
+                               render={(route) => <BedPackages {...this.state}
                                                                    {...this.props}
                                                                    {...route}/>}/>
                         <Route component={Error404}/>

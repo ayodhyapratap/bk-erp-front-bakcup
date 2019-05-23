@@ -101,6 +101,11 @@ class SettingSider extends React.Component {
                             <Icon type="link"/> My Integrations
                         </Link>
                     </Menu.Item>
+                    <Menu.Item key="22">
+                        <Link to="/settings/bed-packages">
+                            <Icon type="box-plot" /> Bed Packages
+                        </Link>
+                    </Menu.Item>
                 </Menu.ItemGroup>
             </Menu>
 

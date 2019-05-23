@@ -47,24 +47,25 @@ class PatientVitalSign extends React.Component {
 
     deleteVitalSign = (record) => {
         let that = this;
-        let reqData = {...record, is_active: false}
+        let reqData = {...record, is_active: false};
         let successFn = function (data) {
 
         }
         let errorFn = function () {
 
         }
-        patchAPI(interpolate(VITAL_SIGNS_API, [record.id]), reqData, successFn, errorFn)
+        patchAPI(interpolate(VITAL_SIGNS_API, [this.props.match.params.id]), reqData, successFn, errorFn)
     }
-    editClinicNotesData(record) {
+    editObject = (record) => {
         this.setState({
-            editVitalsign: record,
+            editVitalSign: record,
             loading: false
         });
-        let id = this.props.match.params.id
+        let id = this.props.match.params.id;
         this.props.history.push("/patient/" + id + "/emr/vitalsigns/edit")
 
     }
+
     render() {
         let that = this;
         const columns = [{
@@ -102,7 +103,7 @@ class PatientVitalSign extends React.Component {
             render: (text, record) => (
                 <span>
                   <a onClick={() => this.editObject(record)}>Edit</a>
-                    <Divider type="vertical" />
+                    <Divider type="vertical"/>
                     <a onClick={() => that.deleteVitalSign(record)}>Delete</a>
                 </span>
             ),
@@ -112,10 +113,10 @@ class PatientVitalSign extends React.Component {
             return <Switch>
                 <Route path='/patient/:id/emr/vitalsigns/add'
                        render={(route) => <AddorEditPatientVitalSigns
-                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} loadData={this.loadVitalsigns}/>}/>
                 <Route path='/patient/:id/emr/vitalsigns/edit'
                        render={(route) => <AddorEditPatientVitalSigns
-                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} loadData={this.loadVitalsigns}/>}/>
                 <Route>
                     <Card
                         title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Vital Sign" : "PatientVitalSign"}

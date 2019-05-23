@@ -25,8 +25,6 @@ export default class AddorEditInventoryItem extends React.Component {
             manufacture_list: this.props.manufacture_list ? this.props.manufacture_list : null,
             vendor_list: this.props.vendor_list ? this.props.vendor_list : null,
             redirect: false,
-
-
         };
         this.changeRedirect = this.changeRedirect.bind(this);
 
@@ -93,7 +91,7 @@ export default class AddorEditInventoryItem extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(VENDOR_API, successFn, errorFn);
+        getAPI(interpolate(VENDOR_API, [this.props.active_practiceId]), successFn, errorFn);
     }
 
 
@@ -118,7 +116,7 @@ export default class AddorEditInventoryItem extends React.Component {
         const taxesOption = [];
         if (this.state.taxes_list) {
             this.state.taxes_list.forEach(function (drug) {
-                taxesOption.push({label: (drug.name + "(" + drug.tax_value + ")"), value: drug.id});
+                taxesOption.push({label: (drug.name + "(" + drug.tax_value + "%)"), value: drug.id});
             })
         }
         const manufacturerOption = [];

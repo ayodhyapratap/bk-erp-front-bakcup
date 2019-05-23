@@ -9,11 +9,19 @@ import {
     Col,
     Table,
     Tabs,
-    InputNumber, Select, DatePicker,
+    InputNumber, Select, DatePicker, AutoComplete, Affix
 } from "antd";
 import {displayMessage, getAPI, postAPI} from "../../../utils/common";
 
-import {INVENTORY_ITEM_TYPE, DRUG, SUPPLIES, EQUIPMENT, ADD_STOCK, CONSUME_STOCK} from "../../../constants/hardData";
+import {
+    INVENTORY_ITEM_TYPE,
+    DRUG,
+    SUPPLIES,
+    EQUIPMENT,
+    ADD_STOCK,
+    CONSUME_STOCK,
+    TYPE_OF_CONSUMPTION
+} from "../../../constants/hardData";
 import {INVENTORY_ITEM_API, BULK_STOCK_ENTRY} from "../../../constants/api";
 import moment from "moment";
 
@@ -33,7 +41,8 @@ class AddOrConsumeStock extends React.Component {
             classType: props.type,
             tableFormValues: [],
             maxQuantityforConsume: {},
-            searchStrings: {}
+            searchStrings: {},
+            tempValues: {}
         }
     }
 
@@ -189,6 +198,11 @@ class AddOrConsumeStock extends React.Component {
             }
         });
     }
+    storeValue = (type, id, value) => {
+        this.setState(function (prevState) {
+            return {tempValues: {...prevState.tempValues, [type.toString() + id.toString()]: value}}
+        });
+    }
 
     render() {
         let that = this;
@@ -234,7 +248,8 @@ class AddOrConsumeStock extends React.Component {
                             message: "This field is required.",
                         }],
                     })(
-                        <InputNumber min={0} placeholder="quantity"/>
+                        <InputNumber min={0} placeholder="quantity"
+                                     onChange={(value) => this.storeValue('quantity', record._id, value)}/>
                     )}
                 </Form.Item>
             }, {
@@ -251,7 +266,9 @@ class AddOrConsumeStock extends React.Component {
                             message: "This field is required.",
                         }],
                     })(
-                        <Input placeholder="Batch Number"/>
+                        <AutoComplete placeholder="Batch Number"
+                                      onChange={(value) => this.storeValue('batch', record._id, value)}
+                                      dataSource={record.item_type_stock && record.item_type_stock.item_stock ? record.item_type_stock.item_stock.map(itemStock => itemStock.batch_number ? itemStock.batch_number : '--') : []}/>
                     )}
                 </Form.Item>
             }, {
@@ -285,14 +302,16 @@ class AddOrConsumeStock extends React.Component {
                             message: "This field is required.",
                         }],
                     })(
-                        <InputNumber placeholder="Unit Cost"/>
+                        <InputNumber placeholder="Unit Cost"
+                                     onChange={(value) => this.storeValue('unit_cost', record._id, value)}/>
                     )}
                 </Form.Item>
             }, {
                 title: 'Total Cost',
                 key: 'total_cost',
                 dataIndex: 'total_cost',
-                render: (item, record) => <span>--</span>
+                render: (item, record) =>
+                    <span>{this.state.tempValues['unit_cost' + record._id] && this.state.tempValues['quantity' + record._id] ? this.state.tempValues['unit_cost' + record._id] * this.state.tempValues['quantity' + record._id] : '--'}</span>
             }]);
         } else if (this.state.classType == CONSUME_STOCK) {
             consumeRow = consumeRow.concat([{
@@ -373,14 +392,105 @@ class AddOrConsumeStock extends React.Component {
                     </Col>
                     <Col span={17}>
                         <Form onSubmit={this.handleSubmit}>
+                            <Row>
+                                {this.state.classType == CONSUME_STOCK ?
+                                    <Form.Item
+                                        key={`type_of_consumption`}
+                                        label={"Type of Consumption"}
+                                        {...{
+                                            labelCol: {span: 6},
+                                            wrapperCol: {span: 14},
+                                        }}>
+                                        {getFieldDecorator(`type_of_consumption`, {
+                                            validateTrigger: ['onChange', 'onBlur'],
+                                            rules: [{
+                                                message: "This field is required.",
+                                            }],
+                                        })(
+                                            <Select>
+                                                {TYPE_OF_CONSUMPTION.map(item => <Select.Option
+                                                    value={item.value}>{item.label}</Select.Option>)}
+                                            </Select>
+                                        )}
+                                    </Form.Item>
+                                    : null}
+                                {this.state.classType == CONSUME_STOCK ?
+                                    <Form.Item
+                                        key={`supplier`}
+                                        label={"Supplier"}
+                                        {...{
+                                            labelCol: {span: 6},
+                                            wrapperCol: {span: 14},
+                                        }}>
+                                        {getFieldDecorator(`addedOn`, {
+                                            validateTrigger: ['onChange', 'onBlur'],
+                                            rules: [{
+                                                message: "This field is required.",
+                                            }],
+                                            initialValue: moment()
+                                        })(
+                                            <Select>
+                                                {this.state.suppliersList.map(item => <Select.Option
+                                                    value={item.value}>{item.label}</Select.Option>)}
+                                            </Select>
+                                        )}
+                                    </Form.Item>
+                                    : null}
+                            </Row>
                             <Table pagination={false}
                                    bordered={true}
                                    dataSource={this.state.tableFormValues}
                                    columns={consumeRow}/>
                             {/*<List>{formItems}</List>*/}
-                            <Form.Item {...formItemLayoutWithOutLabel}>
-                                <Button type="primary" htmlType="submit">Submit</Button>
-                            </Form.Item>
+
+                            <Affix offsetBottom={0}>
+                                <Card>
+                                    <Row>
+                                        <Col span={8}>
+                                            <Form.Item {...formItemLayoutWithOutLabel}>
+                                                <Button type="primary" htmlType="submit">Submit</Button>
+                                                {that.props.history ?
+                                                    <Button style={{margin: 5}}
+                                                            onClick={() => that.props.history.goBack()}>
+                                                        Cancel
+                                                    </Button> : null}
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={8}>
+                                            <Form.Item
+                                                key={`addedOn`}
+                                                label={this.state.classType == ADD_STOCK ? "Added On" : "Consumed On"}
+                                                {...{
+                                                    labelCol: {span: 10},
+                                                    wrapperCol: {span: 14},
+                                                }}>
+                                                {getFieldDecorator(`addedOn`, {
+                                                    validateTrigger: ['onChange', 'onBlur'],
+                                                    rules: [{
+                                                        required: true,
+                                                        message: "This field is required.",
+                                                    }],
+                                                    initialValue: moment()
+                                                })(
+                                                    <DatePicker/>
+                                                )}
+                                            </Form.Item>:
+                                        </Col>
+                                        {this.state.classType == ADD_STOCK ?
+                                            <Col style={{textAlign: 'center'}}>
+
+                                                <h3>Grand
+                                                    Total: <b>{this.state.tableFormValues.reduce(function (total, item) {
+                                                        if (that.state.tempValues['quantity' + item._id] && that.state.tempValues['unit_cost' + item._id]) {
+                                                            return total + (that.state.tempValues['quantity' + item._id] * that.state.tempValues['unit_cost' + item._id])
+                                                        }
+                                                        return total
+                                                    }, 0)}</b></h3>
+                                            </Col> : null}
+                                    </Row>
+                                </Card>
+                            </Affix>
+
                         </Form>
 
                     </Col>
