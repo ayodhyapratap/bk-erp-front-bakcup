@@ -304,7 +304,7 @@ export default class CreateAppointmentForm extends React.Component {
                 categoryOptions.push({label: category.name, value: category.id});
             })
         }
-        let appointmentTime = this.state.appointment ? this.state.appointment.shedule_at : this.props.startTime;
+        let appointmentTime = this.state.appointment ? this.state.appointment.schedule_at : this.props.startTime;
         if (!appointmentTime) {
             appointmentTime = new moment(new Date()).format();
             console.log(appointmentTime);

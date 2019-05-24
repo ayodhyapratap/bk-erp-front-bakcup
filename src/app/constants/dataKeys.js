@@ -36,6 +36,7 @@ export const CHECKBOX_FIELD = 'checkbox';
 export const SINGLE_CHECKBOX_FIELD = 'singlecheckbox';
 export const NUMBER_FIELD = 'number';
 export const DATE_PICKER = 'datepicker';
+export const DATE_TIME_PICKER = 'datetimepicker';
 export const TEXT_FIELD = 'textfield';
 export const TIME_PICKER = 'timepicker';
 export const COLOR_PICKER = 'colorpicker';

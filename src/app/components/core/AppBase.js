@@ -1,7 +1,7 @@
 import React from "react";
 import {Route, Switch} from "react-router-dom";
 import AppHeader from "./AppHeader";
-import {Layout} from "antd";
+import {Layout, Spin} from "antd";
 import AppFooter from "./AppFooter";
 import AppSider from "./AppSider";
 import {
@@ -129,70 +129,73 @@ class AppBase extends React.Component {
 
     render() {
         let that = this;
-        return <Layout style={{minHeight: '100vh'}}>
+        return <Spin spinning={!this.state.activePracticeData}>
+            <Layout style={{minHeight: '100vh'}}>
 
-
-            <Switch>
-                <Route path={"/patients/patientprintform"}
-                       render={(route) => <PrintPatientForm {...this.state} key={that.state.active_practiceId}/>}/>
-                <Route>
-                    <Layout>
-                        <AppSider toggleSider={this.toggleSider} {...this.state} key={that.state.active_practiceId}/>
+                <Switch>
+                    <Route path={"/patients/patientprintform"}
+                           render={(route) => <PrintPatientForm {...this.state} key={that.state.active_practiceId}/>}/>
+                    <Route>
                         <Layout>
-                            <AppHeader {...this.props}
-                                       {...this.state}
-                                       switchPractice={this.switchPractice}
-                                       toggleSider={this.toggleSider}/>
-                            <Switch>
-                                {this.state.activePracticePermissions.WebAdmin ?
-                                    <Route path="/web" render={(route) => <WebAdminHome {...this.state}
-                                                                                        {...this.props}
-                                                                                        {...route}
-                                                                                        key={that.state.active_practiceId}/>}/>
-                                    : null}
-                                <Route path="/calendar" render={(route) => <Calendar {...this.state}
-                                                                                     {...this.props}
-                                                                                     {...route}
-                                                                                     key={that.state.active_practiceId}/>}/>
-                                <Route path="/patient/:id" render={(route) => <PatientHome {...this.state}
-                                                                                           {...this.props}
-                                                                                           {...route}
-                                                                                           key={that.state.active_practiceId + "|" + route.match.params.id}/>}/>
-                                <Route path="/patients" render={(route) => <PatientHome {...this.state}
-                                                                                        {...this.props}
-                                                                                        {...route}
-                                                                                        key={that.state.active_practiceId}/>}/>
-                                <Route path="/settings" render={(route) => <SettingsDash {...this.state}
+                            <AppSider toggleSider={this.toggleSider} {...this.state}
+                                      key={that.state.active_practiceId}/>
+                            <Layout>
+                                <AppHeader {...this.props}
+                                           {...this.state}
+                                           switchPractice={this.switchPractice}
+                                           toggleSider={this.toggleSider}/>
+                                <Switch>
+                                    {this.state.activePracticePermissions.WebAdmin ?
+                                        <Route path="/web" render={(route) => <WebAdminHome {...this.state}
+                                                                                            {...this.props}
+                                                                                            {...route}
+                                                                                            key={that.state.active_practiceId}/>}/>
+                                        : null}
+                                    <Route path="/calendar" render={(route) => <Calendar {...this.state}
                                                                                          {...this.props}
                                                                                          {...route}
-                                                                                         key={that.state.active_practiceId}
-                                                                                         refreshClinicData={this.clinicData}/>}/>
-                                <Route path="/inventory" render={(route) => <InventoryHome {...this.state}
+                                                                                         key={that.state.active_practiceId}/>}/>
+                                    <Route path="/patient/:id" render={(route) => <PatientHome {...this.state}
+                                                                                               {...this.props}
+                                                                                               {...route}
+                                                                                               key={that.state.active_practiceId + "|" + route.match.params.id}/>}/>
+                                    <Route path="/patients" render={(route) => <PatientHome {...this.state}
+                                                                                            {...this.props}
+                                                                                            {...route}
+                                                                                            key={that.state.active_practiceId}/>}/>
+                                    <Route path="/settings" render={(route) => <SettingsDash {...this.state}
+                                                                                             {...this.props}
+                                                                                             {...route}
+                                                                                             key={that.state.active_practiceId}
+                                                                                             refreshClinicData={this.clinicData}/>}/>
+                                    <Route path="/inventory" render={(route) => <InventoryHome {...this.state}
+                                                                                               {...this.props}
+                                                                                               {...route}
+                                                                                               key={that.state.active_practiceId}/>}/>
+                                    <Route path="/reports" render={(route) => <ReportsHome {...this.state}
                                                                                            {...this.props}
                                                                                            {...route}
                                                                                            key={that.state.active_practiceId}/>}/>
-                                <Route path="/reports" render={(route) => <ReportsHome {...this.state}
+
+                                    <Route path="/profile" render={(route) => <Profile {...this.state}
                                                                                        {...this.props}
                                                                                        {...route}
                                                                                        key={that.state.active_practiceId}/>}/>
+                                    <Route exact path="/" render={(route) => <Calendar {...this.state}
+                                                                                       {...this.props}
+                                                                                       {...route}
+                                                                                       key={that.state.active_practiceId}/>}/>
+                                    <Route component={Error404}/>
 
-                                <Route path="/profile" render={(route) => <Profile {...this.state}
-                                                                                   {...this.props}
-                                                                                   {...route}
-                                                                                   key={that.state.active_practiceId}/>}/>
-                                <Route exact path="/" render={(route) => <Calendar {...this.state}
-                                                                                   {...this.props}
-                                                                                   {...route}
-                                                                                   key={that.state.active_practiceId}/>}/>
-                                <Route component={Error404}/>
-
-                            </Switch>
-                            {/*<AppFooter/>*/}
+                                </Switch>
+                                {/*<AppFooter/>*/}
+                            </Layout>
                         </Layout>
-                    </Layout>
-                </Route>
-            </Switch>
-        </Layout>;
+                    </Route>
+                </Switch>
+
+            </Layout>
+        </Spin>;
     }
 }
 

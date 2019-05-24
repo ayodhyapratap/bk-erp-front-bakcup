@@ -30,7 +30,7 @@ import {
     COUNTRY_FIELD,
     STATE_FIELD,
     EMAIL_FIELD,
-    CITY_FIELD, PASSWORD_FIELD, MULTI_SELECT_FIELD, MULTI_IMAGE_UPLOAD_FIELD, SMS_FIELD
+    CITY_FIELD, PASSWORD_FIELD, MULTI_SELECT_FIELD, MULTI_IMAGE_UPLOAD_FIELD, SMS_FIELD, DATE_TIME_PICKER
 } from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {getAPI, makeFileURL, makeURL, postAPI, putAPI} from "../../utils/common";
@@ -172,12 +172,7 @@ class DynamicFieldsForm extends React.Component {
                             values[key] = values[key].fileList.map(file => file.response.id);
                         else
                             values[key] = formFields.initialValue;
-                    } else if (formFields.type == TIME_PICKER) {
-                        let key = formFields.key;
-                        if (formFields.format) {
-                            values[key] = moment(values[key]).isValid() ? moment(values[key]).format(formFields.format) : null;
-                        }
-                    } else if (formFields.type == DATE_PICKER) {
+                    } else if (formFields.type == TIME_PICKER || formFields.type == DATE_PICKER || formFields.type == DATE_TIME_PICKER) {
                         let key = formFields.key;
                         if (formFields.format) {
                             values[key] = moment(values[key]).isValid() ? moment(values[key]).format(formFields.format) : null;
@@ -386,6 +381,17 @@ class DynamicFieldsForm extends React.Component {
                                     <DatePicker format={field.format}/>
                                 )}
                             </FormItem>;
+                        case DATE_TIME_PICKER:
+                            return <FormItem key={field.key} label={field.label} {...formItemLayout}
+                                             extra={field.extra}>
+                                {getFieldDecorator(field.key,
+                                    {initialValue: field.initialValue ? moment(field.initialValue) : null},
+                                    {
+                                        rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],
+                                    })(
+                                    <DatePicker format={field.format} showTime/>
+                                )}
+                            </FormItem>;
                         case TEXT_FIELD:
                             return <div>
                                 <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
@@ -485,7 +491,8 @@ class DynamicFieldsForm extends React.Component {
                                             <Icon type="upload"/> Select File
                                         </Button>
                                         {field.initialValue ?
-                                            <img src={makeFileURL(field.initialValue)} style={{maxWidth: '100%'}}/> : null}
+                                            <img src={makeFileURL(field.initialValue)}
+                                                 style={{maxWidth: '100%'}}/> : null}
                                     </Upload>
                                 )}
                             </Form.Item>;
