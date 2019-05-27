@@ -28,10 +28,15 @@ import CreateAppointment from "./CreateAppointment";
 import TimeGrid from 'react-big-calendar/lib/TimeGrid'
 import dates from 'date-arithmetic'
 import {getAPI, putAPI, interpolate, displayMessage} from "../../utils/common";
-import {APPOINTMENT_PERPRACTICE_API, APPOINTMENT_API, PRACTICESTAFF, CALENDER_SETTINGS} from "../../constants/api";
+import {
+    APPOINTMENT_PERPRACTICE_API,
+    APPOINTMENT_API,
+    PRACTICESTAFF,
+    CALENDER_SETTINGS,
+    BLOCK_CALENDAR
+} from "../../constants/api";
 import EventComponent from "./EventComponent";
 import {calendarSettingMenu, loadAppointmentCategories} from "./calendarUtils";
-import {CHECKOUT_STATUS, ENGAGED_STATUS, SCHEDULE_STATUS, WAITING_STATUS} from "../../constants/hardData";
 import CalendarRightPanel from "./CalendarRightPanel";
 import BlockCalendar from "./BlockCalendar";
 
@@ -62,7 +67,7 @@ class App extends Component {
             filterType: 'DOCTOR',
             doctorsAppointmentCount: {},
             categoriesAppointmentCount: {},
-
+            blockedCalendar: []
         };
         this.onSelectSlot = this.onSelectSlot.bind(this);
         this.onSelectEvent = this.onSelectEvent.bind(this);
@@ -105,7 +110,6 @@ class App extends Component {
                     doctor_object[drug.id] = drug;
                 })
             }
-            // console.log(doctor_object);
             that.setState({
                 doctors_object: doctor_object,
             })
@@ -118,11 +122,14 @@ class App extends Component {
     loadCalendarTimings() {
         var that = this;
         let successFn = function (data) {
-            // console.log("get table");
             that.setState({
-                calendarTimings: data[0],
+                calendarTimings: {
+                    ...data[0],
+                    startTime: new moment(data[0].start_time, 'HH:mm:ss'),
+                    endTime: new moment(data[0].end_time, 'HH:mm:ss')
+                },
                 loading: false
-            })
+            });
         };
         let errorFn = function () {
             that.setState({
@@ -181,7 +188,6 @@ class App extends Component {
             }
         })
 
-        // console.log(changedEvent);
         let successFn = function (data) {
             displayMessage(SUCCESS_MSG_TYPE, "time changed");
             events.forEach((existingEvent) => {
@@ -200,10 +206,7 @@ class App extends Component {
 
 
     onSelectSlot(value) {
-        // console.log(value);
         let time = moment(value.start).format();
-
-        console.log(time);
         if (value.action == "doubleClick") {
             this.setState({
                 startTime: time,
@@ -242,9 +245,6 @@ class App extends Component {
                 // newEvents.concat(previousEvent);
                 data.forEach(function (appointment) {
                     let endtime = new moment(appointment.schedule_at).add(appointment.slot, 'minutes')
-                    // console.log(moment(appointment.schedule_at).format('LLL'));
-                    // console.log(endtime.format('LLL'));
-                    // let event= that.state.events;
                     let event = {
                         appointment: appointment,
                         start: new Date(moment(appointment.schedule_at)),
@@ -292,10 +292,27 @@ class App extends Component {
             start: start.format('YYYY-MM-DD'),
             end: end.format('YYYY-MM-DD')
         });
+        this.blockedCalendarTiming(start, end)
     }
 
+    blockedCalendarTiming = (start, end) => {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                blockedCalendar: data
+            })
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(BLOCK_CALENDAR, successFn, errorFn, {
+            practice: this.props.active_practiceId,
+            cal_fdate: start.format(),
+            cal_tdate: end.format()
+        })
+    };
+
     eventStyleGetter(event, start, end, isSelected) {
-        console.log(event, this.state.categories_object);
         let doctor = event.doctor;
         let category = event.appointment.category;
         let color_object = null;
@@ -327,7 +344,6 @@ class App extends Component {
     }
 
     onRangeChange = (e) => {
-        console.log(e);
         if (e.start && e.end) {
             this.appointmentList(moment(e.start), moment(e.end));
             if (moment(e.start).date() == 1) {
@@ -388,14 +404,6 @@ class App extends Component {
 
     render() {
         let that = this;
-        let startTime;
-        let endTime;
-        if (this.state.calendarTimings) {
-            // console.log(new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss')));
-            startTime = new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss'));
-            endTime = new Date(new moment(this.state.calendarTimings.end_time, 'HH:mm:ss'))
-
-        }
         return (<Content className="main-container">
                 <div style={{margin: '10px', padding: '5px'}}>
                     <Switch>
@@ -495,6 +503,7 @@ class App extends Component {
                                                 defaultView="week"
                                                 step={10}
                                                 timeslots={1}
+                                                truncateEvents={false}
                                                 events={this.state.filteredEvent}
                                                 onEventDrop={this.moveEvent}
                                                 onEventResize={this.resizeEvent}
@@ -504,14 +513,21 @@ class App extends Component {
                                                 onSelectSlot={this.onSelectSlot}
                                                 // onSelectEvent={this.onSelectEvent}
                                                 views={{month: true, week: MyWeek, day: true, agenda: true}}
-                                                style={{minHeight: "calc(100vh - 85px)"}}
+                                                style={{height: "calc(100vh - 85px)"}}
                                                 eventPropGetter={(this.eventStyleGetter)}
                                                 date={new Date(this.state.selectedDate.format())}
-                                                min={startTime}
-                                                max={endTime}
+                                                // min={startTime}
+                                                // max={endTime}
                                                 onRangeChange={this.onRangeChange}
                                                 components={{
-                                                    event: EventComponent
+                                                    event: EventComponent,
+                                                    timeSlotWrapper: function (options) {
+                                                        return <TimeSlotWrapper {...options}
+                                                                                key={options.value.toString()}
+                                                                                blockedCalendar={that.state.blockedCalendar}
+                                                                                calendarTimings={that.state.calendarTimings}/>
+                                                    },
+
                                                 }}/>
                                         </Spin>
                                     </Col>
@@ -570,4 +586,27 @@ MyWeek.navigate = (date, action) => {
 
 MyWeek.title = date => {
     return ` ${date.toLocaleDateString()}`
+}
+
+function TimeSlotWrapper(props) {
+    if (props.calendarTimings && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') >= props.calendarTimings.startTime.format('HH:mm:ss') && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') < props.calendarTimings.endTime.format('HH:mm:ss')) {
+        let flag = true;
+        for (let i = 0; i < props.blockedCalendar.length; i++) {
+            if (moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
+                console.log(props);
+                flag = false;
+                break;
+            }
+        }
+        if (flag)
+            return props.children;
+    }
+
+    const child = React.Children.only(props.children);
+    return React.cloneElement(child, {className: child.props.className + ' rbc-off-range-bg'});
+}
+
+function MonthEventWrapper(props) {
+    console.log(props);
+    return props.children;
 }

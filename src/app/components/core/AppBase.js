@@ -129,9 +129,8 @@ class AppBase extends React.Component {
 
     render() {
         let that = this;
-        return <Spin spinning={!this.state.activePracticeData}>
-            <Layout style={{minHeight: '100vh'}}>
-
+        return <Layout style={{minHeight: '100vh'}}>
+            {/*<Spin spinning={!this.state.activePracticeData}>*/}
                 <Switch>
                     <Route path={"/patients/patientprintform"}
                            render={(route) => <PrintPatientForm {...this.state} key={that.state.active_practiceId}/>}/>
@@ -193,9 +192,8 @@ class AppBase extends React.Component {
                         </Layout>
                     </Route>
                 </Switch>
-
-            </Layout>
-        </Spin>;
+            {/*</Spin>*/}
+        </Layout>;
     }
 }
 

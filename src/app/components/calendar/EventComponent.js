@@ -5,7 +5,6 @@ import EventPatientPopover from "./EventPatientPopover";
 export default class EventComponent extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
     }
 
     render() {
