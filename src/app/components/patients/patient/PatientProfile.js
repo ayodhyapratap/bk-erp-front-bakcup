@@ -100,7 +100,6 @@ class PatientProfile extends React.Component {
                         <PatientRow label="Patient Name" value={patient.user.first_name}/>
                         <PatientRow label="Patient ID" value={patient.id}/>
                         <PatientRow label="Gender" value={patient.gender}/>
-
                         <PatientRow label="Date of Birth" value={patient.dob}/>
                         <Divider>Contact Details</Divider>
                         <PatientRow label="Email" value={patient.user.email}/>

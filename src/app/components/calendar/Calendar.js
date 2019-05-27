@@ -525,7 +525,9 @@ class App extends Component {
                                                         return <TimeSlotWrapper {...options}
                                                                                 key={options.value.toString()}
                                                                                 blockedCalendar={that.state.blockedCalendar}
-                                                                                calendarTimings={that.state.calendarTimings}/>
+                                                                                calendarTimings={that.state.calendarTimings}
+                                                                                filterType={that.state.filterType}
+                                                                                selectedDoctor={that.state.selectedDoctor}/>
                                                     },
 
                                                 }}/>
@@ -592,10 +594,16 @@ function TimeSlotWrapper(props) {
     if (props.calendarTimings && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') >= props.calendarTimings.startTime.format('HH:mm:ss') && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') < props.calendarTimings.endTime.format('HH:mm:ss')) {
         let flag = true;
         for (let i = 0; i < props.blockedCalendar.length; i++) {
-            if (moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
-                console.log(props);
-                flag = false;
-                break;
+            if (props.blockedCalendar[i].doctor && props.filterType == 'DOCTOR') {
+                if (props.blockedCalendar[i].doctor == props.selectedDoctor && moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
+                    flag = false;
+                    break;
+                }
+            } else {
+                if (moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
+                    flag = false;
+                    break;
+                }
             }
         }
         if (flag)

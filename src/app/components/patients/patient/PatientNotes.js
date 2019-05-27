@@ -5,10 +5,14 @@ import {INPUT_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import {Form, List} from "antd/lib/index";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {PATIENT_GROUPS, PATIENT_NOTES} from "../../../constants/api";
+import moment from "moment";
 
 export default class PatientNotes extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            notes: []
+        }
     }
 
     componentDidMount() {
@@ -64,6 +68,12 @@ export default class PatientNotes extends React.Component {
             <TestFormLayout formProp={formProp}
                             defaultValues={defaultValues}
                             fields={fields}/>
+            <List type={'small'} dataSource={this.state.notes} renderItem={item => <List.Item>
+                <List.Item.Meta
+                    title={item.name}
+                    description={'by ' + (item.staff ? item.staff.user.first_name : '--')+' on '+moment(item.created_at).format('lll')}
+                />
+            </List.Item>}/>
         </div>
     }
 }
