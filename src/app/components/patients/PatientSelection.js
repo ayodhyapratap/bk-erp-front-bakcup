@@ -1,8 +1,9 @@
 import React from "react";
-import {Avatar, Input, Card, Col, Icon, Radio, Row, Button, Spin} from "antd";
+import {Avatar, Input, Card, Col, Icon, Radio, Row, Button, Spin, Modal} from "antd";
 import {getAPI, interpolate, postAPI} from "../../utils/common";
 import {PATIENT_GROUPS, SEARCH_PATIENT, PATIENTS_LIST} from "../../constants/api";
 import InfiniteFeedLoaderButton from "../common/InfiniteFeedLoaderButton";
+import PatientGroups from "./patientGroups/PatientGroups";
 
 const {Meta} = Card;
 const Search = Input.Search;
@@ -14,7 +15,8 @@ class PatientSelection extends React.Component {
             patientListData: [],
             patientGroup: [],
             morePatients: null,
-            loading: true
+            loading: true,
+            selectedPatientGroup: 'all'
         }
         this.getPatientListData = this.getPatientListData.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
@@ -84,20 +86,82 @@ class PatientSelection extends React.Component {
     getMorePatient() {
         let that = this;
         let current = this.state.currentPage;
+
         let successFn = function (data) {
             if (data.current == current + 1)
                 that.setState(function (prevState) {
-                    return {
-                        patientListData: [...prevState.patientListData, ...data.results],
-                        morePatients: data.next,
-                        currentPage: data.current
-                    }
+                    if (data.current > 1)
+                        return {
+                            patientListData: [...prevState.patientListData, ...data.results],
+                            morePatients: data.next,
+                            currentPage: data.current,
+                        }
+                    else
+                        return {
+                            patientListData: [...data.results],
+                            morePatients: data.next,
+                            currentPage: data.current,
+                            loading: false
+                        }
                 })
         }
         let errorFn = function () {
 
         }
-        getAPI(PATIENTS_LIST, successFn, errorFn, {page: parseInt(current) + 1});
+        let params = {};
+        if (current) {
+            params.page = parseInt(current) + 1;
+        } else {
+            this.setState({
+                loading: true
+            })
+        }
+        let patientGroup = this.state.selectedPatientGroup;
+        if (patientGroup != 'all') {
+            if (patientGroup == 'smart_a' || patientGroup == 'smart_b' || patientGroup == 'smart_c' || patientGroup == 'smart_d') {
+                switch (patientGroup) {
+                    case 'smart_a':
+                        params.gender = 'male';
+                        break;
+                    case 'smart_b':
+                        params.gender = 'female';
+                        break;
+                    case 'smart_c':
+                        params.gender = 'female';
+                        params.age = 30;
+                        params.type = 'lt';
+                        break;
+                    case 'smart_d':
+                        params.gender = 'female';
+                        params.age = 30;
+                        params.type = 'gt';
+                        break;
+                }
+            } else {
+                params.group = this.state.selectedPatientGroup
+            }
+
+        }
+        getAPI(PATIENTS_LIST, successFn, errorFn, {...params});
+    }
+
+    togglePatientGroupEditing = (option) => {
+        this.setState({
+            showPatientGroupModal: !!option
+        });
+        if (!option) {
+            this.getPatientGroup();
+        }
+    }
+
+    changeSelectedPatientGroup = (e) => {
+        let that = this;
+        this.setState({
+            selectedPatientGroup: e.target.value,
+            currentPage: null
+        }, function () {
+            that.getMorePatient();
+        })
     }
 
     render() {
@@ -111,27 +175,48 @@ class PatientSelection extends React.Component {
                      // backgroundColor: '#e3e5e6',
                      borderRight: '1px solid #ccc'
                  }}>
-                <Radio.Group buttonStyle="solid" defaultValue="all">
+                <Radio.Group buttonStyle="solid" defaultValue={this.state.selectedPatientGroup}
+                             onChange={this.changeSelectedPatientGroup}>
                     <h2>Patients</h2>
                     <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="all">
                         All Patents
                     </Radio.Button>
-                    <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="b">
-                        Recently Visited
-                    </Radio.Button>
-                    <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="c">
-                        Recently Added
-                    </Radio.Button>
+                    {/*<Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="b">*/}
+                        {/*Recently Visited*/}
+                    {/*</Radio.Button>*/}
+                    {/*<Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="c">*/}
+                        {/*Recently Added*/}
+                    {/*</Radio.Button>*/}
                     <p><br/></p>
                     <h2>Groups</h2>
-                    <p><b>My Groups</b> <a style={{float: 'right'}}>Manage</a></p>
+                    <p><b>My Groups</b> <a style={{float: 'right'}}
+                                           onClick={() => this.togglePatientGroupEditing(true)}>Manage</a></p>
                     {this.state.patientGroup.map((group) => <Radio.Button
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={group.id}>
                         {group.name}
                     </Radio.Button>)}
-
                     <p><br/></p>
                     <p><b>Membership</b></p>
+                    <h2>Smart Groups</h2>
+                    <p><b>My Groups</b> <a style={{float: 'right'}}
+                                           onClick={() => this.togglePatientGroupEditing(true)}>Manage</a></p>
+                    <Radio.Button
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={"smart_a"}>
+                        All Male Customers
+                    </Radio.Button>
+                    <Radio.Button
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={"smart_b"}>
+                        All FeMale Customers
+                    </Radio.Button>
+                    <Radio.Button
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={"smart_c"}>
+                        Female Customers Over 30
+                    </Radio.Button>
+                    <Radio.Button
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={"smart_d"}>
+                        Female Customers Under 30
+                    </Radio.Button>
+                    <p><br/></p>
                 </Radio.Group>
             </Col>
             <Col span={19} style={{overflow: 'scroll'}}>
@@ -154,6 +239,10 @@ class PatientSelection extends React.Component {
                                           hidden={!this.state.morePatients}/>
 
             </Col>
+            <Modal visible={this.state.showPatientGroupModal}
+                   onCancel={() => this.togglePatientGroupEditing(false)}>
+                <PatientGroups {...this.props}/>
+            </Modal>
         </Row>
     }
 }

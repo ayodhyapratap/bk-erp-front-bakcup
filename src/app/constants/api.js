@@ -58,6 +58,7 @@ export const PRESCRIPTIONS_API = 'patients/prescriptions/?id=%s';
 export const SINGLE_REATMENTPLANS_API = 'patients/procedure/?id=%s';
 export const BLOCK_CALENDAR = 'appointment/block_calendar/';
 export const ROOM_TYPE = 'clinics/room_types/';
+export const PATIENT_NOTES = 'patients/patient_notes/?patient=%s&practice=%s';
 /*DELETE OBJECT*/
 export const TREATMENTPLANS_API = 'patients/procedure/?id=%s&complete=%s';
 export const ALL_PRESCRIPTIONS_API = 'patients/prescriptions/%s/';

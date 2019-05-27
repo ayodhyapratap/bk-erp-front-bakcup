@@ -4,6 +4,7 @@ import {Avatar, Button, Card, Col, Divider, Icon, List, Row} from "antd";
 import {Link} from "react-router-dom";
 import {getAPI, interpolate} from "../../../utils/common";
 import {MEDICAL_HISTORY, PATIENT_PROFILE} from "../../../constants/api";
+import PatientNotes from "./PatientNotes";
 
 class PatientProfile extends React.Component {
     constructor(props) {
@@ -12,7 +13,7 @@ class PatientProfile extends React.Component {
             patientProfile: null,
             currentPatient: this.props.currentPatient,
             medicalHistory: {},
-            loading:true
+            loading: true
         };
         this.loadProfile = this.loadProfile.bind(this);
         this.getMedicalHistory = this.getMedicalHistory.bind(this);
@@ -35,12 +36,12 @@ class PatientProfile extends React.Component {
             });
             that.setState({
                 medicalHistory: medicalHistoryData,
-                loading:false
+                loading: false
             })
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
 
         }
@@ -64,12 +65,12 @@ class PatientProfile extends React.Component {
         let successFn = function (data) {
             that.setState({
                 patientProfile: data,
-                loading:false
+                loading: false
             });
         };
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         };
         if (that.state.currentPatient)
@@ -99,7 +100,7 @@ class PatientProfile extends React.Component {
                         <PatientRow label="Patient Name" value={patient.user.first_name}/>
                         <PatientRow label="Patient ID" value={patient.id}/>
                         <PatientRow label="Gender" value={patient.gender}/>
-                     
+
                         <PatientRow label="Date of Birth" value={patient.dob}/>
                         <Divider>Contact Details</Divider>
                         <PatientRow label="Email" value={patient.user.email}/>
@@ -112,16 +113,18 @@ class PatientProfile extends React.Component {
                         <PatientRow label="Pincode" value={patient.pincode}/>
                     </Col>
                     <Col span={6} style={{borderLeft: '1 px solid #ccc'}}>
+                        <PatientNotes {...this.props} patientId={patient.id}/>
                         <Divider>Medical History</Divider>
-                        {this.state.medicalHistory && <List loading={this.state.loading} dataSource={patient.medical_history}
-                                                                    renderItem={(item) =>
-                                                                        <List.Item>{this.state.medicalHistory[item].name}</List.Item>}/>}
+                        {this.state.medicalHistory &&
+                        <List loading={this.state.loading} dataSource={patient.medical_history}
+                              renderItem={(item) =>
+                                  <List.Item>{this.state.medicalHistory[item].name}</List.Item>}/>}
 
                         <Divider>Groups</Divider>
-                        <List dataSource={patient.patient_group}
-                              renderItem={(item) => <List.Item>{item}</List.Item>}/>
+                        <List dataSource={patient.patient_group_data}
+                              renderItem={(item) => <List.Item>{item.name}</List.Item>}/>
                         <Divider>Medical Membership</Divider>
-                        <List  dataSource={patient.medical_membership}
+                        <List dataSource={patient.medical_membership}
                               renderItem={(item) => <List.Item>{item}</List.Item>}/>
                     </Col>
                 </Row>

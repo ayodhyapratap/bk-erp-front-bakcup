@@ -12,7 +12,7 @@ import {
     RADIO_FIELD,
     SELECT_FIELD, EMAIL_FIELD, MULTI_SELECT_FIELD
 } from "../../../constants/dataKeys";
-import {PATIENTS_LIST, PATIENT_PROFILE, MEDICAL_HISTORY} from "../../../constants/api";
+import {PATIENTS_LIST, PATIENT_PROFILE, MEDICAL_HISTORY, PATIENT_GROUPS} from "../../../constants/api";
 import {getAPI, interpolate, displayMessage} from "../../../utils/common";
 import {Link, Redirect} from 'react-router-dom'
 import moment from 'moment';
@@ -24,7 +24,8 @@ class EditPatientDetails extends React.Component {
 
         this.state = {
             redirect: false,
-            history: []
+            history: [],
+            patientGroup:[]
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -34,6 +35,7 @@ class EditPatientDetails extends React.Component {
 
     componentDidMount() {
         this.loadMedicalHistory();
+        this.getPatientGroup();
     }
 
     loadMedicalHistory = () => {
@@ -58,7 +60,22 @@ class EditPatientDetails extends React.Component {
             redirect: !redirectVar,
         });
     }
+    getPatientGroup = () => {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                patientGroup: data,
+                loading: false
+            });
+        };
+        let errorFn = function () {
+            that.setState({
+                loading: false
+            })
 
+        };
+        getAPI(interpolate(PATIENT_GROUPS, [this.props.active_practiceId]), successFn, errorFn);
+    }
     render() {
         console.log(this.props.currentPatient);
         const fields = [{
@@ -160,6 +177,15 @@ class EditPatientDetails extends React.Component {
                 value: item.id
             })),
             initialValue: this.props.currentPatient ? this.props.currentPatient.user.medical_history : null,
+            type: MULTI_SELECT_FIELD
+        },{
+            label: "Patient Group",
+            key: "patient_group",
+            options: this.state.patientGroup.map(item => Object.create({
+                label: item.name,
+                value: item.id
+            })),
+            initialValue: this.props.currentPatient ? this.props.currentPatient.user.patient_group : null,
             type: MULTI_SELECT_FIELD
         }];
 

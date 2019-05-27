@@ -3,7 +3,7 @@ import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form} from "antd";
 import {
     SUCCESS_MSG_TYPE,
-    INPUT_FIELD, SMS_FIELD, SINGLE_CHECKBOX_FIELD
+    INPUT_FIELD, SMS_FIELD, SINGLE_CHECKBOX_FIELD, TIME_PICKER, SELECT_FIELD
 } from "../../../../constants/dataKeys";
 import {COMMUNICATONS_API} from "../../../../constants/api"
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
@@ -11,6 +11,7 @@ import {
     APPOINTMENT_CANCELATION_SMS_TAG_OPTIONS,
     APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS
 } from "../../../../constants/hardData";
+import moment from "moment";
 
 
 class AppointmentSMS extends React.Component {
@@ -77,7 +78,7 @@ class AppointmentSMS extends React.Component {
             initialValue: this.state.data ? this.state.data.appointment_confirmation_sms : false,
             type: SINGLE_CHECKBOX_FIELD,
             extra: "SMS is sent to the Patient on successfully adding an appointment",
-            follow: " APPOINTMENT CONFIRMATION SMS"
+            follow: <b>APPOINTMENT CONFIRMATION SMS</b>
         }, {
             key: "appointment_confirmation_text",
             initialValue: this.state.data ? this.state.data.appointment_confirmation_text : null,
@@ -89,7 +90,7 @@ class AppointmentSMS extends React.Component {
             initialValue: this.state.data ? this.state.data.appointment_cancellation_sms : false,
             type: SINGLE_CHECKBOX_FIELD,
             extra: "SMS is sent to the Patient when the appointment is cancelled",
-            follow: "APPOINTMENT CANCELLATION SMS"
+            follow: <b>APPOINTMENT CANCELLATION SMS</b>
         }, {
             key: "appointment_cancellation_text",
             initialValue: this.state.data ? this.state.data.appointment_cancellation_text : null,
@@ -101,7 +102,7 @@ class AppointmentSMS extends React.Component {
             initialValue: this.state.data ? this.state.data.appointment_reminder_sms : false,
             type: SINGLE_CHECKBOX_FIELD,
             extra: "This SMS is automatically sent to the Patient at selected time & date before the appointment.",
-            follow: "APPOINTMENT REMINDER SMS",
+            follow: <b>APPOINTMENT REMINDER SMS</b>
         }, {
             key: "appointment_reminder_text",
             initialValue: this.state.data ? this.state.data.appointment_reminder_text : null,
@@ -113,16 +114,20 @@ class AppointmentSMS extends React.Component {
             type: SINGLE_CHECKBOX_FIELD,
             follow: "Send reminder SMS on the day of appointment at 7:30 AM",
         }, {
-            key: "send_on_day_of_appointment_time",
-            initialValue: "send_on_day_of_appointment_time",
-            follow: " Send reminder SMS on the day before the appointment at",
+            key: "send_on_day_of_appointment",
+            initialValue: this.state.data ? this.state.data.send_on_day_of_appointment : false,
+            follow: "Send reminder SMS on the day before the appointment at",
             type: SINGLE_CHECKBOX_FIELD,
+        }, {
+            key: "send_on_day_of_appointment_time",
+            initialValue: this.state.data && moment(this.state.data.send_on_day_of_appointment_time).isValid() ? moment(this.state.data.send_on_day_of_appointment_time) : null,
+            type: TIME_PICKER
         }, {
             key: "follow_up_reminder_sms",
             initialValue: this.state.data ? this.state.data.follow_up_reminder_sms : false,
             type: SINGLE_CHECKBOX_FIELD,
             extra: "This SMS is sent to the Patient on the morning of the followup sms.",
-            follow: "FOLLOW UP REMINDER SMS",
+            follow: <b>FOLLOW UP REMINDER SMS</b>
         }, {
             key: "follow_up_reminder_sms_text",
             initialValue: this.state.data ? this.state.data.follow_up_reminder_sms_text : null,
@@ -131,14 +136,15 @@ class AppointmentSMS extends React.Component {
         }, {
             key: "send_follow_up_reminder_time",
             initialValue: this.state.data ? this.state.data.send_follow_up_reminder_time : null,
-            extra: "Send follow-up SMS   after the last appointment.",
-            type: INPUT_FIELD,
+            extra: "Time to Send follow-up SMS after the last appointment.",
+            type: SELECT_FIELD,
+            options: [{label: '1 Month', value: 1}, {label: '3 Month', value: 3}, {label: '6 Month', value: 6}]
         }, {
             key: "payment_sms",
             initialValue: this.state.data ? this.state.data.payment_sms : false,
             type: SINGLE_CHECKBOX_FIELD,
             extra: "This SMS is sent to the Patient when payment is received.",
-            follow: "PAYMENT SMS"
+            follow: <b>PAYMENT SMS</b>
         }, {
             key: "payment_sms_text",
             initialValue: this.state.data ? this.state.data.payment_sms_text : null,
@@ -149,7 +155,7 @@ class AppointmentSMS extends React.Component {
             initialValue: this.state.data ? this.state.data.lab_order_confirmation_sms : false,
             type: SINGLE_CHECKBOX_FIELD,
             extra: "This SMS is sent to the Patient when he is prescribed a lab order.",
-            follow: "lab_order_confirmation_sms"
+            follow: <b>LAB ORDER CONFIRMATION SMS</b>
         }, {
             key: "lab_order_confirmation_text",
             initialValue: this.state.data ? this.state.data.lab_order_confirmation_text : null,
@@ -161,19 +167,19 @@ class AppointmentSMS extends React.Component {
             initialValue: this.state.data ? this.state.data.lab_order_due_on_sms : false,
             extra: "This SMS is sent to the Patient informing lab order due date",
             type: SINGLE_CHECKBOX_FIELD,
-            follow: "LAB ORDER DUE ON SMS"
+            follow: <b>LAB ORDER DUE ON SMS</b>
         }, {
             key: "lab_order_result_sms",
             initialValue: this.state.data ? this.state.data.lab_order_result_sms : false,
             extra: "This SMS is sent to the Patient when lab order results are ready",
             type: SINGLE_CHECKBOX_FIELD,
-            follow: "LAB ORDER RESULT SMS"
+            follow: <b>LAB ORDER RESULT SMS</b>
         }, {
             key: "lab_order_reminder_sms",
             initialValue: this.state.data ? this.state.data.lab_order_reminder_sms : false,
             type: SINGLE_CHECKBOX_FIELD,
             extra: "This reminder SMS is sent to the Patient",
-            follow: "LAB ORDER REMINDER SMS"
+            follow: <b>LAB ORDER REMINDER SMS</b>
         },];
         const formProp = {
             successFn: function (data) {

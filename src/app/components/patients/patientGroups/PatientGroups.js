@@ -1,0 +1,97 @@
+import React from "react";
+import {Card, Form, Popconfirm} from 'antd';
+import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
+import {OFFERS, PATIENT_GROUPS} from "../../../constants/api";
+import CustomizedTable from "../../common/CustomizedTable";
+import {INPUT_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import DynamicFieldsForm from "../../common/DynamicFieldsForm";
+
+export default class PatientGroups extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            patientGroup: [],
+            loading: true
+        }
+    }
+
+    componentDidMount() {
+        this.getPatientGroup();
+    }
+
+    getPatientGroup = () => {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                patientGroup: data,
+                loading: false
+            });
+        };
+        let errorFn = function () {
+            that.setState({
+                loading: false
+            })
+
+        };
+        getAPI(interpolate(PATIENT_GROUPS, [this.props.active_practiceId]), successFn, errorFn);
+    }
+    deleteObject(record){
+        let that = this;
+        let reqData = record;
+        reqData.is_active = false;
+        let successFn = function (data) {
+            that.getPatientGroup();
+        }
+        let errorFn = function () {
+        }
+        postAPI(interpolate(PATIENT_GROUPS, [this.props.active_practiceId]), reqData, successFn, errorFn);
+    }
+
+    render() {
+        let that = this;
+        const coloumns = [{
+            title: 'Group Name',
+            dataIndex: 'name',
+            key: 'name'
+        }, {
+            title: 'Action',
+            key: 'action',
+            render: (text, record) => (
+                <Popconfirm title="Are you sure delete this prescription?" onConfirm={() => that.deleteObject(record)}
+                            okText="Yes" cancelText="No">
+                    <a>
+                        Delete
+                    </a>
+                </Popconfirm>
+            ),
+        }];
+        const fields = [{
+            label: "Group Name",
+            key: "name",
+            required: true,
+            type: INPUT_FIELD
+        }]
+        const formProp = {
+            successFn: function (data) {
+                console.log(data);
+                displayMessage(SUCCESS_MSG_TYPE, "success")
+                that.getPatientGroup()
+
+            },
+            errorFn: function () {
+
+            },
+            action: interpolate(PATIENT_GROUPS, [this.props.active_practiceId]),
+            method: "post",
+            beforeSubmit: function (data) {
+                console.log(data)
+            }
+        }
+        const TestFormLayout = Form.create()(DynamicFieldsForm);
+        return <Card title={"Patient Groups"}>
+            <TestFormLayout formProp={formProp}
+                            fields={fields} {...this.props}/>
+            <CustomizedTable dataSource={this.state.patientGroup} loading={this.state.loading} columns={coloumns}/>
+        </Card>
+    }
+}
