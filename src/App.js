@@ -17,7 +17,7 @@ class App extends Component {
             user: loggedInUser(),
             redirect: false,
         };
-        momenttz.tz.setDefault('Asia/Kolkata');
+        // momenttz.tz.setDefault('Asia/Kolkata');
 
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);

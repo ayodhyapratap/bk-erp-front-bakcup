@@ -9,8 +9,8 @@ import {
 } from "../../constants/dataKeys";
 import moment from "moment";
 import DynamicFieldsForm from "../common/DynamicFieldsForm";
-import {Form, Card,Row,Col} from "antd";
-import {BLOCK_CALENDAR, PRACTICESTAFF} from "../../constants/api";
+import {Form, Card, Row, Col} from "antd";
+import {APPOINTMENT_PERPRACTICE_API, BLOCK_CALENDAR, PRACTICESTAFF} from "../../constants/api";
 import {displayMessage, getAPI, interpolate} from "../../utils/common";
 
 export default class BlockCalendar extends React.Component {
@@ -20,6 +20,40 @@ export default class BlockCalendar extends React.Component {
             practice_doctors: [],
         };
         this.loadDoctors();
+    }
+
+    changeParamsForBlockedAppointments = (valueObj) => {
+        let that = this;
+        this.setState({
+            blockedAppointmentParams: valueObj
+        }, function () {
+            if (valueObj.block_from && valueObj.block_to)
+                that.retrieveBlockingAppointments();
+        })
+        return true;
+    }
+    retrieveBlockingAppointments = () => {
+        let that = this;
+        that.setState({
+            loading: true
+        });
+        let successFn = function (data) {
+            that.setState(function (prevState) {
+                return {
+                    blockingAppointments: data,
+                    loading: false
+                }
+            });
+        }
+        let errorFn = function () {
+            that.setState({
+                loading: false
+            })
+        }
+        getAPI(interpolate(APPOINTMENT_PERPRACTICE_API, [this.props.active_practiceId]), successFn, errorFn, {
+            start: moment(that.state.blockedAppointmentParams.block_from).format('YYYY-MM-DD'),
+            end: moment(that.state.blockedAppointmentParams.block_to).format('YYYY-MM-DD')
+        });
     }
 
     loadDoctors() {
@@ -57,16 +91,18 @@ export default class BlockCalendar extends React.Component {
 
     render() {
         let that = this;
-        let fields = [{
+        const fields = [{
             label: "Block From",
             key: 'block_from',
             type: DATE_TIME_PICKER,
-            initialValue: moment()
+            initialValue: moment(),
+            required: true
         }, {
             label: "Block To",
             key: 'block_to',
             type: DATE_TIME_PICKER,
-            initialValue: moment().add(5, 'm')
+            initialValue: moment().add(5, 'm'),
+            required: true
         }, {
             label: "Event Name",
             key: 'event',
@@ -80,7 +116,16 @@ export default class BlockCalendar extends React.Component {
                 value: item.id
             }))
         }];
-        let BlockCalendarLayoutForm = Form.create()(DynamicFieldsForm);
+
+        const BlockCalendarLayoutForm = Form.create({
+            onValuesChange: (props, changedValues, allValues) => {
+                console.log(props, changedValues, allValues);
+                setTimeout(function () {
+                    that.changeParamsForBlockedAppointments(allValues);
+                }, 0);
+                return false;
+            }
+        })(DynamicFieldsForm);
         let formProp = {
             method: 'post',
             action: BLOCK_CALENDAR,
@@ -91,19 +136,20 @@ export default class BlockCalendar extends React.Component {
             errorFn: function () {
                 displayMessage(ERROR_MSG_TYPE, "Blocking Calendar Failed");
             }
-
         }
         let defaultValues = [{key: 'practice', value: that.props.active_practiceId}];
         return <Card title={'Block Calendar'}>
             <Row>
                 <Col span={18}>
-                    <BlockCalendarLayoutForm fields={fields} formProp={formProp} defaultValues={defaultValues} {...this.props}/>
+                    <BlockCalendarLayoutForm fields={fields} formProp={formProp}
+                                             wrappedComponentRef={(form) => that.form = form}
+                                             defaultValues={defaultValues} {...this.props}/>
                 </Col>
                 <Col span={6}>
 
                 </Col>
             </Row>
 
-        </Card>
+        </Card>;
     }
 }

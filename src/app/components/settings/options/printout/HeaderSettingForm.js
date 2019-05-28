@@ -1,7 +1,7 @@
 import React from 'react';
-import {Form, Input, Radio, Avatar, Button, Upload, Icon, message} from 'antd';
+import {Form, Input, Radio, Avatar, Button, Upload, Icon, message, Row, Col} from 'antd';
 import {postAPI, interpolate, getAPI, makeURL} from "../../../../utils/common";
-import {PRACTICE_PRINT_SETTING_API, FILE_UPLOAD_API} from "../../../../constants/api";
+import {PRACTICE_PRINT_SETTING_API, FILE_UPLOAD_API, PRINT_PREVIEW_RENDER} from "../../../../constants/api";
 import {HEADER_INCLUDE, LOGO_TYPE, LOGO_ALIGMENT, LOGO_INCLUDE} from "../../../../constants/hardData";
 
 const UserList = ['U', 'Lucy', 'Tom', 'Edward'];
@@ -88,6 +88,7 @@ class HeaderSettingForm extends React.Component {
     }
 
     render() {
+        let that = this;
         const formItemLayout = {
             labelCol: {
                 xs: {span: 24},
@@ -130,86 +131,104 @@ class HeaderSettingForm extends React.Component {
             value={logo_alignment.value}>{logo_alignment.value}</Radio>)
         const logoInclude = LOGO_INCLUDE.map((logo_include) => <Radio
             value={logo_include.value}>{logo_include.title}</Radio>)
-        return (
-            <Form onSubmit={this.handleSubmit} key={this.state.print_setting.id}>
-                <h2>Customize Header</h2>
+        let PreviewParamsURL = '?type=' + this.props.type + '&sub_type=' + this.props.sub_type;
+        if (this.state.print_setting) {
+            let keys = Object.keys(this.state.print_setting);
+            keys.forEach(function (key) {
+                if (that.state.print_setting[key])
+                    PreviewParamsURL += '&' + key + '=' + that.state.print_setting[key]
+            });
+        }
+        return (<Row gutter={16}>
+                <Col span={12}>
+                    <Form onSubmit={this.handleSubmit} key={this.state.print_setting.id}>
+                        <h2>Customize Header</h2>
 
-                <Form.Item key={'header_include'} {...formItemLayout} label={(<span>Include Header&nbsp;</span>)}>
-                    {getFieldDecorator('header_include', {initialValue: this.state.print_setting.header_include})
-                    (
-                        <Radio.Group onChange={(e) => this.onChanged('isHeaderNot', e.target.value)}>
-                            {headerInclude}
-                        </Radio.Group>
-                    )
-                    }
-                </Form.Item>
+                        <Form.Item key={'header_include'} {...formItemLayout}
+                                   label={(<span>Include Header&nbsp;</span>)}>
+                            {getFieldDecorator('header_include', {initialValue: this.state.print_setting.header_include})
+                            (
+                                <Radio.Group onChange={(e) => this.onChanged('isHeaderNot', e.target.value)}>
+                                    {headerInclude}
+                                </Radio.Group>
+                            )
+                            }
+                        </Form.Item>
 
-                <Form.Item key={'header_text'} {...formItemLayout} label={(<span>Header&nbsp;</span>)}>
-                    {getFieldDecorator('header_text', {
-                        initialValue: this.state.print_setting.header_text
-                    })(
-                        <Input/>
-                    )}
-                </Form.Item>
-                <Form.Item key={'header_left_text'} {...formItemLayout} label={(<span>Left Text&nbsp;</span>)}>
-                    {getFieldDecorator('header_left_text', {
-                        initialValue: this.state.print_setting.header_left_text
-                    })(
-                        <Input/>
-                    )}
-                </Form.Item>
+                        <Form.Item key={'header_text'} {...formItemLayout} label={(<span>Header&nbsp;</span>)}>
+                            {getFieldDecorator('header_text', {
+                                initialValue: this.state.print_setting.header_text
+                            })(
+                                <Input/>
+                            )}
+                        </Form.Item>
+                        <Form.Item key={'header_left_text'} {...formItemLayout} label={(<span>Left Text&nbsp;</span>)}>
+                            {getFieldDecorator('header_left_text', {
+                                initialValue: this.state.print_setting.header_left_text
+                            })(
+                                <Input/>
+                            )}
+                        </Form.Item>
 
-                <Form.Item key={'header_right_text'} {...formItemLayout} label={(<span>Right Text&nbsp;</span>)}>
-                    {getFieldDecorator('header_right_text', {initialValue: this.state.print_setting.header_right_text})
-                    (<Input/>)
-                    }
-                </Form.Item>
+                        <Form.Item key={'header_right_text'} {...formItemLayout}
+                                   label={(<span>Right Text&nbsp;</span>)}>
+                            {getFieldDecorator('header_right_text', {initialValue: this.state.print_setting.header_right_text})
+                            (<Input/>)
+                            }
+                        </Form.Item>
 
-                <Form.Item key={'logo_include'} {...formItemLayout} label={(<span>Include Logo&nbsp;</span>)}>
-                    {getFieldDecorator('logo_include', {initialValue: this.state.print_setting.logo_include})
-                    (
-                        <Radio.Group onChange={(e) => this.onChanged('islogoNot', e.target.value)}>
-                            {logoInclude}
-                        </Radio.Group>
-                    )
-                    }
-                </Form.Item>
+                        <Form.Item key={'logo_include'} {...formItemLayout} label={(<span>Include Logo&nbsp;</span>)}>
+                            {getFieldDecorator('logo_include', {initialValue: this.state.print_setting.logo_include})
+                            (
+                                <Radio.Group onChange={(e) => this.onChanged('islogoNot', e.target.value)}>
+                                    {logoInclude}
+                                </Radio.Group>
+                            )
+                            }
+                        </Form.Item>
 
-                <Form.Item key={'logo_path'} {...formItemLayout} label={(<span>Logo&nbsp;</span>)}>
-                    {getFieldDecorator('logo_path')
-                    (<Upload {...singleUploadprops} >
-                            <Button>
-                                <Icon type="upload"/> Click to Upload
-                            </Button>
-                        </Upload>)}
-                    {/*<Avatar style={{backgroundColor: this.state.color}} size="large">*/}
-                        {/*{this.state.user}*/}
-                    {/*</Avatar>*/}
+                        <Form.Item key={'logo_path'} {...formItemLayout} label={(<span>Logo&nbsp;</span>)}>
+                            {getFieldDecorator('logo_path')
+                            (<Upload {...singleUploadprops} >
+                                <Button>
+                                    <Icon type="upload"/> Click to Upload
+                                </Button>
+                            </Upload>)}
+                            {/*<Avatar style={{backgroundColor: this.state.color}} size="large">*/}
+                            {/*{this.state.user}*/}
+                            {/*</Avatar>*/}
 
-                </Form.Item>
+                        </Form.Item>
 
-                <Form.Item key={'logo_type'} {...formItemLayout} label={(<span>Type&nbsp;</span>)}>
-                    {getFieldDecorator('logo_type', {initialValue: this.state.print_setting.logo_type})(
-                        <Radio.Group onChange={(e) => this.onChanged('logo_type', e.target.value)}>
-                            {logoType}
-                        </Radio.Group>
-                    )}
-                </Form.Item>
+                        <Form.Item key={'logo_type'} {...formItemLayout} label={(<span>Type&nbsp;</span>)}>
+                            {getFieldDecorator('logo_type', {initialValue: this.state.print_setting.logo_type})(
+                                <Radio.Group onChange={(e) => this.onChanged('logo_type', e.target.value)}>
+                                    {logoType}
+                                </Radio.Group>
+                            )}
+                        </Form.Item>
 
-                <Form.Item key={'logo_alignment'} {...formItemLayout} label={(<span>Alignment&nbsp;</span>)}>
-                    {getFieldDecorator('logo_alignment', {initialValue: this.state.print_setting.logo_alignment})
-                    (
-                        <Radio.Group onChange={(e) => this.onChanged('alignType', e.target.value)}>
-                            {logoAlignment}
-                        </Radio.Group>
-                    )
-                    }
-                </Form.Item>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit">Submit</Button>
-                </Form.Item>
+                        <Form.Item key={'logo_alignment'} {...formItemLayout} label={(<span>Alignment&nbsp;</span>)}>
+                            {getFieldDecorator('logo_alignment', {initialValue: this.state.print_setting.logo_alignment})
+                            (
+                                <Radio.Group onChange={(e) => this.onChanged('alignType', e.target.value)}>
+                                    {logoAlignment}
+                                </Radio.Group>
+                            )
+                            }
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">Submit</Button>
+                        </Form.Item>
 
-            </Form>
+                    </Form>
+                </Col>
+                <Col span={12} style={{textAlign: 'center'}}>
+                    <iframe
+                        src={makeURL(PRINT_PREVIEW_RENDER + PreviewParamsURL)} style={{width: '100%', height: '100%', boxShadow: '-2px 0px 4px #B8B8B8'}}/>
+                </Col>
+
+            </Row>
         );
     }
 }

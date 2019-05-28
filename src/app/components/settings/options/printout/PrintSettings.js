@@ -1,12 +1,12 @@
 import React from 'react';
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Row, Form, Col, Radio, Input, Divider} from "antd";
 import HeaderSettingForm from "./HeaderSettingForm";
-import DocumentPdf from "./DocumentPdf";
 import PageSetting from "./PageSettingForm"
 import Patient from "./PatientSettingForm"
 import Footer from "./FooterSettingForm"
 import {CUSTOMIZE_PAPER_TYPE} from "../../../../constants/hardData";
+import {makeURL} from "../../../../utils/common";
+import {PRINT_PREVIEW_RENDER} from "../../../../constants/api";
 
 const {TextArea} = Input;
 
@@ -35,10 +35,11 @@ class PrintPreview extends React.Component {
         const FooterObject = Form.create()(Footer);
 
         return (<Row>
-                <Col span={12}>
+                <Col span={24}>
                     <div style={{textAlign: 'center'}}>
                         <br/>
-                        <Radio.Group buttonStyle="solid" size="small" onChange={this.changeFormType} defaultValue={this.state.selectedFormType}>
+                        <Radio.Group buttonStyle="solid" size="small" onChange={this.changeFormType}
+                                     defaultValue={this.state.selectedFormType}>
                             {radioTabList}
                         </Radio.Group>
                     </div>
@@ -50,9 +51,7 @@ class PrintPreview extends React.Component {
                     </div>
 
                 </Col>
-                <Col span={12} style={{textAlign: 'center'}}>
-                    <h2>Hi</h2>
-                </Col>
+
             </Row>
         );
 

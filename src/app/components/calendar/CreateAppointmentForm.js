@@ -4,6 +4,7 @@ import {
     Input,
     Select,
     CheckBox,
+    Alert,
     DatePicker,
     Button,
     InputNumber,
@@ -23,7 +24,7 @@ import {
     SEARCH_PATIENT,
     ALL_APPOINTMENT_API,
     PATIENT_PROFILE,
-    APPOINTMENT_PERPRACTICE_API
+    APPOINTMENT_PERPRACTICE_API, BLOCK_CALENDAR
 
 } from "../../constants/api";
 import {Checkbox, Radio} from "antd/lib/index";
@@ -50,7 +51,14 @@ export default class CreateAppointmentForm extends React.Component {
             patientListData: [],
             patientDetails: null,
             appointmentDetail: null,
-            saving: false
+            saving: false,
+            doctorBlock:false,
+            practiceBlock:false,
+            timeToCheckBlock: {
+                schedule_at: moment(),
+                slot: 10
+            }
+
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.loadDoctors = this.loadDoctors.bind(this);
@@ -68,9 +76,47 @@ export default class CreateAppointmentForm extends React.Component {
         this.loadAppointmentCategories();
         if (this.props.match.params.appointmentid) {
             this.loadAppointment();
+        } else {
+            this.findBlockedTiming();
         }
     }
 
+    setBlockedTiming = (type, value) => {
+        let that = this;
+        if (type) {
+            this.setState(function (prevState) {
+                return {
+                    timeToCheckBlock: {...prevState.timeToCheckBlock, [type]: value}
+                }
+            }, function () {
+                that.findBlockedTiming();
+            })
+        }
+    }
+    findBlockedTiming = () => {
+        let that = this;
+        let successFn = function (data) {
+            data.forEach(function(blockRow){
+               if(blockRow.doctor==null ) {
+                   that.setState({
+                       practiceBlock:true
+                   });
+               }else if (blockRow.doctor==that.props.timeToCheckBlock.doctor){
+                   that.setState({
+                       doctorBlock:true
+                   });
+               }
+            });
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(BLOCK_CALENDAR, successFn, errorFn, {
+            practice: this.props.active_practiceId,
+            cal_fdate: moment(that.state.timeToCheckBlock.schedule_at).format(),
+            cal_tdate: moment(that.state.timeToCheckBlock.schedule_at).add(that.state.timeToCheckBlock.slot, 'minutes').format()
+        })
+    }
 
     loadAppointment() {
         let that = this;
@@ -81,9 +127,11 @@ export default class CreateAppointmentForm extends React.Component {
             that.setState({
                 appointment: data,
                 patientDetails: data.patient,
+                timeToCheckBlock: data,
                 loading: false,
             });
             console.log("appointment list");
+            that.findBlockedTiming();
         }
 
         let errorFn = function () {
@@ -114,12 +162,10 @@ export default class CreateAppointmentForm extends React.Component {
                     })
                 }
             })
-
         }
         let errorFn = function () {
         };
         getAPI(interpolate(PRACTICESTAFF, [this.props.active_practiceId]), successFn, errorFn);
-
     }
 
     loadProcedureCategory() {
@@ -128,8 +174,6 @@ export default class CreateAppointmentForm extends React.Component {
             that.setState({
                 procedure_category: data
             })
-            // console.log("category",that.state.procedure_category);
-
         }
         let errorFn = function () {
 
@@ -314,14 +358,17 @@ export default class CreateAppointmentForm extends React.Component {
             <Spin spinning={this.state.saving}>
                 <Form onSubmit={this.handleSubmit}>
                     {this.props.title ? <h2>{this.props.title}</h2> : null}
+
                     <FormItem key="schedule_at" label="Appointment Schedule" {...formItemLayout}>
                         {getFieldDecorator("schedule_at",
                             {
                                 initialValue: appointmentTime ? moment(appointmentTime) : null,
                                 rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                             })(
-                            <DatePicker format="YYYY/MM/DD HH:mm" showTime/>
+                            <DatePicker format="YYYY/MM/DD HH:mm" showTime
+                                        onChange={(value) => this.setBlockedTiming("schedule_at", value)}/>
                         )}
+                        {this.state.practiceBlock ? <Alert message="Clinic is not available for current timing!!" type="warning" showIcon />:null}
                     </FormItem>
                     <FormItem key="slot"
                               {...formItemLayout}
@@ -330,7 +377,7 @@ export default class CreateAppointmentForm extends React.Component {
                             initialValue: this.state.appointment ? this.state.appointment.slot : 10,
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
-                            <InputNumber min={1}/>
+                            <InputNumber min={1} onChange={(value) => this.setBlockedTiming("slot", value)}/>
                         )}
                         <span className="ant-form-text">mins</span>
                     </FormItem>
@@ -400,15 +447,18 @@ export default class CreateAppointmentForm extends React.Component {
                             </FormItem>
 
                         </div>}
+
                     <FormItem key="doctor" {...formItemLayout} label="Doctor">
                         {getFieldDecorator("doctor", {initialValue: this.state.appointment ? this.state.appointment.doctor : null}, {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
-                            <Select placeholder="Doctor">
+                            <Select placeholder="Doctor"
+                                    onChange={(value) => this.setBlockedTiming("schedule_at", value)}>
                                 {doctorOption.map((option) => <Select.Option
                                     value={option.value}>{option.label}</Select.Option>)}
                             </Select>
                         )}
+                        {this.state.doctorBlock ? <Alert message="Doctor is not available for current timing!!" type="warning" showIcon />:null}
                     </FormItem>
                     <FormItem key="category" {...formItemLayout} label="Category">
                         {getFieldDecorator("category", {initialValue: this.state.appointment ? this.state.appointment.category : null}, {
@@ -424,7 +474,7 @@ export default class CreateAppointmentForm extends React.Component {
                         {getFieldDecorator("procedure", {initialValue: this.state.appointment ? this.state.appointment.procedure : null}, {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
-                            <Select placeholder="Procedures Planned"  >
+                            <Select placeholder="Procedures Planned">
                                 {procedureOption.map((option) => <Select.Option
                                     value={option.value}>{option.label}</Select.Option>)}
                             </Select>

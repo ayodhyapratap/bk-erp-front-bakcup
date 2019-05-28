@@ -88,6 +88,8 @@ export const TREATMENT_REPORTS = 'clinics/%s/treatment_report/?%s'
 export const DRUG_TYPE_API = 'drug_type/';
 export const DRUG_UNIT_API = '';
 
+export const PRINT_PREVIEW_RENDER = 'patients/print/';
+
 /**
  * Blogs API
  * */
