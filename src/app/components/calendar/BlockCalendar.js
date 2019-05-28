@@ -58,7 +58,7 @@ export default class BlockCalendar extends React.Component {
     render() {
         let that = this;
         let fields = [{
-            label: "Block To",
+            label: "Block From",
             key: 'block_from',
             type: DATE_TIME_PICKER,
             initialValue: moment()

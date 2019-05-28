@@ -424,7 +424,7 @@ export default class CreateAppointmentForm extends React.Component {
                         {getFieldDecorator("procedure", {initialValue: this.state.appointment ? this.state.appointment.procedure : null}, {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
-                            <Select placeholder="Procedures Planned">
+                            <Select placeholder="Procedures Planned"  >
                                 {procedureOption.map((option) => <Select.Option
                                     value={option.value}>{option.label}</Select.Option>)}
                             </Select>

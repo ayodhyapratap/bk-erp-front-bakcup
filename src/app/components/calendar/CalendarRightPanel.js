@@ -1,5 +1,11 @@
 import React from "react";
-import {CHECKOUT_STATUS, ENGAGED_STATUS, SCHEDULE_STATUS, WAITING_STATUS} from "../../constants/hardData";
+import {
+    CANCELLED_STATUS,
+    CHECKOUT_STATUS,
+    ENGAGED_STATUS,
+    SCHEDULE_STATUS,
+    WAITING_STATUS
+} from "../../constants/hardData";
 import {calendarSettingMenu} from "./calendarUtils";
 import {Button, Icon, Dropdown, Row, Col, Divider, Spin, List, Popover} from "antd";
 import {Link} from "react-router-dom";
@@ -16,7 +22,8 @@ export default class CalendarRightPanel extends React.Component {
             todaysAppointments: [],
             todaysFilteredAppointments: [],
             todaysAppointmentOverview: {},
-            todaysAppointmentFilter: 'ALL'
+            todaysAppointmentFilter: 'ALL',
+            selectedDate: moment()
         }
         this.todaysAppointments = this.todaysAppointments.bind(this);
     }
@@ -25,6 +32,18 @@ export default class CalendarRightPanel extends React.Component {
         this.todaysAppointments()
     }
 
+    changeDate = (option) => {
+        let that = this;
+        this.setState(function (prevState) {
+            if (option)
+                return {selectedDate: prevState.selectedDate.add(1, 'days')};
+            return {selectedDate: prevState.selectedDate.subtract(1, 'days')};
+
+        }, function () {
+            that.todaysAppointments();
+        })
+
+    }
     todaysAppointments = () => {
         let that = this;
         that.setState({
@@ -60,8 +79,8 @@ export default class CalendarRightPanel extends React.Component {
             })
         }
         getAPI(interpolate(APPOINTMENT_PERPRACTICE_API, [this.props.active_practiceId]), successFn, errorFn, {
-            start: moment().format('YYYY-MM-DD'),
-            end: moment().format('YYYY-MM-DD')
+            start: that.state.selectedDate.format('YYYY-MM-DD'),
+            end: that.state.selectedDate.format('YYYY-MM-DD')
         });
     }
 
@@ -178,7 +197,11 @@ export default class CalendarRightPanel extends React.Component {
                     <h2 style={{color: (this.state.todaysAppointmentFilter == CHECKOUT_STATUS ? 'white' : '#0094DE')}}>{this.state.todaysAppointmentOverview[CHECKOUT_STATUS] ? this.state.todaysAppointmentOverview[CHECKOUT_STATUS] : 0}</h2>
                 </Col>
             </Row>
-            <Divider>Today's Apointment ({this.state.todaysFilteredAppointments.length})
+            <Divider>
+                <a type="primary" onClick={() => this.changeDate(false)}><Icon type="left"/></a>&nbsp;
+                {this.state.selectedDate.format("MMM Do") == moment().format("MMM Do") ? 'Today' : this.state.selectedDate.format("MMM Do")}'s
+                Schedule ({this.state.todaysFilteredAppointments.length})
+                &nbsp;<a type="primary" onClick={() => this.changeDate(true)}><Icon type="right"/></a>
             </Divider>
             <Spin spinning={this.state.loading}>
                 <List
@@ -191,7 +214,8 @@ export default class CalendarRightPanel extends React.Component {
                             style={{
                                 border: '1px solid #ddd',
                                 borderRadius: '5px',
-                                backgroundColor: '#eee',
+                                textDecoration: (apppointment.status == CANCELLED_STATUS ? 'line-through' : 'inherit'),
+                                backgroundColor: (apppointment.status == CANCELLED_STATUS ? '#aaa' : '#eee'),
                                 width: '100%',
                                 marginTop: '2px',
                                 borderLeft: '5px solid' + (apppointment.doctor && that.props.doctors_object && that.props.doctors_object[apppointment.doctor] ? that.props.doctors_object[apppointment.doctor].calendar_colour : 'transparent')

@@ -16,7 +16,6 @@ class PatientProfile extends React.Component {
             loading: true
         };
         this.loadProfile = this.loadProfile.bind(this);
-        this.getMedicalHistory = this.getMedicalHistory.bind(this);
     }
 
     componentDidMount() {
@@ -24,29 +23,8 @@ class PatientProfile extends React.Component {
             this.loadProfile();
 
         }
-        this.getMedicalHistory();
     }
 
-    getMedicalHistory() {
-        let that = this;
-        let successFn = function (data) {
-            let medicalHistoryData = {};
-            data.forEach(function (history) {
-                medicalHistoryData[history.id] = history
-            });
-            that.setState({
-                medicalHistory: medicalHistoryData,
-                loading: false
-            })
-        }
-        let errorFn = function () {
-            that.setState({
-                loading: false
-            })
-
-        }
-        getAPI(interpolate(MEDICAL_HISTORY, [that.props.active_practiceId]), successFn, errorFn);
-    }
 
     componentWillReceiveProps(newProps) {
         let that = this;
@@ -114,10 +92,10 @@ class PatientProfile extends React.Component {
                     <Col span={6} style={{borderLeft: '1 px solid #ccc'}}>
                         <PatientNotes {...this.props} patientId={patient.id}/>
                         <Divider>Medical History</Divider>
-                        {this.state.medicalHistory &&
-                        <List loading={this.state.loading} dataSource={patient.medical_history}
+                        {patient.medical_history_data &&
+                        <List size="small" loading={this.state.loading} dataSource={patient.medical_history_data}
                               renderItem={(item) =>
-                                  <List.Item>{this.state.medicalHistory[item].name}</List.Item>}/>}
+                                  <List.Item>{item.name}</List.Item>}/>}
 
                         <Divider>Groups</Divider>
                         <List dataSource={patient.patient_group_data}

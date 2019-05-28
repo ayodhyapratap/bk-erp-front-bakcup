@@ -8,6 +8,7 @@ import {
 } from "./app/utils/auth";
 import AppBase from "./app/components/core/AppBase";
 import Auth from "./app/components/auth/Auth";
+import momenttz from 'moment-timezone';
 
 class App extends Component {
     constructor(props) {
@@ -16,6 +17,8 @@ class App extends Component {
             user: loggedInUser(),
             redirect: false,
         };
+        momenttz.tz.setDefault('Asia/Kolkata');
+
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
     }

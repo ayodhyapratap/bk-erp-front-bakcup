@@ -39,6 +39,7 @@ import EventComponent from "./EventComponent";
 import {calendarSettingMenu, loadAppointmentCategories} from "./calendarUtils";
 import CalendarRightPanel from "./CalendarRightPanel";
 import BlockCalendar from "./BlockCalendar";
+import {CANCELLED_STATUS} from "../../constants/hardData";
 
 const localizer = BigCalendar.momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(BigCalendar)
@@ -316,28 +317,32 @@ class App extends Component {
         let doctor = event.doctor;
         let category = event.appointment.category;
         let color_object = null;
-        if (this.state.filterType == 'DOCTOR') {
-            if (doctor && this.state.doctors_object && this.state.doctors_object[doctor]) {
-                color_object = this.state.doctors_object[doctor].calendar_colour;
-            } else {
-                color_object = 'black';
-            }
-        } else if (this.state.filterType == 'CATEGORY') {
-            if (category && this.state.categories_object && this.state.categories_object[category]) {
-                color_object = '#' + this.state.categories_object[category].calendar_colour;
-            } else {
-                color_object = 'black';
-            }
-        }
-        var backgroundColor = color_object;
         var style = {
-            backgroundColor: backgroundColor,
             borderRadius: '0px',
             opacity: 0.8,
             border: '5px',
             color: 'white',
             display: 'block'
         };
+        if (event.appointment.status == CANCELLED_STATUS) {
+            style.backgroundColor = '#aaa';
+            style.textDecoration = 'line-through';
+        } else {
+            if (this.state.filterType == 'DOCTOR') {
+                if (doctor && this.state.doctors_object && this.state.doctors_object[doctor]) {
+                    color_object = this.state.doctors_object[doctor].calendar_colour;
+                } else {
+                    color_object = 'black';
+                }
+            } else if (this.state.filterType == 'CATEGORY') {
+                if (category && this.state.categories_object && this.state.categories_object[category]) {
+                    color_object = '#' + this.state.categories_object[category].calendar_colour;
+                } else {
+                    color_object = 'black';
+                }
+            }
+            style.backgroundColor = color_object;
+        }
         return {
             style: style
         };
@@ -407,14 +412,7 @@ class App extends Component {
         return (<Content className="main-container">
                 <div style={{margin: '10px', padding: '5px'}}>
                     <Switch>
-                        <Route exact path="/calendar/create-appointment"
-                               render={(route) => <CreateAppointment {...this.props} {...route}
-                                                                     startTime={this.state.startTime}/>}/>
-                        <Route exact path="/calendar/:appointmentid/edit-appointment"
-                               render={(route) => <CreateAppointment {...this.props} {...route}
-                                                                     startTime={this.state.startTime}/>}/>
-                        <Route exact path="/calendar/blockcalendar"
-                               render={(route) => <BlockCalendar {...this.props} {...route}/>}/>
+
                         <Route>
                             <div style={{backgroundColor: '#fff', padding: '5px 10px'}}>
                                 <Row gutter={16}>
@@ -422,7 +420,7 @@ class App extends Component {
 
                                         <DatePicker onChange={this.onSelectedDateChange}
                                                     value={this.state.selectedDate}
-                                                    format={"DD-MM-YYYY"} style={{margin: 5}}/>
+                                                    format={"DD-MM-YYYY"} style={{margin: 5}} allowClear={false}/>
                                         <Button block style={{margin: 5}}>
                                             <Link to={"/calendar/blockcalendar"}>
                                                 <Icon type="stop"/> Block Calendar

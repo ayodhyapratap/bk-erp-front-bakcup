@@ -160,6 +160,7 @@ export const SCHEDULE_STATUS = 'Scheduled';
 export const WAITING_STATUS = 'Waiting';
 export const ENGAGED_STATUS = 'Engaged';
 export const CHECKOUT_STATUS = 'CheckOut';
+export const CANCELLED_STATUS = 'Cancelled';
 
 export const TYPE_OF_CONSUMPTION = [
     {label:"Sales",value:"SALES"},

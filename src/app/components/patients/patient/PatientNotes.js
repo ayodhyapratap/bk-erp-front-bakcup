@@ -68,7 +68,7 @@ export default class PatientNotes extends React.Component {
             <TestFormLayout formProp={formProp}
                             defaultValues={defaultValues}
                             fields={fields}/>
-            <List type={'small'} dataSource={this.state.notes} renderItem={item => <List.Item>
+            <List size={'small'} dataSource={this.state.notes} renderItem={item => <List.Item>
                 <List.Item.Meta
                     title={item.name}
                     description={'by ' + (item.staff ? item.staff.user.first_name : '--')+' on '+moment(item.created_at).format('lll')}
