@@ -1,13 +1,15 @@
 import React from "react";
-import {Button, Card, Checkbox, Divider, Icon, Table, Tag, Row, Col, Statistic, Alert} from "antd";
-import {getAPI, interpolate} from "../../../utils/common";
-import {DRUG_CATALOG, INVOICES_API, PROCEDURE_CATEGORY, TAXES} from "../../../constants/api";
+import {Button, Card, Divider, Icon, Table, Tag, Row, Col, Statistic, Alert, Menu, Dropdown, Modal} from "antd";
+import {getAPI, interpolate, postAPI} from "../../../utils/common";
+import {DRUG_CATALOG, INVOICES_API, PRESCRIPTIONS_API, PROCEDURE_CATEGORY, TAXES} from "../../../constants/api";
 import moment from "moment";
-import {Link} from "react-router-dom";
 import {Route, Switch} from "react-router";
 import AddInvoice from "./AddInvoice";
 import AddInvoicedynamic from "./AddInvoicedynamic";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
+import {Link} from "react-router-dom";
+
+const confirm = Modal.confirm;
 
 class PatientInvoices extends React.Component {
     constructor(props) {
@@ -113,7 +115,30 @@ class PatientInvoices extends React.Component {
 
     }
 
+    deleteInvoice(record) {
+        let that = this;
+        confirm({
+            title: 'Are you sure to delete this item?',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                let reqData = {"id": record.id, is_active: false};
+                let successFn = function (data) {
+                    that.loadInvoices();
+                }
+                let errorFn = function () {
+                }
+                postAPI(interpolate(INVOICES_API, [that.props.match.params.id]), reqData, successFn, errorFn);
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
+    }
+
     render() {
+        let that = this;
         const drugs = {}
         if (this.state.drug_catalog) {
 
@@ -137,12 +162,8 @@ class PatientInvoices extends React.Component {
         console.log(taxesdata)
 
         const columns = [{
-            title: 'Time',
-            dataIndex: 'created_at',
-            key: 'name',
-            render: created_at => <span>{moment(created_at).format('LLL')}</span>,
-        }, {
             title: 'Treatment & Products',
+            dataIndex: 'drug',
             key: 'drug',
             render: (text, record) => (
                 <span> <b>{record.inventory ? record.inventory_item_data.name : null}{record.procedure ? record.procedure_data.name : null}</b>
@@ -150,29 +171,29 @@ class PatientInvoices extends React.Component {
                         <Tag color={record.doctor_data ? record.doctor_data.calendar_colour : null}>
                             <b>{"prescribed by  " + record.doctor_data.user.first_name} </b>
                         </Tag> : null}
-                </span>
-
-            )
+                </span>)
         }, {
             title: 'Cost',
             dataIndex: 'unit_cost',
-            key: 'cost',
-            render: (item, record) => <span>{record.unit_cost * record.unit}</span>
+            key: 'unit_cost',
+        }, {
+            title: 'Unit',
+            dataIndex: 'unit',
+            key: 'unit',
         }, {
             title: 'Discount',
-            dataIndex: 'unit_cost',
-            key: 'cost',
-            render: (item, record) => <span>{record.unit_cost * record.unit}</span>
+            dataIndex: 'discount_value',
+            key: 'discount_value',
+            render: (item, record) => <span>{record.discount_value}</span>
         }, {
             title: 'Tax',
-            dataIndex: 'unit_cost',
-            key: 'cost',
-            render: (item, record) => <span>{record.unit_cost * record.unit}</span>
+            dataIndex: 'tax_value',
+            key: 'tax_value',
+            render: (item, record) => <span>{record.tax_value}</span>
         }, {
             title: 'Total',
-            dataIndex: 'unit_cost',
-            key: 'cost',
-            render: (item, record) => <span>{record.unit_cost * record.unit}</span>
+            dataIndex: 'total',
+            key: 'total',
         },];
 
         if (this.props.match.params.id) {
@@ -184,20 +205,57 @@ class PatientInvoices extends React.Component {
                        render={(route) => <AddInvoice {...this.state} {...route}/>}/>
                 <Route>
                     <div>
-                        {/*<Card*/}
-                        {/*title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Invoice" : "Invoice"}*/}
-                        {/*extra={<Button.Group>*/}
-                        {/*<Link to={"/patient/" + this.props.match.params.id + "/billing/invoices/add"}><Button><Icon*/}
-                        {/*type="plus"/>Add</Button></Link>*/}
-                        {/*</Button.Group>}>*/}
+                        <Card
+                            bodyStyle={{padding: 0}}
+                            style={{marginBottom: '20px'}}
+                            title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Invoice" : "Invoice"}
+                            extra={<Button.Group>
+                                <Link to={"/patient/" + this.props.match.params.id + "/billing/invoices/add"}>
+                                    <Button type={"primary"}>
+                                        <Icon type="plus"/>Add
+                                    </Button>
+                                </Link>
+                            </Button.Group>}>
+                        </Card>
                         {this.state.invoices.map(invoice => <div style={{marginBottom: '20px'}}>
                             <Card>
+                                <h4>{invoice.date ? moment(invoice.date).format('ll') : null}
+                                    <Dropdown.Button
+                                        size={"small"}
+                                        style={{float: 'right'}}
+                                        overlay={<Menu>
+                                            <Menu.Item key="1" onClick={() => that.editPrescriptionData(invoice)}>
+                                                <Link to={"/patient/" + this.props.match.params.id + "/billing/payments/add"}>
+                                                <Icon type="money"/>
+                                                Pay
+                                                </Link>
+                                            </Menu.Item>
+                                            <Menu.Divider/>
+                                            <Menu.Item key="2" >
+                                                <Icon type="edit"/>
+                                                Edit
+                                            </Menu.Item>
+                                            <Menu.Item key="3" onClick={() => that.deleteInvoice(invoice)}>
+                                                <Icon type="delete"/>
+                                                Delete
+                                            </Menu.Item>
+                                            <Menu.Divider/>
+                                            <Menu.Item key="4">
+                                                <Icon type="clock-circle"/>
+                                                Patient Timeline
+                                            </Menu.Item>
+                                        </Menu>}>
+                                        <Icon type="printer"/>
+                                    </Dropdown.Button>
+                                </h4>
+
                                 <Row gutter={8}>
                                     <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4}>
                                         {invoice.is_cancelled ?
                                             <Alert message="Cancelled" type="error" showIcon/> : null}
                                         <Divider>INV{invoice.id}</Divider>
-                                        <Statistic title="Paid / Total " value={93} suffix={"/ " + invoice.total}/>
+                                        <Statistic title="Paid / Total " value={invoice.payments_data}
+                                                   suffix={"/ " + invoice.total}/>
                                     </Col>
                                     <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
                                         <Table
@@ -213,7 +271,7 @@ class PatientInvoices extends React.Component {
                         <InfiniteFeedLoaderButton loaderFunction={this.loadInvoices}
                                                   loading={this.state.loading}
                                                   hidden={!this.state.loadMoreInvoice}/>
-                        {/*</Card>*/}
+
                     </div>
 
                 </Route>

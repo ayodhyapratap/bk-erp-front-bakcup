@@ -111,10 +111,10 @@ class AddPaymentForm extends React.Component {
                 // invoice.procedure.forEach(function (proc) {
                 //     payable += proc.unit * proc.total
                 // });
-                payable += invoice.total;
-                if (totalPayingAmount >= invoice.total) {
-                    totalPayingAmount -= invoice.total;
-                    invoicePayments[invoice.id] = invoice.total;
+                payable += invoice.total - invoice.payments_data;
+                if (totalPayingAmount >= invoice.total - invoice.payments_data) {
+                    totalPayingAmount -= invoice.total - invoice.payments_data;
+                    invoicePayments[invoice.id] = invoice.total - invoice.payments_data;
                 } else {
                     invoicePayments[invoice.id] = totalPayingAmount;
                     totalPayingAmount = 0;
@@ -142,12 +142,12 @@ class AddPaymentForm extends React.Component {
         })
     }
     handleSubmit = (e) => {
-        if(!this.state.totalPayingAmount){
-            displayMessage(WARNING_MSG_TYPE,"Payment Amount of O INR is not allowed.");
+        if (!this.state.totalPayingAmount) {
+            displayMessage(WARNING_MSG_TYPE, "Payment Amount of O INR is not allowed.");
             return false
         }
         this.setState({
-            loading:true
+            loading: true
         })
         let that = this;
         let reqData = {
@@ -158,7 +158,7 @@ class AddPaymentForm extends React.Component {
             "is_active": true,
             "is_cancelled": false,
             "practice": that.props.active_practiceId,
-            "patient": that.props.match.id,
+            "patient": that.props.match.params.id,
             "payment_mode": that.state.selectedPaymentMode
         }
         let invoices = Object.keys(that.state.invoicePayments);
@@ -169,19 +169,19 @@ class AddPaymentForm extends React.Component {
                 "invoice": invoiceId
             })
         })
-        let successFn = function(data){
+        let successFn = function (data) {
             that.setState({
-                loading:false
+                loading: false
             });
-            that.props.history.push("/patient/" + that.props.match.id + "/billing/payments")
+            that.props.history.push("/patient/" + that.props.match.params.id + "/billing/payments")
         }
-        let errorFn = function (){
+        let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             });
 
         }
-        postAPI(PATIENT_PAYMENTS_API,reqData,successFn,errorFn)
+        postAPI(PATIENT_PAYMENTS_API, reqData, successFn, errorFn)
     }
 
     render() {
@@ -231,11 +231,11 @@ class AddPaymentForm extends React.Component {
                                                 {invoice.procedure.map(proc => proc.procedure_data.name + ", ")}
                                                 {invoice.inventory.map(proc => proc.inventory_item_data.name + ", ")}
                                             </td>
-                                            <td style={{textAlign: 'right'}}><b>{invoice.total}</b></td>
+                                            <td style={{textAlign: 'right'}}><b>{invoice.total - invoice.payments_data}</b></td>
                                             <td style={{textAlign: 'right'}}>
                                                 <b>{that.state.invoicePayments[invoice.id]}</b></td>
                                             <td style={{textAlign: 'right'}}>
-                                                <b>{invoice.total - that.state.invoicePayments[invoice.id]}</b></td>
+                                                <b>{invoice.total - invoice.payments_data - that.state.invoicePayments[invoice.id]}</b></td>
                                         </tr>
                                     )}
                                 </table>
@@ -302,11 +302,12 @@ class AddPaymentForm extends React.Component {
                                       </tr>
                                       <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}>Paid Amount</td>
-                                          <td style={{textAlign: 'right'}}><b></b></td>
+                                          <td style={{textAlign: 'right'}}><b>{invoice.payments_data}</b></td>
                                       </tr>
                                       <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}><b>Amount Due</b></td>
-                                          <td style={{textAlign: 'right'}}><b></b></td>
+                                          <td style={{textAlign: 'right'}}>
+                                              <b>{invoice.total - invoice.payments_data}</b></td>
                                       </tr>
                                   </table>
                               </Card>)}/>

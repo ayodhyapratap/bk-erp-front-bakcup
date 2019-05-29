@@ -12,7 +12,6 @@ import {
     InputNumber, Select, DatePicker, Menu, Dropdown, Tag, Affix
 } from "antd";
 import {displayMessage, interpolate, getAPI, postAPI} from "../../../utils/common";
-
 import {
     INVOICE_ITEM_TYPE,
     PROCEDURES,
@@ -32,7 +31,6 @@ import {
     CREATE_OR_EDIT_INVOICES, PRACTICESTAFF, UNPAID_PRESCRIPTIONS
 } from "../../../constants/api";
 import moment from "moment";
-import {DOCTORS_ROLE} from "../../../constants/dataKeys";
 import {loadDoctors} from "../../../utils/clinicUtils";
 
 const {MonthPicker} = DatePicker;
@@ -585,22 +583,13 @@ class Addinvoicedynamic extends React.Component {
                                     </Form.Item>
                                 </Card>
                             </Affix>
-
                         </Form>
-
                     </Col>
                 </Row>
             </Card>
-
         </div>
 
     }
 }
 
-export default Form
-    .create()
-
-    (
-        Addinvoicedynamic
-    )
-;
+export default Form.create()(Addinvoicedynamic);
