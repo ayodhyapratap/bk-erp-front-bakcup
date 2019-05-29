@@ -64,7 +64,7 @@ export default class AddManufacture extends React.Component {
             label: 'Details',
             key: 'description',
             type:TEXT_FIELD
-        }, 
+        },
         ];
 
 
@@ -103,12 +103,14 @@ export default class AddManufacture extends React.Component {
         return <Row>
             <Card>
                 <Route exact path='/inventory/manufacture/edit/:id'
-                       render={() => (this.props.match.params.id ?
+                       render={(route) => (this.props.match.params.id ?
                            <TestFormLayout defaultValues={defaultValues} title="Edit Manufacturer"
                                            changeRedirect={this.changeRedirect} formProp={editformProp}
+                                           {...route}
                                            fields={fields}/> : <Redirect to={'/inventory/manufacture'}/>)}/>
                 <Route exact path='/inventory/manufacture/add'
-                       render={() => <TestFormLayout title="Add Manufacturer" changeRedirect={this.changeRedirect}
+                       render={(route) => <TestFormLayout title="Add Manufacturer" changeRedirect={this.changeRedirect}
+                                                     {...route}
                                                      formProp={formProp} fields={fields}/>}/>
 
 

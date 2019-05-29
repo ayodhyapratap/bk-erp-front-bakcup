@@ -66,7 +66,6 @@ class PatientCompletedProcedures extends React.Component {
                 completedTreatmentPlans: completed,
                 loading:false
             })
-                console.log("woow",that.state.completedTreatmentPlans);
         }
         let errorFn = function () {
             that.setState({
@@ -104,7 +103,7 @@ class PatientCompletedProcedures extends React.Component {
         this.props.history.push("/patient/" + id + "/emr/plans/edit");
 
     }
-    
+
     deleteTreatmentPlans(record) {
       let that = this;
       let obj={...record,is_active:false}

@@ -1,5 +1,5 @@
 import React from "react";
-import {Avatar, Input, Card, Col, Icon, Radio, Row, Button, Spin, Modal} from "antd";
+import {Avatar, Input, Card, Col, Icon, Radio, Row, Button, Spin, Modal, Tag} from "antd";
 import {getAPI, interpolate, postAPI} from "../../utils/common";
 import {PATIENT_GROUPS, SEARCH_PATIENT, PATIENTS_LIST} from "../../constants/api";
 import InfiniteFeedLoaderButton from "../common/InfiniteFeedLoaderButton";
@@ -52,6 +52,7 @@ class PatientSelection extends React.Component {
                 patientListData: data.results,
                 morePatients: data.next,
                 currentPage: data.current,
+                totalPatients: data.count,
                 loading: false
             })
         };
@@ -180,26 +181,30 @@ class PatientSelection extends React.Component {
                     <h2>Patients</h2>
                     <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="all">
                         All Patents
+                        <Tag color="#87d068" style={{float: 'right', margin: 4}}>
+                            {this.state.totalPatients ? this.state.totalPatients : 0}
+                        </Tag>
                     </Radio.Button>
                     {/*<Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="b">*/}
-                        {/*Recently Visited*/}
+                    {/*Recently Visited*/}
                     {/*</Radio.Button>*/}
                     {/*<Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="c">*/}
-                        {/*Recently Added*/}
+                    {/*Recently Added*/}
                     {/*</Radio.Button>*/}
                     <p><br/></p>
                     <h2>Groups</h2>
-                    <p><b>My Groups</b> <a style={{float: 'right'}}
-                                           onClick={() => this.togglePatientGroupEditing(true)}>Manage</a></p>
+                    <p><b>My Groups</b>
+                        <a style={{float: 'right'}}
+                           onClick={() => this.togglePatientGroupEditing(true)}>Manage</a></p>
                     {this.state.patientGroup.map((group) => <Radio.Button
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={group.id}>
                         {group.name}
+                        <Tag color="#87d068" style={{float: 'right', margin: 4}}>
+                            {group.patient_count}
+                        </Tag>
                     </Radio.Button>)}
-                    <p><br/></p>
-                    <p><b>Membership</b></p>
-                    <h2>Smart Groups</h2>
-                    <p><b>My Groups</b> <a style={{float: 'right'}}
-                                           onClick={() => this.togglePatientGroupEditing(true)}>Manage</a></p>
+                    {/*<p><br/></p>*/}
+                    <p><b>Smart Groups</b></p>
                     <Radio.Button
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={"smart_a"}>
                         All Male Customers

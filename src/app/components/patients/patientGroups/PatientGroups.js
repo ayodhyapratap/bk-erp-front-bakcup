@@ -54,6 +54,10 @@ export default class PatientGroups extends React.Component {
             dataIndex: 'name',
             key: 'name'
         }, {
+            title:'Patient Count',
+            dataIndex:'patient_count',
+            key:'patient_count'
+        },{
             title: 'Action',
             key: 'action',
             render: (text, record) => (

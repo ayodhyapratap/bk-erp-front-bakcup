@@ -1,33 +1,26 @@
 import React from "react";
 import {
-    Avatar,
-    Input,
     Checkbox,
-    Divider,
     Table,
-    Col,
     Button,
-    Form,
-    Row,
     Card,
     Icon,
-    Skeleton,
-    Popconfirm,
-    Tag
+    Tag, Menu,
+    Dropdown,
+    Modal
 } from "antd";
 import {Link} from "react-router-dom";
 import {
     PROCEDURE_CATEGORY,
-    PATIENT_PROFILE,
-    SINGLE_REATMENTPLANS_API,
     TREATMENTPLANS_API
 } from "../../../constants/api";
-import {getAPI, interpolate, displayMessage, putAPI, postAPI} from "../../../utils/common";
+import {getAPI, interpolate, displayMessage, postAPI} from "../../../utils/common";
 import moment from "moment";
-import AddorEditPatientTreatmentPlans from './AddorEditPatientTreatmentPlans';
 import {Redirect, Switch, Route} from "react-router";
 import AddorEditDynamicTreatmentPlans from "./AddorEditDynamicTreatmentPlans";
+import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 
+const confirm = Modal.confirm;
 
 class PatientTreatmentPlans extends React.Component {
     constructor(props) {
@@ -107,7 +100,7 @@ class PatientTreatmentPlans extends React.Component {
             editTreatmentPlan: record,
             loading: false
         });
-        let id = this.props.match.params.id
+        let id = this.props.match.params.id;
         this.props.history.push("/patient/" + id + "/emr/plans/edit")
 
     }
@@ -115,20 +108,33 @@ class PatientTreatmentPlans extends React.Component {
 
     deleteTreatmentPlans(record) {
         let that = this;
-        let obj = {...record, is_active: false}
-        let reqData = {
-            treatment: [],
-            patient: that.props.match.params.id
-        }
-        reqData.treatment.push(obj);
+        confirm({
+            title: 'Are you sure to delete this item?',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                let reqData = {
+                    ...record,
+                    is_active: false,
+                    doctor: (record.doctor && record.doctor.id ? record.doctor.id : null)
+                }
+                let successFn = function (data) {
+                    that.loadTreatmentPlans();
+                    displayMessage(SUCCESS_MSG_TYPE, "Treatment Plan Deleted Successfully!");
 
-        let successFn = function (data) {
-            that.loadTreatmentPlans();
-        }
-        let errorFn = function () {
+                }
+                let errorFn = function () {
 
-        };
-        postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id], null), reqData, successFn, errorFn);
+                };
+                postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id], null), reqData, successFn, errorFn);
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
+
+
     }
 
     treatmentCompleteToggle(id, option) {
@@ -164,7 +170,7 @@ class PatientTreatmentPlans extends React.Component {
     }
 
     render() {
-
+        let that = this;
         const procedures = {}
         if (this.state.procedure_category) {
             this.state.procedure_category.forEach(function (procedure) {
@@ -191,44 +197,84 @@ class PatientTreatmentPlans extends React.Component {
             dataIndex: 'quantity',
             key: 'quantity',
         }, {
+            title: 'Discount',
+            dataIndex: 'discount',
+            key: 'discount',
+        }, {
             title: 'Cost per  Unit',
             dataIndex: 'cost',
             key: 'cost',
         }, {
-            title: 'Action',
-            key: 'action',
-            render: (text, record) => (
-                <span>
-               <a onClick={() => this.editTreatmentPlanData(record)}>Edit</a>
-
-                <Divider type="vertical"/>
-                <Popconfirm title="Are you sure delete this item?"
-                            onConfirm={() => this.deleteTreatmentPlans(record)} okText="Yes" cancelText="No">
-                    <a>Delete</a>
-                </Popconfirm>
-              </span>
-            ),
-        }];
+            title: 'Notes',
+            dataIndex: 'default_notes',
+            key: 'default_notes',
+        },
+            //     {
+            //     title: 'Action',
+            //     key: 'action',
+            //     render: (text, record) => (
+            //         <span>
+            //        <a onClick={() => this.editTreatmentPlanData(record)}>Edit</a>
+            //
+            //         <Divider type="vertical"/>
+            //         <Popconfirm title="Are you sure delete this item?"
+            //                     onConfirm={() => this.deleteTreatmentPlans(record)} okText="Yes" cancelText="No">
+            //             <a>Delete</a>
+            //         </Popconfirm>
+            //       </span>
+            //     ),
+            // }
+        ];
 
         if (this.props.match.params.id) {
             return <div><Switch>
                 <Route exact path='/patient/:id/emr/plans/add'
                        render={(route) => <AddorEditDynamicTreatmentPlans {...this.state} {...route}/>}/>
                 <Route exact path='/patient/:id/emr/plans/edit'
-                       render={(route) => <AddorEditPatientTreatmentPlans {...this.state} {...route}/>}/>
+                       render={(route) => (this.state.editTreatmentPlan ?
+                           <AddorEditDynamicTreatmentPlans {...this.state} {...route} editId={this.state.editTreatmentPlan.id}/> :
+                           <Redirect to={"/patient/" + this.props.match.params.id + "/emr/plans"}/>)}/>
                 <div>
                     <Card
                         title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " TreatmentPlans" : "TreatmentPlans"}
                         extra={<Button.Group>
-                            <Button onClick={this.submitCompleteTreatment}> <Icon type="save"/>Save</Button>
+                            <Button onClick={this.submitCompleteTreatment}>
+                                <Icon type="save"/>Save
+                            </Button>
                             <Link to={"/patient/" + this.props.match.params.id + "/emr/plans/add"}>
-                                <Button><Icon type="plus"/>Add</Button>
+                                <Button type={"primary"}>
+                                    <Icon type="plus"/>Add
+                                </Button>
                             </Link>
                         </Button.Group>
                         }/>
                     {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
                                                                         style={{marginTop: 15}}>
-                            <h4>{treatment.date ? moment(treatment.date).format('lll') : null}</h4>
+                            <div style={{padding: 16}}>
+                                <h4>{treatment.date ? moment(treatment.date).format('ll') : null}
+                                    <Dropdown.Button
+                                        size={"small"}
+                                        style={{float: 'right'}}
+                                        overlay={<Menu>
+                                            <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)}>
+                                                <Icon type="edit"/>
+                                                Edit
+                                            </Menu.Item>
+                                            <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}>
+                                                <Icon type="delete"/>
+                                                Delete
+                                            </Menu.Item>
+                                            <Menu.Divider/>
+                                            <Menu.Item key="3">
+                                                <Icon type="clock-circle"/>
+                                                Patient Timeline
+                                            </Menu.Item>
+                                        </Menu>}>
+                                        <Icon type="printer"/>
+                                    </Dropdown.Button>
+                                </h4>
+
+                            </div>
                             <Table loading={this.state.loading} columns={columns}
                                    dataSource={treatment.treatment_plans}
                                    footer={() => treatmentFooter(treatment)}

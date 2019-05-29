@@ -39,6 +39,25 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
     }
 
     componentDidMount() {
+        if (this.props.editId) {
+            this.setState(function (prevState) {
+                let tableValues = [];
+                this.props.editTreatmentPlan.treatment_plans.forEach(function (treatment) {
+                    let randId = Math.random().toFixed(7);
+                    tableValues.push({
+                        ...treatment.procedure,
+                        ...treatment,
+                        _id: randId,
+                    })
+                });
+                return {
+                    ...this.props.editTreatmentPlan,
+                    tableFormValues: tableValues,
+                    selectedDate: moment(this.props.editTreatmentPlan.date),
+                    selectedDoctor: this.props.editTreatmentPlan.doctor
+                }
+            })
+        }
         this.loadProcedures();
         loadDoctors(this);
     }
@@ -89,7 +108,8 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
         let successFn = function (data) {
             that.setState({
                 procedure_category: data,
-                loadingProcedures: false
+                loadingProcedures: false,
+                filteredItems: data
             })
         };
         let errorFn = function () {
@@ -124,6 +144,9 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                     "date": that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
                     "practice": that.props.active_practiceId,
                 };
+                if (that.props.editId) {
+                    reqData.id = that.props.editTreatmentPlan.id
+                }
                 that.state.tableFormValues.forEach(function (item) {
                     console.log(item);
                     item.quantity = values.quantity[item._id];
@@ -145,17 +168,47 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                     };
                     reqData.treatment_plans.push(sendingItem);
                 });
+
                 let successFn = function (data) {
                     displayMessage("Inventory updated successfully");
-                    // that.props.loadData();
                     let url = '/patient/' + that.props.match.params.id + '/emr/plans';
                     that.props.history.push(url);
-                    // return <Redirect to={url} />;
                 }
                 let errorFn = function () {
 
                 }
                 postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
+            }
+        });
+    }
+    searchValues = (value) => {
+        let that = this;
+        this.setState(function (prevState) {
+            return {searchStrings: value}
+        }, function () {
+            that.filterValues();
+        });
+        return false;
+    }
+    filterValues = () => {
+        this.setState(function (prevState) {
+            let filteredItemOfGivenType = [];
+            if (prevState.procedure_category) {
+                if (prevState.searchStrings) {
+                    prevState.procedure_category.forEach(function (item) {
+                        if (item.name
+                            .toString()
+                            .toLowerCase()
+                            .includes(prevState.searchStrings.toLowerCase())) {
+                            filteredItemOfGivenType.push(item);
+                        }
+                    });
+                } else {
+                    filteredItemOfGivenType = prevState.procedure_category;
+                }
+            }
+            return {
+                filteredItems: filteredItemOfGivenType
             }
         });
     }
@@ -272,28 +325,12 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
             </span>
         }];
         return <div>
-            <Form onSubmit={this.handleSubmit}>
-                <Card title={"Treatment Plans"}
-                      extra={<Form.Item {...formItemLayoutWithOutLabel} style={{marginBottom: 0}}>
-                          <Button type="primary" htmlType="submit">Save Treatment Plan</Button>
-                      </Form.Item>}>
-                    <Row>
-                        <Col span={7}>
-                            <Affix offsetTop={0}>
-                                <List size={"small"}
 
-                                      style={{maxHeight: '100vh', overflowX: 'scroll'}}
-                                      itemLayout="horizontal"
-                                      dataSource={this.state.procedure_category}
-                                      renderItem={item => (
-                                          <List.Item onClick={() => this.add(item)}>
-                                              <List.Item.Meta
-                                                  title={item.name}/>
-                                          </List.Item>)}/>
-                            </Affix>
-                        </Col>
-                        <Col span={17}>
+            <Card title={"Treatment Plans"}>
+                <Row>
 
+                    <Col span={17}>
+                        <Form onSubmit={this.handleSubmit}>
                             <Table pagination={false}
                                    bordered={true}
                                    dataSource={this.state.tableFormValues}
@@ -317,15 +354,37 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                                     <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
                                     <DatePicker value={this.state.selectedDate}
                                                 onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}/>
+                                    <Form.Item {...formItemLayoutWithOutLabel}
+                                               style={{marginBottom: 0, float: 'right'}}>
+                                        <Button type="primary" htmlType="submit">Save Treatment Plan</Button>
+                                    </Form.Item>
                                 </Card>
                             </Affix>
                             <div ref={el => {
                                 that.bottomPoint = el;
                             }}/>
-                        </Col>
-                    </Row>
-                </Card>
-            </Form>
+                        </Form>
+                    </Col>
+                    <Col span={7}>
+                        <Affix offsetTop={0}>
+                            <div style={{backgroundColor: '#ddd', padding: 8}}>
+                                <Input.Search placeholder={"Search in plans ..."}
+                                              onSearch={value => this.searchValues(value)}/>
+                            </div>
+                            <List size={"small"}
+                                  style={{maxHeight: '100vh', overflowX: 'scroll'}}
+                                  itemLayout="horizontal"
+                                  dataSource={this.state.filteredItems}
+                                  renderItem={item => (
+                                      <List.Item onClick={() => this.add(item)}>
+                                          <List.Item.Meta
+                                              title={item.name}/>
+                                      </List.Item>)}/>
+                        </Affix>
+                    </Col>
+                </Row>
+            </Card>
+
         </div>
     }
 }

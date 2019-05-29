@@ -1,30 +1,21 @@
 import React from "react";
 import {
-    Avatar,
-    Input,
-    Checkbox,
-    Divider,
-    Badge,
     Table,
-    Col,
     Button,
-    Form,
-    Row,
     Card,
     Icon,
-    Skeleton,
-    Popconfirm,
-    Tag
+    Tag, Menu,
+    Dropdown, Modal
 } from "antd";
 import {Link} from "react-router-dom";
 import {PRESCRIPTIONS_API, DRUG_CATALOG, PATIENT_PROFILE, PATIENTS_LIST} from "../../../constants/api";
 import {getAPI, interpolate, displayMessage, postAPI, putAPI} from "../../../utils/common";
 import moment from "moment";
-import AddorEditPatientPrescriptions from './AddorEditPatientPrescriptions';
 import {Redirect, Switch, Route} from "react-router";
 import AddorEditDynamicPatientPrescriptions from "./AddorEditDynamicPatientPrescriptions";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
+const confirm = Modal.confirm;
 
 class PatientPrescriptions extends React.Component {
     constructor(props) {
@@ -116,15 +107,25 @@ class PatientPrescriptions extends React.Component {
     }
 
     deletePrescriptions(record) {
-        console.log("record", record);
         let that = this;
-        let reqData = {"id": record.id, is_active: false};
-        let successFn = function (data) {
-            that.loadPrescriptions();
-        }
-        let errorFn = function () {
-        }
-        postAPI(interpolate(PRESCRIPTIONS_API, [this.props.match.params.id]), reqData, successFn, errorFn);
+        confirm({
+            title: 'Are you sure to delete this item?',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                let reqData = {"id": record.id, is_active: false};
+                let successFn = function (data) {
+                    that.loadPrescriptions();
+                }
+                let errorFn = function () {
+                }
+                postAPI(interpolate(PRESCRIPTIONS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
     }
 
     render() {
@@ -136,16 +137,7 @@ class PatientPrescriptions extends React.Component {
             })
         }
         let that = this;
-        const columns = [
-            {
-                dataIndex: 'doctor',
-                key: 'doctor',
-                width: 5,
-
-                // onCell : doctor => <span style={{backgroundColor: doctor ? doctor.calendar_colour : null, width: 10, height: 10}}/>,
-                render: doctor => <div
-                    style={{backgroundColor: doctor ? doctor.calendar_colour : 'red', width: '5px', height: '100%'}}/>,
-            }, {
+        const columns = [{
                 title: 'Drug',
                 key: 'name',
                 dataIndex: 'name',
@@ -168,30 +160,20 @@ class PatientPrescriptions extends React.Component {
                     {record.after_food ? <Tag>after food</Tag> : null}
                     {instruction}
                 </span>
-            },
-            // {
-            //     title: 'Action',
-            //     key: 'action',
-            //     render: (text, record) => (
-            //         <span>
-            //     <a onClick={() => this.editPrescriptionData(record)}>Edit</a>
-            //     <Divider type="vertical"/>
-            //     <Popconfirm title="Are you sure delete this item?"
-            //                 onConfirm={() => that.deletePrescriptions(record)} okText="Yes" cancelText="No">
-            //         <a>Delete</a>
-            //     </Popconfirm>
-            //   </span>
-            //     ),
-            // }
-        ];
+            }];
 
         if (this.props.match.params.id) {
             return <div><Switch>
                 <Route exact path='/patient/:id/emr/prescriptions/add'
                        render={(route) => <AddorEditDynamicPatientPrescriptions {...this.state}
-                                                                                loadPrescriptions={this.loadPrescriptions} {...route}/>}/>
+                                                                                loadPrescriptions={this.loadPrescriptions}
+                                                                                {...route}/>}/>
                 <Route exact path='/patient/:id/emr/prescriptions/edit'
-                       render={(route) => <AddorEditPatientPrescriptions {...this.state} {...route}/>}/>
+                       render={(route) => (that.state.editPrescription ?
+                           <AddorEditDynamicPatientPrescriptions {...this.state} {...route}
+                                                                 loadPrescriptions={this.loadPrescriptions}
+                                                                 editId={that.state.editPrescription.id}/> :
+                           <Redirect to={"/patient/" + that.props.match.params.id + "/emr/prescriptions"}/>)}/>
                 <Route>
                     <div>
                         <Card>
@@ -208,10 +190,32 @@ class PatientPrescriptions extends React.Component {
 
                             <Card style={{margin: 10, marginBottom: 20}}
                                   bodyStyle={{padding: 0}}>
-                                <h4>{presc.date ? <p>&nbsp;&nbsp;{presc.date}</p> : null}</h4>
+                                <div style={{padding: 16}}>
+                                    <h4>{presc.date ? moment(presc.date).format('ll') : null}
+                                        <Dropdown.Button
+                                            size={"small"}
+                                            style={{float: 'right'}}
+                                            overlay={<Menu>
+                                                <Menu.Item key="1" onClick={() => that.editPrescriptionData(presc)}>
+                                                    <Icon type="edit"/>
+                                                    Edit
+                                                </Menu.Item>
+                                                <Menu.Item key="2" onClick={() => that.deletePrescriptions(presc)}>
+                                                    <Icon type="delete"/>
+                                                    Delete
+                                                </Menu.Item>
+                                                <Menu.Divider/>
+                                                <Menu.Item key="3">
+                                                    <Icon type="clock-circle"/>
+                                                    Patient Timeline
+                                                </Menu.Item>
+                                            </Menu>}>
+                                            <Icon type="printer"/>
+                                        </Dropdown.Button>
+                                    </h4>
+
+                                </div>
                                 <Table columns={columns} dataSource={presc.drugs} pagination={false}
-                                       header={() => prescriptionHeader(presc)}
-                                    // size={'small'}
                                        footer={() => prescriptonFooter(presc)}
                                        key={presc.id}/>
                             </Card></div>)}

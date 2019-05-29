@@ -109,8 +109,11 @@ class PatientClinicNotes extends React.Component {
                 <Card
                     title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " ClinicNotes" : "ClinicNotes"}
                     extra={<Button.Group>
-                        <Link to={"/patient/" + this.props.match.params.id + "/emr/clinicnotes/add"}><Button><Icon
-                            type="plus"/>Add</Button></Link>
+                        <Link to={"/patient/" + this.props.match.params.id + "/emr/clinicnotes/add"}>
+                            <Button type={"primary"}>
+                                <Icon type="plus"/>Add
+                            </Button>
+                        </Link>
                     </Button.Group>}>
 
                     <Table loading={this.state.loading} columns={columns} dataSource={this.state.clinicNotes}/>

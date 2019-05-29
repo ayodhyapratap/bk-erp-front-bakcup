@@ -100,12 +100,14 @@ export default class AddVendor extends React.Component {
         return <Row>
             <Card>
                 <Route exact path='/inventory/vendor/edit/:id'
-                       render={() => (this.props.match.params.id ?
+                       render={(route) => (this.props.match.params.id ?
                            <TestFormLayout defaultValues={defaultValues} title="Edit Vendor"
                                            changeRedirect={this.changeRedirect} formProp={editformProp}
+                                           {...route}
                                            fields={fields}/> : <Redirect to={'/inventory/vendor'}/>)}/>
                 <Route exact path='/inventory/vendor/add'
-                       render={() => <TestFormLayout title="Add Vendor" changeRedirect={this.changeRedirect}
+                       render={(route) => <TestFormLayout title="Add Vendor" changeRedirect={this.changeRedirect}
+                                                     {...route}
                                                      formProp={formProp} fields={fields}/>}/>
             </Card>
             {this.state.redirect && <Redirect to={'/inventory/vendor'}/>}

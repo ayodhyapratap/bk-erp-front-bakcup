@@ -8,15 +8,19 @@ import {Menu} from 'antd';
 export const loadDoctors = function (that) {
     let successFn = function (data) {
         let doctor = [];
+        let selectedDoctor = {};
         data.staff.forEach(function (usersdata) {
             console.log(usersdata);
             if (usersdata.role.indexOf(parseInt(DOCTORS_ROLE)) > -1 || usersdata.role.indexOf(DOCTORS_ROLE) > -1) {
                 doctor.push(usersdata);
+                if (that.state.selectedDoctor) {
+                    selectedDoctor = that.state.selectedDoctor
+                }
             }
         });
         that.setState({
             practiceDoctors: doctor,
-            selectedDoctor: doctor.length ? doctor[0] : {}
+            selectedDoctor: (doctor.length && !selectedDoctor.id ? doctor[0] : selectedDoctor)
         });
     };
     let errorFn = function () {

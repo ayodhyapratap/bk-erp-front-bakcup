@@ -86,7 +86,7 @@ export default class CustomizedTable extends React.Component {
         ),
         filterIcon: filtered => (<Icon type="search" style={{color: filtered ? '#1890ff' : undefined}}/>),
         onFilter: (value, record) =>
-            record[dataIndex] ? record[dataIndex]
+            record[dataIndex]!=null ? record[dataIndex]
                 .toString()
                 .toLowerCase()
                 .includes(value.toLowerCase()) : '',

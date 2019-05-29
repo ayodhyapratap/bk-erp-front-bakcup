@@ -168,12 +168,14 @@ class PatientVitalSign extends React.Component {
                     <Card
                         title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Vital Sign" : "PatientVitalSign"}
                         extra={<Button.Group>
-                            <Link
-                                to={"/patient/" + this.props.match.params.id + "/emr/vitalsigns/add"}><Button><Icon
-                                type="plus"/>Add</Button></Link>
+                            <Link to={"/patient/" + this.props.match.params.id + "/emr/vitalsigns/add"}>
+                                <Button type={"primary"}>
+                                    <Icon type="plus"/>Add
+                                </Button>
+                            </Link>
                         </Button.Group>}>
                         <Tabs>
-                            <Tabs.TabPane tab={"Charts"} key={1} style={{margin:'auto'}}>
+                            <Tabs.TabPane tab={"Charts"} key={1} style={{margin: 'auto'}}>
                                 <Divider>Pulse Chart (bpm)</Divider>
                                 <LineChart width={700} height={200} data={this.state.vitalsign}
                                            margin={{top: 10, right: 30, left: 0, bottom: 0}}>
@@ -187,7 +189,7 @@ class PatientVitalSign extends React.Component {
                                     <XAxis dataKey="created_at" tickFormatter={(value) => {
                                         return moment(value).format('LLL')
                                     }} tickCount={that.state.vitalsign.length}/>
-                                    <YAxis />
+                                    <YAxis/>
                                     <CartesianGrid strokeDasharray="3 3"/>
                                     <Tooltip/>
                                     <Line type="monotone" dataKey="pulse" stroke="#8884d8" fillOpacity={1}

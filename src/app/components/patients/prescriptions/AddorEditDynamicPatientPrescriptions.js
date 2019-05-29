@@ -37,8 +37,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            drugList: [],
-            labList: [],
+            items: {},
+            filteredItems: {},
             formDrugList: [],
             formLabList: [],
             addInstructions: {},
@@ -77,9 +77,14 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     loadPrescriptionTemplate() {
         var that = this;
         let successFn = function (data) {
-            that.setState({
-                prescriptionTemplate: data,
+            that.setState(function (prevState) {
+                let items = {...prevState.items}
+                return {
+                    items: {...items, "Template": data},
+                    filteredItems: {...prevState.filteredItems, "Template": data}
+                }
             })
+
         };
         let errorFn = function () {
 
@@ -91,8 +96,12 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     loadLabList() {
         var that = this;
         let successFn = function (data) {
-            that.setState({
-                labList: data,
+            that.setState(function (prevState) {
+                let items = {...prevState.items}
+                return {
+                    items: {...items, "Labs": data},
+                    filteredItems: {...prevState.filteredItems, "Labs": data}
+                }
             })
         };
         let errorFn = function () {
@@ -104,8 +113,12 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     loadDrugList() {
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                drugList: data.results
+            that.setState(function (prevState) {
+                let items = {...prevState.items}
+                return {
+                    items: {...items, "Drugs": data.results},
+                    filteredItems: {...prevState.filteredItems, "Drugs": data.results}
+                }
             })
         }
         let errorFn = function () {
@@ -122,10 +135,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     addDrug(item) {
         this.setState(function (prevState) {
             let randId = Math.random().toFixed(7);
-            // if (prevState.addedDrugs[item.id]) {
-            //     displayMessage(WARNING_MSG_TYPE, "Item Already Added");
-            //     return false;
-            // }
             return {
                 addedDrugs: {...prevState.addedDrugs, [item.id]: true},
                 formDrugList: [...prevState.formDrugList, {
@@ -181,14 +190,11 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                     _id: randId,
                 }]
             }
-            // console.log("ide",this.state.tableFormValues);
         });
     };
 
     addTemplate = (item) => {
         this.setState(function (prevState) {
-            // console.log("templateData state",prevState);
-            let randId = Math.random().toFixed(7);
             if (prevState.addTemplate[item.id]) {
                 displayMessage(WARNING_MSG_TYPE, "Item Already Added");
                 return false;
@@ -248,11 +254,11 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 let reqData = {
                     drugs: [],
                     labs: [],
-                    advice_data: [],
                     patient: that.props.match.params.id,
                     practice: that.props.active_practiceId,
                     doctor: that.state.selectedDoctor ? that.state.selectedDoctor.id : null,
-                    date: that.state.selectedDate ? that.state.selectedDate.format('YYYY-MM-DD') : null
+                    date: that.state.selectedDate ? that.state.selectedDate.format('YYYY-MM-DD') : null,
+                    advice_data: []
                 };
 
                 that.state.formDrugList.forEach(function (item) {
@@ -271,11 +277,11 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         item.after_food = false;
                     }
 
-                    if (item.advice_data) {
-                        item.advice_data.map(function (advice) {
-                            reqData.advice_data.push(advice.id)
-                        })
-                    }
+                    // if (item.advice_data) {
+                    //     item.advice_data.map(function (advice) {
+                    //         reqData.advice_data.push(advice.id)
+                    //     })
+                    // }
                     const drugItem = {
                         "inventory": item.id,
                         "name": item.name,
@@ -285,7 +291,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         "instruction": item.instruction,
                         "before_food": item.before_food,
                         "after_food": item.after_food,
-                        "advice_data": that.state.prescriptionTemplate.advice_data,
+
                         "is_active": true,
                     };
                     reqData.drugs.push(drugItem);
@@ -303,7 +309,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 }
                 console.log("final", reqData);
                 postAPI(interpolate(PRESCRIPTIONS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
-            }else{
+            } else {
                 console.log(err);
             }
         });
@@ -324,6 +330,38 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     onChange = e => {
         this.setState({});
     };
+    searchValues = (type, value) => {
+        let that = this;
+        this.setState(function (prevState) {
+            let searchValues = {...prevState.searchStrings};
+            searchValues[type] = value;
+            return {searchStrings: searchValues}
+        }, function () {
+            that.filterValues(type);
+        });
+    }
+    filterValues = (type) => {
+        this.setState(function (prevState) {
+            let filteredItemOfGivenType = [];
+            if (prevState.items[type]) {
+                if (prevState.searchStrings[type]) {
+                    prevState.items[type].forEach(function (item) {
+                        if (item.name && item.name
+                            .toString()
+                            .toLowerCase()
+                            .includes(prevState.searchStrings[type].toLowerCase())) {
+                            filteredItemOfGivenType.push(item);
+                        }
+                    });
+                } else {
+                    filteredItemOfGivenType = prevState.items[type];
+                }
+            }
+            return {
+                filteredItems: {...prevState.filteredItems, [type]: filteredItemOfGivenType}
+            }
+        });
+    }
 
     render() {
         let that = this;
@@ -533,9 +571,14 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 <Col span={6}>
                     <Tabs type="card">
                         <TabPane tab="Drugs" key="1">
+                            <div style={{backgroundColor: '#ddd', padding: 8}}>
+                                <Input.Search key={"Drugs"}
+                                              placeholder={"Search in Drugs..."}
+                                              onSearch={value => this.searchValues("Drugs", value)}/>
+                            </div>
                             <List size={"small"}
                                   itemLayout="horizontal"
-                                  dataSource={this.state.drugList}
+                                  dataSource={this.state.filteredItems["Drugs"]}
                                   renderItem={item => (
                                       <List.Item onClick={() => this.addDrug(item)}>
                                           <List.Item.Meta
@@ -543,9 +586,14 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                       </List.Item>)}/>
                         </TabPane>
                         <TabPane tab="Labs" key="2">
+                            <div style={{backgroundColor: '#ddd', padding: 8}}>
+                                <Input.Search key={"Labs"}
+                                              placeholder={"Search in Labs..."}
+                                              onSearch={value => this.searchValues("Labs", value)}/>
+                            </div>
                             <List size={"small"}
                                   itemLayout="horizontal"
-                                  dataSource={this.state.labList}
+                                  dataSource={this.state.filteredItems["Labs"]}
                                   renderItem={item => (
                                       <List.Item onClick={() => this.addLabs(item)}>
                                           <List.Item.Meta
@@ -561,9 +609,14 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                 </Link>
                             </div>
                             <Divider style={{margin: 0}}/>
+                            <div style={{backgroundColor: '#ddd', padding: 8}}>
+                                <Input.Search key={"Template"}
+                                              placeholder={"Search in Template..."}
+                                              onSearch={value => this.searchValues("Template", value)}/>
+                            </div>
                             <List size={"small"}
                                   itemLayout="horizontal"
-                                  dataSource={this.state.prescriptionTemplate}
+                                  dataSource={this.state.filteredItems["Template"]}
                                   renderItem={item => (
                                       <List.Item onConfirm={() => that.deletePrescriptionTemplate(item.id)}>
                                           <List.Item.Meta onClick={() => this.addTemplate(item)} title={item.name}/>
