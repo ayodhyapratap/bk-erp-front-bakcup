@@ -8,12 +8,19 @@ import {
     Dropdown, Modal
 } from "antd";
 import {Link} from "react-router-dom";
-import {PRESCRIPTIONS_API, DRUG_CATALOG, PATIENT_PROFILE, PATIENTS_LIST} from "../../../constants/api";
+import {
+    PRESCRIPTIONS_API,
+    DRUG_CATALOG,
+    PATIENT_PROFILE,
+    PATIENTS_LIST,
+    PRESCRIPTION_PDF
+} from "../../../constants/api";
 import {getAPI, interpolate, displayMessage, postAPI, putAPI} from "../../../utils/common";
 import moment from "moment";
 import {Redirect, Switch, Route} from "react-router";
 import AddorEditDynamicPatientPrescriptions from "./AddorEditDynamicPatientPrescriptions";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
+import {BACKEND_BASE_URL} from "../../../config/connect";
 
 const confirm = Modal.confirm;
 
@@ -60,7 +67,17 @@ class PatientPrescriptions extends React.Component {
         }
         getAPI(interpolate(PRESCRIPTIONS_API, [this.props.match.params.id]), successFn, errorFn)
     }
+    loadPDF(id) {
+        let that = this;
+        let successFn = function (data) {
+            if (data.report)
+                window.open(BACKEND_BASE_URL + data.report);
+        }
+        let errorFn = function () {
 
+        }
+        getAPI(interpolate(PRESCRIPTION_PDF, [id]), successFn, errorFn);
+    }
     getMorePriscriptions() {
         let that = this;
         let next = this.state.nextPrescriptionPage;
@@ -193,6 +210,7 @@ class PatientPrescriptions extends React.Component {
                                 <div style={{padding: 16}}>
                                     <h4>{presc.date ? moment(presc.date).format('ll') : null}
                                         <Dropdown.Button
+                                            onClick={()=>that.loadPDF(presc.id)}
                                             size={"small"}
                                             style={{float: 'right'}}
                                             overlay={<Menu>

@@ -3,7 +3,7 @@ import {BACKEND_BASE_URL} from "../config/connect";
 /***
  * API Connection URLs
  * */
-export const API_URL = BACKEND_BASE_URL + 'erp-api';
+export const API_URL = BACKEND_BASE_URL + '/erp-api';
 export const FILE_UPLOAD_API = 'blogImage/';
 
 export const SIGNUP_URL = '';
@@ -152,3 +152,12 @@ export const PRODUCT_LEVEL = "product_level";
 export const PRODUCT_MARGIN = "product_margin/";
 export const SINGLE_PRODUCT_MARGIN = "product_margin/%s/";
 export const GENERATE_MLM_COMMISSON = 'product_margin/generate_mlm/';
+
+
+/**
+ * PDFs Links
+ * */
+
+export const PRESCRIPTION_PDF = 'patients/prescriptions_pdf/?id=%s';
+export const VITAL_SIGN_PDF = 'patients/vital_sign_pdf/?id=%s';
+

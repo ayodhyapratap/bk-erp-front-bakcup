@@ -1,13 +1,14 @@
 import React from "react";
 import {Avatar, Input, Table, Col, Button, Card, Icon, Divider, Tabs} from "antd";
 import {Link, Route, Switch} from "react-router-dom";
-import {VITAL_SIGNS_API} from "../../../constants/api";
+import {PRESCRIPTION_PDF, VITAL_SIGN_PDF, VITAL_SIGNS_API} from "../../../constants/api";
 import {getAPI, interpolate, patchAPI, putAPI} from "../../../utils/common";
 import moment from 'moment';
 import PatientRequiredNoticeCard from "../PatientRequiredNoticeCard";
 import CustomizedTable from "../../common/CustomizedTable";
 import AddorEditPatientVitalSigns from "./AddorEditPatientVitalSigns";
 import {AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Area, LineChart, Line} from 'recharts';
+import {BACKEND_BASE_URL} from "../../../config/connect";
 
 const {Meta} = Card;
 const Search = Input.Search;
@@ -65,6 +66,17 @@ class PatientVitalSign extends React.Component {
         let id = this.props.match.params.id;
         this.props.history.push("/patient/" + id + "/emr/vitalsigns/edit")
 
+    }
+    loadPDF(id) {
+        let that = this;
+        let successFn = function (data) {
+            if (data.report)
+                window.open(BACKEND_BASE_URL + data.report);
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(interpolate(VITAL_SIGN_PDF, [id]), successFn, errorFn);
     }
 
     render() {
@@ -147,6 +159,8 @@ class PatientVitalSign extends React.Component {
             key: 'action',
             render: (text, record) => (
                 <span>
+                    <a onClick={() => this.loadPDF(record.id)}>Print</a>
+                    <Divider type="vertical"/>
                   <a onClick={() => this.editObject(record)}>Edit</a>
                     <Divider type="vertical"/>
                     <a onClick={() => that.deleteVitalSign(record)}>Delete</a>
