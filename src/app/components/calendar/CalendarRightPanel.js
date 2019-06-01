@@ -54,6 +54,9 @@ export default class CalendarRightPanel extends React.Component {
                 let appointmentOverview = {};
                 let filteredAppointment = [];
                 data.forEach(function (appointment) {
+                    if(appointment.status == CANCELLED_STATUS){
+                        return true;
+                    }
                     if (appointmentOverview[appointment.status]) {
                         appointmentOverview[appointment.status] += 1
                     } else {
@@ -207,7 +210,7 @@ export default class CalendarRightPanel extends React.Component {
                 <List
                     size={'small'}
                     dataSource={this.state.todaysFilteredAppointments}
-                    renderItem={(apppointment) => <List.Item
+                    renderItem={(apppointment) => (apppointment.status == CANCELLED_STATUS ? <div/> : <List.Item
                         color={'transparent'}
                         style={{padding: 0}}>
                         <div
@@ -223,10 +226,9 @@ export default class CalendarRightPanel extends React.Component {
                             <AppointmentCard {...apppointment}
                                              changeAppointmentStatus={this.changeAppointmentStatus}/>
                         </div>
-                    </List.Item>
+                    </List.Item>)
                     }/>
             </Spin>
-            <h3></h3>
         </div>
     }
 }

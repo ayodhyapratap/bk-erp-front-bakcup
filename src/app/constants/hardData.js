@@ -175,3 +175,5 @@ export const TYPES_OF_BED_PACKAGES_ROOM_TYPE= [
     {label:"Dormitory",value:"DORMITORY"},
     {label:"Semi Private",value:"SEMI PRIVATE"},
 ]
+
+export const CUSTOM_STRING_SEPERATOR = '$_$';

@@ -18,8 +18,7 @@ import {
     ALL_APPOINTMENT_API,
     APPOINTMENT_CATEGORIES,
     PRACTICESTAFF,
-    PROCEDURE_CATEGORY,
-    EMR_TREATMENTNOTES, APPOINTMENT_API, SINGLE_PRACTICE_STAFF_API, SEARCH_PATIENT
+    PROCEDURE_CATEGORY, APPOINTMENT_API, SINGLE_PRACTICE_STAFF_API, SEARCH_PATIENT
 } from "../../constants/api";
 import {getAPI, interpolate, displayMessage} from "../../utils/common";
 import {Redirect} from 'react-router-dom'

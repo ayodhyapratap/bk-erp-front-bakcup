@@ -1,0 +1,346 @@
+import React from "react";
+import {
+    Row,
+    Card,
+    Col,
+    Form,
+    Tabs,
+    Button,
+    Icon,
+    List,
+    Input,
+    Divider,
+    Affix,
+    DatePicker,
+    Menu,
+    Dropdown,
+    Modal
+} from 'antd';
+import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
+import {
+    EMR_COMPLAINTS,
+    EMR_DIAGNOSES,
+    EMR_INVESTIGATIONS,
+    EMR_OBSERVATIONS,
+    EMR_TREATMENTNOTES, PATIENT_CLINIC_NOTES_API
+} from "../../../constants/api";
+import DynamicFieldsForm from "../../common/DynamicFieldsForm";
+import {INPUT_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {CUSTOM_STRING_SEPERATOR} from "../../../constants/hardData";
+
+const {TabPane} = Tabs;
+const tabLists = ['Complaints', 'Observations', 'Diagnoses', 'Investigations', 'Notes'];
+const tabResourcesAPI = {
+    'Complaints': EMR_COMPLAINTS,
+    'Observations': EMR_OBSERVATIONS,
+    'Diagnoses': EMR_DIAGNOSES,
+    'Investigations': EMR_INVESTIGATIONS,
+    'Notes': EMR_TREATMENTNOTES
+};
+let id = 0;
+
+class AddClinicNotesDynamic extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            resourceList: {},
+            filteredResourceList: {},
+            filterStrings: {},
+            practiceDoctors: [],
+            selectedDoctor: {},
+            resourceAddModal: null,
+            editClinicNotes: this.props.editClinicNotes ? this.props.editClinicNotes : null,
+            selectedTab: 'Complaints'
+        }
+    }
+
+    componentDidMount() {
+        this.loadRequiredResources(interpolate(EMR_COMPLAINTS, [this.props.active_practiceId]), 'Complaints');
+        this.loadRequiredResources(interpolate(EMR_OBSERVATIONS, [this.props.active_practiceId]), 'Observations');
+        this.loadRequiredResources(interpolate(EMR_DIAGNOSES, [this.props.active_practiceId]), 'Diagnoses');
+        this.loadRequiredResources(interpolate(EMR_INVESTIGATIONS, [this.props.active_practiceId]), 'Investigations');
+        this.loadRequiredResources(interpolate(EMR_TREATMENTNOTES, [this.props.active_practiceId]), 'Notes');
+        if (this.state.editClinicNotes) {
+            this.setInitialData();
+        }
+    }
+
+    setInitialData = () => {
+        let that = this;
+        let initialData = this.state.editClinicNotes;
+        if (initialData.chief_complaints)
+            initialData.chief_complaints.split(CUSTOM_STRING_SEPERATOR).forEach(str => setTimeout(function () {
+                if (str.length)
+                    that.addValues('Complaints', str)
+            }, 500));
+        if (initialData.investigations)
+            initialData.investigations.split(CUSTOM_STRING_SEPERATOR).forEach(str => setTimeout(function () {
+                if (str.length)
+                    that.addValues('Investigations', str)
+            }, 500));
+        if (initialData.diagnosis)
+            initialData.diagnosis.split(CUSTOM_STRING_SEPERATOR).forEach(str => setTimeout(function () {
+                if (str.length)
+                    that.addValues('Diagnoses', str)
+            }, 500));
+        if (initialData.notes)
+            initialData.notes.split(CUSTOM_STRING_SEPERATOR).forEach(str => setTimeout(function () {
+                if (str.length)
+                    that.addValues('Notes', str)
+            }, 500));
+        if (initialData.observations)
+            initialData.observations.split(CUSTOM_STRING_SEPERATOR).forEach(str => setTimeout(function () {
+                if (str.length)
+                    that.addValues('Observations', str)
+            }, 500));
+
+    }
+    loadRequiredResources = (API, key) => {
+        let that = this;
+        let successFn = function (data) {
+            that.setState(function (prevState) {
+                let newResources = {...prevState.resourceList, [key]: data}
+                return {
+                    resourceList: newResources,
+                    filteredResourceList: newResources,
+                    filterStrings: {}
+                }
+            })
+        }
+        let errorFn = function () {
+            console.log(key + " fetching error");
+        }
+        getAPI(API, successFn, errorFn);
+    }
+    add = (tab) => {
+        const {form} = this.props;
+        // can use data-binding to get
+        const keys = form.getFieldValue(tab);
+        const nextKeys = keys.concat(++id);
+        // can use data-binding to set
+        // important! notify form to detect changes
+        form.setFieldsValue({
+            [tab]: nextKeys,
+        });
+    };
+    remove = (tab, k) => {
+        const {form} = this.props;
+        // can use data-binding to get
+        const keys = form.getFieldValue(tab);
+        // We need at least one passenger
+        if (keys.length === 1) {
+            return;
+        }
+
+        // can use data-binding to set
+        form.setFieldsValue({
+            [tab]: keys.filter(key => key !== k),
+        });
+    };
+    addValues = (tab, value) => {
+        const {form} = this.props;
+        // can use data-binding to get
+        const keys = form.getFieldValue(tab);
+        const nextKeys = keys.concat(++id);
+        // can use data-binding to set
+        // important! notify form to detect changes
+        form.setFieldsValue({
+            [tab]: nextKeys,
+            [`field[${keys[keys.length - 1]}]`]: value,
+        });
+    }
+    changeValues = (tab, id) => {
+        const {form} = this.props;
+        // can use data-binding to get
+        const keys = form.getFieldValue(tab);
+        if (keys.indexOf(id) == keys.length - 1) {
+            this.add(tab);
+        }
+    }
+    toggleModal = (option) => {
+        let prevsOption = null;
+        let that = this;
+        this.setState(function (prevState) {
+            console.log(prevState.resourceAddModal);
+            if (prevState.resourceAddModal)
+                prevsOption = prevState.resourceAddModal;
+            return {resourceAddModal: option}
+        }, function () {
+            if (prevsOption) {
+                that.loadRequiredResources(interpolate(tabResourcesAPI[prevsOption], [that.props.active_practiceId]), prevsOption);
+            }
+        });
+
+    }
+    handleSubmit = (e) => {
+        let that = this;
+        e.preventDefault();
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            if (!err) {
+                let reqData = {};
+                reqData.chief_complaints = values.Complaints.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
+                reqData.investigations = values.Investigations.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
+                reqData.diagnosis = values.Diagnoses.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
+                reqData.notes = values.Notes.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
+                reqData.observations = values.Observations.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
+                reqData.patient = that.props.match.params.id;
+                if (that.state.editClinicNotes)
+                    reqData.id = that.state.editClinicNotes.id
+                let successFn = function (data) {
+                    if (that.props.loadData)
+                        that.props.loadData();
+                    that.props.history.push('/patient/' + that.props.match.params.id + '/emr/clinicnotes/');
+                }
+                let errorFn = function () {
+
+                }
+                postAPI(interpolate(PATIENT_CLINIC_NOTES_API, [this.props.match.params.id]), reqData, successFn, errorFn);
+            }
+        });
+
+    }
+    changeTab = (tab) => {
+        this.setState({
+            selectedTab: tab
+        });
+        return true;
+    }
+
+    render() {
+        let that = this;
+        const {getFieldDecorator, getFieldValue} = this.props.form;
+        const formItemLayout = {
+            labelCol: {
+                xs: {span: 24},
+                sm: {span: 4},
+            },
+            wrapperCol: {
+                xs: {span: 24},
+                sm: {span: 20},
+            },
+        };
+        let keysObject = {};
+        tabLists.forEach(function (tab) {
+            getFieldDecorator(tab, {initialValue: [++id]});
+            keysObject[tab] = getFieldValue(tab);
+        });
+
+
+        const keys = keysObject;
+        const ResourceAddForm = Form.create()(DynamicFieldsForm);
+        return <Card>
+            <Row>
+                <Col span={18}>
+                    <Form onSubmit={this.handleSubmit}>
+                        {tabLists.map(tab =>
+                            <div>
+                                <Divider style={{margin:5}}>{tab}</Divider>
+                                <div style={{
+                                    backgroundColor: (tab == that.state.selectedTab ? '#ddd' : 'initial'),
+                                    padding: 10
+                                }} onClick={() => that.changeTab(tab)}>
+
+                                    {keys[tab].map((k, index) => (
+                                        <Form.Item
+                                            {...formItemLayout}
+                                            label={tab + ' ' + (index + 1)}
+                                            required={false}
+                                            key={k}>
+                                            {getFieldDecorator(`field[${k}]`, {
+                                                validateTrigger: ['onChange', 'onBlur'],
+                                                rules: [
+                                                    {
+                                                        whitespace: true,
+                                                    },
+                                                ],
+                                            })(<Input placeholder={tab} style={{width: '60%', marginRight: 8}}
+                                                      onChange={() => that.changeValues(tab, k)}/>)}
+                                            {keys[tab].length - 1 != index ? (
+                                                <Button
+                                                    shape={"circle"}
+                                                    type={"danger"}
+                                                    size={"small"}
+                                                    icon="delete"
+                                                    onClick={() => this.remove(tab, k)}
+                                                />
+                                            ) : null}
+                                        </Form.Item>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        <Affix offsetBottom={0}>
+                            <Card>
+                                <span>by &nbsp;&nbsp;</span>
+                                <Dropdown placement="topCenter" overlay={<Menu>
+                                    {this.state.practiceDoctors.map(doctor =>
+                                        <Menu.Item key="0">
+                                            <a onClick={() => this.selectDoctor(doctor)}>{doctor.user.first_name}</a>
+                                        </Menu.Item>)}
+                                </Menu>} trigger={['click']}>
+                                    <a className="ant-dropdown-link" href="#">
+                                        <b>
+                                            {this.state.selectedDoctor.user ? this.state.selectedDoctor.user.first_name : 'No DOCTORS Found'}
+                                        </b>
+                                    </a>
+                                </Dropdown>
+                                <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
+                                <DatePicker value={this.state.selectedDate}
+                                            onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}/>
+
+                                <Button type="primary" htmlType="submit" style={{float: 'right'}}>
+                                    Save
+                                </Button>
+                            </Card>
+                        </Affix>
+                    </Form>
+                </Col>
+                <Col span={6}>
+                    <Tabs type={"card"}>
+                        {tabLists.map(tabList => <TabPane tab={tabList} key={tabList}>
+                            <div style={{padding: 5}}>
+                                <Button type={"primary"} block size={"small"} onClick={() => that.toggleModal(tabList)}>
+                                    <Icon type={"plus"}/>Add&nbsp;{tabList}
+                                </Button>
+                                <List key={tabList} size={'small'} dataSource={that.state.resourceList[tabList]}
+                                      renderItem={item => <List.Item
+                                          key={item.id}
+                                          onClick={() => this.addValues(tabList, item.name)}>
+                                          {item.name}
+                                      </List.Item>}/>
+                            </div>
+                        </TabPane>)}
+                    </Tabs>
+                </Col>
+                <Modal visible={!!this.state.resourceAddModal}
+                       onCancel={() => that.toggleModal(null)}
+                       title={"Add " + this.state.resourceAddModal}
+                       footer={null}>
+                    {this.state.resourceAddModal ?
+                        <ResourceAddForm
+                            fields={[{
+                                label: this.state.resourceAddModal,
+                                required: true,
+                                type: INPUT_FIELD,
+                                key: 'name'
+                            }]}
+                            defaultValues={[{key: 'practice', value: this.props.active_practiceId}]}
+                            formProp={{
+                                method: 'post',
+                                action: interpolate(tabResourcesAPI[this.state.resourceAddModal], [this.props.active_practiceId]),
+                                successFn: function () {
+                                    that.toggleModal(null);
+                                    displayMessage(SUCCESS_MSG_TYPE, that.state.resourceAddModal + " added successfully!!");
+                                },
+                                errorFn: function (err) {
+                                    console.log(err);
+                                }
+                            }}
+                        /> : null}
+                </Modal>
+            </Row>
+        </Card>
+    }
+}
+
+export default Form.create()(AddClinicNotesDynamic)

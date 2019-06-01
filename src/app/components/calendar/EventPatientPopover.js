@@ -1,5 +1,5 @@
 import React from "react";
-import {Spin, Row, Col, Avatar, Icon, Button} from "antd";
+import {Spin, Row, Col, Avatar, Icon, Button, Divider} from "antd";
 import {getAPI, interpolate} from "../../utils/common";
 import {APPOINTMENT_API, PATIENT_PROFILE} from "../../constants/api";
 import {Link} from "react-router-dom";
@@ -15,6 +15,7 @@ export default class EventPatientPopover extends React.Component {
     }
 
     componentDidMount() {
+        console.log(this.props);
         if (this.props.appointmentId) {
             let that = this;
             let successFn = function (data) {
@@ -22,7 +23,7 @@ export default class EventPatientPopover extends React.Component {
                     appointment: data,
                     loading: false
                 });
-                // console.log("event",that.state.patientDetails);
+                console.log("event", data)
             };
             let errorFn = function () {
                 that.setState({
@@ -40,24 +41,35 @@ export default class EventPatientPopover extends React.Component {
     render() {
         return <div style={{width: '300px', minHeight: '200px'}}>
             <Spin spinning={this.state.loading}>
-                {this.state.appointment ? <div >
+                {this.state.appointment ? <div>
                         <Row>
                             <Col span={8}>
                                 <Avatar src={this.state.appointment.patient.image} size={80}/>
                             </Col>
                             <Col span={16}>
                                 <Link to={"/patient/" + this.state.appointment.patient.id + "/profile"}>
-                                    <h2>{this.state.appointment.patient.user.first_name}</h2>
-                                    <h4>Patient
-                                        ID: {this.state.appointment.patient.id} , {this.state.appointment.patient.gender}</h4>
-                                    <h4>{this.state.appointment.patient.user.mobile}</h4>
+                                    <h3>{this.state.appointment.patient.user.first_name}
+                                        <br/>
+                                        <small>
+                                            Patient
+                                            ID: {this.state.appointment.patient.id} , {this.state.appointment.patient.gender}
+                                            <br/>{this.state.appointment.patient.user.mobile}
+                                        </small>
+                                    </h3>
                                 </Link>
                             </Col>
                         </Row>
-                        <Row>
-                            Status: {this.state.appointment.status}
-                            {/*<Icon type={"clock"}/> {moment(this.state.appointment.schedule_at)} for {this.state.appointment.slot} mins.*/}
+                        <Divider style={{margin: 0}}/>
+                        <small>Status: {this.state.appointment.status}</small>
+                        <br/>
+                        <small>
+                            <Icon
+                                type="clock-circle"/> {moment(this.state.appointment.schedule_at).format('HH:mm A on MMMM Do')} for {this.state.appointment.slot} mins.
+                        </small>
+                        <Row style={{height: '100px', overflow: 'scroll', backgroundColor: '#eee', padding: 5}}>
+
                         </Row>
+                        <Divider style={{margin: 0}}/>
                         <Row style={{textAlign: 'right'}}>
                             <Button.Group size={"small"}>
                                 <Button>

@@ -17,7 +17,7 @@ import {
     Menu,
     Dropdown,
     Icon,
-    DatePicker,
+    DatePicker, Affix, Checkbox,
 } from "antd"
 import {DOCTORS_ROLE, SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
@@ -255,15 +255,42 @@ class App extends Component {
                         doctor: appointment.doctor,
                         loading: false
                     };
-                    if (appointment.doctor && doctorsAppointmentCount[appointment.doctor]) {
-                        doctorsAppointmentCount[appointment.doctor] += 1
+                    if (doctorsAppointmentCount['ALL']) {
+                        doctorsAppointmentCount['ALL'].ALL += 1
+                        if (appointment.status == CANCELLED_STATUS) {
+                            doctorsAppointmentCount['ALL'].CANCELLED += 1;
+                        }
                     } else {
-                        doctorsAppointmentCount[appointment.doctor] = 1;
+                        doctorsAppointmentCount['ALL'] = {}
+                        doctorsAppointmentCount['ALL'].ALL = 1;
+                        if (appointment.status == CANCELLED_STATUS) {
+                            doctorsAppointmentCount['ALL'].CANCELLED = 1;
+                        } else {
+                            doctorsAppointmentCount['ALL'].CANCELLED = 0;
+                        }
+                    }
+                    if (appointment.doctor && doctorsAppointmentCount[appointment.doctor]) {
+                        doctorsAppointmentCount[appointment.doctor].ALL += 1
+                        if (appointment.status == CANCELLED_STATUS) {
+                            doctorsAppointmentCount[appointment.doctor].CANCELLED += 1;
+                        }
+                    } else {
+                        doctorsAppointmentCount[appointment.doctor] = {}
+                        doctorsAppointmentCount[appointment.doctor].ALL = 1;
+                        if (appointment.status == CANCELLED_STATUS) {
+                            doctorsAppointmentCount[appointment.doctor].CANCELLED = 1;
+                        } else {
+                            doctorsAppointmentCount[appointment.doctor].CANCELLED = 0;
+                        }
                     }
                     if (appointment.category && doctorsAppointmentCount[appointment.category]) {
                         categoriesAppointmentCount[appointment.category] += 1
                     } else {
                         categoriesAppointmentCount[appointment.category] = 1;
+                    }
+                    newEvents.push(event);
+                    if (!prevState.filterCancelledAppointment && event.appointment.status == CANCELLED_STATUS) {
+                        return true;
                     }
                     if ((prevState.filterType == 'DOCTOR' && prevState.selectedDoctor == 'ALL') || (prevState.filterType == 'CATEGORY' && prevState.selectedCategory == 'ALL')) {
                         filteredEvent.push(event)
@@ -272,12 +299,12 @@ class App extends Component {
                     } else if (prevState.filterType == 'CATEGORY' && event.appointment.category == prevState.selectedCategory) {
                         filteredEvent.push(event)
                     }
-                    newEvents.push(event);
+
                 });
                 return {
                     events: newEvents,
                     filteredEvent: filteredEvent,
-                    doctorsAppointmentCount: {...doctorsAppointmentCount, 'ALL': data.length},
+                    doctorsAppointmentCount: {...doctorsAppointmentCount},
                     categoriesAppointmentCount: {...categoriesAppointmentCount, 'ALL': data.length},
                     appointments: data,
                     loading: false
@@ -387,10 +414,22 @@ class App extends Component {
             }
         })
     }
+    setFilter = (type, value) => {
+        let that = this;
+        this.setState({
+            [type]: value
+        }, function () {
+            that.changeFilter('tempKey', 'ALL')
+        })
+    }
+
     changeFilter = (type, value) => {
         this.setState(function (prevState) {
             let filteredEvent = [];
             prevState.events.forEach(function (event) {
+                if (!prevState.filterCancelledAppointment && event.appointment.status == CANCELLED_STATUS) {
+                    return true;
+                }
                 if (value == 'ALL') {
                     filteredEvent.push(event)
                 } else if (type == "selectedDoctor" && event.doctor == value) {
@@ -405,12 +444,24 @@ class App extends Component {
             }
         })
     }
-
+    changeState = (type, value) => {
+        this.setState({
+            [type]: value
+        })
+    }
 
     render() {
         let that = this;
+        let startTime = null;
+        let endTime = null;
+        if (this.state.calendarTimings) {
+            // console.log(new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss')));
+            startTime = new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss'));
+            endTime = new Date(new moment(this.state.calendarTimings.end_time, 'HH:mm:ss'))
+
+        }
         return (<Content className="main-container">
-                <div style={{margin: '10px', padding: '5px'}}>
+                <div style={{padding: '5px'}}>
                     <Switch>
 
                         <Route>
@@ -452,7 +503,7 @@ class App extends Component {
                                                         borderLeft: '5px solid black',
                                                         borderRight: 'none'
                                                     }}>
-                                                        <span>({this.state.doctorsAppointmentCount['ALL'] ? this.state.doctorsAppointmentCount['ALL'] : 0}) All Doctors</span>
+                                                        <span>({this.state.doctorsAppointmentCount['ALL'] ? (!this.state.filterCancelledAppointment ? (this.state.doctorsAppointmentCount['ALL'].ALL - this.state.doctorsAppointmentCount['ALL'].CANCELLED) : this.state.doctorsAppointmentCount['ALL'].ALL) : 0}) All Doctors</span>
                                                     </Menu.Item>
                                                     {this.state.practice_doctors.map(item =>
                                                         <Menu.Item key={item.id} style={{
@@ -463,7 +514,7 @@ class App extends Component {
                                                             color: this.state.selectedDoctor == item.id ? 'white' : 'inherit',
                                                             fontWeight: this.state.selectedDoctor == item.id ? 'bold' : 'inherit',
                                                         }}>
-                                                            <span>({this.state.doctorsAppointmentCount[item.id] ? this.state.doctorsAppointmentCount[item.id] : 0}) {item.user.first_name}</span>
+                                                            <span>({this.state.doctorsAppointmentCount[item.id] ? (!this.state.filterCancelledAppointment ? (this.state.doctorsAppointmentCount[item.id].ALL - this.state.doctorsAppointmentCount[item.id].CANCELLED) : this.state.doctorsAppointmentCount[item.id].ALL) : 0}) {item.user.first_name}</span>
                                                         </Menu.Item>
                                                     )}
                                                 </Menu>
@@ -491,6 +542,62 @@ class App extends Component {
                                                         </Menu.Item>
                                                     )}
                                                 </Menu>}
+                                            <div style={{position: 'fixed', bottom: 10, zIndex: 9}}>
+                                                {this.state.openMorePanel ?
+                                                    <div style={{
+                                                        // width: 100,
+                                                        boxShadow: '0 2px 4px #111',
+                                                        border: '1px solid #bbb',
+                                                        borderRadius: 2,
+                                                        padding: 5,
+                                                        backgroundColor: 'white'
+                                                    }}>
+                                                        <ul style={{listStyle: 'none', paddingInlineStart: 0}}>
+                                                            <li>
+                                                                <Checkbox checked={this.state.show24HourCalendar}
+                                                                          onChange={(e) => that.changeState('show24HourCalendar', e.target.checked)}>
+                                                                    <small>24 Hours</small>
+                                                                </Checkbox>
+                                                            </li>
+                                                            <li>
+                                                                <Checkbox
+                                                                    checked={this.state.filterCancelledAppointment}
+                                                                    onChange={(e) => that.setFilter('filterCancelledAppointment', e.target.checked)}>
+                                                                    <small>Cancellled Appointment</small>
+                                                                </Checkbox>
+                                                            </li>
+                                                            <li>
+                                                                <Divider/>
+                                                            </li>
+                                                            <li>
+                                                                <Link to={"/settings/clinics-staff#staff"}>
+                                                                    <small>Add Doctor</small>
+                                                                </Link>
+                                                            </li>
+                                                            <li>
+                                                                <Link to={"/settings/calendarsettings#timings"}>
+                                                                    <small> Customize Calendar</small>
+                                                                </Link>
+                                                            </li>
+                                                            <li>
+                                                                <a>
+                                                                    <small>Resync</small>
+                                                                </a>
+                                                                <Button
+                                                                    onClick={() => this.changeState('openMorePanel', false)}
+                                                                    shape={"circle"}
+                                                                    size={"small"}
+                                                                    type={"danger"}
+                                                                    icon={"close"}
+                                                                    style={{float: 'right'}}/>
+                                                            </li>
+                                                        </ul>
+
+                                                    </div> :
+                                                    <a onClick={() => this.changeState('openMorePanel', true)}>
+                                                        More <Icon type={"caret-down"}/>
+                                                    </a>}
+                                            </div>
                                         </Spin>
                                     </Col>
                                     <Col span={16}>
@@ -514,8 +621,7 @@ class App extends Component {
                                                 style={{height: "calc(100vh - 85px)"}}
                                                 eventPropGetter={(this.eventStyleGetter)}
                                                 date={new Date(this.state.selectedDate.format())}
-                                                // min={startTime}
-                                                // max={endTime}
+                                                {...(this.state.show24HourCalendar ? {} :{min:startTime,max:endTime})}
                                                 onRangeChange={this.onRangeChange}
                                                 components={{
                                                     event: EventComponent,
@@ -529,6 +635,7 @@ class App extends Component {
                                                     },
 
                                                 }}/>
+
                                         </Spin>
                                     </Col>
                                     <Col span={5}>
