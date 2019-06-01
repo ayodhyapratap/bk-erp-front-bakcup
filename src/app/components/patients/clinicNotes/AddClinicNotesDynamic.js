@@ -27,6 +27,8 @@ import {
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {INPUT_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import {CUSTOM_STRING_SEPERATOR} from "../../../constants/hardData";
+import {loadDoctors} from "../../../utils/clinicUtils";
+import moment from "moment";
 
 const {TabPane} = Tabs;
 const tabLists = ['Complaints', 'Observations', 'Diagnoses', 'Investigations', 'Notes'];
@@ -55,6 +57,7 @@ class AddClinicNotesDynamic extends React.Component {
     }
 
     componentDidMount() {
+        loadDoctors(this);
         this.loadRequiredResources(interpolate(EMR_COMPLAINTS, [this.props.active_practiceId]), 'Complaints');
         this.loadRequiredResources(interpolate(EMR_OBSERVATIONS, [this.props.active_practiceId]), 'Observations');
         this.loadRequiredResources(interpolate(EMR_DIAGNOSES, [this.props.active_practiceId]), 'Diagnoses');
@@ -184,8 +187,10 @@ class AddClinicNotesDynamic extends React.Component {
                 reqData.notes = values.Notes.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
                 reqData.observations = values.Observations.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
                 reqData.patient = that.props.match.params.id;
+                reqData.doctor = that.state.selectedDoctor && that.state.selectedDoctor.id ? that.state.selectedDoctor.id : that.state.selectedDoctor;
+                reqData.date = that.state.selectedDate && moment(that.state.selectedDate).isValid() ? moment(that.state.selectedDate).format('YYYY-MM-DD') : null
                 if (that.state.editClinicNotes)
-                    reqData.id = that.state.editClinicNotes.id
+                    reqData.id = that.state.editClinicNotes.id;
                 let successFn = function (data) {
                     if (that.props.loadData)
                         that.props.loadData();
@@ -204,6 +209,16 @@ class AddClinicNotesDynamic extends React.Component {
             selectedTab: tab
         });
         return true;
+    }
+    selectDoctor = (doctor) => {
+        this.setState({
+            selectedDoctor: doctor
+        })
+    }
+    selectedDate = (date) => {
+        this.setState({
+            selectedDate: date
+        })
     }
 
     render() {

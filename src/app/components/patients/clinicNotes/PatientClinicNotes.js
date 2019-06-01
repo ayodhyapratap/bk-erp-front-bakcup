@@ -1,4 +1,4 @@
-import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag} from "antd";
 import React from "react";
 import {getAPI, interpolate, postAPI} from "../../../utils/common";
 import {INVOICES_API, PATIENT_CLINIC_NOTES_API,} from "../../../constants/api";
@@ -155,7 +155,7 @@ class PatientClinicNotes extends React.Component {
                         </Card>
                         {this.state.clinicNotes.map(clinicNote => <Card style={{marginTop: 20}}>
                             <div>
-                                <h4>{clinicNote.created_at ? moment(clinicNote.created_at).format('ll') : null}
+                                <h4>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}
                                     <Dropdown.Button
                                         // onClick={()=>that.loadPDF(clinicNote.id)}
                                         size={"small"}
@@ -228,6 +228,11 @@ class PatientClinicNotes extends React.Component {
                                             <span>{str}<br/></span>) : null}
                                     </Col>
                                 </Row>
+                            </div>
+                            <div>
+                                {clinicNote.doctor ? <Tag color={clinicNote.doctor ? clinicNote.doctor.calendar_colour : null}>
+                                    <b>{"prescribed by  " + clinicNote.doctor.user.first_name} </b>
+                                </Tag> : null}
                             </div>
                         </Card>)}
                     </div>
