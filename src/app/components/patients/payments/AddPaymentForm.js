@@ -173,6 +173,8 @@ class AddPaymentForm extends React.Component {
             that.setState({
                 loading: false
             });
+            if (that.props.loadData)
+                that.props.loadData();
             that.props.history.push("/patient/" + that.props.match.params.id + "/billing/payments")
         }
         let errorFn = function () {
@@ -231,11 +233,13 @@ class AddPaymentForm extends React.Component {
                                                 {invoice.procedure.map(proc => proc.procedure_data.name + ", ")}
                                                 {invoice.inventory.map(proc => proc.inventory_item_data.name + ", ")}
                                             </td>
-                                            <td style={{textAlign: 'right'}}><b>{invoice.total - invoice.payments_data}</b></td>
+                                            <td style={{textAlign: 'right'}}>
+                                                <b>{invoice.total - invoice.payments_data}</b></td>
                                             <td style={{textAlign: 'right'}}>
                                                 <b>{that.state.invoicePayments[invoice.id]}</b></td>
                                             <td style={{textAlign: 'right'}}>
-                                                <b>{invoice.total - invoice.payments_data - that.state.invoicePayments[invoice.id]}</b></td>
+                                                <b>{invoice.total - invoice.payments_data - that.state.invoicePayments[invoice.id]}</b>
+                                            </td>
                                         </tr>
                                     )}
                                 </table>

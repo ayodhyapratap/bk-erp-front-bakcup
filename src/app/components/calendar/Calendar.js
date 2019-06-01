@@ -24,7 +24,6 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./app.css";
 import {Route, Link, Switch} from "react-router-dom";
-import CreateAppointment from "./CreateAppointment";
 import TimeGrid from 'react-big-calendar/lib/TimeGrid'
 import dates from 'date-arithmetic'
 import {getAPI, putAPI, interpolate, displayMessage} from "../../utils/common";
@@ -36,9 +35,12 @@ import {
     BLOCK_CALENDAR
 } from "../../constants/api";
 import EventComponent from "./EventComponent";
-import {calendarSettingMenu, loadAppointmentCategories} from "./calendarUtils";
+import {
+    getCalendarSettings,
+    loadAppointmentCategories,
+    saveCalendarSettings
+} from "../../utils/calendarUtils";
 import CalendarRightPanel from "./CalendarRightPanel";
-import BlockCalendar from "./BlockCalendar";
 import {CANCELLED_STATUS} from "../../constants/hardData";
 
 const localizer = BigCalendar.momentLocalizer(moment)
@@ -68,8 +70,10 @@ class App extends Component {
             filterType: 'DOCTOR',
             doctorsAppointmentCount: {},
             categoriesAppointmentCount: {},
-            blockedCalendar: []
-        };
+            blockedCalendar: [],
+            ...getCalendarSettings()
+        }
+        ;
         this.onSelectSlot = this.onSelectSlot.bind(this);
         this.onSelectEvent = this.onSelectEvent.bind(this);
         this.moveEvent = this.moveEvent.bind(this)
@@ -419,6 +423,7 @@ class App extends Component {
         this.setState({
             [type]: value
         }, function () {
+            saveCalendarSettings(type, value);
             that.changeFilter('tempKey', 'ALL')
         })
     }
@@ -447,6 +452,8 @@ class App extends Component {
     changeState = (type, value) => {
         this.setState({
             [type]: value
+        }, function () {
+            saveCalendarSettings(type, value)
         })
     }
 
@@ -621,7 +628,10 @@ class App extends Component {
                                                 style={{height: "calc(100vh - 85px)"}}
                                                 eventPropGetter={(this.eventStyleGetter)}
                                                 date={new Date(this.state.selectedDate.format())}
-                                                {...(this.state.show24HourCalendar ? {} :{min:startTime,max:endTime})}
+                                                {...(this.state.show24HourCalendar ? {} : {
+                                                    min: startTime,
+                                                    max: endTime
+                                                })}
                                                 onRangeChange={this.onRangeChange}
                                                 components={{
                                                     event: EventComponent,
@@ -633,7 +643,6 @@ class App extends Component {
                                                                                 filterType={that.state.filterType}
                                                                                 selectedDoctor={that.state.selectedDoctor}/>
                                                     },
-
                                                 }}/>
 
                                         </Spin>

@@ -245,9 +245,6 @@ class Addinvoicedynamic extends React.Component {
                     discount: null,
                     taxes: 0,
                     total: null,
-                    is_pending: false,
-                    is_active: true,
-                    is_cancelled: false,
                     procedure: [],
                     inventory: [],
                     prescription: that.state.selectedPrescriptions

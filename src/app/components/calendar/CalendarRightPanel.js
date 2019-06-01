@@ -6,7 +6,7 @@ import {
     SCHEDULE_STATUS,
     WAITING_STATUS
 } from "../../constants/hardData";
-import {calendarSettingMenu} from "./calendarUtils";
+import {calendarSettingMenu} from "../../utils/calendarUtils";
 import {Button, Icon, Dropdown, Row, Col, Divider, Spin, List, Popover} from "antd";
 import {Link} from "react-router-dom";
 import moment from "moment/moment";

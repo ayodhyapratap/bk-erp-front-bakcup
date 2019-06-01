@@ -54,3 +54,4 @@ export const SMS_FIELD = 'sms_field';
  *Role
  **/
 export const DOCTORS_ROLE = '3';
+export const CALENDAR_SETTINGS = 'calendar_settings';

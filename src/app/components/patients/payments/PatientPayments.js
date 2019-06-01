@@ -114,7 +114,7 @@ class PatientPayments extends React.Component {
             return <div>
                 <Switch>
                     <Route exact path='/patient/:id/billing/payments/add'
-                           render={(route) => <AddPaymentForm {...this.state} {...route}/>}/>
+                           render={(route) => <AddPaymentForm {...this.state} {...route} loadData={this.loadInvoices}/>}/>
                     <Route exact path='/patient/:id/billing/payments/edit'
                            render={(route) => <AddPayment {...this.state} {...route}/>}/>
                     <Route>
