@@ -12,7 +12,7 @@ import {
 import {Link} from "react-router-dom";
 import {
     PROCEDURE_CATEGORY,
-    TREATMENTPLANS_API
+    TREATMENTPLANS_API, TREATMENTPLANS_MARK_COMPLETE_API
 } from "../../../constants/api";
 import {getAPI, interpolate, displayMessage, postAPI} from "../../../utils/common";
 import moment from "moment";
@@ -166,7 +166,7 @@ class PatientTreatmentPlans extends React.Component {
 
         }
         // console.log("Data",JSON.stringify(reqData));
-        postAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id]), reqData, successFn, errorFn)
+        postAPI(interpolate(TREATMENTPLANS_MARK_COMPLETE_API, [this.props.match.params.id]), reqData, successFn, errorFn)
     }
 
     render() {
@@ -184,7 +184,7 @@ class PatientTreatmentPlans extends React.Component {
             key: 'is_completed',
             render: (text, record) => (record.is_completed ?
                     <Icon type="check-circle" theme="twoTone" style={{marginLeft: '8px', fontSize: '20px'}}/> :
-                    <Checkbox onChange={(e) => this.treatmentCompleteToggle(record.id, e.target.checked)}
+                    <Checkbox key={record.id} onChange={(e) => this.treatmentCompleteToggle(record.id, e.target.checked)}
                               value={this.state.selectedTreatments[record.id]}/>
             )
         }, {

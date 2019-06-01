@@ -61,6 +61,7 @@ export const ROOM_TYPE = 'clinics/room_types/';
 export const PATIENT_NOTES = 'patients/patient_notes/?patient=%s&practice=%s';
 /*DELETE OBJECT*/
 export const TREATMENTPLANS_API = 'patients/procedure/?id=%s&complete=%s';
+export const TREATMENTPLANS_MARK_COMPLETE_API = 'patients/complete_procedure/?id=%s&complete=%s';
 export const ALL_PRESCRIPTIONS_API = 'patients/prescriptions/%s/';
 export const INVOICES_API = 'invoice/?id=%s';
 export const CREATE_OR_EDIT_INVOICES = 'invoice/';
