@@ -30,6 +30,7 @@ import IntegrationHome from "./options/integration/IntegrationHome";
 import MailPDFSettings from "./options/mailPDF/MailPDFSettings";
 import BedPackages from "./options/bed-packages/BedPackages";
 import RoomTypes from "./options/roomtypes/RoomTypes";
+import LoyaltySettings from "./options/loyalty/LoyaltySettings";
 
 const Content = Layout.Content;
 
@@ -106,16 +107,16 @@ class SettingsDash extends React.Component {
                                )}/>
                         <Route exact path="/settings/loyalty"
                                render={(route) => (this.props.activePracticePermissions.SettingsLoyalty || this.props.allowAllPermissions ?
-                                       <Offers  {...this.props} /> : <PermissionDenied/>
+                                       <LoyaltySettings  {...this.props} /> : <PermissionDenied/>
                                )}/>
                         <Route  path="/settings/emr"
                                render={(route) => (this.props.activePracticePermissions.SettingsEMR || this.props.allowAllPermissions ?
                                        <EMRSettings  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
-                        <Route exact path="/settings/loyalty/add"
-                               render={(route) => (this.props.activePracticePermissions.SettingsLoyalty || this.props.allowAllPermissions ?
-                                       <AddOffer  {...this.props} {...route}/> : <PermissionDenied/>
-                               )}/>
+                        {/*<Route exact path="/settings/loyalty/add"*/}
+                               {/*render={(route) => (this.props.activePracticePermissions.SettingsLoyalty || this.props.allowAllPermissions ?*/}
+                                       {/*<AddOffer  {...this.props} {...route}/> : <PermissionDenied/>*/}
+                               {/*)}/>*/}
                         <Route path="/settings/prescriptions"
                                render={(route) => (this.props.activePracticePermissions.SettingsPrescriptions || this.props.allowAllPermissions ?
                                        <Prescriptions  {...this.props} {...route} /> : <PermissionDenied/>

@@ -90,6 +90,7 @@ export const DRUG_UNIT_API = '';
 
 export const PRINT_PREVIEW_RENDER = 'patients/print/';
 
+export const MEMBERSHIP_API = 'patients/membership/?id=%s'
 /**
  * Blogs API
  * */

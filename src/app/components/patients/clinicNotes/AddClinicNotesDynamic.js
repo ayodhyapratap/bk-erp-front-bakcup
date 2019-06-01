@@ -234,12 +234,11 @@ class AddClinicNotesDynamic extends React.Component {
                     <Form onSubmit={this.handleSubmit}>
                         {tabLists.map(tab =>
                             <div>
-                                <Divider style={{margin:5}}>{tab}</Divider>
+                                <Divider style={{margin: 5}}>{tab}</Divider>
                                 <div style={{
                                     backgroundColor: (tab == that.state.selectedTab ? '#ddd' : 'initial'),
                                     padding: 10
                                 }} onClick={() => that.changeTab(tab)}>
-
                                     {keys[tab].map((k, index) => (
                                         <Form.Item
                                             {...formItemLayout}
@@ -248,11 +247,9 @@ class AddClinicNotesDynamic extends React.Component {
                                             key={k}>
                                             {getFieldDecorator(`field[${k}]`, {
                                                 validateTrigger: ['onChange', 'onBlur'],
-                                                rules: [
-                                                    {
-                                                        whitespace: true,
-                                                    },
-                                                ],
+                                                rules: [{
+                                                    whitespace: true,
+                                                }],
                                             })(<Input placeholder={tab} style={{width: '60%', marginRight: 8}}
                                                       onChange={() => that.changeValues(tab, k)}/>)}
                                             {keys[tab].length - 1 != index ? (
@@ -287,7 +284,6 @@ class AddClinicNotesDynamic extends React.Component {
                                 <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
                                 <DatePicker value={this.state.selectedDate}
                                             onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}/>
-
                                 <Button type="primary" htmlType="submit" style={{float: 'right'}}>
                                     Save
                                 </Button>

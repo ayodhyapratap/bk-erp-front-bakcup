@@ -1,16 +1,17 @@
 import React from "react";
-import {Button, Card, Icon, Popconfirm, Row,} from "antd";
+import {Button, Card, Divider, Icon, Popconfirm, Row,} from "antd";
 import {Link} from "react-router-dom";
 import {OFFERS} from "../../../../constants/api";
 import {getAPI, interpolate, postAPI} from "../../../../utils/common";
 import CustomizedTable from "../../../common/CustomizedTable";
+import AddOffer from "./AddOffer";
 
 class Offers extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             offers: null,
-            loading:true
+            loading: true
         }
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -26,12 +27,12 @@ class Offers extends React.Component {
             console.log("get table");
             that.setState({
                 offers: data,
-                loading:false
+                loading: false
             })
         };
         let errorFn = function () {
             that.setState({
-                loading:true
+                loading: true
             })
         };
         getAPI(interpolate(OFFERS, [this.props.active_practiceId]), successFn, errorFn);
@@ -80,17 +81,16 @@ class Offers extends React.Component {
             ),
         }];
         return <Row>
-            <h2>All Offers
-                <Link to="/settings/loyalty/add">
-                    <Button type="primary" style={{float: 'right'}}>
-                        <Icon type="plus"/>&nbsp;Add
-                    </Button>
-                </Link>
-            </h2>
-            <Card>
-                <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.offers}/>
-
-            </Card>
+            {/*<h2>All Offers*/}
+            {/*<Link to="/settings/loyalty/add">*/}
+            {/*<Button type="primary" style={{float: 'right'}}>*/}
+            {/*<Icon type="plus"/>&nbsp;Add*/}
+            {/*</Button>*/}
+            {/*</Link>*/}
+            {/*</h2>*/}
+            <AddOffer {...this.props} loadData={this.loadData}/>
+            <Divider/>
+            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.offers}/>
         </Row>
     }
 }

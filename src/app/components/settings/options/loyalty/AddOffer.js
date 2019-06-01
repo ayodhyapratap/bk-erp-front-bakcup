@@ -39,8 +39,8 @@ class AddOffer extends React.Component {
                 key: 'unit',
                 required: true,
                 options: [{label: 'Percent', value: '%'}, {label: 'Rupees', value: 'INR'}],
-                type:SELECT_FIELD,
-                initialValue:'%'
+                type: SELECT_FIELD,
+                initialValue: '%'
             }]
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -55,10 +55,12 @@ class AddOffer extends React.Component {
     }
 
     render() {
+        let that = this;
         const formProp = {
             successFn: function (data) {
-                console.log(data);
                 displayMessage(SUCCESS_MSG_TYPE, "success")
+                if (that.props.loadData)
+                    that.props.loadData();
 
             },
             errorFn: function () {
@@ -71,12 +73,11 @@ class AddOffer extends React.Component {
             }
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div><Card>
-            <TestFormLayout title="Add Offer" formProp={formProp} changeRedirect={this.changeRedirect}
+        return <div>
+            <TestFormLayout formProp={formProp}
                             fields={this.state.fields} {...this.props}/>
             {this.state.redirect && <Redirect to='/settings/loyalty'/>}
 
-        </Card>
         </div>
     }
 }

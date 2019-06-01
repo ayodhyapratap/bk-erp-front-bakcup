@@ -1,13 +1,7 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form, Button, Card, Icon, Tabs, Divider, Tag, Row, Table} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import PaymentModes from "./PaymentModes";
-import CancelledInvoice from "./CancelledInvoice";
 import TaxCatalog from "./TaxCatalog";
-import {TAXES} from "../../../../constants/api"
-import {Link} from "react-router-dom";
-import {getAPI, interpolate} from "../../../../utils/common";
 
 const TabPane = Tabs.TabPane;
 

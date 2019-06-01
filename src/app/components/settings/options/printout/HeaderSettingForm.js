@@ -131,7 +131,7 @@ class HeaderSettingForm extends React.Component {
             value={logo_alignment.value}>{logo_alignment.value}</Radio>)
         const logoInclude = LOGO_INCLUDE.map((logo_include) => <Radio
             value={logo_include.value}>{logo_include.title}</Radio>)
-        let PreviewParamsURL = '?type=' + this.props.type + '&sub_type=' + this.props.sub_type;
+        let PreviewParamsURL = '?preview=true&type=' + this.props.type + '&sub_type=' + this.props.sub_type;
         if (this.state.print_setting) {
             let keys = Object.keys(this.state.print_setting);
             keys.forEach(function (key) {

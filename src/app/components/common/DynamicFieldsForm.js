@@ -70,12 +70,12 @@ class DynamicFieldsForm extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log("Recieved New Props in Dynamic Form", nextProps);
+        // console.log("Recieved New Props in Dynamic Form", nextProps);
     }
 
     fieldDecorators = (field, formData) => {
         let urlInitialValues = this.state.urlInitialValues;
-        console.log(urlInitialValues);
+        // console.log(urlInitialValues);
         if (field.type == MULTI_SELECT_FIELD) {
             return {
                 initialValue: formData[field.key] ? formData[field.key] : (urlInitialValues[field.key] ? urlInitialValues[field.key] : formData[field.key]),
@@ -291,6 +291,10 @@ class DynamicFieldsForm extends React.Component {
                                     <Input prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
                                            type="password"
                                            placeholder={field.placeholder}
+                                           onChange={(e) => function () {
+                                               if (field.onChange)
+                                                   field.onChange(e)
+                                           }}
                                            disabled={field.disabled ? field.disabled : that.state.disabled}/>
                                 )}
                             </Form.Item>;
@@ -299,6 +303,10 @@ class DynamicFieldsForm extends React.Component {
                                              extra={field.extra}>
                                 {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                     <Input placeholder={field.placeholder}
+                                           onChange={(e) => function () {
+                                               if (field.onChange)
+                                                   field.onChange(e)
+                                           }}
                                            disabled={field.disabled ? field.disabled : that.state.disabled}/>
                                 )}
                                 {field.follow ? <span className="ant-form-text">{field.follow}</span> : null}
@@ -389,7 +397,10 @@ class DynamicFieldsForm extends React.Component {
                                     {
                                         rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],
                                     })(
-                                    <DatePicker format={field.format} showTime/>
+                                    <DatePicker format={field.format} showTime onChange={(e) => (field.onChange ?
+                                        field.onChange(e) :
+                                        function () {
+                                        })}/>
                                 )}
                             </FormItem>;
                         case TEXT_FIELD:

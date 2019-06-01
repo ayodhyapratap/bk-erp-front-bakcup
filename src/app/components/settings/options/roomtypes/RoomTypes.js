@@ -158,12 +158,12 @@ class RoomTypes extends React.Component {
                 that.loadData();
                 console.log(data);
                 console.log("sucess");
-                displayMessage(SUCCESS_MSG_TYPE, "success")
+                displayMessage(SUCCESS_MSG_TYPE, "success");
             },
             errorFn: function () {
 
             },
-            action: interpolate(EXPENSE_TYPE, [this.props.active_practiceId]),
+            action: ROOM_TYPE,
             method: "post",
         }
         const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
@@ -177,7 +177,7 @@ class RoomTypes extends React.Component {
             <Card>
                 <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
                 <Divider/>
-                <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.expenses}/>
+                <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.rooms}/>
                 {/*{this.state.showDeleted ?*/}
                     {/*<div>*/}
                         {/*<CustomizedTable loading={this.state.deletedLoading} columns={columns}*/}
