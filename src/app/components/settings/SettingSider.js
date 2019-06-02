@@ -94,29 +94,29 @@ class SettingSider extends React.Component {
                             <Icon type="dollar"/> Expense Types
                         </Link>
                     </Menu.Item> : null}
-                    <Menu.Item key="20">
-                        <Link to="/settings/integration">
-                            <Icon type="link"/> My Integrations
-                        </Link>
-                    </Menu.Item>
-                </Menu.ItemGroup>
-                <Menu.ItemGroup key="g2" title={<Divider style={{margin: '0px'}}>Bed & Medicine</Divider>}>
-                    <Menu.Item key="22">
-                        <Link to="/settings/roomtypes">
-                            <Icon type="apartment" /> Room Types
-                        </Link>
-                    </Menu.Item>
-                    <Menu.Item key="23">
-                        <Link to="/settings/bed-packages">
-                            <Icon type="box-plot"/> Bed Packages
-                        </Link>
-                    </Menu.Item>
-                    {/*<Menu.Item key="24">*/}
-                        {/*<Link to="/settings/bed-packages">*/}
-                            {/*<Icon type="medicine-box" /> Medicines*/}
+                    {/*<Menu.Item key="20">*/}
+                        {/*<Link to="/settings/integration">*/}
+                            {/*<Icon type="link"/> My Integrations*/}
                         {/*</Link>*/}
                     {/*</Menu.Item>*/}
                 </Menu.ItemGroup>
+                {/*<Menu.ItemGroup key="g2" title={<Divider style={{margin: '0px'}}>Bed & Medicine</Divider>}>*/}
+                    {/*<Menu.Item key="22">*/}
+                        {/*<Link to="/settings/roomtypes">*/}
+                            {/*<Icon type="apartment" /> Room Types*/}
+                        {/*</Link>*/}
+                    {/*</Menu.Item>*/}
+                    {/*<Menu.Item key="23">*/}
+                        {/*<Link to="/settings/bed-packages">*/}
+                            {/*<Icon type="box-plot"/> Bed Packages*/}
+                        {/*</Link>*/}
+                    {/*</Menu.Item>*/}
+                    {/*/!*<Menu.Item key="24">*!/*/}
+                        {/*/!*<Link to="/settings/bed-packages">*!/*/}
+                            {/*/!*<Icon type="medicine-box" /> Medicines*!/*/}
+                        {/*/!*</Link>*!/*/}
+                    {/*/!*</Menu.Item>*!/*/}
+                {/*</Menu.ItemGroup>*/}
             </Menu>
 
         </Sider>

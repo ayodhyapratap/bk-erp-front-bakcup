@@ -20,7 +20,7 @@ class WishSMS extends React.Component {
                 initialValue: "My Name",
                 type: RADIO_FIELD,
                 options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
-            },{
+            }, {
                 label: "Name 3",
                 key: "name3",
                 required: true,
@@ -41,7 +41,7 @@ class WishSMS extends React.Component {
     render() {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
-            <TestFormLayout title="Communication Settings" fields={this.state.fields}/>
+            <TestFormLayout fields={this.state.fields}/>
         </div>
     }
 }

@@ -198,7 +198,7 @@ class AppointmentSMS extends React.Component {
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
-            <TestFormLayout formProp={formProp} defaultValues={defaultValues} title="Communication Settings"
+            <TestFormLayout formProp={formProp} defaultValues={defaultValues}
                             fields={fields} {...this.props}/>
         </div>
     }

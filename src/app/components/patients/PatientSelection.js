@@ -245,6 +245,7 @@ class PatientSelection extends React.Component {
 
             </Col>
             <Modal visible={this.state.showPatientGroupModal}
+                   footer={null}
                    onCancel={() => this.togglePatientGroupEditing(false)}>
                 <PatientGroups {...this.props}/>
             </Modal>
