@@ -166,8 +166,8 @@ class PatientClinicNotes extends React.Component {
                                                 Edit
                                             </Menu.Item>
                                             <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}>
-                                            <Icon type="delete"/>
-                                            Delete
+                                                <Icon type="delete"/>
+                                                Delete
                                             </Menu.Item>
                                             <Menu.Divider/>
                                             <Menu.Item key="3">
@@ -178,14 +178,17 @@ class PatientClinicNotes extends React.Component {
                                         <Icon type="printer"/>
                                     </Dropdown.Button>
                                 </h4>
+                                <Divider style={{margin: 0}}/>
                                 <Row>
                                     <Col span={6}>
                                         <h3>Complaints</h3>
                                     </Col>
                                     <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                        <div style={{minHeight: 30}}>
+                                            {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                                <span>{str}<br/></span>) : null}
+                                        </div>
                                         <Divider style={{margin: 0}}/>
-                                        {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                            <span>{str}<br/></span>) : null}
                                     </Col>
                                 </Row>
                                 <Row>
@@ -193,9 +196,11 @@ class PatientClinicNotes extends React.Component {
                                         <h3>Observations</h3>
                                     </Col>
                                     <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                        <div style={{minHeight: 30}}>
+                                            {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                                <span>{str}<br/></span>) : null}
+                                        </div>
                                         <Divider style={{margin: 0}}/>
-                                        {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                            <span>{str}<br/></span>) : null}
                                     </Col>
                                 </Row>
                                 <Row>
@@ -203,9 +208,11 @@ class PatientClinicNotes extends React.Component {
                                         <h3>Investigations</h3>
                                     </Col>
                                     <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                        <div style={{minHeight: 30}}>
+                                            {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                                <span>{str}<br/></span>) : null}
+                                        </div>
                                         <Divider style={{margin: 0}}/>
-                                        {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                            <span>{str}<br/></span>) : null}
                                     </Col>
                                 </Row>
                                 <Row>
@@ -213,9 +220,11 @@ class PatientClinicNotes extends React.Component {
                                         <h3>Diagnoses</h3>
                                     </Col>
                                     <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                        <div style={{minHeight: 30}}>
+                                            {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                                <span>{str}<br/></span>) : null}
+                                        </div>
                                         <Divider style={{margin: 0}}/>
-                                        {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                            <span>{str}<br/></span>) : null}
                                     </Col>
                                 </Row>
                                 <Row>
@@ -223,16 +232,19 @@ class PatientClinicNotes extends React.Component {
                                         <h3>Notes</h3>
                                     </Col>
                                     <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                        <div style={{minHeight: 30}}>
+                                            {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                                <span>{str}<br/></span>) : null}
+                                        </div>
                                         <Divider style={{margin: 0}}/>
-                                        {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                            <span>{str}<br/></span>) : null}
                                     </Col>
                                 </Row>
                             </div>
                             <div>
-                                {clinicNote.doctor ? <Tag color={clinicNote.doctor ? clinicNote.doctor.calendar_colour : null}>
-                                    <b>{"prescribed by  " + clinicNote.doctor.user.first_name} </b>
-                                </Tag> : null}
+                                {clinicNote.doctor ?
+                                    <Tag color={clinicNote.doctor ? clinicNote.doctor.calendar_colour : null}>
+                                        <b>{"prescribed by  " + clinicNote.doctor.user.first_name} </b>
+                                    </Tag> : null}
                             </div>
                         </Card>)}
                     </div>

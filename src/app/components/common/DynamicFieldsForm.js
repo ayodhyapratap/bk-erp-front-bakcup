@@ -30,7 +30,7 @@ import {
     COUNTRY_FIELD,
     STATE_FIELD,
     EMAIL_FIELD,
-    CITY_FIELD, PASSWORD_FIELD, MULTI_SELECT_FIELD, MULTI_IMAGE_UPLOAD_FIELD, SMS_FIELD, DATE_TIME_PICKER
+    CITY_FIELD, PASSWORD_FIELD, MULTI_SELECT_FIELD, MULTI_IMAGE_UPLOAD_FIELD, SMS_FIELD, DATE_TIME_PICKER, DIVIDER_FIELD
 } from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {getAPI, makeFileURL, makeURL, postAPI, putAPI} from "../../utils/common";
@@ -600,7 +600,8 @@ class DynamicFieldsForm extends React.Component {
                                     </Select>
                                 )}
                             </FormItem>;
-
+                        case DIVIDER_FIELD :
+                            return <Divider style={{margin: 4}}/>
                         default:
                             return null;
                     }

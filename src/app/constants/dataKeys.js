@@ -49,7 +49,7 @@ export const CITY_FIELD = 'city';
 export const PASSWORD_FIELD = 'password';
 export const EMAIL_FIELD = 'email';
 export const SMS_FIELD = 'sms_field';
-
+export const DIVIDER_FIELD = 'divider_field';
 /***
  *Role
  **/

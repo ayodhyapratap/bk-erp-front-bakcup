@@ -10,9 +10,9 @@ export default class MailPDFSettings extends React.Component {
 
     render() {
         return <div>
-            <h2>EMail PDF Settings</h2>
+            <h2>Email PDF Settings</h2>
             <Card>
-                <PrintSettings sub_type={"PDF"}
+                <PrintSettings sub_type={"INVOICE"}
                                active_practiceId={this.props.active_practiceId} type={"MAIL"}/></Card>
         </div>
     }

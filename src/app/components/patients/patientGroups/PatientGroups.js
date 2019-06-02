@@ -1,5 +1,5 @@
 import React from "react";
-import {Card, Form, Popconfirm} from 'antd';
+import {Card, Form, Popconfirm, Row, Divider} from 'antd';
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
 import {OFFERS, PATIENT_GROUPS} from "../../../constants/api";
 import CustomizedTable from "../../common/CustomizedTable";
@@ -35,7 +35,8 @@ export default class PatientGroups extends React.Component {
         };
         getAPI(interpolate(PATIENT_GROUPS, [this.props.active_practiceId]), successFn, errorFn);
     }
-    deleteObject(record){
+
+    deleteObject(record) {
         let that = this;
         let reqData = record;
         reqData.is_active = false;
@@ -54,10 +55,10 @@ export default class PatientGroups extends React.Component {
             dataIndex: 'name',
             key: 'name'
         }, {
-            title:'Patient Count',
-            dataIndex:'patient_count',
-            key:'patient_count'
-        },{
+            title: 'Patient Count',
+            dataIndex: 'patient_count',
+            key: 'patient_count'
+        }, {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
@@ -92,10 +93,12 @@ export default class PatientGroups extends React.Component {
             }
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <Card title={"Patient Groups"}>
+        return <Row>
             <TestFormLayout formProp={formProp}
+                            title={"Patient Groups"}
                             fields={fields} {...this.props}/>
+            <Divider/>
             <CustomizedTable dataSource={this.state.patientGroup} loading={this.state.loading} columns={coloumns}/>
-        </Card>
+        </Row>
     }
 }

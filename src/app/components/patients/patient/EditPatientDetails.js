@@ -193,7 +193,7 @@ class EditPatientDetails extends React.Component {
                 label: item.name,
                 value: item.id
             })),
-            initialValue: this.props.currentPatient ? this.props.currentPatient.user.medical_history : null,
+            initialValue: this.props.currentPatient ? this.props.currentPatient.medical_history : null,
             type: MULTI_SELECT_FIELD
         }, {
             label: "Patient Group",
@@ -202,16 +202,16 @@ class EditPatientDetails extends React.Component {
                 label: item.name,
                 value: item.id
             })),
-            initialValue: this.props.currentPatient ? this.props.currentPatient.user.patient_group : null,
+            initialValue: this.props.currentPatient ? this.props.currentPatient.patient_group : null,
             type: MULTI_SELECT_FIELD
         }, {
-            label: "Patient Group",
+            label: "Membership",
             key: "medical_membership",
             options: this.state.membership.map(item => Object.create({
                 label: item.name,
                 value: item.id
             })),
-            initialValue: this.props.currentPatient ? this.props.currentPatient.user.medical_membership : null,
+            initialValue: this.props.currentPatient ? this.props.currentPatient.medical_membership : null,
             type: SELECT_FIELD
         }];
 

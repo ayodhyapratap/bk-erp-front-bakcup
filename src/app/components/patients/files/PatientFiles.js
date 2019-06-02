@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Col, Icon, List, Modal, Radio, Row} from "antd";
+import {Button, Card, Col, Icon, List, Modal, Radio, Row, Checkbox} from "antd";
 import {getAPI, interpolate,makeFileURL} from "../../../utils/common";
 import {ALL_PATIENT_FILES, EMR_FILETAGS, PATIENT_FILES} from "../../../constants/api";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
@@ -132,7 +132,9 @@ class PatientFiles extends React.Component {
                         dataSource={this.state.files}
                         renderItem={item => (
                             <List.Item style={{textAlign:'center'}}>
-                                <img src={makeFileURL(item.file_type)} alt="" style={{maxWidth:'100%',height:'100px'}}/>
+                                <Checkbox>
+                                    <img src={makeFileURL(item.file_type)} alt="" style={{maxWidth:'100%',height:'100px'}}/>
+                                </Checkbox>
                             </List.Item>
                         )}
                     />
