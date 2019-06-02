@@ -29,7 +29,7 @@ class CommunicationSettings extends React.Component {
                 {/*<WishSMS/>*/}
               {/*</TabPane>*/}
               <TabPane tab={<span><Icon type="mail" />Emails</span>} key="emails">
-                <Emails/>
+                <Emails {...this.props}/>
               </TabPane>
             </Tabs>
 

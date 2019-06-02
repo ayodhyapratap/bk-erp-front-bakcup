@@ -47,6 +47,7 @@ export const DRUG_CATALOG = 'clinics/%s/drugcatalog/';
 export const SINGLE_DRUG_CATALOG = 'clinics/%s/drugcatalog/?id=%s';
 export const LABTEST_API = 'clinics/%s/labtest/';
 export const COMMUNICATONS_API = 'clinics/%s/communications/';
+export const EMAIL_COMMUNICATONS_API = 'clinics/%s/email_communications/';
 export const CALENDER_SETTINGS = 'clinics/%s/calender_settings/';
 export const ALL_APPOINTMENT_API = 'appointment/';
 export const APPOINTMENT_API = 'appointment/%s/';
