@@ -1,29 +1,23 @@
 import React from "react";
 import PracticeDetails from "./options/practice-detail/PracticeDetails"
-import {Route, Link, Switch} from 'react-router-dom';
-import {Avatar, Dropdown, Icon, Layout, Menu} from "antd";
+import {Route, Switch} from 'react-router-dom';
+import {Layout} from "antd";
 import PracticeStaff from "./options/practice-staff/PracticeStaff";
 import AddStaffDoctor from "./options/practice-staff/AddStaffDoctor";
 import AddPracticeDetails from "./options/practice-detail/AddPracticeDetails";
 import CommunicationSettings from "./options/communication-settings/CommunicationSettings";
 import RecentProcedure from "./options/procedure-catalog/RecentProcedure";
 import AddProcedure from "./options/procedure-catalog/AddProcedure";
-import EditProcedure from "./options/procedure-catalog/EditProcedure";
 import BillingSettings from "./options/billing/BillingSettings";
-import Offers from "./options/loyalty/Offers";
 import EMRSettings from "./options/emr/EMRSettings";
-import AddOffer from "./options/loyalty/AddOffer";
 import EditPracticeDetail from "./options/practice-detail/EditPracticeDetail";
 import Prescriptions from "./options/prescriptions/Prescriptions";
-import AddPrescription from "./options/prescriptions/AddPrescription";
 import ExpensesTypes from "./options/expenses-types/ExpensesTypes";
-import LabTest from "./options/labs/LabTest";
 import MedicalHistory from "./options/medical-history/MedicalHistory";
 import Error404 from "../common/errors/Error404";
 import CalendarSettings from "./options/calendar/CalendarSettings"
 import SettingSider from "./SettingSider";
 import PermissionDenied from "../common/errors/PermissionDenied";
-import AddorEditLab from "./options/labs/AddorEditLab";
 import MlmBase from "./options/mlm/MlmBase";
 import Printout from "./options/printout/Printout";
 import IntegrationHome from "./options/integration/IntegrationHome";
@@ -31,6 +25,7 @@ import MailPDFSettings from "./options/mailPDF/MailPDFSettings";
 import BedPackages from "./options/bed-packages/BedPackages";
 import RoomTypes from "./options/roomtypes/RoomTypes";
 import LoyaltySettings from "./options/loyalty/LoyaltySettings";
+import LabTracking from "./options/labs/LabTracking";
 
 const Content = Layout.Content;
 
@@ -82,7 +77,8 @@ class SettingsDash extends React.Component {
                                )}/>
                         <Route exact path="/settings/clinics/:id/edit"
                                render={(route) => (this.props.activePracticePermissions.SettingsPracticeDetail || this.props.allowAllPermissions ?
-                                       <EditPracticeDetail {...this.props} practiceId={route.match.params.id} {...route}/> :
+                                       <EditPracticeDetail {...this.props}
+                                                           practiceId={route.match.params.id} {...route}/> :
                                        <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/communication-settings"
@@ -101,7 +97,7 @@ class SettingsDash extends React.Component {
                                render={(route) => (this.props.activePracticePermissions.SettingsProcedureCatalog || this.props.allowAllPermissions ?
                                        <RecentProcedure  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
-                        <Route  path="/settings/billing"
+                        <Route path="/settings/billing"
                                render={(route) => (this.props.activePracticePermissions.SettingsBilling || this.props.allowAllPermissions ?
                                        <BillingSettings  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
@@ -109,14 +105,14 @@ class SettingsDash extends React.Component {
                                render={(route) => (this.props.activePracticePermissions.SettingsLoyalty || this.props.allowAllPermissions ?
                                        <LoyaltySettings  {...this.props} /> : <PermissionDenied/>
                                )}/>
-                        <Route  path="/settings/emr"
+                        <Route path="/settings/emr"
                                render={(route) => (this.props.activePracticePermissions.SettingsEMR || this.props.allowAllPermissions ?
                                        <EMRSettings  {...this.props} {...route}/> : <PermissionDenied/>
                                )}/>
                         {/*<Route exact path="/settings/loyalty/add"*/}
-                               {/*render={(route) => (this.props.activePracticePermissions.SettingsLoyalty || this.props.allowAllPermissions ?*/}
-                                       {/*<AddOffer  {...this.props} {...route}/> : <PermissionDenied/>*/}
-                               {/*)}/>*/}
+                        {/*render={(route) => (this.props.activePracticePermissions.SettingsLoyalty || this.props.allowAllPermissions ?*/}
+                        {/*<AddOffer  {...this.props} {...route}/> : <PermissionDenied/>*/}
+                        {/*)}/>*/}
                         <Route path="/settings/prescriptions"
                                render={(route) => (this.props.activePracticePermissions.SettingsPrescriptions || this.props.allowAllPermissions ?
                                        <Prescriptions  {...this.props} {...route} /> : <PermissionDenied/>
@@ -127,7 +123,7 @@ class SettingsDash extends React.Component {
                                )}/>
                         <Route path="/settings/labs"
                                render={(route) => (this.props.activePracticePermissions.SettingsLabs || this.props.allowAllPermissions ?
-                                       <LabTest  {...this.props} {...route} /> : <PermissionDenied/>
+                                       <LabTracking  {...this.props} {...route} /> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/medical-history"
                                render={(route) => (this.props.activePracticePermissions.SettingsMedicalHistory || this.props.allowAllPermissions ?
@@ -140,17 +136,17 @@ class SettingsDash extends React.Component {
                                                 {...route}
                                                 key={this.state.active_practiceId}/> : <PermissionDenied/>
                                )}/>
-                       <Route path ="/settings/printout"
-                             render={(route) => (
-                                    <Printout {...this.state}
-                                              {...route}
-                                              {...this.props}/>
+                        <Route path="/settings/printout"
+                               render={(route) => (
+                                   <Printout {...this.state}
+                                             {...route}
+                                             {...this.props}/>
                                )}/>
-                        <Route path ="/settings/mailpdfsettings"
+                        <Route path="/settings/mailpdfsettings"
                                render={(route) => (
                                    <MailPDFSettings {...this.state}
                                                     {...route}
-                                             {...this.props}/>
+                                                    {...this.props}/>
                                )}/>
                         <Route path="/settings/integration"
                                render={(route) => <IntegrationHome {...this.state}
@@ -162,8 +158,8 @@ class SettingsDash extends React.Component {
                                )}/>
                         <Route path="/settings/bed-packages"
                                render={(route) => <BedPackages {...this.state}
-                                                                   {...this.props}
-                                                                   {...route}/>}/>
+                                                               {...this.props}
+                                                               {...route}/>}/>
                         <Route component={Error404}/>
                     </Switch>
                 </Content>

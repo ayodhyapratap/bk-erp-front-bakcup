@@ -2,6 +2,7 @@ import React from "react";
 import {Form, Button, Card, Icon, Tabs, Divider, Tag, Row, Table} from "antd";
 import PaymentModes from "./PaymentModes";
 import TaxCatalog from "./TaxCatalog";
+import CancelledInvoice from "./CancelledInvoice";
 
 const TabPane = Tabs.TabPane;
 
@@ -27,9 +28,9 @@ class BillingSettings extends React.Component {
                         <TabPane tab={<span><Icon type="dollar"/>Accepted Modes of payment </span>} key="#paymentmodes">
                             <PaymentModes {...this.props}/>
                         </TabPane>
-                        {/*<TabPane tab={<span><Icon type="android" />Emails</span>} key="cancelledinvoice">
-                <CancelledInvoice/>
-              </TabPane>*/}
+                        <TabPane tab={<span><Icon type="block"/>Cancelled Invoice</span>} key="cancelledinvoice">
+                            <CancelledInvoice {...this.state} {...this.props}/>
+                        </TabPane>
                     </Tabs>
 
                 </Card>

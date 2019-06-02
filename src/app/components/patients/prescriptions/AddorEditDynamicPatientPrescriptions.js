@@ -574,7 +574,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                             <div style={{backgroundColor: '#ddd', padding: 8}}>
                                 <Input.Search key={"Drugs"}
                                               placeholder={"Search in Drugs..."}
-                                              onSearch={value => this.searchValues("Drugs", value)}/>
+                                              onChange={e => this.searchValues("Drugs", e.target.value)}
+                                />
                             </div>
                             <List size={"small"}
                                   itemLayout="horizontal"
@@ -589,7 +590,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                             <div style={{backgroundColor: '#ddd', padding: 8}}>
                                 <Input.Search key={"Labs"}
                                               placeholder={"Search in Labs..."}
-                                              onSearch={value => this.searchValues("Labs", value)}/>
+                                              onChange={e => this.searchValues("Labs", e.target.value)}
+                                />
                             </div>
                             <List size={"small"}
                                   itemLayout="horizontal"
@@ -612,7 +614,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                             <div style={{backgroundColor: '#ddd', padding: 8}}>
                                 <Input.Search key={"Template"}
                                               placeholder={"Search in Template..."}
-                                              onSearch={value => this.searchValues("Template", value)}/>
+                                              onChange={e => this.searchValues("Template", e.target.value)}
+                                />
                             </div>
                             <List size={"small"}
                                   itemLayout="horizontal"

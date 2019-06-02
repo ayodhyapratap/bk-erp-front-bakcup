@@ -353,10 +353,16 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                                     </Dropdown>
                                     <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
                                     <DatePicker value={this.state.selectedDate}
-                                                onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}/>
+                                                onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}
+                                                allowClear={false}/>
                                     <Form.Item {...formItemLayoutWithOutLabel}
                                                style={{marginBottom: 0, float: 'right'}}>
-                                        <Button type="primary" htmlType="submit">Save Treatment Plan</Button>
+                                        <Button type="primary" htmlType="submit" style={{margin: 5}}>Save Treatment Plan</Button>
+                                        {that.props.history ?
+                                            <Button style={{margin: 5, float: 'right'}}
+                                                    onClick={() => that.props.history.goBack()}>
+                                                Cancel
+                                            </Button> : null}
                                     </Form.Item>
                                 </Card>
                             </Affix>
@@ -369,7 +375,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                         <Affix offsetTop={0}>
                             <div style={{backgroundColor: '#ddd', padding: 8}}>
                                 <Input.Search placeholder={"Search in plans ..."}
-                                              onSearch={value => this.searchValues(value)}/>
+                                              onChange={e => this.searchValues( e.target.value)}/>
                             </div>
                             <List size={"small"}
                                   style={{maxHeight: '100vh', overflowX: 'scroll'}}

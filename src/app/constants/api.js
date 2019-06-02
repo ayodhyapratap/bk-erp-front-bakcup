@@ -87,8 +87,8 @@ export const INVOICE_REPORTS = 'clinics/%s/invoice_report/?%s'
 export const PATIENTS_REPORTS = 'clinics/%s/patients_report/?%s'
 export const PAYMENTS_REPORTS = 'clinics/%s/payments_report/?%s'
 export const TREATMENT_REPORTS = 'clinics/%s/treatment_report/?%s'
-export const DRUG_TYPE_API = 'drug_type/';
-export const DRUG_UNIT_API = '';
+export const DRUG_TYPE_API = 'clinics/%s/drugtype/';
+export const DRUG_UNIT_API = 'clinics/%s/drugunit/';
 
 export const PRINT_PREVIEW_RENDER = 'patients/print/';
 

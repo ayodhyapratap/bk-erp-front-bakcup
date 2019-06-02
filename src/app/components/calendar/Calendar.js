@@ -71,6 +71,8 @@ class App extends Component {
             doctorsAppointmentCount: {},
             categoriesAppointmentCount: {},
             blockedCalendar: [],
+            showCalendarEvents:true,
+            showAppointments:true,
             ...getCalendarSettings()
         }
         ;
@@ -561,6 +563,18 @@ class App extends Component {
                                                     }}>
                                                         <ul style={{listStyle: 'none', paddingInlineStart: 0}}>
                                                             <li>
+                                                                <Checkbox checked={this.state.showCalendarEvents}
+                                                                          onChange={(e) => that.changeState('showCalendarEvents', e.target.checked)}>
+                                                                    <small>Events</small>
+                                                                </Checkbox>
+                                                            </li>
+                                                            <li>
+                                                                <Checkbox checked={this.state.showAppointments}
+                                                                          onChange={(e) => that.changeState('showAppointments', e.target.checked)}>
+                                                                    <small>Appointments</small>
+                                                                </Checkbox>
+                                                            </li>
+                                                            <li>
                                                                 <Checkbox checked={this.state.show24HourCalendar}
                                                                           onChange={(e) => that.changeState('show24HourCalendar', e.target.checked)}>
                                                                     <small>24 Hours</small>
@@ -616,7 +630,7 @@ class App extends Component {
                                                 step={10}
                                                 timeslots={1}
                                                 truncateEvents={false}
-                                                events={this.state.filteredEvent}
+                                                events={this.state.showAppointments ? this.state.filteredEvent : []}
                                                 onEventDrop={this.moveEvent}
                                                 onEventResize={this.resizeEvent}
                                                 resizable
@@ -641,7 +655,8 @@ class App extends Component {
                                                                                 blockedCalendar={that.state.blockedCalendar}
                                                                                 calendarTimings={that.state.calendarTimings}
                                                                                 filterType={that.state.filterType}
-                                                                                selectedDoctor={that.state.selectedDoctor}/>
+                                                                                selectedDoctor={that.state.selectedDoctor}
+                                                                                showCalendarEvents={that.state.showCalendarEvents}/>
                                                     },
                                                 }}/>
 
@@ -707,16 +722,18 @@ MyWeek.title = date => {
 function TimeSlotWrapper(props) {
     if (props.calendarTimings && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') >= props.calendarTimings.startTime.format('HH:mm:ss') && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') < props.calendarTimings.endTime.format('HH:mm:ss')) {
         let flag = true;
-        for (let i = 0; i < props.blockedCalendar.length; i++) {
-            if (props.blockedCalendar[i].doctor && props.filterType == 'DOCTOR') {
-                if (props.blockedCalendar[i].doctor == props.selectedDoctor && moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
-                    flag = false;
-                    break;
-                }
-            } else {
-                if (moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
-                    flag = false;
-                    break;
+        if (props.showCalendarEvents) {
+            for (let i = 0; i < props.blockedCalendar.length; i++) {
+                if (props.blockedCalendar[i].doctor && props.filterType == 'DOCTOR') {
+                    if (props.blockedCalendar[i].doctor == props.selectedDoctor && moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
+                        flag = false;
+                        break;
+                    }
+                } else {
+                    if (moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
+                        flag = false;
+                        break;
+                    }
                 }
             }
         }

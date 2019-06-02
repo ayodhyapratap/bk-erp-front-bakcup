@@ -50,6 +50,7 @@ class AddClinicNotesDynamic extends React.Component {
             filterStrings: {},
             practiceDoctors: [],
             selectedDoctor: {},
+            selectedDate: moment(),
             resourceAddModal: null,
             editClinicNotes: this.props.editClinicNotes ? this.props.editClinicNotes : null,
             selectedTab: 'Complaints'
@@ -175,6 +176,39 @@ class AddClinicNotesDynamic extends React.Component {
         });
 
     }
+    searchValues = (type, value) => {
+        let that = this;
+        this.setState(function (prevState) {
+            let searchValues = {...prevState.searchStrings};
+            searchValues[type] = value;
+            return {searchStrings: searchValues}
+        }, function () {
+            that.filterValues(type);
+        });
+    }
+    filterValues = (type) => {
+        this.setState(function (prevState) {
+            let filteredItemOfGivenType = [];
+            if (prevState.resourceList[type]) {
+                if (prevState.searchStrings[type]) {
+                    prevState.resourceList[type].forEach(function (item) {
+                        if (item.name && item.name
+                            .toString()
+                            .toLowerCase()
+                            .includes(prevState.searchStrings[type].toLowerCase())) {
+                            filteredItemOfGivenType.push(item);
+                        }
+                    });
+                } else {
+                    filteredItemOfGivenType = prevState.resourceList[type];
+                }
+            }
+            return {
+                filteredResourceList: {...prevState.filteredResourceList, [type]: filteredItemOfGivenType}
+            }
+        });
+    }
+
     handleSubmit = (e) => {
         let that = this;
         e.preventDefault();
@@ -283,25 +317,36 @@ class AddClinicNotesDynamic extends React.Component {
                         )}
                         <Affix offsetBottom={0}>
                             <Card>
-                                <span>by &nbsp;&nbsp;</span>
-                                <Dropdown placement="topCenter" overlay={<Menu>
-                                    {this.state.practiceDoctors.map(doctor =>
-                                        <Menu.Item key="0">
-                                            <a onClick={() => this.selectDoctor(doctor)}>{doctor.user.first_name}</a>
-                                        </Menu.Item>)}
-                                </Menu>} trigger={['click']}>
-                                    <a className="ant-dropdown-link" href="#">
-                                        <b>
-                                            {this.state.selectedDoctor.user ? this.state.selectedDoctor.user.first_name : 'No DOCTORS Found'}
-                                        </b>
-                                    </a>
-                                </Dropdown>
-                                <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
-                                <DatePicker value={this.state.selectedDate}
-                                            onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}/>
-                                <Button type="primary" htmlType="submit" style={{float: 'right'}}>
-                                    Save
-                                </Button>
+                                <Row>
+                                    <span>by &nbsp;&nbsp;</span>
+                                    <Dropdown placement="topCenter" overlay={<Menu>
+                                        {this.state.practiceDoctors.map(doctor =>
+                                            <Menu.Item key="0">
+                                                <a onClick={() => this.selectDoctor(doctor)}>{doctor.user.first_name}</a>
+                                            </Menu.Item>)}
+                                    </Menu>} trigger={['click']}>
+                                        <a className="ant-dropdown-link" href="#">
+                                            <b>
+                                                {this.state.selectedDoctor.user ? this.state.selectedDoctor.user.first_name : 'No DOCTORS Found'}
+                                            </b>
+                                        </a>
+                                    </Dropdown>
+                                    <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
+                                    <DatePicker value={this.state.selectedDate}
+                                                allowClear={false}
+                                                onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}/>
+                                    <Button type="primary" htmlType="submit" style={{float: 'right', margin: 5}}>
+                                        Save
+                                    </Button>
+                                    {that.props.history ?
+                                        <Button style={{margin: 5, float: 'right'}}
+                                                onClick={() => that.props.history.goBack()}>
+                                            Cancel
+                                        </Button> : null}
+                                </Row>
+                                <Row>
+                                    Next Follow up
+                                </Row>
                             </Card>
                         </Affix>
                     </Form>
@@ -313,7 +358,11 @@ class AddClinicNotesDynamic extends React.Component {
                                 <Button type={"primary"} block size={"small"} onClick={() => that.toggleModal(tabList)}>
                                     <Icon type={"plus"}/>Add&nbsp;{tabList}
                                 </Button>
-                                <List key={tabList} size={'small'} dataSource={that.state.resourceList[tabList]}
+                                <div style={{backgroundColor: '#ddd', padding: 8}}>
+                                    <Input.Search placeholder={"Search in " + tabList + " ..."}
+                                                  onChange={e => this.searchValues(tabList, e.target.value)}/>
+                                </div>
+                                <List key={tabList} size={'small'} dataSource={that.state.filteredResourceList[tabList]}
                                       renderItem={item => <List.Item
                                           key={item.id}
                                           onClick={() => this.addValues(tabList, item.name)}>

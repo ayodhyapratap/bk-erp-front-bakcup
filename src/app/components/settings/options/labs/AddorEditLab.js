@@ -1,5 +1,5 @@
 import React from "react";
-import {Card, Row} from "antd";
+import {Card, Divider, Row} from "antd";
 import {Redirect, Route} from "react-router-dom";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form} from "antd/lib/index";
@@ -10,7 +10,7 @@ import {
     SUCCESS_MSG_TYPE, TEXT_FIELD
 } from "../../../../constants/dataKeys";
 import {displayMessage, getAPI, interpolate} from "../../../../utils/common";
-import {LABTEST_API,PRODUCT_MARGIN} from "../../../../constants/api";
+import {LABTEST_API, PRODUCT_MARGIN} from "../../../../constants/api";
 
 export default class AddorEditLab extends React.Component {
     constructor(props) {
@@ -91,17 +91,16 @@ export default class AddorEditLab extends React.Component {
         if (this.state.editFields)
             defaultValues.push({'key': 'id', 'value': this.state.editFields.id});
         return <Row>
-            <Card>
-                <Route exact path='/settings/labs/add'
-                       render={(route) => <TestFormLayout title="Add Lab" changeRedirect={this.changeRedirect}
-                                                     formProp={formProp} fields={fields} {...route}/>}/>
-                <Route exact path='/settings/labs/edit'
-                       render={(route) => (this.state.editFields ?
-                           <TestFormLayout title="Add Lab" defaultValues={defaultValues}
-                                           changeRedirect={this.changeRedirect}
-                                           {...route}
-                                           formProp={formProp} fields={fields}/> : <Redirect to={'/settings/labs'}/>)}/>
-            </Card>
+            <Route exact path='/settings/labs/add'
+                   render={(route) => <TestFormLayout title="Add Lab" changeRedirect={this.changeRedirect}
+                                                      formProp={formProp} fields={fields} {...route}/>}/>
+            <Route exact path='/settings/labs/edit'
+                   render={(route) => (this.state.editFields ?
+                       <TestFormLayout title="Add Lab" defaultValues={defaultValues}
+                                       changeRedirect={this.changeRedirect}
+                                       {...route}
+                                       formProp={formProp} fields={fields}/> : <Redirect to={'/settings/labs'}/>)}/>
+            <Divider/>
             {this.state.redirect && <Redirect to={'/settings/labs'}/>}
         </Row>
     }

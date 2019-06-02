@@ -1,8 +1,8 @@
 import React from "react";
 import {Form, Input, Select, InputNumber, Button, Card} from "antd";
 import {REQUIRED_FIELD_MESSAGE} from "../../../../constants/messages";
-import {displayMessage, getAPI, postAPI} from "../../../../utils/common";
-import {DRUG_TYPE_API, INVENTORY_ITEM_API} from "../../../../constants/api";
+import {displayMessage, getAPI, interpolate, postAPI} from "../../../../utils/common";
+import {DRUG_TYPE_API, DRUG_UNIT_API, INVENTORY_ITEM_API} from "../../../../constants/api";
 import {
     DATE_PICKER,
     INPUT_FIELD, MULTI_IMAGE_UPLOAD_FIELD,
@@ -17,12 +17,15 @@ class AddorEditPrescriptionForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            drugTypeList: []
+            drugTypeList: [],
+            drugUnitList: [],
+            editPrescreption: this.props.editCatalog ? this.props.editCatalog : null
         }
     }
 
     componentWillMount() {
         this.loadDrugType();
+        this.loadDrugUnit();
     }
 
     loadDrugType() {
@@ -34,7 +37,19 @@ class AddorEditPrescriptionForm extends React.Component {
         }
         let errorFn = function () {
         }
-        getAPI(DRUG_TYPE_API, successFn, errorFn);
+        getAPI(interpolate(DRUG_TYPE_API, [this.props.active_practiceId]), successFn, errorFn);
+    }
+
+    loadDrugUnit() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                drugUnitList: data
+            })
+        }
+        let errorFn = function () {
+        }
+        getAPI(interpolate(DRUG_UNIT_API, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     setFormParams = (type, value) => {
@@ -53,6 +68,9 @@ class AddorEditPrescriptionForm extends React.Component {
                 practice: that.props.activePracticeId,
                 maintain_inventory: option,
                 item_type: DRUG
+            }
+            if (that.state.editPrescreption) {
+                reqData.id = that.state.editPrescreption.id;
             }
             let successFn = function (data) {
 
@@ -78,7 +96,7 @@ class AddorEditPrescriptionForm extends React.Component {
         const {getFieldDecorator} = this.props.form;
         return <Card>
             <Form>
-                <h2>Add Prescription Drugs</h2>
+                <h2>{this.props.title}</h2>
                 <Form.Item key={'name'} label={'Name'}  {...formItemLayout}>
                     {getFieldDecorator('name', {
                         initialValue: that.state.editPrescreption ? that.state.editPrescreption.name : null,
@@ -133,7 +151,7 @@ class AddorEditPrescriptionForm extends React.Component {
                 {this.state.drugUnit && this.state.drugUnit == INPUT_FIELD ?
                     <Form.Item key={'unit_type_extra'} label={"Drug Unit"}  {...formItemLayout}>
                         {getFieldDecorator("unit_type_extra", {
-                            initialValue: that.state.editPrescreption ? that.state.editPrescreption.drug_type_extra : null,
+                            initialValue: that.state.editPrescreption ? that.state.editPrescreption.unit_type_extra : null,
                             rules: [{
                                 required: true,
                                 message: REQUIRED_FIELD_MESSAGE
@@ -141,7 +159,7 @@ class AddorEditPrescriptionForm extends React.Component {
                         })(
                             <Input/>
                         )}
-                        <a onClick={() => that.setFormParams('drugUnit', SELECT_FIELD)}>Choose Drug Type</a>
+                        <a onClick={() => that.setFormParams('drugUnit', SELECT_FIELD)}>Choose Drug Unit</a>
                     </Form.Item>
                     : <Form.Item key={"stength_unit"} {...formItemLayout} label={"Drug Unit"}>
                         {getFieldDecorator("stength_unit", {
@@ -152,7 +170,7 @@ class AddorEditPrescriptionForm extends React.Component {
                             }]
                         })(
                             <Select>
-                                {that.state.drugTypeList.map((option) => <Select.Option
+                                {that.state.drugUnitList.map((option) => <Select.Option
                                     value={option.id}>{option.name}</Select.Option>)}
                             </Select>
                         )}

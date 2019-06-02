@@ -95,6 +95,7 @@ class FooterSetting extends React.Component {
                             })(
                                 <InputNumber min={0} max={10}/>
                             )}
+                            <span className="ant-form-text">Inches</span>
                         </Form.Item>
                         <Form.Item key={'footer_text'} {...formItemLayout}
                                    label={(<span>Full Width Content&nbsp;</span>)}>

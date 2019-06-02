@@ -116,7 +116,8 @@ class RecentProcedure extends React.Component {
                             key="taxes"
                             render={taxes => (
                                 <span>
-                                    {taxes && taxes.length ? taxes.map(tax => <Tag> {tax.name}</Tag>) : null}
+                                    {taxes && taxes.length ? taxes.map(tax =>
+                                        <Tag> {tax.name}|<b>{tax.tax_value}%</b></Tag>) : null}
                                     </span>
                             )}
                         />
@@ -129,7 +130,8 @@ class RecentProcedure extends React.Component {
                             title="Action"
                             key="action"
                             render={(text, record) => (
-                                <span><Link to={"/settings/procedures/addprocedure?under=" + record.id}>Add SubCategory</Link>
+                                <span><Link
+                                    to={"/settings/procedures/addprocedure?under=" + record.id}>Add SubCategory</Link>
                                         <Divider type="vertical"/>
                                             <a onClick={() => this.editProcedure(record)}>Edit</a>
                                         <Divider type="vertical"/>

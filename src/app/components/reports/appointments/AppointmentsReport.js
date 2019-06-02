@@ -10,28 +10,30 @@ export default class AppointmentsReport extends React.Component {
         super(props);
         this.state = {
             appointmentReports: [],
-            loading:true
+            loading: true
         }
         this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
         this.loadAppointmentReport();
     }
-    componentWillReceiveProps(newProps){
-        if(this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
+
+    componentWillReceiveProps(newProps) {
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
             this.loadAppointmentReport();
     }
+
     loadAppointmentReport() {
         let that = this;
         let successFn = function (data) {
             console.log(data);
             that.setState({
                 appointmentReports: data.data,
-                loading:false
+                loading: false
             });
             console.log(that.state.appointmentReports);
         };
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         };
         getAPI(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId, "start=" + this.props.startDate + "&end=" + this.props.endDate]), successFn, errorFn);
@@ -43,7 +45,7 @@ export default class AppointmentsReport extends React.Component {
             key: 'date',
             render: (text, record) => (
                 <span>
-                {moment(record.shedule_at).format('LL')}
+                {moment(record.schedule_at).format('LL')}
                   </span>
             ),
         }, {
@@ -57,25 +59,44 @@ export default class AppointmentsReport extends React.Component {
             ),
         }, {
             title: 'Check-in At',
-            dataIndex: 'age',
-            key: 'age',
+            dataIndex: 'waiting',
+            key: 'waiting',
+            render: (text, record) => (
+                <span>
+                {record.waiting ? moment(record.waiting).format('lll') : ''}
+                  </span>
+            ),
         }, {
             title: 'Waited For (hh:mm:ss)',
             dataIndex: 'age',
             key: 'age',
+            render: (age, record) => (<span>
+                {record.engaged ? moment(record.engaged).from(moment(record.waiting))
+                    : ''}
+            </span>)
         }, {
             title: 'Engaged At',
-            dataIndex: 'age',
-            key: 'age',
+            dataIndex: 'engaged',
+            key: 'engaged',
+            render: (text, record) => (
+                <span>
+                {record.engaged ? moment(record.engaged).format('lll') : ''}
+                  </span>
+            ),
         }, {
             title: 'Checkout At',
-            dataIndex: 'age',
-            key: 'age',
+            dataIndex: 'checkout',
+            key: 'checkout',
+            render: (text, record) => (
+                <span>
+                {record.checkout ? moment(record.checkout).format('lll') : ''}
+                  </span>
+            ),
         }, {
             title: 'Patient',
             dataIndex: 'patient',
             key: 'patient_name',
-            render:(item,record)=><span>{item.user.first_name}</span>
+            render: (item, record) => <span>{item.user.first_name}</span>
         }, {
             title: 'Doctor',
             dataIndex: 'doctor',
@@ -100,14 +121,15 @@ export default class AppointmentsReport extends React.Component {
         return <div>
             <h2>Appointments Report
                 {/*<Button.Group style={{float: 'right'}}>*/}
-                    {/*<Button><Icon type="mail"/> Mail</Button>*/}
-                    {/*<Button><Icon type="printer"/> Print</Button>*/}
+                {/*<Button><Icon type="mail"/> Mail</Button>*/}
+                {/*<Button><Icon type="printer"/> Print</Button>*/}
                 {/*</Button.Group>*/}
             </h2>
             <Card>
                 <Row gutter={16}>
                     <Col span={18}>
-                        <CustomizedTable loading={this.state.loading} columns={columns} size={'small'} dataSource={this.state.appointmentReports}/>
+                        <CustomizedTable loading={this.state.loading} columns={columns} size={'small'}
+                                         dataSource={this.state.appointmentReports}/>
                     </Col>
                     <Col span={6}>
                         <Radio.Group buttonStyle="solid" defaultValue="all">

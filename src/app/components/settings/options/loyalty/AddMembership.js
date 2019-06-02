@@ -54,7 +54,7 @@ export default class AddMembership extends React.Component {
         const formDefaultValues = [{"key": "practice", "value": this.state.active_practiceId}];
         const AddForm = Form.create()(DynamicFieldsForm);
         return <Row>
-            <AddForm fields={fields} formProp={formProp} defaultValues={formDefaultValues}/>
+            <AddForm fields={fields} formProp={formProp} defaultValues={formDefaultValues} {...this.props}/>
         </Row>
     }
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Divider, Form, Icon, Popconfirm, Row, Table} from "antd";
-import {Link, Route, Switch} from "react-router-dom";
+import {Link, Redirect, Route, Switch} from "react-router-dom";
 import {DRUG_CATALOG, INVENTORY_ITEM_API,} from "../../../../constants/api";
 import {getAPI, interpolate, postAPI} from "../../../../utils/common";
 import AddPrescription from "./AddPrescription";
@@ -14,9 +14,9 @@ class Prescriptions extends React.Component {
         super(props);
         this.state = {
             catalog: null,
-            editCatalog: null,
+            editCatalog: {},
             loading: true,
-            loadMorePrescriptions: null
+            loadMorePrescriptions: null,
         }
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -112,10 +112,12 @@ class Prescriptions extends React.Component {
         return <Row>
             <Switch>
                 <Route exact path="/settings/prescriptions/add"
-                       render={() => <AddorEditPrescriptionForm  {...this.props} loadData={this.loadInitialData}/>}/>
+                       render={() => <AddorEditPrescriptionForm  {...this.props} loadData={this.loadInitialData} title={"Add Prescription"}/>}/>
                 <Route exact path="/settings/prescriptions/edit"
-                       render={(route) => <AddorEditPrescriptionForm  {...this.state}
-                                                            loadData={this.loadInitialData} {...this.props} {...route}/>}/>
+                       render={(route) => (this.state.editCatalog.id ? <AddorEditPrescriptionForm  {...this.state}
+                                                                                                   title={"Edit Prescription"}
+                                                                                                   loadData={this.loadInitialData} {...this.props} {...route}/> :
+                           <Redirect to={"/settings/prescriptions/"}/>)}/>
                 <Route>
                     <div>
                         <h2>All presciptions
@@ -126,8 +128,9 @@ class Prescriptions extends React.Component {
                             </Link>
                         </h2>
                         <Card>
-                            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.catalog}
-                                   pagination={false}/>
+                            <CustomizedTable loading={this.state.loading} columns={columns}
+                                             dataSource={this.state.catalog}
+                                             pagination={false}/>
                         </Card>
                         <InfiniteFeedLoaderButton loaderFunction={this.loadData}
                                                   loading={this.state.loading}

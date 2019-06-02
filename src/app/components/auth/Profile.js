@@ -4,13 +4,12 @@ import ChangePasswordForm from "./forms/ChangePasswordForm";
 import {Layout} from "antd";
 import {getAPI, interpolate} from "../../utils/common";
 import {USER_DATA} from "../../constants/api";
+
 const {Content} = Layout;
 export default class Profile extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-
-        };
+        this.state = {};
         console.log(this.state);
     }
 
@@ -27,8 +26,9 @@ export default class Profile extends React.Component {
                 loading: false
             })
         };
-          getAPI(interpolate(USER_DATA, [that.state.currentPatient.id]), successFn, errorFn);
+        getAPI(USER_DATA, successFn, errorFn);
     }
+
     render() {
         let that = this;
         const ChangePasswordLayout = Form.create()(ChangePasswordForm);
@@ -47,28 +47,27 @@ export default class Profile extends React.Component {
                 <Col span={12}>
                     <Card title="My Permissions">
                         <List size="small"
-                            dataSource={that.props.activePracticeData ? that.props.activePracticeData.permissions_data : []}
-                            renderItem={item => <List.Item>{item.name}</List.Item>}/>
+                              dataSource={that.props.activePracticeData ? that.props.activePracticeData.permissions_data : []}
+                              renderItem={item => <List.Item>{item.name}</List.Item>}/>
                     </Card>
                 </Col>
                 <Divider/>
                 <Col span={12}>
                     <Card title="My Profile">
-                    <Row gutter={16}>
-                        <Col span={6}>
-                            <UsersRow label="Name " value={this.props.user.first_name}/>
-                            <UsersRow label="Email Id " value={this.props.user.email}/>
-                            <UsersRow label="Contact No." value={this.props.user.mobile}/>
-                        </Col>
-                    </Row>
-
-                       
+                        <Row gutter={16}>
+                            <Col span={6}>
+                                <UsersRow label="Name " value={this.props.user.first_name}/>
+                                <UsersRow label="Email Id " value={this.props.user.email}/>
+                                <UsersRow label="Contact No." value={this.props.user.mobile}/>
+                            </Col>
+                        </Row>
                     </Card>
                 </Col>
             </Row>
         </Content>
     }
 }
+
 function UsersRow(props) {
     return <Row gutter={16} style={{marginBottom: '5px'}}>
         <Col span={12} style={{textAlign: 'right'}}>{props.label}:</Col>

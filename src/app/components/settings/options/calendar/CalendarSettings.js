@@ -23,6 +23,7 @@ class CalendarSettings extends React.Component {
 
     render() {
         return <div>
+            <h2>Calendar Settings</h2>
             <Row>
                 <Card>
                     <Tabs defaultActiveKey={this.state.defaultActiveKey}>
@@ -33,11 +34,7 @@ class CalendarSettings extends React.Component {
                                  key="#categories">
                             <AppointmentCategories {...this.props}/>
                         </TabPane>
-                        {/*<TabPane tab={<span><Icon type="android" />Emails</span>} key="cancelledinvoice">
-                <CancelledInvoice/>
-              </TabPane>*/}
                     </Tabs>
-
                 </Card>
             </Row>
         </div>

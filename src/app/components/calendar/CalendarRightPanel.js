@@ -54,7 +54,7 @@ export default class CalendarRightPanel extends React.Component {
                 let appointmentOverview = {};
                 let filteredAppointment = [];
                 data.forEach(function (appointment) {
-                    if(appointment.status == CANCELLED_STATUS){
+                    if (appointment.status == CANCELLED_STATUS) {
                         return true;
                     }
                     if (appointmentOverview[appointment.status]) {
@@ -122,6 +122,13 @@ export default class CalendarRightPanel extends React.Component {
         let that = this;
         let reqData = {
             status: targetStatus
+        };
+        if(targetStatus==WAITING_STATUS){
+            reqData.waiting=moment().format()
+        }else if(targetStatus==ENGAGED_STATUS){
+            reqData.engaged=moment().format()
+        }else if(targetStatus==CHECKOUT_STATUS){
+            reqData.checkout=moment().format()
         }
         let successFn = function (data) {
             displayMessage(SUCCESS_MSG_TYPE, "Appointment Status Changed Successfully!!");
@@ -233,9 +240,7 @@ export default class CalendarRightPanel extends React.Component {
     }
 }
 
-function
-
-AppointmentCard(appointment) {
+function AppointmentCard(appointment) {
     return <div style={{width: '100%'}}>
 
         <p style={{marginBottom: 0}}>

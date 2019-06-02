@@ -124,28 +124,26 @@ class LabTest extends React.Component {
             ),
         }];
         return <Row>
-            <Switch>
-                <Route exact path={'/settings/labs/add'}
-                       render={(route) => <AddorEditLab {...that.state}
-                                                        loadData={this.loadData}{...this.props} {...route}/>}/>
-                <Route exact path={'/settings/labs/edit'}
-                       render={(route) => <AddorEditLab {...that.state}
-                                                        loadData={this.loadData} {...this.props} {...route}/>}/>
-                <Route exact path={'/settings/labs'}>
-                    <div>
-                        <h2>Lab Tests
+            <Route exact path={'/settings/labs/add'}
+                   render={(route) => <AddorEditLab {...that.state}
+                                                    loadData={this.loadData}{...this.props} {...route}/>}/>
+            <Route exact path={'/settings/labs/edit'}
+                   render={(route) => <AddorEditLab {...that.state}
+                                                    loadData={this.loadData} {...this.props} {...route}/>}/>
+            <Route exact path={'/settings/labs'}>
+                <div>
+                    <Row>
+                        <h2>
                             <Link to="/settings/labs/add">
                                 <Button type="primary" style={{float: 'right'}}>
                                     <Icon type="plus"/>&nbsp;Add
                                 </Button>
                             </Link>
                         </h2>
-                        <Card>
-                            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.tests}/>
-                        </Card>
-                    </div>
-                </Route>
-            </Switch>
+                    </Row>
+                    <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.tests}/>
+                </div>
+            </Route>
 
         </Row>
     }

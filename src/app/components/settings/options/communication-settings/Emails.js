@@ -125,7 +125,7 @@ class Emails extends React.Component {
 
         const formProp = {
             successFn: function (data) {
-                displayMessage(SUCCESS_MSG_TYPE, "success");
+                displayMessage(SUCCESS_MSG_TYPE, "Communication Settings Saved Successfully!!");
             },
             errorFn: function () {
 
@@ -133,7 +133,7 @@ class Emails extends React.Component {
             action: interpolate(EMAIL_COMMUNICATONS_API, [that.props.active_practiceId]),
             method: "post",
         };
-        
+
         const defaultValues = [{"key": "practice", "value": this.props.active_practiceId , "is_active": false}, {
             "key": "id",
             "value": this.state.data ? this.state.data.id : null,
