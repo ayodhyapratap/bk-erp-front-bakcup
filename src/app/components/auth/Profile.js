@@ -1,11 +1,34 @@
-import {Card, Col, Form, List, Row} from "antd";
+import {Card, Col, Form, List, Row, Divider} from "antd";
 import React from "react";
 import ChangePasswordForm from "./forms/ChangePasswordForm";
 import {Layout} from "antd";
-
+import {getAPI, interpolate} from "../../utils/common";
+import {USER_DATA} from "../../constants/api";
 const {Content} = Layout;
 export default class Profile extends React.Component {
+    constructor(props){
+        super(props);
+        this.state={
 
+        };
+        console.log(this.state);
+    }
+
+    loadProfile() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                userProfile: data,
+                loading: false
+            });
+        };
+        let errorFn = function () {
+            that.setState({
+                loading: false
+            })
+        };
+          getAPI(interpolate(USER_DATA, [that.state.currentPatient.id]), successFn, errorFn);
+    }
     render() {
         let that = this;
         const ChangePasswordLayout = Form.create()(ChangePasswordForm);
@@ -28,7 +51,27 @@ export default class Profile extends React.Component {
                             renderItem={item => <List.Item>{item.name}</List.Item>}/>
                     </Card>
                 </Col>
+                <Divider/>
+                <Col span={12}>
+                    <Card title="My Profile">
+                    <Row gutter={16}>
+                        <Col span={6}>
+                            <UsersRow label="Name " value={this.props.user.first_name}/>
+                            <UsersRow label="Email Id " value={this.props.user.email}/>
+                            <UsersRow label="Contact No." value={this.props.user.mobile}/>
+                        </Col>
+                    </Row>
+
+                       
+                    </Card>
+                </Col>
             </Row>
         </Content>
     }
+}
+function UsersRow(props) {
+    return <Row gutter={16} style={{marginBottom: '5px'}}>
+        <Col span={12} style={{textAlign: 'right'}}>{props.label}:</Col>
+        <Col span={12}><strong>{props.value}</strong></Col>
+    </Row>
 }
