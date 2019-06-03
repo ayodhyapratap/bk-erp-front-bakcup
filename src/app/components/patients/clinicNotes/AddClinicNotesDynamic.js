@@ -52,8 +52,9 @@ class AddClinicNotesDynamic extends React.Component {
             selectedDoctor: {},
             selectedDate: moment(),
             resourceAddModal: null,
+            selectedTab: 'Complaints',
             editClinicNotes: this.props.editClinicNotes ? this.props.editClinicNotes : null,
-            selectedTab: 'Complaints'
+
         }
     }
 
@@ -238,11 +239,12 @@ class AddClinicNotesDynamic extends React.Component {
         });
 
     }
-    changeTab = (tab) => {
-        this.setState({
-            selectedTab: tab
-        });
-        return true;
+    changeTab = (e, tab) => {
+        // this.setState({
+        //     selectedTab: tab
+        // });
+
+
     }
     selectDoctor = (doctor) => {
         this.setState({
@@ -280,6 +282,7 @@ class AddClinicNotesDynamic extends React.Component {
         return <Card>
             <Row>
                 <Col span={18}>
+                    <h2>Clinical Notes</h2>
                     <Form onSubmit={this.handleSubmit}>
                         {tabLists.map(tab =>
                             <div>
@@ -287,12 +290,11 @@ class AddClinicNotesDynamic extends React.Component {
                                 <div style={{
                                     backgroundColor: (tab == that.state.selectedTab ? '#ddd' : 'initial'),
                                     padding: 10
-                                }} onClick={() => that.changeTab(tab)}>
+                                }}>
                                     {keys[tab].map((k, index) => (
                                         <Form.Item
                                             {...formItemLayout}
                                             label={tab + ' ' + (index + 1)}
-                                            required={false}
                                             key={k}>
                                             {getFieldDecorator(`field[${k}]`, {
                                                 validateTrigger: ['onChange', 'onBlur'],
@@ -300,6 +302,8 @@ class AddClinicNotesDynamic extends React.Component {
                                                     whitespace: true,
                                                 }],
                                             })(<Input placeholder={tab} style={{width: '60%', marginRight: 8}}
+                                                      key={k}
+                                                      onFocus={(e) => that.changeTab(e, tab)}
                                                       onChange={() => that.changeValues(tab, k)}/>)}
                                             {keys[tab].length - 1 != index ? (
                                                 <Button
