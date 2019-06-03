@@ -60,6 +60,7 @@ export const SINGLE_REATMENTPLANS_API = 'patients/procedure/?id=%s';
 export const BLOCK_CALENDAR = 'appointment/block_calendar/';
 export const ROOM_TYPE = 'clinics/room_types/';
 export const PATIENT_NOTES = 'patients/patient_notes/?patient=%s&practice=%s';
+export const LABPANEL_API= 'clinics/%s/labpanel/';
 /*DELETE OBJECT*/
 export const TREATMENTPLANS_API = 'patients/procedure/?id=%s&complete=%s';
 export const TREATMENTPLANS_MARK_COMPLETE_API = 'patients/complete_procedure/?id=%s&complete=%s';

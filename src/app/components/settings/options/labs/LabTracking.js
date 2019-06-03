@@ -1,6 +1,7 @@
 import React from "react";
 import {Card, Tabs} from 'antd';
 import LabTest from "./LabTest";
+import LabPanel from "./LabPanel";
 
 const TabPane = Tabs.TabPane;
 export default class LabTracking extends React.Component {
@@ -14,11 +15,11 @@ export default class LabTracking extends React.Component {
             <h2>Lab Tracking</h2>
             <Card>
                 <Tabs>
-                    <TabPane key={"tests"} tab={"Lab Tests"}>
+                    <TabPane key={"labTests"} tab={"Lab Tests"}>
                         <LabTest {...this.props}/>
                     </TabPane>
-                    <TabPane key={"tests"} tab={"Lab Panels"}>
-                        <LabTest {...this.props}/>
+                    <TabPane key={"labPanels"} tab={"Lab Panels"}>
+                        <LabPanel {...this.props}/>
                     </TabPane>
                 </Tabs>
             </Card>
