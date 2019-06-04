@@ -1,12 +1,11 @@
 import React from "react";
-import {Button, Card, Checkbox, Divider, Icon, Table, Popconfirm} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Table, Popconfirm, Menu, Dropdown, Tag} from "antd";
 import {getAPI, interpolate, putAPI, postAPI} from "../../../utils/common";
 import {PROCEDURE_CATEGORY, PRODUCT_MARGIN, TREATMENTPLANS_API, SINGLE_REATMENTPLANS_API} from "../../../constants/api";
 import moment from "moment";
-import {Route, Switch} from "react-router";
-import AddorEditPatientTreatmentPlans from "../treatmentPlans/AddorEditPatientTreatmentPlans";
-import {Link} from "react-router-dom";
+import {Link, Redirect, Route, Switch} from "react-router-dom";
 import {SELECT_FIELD} from "../../../constants/dataKeys";
+import AddorEditDynamicCompletedTreatmentPlans from "./AddorEditDynamicCompletedTreatmentPlans";
 
 class PatientCompletedProcedures extends React.Component {
     constructor(props) {
@@ -18,7 +17,7 @@ class PatientCompletedProcedures extends React.Component {
             procedure_category: null,
             completedTreatmentPlans: [],
             productMargin: [],
-            loading:true
+            loading: true
         }
         this.loadTreatmentPlans = this.loadTreatmentPlans.bind(this);
         this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
@@ -38,41 +37,42 @@ class PatientCompletedProcedures extends React.Component {
         let successFn = function (data) {
             that.setState({
                 productMargin: data,
-                loading:false
+                loading: false
             })
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         }
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
 
     loadTreatmentPlans() {
-        let completed = [];
+        let incompleted = [];
         let that = this;
         let successFn = function (data) {
             that.setState({
                 treatmentPlans: data,
-                loading:false
+                loading: false
             })
             data.forEach(function (treatmentplan) {
-                if (treatmentplan.is_completed) {
-                    completed.push(treatmentplan)
+                if (!treatmentplan.is_completed) {
+                    incompleted.push(treatmentplan)
                 }
             })
             that.setState({
-                completedTreatmentPlans: completed,
-                loading:false
+                incompletedTreatmentPlans: incompleted,
+                loading: false
             })
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
+
         }
-        getAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id]), successFn, errorFn)
+        getAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id, true]), successFn, errorFn)
     }
 
     loadProcedureCategory() {
@@ -80,12 +80,12 @@ class PatientCompletedProcedures extends React.Component {
         let successFn = function (data) {
             that.setState({
                 procedure_category: data,
-                loading:false
+                loading: false
             })
         };
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
 
         }
@@ -94,35 +94,36 @@ class PatientCompletedProcedures extends React.Component {
 
 
     editTreatmentPlanData(record) {
-        console.log("array record",record);
+        console.log("array record", record);
         this.setState({
             editTreatmentPlan: record,
         });
         // console.log("props history",this.props);
         let id = this.props.match.params.id;
-        this.props.history.push("/patient/" + id + "/emr/plans/edit");
+        this.props.history.push("/patient/" + id + "/emr/workdone/edit");
 
     }
 
     deleteTreatmentPlans(record) {
-      let that = this;
-      let obj={...record,is_active:false}
-      let reqData = {
-          treatment:[],
-          patient: that.props.match.params.id
-      }
-      reqData.treatment.push(obj);
+        let that = this;
+        let obj = {...record, is_active: false}
+        let reqData = {
+            treatment: [],
+            patient: that.props.match.params.id
+        }
+        reqData.treatment.push(obj);
 
-      let successFn = function (data) {
-        that.loadTreatmentPlans();
-      }
-      let errorFn = function () {
+        let successFn = function (data) {
+            that.loadTreatmentPlans();
+        }
+        let errorFn = function () {
 
-      };
-      postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id],null), reqData, successFn, errorFn);
+        };
+        postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id], null), reqData, successFn, errorFn);
     }
 
     render() {
+        let that = this;
         const procedures = {}
         if (this.state.procedure_category) {
             this.state.procedure_category.forEach(function (procedure) {
@@ -169,7 +170,7 @@ class PatientCompletedProcedures extends React.Component {
 
                 <Divider type="vertical"/>
                <Popconfirm title="Are you sure delete this item?"
-                            onConfirm={() => this.deleteTreatmentPlans(record)} okText="Yes" cancelText="No">
+                           onConfirm={() => this.deleteTreatmentPlans(record)} okText="Yes" cancelText="No">
                     <a>Delete</a>
                 </Popconfirm>
               </span>
@@ -177,23 +178,60 @@ class PatientCompletedProcedures extends React.Component {
         }];
 
         if (this.props.match.params.id) {
-            return <div><Switch>
-                <Route exact path='/patient/:id/emr/plans/add'
-                       render={(route) => <AddorEditPatientTreatmentPlans{...this.state} {...route}/>}/>
-                <Route exact path='/patient/:id/emr/plans/edit'
-                       render={(route) => <AddorEditPatientTreatmentPlans {...this.state} {...route}/>}/>
-                <Card
-                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Completed Procedures" : "Completed Procedures "}
-                    extra={<Button.Group>
-                        <Link to={"/patient/" + this.props.match.params.id + "/emr/plans/add"}><Button><Icon
-                            type="plus"/>Add</Button></Link>
-                    </Button.Group>}>
+            return <div>
+                <Switch>
+                    <Route exact path='/patient/:id/emr/workdone/add'
+                           render={(route) => <AddorEditDynamicCompletedTreatmentPlans {...this.state} {...route}/>}/>
+                    <Route exact path='/patient/:id/emr/workdone/edit'
+                           render={(route) => (this.state.editTreatmentPlan ?
+                               <AddorEditDynamicCompletedTreatmentPlans {...this.state} {...route}
+                                                                        editId={this.state.editTreatmentPlan.id}/> :
+                               <Redirect to={"/patient/" + this.props.match.params.id + "/emr/workdone"}/>)}/>
+                    <Card
+                        title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Completed Procedures" : "Completed Procedures "}
+                        extra={<Button.Group>
+                            <Link to={"/patient/" + this.props.match.params.id + "/emr/workdone/add"}><Button><Icon
+                                type="plus"/>Add</Button></Link>
+                        </Button.Group>}>
 
-                    <Table loading={this.state.loading} columns={columns} dataSource={this.state.completedTreatmentPlans}/>
+                        {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
+                                                                            style={{marginTop: 15}}>
+                                <div style={{padding: 16}}>
+                                    <h4>{treatment.date ? moment(treatment.date).format('ll') : null}
+                                        <Dropdown.Button
+                                            size={"small"}
+                                            style={{float: 'right'}}
+                                            overlay={<Menu>
+                                                <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)}>
+                                                    <Icon type="edit"/>
+                                                    Edit
+                                                </Menu.Item>
+                                                <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}>
+                                                    <Icon type="delete"/>
+                                                    Delete
+                                                </Menu.Item>
+                                                <Menu.Divider/>
+                                                <Menu.Item key="3">
+                                                    <Icon type="clock-circle"/>
+                                                    Patient Timeline
+                                                </Menu.Item>
+                                            </Menu>}>
+                                            <Icon type="printer"/>
+                                        </Dropdown.Button>
+                                    </h4>
 
-                </Card>
-            </Switch>
+                                </div>
+                                <Table loading={this.state.loading} columns={columns}
+                                       dataSource={treatment.treatment_plans}
+                                       footer={() => treatmentFooter(treatment)}
+                                       pagination={false}
+                                       key={treatment.id}/>
 
+                            </Card>
+                        )}
+
+                    </Card>
+                </Switch>
             </div>
         }
         else {
@@ -206,3 +244,15 @@ class PatientCompletedProcedures extends React.Component {
 }
 
 export default PatientCompletedProcedures;
+
+function treatmentFooter(presc) {
+    if (presc) {
+
+        return <div>
+            {presc.doctor ? <Tag color={presc.doctor ? presc.doctor.calendar_colour : null}>
+                <b>{"prescribed by  " + presc.doctor.user.first_name} </b>
+            </Tag> : null}
+        </div>
+    }
+    return null
+}
