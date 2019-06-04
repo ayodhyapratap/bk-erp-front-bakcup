@@ -41,7 +41,7 @@ import {
     saveCalendarSettings
 } from "../../utils/calendarUtils";
 import CalendarRightPanel from "./CalendarRightPanel";
-import {CANCELLED_STATUS, DAY_KEYS} from "../../constants/hardData";
+import {CANCELLED_STATUS, CHECKOUT_STATUS, DAY_KEYS, ENGAGED_STATUS, WAITING_STATUS} from "../../constants/hardData";
 
 const localizer = BigCalendar.momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(BigCalendar)
@@ -516,7 +516,7 @@ class App extends Component {
                                                 <Icon type="stop"/> Block Calendar
                                             </Link>
                                         </Button>
-                                        <Dropdown overlay={
+                                        <Dropdown trigger={'click'} overlay={
                                             <Menu onClick={this.setFilterType}>
                                                 <Menu.Item key={"DOCTOR"}>
                                                     DOCTOR

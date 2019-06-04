@@ -144,7 +144,7 @@ export default class CalendarRightPanel extends React.Component {
     render() {
         let that = this;
         return <div>
-            <Dropdown overlay={calendarSettingMenu}>
+            <Dropdown trigger={'click'} overlay={calendarSettingMenu}>
                 <Button block style={{margin: 5}}>
                     <Icon type="setting"/> Settings <Icon type="down"/>
                 </Button>

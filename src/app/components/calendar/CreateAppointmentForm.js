@@ -24,12 +24,13 @@ import {
     SEARCH_PATIENT,
     ALL_APPOINTMENT_API,
     PATIENT_PROFILE,
-    APPOINTMENT_PERPRACTICE_API, BLOCK_CALENDAR
+    APPOINTMENT_PERPRACTICE_API, BLOCK_CALENDAR, CALENDER_SETTINGS, DOCTOR_VISIT_TIMING_API
 
 } from "../../constants/api";
 import {Checkbox, Radio} from "antd/lib/index";
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../utils/common";
 import {Redirect} from "react-router-dom";
+import {DAY_KEYS} from "../../constants/hardData";
 
 const {TextArea} = Input;
 const FormItem = Form.Item;
@@ -52,11 +53,13 @@ export default class CreateAppointmentForm extends React.Component {
             patientDetails: null,
             appointmentDetail: null,
             saving: false,
-            doctorBlock:false,
-            practiceBlock:false,
+            doctorBlock: false,
+            doctorOutsideAvailableTiming: false,
+            practiceBlock: false,
+            practiceOutsideAvailableTiming: false,
             timeToCheckBlock: {
                 schedule_at: moment(),
-                slot: 10
+                slot: 10,
             }
 
         }
@@ -74,13 +77,107 @@ export default class CreateAppointmentForm extends React.Component {
         this.loadProcedureCategory();
         this.loadTreatmentNotes();
         this.loadAppointmentCategories();
+        this.loadPracticeTiming()
         if (this.props.match.params.appointmentid) {
             this.loadAppointment();
         } else {
-            this.findBlockedTiming();
+            // this.findBlockedTiming();
         }
     }
 
+    loadPracticeTiming = () => {
+        var that = this;
+        let successFn = function (data) {
+            let dataObject = {};
+            if (data.length)
+                dataObject = data[0];
+            let timing = {};
+            DAY_KEYS.forEach(function (dayKey) {
+                timing[dayKey] = {};
+                if (dataObject.visting_hour_same_week) {
+                    timing[dayKey].startTime = moment(dataObject.first_start_time, 'HH:mm:ss');
+                    timing[dayKey].endTime = moment(dataObject.second_end_time, 'HH:mm:ss');
+                    if (dataObject.is_two_sessions) {
+                        timing[dayKey].lunch = true;
+                        timing[dayKey].lunchStartTime = moment(dataObject.first_end_time, 'HH:mm:ss');
+                        timing[dayKey].lunchEndTime = moment(dataObject.second_start_time, 'HH:mm:ss');
+                    } else {
+                        timing[dayKey].lunch = false
+                    }
+                } else if (dataObject[dayKey]) {
+                    timing[dayKey].startTime = moment(dataObject[`first_start_time_${dayKey}`], 'HH:mm:ss');
+                    timing[dayKey].endTime = moment(dataObject[`second_end_time_${dayKey}`], 'HH:mm:ss');
+                    if (dataObject[`is_two_sessions_${dayKey}`]) {
+                        timing[dayKey].lunch = true;
+                        timing[dayKey].lunchStartTime = moment(dataObject[`first_end_time_${dayKey}`], 'HH:mm:ss');
+                        timing[dayKey].lunchEndTime = moment(dataObject[`second_start_time_${dayKey}`], 'HH:mm:ss');
+                    } else {
+                        timing[dayKey].lunch = false
+                    }
+                } else {
+                    timing[dayKey] = null
+                }
+            });
+            that.setState({
+                calendarTimings: {...timing},
+            }, function () {
+                that.findOutsidePracticeTiming();
+            });
+        };
+        let errorFn = function () {
+            that.setState({
+                calendarTimings: {}
+            })
+        };
+        getAPI(interpolate(CALENDER_SETTINGS, [this.props.active_practiceId]), successFn, errorFn);
+    }
+    loadDoctorsTiming = () => {
+        let that = this;
+        let successFn = function (data) {
+            let dataObject = {};
+            if (data.length)
+                dataObject = data[0];
+            let timing = {};
+            DAY_KEYS.forEach(function (dayKey) {
+                timing[dayKey] = {};
+                if (dataObject.visting_hour_same_week) {
+                    timing[dayKey].startTime = moment(dataObject.first_start_time, 'HH:mm:ss');
+                    timing[dayKey].endTime = moment(dataObject.second_end_time, 'HH:mm:ss');
+                    if (dataObject.is_two_sessions) {
+                        timing[dayKey].lunch = true;
+                        timing[dayKey].lunchStartTime = moment(dataObject.first_end_time, 'HH:mm:ss');
+                        timing[dayKey].lunchEndTime = moment(dataObject.second_start_time, 'HH:mm:ss');
+                    } else {
+                        timing[dayKey].lunch = false
+                    }
+                } else if (dataObject[dayKey]) {
+                    timing[dayKey].startTime = moment(dataObject[`first_start_time_${dayKey}`], 'HH:mm:ss');
+                    timing[dayKey].endTime = moment(dataObject[`second_end_time_${dayKey}`], 'HH:mm:ss');
+                    if (dataObject[`is_two_sessions_${dayKey}`]) {
+                        timing[dayKey].lunch = true;
+                        timing[dayKey].lunchStartTime = moment(dataObject[`first_end_time_${dayKey}`], 'HH:mm:ss');
+                        timing[dayKey].lunchEndTime = moment(dataObject[`second_start_time_${dayKey}`], 'HH:mm:ss');
+                    } else {
+                        timing[dayKey].lunch = false
+                    }
+                } else {
+                    timing[dayKey] = null
+                }
+            });
+            that.setState({
+                doctorTimings: {...timing},
+            }, function () {
+                that.findOutsideDoctorTiming();
+            });
+        }
+        let errorFn = function () {
+
+        };
+        if (that.state.timeToCheckBlock.doctor)
+            getAPI(interpolate(DOCTOR_VISIT_TIMING_API, [this.props.active_practiceId]), successFn, errorFn, {
+                doctor: that.state.timeToCheckBlock.doctor
+            });
+    }
     setBlockedTiming = (type, value) => {
         let that = this;
         if (type) {
@@ -90,22 +187,29 @@ export default class CreateAppointmentForm extends React.Component {
                 }
             }, function () {
                 that.findBlockedTiming();
+                that.findOutsidePracticeTiming();
+                if (type == 'doctor') {
+                    that.loadDoctorsTiming();
+                } else {
+                    that.findOutsideDoctorTiming();
+                }
+
             })
         }
     }
     findBlockedTiming = () => {
         let that = this;
         let successFn = function (data) {
-            data.forEach(function(blockRow){
-               if(blockRow.doctor==null ) {
-                   that.setState({
-                       practiceBlock:true
-                   });
-               }else if (blockRow.doctor==that.props.timeToCheckBlock.doctor){
-                   that.setState({
-                       doctorBlock:true
-                   });
-               }
+            data.forEach(function (blockRow) {
+                if (blockRow.doctor == null) {
+                    that.setState({
+                        practiceBlock: true
+                    });
+                } else if (blockRow.doctor == that.props.timeToCheckBlock.doctor) {
+                    that.setState({
+                        doctorBlock: true
+                    });
+                }
             });
         }
         let errorFn = function () {
@@ -115,6 +219,85 @@ export default class CreateAppointmentForm extends React.Component {
             practice: this.props.active_practiceId,
             cal_fdate: moment(that.state.timeToCheckBlock.schedule_at).format(),
             cal_tdate: moment(that.state.timeToCheckBlock.schedule_at).add(that.state.timeToCheckBlock.slot, 'minutes').format()
+        })
+    }
+    findOutsidePracticeTiming = () => {
+        let that = this;
+        let flag = true;
+        if (that.state.timeToCheckBlock.schedule_at && that.state.timeToCheckBlock.slot) {
+            let schedule_at = that.state.timeToCheckBlock.schedule_at;
+            let calendarTimings = that.state.calendarTimings;
+            let dayValue = moment(schedule_at).isValid() ? moment(schedule_at).format('dddd').toLowerCase() : null;
+            /**
+             * Checking for Calendar Clinic Timings
+             * */
+            if (calendarTimings && dayValue && calendarTimings[dayValue]) {
+                let daysTimings = calendarTimings[dayValue];
+                if (daysTimings.lunch) {
+                    if (
+                        (moment(schedule_at, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss')
+                            || moment(schedule_at, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')
+                        ) || (
+                            moment(schedule_at, 'HH:mm:ss').format('HH:mm:ss') < daysTimings.lunchEndTime.format('HH:mm:ss')
+                            && moment(schedule_at, 'HH:mm:ss').format('HH:mm:ss') >= daysTimings.lunchStartTime.format('HH:mm:ss')
+                        )
+                    ) {
+                        flag = false;
+                    }
+                } else {
+                    if (moment(schedule_at, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(schedule_at, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
+                        flag = false;
+                    }
+                }
+            } else if (dayValue && !calendarTimings[dayValue]) {
+                /**
+                 * If the practice isnot opening for the day
+                 * */
+                flag = false;
+            }
+
+        }
+        that.setState({
+            practiceOutsideAvailableTiming: !flag
+        })
+    }
+    findOutsideDoctorTiming = () => {
+        let that = this;
+        let flag = true;
+        if (that.state.timeToCheckBlock.schedule_at && that.state.timeToCheckBlock.slot) {
+            let schedule_at = that.state.timeToCheckBlock.schedule_at;
+            let calendarTimings = that.state.doctorTimings;
+            let dayValue = moment(schedule_at).isValid() ? moment(schedule_at).format('dddd').toLowerCase() : null;
+            /**
+             * Checking for Calendar Clinic Timings
+             * */
+            if (calendarTimings && dayValue && calendarTimings[dayValue]) {
+                let daysTimings = calendarTimings[dayValue];
+                if (daysTimings.lunch) {
+                    if (
+                        (moment(schedule_at, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss')
+                            || moment(schedule_at, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')
+                        ) || (
+                            moment(schedule_at, 'HH:mm:ss').format('HH:mm:ss') < daysTimings.lunchEndTime.format('HH:mm:ss')
+                            && moment(schedule_at, 'HH:mm:ss').format('HH:mm:ss') >= daysTimings.lunchStartTime.format('HH:mm:ss')
+                        )
+                    ) {
+                        flag = false;
+                    }
+                } else {
+                    if (moment(schedule_at, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(schedule_at, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
+                        flag = false;
+                    }
+                }
+            } else if (dayValue && calendarTimings && !calendarTimings[dayValue]) {
+                /**
+                 * If the practice isnot opening for the day
+                 * */
+                flag = false;
+            }
+        }
+        that.setState({
+            doctorOutsideAvailableTiming: !flag
         })
     }
 
@@ -129,9 +312,12 @@ export default class CreateAppointmentForm extends React.Component {
                 patientDetails: data.patient,
                 timeToCheckBlock: data,
                 loading: false,
+            }, function () {
+                that.findBlockedTiming();
+                that.findOutsideDoctorTiming();
+                that.loadDoctorsTiming();
             });
-            console.log("appointment list");
-            that.findBlockedTiming();
+
         }
 
         let errorFn = function () {
@@ -146,22 +332,26 @@ export default class CreateAppointmentForm extends React.Component {
     loadDoctors() {
         let that = this;
         let successFn = function (data) {
+            let doctor = [];
             data.staff.forEach(function (usersdata) {
                 if (usersdata.role == DOCTORS_ROLE) {
-                    let doctor = that.state.practice_doctors;
                     doctor.push(usersdata);
-                    that.setState({
-                        practice_doctors: doctor,
-                    })
+
                 }
-                else {
-                    let doctor = that.state.practice_staff;
-                    doctor.push(usersdata);
-                    that.setState({
-                        practice_staff: doctor,
-                    })
+            });
+            that.setState(function (prevState) {
+                let selectedDoctor = null
+                if (doctor.length) {
+                    selectedDoctor = doctor[0].id
                 }
-            })
+                return {
+                    practice_doctors: doctor,
+                    timeToCheckBlock: {...prevState.timeToCheckBlock, doctor: selectedDoctor}
+                }
+            }, function () {
+                that.findBlockedTiming();
+                that.loadDoctorsTiming();
+            });
         }
         let errorFn = function () {
         };
@@ -321,7 +511,6 @@ export default class CreateAppointmentForm extends React.Component {
             wrapperCol: {offset: 6, span: 14},
         });
         const {getFieldDecorator} = this.props.form;
-        console.log(this.state.practice_doctors)
 
         const procedureOption = []
         if (this.state.procedure_category) {
@@ -351,7 +540,6 @@ export default class CreateAppointmentForm extends React.Component {
         let appointmentTime = this.state.appointment ? this.state.appointment.schedule_at : this.props.startTime;
         if (!appointmentTime) {
             appointmentTime = new moment(new Date()).format();
-            console.log(appointmentTime);
         }
         const fields = [];
         return <Card loading={this.state.loading}>
@@ -368,7 +556,12 @@ export default class CreateAppointmentForm extends React.Component {
                             <DatePicker format="YYYY/MM/DD HH:mm" showTime
                                         onChange={(value) => this.setBlockedTiming("schedule_at", value)}/>
                         )}
-                        {this.state.practiceBlock ? <Alert message="Clinic is not available for current timing!!" type="warning" showIcon />:null}
+                        {this.state.practiceOutsideAvailableTiming ?
+                            <Alert message="Selected time is outside available clinic time!!" type="warning"
+                                   showIcon/> : null}
+                        {this.state.practiceBlock ?
+                            <Alert message="Selected time is blocked in this clinic !!" type="warning"
+                                   showIcon/> : null}
                     </FormItem>
                     <FormItem key="slot"
                               {...formItemLayout}
@@ -453,12 +646,19 @@ export default class CreateAppointmentForm extends React.Component {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
                             <Select placeholder="Doctor"
-                                    onChange={(value) => this.setBlockedTiming("schedule_at", value)}>
+                                    onChange={(value) => this.setBlockedTiming("doctor", value)}>
                                 {doctorOption.map((option) => <Select.Option
                                     value={option.value}>{option.label}</Select.Option>)}
                             </Select>
                         )}
-                        {this.state.doctorBlock ? <Alert message="Doctor is not available for current timing!!" type="warning" showIcon />:null}
+                        {this.state.doctorBlock ?
+                            <Alert message="Selected time is blocked for selected doctor in this clinic!!"
+                                   type="warning"
+                                   showIcon/> : null}
+                        {this.state.doctorOutsideAvailableTiming ?
+                            <Alert message="Selected time is out of doctor's visit time in this clinic!!"
+                                   type="warning"
+                                   showIcon/> : null}
                     </FormItem>
                     <FormItem key="category" {...formItemLayout} label="Category">
                         {getFieldDecorator("category", {initialValue: this.state.appointment ? this.state.appointment.category : null}, {
