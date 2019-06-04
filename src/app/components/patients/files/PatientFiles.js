@@ -200,14 +200,14 @@ class PatientFiles extends React.Component {
                           grid={{gutter: 16, column: 3}}
                           dataSource={this.state.files}
                           renderItem={item => (
-
-                              <List.Item style={{textAlign: 'center'}}>
+                              <List.Item style={{textAlign: 'center'}} key={item.id}>
                                   <div style={{
                                       width: '100%',
                                       height: '150px',
                                       border: '1px solid #bbb',
                                       background: '#fff url("' + makeFileURL(item.file_type) + '") no-repeat center center',
-                                      backgroundSize:'cover'
+                                      backgroundSize:'cover',
+
                                   }}>
                                       <Checkbox key={item.id}
                                                 style={{

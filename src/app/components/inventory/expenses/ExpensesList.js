@@ -1,7 +1,7 @@
-import {Button, Card, Divider, Icon, Popconfirm} from "antd";
+import {Button, Card, Divider, Icon, Popconfirm, Row, Col, Select, DatePicker} from "antd";
 import React from "react";
 import {getAPI, interpolate, postAPI} from "../../../utils/common";
-import {EXPENSE_TYPE, EXPENSES_API, SINGLE_EXPENSES_API} from "../../../constants/api";
+import {EXPENSE_TYPE, EXPENSES_API, PAYMENT_MODES, SINGLE_EXPENSES_API} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddExpenses from "./AddExpenses";
 import {Link} from "react-router-dom";
@@ -14,33 +14,95 @@ export default class ExpensesList extends React.Component {
         this.state = {
             active_practiceId: this.props.active_practiceId,
             expenses: null,
-            loading:true
+            expenseTypes: [],
+            loading: true,
+            paymentModes: [],
+            selectedExpenseType: null,
+            selectedPaymentMode: null,
+            selectedStartDate: moment().subtract(1, 'month'),
+            selectedEndDate: moment()
         };
         this.loadData = this.loadData.bind(this);
     }
 
     componentDidMount() {
+        this.loadExpenseTypes();
+        this.loadPaymentModes();
         this.loadData();
     }
 
-    loadData() {
+    loadExpenseTypes(deleted = false) {
+        var that = this;
+        let successFn = function (data) {
+            console.log("get table");
+            if (deleted) {
+                that.setState({
+                    deletedExpenses: data,
+                    deletedLoading: false
+                })
+            } else {
+                that.setState({
+                    expenseTypes: data,
+                })
+            }
+        };
+        let errorFn = function () {
+        };
+        if (deleted) {
+            getAPI(interpolate(EXPENSE_TYPE, [this.props.active_practiceId]), successFn, errorFn, {deleted: true});
+        } else {
+            getAPI(interpolate(EXPENSE_TYPE, [this.props.active_practiceId]), successFn, errorFn);
+        }
+    }
+
+    loadPaymentModes() {
+        var that = this;
+        let successFn = function (data) {
+            console.log("get table");
+            that.setState({
+                paymentModes: data,
+            })
+        };
+        let errorFn = function () {
+        };
+        getAPI(interpolate(PAYMENT_MODES, [this.props.active_practiceId]), successFn, errorFn);
+    }
+
+    changeExpenseFilters = (type, value) => {
         let that = this;
+        this.setState({
+            [type]: value
+        }, function () {
+            that.loadData();
+        })
+    }
+    loadData = () => {
+        let that = this;
+        that.setState({
+            loading: true
+        })
         let successFn = function (data) {
             that.setState({
                 expenses: data,
-                loading:false
+                loading: false
             })
-            console.log("log data",that.state.expenses)
+            console.log("log data", that.state.expenses)
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
 
         }
-        getAPI(EXPENSES_API, successFn, errorFn);
+        getAPI(EXPENSES_API, successFn, errorFn, {
+            payment_mode: that.state.selectedPaymentMode,
+            expense_type: that.state.selectedExpenseType,
+            start: that.state.selectedStartDate.format(),
+            end: that.state.selectedEndDate.format(),
+        });
     }
-    deleteObject(record,type) {
+
+    deleteObject(record, type) {
         let that = this;
         let reqData = record;
         reqData.is_active = type;
@@ -54,6 +116,7 @@ export default class ExpensesList extends React.Component {
         };
         postAPI(interpolate(SINGLE_EXPENSES_API, [record.id]), reqData, successFn, errorFn)
     }
+
     render() {
         let that = this;
         const expenseColoumns = [{
@@ -70,7 +133,6 @@ export default class ExpensesList extends React.Component {
             title: 'Expense Type',
             key: 'expense_type',
             dataIndex: 'expense_type.name',
-
         }, {
             title: 'Vendor',
             key: 'vendor',
@@ -90,22 +152,67 @@ export default class ExpensesList extends React.Component {
                     <Link to={'/inventory/expenses/edit/' + record.id}>Edit</Link>
                     <Divider type={"vertical"}/>
                     <Popconfirm title="Are you sure to delete this?"
-                                onConfirm={() => that.deleteObject(record,false)} okText="Yes" cancelText="No">
+                                onConfirm={() => that.deleteObject(record, false)} okText="Yes" cancelText="No">
                         <a>Delete</a>
                     </Popconfirm>
                 </div>
             }
         }]
-        return <div><Switch>
-            <Route exact path='/inventory/expenses/add'
-                   render={(route) => <AddExpenses {...this.state} {...route} loadData={this.loadData}/>}/>
-            <Route exact path='/inventory/expenses/edit/:id'
-                   render={(route) => <AddExpenses {...this.state} {...route} loadData={this.loadData}/>}/>
-            <Card title="Expensess" extra={<Link to={"/inventory/expenses/add"}> <Button type="primary"><Icon
-                type="plus"/> Add</Button></Link>}>
-                <CustomizedTable loading={this.state.loading} dataSource={this.state.expenses} columns={expenseColoumns}/>
-            </Card>
-        </Switch>
+        return <div>
+            <Switch>
+                <Route exact path='/inventory/expenses/add'
+                       render={(route) => <AddExpenses {...this.state} {...route} loadData={this.loadData}/>}/>
+                <Route exact path='/inventory/expenses/edit/:id'
+                       render={(route) => <AddExpenses {...this.state} {...route} loadData={this.loadData}/>}/>
+                <Card title="Expenses" extra={<Link to={"/inventory/expenses/add"}> <Button type="primary"><Icon
+                    type="plus"/> Add</Button></Link>}>
+                    <Row gutter={16} style={{marginBottom: 10}}>
+                        <Col span={2} style={{textAlign: "right"}}>
+                            <b> Expense Types</b>
+                        </Col>
+                        <Col span={4}>
+                            <Select style={{width: '100%'}} value={this.state.selectedExpenseType}
+                                    disabled={this.state.loading}
+                                    onChange={(value) => this.changeExpenseFilters('selectedExpenseType', value)}>
+                                <Select.Option value={null}>--ALL EXPENSES--</Select.Option>
+                                {this.state.expenseTypes.map(item => <Select.Option
+                                    value={item.id}>{item.name}</Select.Option>)}
+                            </Select>
+                        </Col>
+                        <Col span={2} style={{textAlign: "right"}}>
+                            <b> Payment Modes</b>
+                        </Col>
+                        <Col span={4}>
+                            <Select style={{width: '100%'}} value={this.state.selectedPaymentMode}
+                                    disabled={this.state.loading}
+                                    onChange={(value) => this.changeExpenseFilters('selectedPaymentMode', value)}>
+                                <Select.Option value={null}>--ALL PAYMENT MODE--</Select.Option>
+                                {this.state.paymentModes.map(item => <Select.Option
+                                    value={item.id}>{item.mode}</Select.Option>)}
+                            </Select>
+                        </Col>
+
+                        <Col span={2} style={{textAlign: "right"}}>
+                            <b> From</b>
+                        </Col>
+                        <Col span={4}>
+                            <DatePicker value={this.state.selectedStartDate}
+                                        disabled={this.state.loading}
+                                        onChange={(value) => this.changeExpenseFilters('selectedStartDate', value)}/>
+                        </Col>
+                        <Col span={2} style={{textAlign: "right"}}>
+                            <b> To</b>
+                        </Col>
+                        <Col span={4}>
+                            <DatePicker value={this.state.selectedEndDate}
+                                        disabled={this.state.loading}
+                                        onChange={(value) => this.changeExpenseFilters('selectedEndDate', value)}/>
+                        </Col>
+                    </Row>
+                    <CustomizedTable loading={this.state.loading} dataSource={this.state.expenses}
+                                     columns={expenseColoumns}/>
+                </Card>
+            </Switch>
         </div>
     }
 }
