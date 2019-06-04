@@ -146,8 +146,7 @@ class PatientFiles extends React.Component {
             <Menu>
                 <Menu.Item>
                     <Checkbox.Group options={this.state.tags.map(tag => ({label: tag.name, value: tag.id}))}
-                                    onChange={this.tagsCompleteToggle}
-                    >
+                                    onChange={this.tagsCompleteToggle}>
                     </Checkbox.Group>
                     <Button onClick={() => this.filesWithTags()} style={{float: 'right'}}>Done</Button>
                 </Menu.Item>
@@ -164,7 +163,7 @@ class PatientFiles extends React.Component {
 
                          <Button onClick={() => this.triggerAddModal(true)}><Icon type="plus"/>Add</Button>
                      </Button.Group>}>
-            <Row>
+            <Row gutter={8}>
                 <Col span={6}
                      style={{
                          height: 'calc(100vh - 55px)',
@@ -201,14 +200,29 @@ class PatientFiles extends React.Component {
                           grid={{gutter: 16, column: 3}}
                           dataSource={this.state.files}
                           renderItem={item => (
-                              <Checkbox key={item.id}
-                                        onChange={(e) => that.filesCompleteToggle(item.id, e.target.checked)}
-                                        checked={that.state.selectedFiles[item.id]}>
-                                  <List.Item style={{textAlign: 'center'}}>
-                                      <img src={makeFileURL(item.file_type)} alt=""
-                                           style={{maxWidth: '100%', height: '100px'}}/>
-                                  </List.Item>
-                              </Checkbox>
+
+                              <List.Item style={{textAlign: 'center'}}>
+                                  <div style={{
+                                      width: '100%',
+                                      height: '150px',
+                                      border: '1px solid #bbb',
+                                      background: '#fff url("' + makeFileURL(item.file_type) + '") no-repeat center center',
+                                      backgroundSize:'cover'
+                                  }}>
+                                      <Checkbox key={item.id}
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 5,
+                                                    left: 5,
+                                                    boxShadow: '0 0px 5px #000 '
+                                                }}
+                                                onChange={(e) => that.filesCompleteToggle(item.id, e.target.checked)}
+                                                checked={that.state.selectedFiles[item.id]}/>
+                                      {/*<img src={makeFileURL(item.file_type)} alt=""*/}
+                                      {/*style={{maxWidth: '100%', height: '100px'}}/>*/}
+                                  </div>
+                              </List.Item>
+
 
                           )}
                     />
