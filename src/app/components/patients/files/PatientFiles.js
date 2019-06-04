@@ -1,6 +1,6 @@
 import React from "react";
-import {Button, Card, Col, Icon, List, Modal, Radio, Row,Checkbox,Menu, Dropdown} from "antd";
-import {getAPI, postAPI, interpolate,makeFileURL} from "../../../utils/common";
+import {Button, Card, Col, Icon, List, Modal, Radio, Row, Checkbox, Menu, Dropdown} from "antd";
+import {getAPI, postAPI, interpolate, makeFileURL} from "../../../utils/common";
 import {ALL_PATIENT_FILES, EMR_FILETAGS, PATIENT_FILES} from "../../../constants/api";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Form} from "antd/lib/index";
@@ -13,13 +13,11 @@ class PatientFiles extends React.Component {
             files: [],
             tags: [],
             showAddModal: false,
-            loading:true,
-            selectedFiles:{},
-            selectedTags:[],
-            filterSearchTag:null
+            loading: true,
+            selectedFiles: {},
+            selectedTags: [],
+            filterSearchTag: null
         };
-
-        console.log("props",this.props)
         this.loadData = this.loadData.bind(this);
     }
 
@@ -33,24 +31,24 @@ class PatientFiles extends React.Component {
         let successFn = function (data) {
             that.setState({
                 files: data,
-                loading:false
+                loading: false
             })
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         }
         let queryParams = {};
-        if(this.state.filterSearchTag){
+        if (this.state.filterSearchTag) {
             queryParams.tag = this.state.filterSearchTag
-        }else if(this.state.filterSearchTag==''){
-            queryParams.notag=true
+        } else if (this.state.filterSearchTag == '') {
+            queryParams.notag = true
         }
         if (this.props.match.params.id)
-            getAPI(interpolate(PATIENT_FILES, [this.props.match.params.id]), successFn, errorFn,queryParams);
+            getAPI(interpolate(PATIENT_FILES, [this.props.match.params.id]), successFn, errorFn, queryParams);
         else
-            getAPI(ALL_PATIENT_FILES, successFn, errorFn,queryParams);
+            getAPI(ALL_PATIENT_FILES, successFn, errorFn, queryParams);
     }
 
     loadTags() {
@@ -58,12 +56,12 @@ class PatientFiles extends React.Component {
         let successFn = function (data) {
             that.setState({
                 tags: data,
-                loading:false
+                loading: false
             })
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         }
         getAPI(interpolate(EMR_FILETAGS, [this.props.active_practiceId]), successFn, errorFn);
@@ -74,50 +72,53 @@ class PatientFiles extends React.Component {
             showAddModal: !!option
         })
     }
+
     filesCompleteToggle(id, option) {
         this.setState(function (prevState) {
             let selected = {...prevState.selectedFiles}
-            if(option){
+            if (option) {
                 selected[id] = !!option
-            }else{
+            } else {
                 delete selected[id];
             }
             return {selectedFiles: {...selected}}
         });
     }
 
-    tagsCompleteToggle=(e)=>{
-        
+    tagsCompleteToggle = (e) => {
+
         this.setState({
-            selectedTags:e,    
+            selectedTags: e,
         })
     }
 
-    filesWithTags(){
+    filesWithTags() {
         let that = this;
-        let reqData={
-            id:Object.keys(this.state.selectedFiles),
-            file_tags:this.state.selectedTags,
+        let reqData = {
+            id: Object.keys(this.state.selectedFiles),
+            file_tags: this.state.selectedTags,
         };
         let successFn = function () {
             that.setState({
-                selectedFiles:{}
+                selectedFiles: {}
             })
             that.loadData()
         }
         let errorFn = function () {
 
         }
-        postAPI(interpolate(PATIENT_FILES, [this.props.match.params.id]),reqData, successFn, errorFn)
+        postAPI(interpolate(PATIENT_FILES, [this.props.match.params.id]), reqData, successFn, errorFn)
     }
-    filterTags=(e)=>{
+
+    filterTags = (e) => {
         let that = this;
         this.setState({
-            filterSearchTag : e.target.value
-        },function(){
+            filterSearchTag: e.target.value
+        }, function () {
             that.loadData();
         })
     }
+
     render() {
         let that = this;
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
@@ -143,24 +144,25 @@ class PatientFiles extends React.Component {
         }
         const tagsMenu = (
             <Menu>
-              <Menu.Item>
-                <Checkbox.Group options={this.state.tags.map(tag => ({label: tag.name, value: tag.id}))} onChange={this.tagsCompleteToggle}
-                   >
-                </Checkbox.Group>
-                <Button  onClick={() => this.filesWithTags()} style={{float: 'right'}}>Done</Button>  
-              </Menu.Item>
-              
+                <Menu.Item>
+                    <Checkbox.Group options={this.state.tags.map(tag => ({label: tag.name, value: tag.id}))}
+                                    onChange={this.tagsCompleteToggle}
+                    >
+                    </Checkbox.Group>
+                    <Button onClick={() => this.filesWithTags()} style={{float: 'right'}}>Done</Button>
+                </Menu.Item>
+
             </Menu>
-          );
-          
+        );
+
         const defaultFields = [{key: 'is_active', value: true}, {key: 'patient', value: this.props.match.params.id}]
         return <Card title="Files"
                      extra={<Button.Group>
-                        <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft">
-                            <Button><Icon type="plus"/>AddFile/remove</Button>
-                        </Dropdown>
-                        
-                        <Button onClick={() => this.triggerAddModal(true)}><Icon type="plus"/>Add</Button>
+                         <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft">
+                             <Button><Icon type="plus"/>AddFile/remove</Button>
+                         </Dropdown>
+
+                         <Button onClick={() => this.triggerAddModal(true)}><Icon type="plus"/>Add</Button>
                      </Button.Group>}>
             <Row>
                 <Col span={6}
@@ -187,26 +189,28 @@ class PatientFiles extends React.Component {
                         {/*<p><br/></p>*/}
                         {/*<h2>Generated Files</h2>*/}
                         {/*<Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="d">*/}
-                            {/*Chengdu*/}
+                        {/*Chengdu*/}
                         {/*</Radio.Button>*/}
                         {/*<Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}*/}
-                                      {/*value="none">*/}
-                            {/*Untagged Files</Radio.Button>*/}
+                        {/*value="none">*/}
+                        {/*Untagged Files</Radio.Button>*/}
                     </Radio.Group>
                 </Col>
                 <Col span={18}>
                     <List loading={this.state.loading}
-                        grid={{gutter: 16, column: 3}}
-                        dataSource={this.state.files}
-                        renderItem={item => (
-                            <Checkbox key={item.id} onChange={(e) => that.filesCompleteToggle(item.id, e.target.checked)}
-                            checked={that.state.selectedFiles[item.id]}>
-                                <List.Item style={{textAlign:'center'}}>
-                                    <img src={makeFileURL(item.file_type)} alt="" style={{maxWidth:'100%',height:'100px'}}/>
-                                </List.Item>
-                            </Checkbox>
-                            
-                        )}
+                          grid={{gutter: 16, column: 3}}
+                          dataSource={this.state.files}
+                          renderItem={item => (
+                              <Checkbox key={item.id}
+                                        onChange={(e) => that.filesCompleteToggle(item.id, e.target.checked)}
+                                        checked={that.state.selectedFiles[item.id]}>
+                                  <List.Item style={{textAlign: 'center'}}>
+                                      <img src={makeFileURL(item.file_type)} alt=""
+                                           style={{maxWidth: '100%', height: '100px'}}/>
+                                  </List.Item>
+                              </Checkbox>
+
+                          )}
                     />
                 </Col>
             </Row>
@@ -218,7 +222,7 @@ class PatientFiles extends React.Component {
                                   defaultFields={defaultFields}
                                   formProp={formProps}/>
             </Modal>
-            
+
         </Card>
     }
 }

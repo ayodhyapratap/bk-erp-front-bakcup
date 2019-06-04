@@ -7,12 +7,18 @@ import {
     STAFF_ROLES,
     ALL_PRACTICE_STAFF,
     ALL_PRACTICE_DOCTORS,
-    SINGLE_PRACTICE_STAFF_API, USER_PRACTICE_PERMISSIONS, SET_USER_PERMISSION, SET_SPECIFIC_USER_PERMISSION
+    SINGLE_PRACTICE_STAFF_API,
+    USER_PRACTICE_PERMISSIONS,
+    SET_USER_PERMISSION,
+    SET_SPECIFIC_USER_PERMISSION,
+    DOCTOR_VISIT_TIMING_API
 } from "../../../../constants/api"
-import {Link} from "react-router-dom";
+import {Link, Route, Switch} from "react-router-dom";
 import {deleteAPI, getAPI, interpolate, patchAPI, postAPI} from "../../../../utils/common";
 import {getAllPermissions, loggedInUserPractices} from "../../../../utils/auth";
 import moment from "moment";
+import DoctorTiming from "./DoctorTiming";
+import {DAY_KEYS} from "../../../../constants/hardData";
 
 const {Column, ColumnGroup} = Table;
 const TabPane = Tabs.TabPane;
@@ -29,7 +35,8 @@ class PracticeDetails extends React.Component {
             editPermissions: {},
             allPermissions: getAllPermissions(),
             loading: true,
-            defaultActiveTab: this.props.location.hash
+            defaultActiveTab: this.props.location.hash,
+            doctorsTiming: {}
         }
         this.setPermission = this.setPermission.bind(this);
         this.staffRoles();
@@ -116,13 +123,9 @@ class PracticeDetails extends React.Component {
     }
 
     loadData() {
-        // let group = loggedInUserGroup();
-        // if (group[0].name == "Admin") {
+
         this.admin_StaffData();
-        // }
-        // else {
-        //     this.clinicData();
-        // }
+
 
     }
 
@@ -161,11 +164,13 @@ class PracticeDetails extends React.Component {
                 } else {
                     staff.push(usersdata);
                 }
-            });
+            })
             that.setState({
                 practice_doctors: doctor,
                 practice_staff: staff,
                 loading: false
+            }, function () {
+                that.loadDoctorsTiming();
             })
         };
         let errorFn = function () {
@@ -181,47 +186,26 @@ class PracticeDetails extends React.Component {
         let practice = loggedInUserPractices();
         var practiceKeys = Object.keys(practice);
         var that = this;
-        // practiceKeys.forEach(function(key){
-        //     let successFn = function (data) {
-        //       that.setState(function(prevState){
-        //         let doctors = prevState.practice_doctors;
-        //         let staff= prevState.practice_staff;
-        //         // if(doctors==null){doctors=[];}
-        //         // if(staff==null){staff=[];}
-        //         data.doctors.concat(doctors);
-        //         data.staff.concat(staff);
-        //         return{
-        //           practice_staff:data.staff,
-        //           practice_doctors:data.doctors,
-        //         }
-        //       })
-        //     }
-        //     let errorFn = function () {
-        //     };
-        //     getAPI(interpolate(PRACTICESTAFF,[key]), successFn, errorFn);
-        //
-        // });
         let successFn = function (data) {
+            let doctor = [];
+            let staff = [];
             data.staff.forEach(function (usersdata) {
                 if (usersdata.role == DOCTORS_ROLE) {
-                    let doctor = that.state.practice_doctors;
                     doctor.push(usersdata);
-                    that.setState({
-                        practice_doctors: doctor,
-                    })
                 } else {
-                    let doctor = that.state.practice_staff;
-                    doctor.push(usersdata);
-                    that.setState({
-                        practice_staff: doctor,
-                    })
+                    staff.push(usersdata);
                 }
+            })
+            that.setState({
+                practice_doctors: doctor,
+                practice_staff: staff,
+            }, function () {
+                that.loadDoctorsTiming();
             })
         }
         let errorFn = function () {
         };
         getAPI(interpolate(PRACTICESTAFF, [this.props.active_practiceId]), successFn, errorFn);
-
 
     }
 
@@ -231,6 +215,25 @@ class PracticeDetails extends React.Component {
         });
     }
 
+    loadDoctorsTiming = () => {
+        let that = this;
+        let doctorList = that.state.practice_doctors.map(doctor => doctor.id);
+        let successFn = function (data) {
+            that.setState(function (prevState) {
+                let timingObject = {}
+                data.forEach(function (dataObj) {
+                    timingObject[dataObj.doctor.id] = dataObj
+                })
+                return {doctorsTiming: timingObject}
+            })
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(interpolate(DOCTOR_VISIT_TIMING_API, [this.props.active_practiceId]), successFn, errorFn, {
+            doctor: doctorList.join(',')
+        });
+    }
 
     render() {
         let that = this;
@@ -254,7 +257,7 @@ class PracticeDetails extends React.Component {
         }, {
             title: "Last Login",
             key: "user",
-            render: (text, record) => (record.user && record.user.is_active ? (record.user.last_login ? moment(record.user.last_login).fromNow():'--' ) :
+            render: (text, record) => (record.user && record.user.is_active ? (record.user.last_login ? moment(record.user.last_login).fromNow() : '--') :
                 <Tag color="#f50">Activation Pending</Tag>),
         }, {
             title: "Action",
@@ -267,9 +270,7 @@ class PracticeDetails extends React.Component {
               <a>Edit</a>
             </Link>
                      <Divider type="vertical"/>
-                        <a
-                            // disabled={!(record.user && record.user.is_active)}
-                            onClick={() => that.editPermissions(record.user.id)}>Permissions</a>
+                        <a onClick={() => that.editPermissions(record.user.id)}>Permissions</a>
                     <Divider type="vertical"/>
                     <Popconfirm title="Are you sure delete this staff?"
                                 onConfirm={() => that.deleteStaff(record.id)} okText="Yes" cancelText="No">
@@ -330,61 +331,96 @@ class PracticeDetails extends React.Component {
         }];
         return <Row>
             <h2>Practice Staff</h2>
-            <Card>
-                <Tabs defaultActiveKey={this.state.defaultActiveTab}>
-                    <TabPane tab={<span><Icon type="user-add"/>Manage Staff</span>} key="#staff">
-                        <h2>Doctors <Link to="/settings/clinics-staff/adddoctor">
-                            <Button type="primary" style={{float: 'right'}}>
-                                <Icon type="plus"/>&nbsp;Add Doctor/Staff
-                            </Button>
-                        </Link></h2>
-                        <Table loading={this.state.loading} pagination={false} columns={columns}
-                               dataSource={this.state.practice_doctors}/>
-                        <h2>Staff </h2>
-                        <Table loading={this.state.loading} pagination={false} columns={columns}
-                               dataSource={this.state.practice_staff}/>
-                    </TabPane>
-                    <TabPane tab={<span><Icon type="team"/>Staff Notification</span>} key="#notification">
-                        <h2>Doctors</h2>
-                        <Table loading={this.state.loading} pagination={false} columns={notification_columns}
-                               dataSource={this.state.practice_doctors}/>
-                        <h2>Staff</h2>
-                        <Table loading={this.state.loading} pagination={false} columns={notification_columns}
-                               dataSource={this.state.practice_staff}/>
-                    </TabPane>
-                    {/*<TabPane tab={<span><Icon type="schedule"/>Doctors visit Timing</span>} key="#timing">*/}
-                        {/*<Table loading={this.state.loading}>*/}
-                            {/*<Column title="Name"*/}
-                                    {/*dataIndex="user.name"*/}
-                                    {/*key="name"*/}
-                            {/*/>*/}
-                            {/*<Column title="Visit Timing"*/}
-                                    {/*dataIndex="loginstatus"*/}
-                                    {/*key="VisitTiming"*/}
-                            {/*/>*/}
-                            {/*<Column title="Action"*/}
-                                    {/*key="action"*/}
-                                    {/*render={(text, record) => (*/}
-                                        {/*<Link to="/settings/clinics-staff/adddoctor">*/}
-                                            {/*<a>Edit</a>*/}
-                                        {/*</Link>*/}
-                                    {/*)}/>*/}
-                        {/*</Table>*/}
-                    {/*</TabPane>*/}
-                </Tabs>
-                <Modal title="Edit Permissions"
-                       visible={this.state.permissionEditModal}
-                       onCancel={() => this.editPermissions()}
-                       footer={null}>
-                    {that.state.allPermissions.map(item => <Checkbox value={item.codename}
-                                                                     checked={that.state.editPermissions[item.codename]}
-                                                                     disabled={that.state.editPermissions[item.codename] && that.state.editPermissions[item.codename].loading}
-                                                                     onClick={(e) => this.setPermission(item.codename, e)}
-                                                                     style={{display: 'list-item'}}>{item.id} {item.name}</Checkbox>)}
-                </Modal>
-            </Card>
+            <Switch>
+                <Route path={"/settings/clinics-staff/:docId/edit-timing"}
+                       render={(route) => <DoctorTiming {...this.props} {...route} loadData={that.loadData}/>}/>
+                <Route>
+                    <Card>
+                        <Tabs defaultActiveKey={this.state.defaultActiveTab}>
+                            <TabPane tab={<span><Icon type="user-add"/>Manage Staff</span>} key="#staff">
+                                <h2>Doctors <Link to="/settings/clinics-staff/adddoctor">
+                                    <Button type="primary" style={{float: 'right'}}>
+                                        <Icon type="plus"/>&nbsp;Add Doctor/Staff
+                                    </Button>
+                                </Link></h2>
+                                <Table loading={this.state.loading} pagination={false} columns={columns}
+                                       dataSource={this.state.practice_doctors}/>
+                                <Divider/>
+                                <h2>Staff </h2>
+                                <Table loading={this.state.loading} pagination={false} columns={columns}
+                                       dataSource={this.state.practice_staff}/>
+                            </TabPane>
+                            <TabPane tab={<span><Icon type="team"/>Staff Notification</span>} key="#notification">
+                                <h2>Doctors</h2>
+                                <Table loading={this.state.loading} pagination={false} columns={notification_columns}
+                                       dataSource={this.state.practice_doctors}/>
+                                <Divider/>
+                                <h2>Staff</h2>
+                                <Table loading={this.state.loading} pagination={false} columns={notification_columns}
+                                       dataSource={this.state.practice_staff}/>
+                            </TabPane>
+                            <TabPane tab={<span><Icon type="schedule"/>Doctors visit Timing</span>} key="#timing">
+                                <Table loading={this.state.loading} dataSource={this.state.practice_doctors}>
+                                    <Column title="Name"
+                                            dataIndex="user.first_name"
+                                            key="name"
+                                    />
+                                    <Column title="Visit Timing"
+                                            dataIndex="loginstatus"
+                                            key="VisitTiming"
+                                            render={(text, record) => visitTime(that.state.doctorsTiming[record.id])}
+                                    />
+                                    <Column title="Action"
+                                            key="action"
+                                            render={(text, record) => (
+                                                <Link to={"/settings/clinics-staff/" + record.id + "/edit-timing"}>
+                                                    <a>Edit Timing</a>
+                                                </Link>
+                                            )}/>
+                                </Table>
+                            </TabPane>
+                        </Tabs>
+                        <Modal title="Edit Permissions"
+                               visible={this.state.permissionEditModal}
+                               onCancel={() => this.editPermissions()}
+                               footer={null}>
+                            {that.state.allPermissions.map(item => <Checkbox value={item.codename}
+                                                                             checked={that.state.editPermissions[item.codename]}
+                                                                             disabled={that.state.editPermissions[item.codename] && that.state.editPermissions[item.codename].loading}
+                                                                             onClick={(e) => this.setPermission(item.codename, e)}
+                                                                             style={{display: 'list-item'}}>{item.id} {item.name}</Checkbox>)}
+                        </Modal>
+                    </Card>
+                </Route>
+            </Switch>
+
         </Row>
     }
+}
+
+function visitTime(visitObj) {
+    if (visitObj) {
+        return (visitObj.visting_hour_same_week ?
+            <span>
+                <b>Mon-Sun : </b>{momentTime(visitObj.first_start_time)}
+                {visitObj.is_two_sessions ? "-" + momentTime(visitObj.first_end_time) + " ||LUNCH|| " + momentTime(visitObj.second_start_time) : null}
+                -{momentTime(visitObj.second_end_time)}
+                </span>
+            : DAY_KEYS.map(dayKey =>
+                visitObj[dayKey] ? <span>
+                        <b>{dayKey} : </b>
+                    {momentTime(visitObj[`first_start_time_${dayKey}`])}
+                    {visitObj[`is_two_sessions_${dayKey}`] ? "-" + momentTime(visitObj[`first_end_time_${dayKey}`]) + "||LUNCH||" + momentTime(visitObj[`second_start_time_${dayKey}`]) : null}
+                    -{momentTime(visitObj[`second_end_time_${dayKey}`])}
+                    <br/></span> : null
+            ))
+    }
+    return null
+}
+
+
+function momentTime(timeStr) {
+    return moment(timeStr, "HH:mm").format("HH:mm")
 }
 
 export default PracticeDetails;

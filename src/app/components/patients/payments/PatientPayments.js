@@ -99,7 +99,7 @@ class PatientPayments extends React.Component {
             })
         }
         const columns = [{
-            title: 'Time',
+            title: 'INVOICE',
             dataIndex: 'invoice',
             key: 'invoice',
             render: invoice => <span>INV{invoice}</span>,

@@ -143,238 +143,221 @@ class PracticeTimings extends React.Component {
             wrapperCol: {span: 12},
         });
         const {getFieldDecorator} = this.props.form;
-        const formProp = {
-            successFn: function (data) {
-                that.loadData();
-                console.log(data);
-                displayMessage(SUCCESS_MSG_TYPE, "success")
-            },
-            errorFn: function () {
+        return <div>
+            <Form onSubmit={this.handleSubmit}>
+                <Form.Item key={"today_first_day"}  {...formItemLayout}>
+                    {getFieldDecorator("today_first_day", {
+                        valuePropName: 'checked',
+                        initialValue: that.state.timings ? that.state.timings.today_first_day : false
+                    }, {
+                        rules: [{message: REQUIRED_FIELD_MESSAGE}],
+                    })(
+                        <Checkbox
+                        >{"Always show today as first day on my calendar"}</Checkbox>
+                    )}
+                </Form.Item>
+                <Form.Item key={"calendar_slot"}
+                           {...formItemLayout}
+                           label={"Show Calendar Slots of"}>
+                    {getFieldDecorator("calendar_slot", {
+                        initialValue: that.state.timings ? that.state.timings.calendar_slot : null,
+                        rules: [{
+                            required: true,
+                            message: REQUIRED_FIELD_MESSAGE
+                        }]
+                    })(
+                        <InputNumber min={5}/>
+                    )}
+                    <span className="ant-form-text">mins.</span>
+                </Form.Item>
+                <Form.Item key={"visting_hour_same_week"}  {...formItemLayout}>
+                    {getFieldDecorator("visting_hour_same_week", {
+                        valuePropName: 'checked',
+                        initialValue: that.state.timings ? that.state.timings.visting_hour_same_week : false
+                    }, {
+                        rules: [{message: REQUIRED_FIELD_MESSAGE}],
+                    })(
+                        <Checkbox onChange={this.changeVistingHourSameWeek}>
+                            {"Visiting hours are  same for all working days in a week"}
+                        </Checkbox>
+                    )}
+                </Form.Item>
+                <Divider style={{margin: 4}}/>
+                {this.state.visting_hour_same_week ?
+                    <div>
+                        <Row>
+                            <Col span={4}>
 
-            },
-            action: interpolate(CALENDER_SETTINGS, [this.props.active_practiceId]),
-            method: "post",
-        }
-        if (this.state.timings) {
-            let editFormDefaultValues = [{"key": "practice", "value": this.props.active_practiceId},
-                {"key": "id", "value": this.state.timings.id}];
-            return <div>
-                <Form onSubmit={this.handleSubmit}>
-                    <Form.Item key={"today_first_day"}  {...formItemLayout}>
-                        {getFieldDecorator("today_first_day", {
-                            valuePropName: 'checked',
-                            initialValue: that.state.timings ? that.state.timings.today_first_day : false
-                        }, {
-                            rules: [{message: REQUIRED_FIELD_MESSAGE}],
-                        })(
-                            <Checkbox
-                            >{"Always show today as first day on my calendar"}</Checkbox>
-                        )}
-                    </Form.Item>
-                    <Form.Item key={"calendar_slot"}
-                               {...formItemLayout}
-                               label={"Show Calendar Slots of"}>
-                        {getFieldDecorator("calendar_slot", {
-                            initialValue: that.state.timings ? that.state.timings.calendar_slot : null,
-                            rules: [{
-                                required: true,
-                                message: REQUIRED_FIELD_MESSAGE
-                            }]
-                        })(
-                            <InputNumber min={5}/>
-                        )}
-                        <span className="ant-form-text">mins.</span>
-                    </Form.Item>
-                    <Form.Item key={"visting_hour_same_week"}  {...formItemLayout}>
-                        {getFieldDecorator("visting_hour_same_week", {
-                            valuePropName: 'checked',
-                            initialValue: that.state.timings ? that.state.timings.visting_hour_same_week : false
-                        }, {
-                            rules: [{message: REQUIRED_FIELD_MESSAGE}],
-                        })(
-                            <Checkbox onChange={this.changeVistingHourSameWeek}>
-                                {"Visiting hours are  same for all working days in a week"}
-                            </Checkbox>
-                        )}
-                    </Form.Item>
-                    <Divider style={{margin: 4}}/>
-                    {this.state.visting_hour_same_week ?
-                        <div>
-                            <Row>
-                                <Col span={4}>
-
-                                </Col>
-                                <Col span={18}>
-                                    <Form.Item key={"is_two_sessions"}  {...formItemLayout}>
-                                        {getFieldDecorator("is_two_sessions", {
-                                            valuePropName: 'checked',
-                                            initialValue: that.state.timings ? that.state.timings.is_two_sessions || that.state.twoSessions["is_two_sessions"] : false
-                                        }, {
-                                            rules: [{message: REQUIRED_FIELD_MESSAGE}],
-                                        })(
-                                            <Checkbox
-                                                onChange={(e) => this.changePracticeTwoSessions("is_two_sessions", e.target.checked)}>
-                                                {"Practice operates in two sessions."}
-                                            </Checkbox>
-                                        )}
-                                    </Form.Item>
-                                    <Row gutter={16}>
+                            </Col>
+                            <Col span={18}>
+                                <Form.Item key={"is_two_sessions"}  {...formItemLayout}>
+                                    {getFieldDecorator("is_two_sessions", {
+                                        valuePropName: 'checked',
+                                        initialValue: that.state.timings ? that.state.timings.is_two_sessions || that.state.twoSessions["is_two_sessions"] : false
+                                    }, {
+                                        rules: [{message: REQUIRED_FIELD_MESSAGE}],
+                                    })(
+                                        <Checkbox
+                                            onChange={(e) => this.changePracticeTwoSessions("is_two_sessions", e.target.checked)}>
+                                            {"Practice operates in two sessions."}
+                                        </Checkbox>
+                                    )}
+                                </Form.Item>
+                                <Row gutter={16}>
+                                    <Col span={12}>
+                                        <Form.Item key={"first_start_time"}
+                                                   label={"Practice Starts At"} {...formItemLayout}>
+                                            {getFieldDecorator("first_start_time", {
+                                                initialValue: that.state.timings && that.state.timings.first_start_time ? moment(that.state.timings.first_start_time, "HH:mm") : null,
+                                                rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
+                                            })(
+                                                <TimePicker format={"HH:mm"}/>
+                                            )}
+                                        </Form.Item>
+                                    </Col>
+                                    {that.state.twoSessions["is_two_sessions"] ? <div>
                                         <Col span={12}>
-                                            <Form.Item key={"first_start_time"}
-                                                       label={"Practice Starts At"} {...formItemLayout}>
-                                                {getFieldDecorator("first_start_time", {
-                                                    initialValue: that.state.timings && that.state.timings.first_start_time ? moment(that.state.timings.first_start_time, "HH:mm") : null,
+                                            <Form.Item key={"first_end_time"}
+                                                       label={"Lunch At"} {...formItemLayout}>
+                                                {getFieldDecorator("first_end_time", {
+                                                    initialValue: that.state.timings && that.state.timings.first_end_time ? moment(that.state.timings.first_end_time, "HH:mm") : null,
                                                     rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                                 })(
                                                     <TimePicker format={"HH:mm"}/>
                                                 )}
                                             </Form.Item>
                                         </Col>
-                                        {that.state.twoSessions["is_two_sessions"] ? <div>
-                                            <Col span={12}>
-                                                <Form.Item key={"first_end_time"}
-                                                           label={"Lunch At"} {...formItemLayout}>
-                                                    {getFieldDecorator("first_end_time", {
-                                                        initialValue: that.state.timings && that.state.timings.first_end_time ? moment(that.state.timings.first_end_time, "HH:mm") : null,
-                                                        rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
-                                                    })(
-                                                        <TimePicker format={"HH:mm"}/>
-                                                    )}
-                                                </Form.Item>
-                                            </Col>
-                                            <Col span={12}>
-                                                <Form.Item key={"second_start_time"}
-                                                           label={"Resume At"} {...formItemLayout}>
-                                                    {getFieldDecorator("second_start_time", {
-                                                        initialValue: that.state.timings && that.state.timings.second_start_time ? moment(that.state.timings.second_start_time, "HH:mm") : null,
-                                                        rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
-                                                    })(
-                                                        <TimePicker format={"HH:mm"}/>
-                                                    )}
-                                                </Form.Item>
-                                            </Col>
-                                        </div> : null}
-
                                         <Col span={12}>
-                                            <Form.Item key={"second_end_time"}
-                                                       label={"Practice Ends At"} {...formItemLayout}>
-                                                {getFieldDecorator("second_end_time", {
-                                                    initialValue: that.state.timings && that.state.timings.second_end_time ? moment(that.state.timings.second_end_time, "HH:mm") : null,
+                                            <Form.Item key={"second_start_time"}
+                                                       label={"Resume At"} {...formItemLayout}>
+                                                {getFieldDecorator("second_start_time", {
+                                                    initialValue: that.state.timings && that.state.timings.second_start_time ? moment(that.state.timings.second_start_time, "HH:mm") : null,
                                                     rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                                 })(
                                                     <TimePicker format={"HH:mm"}/>
                                                 )}
                                             </Form.Item>
                                         </Col>
-                                    </Row>
-                                </Col>
-                            </Row>
-                            <Divider style={{margin: 4}}/>
-                        </div> : dayKeys.map(dayKey => <div key={dayKey}>
-                            <Row>
-                                <Col span={4}>
-                                    <h4>{dayKey.replace(/^\w/, c => c.toUpperCase())}</h4>
-                                </Col>
+                                    </div> : null}
 
-                                <Col span={18}>
-                                    <Form.Item key={`${dayKey}`}  {...formItemLayout}>
-                                        {getFieldDecorator(`${dayKey}`, {
-                                            valuePropName: 'checked',
-                                            initialValue: that.state.timings ? that.state.timings[`${dayKey}`] || that.state.openPracticeDays[dayKey] : false
-                                        }, {
-                                            rules: [{message: REQUIRED_FIELD_MESSAGE}],
-                                        })(
-                                            <Checkbox
-                                                onChange={(e) => that.changeOpenPracticeDays(dayKey, e.target.checked)}>
-                                                {`Practice is open on ${dayKey.replace(/^\w/, c => c.toUpperCase())}`}
-                                            </Checkbox>
-                                        )}
-                                    </Form.Item>
-                                    {that.state.openPracticeDays[dayKey] ? <div>
-                                            <Form.Item key={`is_two_sessions_${dayKey}`}  {...formItemLayout}>
-                                                {getFieldDecorator(`is_two_sessions_${dayKey}`, {
-                                                    valuePropName: 'checked',
-                                                    initialValue: that.state.timings ? that.state.timings[`is_two_sessions_${dayKey}`] || that.state.twoSessions[`is_two_sessions_${dayKey}`] : false
-                                                }, {
-                                                    rules: [{message: REQUIRED_FIELD_MESSAGE}],
-                                                })(
-                                                    <Checkbox
-                                                        onChange={(e) => this.changePracticeTwoSessions(`is_two_sessions_${dayKey}`, e.target.checked)}
-                                                    >
-                                                        {"Practice operates in two sessions."}
-                                                    </Checkbox>
-                                                )}
-                                            </Form.Item>
-                                            <Row gutter={16}>
+                                    <Col span={12}>
+                                        <Form.Item key={"second_end_time"}
+                                                   label={"Practice Ends At"} {...formItemLayout}>
+                                            {getFieldDecorator("second_end_time", {
+                                                initialValue: that.state.timings && that.state.timings.second_end_time ? moment(that.state.timings.second_end_time, "HH:mm") : null,
+                                                rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
+                                            })(
+                                                <TimePicker format={"HH:mm"}/>
+                                            )}
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                        <Divider style={{margin: 4}}/>
+                    </div> : dayKeys.map(dayKey => <div key={dayKey}>
+                        <Row>
+                            <Col span={4}>
+                                <h4>{dayKey.replace(/^\w/, c => c.toUpperCase())}</h4>
+                            </Col>
+
+                            <Col span={18}>
+                                <Form.Item key={`${dayKey}`}  {...formItemLayout}>
+                                    {getFieldDecorator(`${dayKey}`, {
+                                        valuePropName: 'checked',
+                                        initialValue: that.state.timings ? that.state.timings[`${dayKey}`] || that.state.openPracticeDays[dayKey] : false
+                                    }, {
+                                        rules: [{message: REQUIRED_FIELD_MESSAGE}],
+                                    })(
+                                        <Checkbox
+                                            onChange={(e) => that.changeOpenPracticeDays(dayKey, e.target.checked)}>
+                                            {`Practice is open on ${dayKey.replace(/^\w/, c => c.toUpperCase())}`}
+                                        </Checkbox>
+                                    )}
+                                </Form.Item>
+                                {that.state.openPracticeDays[dayKey] ? <div>
+                                        <Form.Item key={`is_two_sessions_${dayKey}`}  {...formItemLayout}>
+                                            {getFieldDecorator(`is_two_sessions_${dayKey}`, {
+                                                valuePropName: 'checked',
+                                                initialValue: that.state.timings ? that.state.timings[`is_two_sessions_${dayKey}`] || that.state.twoSessions[`is_two_sessions_${dayKey}`] : false
+                                            }, {
+                                                rules: [{message: REQUIRED_FIELD_MESSAGE}],
+                                            })(
+                                                <Checkbox
+                                                    onChange={(e) => this.changePracticeTwoSessions(`is_two_sessions_${dayKey}`, e.target.checked)}
+                                                >
+                                                    {"Practice operates in two sessions."}
+                                                </Checkbox>
+                                            )}
+                                        </Form.Item>
+                                        <Row gutter={16}>
+                                            <Col span={12}>
+                                                <Form.Item key={`first_start_time_${dayKey}`}
+                                                           label={"Practice Starts At"} {...formItemLayout}>
+                                                    {getFieldDecorator(`first_start_time_${dayKey}`, {
+                                                        initialValue: that.state.timings && that.state.timings[`first_start_time_${dayKey}`] ? moment(that.state.timings[`first_start_time_${dayKey}`], "HH:mm") : null,
+                                                        rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
+                                                    })(
+                                                        <TimePicker format={"HH:mm"}/>
+                                                    )}
+                                                </Form.Item>
+                                            </Col>
+                                            {that.state.twoSessions[`is_two_sessions_${dayKey}`] ? <div>
                                                 <Col span={12}>
-                                                    <Form.Item key={`first_start_time_${dayKey}`}
-                                                               label={"Practice Starts At"} {...formItemLayout}>
-                                                        {getFieldDecorator(`first_start_time_${dayKey}`, {
-                                                            initialValue: that.state.timings && that.state.timings[`first_start_time_${dayKey}`] ? moment(that.state.timings[`first_start_time_${dayKey}`], "HH:mm") : null,
+                                                    <Form.Item key={`first_end_time_${dayKey}`}
+                                                               label={"Lunch At"} {...formItemLayout}>
+                                                        {getFieldDecorator(`first_end_time_${dayKey}`, {
+                                                            initialValue: that.state.timings && that.state.timings[`first_end_time_${dayKey}`] ? moment(that.state.timings[`first_end_time_${dayKey}`], "HH:mm") : null,
                                                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                                         })(
                                                             <TimePicker format={"HH:mm"}/>
                                                         )}
                                                     </Form.Item>
                                                 </Col>
-                                                {that.state.twoSessions[`is_two_sessions_${dayKey}`] ? <div>
-                                                    <Col span={12}>
-                                                        <Form.Item key={`first_end_time_${dayKey}`}
-                                                                   label={"Lunch At"} {...formItemLayout}>
-                                                            {getFieldDecorator(`first_end_time_${dayKey}`, {
-                                                                initialValue: that.state.timings && that.state.timings[`first_end_time_${dayKey}`] ? moment(that.state.timings[`first_end_time_${dayKey}`], "HH:mm") : null,
-                                                                rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
-                                                            })(
-                                                                <TimePicker format={"HH:mm"}/>
-                                                            )}
-                                                        </Form.Item>
-                                                    </Col>
-                                                    <Col span={12}>
-                                                        <Form.Item key={`second_start_time_${dayKey}`}
-                                                                   label={"Resume At"} {...formItemLayout}>
-                                                            {getFieldDecorator(`second_start_time_${dayKey}`, {
-                                                                initialValue: that.state.timings && that.state.timings[`second_start_time_${dayKey}`] ? moment(that.state.timings[`second_start_time_${dayKey}`], "HH:mm") : null,
-                                                                rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
-                                                            })(
-                                                                <TimePicker format={"HH:mm"}/>
-                                                            )}
-                                                        </Form.Item>
-                                                    </Col>
-                                                </div> : null}
                                                 <Col span={12}>
-                                                    <Form.Item key={`second_end_time_${dayKey}`}
-                                                               label={"Practice Ends At"} {...formItemLayout}>
-                                                        {getFieldDecorator(`second_end_time_${dayKey}`, {
-                                                            initialValue: that.state.timings && that.state.timings[`second_end_time_${dayKey}`] ? moment(that.state.timings[`second_end_time_${dayKey}`], "HH:mm") : null,
+                                                    <Form.Item key={`second_start_time_${dayKey}`}
+                                                               label={"Resume At"} {...formItemLayout}>
+                                                        {getFieldDecorator(`second_start_time_${dayKey}`, {
+                                                            initialValue: that.state.timings && that.state.timings[`second_start_time_${dayKey}`] ? moment(that.state.timings[`second_start_time_${dayKey}`], "HH:mm") : null,
                                                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                                         })(
                                                             <TimePicker format={"HH:mm"}/>
                                                         )}
                                                     </Form.Item>
                                                 </Col>
-                                            </Row>
-                                        </div>
-                                        : null}
-                                </Col>
-                            </Row>
-                            <Divider style={{margin: 4}}/>
-                        </div>)
-                    }
-                    <Form.Item {...formItemLayout}>
-                        <Button loading={that.state.loading} type="primary" htmlType="submit" style={{margin: 5}}>
-                            Submit
-                        </Button>
-                        {that.props.history ?
-                            <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
-                                Cancel
-                            </Button> : null}
-                    </Form.Item>
-                </Form>
-            </div>
-        } else {
-            return null
-        }
+                                            </div> : null}
+                                            <Col span={12}>
+                                                <Form.Item key={`second_end_time_${dayKey}`}
+                                                           label={"Practice Ends At"} {...formItemLayout}>
+                                                    {getFieldDecorator(`second_end_time_${dayKey}`, {
+                                                        initialValue: that.state.timings && that.state.timings[`second_end_time_${dayKey}`] ? moment(that.state.timings[`second_end_time_${dayKey}`], "HH:mm") : null,
+                                                        rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
+                                                    })(
+                                                        <TimePicker format={"HH:mm"}/>
+                                                    )}
+                                                </Form.Item>
+                                            </Col>
+                                        </Row>
+                                    </div>
+                                    : null}
+                            </Col>
+                        </Row>
+                        <Divider style={{margin: 4}}/>
+                    </div>)
+                }
+                <Form.Item {...formItemLayout}>
+                    <Button loading={that.state.loading} type="primary" htmlType="submit" style={{margin: 5}}>
+                        Submit
+                    </Button>
+                    {that.props.history ?
+                        <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
+                            Cancel
+                        </Button> : null}
+                </Form.Item>
+            </Form>
+        </div>
     }
+
 }
 
 export default Form.create()(PracticeTimings);
