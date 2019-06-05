@@ -68,7 +68,6 @@ class AddorEditLab extends React.Component {
         })
         
     }
-    id
     removeLabPanel = (id) => {
         this.setState(function (prevState) {
             return {

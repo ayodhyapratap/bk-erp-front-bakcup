@@ -10,15 +10,13 @@ import {
     Modal
 } from "antd";
 import {Link} from "react-router-dom";
-import {
-    PROCEDURE_CATEGORY,
-    TREATMENTPLANS_API, TREATMENTPLANS_MARK_COMPLETE_API
-} from "../../../constants/api";
+import {PROCEDURE_CATEGORY,TREATMENTPLANS_API, TREATMENTPLANS_MARK_COMPLETE_API,TREATMENTPLANS_PDF} from "../../../constants/api";
 import {getAPI, interpolate, displayMessage, postAPI} from "../../../utils/common";
 import moment from "moment";
 import {Redirect, Switch, Route} from "react-router";
 import AddorEditDynamicTreatmentPlans from "./AddorEditDynamicTreatmentPlans";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {BACKEND_BASE_URL} from "../../../config/connect"; 
 
 const confirm = Modal.confirm;
 
@@ -165,8 +163,19 @@ class PatientTreatmentPlans extends React.Component {
         let errorFn = function () {
 
         }
-        // console.log("Data",JSON.stringify(reqData));
         postAPI(interpolate(TREATMENTPLANS_MARK_COMPLETE_API, [this.props.match.params.id]), reqData, successFn, errorFn)
+    }
+
+    loadPDF(id) {
+        let that = this;
+        let successFn = function (data) {
+            if (data.report)
+                window.open(BACKEND_BASE_URL + data.report);
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(interpolate(TREATMENTPLANS_PDF, [id]), successFn, errorFn);
     }
 
     render() {
@@ -270,7 +279,7 @@ class PatientTreatmentPlans extends React.Component {
                                                 Patient Timeline
                                             </Menu.Item>
                                         </Menu>}>
-                                        <Icon type="printer"/>
+                                        <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
                                     </Dropdown.Button>
                                 </h4>
 

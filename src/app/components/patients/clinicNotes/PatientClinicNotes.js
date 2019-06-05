@@ -1,7 +1,7 @@
 import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag} from "antd";
 import React from "react";
 import {getAPI, interpolate, postAPI} from "../../../utils/common";
-import {INVOICES_API, PATIENT_CLINIC_NOTES_API,} from "../../../constants/api";
+import {INVOICES_API, PATIENT_CLINIC_NOTES_API,CLINIC_NOTES_PDF} from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
 import {Link, Redirect} from "react-router-dom";
@@ -9,6 +9,7 @@ import AddClinicNotes from "./AddClinicNotes";
 import {CUSTOM_STRING_SEPERATOR} from "../../../constants/hardData";
 import AddClinicNotesDynamic from "./AddClinicNotesDynamic";
 import {Modal} from "antd/lib/index";
+import {BACKEND_BASE_URL} from "../../../config/connect";
 
 const confirm = Modal.confirm;
 
@@ -84,6 +85,18 @@ class PatientClinicNotes extends React.Component {
         });
     }
 
+    loadPDF(id) {
+        let that = this;
+        let successFn = function (data) {
+            if (data.report)
+                window.open(BACKEND_BASE_URL + data.report);
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(interpolate(CLINIC_NOTES_PDF, [id]), successFn, errorFn);
+    }
+
     render() {
         let that = this;
         const columns = [{
@@ -157,7 +170,6 @@ class PatientClinicNotes extends React.Component {
                             <div>
                                 <h4>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}
                                     <Dropdown.Button
-                                        // onClick={()=>that.loadPDF(clinicNote.id)}
                                         size={"small"}
                                         style={{float: 'right'}}
                                         overlay={<Menu>
@@ -175,7 +187,8 @@ class PatientClinicNotes extends React.Component {
                                                 Patient Timeline
                                             </Menu.Item>
                                         </Menu>}>
-                                        <Icon type="printer"/>
+                                        <a onClick={() => this.loadPDF(clinicNote.id)}><Icon type="printer"/></a>
+                                        
                                     </Dropdown.Button>
                                 </h4>
                                 <Divider style={{margin: 0}}/>

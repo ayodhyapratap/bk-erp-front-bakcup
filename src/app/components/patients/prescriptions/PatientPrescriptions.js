@@ -144,6 +144,7 @@ class PatientPrescriptions extends React.Component {
             },
         });
     }
+    
 
     render() {
         const drugs = {}
@@ -210,7 +211,7 @@ class PatientPrescriptions extends React.Component {
                                 <div style={{padding: 16}}>
                                     <h4>{presc.date ? moment(presc.date).format('ll') : null}
                                         <Dropdown.Button
-                                            onClick={()=>that.loadPDF(presc.id)}
+                                           
                                             size={"small"}
                                             style={{float: 'right'}}
                                             overlay={<Menu>
@@ -228,7 +229,7 @@ class PatientPrescriptions extends React.Component {
                                                     Patient Timeline
                                                 </Menu.Item>
                                             </Menu>}>
-                                            <Icon type="printer"/>
+                                            <a onClick={() => this.loadPDF(presc.id)}><Icon type="printer"/></a>
                                         </Dropdown.Button>
                                     </h4>
 

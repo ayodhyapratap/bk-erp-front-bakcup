@@ -164,4 +164,8 @@ export const GENERATE_MLM_COMMISSON = 'product_margin/generate_mlm/';
 
 export const PRESCRIPTION_PDF = 'patients/prescriptions_pdf/?id=%s';
 export const VITAL_SIGN_PDF = 'patients/vital_sign_pdf/?id=%s';
+export const CLINIC_NOTES_PDF = 'patients/clinic_notes_pdf/?id=%s';
+export const TREATMENTPLANS_PDF = 'patients/treatment_plan_pdf/?id=%s';
+export const MEDICAL_CERTIFICATE_PDF = 'patients/medical_certificate_pdf/?id=%s';
+
 
