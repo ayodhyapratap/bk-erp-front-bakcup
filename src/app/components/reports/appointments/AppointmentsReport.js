@@ -101,10 +101,12 @@ export default class AppointmentsReport extends React.Component {
             title: 'Doctor',
             dataIndex: 'doctor',
             key: 'address',
+            render: (text, record) => <span>{record.doctor_data ? record.doctor_data.user.first_name : null}</span>
         }, {
             title: 'Category',
             dataIndex: 'category',
             key: 'address',
+            render: (text, record) => <span>{record.category_data ? record.category_data.name : null}</span>
         }];
 
 

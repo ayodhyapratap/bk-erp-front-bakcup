@@ -134,7 +134,8 @@ class PatientHome extends React.Component {
                                                                key={this.state.currentPatient}
                                                                setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
                                 <Route exact path='/patients/profile/add'
-                                       render={() => <EditPatientDetails key={this.state.currentPatient} {...this.props}/>}/>
+                                       render={() => <EditPatientDetails
+                                           key={this.state.currentPatient} {...this.props}/>}/>
                                 <Route exact path='/patient/:id/profile'
                                        render={() => <PatientProfile {...this.state}
                                                                      key={this.state.currentPatient}
@@ -176,7 +177,7 @@ class PatientHome extends React.Component {
                                                to={"/patient/" + this.state.currentPatient.id + "/emr/vitalsigns"}/> :
                                            <PatientRequiredNoticeCard
                                                togglePatientListModal={this.togglePatientListModal}/>)}/>
-                                <Route  path='/patient/:id/emr/vitalsigns'
+                                <Route path='/patient/:id/emr/vitalsigns'
                                        render={(route) => <PatientVitalSign
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />}/>
 
@@ -200,7 +201,7 @@ class PatientHome extends React.Component {
                                                to={"/patient/" + this.state.currentPatient.id + "/emr/workdone"}/> :
                                            <PatientRequiredNoticeCard
                                                togglePatientListModal={this.togglePatientListModal}/>)}/>
-                                <Route exact path='/patient/:id/emr/workdone'
+                                <Route path='/patient/:id/emr/workdone'
                                        render={(route) => <PatientCompletedProcedures
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
 

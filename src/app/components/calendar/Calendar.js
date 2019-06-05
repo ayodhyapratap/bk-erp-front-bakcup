@@ -41,7 +41,7 @@ import {
     saveCalendarSettings
 } from "../../utils/calendarUtils";
 import CalendarRightPanel from "./CalendarRightPanel";
-import {CANCELLED_STATUS} from "../../constants/hardData";
+import {CANCELLED_STATUS, CHECKOUT_STATUS, DAY_KEYS, ENGAGED_STATUS, WAITING_STATUS} from "../../constants/hardData";
 
 const localizer = BigCalendar.momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(BigCalendar)
@@ -63,6 +63,7 @@ class App extends Component {
             doctors_object: null,
             categories_object: null,
             calendarTimings: null,
+            timing: {},
             loading: true,
             selectedDoctor: 'ALL',
             selectedCategory: 'ALL',
@@ -71,8 +72,8 @@ class App extends Component {
             doctorsAppointmentCount: {},
             categoriesAppointmentCount: {},
             blockedCalendar: [],
-            showCalendarEvents:true,
-            showAppointments:true,
+            showCalendarEvents: true,
+            showAppointments: true,
             ...getCalendarSettings()
         }
         ;
@@ -129,12 +130,41 @@ class App extends Component {
     loadCalendarTimings() {
         var that = this;
         let successFn = function (data) {
+            let dataObject = {};
+            if (data.length)
+                dataObject = data[0];
+            let timing = {};
+            DAY_KEYS.forEach(function (dayKey) {
+                timing[dayKey] = {};
+                if (dataObject.visting_hour_same_week) {
+                    timing[dayKey].startTime = moment(dataObject.first_start_time, 'HH:mm:ss');
+                    timing[dayKey].endTime = moment(dataObject.second_end_time, 'HH:mm:ss');
+                    if (dataObject.is_two_sessions) {
+                        timing[dayKey].lunch = true;
+                        timing[dayKey].lunchStartTime = moment(dataObject.first_end_time, 'HH:mm:ss');
+                        timing[dayKey].lunchEndTime = moment(dataObject.second_start_time, 'HH:mm:ss');
+                    } else {
+                        timing[dayKey].lunch = false
+                    }
+                } else if (dataObject[dayKey]) {
+                    timing[dayKey].startTime = moment(dataObject[`first_start_time_${dayKey}`], 'HH:mm:ss');
+                    timing[dayKey].endTime = moment(dataObject[`second_end_time_${dayKey}`], 'HH:mm:ss');
+                    if (dataObject[`is_two_sessions_${dayKey}`]) {
+                        timing[dayKey].lunch = true;
+                        timing[dayKey].lunchStartTime = moment(dataObject[`first_end_time_${dayKey}`], 'HH:mm:ss');
+                        timing[dayKey].lunchEndTime = moment(dataObject[`second_start_time_${dayKey}`], 'HH:mm:ss');
+                    } else {
+                        timing[dayKey].lunch = false
+                    }
+                } else {
+                    timing[dayKey] = null
+                }
+            });
             that.setState({
                 calendarTimings: {
-                    ...data[0],
-                    startTime: new moment(data[0].start_time, 'HH:mm:ss'),
-                    endTime: new moment(data[0].end_time, 'HH:mm:ss')
+                    ...dataObject,
                 },
+                timing: {...timing},
                 loading: false
             });
         };
@@ -486,7 +516,7 @@ class App extends Component {
                                                 <Icon type="stop"/> Block Calendar
                                             </Link>
                                         </Button>
-                                        <Dropdown overlay={
+                                        <Dropdown trigger={'click'} overlay={
                                             <Menu onClick={this.setFilterType}>
                                                 <Menu.Item key={"DOCTOR"}>
                                                     DOCTOR
@@ -642,10 +672,6 @@ class App extends Component {
                                                 style={{height: "calc(100vh - 85px)"}}
                                                 eventPropGetter={(this.eventStyleGetter)}
                                                 date={new Date(this.state.selectedDate.format())}
-                                                {...(this.state.show24HourCalendar ? {} : {
-                                                    min: startTime,
-                                                    max: endTime
-                                                })}
                                                 onRangeChange={this.onRangeChange}
                                                 components={{
                                                     event: EventComponent,
@@ -653,7 +679,7 @@ class App extends Component {
                                                         return <TimeSlotWrapper {...options}
                                                                                 key={options.value.toString()}
                                                                                 blockedCalendar={that.state.blockedCalendar}
-                                                                                calendarTimings={that.state.calendarTimings}
+                                                                                calendarTimings={that.state.timing}
                                                                                 filterType={that.state.filterType}
                                                                                 selectedDoctor={that.state.selectedDoctor}
                                                                                 showCalendarEvents={that.state.showCalendarEvents}/>
@@ -720,32 +746,61 @@ MyWeek.title = date => {
 }
 
 function TimeSlotWrapper(props) {
-    if (props.calendarTimings && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') >= props.calendarTimings.startTime.format('HH:mm:ss') && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') < props.calendarTimings.endTime.format('HH:mm:ss')) {
-        let flag = true;
-        if (props.showCalendarEvents) {
-            for (let i = 0; i < props.blockedCalendar.length; i++) {
-                if (props.blockedCalendar[i].doctor && props.filterType == 'DOCTOR') {
-                    if (props.blockedCalendar[i].doctor == props.selectedDoctor && moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
-                        flag = false;
-                        break;
-                    }
-                } else {
-                    if (moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
-                        flag = false;
-                        break;
-                    }
+    let flag = true;
+    let dayValue = moment(props.value).isValid() ? moment(props.value).format('dddd').toLowerCase() : null;
+    /**
+     * Checking for Calendar Clinic Timings
+     * */
+    if (props.calendarTimings && dayValue && props.calendarTimings[dayValue]) {
+        let daysTimings = props.calendarTimings[dayValue];
+        if (daysTimings.lunch) {
+            if (
+                (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss')
+                    || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')
+                ) || (
+                    moment(props.value, 'HH:mm:ss').format('HH:mm:ss') < daysTimings.lunchEndTime.format('HH:mm:ss')
+                    && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') >= daysTimings.lunchStartTime.format('HH:mm:ss')
+                )
+            ) {
+                flag = false;
+            }
+        } else {
+            if (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
+                flag = false;
+            }
+        }
+    } else if (dayValue && !props.calendarTimings[dayValue]) {
+        /**
+         * If the practice isnot opening for the day
+         * */
+        flag = false;
+    }
+    /**
+     * Checking for Events Timings
+     * */
+    if (props.showCalendarEvents && flag) {
+        for (let i = 0; i < props.blockedCalendar.length; i++) {
+            if (props.blockedCalendar[i].doctor && props.filterType == 'DOCTOR') {
+                if (props.blockedCalendar[i].doctor == props.selectedDoctor && moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
+                    flag = false;
+                    break;
+                }
+            } else {
+                if (moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
+                    flag = false;
+                    break;
                 }
             }
         }
-        if (flag)
-            return props.children;
     }
+    if (flag)
+        return props.children;
+
 
     const child = React.Children.only(props.children);
     return React.cloneElement(child, {className: child.props.className + ' rbc-off-range-bg'});
 }
 
 function MonthEventWrapper(props) {
-    console.log(props);
     return props.children;
 }

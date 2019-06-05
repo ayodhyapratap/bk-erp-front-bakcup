@@ -178,3 +178,5 @@ export const TYPES_OF_BED_PACKAGES_ROOM_TYPE = [
 ]
 
 export const CUSTOM_STRING_SEPERATOR = '$_$';
+
+export const DAY_KEYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
