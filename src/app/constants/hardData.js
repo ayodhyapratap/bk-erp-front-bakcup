@@ -180,8 +180,9 @@ export const TYPES_OF_BED_PACKAGES_ROOM_TYPE = [
 export const CUSTOM_STRING_SEPERATOR = '$_$';
 
 export const DAY_KEYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
 export const ATTENDANCE =[
-    {label:"your name", value: "nitish"},
-    {label:"your name", value: "nitish"},
-    {label:"your name", value: "nitish"}
+    {label:"Valid for absence from court attendance", value: "valid_court"},
+    {label:"Invalid for absence from court attendance", value: "invalid_court"},
+    {label:"Dont mention", value: "no_mention"}
 ];

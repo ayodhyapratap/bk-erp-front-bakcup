@@ -2,8 +2,10 @@ import React from "react";
 import {Route} from "react-router";
 import { Form, Icon, Input, Button,Checkbox, Card,DatePicker, Radio ,Row,Col,Select} from 'antd';
 import {Redirect, Link} from 'react-router-dom'
-import {getAPI, interpolate, displayMessage} from "../../../utils/common";
+import {postAPI, interpolate, displayMessage} from "../../../utils/common";
 import {ATTENDANCE} from "../../../constants/hardData";
+import {MEDICAL_CERTIFICATE_API} from "../../../constants/api";
+import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 
 
 const { TextArea } = Input;
@@ -13,7 +15,9 @@ class PatientMedicalCertificate extends React.Component {
         super(props);
         this.state = {
             redirect:false,
-           checked:false
+            excused_duty_checked:false,
+            fit_light_duty_checked:false,
+            attendance_checked:false,
         }
         
     console.log(this.props);
@@ -25,7 +29,49 @@ class PatientMedicalCertificate extends React.Component {
         });
     }
     
+    handleCheck = (e) => {
+        this.setState({
+            excused_duty_checked: !this.state.excused_duty_checked
+        });
+    }
+    handleLighDutyCheck = (e)=>{
+        this.setState({
+            fit_light_duty_checked:!this.state.fit_light_duty_checked
+        });
+    }
+    onChangeHandle = (e)=>{
+        this.setState({
+            
+        });
+    }
+    handleAttendanceCheck = (e) =>{
+        this.setState({
+            attendance_checked:!this.state.attendance_checked
+        });
+    }
 
+    handleSubmit = (e) => {
+        let that = this;
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                let reqData = {...values};
+                that.setState({
+                });
+                let successFn = function (data) {
+                    displayMessage(SUCCESS_MSG_TYPE, "Saved Successfully!!");
+                    that.setState({
+                    });
+                }
+                let errorFn = function () {
+                    that.setState({
+                    });
+                }
+                console.log(reqData);
+                postAPI(interpolate(MEDICAL_CERTIFICATE_API, [this.props.currentPatient.id]), reqData, successFn, errorFn);
+            }
+        });
+    }
     render() {
         const { getFieldDecorator} = this.props.form;
         const formItemLayout = {
@@ -42,75 +88,83 @@ class PatientMedicalCertificate extends React.Component {
                 lg: { span: 16 },
             },
         };
-          
-        return (<Card title="ADD MEDICAL LEAVE CERTIFICATE"
-                extra={<Button.Group>
-                <Button type="primary" htmlType="submit">Save Certificate</Button>
-            </Button.Group>}>
+        const radioOption = ATTENDANCE.map((option) => <Radio value={option.value}>{option.label}</Radio>)
+        return ( <Form onSubmit={this.handleSubmit} {...formItemLayout}> 
+                <Card title="ADD MEDICAL LEAVE CERTIFICATE"
+                    extra={<Button.Group>
+                    <Button type="primary" htmlType="submit">Save Certificate</Button>
+                </Button.Group>}>
 
-            <Form onSubmit={this.handleSubmit} {...formItemLayout}> 
-
-                <Form.Item >
-                    {getFieldDecorator('excused_duty', { })(
-                        (<Checkbox>Excused from duty</Checkbox>),
-                    )}                 
-                </Form.Item> 
-                <Row>
-                    <Col span={6} offset={6}>
-                        <Form.Item label="From">
-                            <DatePicker />
-                        </Form.Item>
-
-                        <Form.Item label="till">
-                            <DatePicker />
-                        </Form.Item>
-                        
-                    </Col>
-                    <Col span={6} >
-                        <Form.Item>
-                            <Select>
-                                <Option value="M">Morning</Option>
-                                <Option value="E">Evening</Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item>
-                            <Select>
-                                <Option value="M">Morning</Option>
-                                <Option value="E">Evening</Option>
-                            </Select>
-                        </Form.Item>
-                    </Col>
-                </Row>
+           
 
                 <Form.Item >
                     {getFieldDecorator('excused_duty', { })(
-                        (<Checkbox>Fit for light duty</Checkbox>),
+                        (<Checkbox onClick={this.handleCheck} defaultChecked={this.state.excused_duty_checked}>Excused from duty</Checkbox>),
                     )}                 
                 </Form.Item> 
-                <Row>
-                    <Col>
-                        <Form.Item label="From">
-                            <DatePicker />
-                        </Form.Item>
+                {this.state.excused_duty_checked ? 
+                    <Row>
+                        <Col span={6} offset={6}>
+                            <Form.Item label="From">
+                                <DatePicker />
+                            </Form.Item>
 
-                        <Form.Item label="till">
-                            <DatePicker />
-                        </Form.Item>
-                    </Col>
-                </Row>
+                            <Form.Item label="till">
+                                <DatePicker />
+                            </Form.Item>
+                            
+                        </Col>
+                        <Col span={6} >
+                            <Form.Item>
+                                <Select>
+                                    <Option value="M">Morning</Option>
+                                    <Option value="E">Evening</Option>
+                                </Select>
+                            </Form.Item>
+
+                            <Form.Item>
+                                <Select>
+                                    <Option value="M">Morning</Option>
+                                    <Option value="E">Evening</Option>
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                :null}
                 
 
-                <Form.Item>
-                    {getFieldDecorator('excused_duty', { })(
-                        (<Checkbox>Proof of attendance at practice</Checkbox>),
+                <Form.Item >
+                    {getFieldDecorator('fit_light_duty', { })(
+                        (<Checkbox onClick={this.handleLighDutyCheck} defaultChecked={this.state.fit_light_duty_checked}>Fit for light duty</Checkbox>),
                     )}                 
                 </Form.Item> 
-                <Row>
+
+                {this.state.fit_light_duty_checked ?
+                    <Row>
+                        <Col>
+                            <Form.Item label="From">
+                                <DatePicker />
+                            </Form.Item>
+
+                            <Form.Item label="till">
+                                <DatePicker />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    :null
+                }
+                
+                <Form.Item>
+                    {getFieldDecorator('proof_attendance', { })(
+                        (<Checkbox onClick={this.handleAttendanceCheck} defaultChecked={this.state.attendance_checked}>Proof of attendance at practice</Checkbox>),
+                    )}                 
+                </Form.Item> 
+                {this.state.attendance_checked ? 
+                    <Row>
                         <Form.Item label="on">
                             <DatePicker />
                         </Form.Item>
-                        <Col span={4} offset={6}>
+                        <Col span={6} offset={6}>
                             <Form.Item label="From">
                                 <Select>
                                     <Option value="M">5pm</Option>
@@ -132,7 +186,7 @@ class PatientMedicalCertificate extends React.Component {
                                     <Option value="E">9</Option>
                                 </Select>
                             </Form.Item>
-
+    
                             <Form.Item>
                                 <Select>
                                     <Option value="M">8</Option>
@@ -140,25 +194,30 @@ class PatientMedicalCertificate extends React.Component {
                                 </Select>
                             </Form.Item>
                         </Col>
-                </Row>
+                        </Row>
+                    
+                    
+                    :null}
+               
                         
                 <Form.Item label="Notes">
-                    {getFieldDecorator('excused_duty', { })(
+                    {getFieldDecorator('notes', { })(
                         (<TextArea/>),
                     )}                 
                 </Form.Item> 
 
                 
                 <Form.Item>
-                    <Radio.Group>
-                        <Radio value="a">Valid for absence from court attendance  </Radio>
-                        <Radio value="b">Invalid for absence from court attendance  </Radio>
-                        <Radio value="c">Dont mention</Radio>
-                    </Radio.Group>
+                    {getFieldDecorator('xxf', { })(
+                        <Radio.Group onChange={this.onChangeHandle}>
+                           {radioOption}
+                        </Radio.Group>
+                    )}
+                    
                 </Form.Item>
                
-            </Form>
-        </Card>
+            </Card>
+        </Form>
 
         );
       }

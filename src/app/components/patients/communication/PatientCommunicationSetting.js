@@ -150,6 +150,7 @@ class PatientCommunicationSetting extends React.Component {
                     extra={<Button type="primary" htmlType="submit" loading={this.state.saving}>
                         <Icon type="save"/> Save Communication Setting
                     </Button>}>
+                    
                     <Form.Item {...formItemLayout} key={'sms_enable'}> <label>
                         <span className="ant-form-text">{'Enable SMS the patient'} : </span>
                         {getFieldDecorator('sms_enable', {initialValue: this.state.patientProfile ? this.state.patientProfile.sms_enable : false})
