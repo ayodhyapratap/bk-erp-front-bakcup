@@ -27,6 +27,7 @@ import {PATIENT_PROFILE, PATIENTS_LIST} from "../../constants/api";
 import {ERROR_MSG_TYPE} from "../../constants/dataKeys";
 import PatientMerge from "./merge/PatientMerge";
 import PatientRequiredNoticeCard from "./PatientRequiredNoticeCard";
+import PatientMedicalCertificate from "./files/PatientMedicalCertificate";
 
 const {Content} = Layout;
 
@@ -213,6 +214,9 @@ class PatientHome extends React.Component {
                                                togglePatientListModal={this.togglePatientListModal}/>)}/>
                                 <Route path={"/patient/:id/emr/files"}
                                        render={(route) => <PatientFiles
+                                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...route} {...this.state}/>}/>
+                                <Route path={"/patient/:id/emr/create-medicalCertificate"}
+                                       render={(route) => <PatientMedicalCertificate
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...route} {...this.state}/>}/>
 
                                 {/*** Patient Prescriptions Routes*/}

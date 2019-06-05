@@ -1,10 +1,11 @@
 import React from "react";
-import {Button, Card, Col, Icon, List, Modal, Radio, Row, Checkbox, Menu, Dropdown} from "antd";
+import {Button, Card, Col, Icon, List, Modal, Radio, Row, Checkbox, Menu, Dropdown, Input} from "antd";
 import {getAPI, postAPI, interpolate, makeFileURL} from "../../../utils/common";
-import {ALL_PATIENT_FILES, EMR_FILETAGS, PATIENT_FILES} from "../../../constants/api";
+import {ALL_PATIENT_FILES, EMR_FILETAGS, PATIENT_FILES,MEDICAL_CERTIFICATE_API} from "../../../constants/api";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Form} from "antd/lib/index";
-import {MULTI_SELECT_FIELD, SINGLE_IMAGE_UPLOAD_FIELD} from "../../../constants/dataKeys";
+import {MULTI_SELECT_FIELD, SINGLE_IMAGE_UPLOAD_FIELD, INPUT_FIELD} from "../../../constants/dataKeys";
+import {Redirect, Link} from 'react-router-dom';
 
 class PatientFiles extends React.Component {
     constructor(props) {
@@ -16,7 +17,8 @@ class PatientFiles extends React.Component {
             loading: true,
             selectedFiles: {},
             selectedTags: [],
-            filterSearchTag: null
+            filterSearchTag: null,
+            showAddMedicalModel:false
         };
         this.loadData = this.loadData.bind(this);
     }
@@ -72,6 +74,11 @@ class PatientFiles extends React.Component {
             showAddModal: !!option
         })
     }
+    triggerAddMedicalCertificateModal(option){
+        this.setState({
+            showAddMedicalModel: !! option
+        })
+    }
 
     filesCompleteToggle(id, option) {
         this.setState(function (prevState) {
@@ -122,6 +129,7 @@ class PatientFiles extends React.Component {
     render() {
         let that = this;
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
+        const  PatientMedicalCertificateForm = Form.create()(DynamicFieldsForm);
         const fields = [{
             key: 'file_type',
             label: 'File',
@@ -142,6 +150,28 @@ class PatientFiles extends React.Component {
             },
             action: interpolate(PATIENT_FILES, [this.props.match.params.id])
         }
+
+        const medicalFields=[{
+            key:'name',
+            label:'name',
+            type:INPUT_FIELD,
+        }, {
+            key: 'file_tags',
+            label: 'Tags',
+            type: MULTI_SELECT_FIELD,
+            options: this.state.tags.map(tag => ({label: tag.name, value: tag.id}))
+        }];
+        const medicalFormProps = {
+            method: 'post',
+            successFn:function(){
+                that.triggerAddMedicalCertificateModal(false);
+                that.loadData();
+            },
+            errorFn:function(){
+
+            },
+            action:interpolate(MEDICAL_CERTIFICATE_API,[this.props.match.params.id])
+        }
         const tagsMenu = (
             <Menu>
                 <Menu.Item>
@@ -157,6 +187,10 @@ class PatientFiles extends React.Component {
         const defaultFields = [{key: 'is_active', value: true}, {key: 'patient', value: this.props.match.params.id}]
         return <Card title="Files"
                      extra={<Button.Group>
+                            <Link to={"/patient/"+ this.props.match.params.id + "/emr/create-medicalCertificate"}> <Button type="primary">
+                                <Icon type="plus"/>&nbsp;Add Medical Certificate</Button> </Link>
+
+                         <Button onClick={() => this.triggerAddMedicalCertificateModal(true)}><Icon type="plus"/>Add Certificate</Button>
                          <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft">
                              <Button><Icon type="plus"/>AddFile/remove</Button>
                          </Dropdown>
@@ -236,6 +270,15 @@ class PatientFiles extends React.Component {
                                   defaultFields={defaultFields}
                                   formProp={formProps}/>
             </Modal>
+
+            {/* <Modal visible={this.state.showAddMedicalModel}
+                    onCancel={()=> this.triggerAddMedicalCertificateModal(false)}
+                    footer={null}>
+                    <PatientMedicalCertificateForm title="Add Medical Certificate"
+                                  fields={medicalFields}
+                                  defaultFields={defaultFields}
+                                  formProp={medicalFormProps}/>     
+            </Modal> */}
 
         </Card>
     }
