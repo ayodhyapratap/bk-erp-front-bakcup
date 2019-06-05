@@ -107,24 +107,39 @@ class PatientMedicalCertificate extends React.Component {
                     )}                 
                 </Form.Item> 
                 <Row>
-                    <Col span={5} offset={6}>
                         <Form.Item label="on">
                             <DatePicker />
                         </Form.Item>
+                        <Col span={4} offset={6}>
+                            <Form.Item label="From">
+                                <Select>
+                                    <Option value="M">5pm</Option>
+                                    <Option value="E">8pm</Option>
+                                </Select>
+                            </Form.Item>
+                            <Form.Item label="till">
+                                <Select>
+                                    <Option value="M">8</Option>
+                                    <Option value="E">9</Option>
+                                </Select>
+                            </Form.Item>
+                        
+                        </Col>
+                        <Col span={4} >
+                            <Form.Item>
+                                <Select>
+                                    <Option value="M">8</Option>
+                                    <Option value="E">9</Option>
+                                </Select>
+                            </Form.Item>
 
-                        <Form.Item label="From">
-                            <Select>
-                                <Option value="M">5pm</Option>
-                                <Option value="E">8pm</Option>
-                            </Select>
-                        </Form.Item>
-                        <Form.Item label="till">
-                            <Select>
-                                <Option value="M">8</Option>
-                                <Option value="E">9</Option>
-                            </Select>
-                        </Form.Item>
-                    </Col>
+                            <Form.Item>
+                                <Select>
+                                    <Option value="M">8</Option>
+                                    <Option value="E">9</Option>
+                                </Select>
+                            </Form.Item>
+                        </Col>
                 </Row>
                         
                 <Form.Item label="Notes">
