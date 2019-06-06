@@ -268,6 +268,7 @@ class PatientFiles extends React.Component {
 
                                   }}>
                                       <Checkbox key={item.id}
+                                                disabled={(item.practice != this.props.active_practiceId)}
                                                 style={{
                                                     position: 'absolute',
                                                     top: 5,

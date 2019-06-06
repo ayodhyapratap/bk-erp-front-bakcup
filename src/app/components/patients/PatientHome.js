@@ -188,8 +188,8 @@ class PatientHome extends React.Component {
                                        render={(route) => (this.state.currentPatient ?
                                            <Redirect
                                                to={"/patient/" + this.state.currentPatient.id + "/emr/vitalsigns"}/> :
-                                           <PatientRequiredNoticeCard
-                                               togglePatientListModal={this.togglePatientListModal}/>)}/>
+                                           <PatientVitalSign
+                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />)}/>
                                 <Route path='/patient/:id/emr/vitalsigns'
                                        render={(route) => <PatientVitalSign
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />}/>
@@ -213,8 +213,8 @@ class PatientHome extends React.Component {
                                        render={(route) => (this.state.currentPatient ?
                                            <Redirect
                                                to={"/patient/" + this.state.currentPatient.id + "/emr/workdone"}/> :
-                                           <PatientRequiredNoticeCard
-                                               togglePatientListModal={this.togglePatientListModal}/>)}/>
+                                           <PatientCompletedProcedures
+                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>)}/>
                                 <Route path='/patient/:id/emr/workdone'
                                        render={(route) => <PatientCompletedProcedures
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
@@ -274,8 +274,8 @@ class PatientHome extends React.Component {
                                        render={(route) => (this.state.currentPatient ?
                                            <Redirect
                                                to={"/patient/" + this.state.currentPatient.id + "/billing/invoices"}/> :
-                                           <PatientRequiredNoticeCard
-                                               togglePatientListModal={this.togglePatientListModal}/>)}/>
+                                           <PatientInvoices
+                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>)}/>
                                 <Route path='/patient/:id/billing/invoices'
                                        render={(route) => <PatientInvoices
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>

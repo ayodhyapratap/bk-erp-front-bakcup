@@ -210,11 +210,13 @@ class PatientPrescriptions extends React.Component {
                                             size={"small"}
                                             style={{float: 'right'}}
                                             overlay={<Menu>
-                                                <Menu.Item key="1" onClick={() => that.editPrescriptionData(presc)}>
+                                                <Menu.Item key="1" onClick={() => that.editPrescriptionData(presc)}
+                                                           disabled={(presc.practice != this.props.active_practiceId)}>
                                                     <Icon type="edit"/>
                                                     Edit
                                                 </Menu.Item>
-                                                <Menu.Item key="2" onClick={() => that.deletePrescriptions(presc)}>
+                                                <Menu.Item key="2" onClick={() => that.deletePrescriptions(presc)}
+                                                           disabled={(presc.practice != this.props.active_practiceId)}>
                                                     <Icon type="delete"/>
                                                     Delete
                                                 </Menu.Item>
@@ -236,13 +238,6 @@ class PatientPrescriptions extends React.Component {
                         <InfiniteFeedLoaderButton loading={this.state.loading}
                                                   loaderFunction={() => this.loadPrescriptions(this.state.nextPrescriptionPage)}
                                                   hidden={!this.state.nextPrescriptionPage}/>
-                        {this.state.nextPrescriptionPage ?
-                            <div style={{textAlign: 'center'}}>
-                                <Button type="primary" disabled={this.state.loading}
-                                        onClick={this.getMorePriscriptions}>
-                                    Load More...
-                                </Button>
-                            </div> : null}
                     </div>
                 </Route>
             </Switch>
@@ -250,9 +245,47 @@ class PatientPrescriptions extends React.Component {
             </div>
         }
         else {
-            return <Card>
-                <h2> select patient to further continue</h2>
-            </Card>
+            return <div>
+                {this.state.prescription.map((presc) => <div>
+
+                    <Card style={{margin: 10, marginBottom: 20}}
+                          bodyStyle={{padding: 0}}>
+                        <div style={{padding: 16}}>
+                            <h4>{presc.date ? moment(presc.date).format('ll') : null}
+                                <Dropdown.Button
+
+                                    size={"small"}
+                                    style={{float: 'right'}}
+                                    overlay={<Menu>
+                                        <Menu.Item key="1" onClick={() => that.editPrescriptionData(presc)}
+                                                   disabled={(presc.practice != this.props.active_practiceId)}>
+                                            <Icon type="edit"/>
+                                            Edit
+                                        </Menu.Item>
+                                        <Menu.Item key="2" onClick={() => that.deletePrescriptions(presc)}
+                                                   disabled={(presc.practice != this.props.active_practiceId)}>
+                                            <Icon type="delete"/>
+                                            Delete
+                                        </Menu.Item>
+                                        <Menu.Divider/>
+                                        <Menu.Item key="3">
+                                            <Icon type="clock-circle"/>
+                                            Patient Timeline
+                                        </Menu.Item>
+                                    </Menu>}>
+                                    <a onClick={() => this.loadPDF(presc.id)}><Icon type="printer"/></a>
+                                </Dropdown.Button>
+                            </h4>
+
+                        </div>
+                        <Table columns={columns} dataSource={presc.drugs} pagination={false}
+                               footer={() => prescriptonFooter(presc)}
+                               key={presc.id}/>
+                    </Card></div>)}
+                <InfiniteFeedLoaderButton loading={this.state.loading}
+                                          loaderFunction={() => this.loadPrescriptions(this.state.nextPrescriptionPage)}
+                                          hidden={!this.state.nextPrescriptionPage}/>
+            </div>
         }
 
     }

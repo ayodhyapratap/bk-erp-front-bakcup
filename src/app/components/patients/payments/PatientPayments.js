@@ -1,6 +1,6 @@
 import React from "react";
 
-import {Button, Card, Checkbox, Divider, Icon, Spin, Table, Tag, Row} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Spin, Table, Tag, Row,Alert} from "antd";
 import {getAPI, interpolate} from "../../../utils/common";
 import {PAYMENT_MODES, INVOICES_API, PATIENT_PAYMENTS_API, TAXES} from "../../../constants/api";
 import moment from "moment";
@@ -56,9 +56,9 @@ class PatientPayments extends React.Component {
         if (this.props.match.params.id) {
             apiParams.patient = this.props.match.params.id;
         }
-        if (this.props.showAllClinic && this.props.match.params.id) {
-            delete (apiParams.practice)
-        }
+        // if (this.props.showAllClinic && this.props.match.params.id) {
+        //     delete (apiParams.practice)
+        // }
         getAPI(PATIENT_PAYMENTS_API, successFn, errorFn, apiParams);
     }
 
@@ -127,6 +127,7 @@ class PatientPayments extends React.Component {
 
         if (this.props.match.params.id) {
             return <div>
+                <Alert  banner showIcon type={"info"} message={"The payments shown are only for the current selected practice!"}/>
                 <Switch>
                     <Route exact path='/patient/:id/billing/payments/add'
                            render={(route) => <AddPaymentForm {...this.state} {...route}

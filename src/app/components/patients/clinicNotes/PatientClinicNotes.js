@@ -1,4 +1,4 @@
-import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag, Spin} from "antd";
 import React from "react";
 import {getAPI, interpolate, postAPI} from "../../../utils/common";
 import {INVOICES_API, PATIENT_CLINIC_NOTES_API, CLINIC_NOTES_PDF} from "../../../constants/api";
@@ -189,11 +189,13 @@ class PatientClinicNotes extends React.Component {
                                         size={"small"}
                                         style={{float: 'right'}}
                                         overlay={<Menu>
-                                            <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}>
+                                            <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}
+                                                       disabled={(clinicNote.practice != this.props.active_practiceId)}>
                                                 <Icon type="edit"/>
                                                 Edit
                                             </Menu.Item>
-                                            <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}>
+                                            <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}
+                                                       disabled={(clinicNote.practice != this.props.active_practiceId)}>
                                                 <Icon type="delete"/>
                                                 Delete
                                             </Menu.Item>
@@ -276,6 +278,9 @@ class PatientClinicNotes extends React.Component {
                                     </Tag> : null}
                             </div>
                         </Card>)}
+                        <Spin spinning={this.state.loading}>
+                            <Row/>
+                        </Spin>
                         <InfiniteFeedLoaderButton loaderFunction={() => this.loadClinicNotes(that.state.next)}
                                                   loading={this.state.loading}
                                                   hidden={!this.state.next}/>
@@ -293,11 +298,13 @@ class PatientClinicNotes extends React.Component {
                                 size={"small"}
                                 style={{float: 'right'}}
                                 overlay={<Menu>
-                                    <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}>
+                                    <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}
+                                               disabled={(clinicNote.practice != this.props.active_practiceId)}>
                                         <Icon type="edit"/>
                                         Edit
                                     </Menu.Item>
-                                    <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}>
+                                    <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}
+                                               disabled={(clinicNote.practice != this.props.active_practiceId)}>
                                         <Icon type="delete"/>
                                         Delete
                                     </Menu.Item>
@@ -380,6 +387,9 @@ class PatientClinicNotes extends React.Component {
                             </Tag> : null}
                     </div>
                 </Card>)}
+                <Spin spinning={this.state.loading}>
+                    <Row/>
+                </Spin>
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadClinicNotes(that.state.next)}
                                           loading={this.state.loading}
                                           hidden={!this.state.next}/>

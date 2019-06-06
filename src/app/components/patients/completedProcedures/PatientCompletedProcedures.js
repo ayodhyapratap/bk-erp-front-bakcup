@@ -17,6 +17,7 @@ class PatientCompletedProcedures extends React.Component {
             treatmentPlans: [],
             procedure_category: null,
             completedTreatmentPlans: [],
+            incompletedTreatmentPlans:[],
             productMargin: [],
             loading: true
         }
@@ -219,11 +220,11 @@ class PatientCompletedProcedures extends React.Component {
                                             size={"small"}
                                             style={{float: 'right'}}
                                             overlay={<Menu>
-                                                <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)}>
+                                                <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
                                                     <Icon type="edit"/>
                                                     Edit
                                                 </Menu.Item>
-                                                <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}>
+                                                <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
                                                     <Icon type="delete"/>
                                                     Delete
                                                 </Menu.Item>
@@ -254,9 +255,46 @@ class PatientCompletedProcedures extends React.Component {
             </div>
         }
         else {
-            return <Card>
-                <h2> select patient to further continue</h2>
-            </Card>
+            return <div>
+                {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
+                                                                    style={{marginTop: 15}}>
+                        <div style={{padding: 16}}>
+                            <h4>{treatment.date ? moment(treatment.date).format('ll') : null}
+                                <Dropdown.Button
+                                    size={"small"}
+                                    style={{float: 'right'}}
+                                    overlay={<Menu>
+                                        <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
+                                            <Icon type="edit"/>
+                                            Edit
+                                        </Menu.Item>
+                                        <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
+                                            <Icon type="delete"/>
+                                            Delete
+                                        </Menu.Item>
+                                        <Menu.Divider/>
+                                        <Menu.Item key="3">
+                                            <Icon type="clock-circle"/>
+                                            Patient Timeline
+                                        </Menu.Item>
+                                    </Menu>}>
+                                    <Icon type="printer"/>
+                                </Dropdown.Button>
+                            </h4>
+
+                        </div>
+                        <Table loading={this.state.loading} columns={columns}
+                               dataSource={treatment.treatment_plans}
+                               footer={() => treatmentFooter(treatment)}
+                               pagination={false}
+                               key={treatment.id}/>
+
+                    </Card>
+                )}
+                <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.next}/>
+            </div>
         }
 
     }

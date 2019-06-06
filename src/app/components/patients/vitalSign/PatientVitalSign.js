@@ -47,7 +47,7 @@ class PatientVitalSign extends React.Component {
         }
         let apiParams = {
             page: page,
-            practice : this.props.active_practiceId
+            practice: this.props.active_practiceId
         };
         if (this.props.match.params.id) {
             apiParams.patient = this.props.match.params.id;
@@ -171,11 +171,13 @@ class PatientVitalSign extends React.Component {
             key: 'action',
             render: (text, record) => (
                 <span>
-                    <a onClick={() => this.loadPDF(record.id)}>Print</a>
+                    <a onClick={() => this.loadPDF(record.id)}
+                       >Print</a>
                     <Divider type="vertical"/>
-                  <a onClick={() => this.editObject(record)}>Edit</a>
+                  <a onClick={() => this.editObject(record)}
+                     disabled={(record.practice != that.props.active_practiceId)}>Edit</a>
                     <Divider type="vertical"/>
-                    <a onClick={() => that.deleteVitalSign(record)}>Delete</a>
+                    <a onClick={() => that.deleteVitalSign(record)} disabled={(record.practice != that.props.active_practiceId)}>Delete</a>
                 </span>
             ),
         }];
@@ -323,7 +325,14 @@ class PatientVitalSign extends React.Component {
             </Switch>
         }
         else {
-            return <PatientRequiredNoticeCard/>
+            return <div>
+                <CustomizedTable loading={this.state.loading} columns={columns}
+                                 pagination={false}
+                                 dataSource={this.state.vitalsign}/>
+                <InfiniteFeedLoaderButton loaderFunction={() => this.loadInvoices(that.state.next)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.next}/>
+            </div>
         }
     }
 
