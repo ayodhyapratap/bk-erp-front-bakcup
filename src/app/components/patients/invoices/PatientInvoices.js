@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Divider, Icon, Table, Tag, Row, Col, Statistic, Alert, Menu, Dropdown, Modal} from "antd";
+import {Button, Card, Divider, Icon, Table, Tag, Row, Col, Statistic, Alert, Menu, Dropdown, Modal, Spin} from "antd";
 import {getAPI, interpolate, postAPI} from "../../../utils/common";
 import {DRUG_CATALOG, INVOICES_API, PRESCRIPTIONS_API, PROCEDURE_CATEGORY, TAXES} from "../../../constants/api";
 import moment from "moment";
@@ -33,16 +33,14 @@ class PatientInvoices extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.match.params.id) {
-            this.loadInvoices();
-            this.loadDrugCatalog();
-            this.loadProcedureCategory()
-            this.loadTaxes();
-        }
+        this.loadInvoices();
+        this.loadDrugCatalog();
+        this.loadProcedureCategory()
+        this.loadTaxes();
 
     }
 
-    loadInvoices() {
+    loadInvoices(page = 1) {
         let that = this;
         that.setState({
             loading: true
@@ -60,7 +58,17 @@ class PatientInvoices extends React.Component {
             })
 
         }
-        getAPI(interpolate(INVOICES_API, [this.props.match.params.id]), successFn, errorFn, {page: that.state.loadMoreInvoice || 1});
+        let apiParams = {
+            page: page,
+            practice: this.props.active_practiceId,
+        };
+        if (this.props.match.params.id) {
+            apiParams.patient = this.props.match.params.id;
+        }
+        if (this.props.showAllClinic && this.props.match.params.id) {
+            delete (apiParams.practice)
+        }
+        getAPI(INVOICES_API, successFn, errorFn, apiParams);
     }
 
     loadDrugCatalog() {
@@ -225,13 +233,14 @@ class PatientInvoices extends React.Component {
                                         style={{float: 'right'}}
                                         overlay={<Menu>
                                             <Menu.Item key="1" onClick={() => that.editPrescriptionData(invoice)}>
-                                                <Link to={"/patient/" + this.props.match.params.id + "/billing/payments/add"}>
-                                                <Icon type="money"/>
-                                                Pay
+                                                <Link
+                                                    to={"/patient/" + this.props.match.params.id + "/billing/payments/add"}>
+                                                    <Icon type="money"/>
+                                                    Pay
                                                 </Link>
                                             </Menu.Item>
                                             <Menu.Divider/>
-                                            <Menu.Item key="2" >
+                                            <Menu.Item key="2">
                                                 <Icon type="edit"/>
                                                 Edit
                                             </Menu.Item>
@@ -268,7 +277,11 @@ class PatientInvoices extends React.Component {
 
                             </Card>
                         </div>)}
-                        <InfiniteFeedLoaderButton loaderFunction={this.loadInvoices}
+                        <Spin spinning={this.state.loading}>
+                            <Row>
+                            </Row>
+                        </Spin>
+                        <InfiniteFeedLoaderButton loaderFunction={() => this.loadInvoices(this.state.loadMoreInvoice)}
                                                   loading={this.state.loading}
                                                   hidden={!this.state.loadMoreInvoice}/>
 

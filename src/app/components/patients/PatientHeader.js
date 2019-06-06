@@ -1,5 +1,5 @@
 import React from "react";
-import {Avatar, Button, Drawer, Icon, Layout, Tooltip, Dropdown, Tag} from "antd";
+import {Avatar, Button, Drawer, Icon, Layout, Tooltip, Dropdown, Tag, Switch} from "antd";
 import PatientSelection from "./PatientSelection";
 import {Link} from "react-router-dom";
 import {patientSettingMenu} from "../../utils/clinicUtils";
@@ -37,9 +37,15 @@ class PatientHeader extends React.Component {
                         </a>
                         &nbsp;&nbsp;&nbsp;&nbsp;
                         <Tooltip placement="top" title={"Medical History"}>
-                        {that.props.currentPatient.medical_history_data ? that.props.currentPatient.medical_history_data.map(item =>
-                            <Tag>{item.name}</Tag>) : null}
+                            {that.props.currentPatient.medical_history_data ? that.props.currentPatient.medical_history_data.map(item =>
+                                <Tag>{item.name}</Tag>) : null}
                         </Tooltip>
+                        <Switch
+                            checked={this.props.showAllClinic}
+                            onChange={(value)=>this.props.toggleShowAllClinic(value)}
+                            checkedChildren={"All Clinics"}
+                            unCheckedChildren={"Current Clinic"}
+                        />
                     </div> :
                     <a style={{padding: '8px', fontSize: '20px'}}
                        onClick={() => this.props.togglePatientListModal(true)}>

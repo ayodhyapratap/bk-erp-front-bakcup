@@ -43,14 +43,14 @@ class PatientPrescriptions extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.match.params.id) {
-            this.loadPrescriptions();
-            this.loadDrugCatalog();
-        }
+        // if (this.props.match.params.id) {
+        this.loadPrescriptions();
+        this.loadDrugCatalog();
+        // }
 
     }
 
-    loadPrescriptions() {
+    loadPrescriptions(page = 1) {
         let that = this;
         let successFn = function (data) {
             that.setState({
@@ -65,8 +65,19 @@ class PatientPrescriptions extends React.Component {
             })
 
         }
-        getAPI(interpolate(PRESCRIPTIONS_API, [this.props.match.params.id]), successFn, errorFn)
+        let apiParams = {
+            page: page,
+            practice: this.props.active_practiceId
+        };
+        if (this.props.match.params.id) {
+            apiParams.patient = this.props.match.params.id;
+        }
+        if (this.props.showAllClinic && this.props.match.params.id) {
+            delete (apiParams.practice)
+        }
+        getAPI(PRESCRIPTIONS_API, successFn, errorFn, apiParams)
     }
+
     loadPDF(id) {
         let that = this;
         let successFn = function (data) {
@@ -78,23 +89,7 @@ class PatientPrescriptions extends React.Component {
         }
         getAPI(interpolate(PRESCRIPTION_PDF, [id]), successFn, errorFn);
     }
-    getMorePriscriptions() {
-        let that = this;
-        let next = this.state.nextPrescriptionPage;
-        let successFn = function (data) {
-            if (data.current == next)
-                that.setState(function (prevState) {
-                    return {
-                        prescription: [...prevState.prescription, ...data.results],
-                        nextPrescriptionPage: data.next,
-                    }
-                })
-        }
-        let errorFn = function () {
 
-        }
-        getAPI(PATIENTS_LIST, successFn, errorFn, {page: parseInt(next)});
-    }
 
     loadDrugCatalog() {
         let that = this;
@@ -144,7 +139,7 @@ class PatientPrescriptions extends React.Component {
             },
         });
     }
-    
+
 
     render() {
         const drugs = {}
@@ -156,29 +151,29 @@ class PatientPrescriptions extends React.Component {
         }
         let that = this;
         const columns = [{
-                title: 'Drug',
-                key: 'name',
-                dataIndex: 'name',
-            }, {
-                title: 'Frequency',
-                dataIndex: 'frequency',
-                key: 'frequency',
-                render: (frequency, record) => <span>{record.dosage}&nbsp;{record.frequency}</span>
-            }, {
-                title: 'Duration',
-                dataIndex: 'duration',
-                key: 'duration',
-                render: (duration, record) => <span>{duration}&nbsp;{record.duration_type}</span>
-            }, {
-                title: 'Instruction',
-                dataIndex: 'instruction',
-                key: 'instruction',
-                render: (instruction, record) => <span>
+            title: 'Drug',
+            key: 'name',
+            dataIndex: 'name',
+        }, {
+            title: 'Frequency',
+            dataIndex: 'frequency',
+            key: 'frequency',
+            render: (frequency, record) => <span>{record.dosage}&nbsp;{record.frequency}</span>
+        }, {
+            title: 'Duration',
+            dataIndex: 'duration',
+            key: 'duration',
+            render: (duration, record) => <span>{duration}&nbsp;{record.duration_type}</span>
+        }, {
+            title: 'Instruction',
+            dataIndex: 'instruction',
+            key: 'instruction',
+            render: (instruction, record) => <span>
                     {record.before_food ? <Tag>before food </Tag> : null}
-                    {record.after_food ? <Tag>after food</Tag> : null}
-                    {instruction}
+                {record.after_food ? <Tag>after food</Tag> : null}
+                {instruction}
                 </span>
-            }];
+        }];
 
         if (this.props.match.params.id) {
             return <div><Switch>
@@ -211,7 +206,7 @@ class PatientPrescriptions extends React.Component {
                                 <div style={{padding: 16}}>
                                     <h4>{presc.date ? moment(presc.date).format('ll') : null}
                                         <Dropdown.Button
-                                           
+
                                             size={"small"}
                                             style={{float: 'right'}}
                                             overlay={<Menu>
@@ -239,7 +234,7 @@ class PatientPrescriptions extends React.Component {
                                        key={presc.id}/>
                             </Card></div>)}
                         <InfiniteFeedLoaderButton loading={this.state.loading}
-                                                  loaderFunction={this.getMorePriscriptions}
+                                                  loaderFunction={() => this.loadPrescriptions(this.state.nextPrescriptionPage)}
                                                   hidden={!this.state.nextPrescriptionPage}/>
                         {this.state.nextPrescriptionPage ?
                             <div style={{textAlign: 'center'}}>

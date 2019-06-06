@@ -1,11 +1,12 @@
 import React from "react";
 import {Button, Card, Col, Icon, List, Modal, Radio, Row, Checkbox, Menu, Dropdown, Input} from "antd";
 import {getAPI, postAPI, interpolate, makeFileURL} from "../../../utils/common";
-import {ALL_PATIENT_FILES, EMR_FILETAGS, PATIENT_FILES,MEDICAL_CERTIFICATE_API} from "../../../constants/api";
+import {ALL_PATIENT_FILES, EMR_FILETAGS, PATIENT_FILES, MEDICAL_CERTIFICATE_API} from "../../../constants/api";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Form} from "antd/lib/index";
 import {MULTI_SELECT_FIELD, SINGLE_IMAGE_UPLOAD_FIELD, INPUT_FIELD} from "../../../constants/dataKeys";
 import {Redirect, Link} from 'react-router-dom';
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 class PatientFiles extends React.Component {
     constructor(props) {
@@ -18,7 +19,7 @@ class PatientFiles extends React.Component {
             selectedFiles: {},
             selectedTags: [],
             filterSearchTag: null,
-            showAddMedicalModel:false
+            showAddMedicalModel: false
         };
         this.loadData = this.loadData.bind(this);
     }
@@ -28,12 +29,25 @@ class PatientFiles extends React.Component {
         this.loadTags()
     }
 
-    loadData() {
+    loadData(page = 1) {
         let that = this;
+        this.setState({
+            loading:true
+        })
         let successFn = function (data) {
-            that.setState({
-                files: data,
-                loading: false
+            that.setState(function (prevState) {
+                if (data.current == 1) {
+                    return {
+                        files: [...data.results],
+                        loading: false
+                    }
+                } else {
+                    return {
+                        files: [...prevState.files, ...data.results],
+                        loading: false
+                    }
+                }
+
             })
         }
         let errorFn = function () {
@@ -41,16 +55,23 @@ class PatientFiles extends React.Component {
                 loading: false
             })
         }
-        let queryParams = {};
-        if (this.state.filterSearchTag) {
-            queryParams.tag = this.state.filterSearchTag
-        } else if (this.state.filterSearchTag == '') {
-            queryParams.notag = true
+        let apiParams = {
+            page: page,
+            practice: this.props.active_practiceId,
+        };
+        if (this.props.match.params.id) {
+            apiParams.patient = this.props.match.params.id;
         }
-        if (this.props.match.params.id)
-            getAPI(interpolate(PATIENT_FILES, [this.props.match.params.id]), successFn, errorFn, queryParams);
-        else
-            getAPI(ALL_PATIENT_FILES, successFn, errorFn, queryParams);
+        if (this.props.showAllClinic && this.props.match.params.id) {
+            delete (apiParams.practice)
+        }
+        if (this.state.filterSearchTag) {
+            apiParams.tag = this.state.filterSearchTag
+        } else if (this.state.filterSearchTag == '') {
+            apiParams.notag = true
+        }
+        getAPI(PATIENT_FILES, successFn, errorFn, apiParams);
+
     }
 
     loadTags() {
@@ -74,9 +95,10 @@ class PatientFiles extends React.Component {
             showAddModal: !!option
         })
     }
-    triggerAddMedicalCertificateModal(option){
+
+    triggerAddMedicalCertificateModal(option) {
         this.setState({
-            showAddMedicalModel: !! option
+            showAddMedicalModel: !!option
         })
     }
 
@@ -129,7 +151,7 @@ class PatientFiles extends React.Component {
     render() {
         let that = this;
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
-        const  PatientMedicalCertificateForm = Form.create()(DynamicFieldsForm);
+        const PatientMedicalCertificateForm = Form.create()(DynamicFieldsForm);
         const fields = [{
             key: 'file_type',
             label: 'File',
@@ -151,10 +173,10 @@ class PatientFiles extends React.Component {
             action: interpolate(PATIENT_FILES, [this.props.match.params.id])
         }
 
-        const medicalFields=[{
-            key:'name',
-            label:'name',
-            type:INPUT_FIELD,
+        const medicalFields = [{
+            key: 'name',
+            label: 'name',
+            type: INPUT_FIELD,
         }, {
             key: 'file_tags',
             label: 'Tags',
@@ -163,14 +185,14 @@ class PatientFiles extends React.Component {
         }];
         const medicalFormProps = {
             method: 'post',
-            successFn:function(){
+            successFn: function () {
                 that.triggerAddMedicalCertificateModal(false);
                 that.loadData();
             },
-            errorFn:function(){
+            errorFn: function () {
 
             },
-            action:interpolate(MEDICAL_CERTIFICATE_API,[this.props.match.params.id])
+            action: interpolate(MEDICAL_CERTIFICATE_API, [this.props.match.params.id])
         }
         const tagsMenu = (
             <Menu>
@@ -187,10 +209,12 @@ class PatientFiles extends React.Component {
         const defaultFields = [{key: 'is_active', value: true}, {key: 'patient', value: this.props.match.params.id}]
         return <Card title="Files"
                      extra={<Button.Group>
-                            <Link to={"/patient/"+ this.props.match.params.id + "/emr/create-medicalCertificate"}> <Button type="primary">
-                                <Icon type="plus"/>&nbsp;Add Medical Certificate</Button> </Link>
+                         <Link to={"/patient/" + this.props.match.params.id + "/emr/create-medicalCertificate"}> <Button
+                             type="primary">
+                             <Icon type="plus"/>&nbsp;Add Medical Certificate</Button> </Link>
 
-                         <Button onClick={() => this.triggerAddMedicalCertificateModal(true)}><Icon type="plus"/>Add Certificate</Button>
+                         <Button onClick={() => this.triggerAddMedicalCertificateModal(true)}><Icon type="plus"/>Add
+                             Certificate</Button>
                          <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft">
                              <Button><Icon type="plus"/>AddFile/remove</Button>
                          </Dropdown>
@@ -240,7 +264,7 @@ class PatientFiles extends React.Component {
                                       height: '150px',
                                       border: '1px solid #bbb',
                                       background: '#fff url("' + makeFileURL(item.file_type) + '") no-repeat center center',
-                                      backgroundSize:'cover',
+                                      backgroundSize: 'cover',
 
                                   }}>
                                       <Checkbox key={item.id}
@@ -260,7 +284,11 @@ class PatientFiles extends React.Component {
 
                           )}
                     />
+                    <InfiniteFeedLoaderButton loaderFunction={() => this.loadData(that.state.next)}
+                                              loading={this.state.loading}
+                                              hidden={!this.state.next}/>
                 </Col>
+
             </Row>
             <Modal visible={this.state.showAddModal}
                    onCancel={() => this.triggerAddModal(false)}
@@ -277,7 +305,7 @@ class PatientFiles extends React.Component {
                     <PatientMedicalCertificateForm title="Add Medical Certificate"
                                   fields={medicalFields}
                                   defaultFields={defaultFields}
-                                  formProp={medicalFormProps}/>     
+                                  formProp={medicalFormProps}/>
             </Modal> */}
 
         </Card>

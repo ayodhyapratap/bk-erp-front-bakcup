@@ -6,6 +6,7 @@ import moment from "moment";
 import {Link, Redirect, Route, Switch} from "react-router-dom";
 import {SELECT_FIELD} from "../../../constants/dataKeys";
 import AddorEditDynamicCompletedTreatmentPlans from "./AddorEditDynamicCompletedTreatmentPlans";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 class PatientCompletedProcedures extends React.Component {
     constructor(props) {
@@ -25,11 +26,11 @@ class PatientCompletedProcedures extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.match.params.id) {
+        // if (this.props.match.params.id) {
             this.loadTreatmentPlans();
             this.loadProcedureCategory();
             this.loadProductMargin();
-        }
+        // }
     }
 
     loadProductMargin() {
@@ -48,22 +49,27 @@ class PatientCompletedProcedures extends React.Component {
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
 
-    loadTreatmentPlans() {
+    loadTreatmentPlans(page=1) {
         let incompleted = [];
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                treatmentPlans: data,
-                loading: false
+            that.setState(function (prevState) {
+                return {
+                    treatmentPlans: [...prevState.treatmentPlans, ...data.results],
+                    next: data.next,
+                    loading: false
+                }
             })
-            data.forEach(function (treatmentplan) {
+            data.results.forEach(function (treatmentplan) {
                 if (!treatmentplan.is_completed) {
                     incompleted.push(treatmentplan)
                 }
             })
-            that.setState({
-                incompletedTreatmentPlans: incompleted,
-                loading: false
+            that.setState(function (prevState) {
+                return {
+                    incompletedTreatmentPlans: [...prevState.incompletedTreatmentPlans, ...incompleted],
+                    loading: false
+                }
             })
         }
         let errorFn = function () {
@@ -72,7 +78,18 @@ class PatientCompletedProcedures extends React.Component {
             })
 
         }
-        getAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id, true]), successFn, errorFn)
+        let apiParams = {
+            page: page,
+            practice: this.props.active_practiceId,
+            complete:true
+        };
+        if (this.props.match.params.id) {
+            apiParams.patient = this.props.match.params.id;
+        }
+        if (this.props.showAllClinic && this.props.match.params.id) {
+            delete (apiParams.practice)
+        }
+        getAPI(TREATMENTPLANS_API, successFn, errorFn)
     }
 
     loadProcedureCategory() {
@@ -229,7 +246,9 @@ class PatientCompletedProcedures extends React.Component {
 
                             </Card>
                         )}
-
+                        <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
+                                                  loading={this.state.loading}
+                                                  hidden={!this.state.next}/>
                     </Card>
                 </Switch>
             </div>

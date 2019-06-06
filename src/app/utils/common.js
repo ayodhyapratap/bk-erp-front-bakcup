@@ -11,7 +11,14 @@ import {
     PASS_LOWER, PASS_SPEC,
     PASS_UPPER
 } from "../constants/messages";
-import {ERROR_MSG_TYPE, INFO_MSG_TYPE, SUCCESS_MSG_TYPE, WARNING_MSG_TYPE} from "../constants/dataKeys";
+import {
+    CALENDAR_SETTINGS,
+    ERROR_MSG_TYPE,
+    INFO_MSG_TYPE,
+    SUCCESS_MSG_TYPE,
+    WARNING_MSG_TYPE
+} from "../constants/dataKeys";
+import * as lockr from "lockr";
 
 export const makeURL = function (URL) {
     return API_URL + '/' + URL;
@@ -246,4 +253,14 @@ export const validatePassword = function (rule, value, callback) {
         return (PASS_SPEC);
     }
     return;
+}
+
+export const saveCommonSettings = function (type, value) {
+    lockr.set(type, value);
+}
+export const getCommonSettings = function (type) {
+    let savedStates = lockr.get(type);
+    if (savedStates)
+        return savedStates;
+    return false;
 }

@@ -9,6 +9,7 @@ import CustomizedTable from "../../common/CustomizedTable";
 import AddorEditPatientVitalSigns from "./AddorEditPatientVitalSigns";
 import {AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Area, LineChart, Line} from 'recharts';
 import {BACKEND_BASE_URL} from "../../../config/connect";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 const {Meta} = Card;
 const Search = Input.Search;
@@ -27,24 +28,34 @@ class PatientVitalSign extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.match.params.id) {
-            this.loadVitalsigns();
-        }
-
+        this.loadVitalsigns();
     }
 
-    loadVitalsigns() {
+    loadVitalsigns(page = 1) {
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                vitalsign: data,
-                loading: false
+            that.setState(function (prevState) {
+                return {
+                    vitalsign: [...prevState.vitalsign, ...data.results],
+                    next: data.next,
+                    loading: false
+                }
             })
         }
         let errorFn = function () {
 
         }
-        getAPI(interpolate(VITAL_SIGNS_API, [this.props.match.params.id]), successFn, errorFn)
+        let apiParams = {
+            page: page,
+            practice : this.props.active_practiceId
+        };
+        if (this.props.match.params.id) {
+            apiParams.patient = this.props.match.params.id;
+        }
+        if (this.props.showAllClinic && this.props.match.params.id) {
+            delete (apiParams.practice)
+        }
+        getAPI(VITAL_SIGNS_API, successFn, errorFn, apiParams)
     }
 
     deleteVitalSign = (record) => {
@@ -67,6 +78,7 @@ class PatientVitalSign extends React.Component {
         this.props.history.push("/patient/" + id + "/emr/vitalsigns/edit")
 
     }
+
     loadPDF(id) {
         let that = this;
         let successFn = function (data) {
@@ -297,7 +309,12 @@ class PatientVitalSign extends React.Component {
                             </Tabs.TabPane>
                             <Tabs.TabPane tab={"Details"} key={2}>
                                 <CustomizedTable loading={this.state.loading} columns={columns}
+                                                 pagination={false}
                                                  dataSource={this.state.vitalsign}/>
+                                <InfiniteFeedLoaderButton loaderFunction={() => this.loadInvoices(that.state.next)}
+                                                          loading={this.state.loading}
+                                                          hidden={!this.state.next}/>
+
                             </Tabs.TabPane>
 
                         </Tabs>
