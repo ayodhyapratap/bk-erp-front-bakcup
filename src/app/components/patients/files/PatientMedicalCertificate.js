@@ -6,8 +6,11 @@ import {postAPI, interpolate, displayMessage} from "../../../utils/common";
 import {ATTENDANCE} from "../../../constants/hardData";
 import {MEDICAL_CERTIFICATE_API} from "../../../constants/api";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import moment from 'moment';
 
 
+// const { MonthPicker, RangePicker } = DatePicker;
+const dateFormat = 'YYYY/MM/DD';
 const { TextArea } = Input;
 const { Option } = Select;
 class PatientMedicalCertificate extends React.Component {
@@ -18,8 +21,13 @@ class PatientMedicalCertificate extends React.Component {
             excused_duty_checked:false,
             fit_light_duty_checked:false,
             attendance_checked:false,
+            startDate: this.props.value,
+            endDate: new Date(),
+            days:0,
         }
-        
+        this.handleChangeStart =this.handleChangeStart.bind(this);
+        this.handleChangeEnd = this.handleChangeEnd.bind(this);
+        this.totalDays = this.totalDays.bind(this);
     console.log(this.props);
     }
     changeRedirect() {
@@ -49,7 +57,31 @@ class PatientMedicalCertificate extends React.Component {
             attendance_checked:!this.state.attendance_checked
         });
     }
-
+    handleChangeStart = (date)=> {
+        console.log("date kya h0",this.state.startDate)
+        this.setState({
+          startDate: date
+        });
+       
+    }
+    
+    
+    handleChangeEnd(date) {
+        console.log(date);
+        this.setState({
+          endDate: date
+        });
+    }
+    totalDays(){
+        let {startDate, endDate} = this.state;
+        console.log(startDate);
+        console.log(endDate);
+        let amount = (startDate-endDate);
+        this.setState({
+        days: amount
+        });
+    }
+    
     handleSubmit = (e) => {
         let that = this;
         e.preventDefault();
@@ -143,13 +175,14 @@ class PatientMedicalCertificate extends React.Component {
                     <Row>
                         <Col>
                             <Form.Item label="From">
-                                <DatePicker />
+                                <DatePicker defaultValue={moment('2015/01/01', dateFormat)} format={dateFormat}  selected={this.state.startDate} onChange={this.state.handleChangeStart} />
                             </Form.Item>
 
                             <Form.Item label="till">
-                                <DatePicker />
+                                <DatePicker defaultValue={moment('2015/01/01', dateFormat)} format={dateFormat} selected={this.state.endDate} onChange={this.state.handleChangeEnd} />
                             </Form.Item>
                         </Col>
+                        <p>{this.props.value}</p>
                     </Row>
                     :null
                 }
