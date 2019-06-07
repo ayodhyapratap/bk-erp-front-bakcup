@@ -138,27 +138,38 @@ class PatientMedicalCertificate extends React.Component {
                     <Row>
                         <Col span={6} offset={6}>
                             <Form.Item label="From">
-                                <DatePicker />
+                                {getFieldDecorator('f',{})
+                                    (<DatePicker/>)
+                                }
                             </Form.Item>
 
                             <Form.Item label="till">
-                                <DatePicker />
+                                {getFieldDecorator('f',{})
+                                    (<DatePicker/>)
+                                }
                             </Form.Item>
                             
                         </Col>
                         <Col span={6} >
                             <Form.Item>
-                                <Select>
-                                    <Option value="M">Morning</Option>
-                                    <Option value="E">Evening</Option>
-                                </Select>
+                                {getFieldDecorator('f',{})
+                                (
+                                    <Select>
+                                        <Option value="M">Morning</Option>
+                                        <Option value="E">Evening</Option>
+                                    </Select>
+                                )}
+                                
                             </Form.Item>
 
                             <Form.Item>
-                                <Select>
-                                    <Option value="M">Morning</Option>
-                                    <Option value="E">Evening</Option>
-                                </Select>
+                                {getFieldDecorator('f',{})
+                                (
+                                    <Select>
+                                        <Option value="M">Morning</Option>
+                                        <Option value="E">Evening</Option>
+                                    </Select>
+                                )}
                             </Form.Item>
                         </Col>
                     </Row>
@@ -175,11 +186,21 @@ class PatientMedicalCertificate extends React.Component {
                     <Row>
                         <Col>
                             <Form.Item label="From">
-                                <DatePicker defaultValue={moment('2015/01/01', dateFormat)} format={dateFormat}  selected={this.state.startDate} onChange={this.state.handleChangeStart} />
+                                {getFieldDecorator('f',{})
+                                    (
+                                        <DatePicker defaultValue={moment('2015/01/01', dateFormat)} format={dateFormat}  selected={this.state.startDate} onChange={this.state.handleChangeStart} />
+                                    )
+                                }
+                                
                             </Form.Item>
 
                             <Form.Item label="till">
-                                <DatePicker defaultValue={moment('2015/01/01', dateFormat)} format={dateFormat} selected={this.state.endDate} onChange={this.state.handleChangeEnd} />
+                                {getFieldDecorator('f',{})
+                                    (
+                                        <DatePicker defaultValue={moment('2015/01/01', dateFormat)} format={dateFormat} selected={this.state.endDate} onChange={this.state.handleChangeEnd} />
+                                    )
+                                }
+                                
                             </Form.Item>
                         </Col>
                         <p>{this.props.value}</p>
@@ -195,36 +216,56 @@ class PatientMedicalCertificate extends React.Component {
                 {this.state.attendance_checked ? 
                     <Row>
                         <Form.Item label="on">
-                            <DatePicker />
+                            {getFieldDecorator('f',{})
+                                (<DatePicker/>)
+                            }
                         </Form.Item>
                         <Col span={6} offset={6}>
                             <Form.Item label="From">
-                                <Select>
-                                    <Option value="M">5pm</Option>
-                                    <Option value="E">8pm</Option>
-                                </Select>
+                                {getFieldDecorator('f',{})
+                                    (
+                                        <Select>
+                                            <Option value="M">5pm</Option>
+                                            <Option value="E">8pm</Option>
+                                        </Select>
+                                    )
+                                }
+                               
                             </Form.Item>
                             <Form.Item label="till">
-                                <Select>
-                                    <Option value="M">8</Option>
-                                    <Option value="E">9</Option>
-                                </Select>
+                                {getFieldDecorator('f',{})
+                                    (
+                                        <Select>
+                                            <Option value="M">8</Option>
+                                            <Option value="E">9</Option>
+                                        </Select>
+                                    )
+                                }
+                                
                             </Form.Item>
                         
                         </Col>
                         <Col span={4} >
                             <Form.Item>
-                                <Select>
-                                    <Option value="M">8</Option>
-                                    <Option value="E">9</Option>
-                                </Select>
+                                {getFieldDecorator('f',{})
+                                    (
+                                        <Select>
+                                            <Option value="M">5pm</Option>
+                                            <Option value="E">8pm</Option>
+                                        </Select>
+                                    )
+                                }
                             </Form.Item>
     
                             <Form.Item>
-                                <Select>
-                                    <Option value="M">8</Option>
-                                    <Option value="E">9</Option>
-                                </Select>
+                                {getFieldDecorator('f',{})
+                                    (
+                                        <Select>
+                                            <Option value="M">8</Option>
+                                            <Option value="E">9</Option>
+                                        </Select>
+                                    )
+                                }
                             </Form.Item>
                         </Col>
                         </Row>

@@ -1,6 +1,6 @@
 import React from "react";
 
-import {Button, Card, Checkbox, Divider, Icon, Table, Tag} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Spin, Table, Tag, Row,Alert} from "antd";
 import {getAPI, interpolate} from "../../../utils/common";
 import {PAYMENT_MODES, INVOICES_API, PATIENT_PAYMENTS_API, TAXES} from "../../../constants/api";
 import moment from "moment";
@@ -8,6 +8,7 @@ import {Link} from "react-router-dom";
 import {Route, Switch} from "react-router";
 import AddPayment from "./AddPayment";
 import AddPaymentForm from "./AddPaymentForm";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 
 class PatientPayments extends React.Component {
@@ -28,12 +29,18 @@ class PatientPayments extends React.Component {
     }
 
 
-    loadPayments() {
+    loadPayments(page = 1) {
         let that = this;
+        this.setState({
+            loading: true
+        })
         let successFn = function (data) {
-            that.setState({
-                payments: data.results,
-                loading: false
+            that.setState(function (prevState) {
+                return {
+                    payments: [...prevState.payments, ...data.results],
+                    next: data.next,
+                    loading: false
+                }
             })
         }
         let errorFn = function () {
@@ -42,10 +49,17 @@ class PatientPayments extends React.Component {
             })
 
         }
-        getAPI(PATIENT_PAYMENTS_API, successFn, errorFn, {
-            id: this.props.match.params.id,
-            practice: this.props.active_practiceId
-        });
+        let apiParams = {
+            page: page,
+            practice: this.props.active_practiceId,
+        };
+        if (this.props.match.params.id) {
+            apiParams.patient = this.props.match.params.id;
+        }
+        // if (this.props.showAllClinic && this.props.match.params.id) {
+        //     delete (apiParams.practice)
+        // }
+        getAPI(PATIENT_PAYMENTS_API, successFn, errorFn, apiParams);
     }
 
     loadInvoices() {
@@ -92,6 +106,7 @@ class PatientPayments extends React.Component {
     }
 
     render() {
+        let that = this;
         const paymentmodes = {}
         if (this.state.paymentModes) {
             this.state.paymentModes.forEach(function (mode) {
@@ -112,9 +127,11 @@ class PatientPayments extends React.Component {
 
         if (this.props.match.params.id) {
             return <div>
+                <Alert  banner showIcon type={"info"} message={"The payments shown are only for the current selected practice!"}/>
                 <Switch>
                     <Route exact path='/patient/:id/billing/payments/add'
-                           render={(route) => <AddPaymentForm {...this.state} {...route} loadData={this.loadInvoices}/>}/>
+                           render={(route) => <AddPaymentForm {...this.state} {...route}
+                                                              loadData={this.loadInvoices}/>}/>
                     <Route exact path='/patient/:id/billing/payments/edit'
                            render={(route) => <AddPayment {...this.state} {...route}/>}/>
                     <Route>
@@ -137,6 +154,12 @@ class PatientPayments extends React.Component {
                                            dataSource={payment.invoices}/>
                                 </Card>
                             </div>)}
+                            <Spin spinning={this.state.loading}>
+                                <Row/>
+                            </Spin>
+                            <InfiniteFeedLoaderButton loaderFunction={() => this.loadPayments(that.state.next)}
+                                                      loading={this.state.loading}
+                                                      hidden={!this.state.next}/>
                         </div>
                     </Route>
                 </Switch>

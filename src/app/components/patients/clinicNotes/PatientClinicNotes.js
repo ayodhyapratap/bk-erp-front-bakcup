@@ -1,7 +1,7 @@
-import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag, Spin} from "antd";
 import React from "react";
 import {getAPI, interpolate, postAPI} from "../../../utils/common";
-import {INVOICES_API, PATIENT_CLINIC_NOTES_API,CLINIC_NOTES_PDF} from "../../../constants/api";
+import {INVOICES_API, PATIENT_CLINIC_NOTES_API, CLINIC_NOTES_PDF} from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
 import {Link, Redirect} from "react-router-dom";
@@ -10,6 +10,7 @@ import {CUSTOM_STRING_SEPERATOR} from "../../../constants/hardData";
 import AddClinicNotesDynamic from "./AddClinicNotesDynamic";
 import {Modal} from "antd/lib/index";
 import {BACKEND_BASE_URL} from "../../../config/connect";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 const confirm = Modal.confirm;
 
@@ -29,18 +30,21 @@ class PatientClinicNotes extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.match.params.id) {
-            this.loadClinicNotes();
-        }
+        // if (this.props.match.params.id) {
+        this.loadClinicNotes();
+        // }
 
     }
 
-    loadClinicNotes() {
+    loadClinicNotes(page = 1) {
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                clinicNotes: data,
-                loading: false
+            that.setState(function (prevState) {
+                return {
+                    clinicNotes: [...prevState.clinicNotes, ...data.results],
+                    next: data.next,
+                    loading: false
+                }
             })
         }
         let errorFn = function () {
@@ -49,7 +53,19 @@ class PatientClinicNotes extends React.Component {
             })
 
         }
-        getAPI(interpolate(PATIENT_CLINIC_NOTES_API, [this.props.match.params.id]), successFn, errorFn)
+        let apiParams = {
+            page: page,
+            practice: this.props.active_practiceId
+        };
+        if (this.props.match.params.id) {
+            apiParams.patient = this.props.match.params.id;
+        }
+        if (this.props.showAllClinic && this.props.match.params.id) {
+            delete (apiParams.practice)
+        }
+
+        getAPI(PATIENT_CLINIC_NOTES_API, successFn, errorFn, apiParams)
+
     }
 
 
@@ -173,11 +189,13 @@ class PatientClinicNotes extends React.Component {
                                         size={"small"}
                                         style={{float: 'right'}}
                                         overlay={<Menu>
-                                            <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}>
+                                            <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}
+                                                       disabled={(clinicNote.practice != this.props.active_practiceId)}>
                                                 <Icon type="edit"/>
                                                 Edit
                                             </Menu.Item>
-                                            <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}>
+                                            <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}
+                                                       disabled={(clinicNote.practice != this.props.active_practiceId)}>
                                                 <Icon type="delete"/>
                                                 Delete
                                             </Menu.Item>
@@ -188,7 +206,7 @@ class PatientClinicNotes extends React.Component {
                                             </Menu.Item>
                                         </Menu>}>
                                         <a onClick={() => this.loadPDF(clinicNote.id)}><Icon type="printer"/></a>
-                                        
+
                                     </Dropdown.Button>
                                 </h4>
                                 <Divider style={{margin: 0}}/>
@@ -260,15 +278,121 @@ class PatientClinicNotes extends React.Component {
                                     </Tag> : null}
                             </div>
                         </Card>)}
+                        <Spin spinning={this.state.loading}>
+                            <Row/>
+                        </Spin>
+                        <InfiniteFeedLoaderButton loaderFunction={() => this.loadClinicNotes(that.state.next)}
+                                                  loading={this.state.loading}
+                                                  hidden={!this.state.next}/>
                     </div>
                 </Route>
             </Switch>
-
             </div>
         }
         else {
             return <Card>
-                <h2> select patient to further continue</h2>
+                {this.state.clinicNotes.map(clinicNote => <Card style={{marginTop: 20}}>
+                    <div>
+                        <h4>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}
+                            <Dropdown.Button
+                                size={"small"}
+                                style={{float: 'right'}}
+                                overlay={<Menu>
+                                    <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}
+                                               disabled={(clinicNote.practice != this.props.active_practiceId)}>
+                                        <Icon type="edit"/>
+                                        Edit
+                                    </Menu.Item>
+                                    <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}
+                                               disabled={(clinicNote.practice != this.props.active_practiceId)}>
+                                        <Icon type="delete"/>
+                                        Delete
+                                    </Menu.Item>
+                                    <Menu.Divider/>
+                                    <Menu.Item key="3">
+                                        <Icon type="clock-circle"/>
+                                        Patient Timeline
+                                    </Menu.Item>
+                                </Menu>}>
+                                <a onClick={() => this.loadPDF(clinicNote.id)}><Icon type="printer"/></a>
+
+                            </Dropdown.Button>
+                        </h4>
+                        <Divider style={{margin: 0}}/>
+                        <Row>
+                            <Col span={6}>
+                                <h3>Complaints</h3>
+                            </Col>
+                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                <div style={{minHeight: 30}}>
+                                    {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                        <span>{str}<br/></span>) : null}
+                                </div>
+                                <Divider style={{margin: 0}}/>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={6}>
+                                <h3>Observations</h3>
+                            </Col>
+                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                <div style={{minHeight: 30}}>
+                                    {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                        <span>{str}<br/></span>) : null}
+                                </div>
+                                <Divider style={{margin: 0}}/>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={6}>
+                                <h3>Investigations</h3>
+                            </Col>
+                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                <div style={{minHeight: 30}}>
+                                    {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                        <span>{str}<br/></span>) : null}
+                                </div>
+                                <Divider style={{margin: 0}}/>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={6}>
+                                <h3>Diagnoses</h3>
+                            </Col>
+                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                <div style={{minHeight: 30}}>
+                                    {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                        <span>{str}<br/></span>) : null}
+                                </div>
+                                <Divider style={{margin: 0}}/>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={6}>
+                                <h3>Notes</h3>
+                            </Col>
+                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                <div style={{minHeight: 30}}>
+                                    {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                        <span>{str}<br/></span>) : null}
+                                </div>
+                                <Divider style={{margin: 0}}/>
+                            </Col>
+                        </Row>
+                    </div>
+                    <div>
+                        {clinicNote.doctor ?
+                            <Tag color={clinicNote.doctor ? clinicNote.doctor.calendar_colour : null}>
+                                <b>{"prescribed by  " + clinicNote.doctor.user.first_name} </b>
+                            </Tag> : null}
+                    </div>
+                </Card>)}
+                <Spin spinning={this.state.loading}>
+                    <Row/>
+                </Spin>
+                <InfiniteFeedLoaderButton loaderFunction={() => this.loadClinicNotes(that.state.next)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.next}/>
             </Card>
         }
 

@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Divider, Icon, Table, Tag, Row, Col, Statistic, Alert, Menu, Dropdown, Modal} from "antd";
+import {Button, Card, Divider, Icon, Table, Tag, Row, Col, Statistic, Alert, Menu, Dropdown, Modal, Spin} from "antd";
 import {getAPI, interpolate, postAPI} from "../../../utils/common";
 import {DRUG_CATALOG, INVOICES_API, PRESCRIPTIONS_API, PROCEDURE_CATEGORY, TAXES} from "../../../constants/api";
 import moment from "moment";
@@ -33,16 +33,14 @@ class PatientInvoices extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.match.params.id) {
-            this.loadInvoices();
-            this.loadDrugCatalog();
-            this.loadProcedureCategory()
-            this.loadTaxes();
-        }
+        this.loadInvoices();
+        this.loadDrugCatalog();
+        this.loadProcedureCategory()
+        this.loadTaxes();
 
     }
 
-    loadInvoices() {
+    loadInvoices(page = 1) {
         let that = this;
         that.setState({
             loading: true
@@ -60,7 +58,17 @@ class PatientInvoices extends React.Component {
             })
 
         }
-        getAPI(interpolate(INVOICES_API, [this.props.match.params.id]), successFn, errorFn, {page: that.state.loadMoreInvoice || 1});
+        let apiParams = {
+            page: page,
+            practice: this.props.active_practiceId,
+        };
+        if (this.props.match.params.id) {
+            apiParams.patient = this.props.match.params.id;
+        }
+        // if (this.props.showAllClinic && this.props.match.params.id) {
+        //     delete (apiParams.practice)
+        // }
+        getAPI(INVOICES_API, successFn, errorFn, apiParams);
     }
 
     loadDrugCatalog() {
@@ -197,92 +205,161 @@ class PatientInvoices extends React.Component {
         },];
 
         if (this.props.match.params.id) {
-            return <div><Switch>
-                <Route exact path='/patient/:id/billing/invoices/add'
-                       render={(route) => <AddInvoicedynamic {...this.state} {...this.props} {...route}
-                                                             loadData={this.loadInvoices}/>}/>
-                <Route exact path='/patient/:id/billing/invoices/edit'
-                       render={(route) => <AddInvoice {...this.state} {...route}/>}/>
-                <Route>
-                    <div>
-                        <Card
-                            bodyStyle={{padding: 0}}
-                            style={{marginBottom: '20px'}}
-                            title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Invoice" : "Invoice"}
-                            extra={<Button.Group>
-                                <Link to={"/patient/" + this.props.match.params.id + "/billing/invoices/add"}>
-                                    <Button type={"primary"}>
-                                        <Icon type="plus"/>Add
-                                    </Button>
-                                </Link>
-                            </Button.Group>}>
-                        </Card>
-                        {this.state.invoices.map(invoice => <div style={{marginBottom: '20px'}}>
-                            <Card>
-                                <h4>{invoice.date ? moment(invoice.date).format('ll') : null}
-                                    <Dropdown.Button
-                                        size={"small"}
-                                        style={{float: 'right'}}
-                                        overlay={<Menu>
-                                            <Menu.Item key="1" onClick={() => that.editPrescriptionData(invoice)}>
-                                                <Link to={"/patient/" + this.props.match.params.id + "/billing/payments/add"}>
-                                                <Icon type="money"/>
-                                                Pay
-                                                </Link>
-                                            </Menu.Item>
-                                            <Menu.Divider/>
-                                            <Menu.Item key="2" >
-                                                <Icon type="edit"/>
-                                                Edit
-                                            </Menu.Item>
-                                            <Menu.Item key="3" onClick={() => that.deleteInvoice(invoice)}>
-                                                <Icon type="delete"/>
-                                                Delete
-                                            </Menu.Item>
-                                            <Menu.Divider/>
-                                            <Menu.Item key="4">
-                                                <Icon type="clock-circle"/>
-                                                Patient Timeline
-                                            </Menu.Item>
-                                        </Menu>}>
-                                        <Icon type="printer"/>
-                                    </Dropdown.Button>
-                                </h4>
-
-                                <Row gutter={8}>
-                                    <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4}>
-                                        {invoice.is_cancelled ?
-                                            <Alert message="Cancelled" type="error" showIcon/> : null}
-                                        <Divider>INV{invoice.id}</Divider>
-                                        <Statistic title="Paid / Total " value={invoice.payments_data}
-                                                   suffix={"/ " + invoice.total}/>
-                                    </Col>
-                                    <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
-                                        <Table
-                                            bordered={true}
-                                            pagination={false} loading={this.state.loading}
-                                            columns={columns}
-                                            dataSource={[...invoice.inventory, ...invoice.procedure]}/>
-                                    </Col>
-                                </Row>
-
+            return <div>
+                <Switch>
+                    <Route exact path='/patient/:id/billing/invoices/add'
+                           render={(route) => <AddInvoicedynamic {...this.state} {...this.props} {...route}
+                                                                 loadData={this.loadInvoices}/>}/>
+                    <Route exact path='/patient/:id/billing/invoices/edit'
+                           render={(route) => <AddInvoice {...this.state} {...route}/>}/>
+                    <Route>
+                        <div>
+                            <Alert banner showIcon type={"info"}
+                                   message={"The invoices shown are only for the current selected practice!"}/>
+                            <Card
+                                bodyStyle={{padding: 0}}
+                                style={{marginBottom: '20px'}}
+                                title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Invoice" : "Invoice"}
+                                extra={<Button.Group>
+                                    <Link to={"/patient/" + this.props.match.params.id + "/billing/invoices/add"}>
+                                        <Button type={"primary"}>
+                                            <Icon type="plus"/>Add
+                                        </Button>
+                                    </Link>
+                                </Button.Group>}>
                             </Card>
-                        </div>)}
-                        <InfiniteFeedLoaderButton loaderFunction={this.loadInvoices}
-                                                  loading={this.state.loading}
-                                                  hidden={!this.state.loadMoreInvoice}/>
+                            {this.state.invoices.map(invoice => <div style={{marginBottom: '20px'}}>
+                                <Card>
+                                    <h4>{invoice.date ? moment(invoice.date).format('ll') : null}
+                                        <Dropdown.Button
+                                            size={"small"}
+                                            style={{float: 'right'}}
+                                            overlay={<Menu>
+                                                <Menu.Item key="1" onClick={() => that.editPrescriptionData(invoice)}>
+                                                    <Link
+                                                        to={"/patient/" + this.props.match.params.id + "/billing/payments/add"}>
+                                                        <Icon type="money"/>
+                                                        Pay
+                                                    </Link>
+                                                </Menu.Item>
+                                                <Menu.Divider/>
+                                                <Menu.Item key="2"
+                                                           disabled={(invoice.practice != this.props.active_practiceId)}>
+                                                    <Icon type="edit"/>
+                                                    Edit
+                                                </Menu.Item>
+                                                <Menu.Item key="3" onClick={() => that.deleteInvoice(invoice)}
+                                                           disabled={(invoice.practice != this.props.active_practiceId)}>
+                                                    <Icon type="delete"/>
+                                                    Delete
+                                                </Menu.Item>
+                                                <Menu.Divider/>
+                                                <Menu.Item key="4">
+                                                    <Icon type="clock-circle"/>
+                                                    Patient Timeline
+                                                </Menu.Item>
+                                            </Menu>}>
+                                            <Icon type="printer"/>
+                                        </Dropdown.Button>
+                                    </h4>
+                                    <Row gutter={8}>
+                                        <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4}>
+                                            {invoice.is_cancelled ?
+                                                <Alert message="Cancelled" type="error" showIcon/> : null}
+                                            <Divider>INV{invoice.id}</Divider>
+                                            <Statistic title="Paid / Total " value={invoice.payments_data}
+                                                       suffix={"/ " + invoice.total}/>
+                                        </Col>
+                                        <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
+                                            <Table
+                                                bordered={true}
+                                                pagination={false} loading={this.state.loading}
+                                                columns={columns}
+                                                dataSource={[...invoice.inventory, ...invoice.procedure]}/>
+                                        </Col>
+                                    </Row>
 
-                    </div>
+                                </Card>
+                            </div>)}
+                            <Spin spinning={this.state.loading}>
+                                <Row>
+                                </Row>
+                            </Spin>
+                            <InfiniteFeedLoaderButton
+                                loaderFunction={() => this.loadInvoices(this.state.loadMoreInvoice)}
+                                loading={this.state.loading}
+                                hidden={!this.state.loadMoreInvoice}/>
 
-                </Route>
-            </Switch>
+                        </div>
+                    </Route>
+                </Switch>
 
             </div>
-        }
-        else {
-            return <Card>
-                <h2> select patient to further continue</h2>
-            </Card>
+        } else {
+            return <div>
+                <Alert banner showIcon type={"info"}
+                       message={"The invoices shown are only for the current selected practice!"}/>
+                {this.state.invoices.map(invoice => <div style={{marginBottom: '20px'}}>
+                    <Card>
+                        <h4>{invoice.date ? moment(invoice.date).format('ll') : null}
+                            <Dropdown.Button
+                                size={"small"}
+                                style={{float: 'right'}}
+                                overlay={<Menu>
+                                    <Menu.Item key="1" onClick={() => that.editPrescriptionData(invoice)}>
+                                        <Link
+                                            to={"/patient/" + this.props.match.params.id + "/billing/payments/add"}>
+                                            <Icon type="money"/>
+                                            Pay
+                                        </Link>
+                                    </Menu.Item>
+                                    <Menu.Divider/>
+                                    <Menu.Item key="2" disabled={(invoice.practice != this.props.active_practiceId)}>
+                                        <Icon type="edit"/>
+                                        Edit
+                                    </Menu.Item>
+                                    <Menu.Item key="3" onClick={() => that.deleteInvoice(invoice)}
+                                               disabled={(invoice.practice != this.props.active_practiceId)}>
+                                        <Icon type="delete"/>
+                                        Delete
+                                    </Menu.Item>
+                                    <Menu.Divider/>
+                                    <Menu.Item key="4">
+                                        <Icon type="clock-circle"/>
+                                        Patient Timeline
+                                    </Menu.Item>
+                                </Menu>}>
+                                <Icon type="printer"/>
+                            </Dropdown.Button>
+                        </h4>
+                        <Row gutter={8}>
+                            <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4}>
+                                {invoice.is_cancelled ?
+                                    <Alert message="Cancelled" type="error" showIcon/> : null}
+                                <Divider>INV{invoice.id}</Divider>
+                                <Statistic title="Paid / Total " value={invoice.payments_data}
+                                           suffix={"/ " + invoice.total}/>
+                            </Col>
+                            <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
+                                <Table
+                                    bordered={true}
+                                    pagination={false} loading={this.state.loading}
+                                    columns={columns}
+                                    dataSource={[...invoice.inventory, ...invoice.procedure]}/>
+                            </Col>
+                        </Row>
+
+                    </Card>
+                </div>)}
+                <Spin spinning={this.state.loading}>
+                    <Row>
+                    </Row>
+                </Spin>
+                <InfiniteFeedLoaderButton loaderFunction={() => this.loadInvoices(this.state.loadMoreInvoice)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.loadMoreInvoice}/>
+
+            </div>
         }
 
     }

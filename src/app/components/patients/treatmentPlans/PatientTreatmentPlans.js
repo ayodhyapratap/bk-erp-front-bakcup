@@ -10,13 +10,19 @@ import {
     Modal
 } from "antd";
 import {Link} from "react-router-dom";
-import {PROCEDURE_CATEGORY,TREATMENTPLANS_API, TREATMENTPLANS_MARK_COMPLETE_API,TREATMENTPLANS_PDF} from "../../../constants/api";
+import {
+    PROCEDURE_CATEGORY,
+    TREATMENTPLANS_API,
+    TREATMENTPLANS_MARK_COMPLETE_API,
+    TREATMENTPLANS_PDF
+} from "../../../constants/api";
 import {getAPI, interpolate, displayMessage, postAPI} from "../../../utils/common";
 import moment from "moment";
 import {Redirect, Switch, Route} from "react-router";
 import AddorEditDynamicTreatmentPlans from "./AddorEditDynamicTreatmentPlans";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
-import {BACKEND_BASE_URL} from "../../../config/connect"; 
+import {BACKEND_BASE_URL} from "../../../config/connect";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 const confirm = Modal.confirm;
 
@@ -39,29 +45,34 @@ class PatientTreatmentPlans extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.match.params.id) {
-            this.loadTreatmentPlans();
-            this.loadProcedureCategory();
-        }
+        // if (this.props.match.params.id) {
+        this.loadTreatmentPlans();
+        this.loadProcedureCategory();
+        // }
 
     }
 
-    loadTreatmentPlans() {
+    loadTreatmentPlans(page = 1) {
         let incompleted = [];
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                treatmentPlans: data,
-                loading: false
+            that.setState(function (prevState) {
+                return {
+                    treatmentPlans: [...prevState.treatmentPlans, ...data.results],
+                    next: data.next,
+                    loading: false
+                }
             })
-            data.forEach(function (treatmentplan) {
+            data.results.forEach(function (treatmentplan) {
                 if (!treatmentplan.is_completed) {
                     incompleted.push(treatmentplan)
                 }
             })
-            that.setState({
-                incompletedTreatmentPlans: incompleted,
-                loading: false
+            that.setState(function (prevState) {
+                return {
+                    incompletedTreatmentPlans: [...prevState.incompletedTreatmentPlans, ...incompleted],
+                    loading: false
+                }
             })
         }
         let errorFn = function () {
@@ -69,8 +80,19 @@ class PatientTreatmentPlans extends React.Component {
                 loading: false
             })
 
+        };
+        let apiParams = {
+            page: page,
+            practice: this.props.active_practiceId
+        };
+        if (this.props.match.params.id) {
+            apiParams.patient = this.props.match.params.id;
         }
-        getAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id, null]), successFn, errorFn)
+        if (this.props.showAllClinic && this.props.match.params.id) {
+            delete (apiParams.practice)
+        }
+        getAPI(TREATMENTPLANS_API, successFn, errorFn, apiParams)
+
     }
 
 
@@ -193,7 +215,8 @@ class PatientTreatmentPlans extends React.Component {
             key: 'is_completed',
             render: (text, record) => (record.is_completed ?
                     <Icon type="check-circle" theme="twoTone" style={{marginLeft: '8px', fontSize: '20px'}}/> :
-                    <Checkbox key={record.id} onChange={(e) => this.treatmentCompleteToggle(record.id, e.target.checked)}
+                    <Checkbox key={record.id}
+                              onChange={(e) => this.treatmentCompleteToggle(record.id, e.target.checked)}
                               value={this.state.selectedTreatments[record.id]}/>
             )
         }, {
@@ -241,7 +264,8 @@ class PatientTreatmentPlans extends React.Component {
                        render={(route) => <AddorEditDynamicTreatmentPlans {...this.state} {...route}/>}/>
                 <Route exact path='/patient/:id/emr/plans/edit'
                        render={(route) => (this.state.editTreatmentPlan ?
-                           <AddorEditDynamicTreatmentPlans {...this.state} {...route} editId={this.state.editTreatmentPlan.id}/> :
+                           <AddorEditDynamicTreatmentPlans {...this.state} {...route}
+                                                           editId={this.state.editTreatmentPlan.id}/> :
                            <Redirect to={"/patient/" + this.props.match.params.id + "/emr/plans"}/>)}/>
                 <div>
                     <Card
@@ -265,11 +289,11 @@ class PatientTreatmentPlans extends React.Component {
                                         size={"small"}
                                         style={{float: 'right'}}
                                         overlay={<Menu>
-                                            <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)}>
+                                            <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
                                                 <Icon type="edit"/>
                                                 Edit
                                             </Menu.Item>
-                                            <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}>
+                                            <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
                                                 <Icon type="delete"/>
                                                 Delete
                                             </Menu.Item>
@@ -292,15 +316,55 @@ class PatientTreatmentPlans extends React.Component {
 
                         </Card>
                     )}
+                    <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
+                                              loading={this.state.loading}
+                                              hidden={!this.state.next}/>
                 </div>
             </Switch>
 
             </div>
         }
         else {
-            return <Card>
-                <h2> select patient to further continue</h2>
-            </Card>
+            return <div>
+                {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
+                                                                    style={{marginTop: 15}}>
+                        <div style={{padding: 16}}>
+                            <h4>{treatment.date ? moment(treatment.date).format('ll') : null}
+                                <Dropdown.Button
+                                    size={"small"}
+                                    style={{float: 'right'}}
+                                    overlay={<Menu>
+                                        <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
+                                            <Icon type="edit"/>
+                                            Edit
+                                        </Menu.Item>
+                                        <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
+                                            <Icon type="delete"/>
+                                            Delete
+                                        </Menu.Item>
+                                        <Menu.Divider/>
+                                        <Menu.Item key="3">
+                                            <Icon type="clock-circle"/>
+                                            Patient Timeline
+                                        </Menu.Item>
+                                    </Menu>}>
+                                    <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
+                                </Dropdown.Button>
+                            </h4>
+
+                        </div>
+                        <Table loading={this.state.loading} columns={columns}
+                               dataSource={treatment.treatment_plans}
+                               footer={() => treatmentFooter(treatment)}
+                               pagination={false}
+                               key={treatment.id}/>
+
+                    </Card>
+                )}
+                <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.next}/>
+            </div>
         }
 
     }

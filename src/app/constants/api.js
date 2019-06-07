@@ -41,7 +41,7 @@ export const MERGE_PATIENTS = 'patients/merge_patients/';
 export const STAFF_ROLES = 'staff/roles/';
 export const MEDICAL_HISTORY = 'patients/history/?id=%s'
 // export const PATIENT_MEDICAL_HISTORY = 'patients/history/?id=%s';
-export const PATIENT_FILES = 'patients/files/?id=%s';
+export const PATIENT_FILES = 'patients/files/';
 export const ALL_PATIENT_FILES = 'patients/files/';
 export const EXPENSE_TYPE = 'clinics/%s/expense_type/';
 export const DRUG_CATALOG = 'clinics/%s/drugcatalog/';
@@ -55,21 +55,21 @@ export const APPOINTMENT_API = 'appointment/%s/';
 export const APPOINTMENT_PERPRACTICE_API = 'appointment/?id=%s';
 export const SINGLE_APPOINTMENT_PERPRACTICE_API = 'appointment/?id=%s&patient=%s';
 export const PATIENT_GROUPS = 'patients/group/?id=%s';
-export const VITAL_SIGNS_API = 'patients/vital_sign/?id=%s';
-export const PRESCRIPTIONS_API = 'patients/prescriptions/?id=%s';
+export const VITAL_SIGNS_API = 'patients/vital_sign/'; //?patient=patientId&practice=practiceId
+export const PRESCRIPTIONS_API = 'patients/prescriptions/'; //?id=patientId&practice=practiceId
 export const SINGLE_REATMENTPLANS_API = 'patients/procedure/?id=%s';
 export const BLOCK_CALENDAR = 'appointment/block_calendar/';
 export const ROOM_TYPE = 'clinics/room_types/';
 export const PATIENT_NOTES = 'patients/patient_notes/?patient=%s&practice=%s';
-export const LABPANEL_API= 'clinics/%s/labpanel/';
+export const LABPANEL_API = 'clinics/%s/labpanel/';
 export const MEDICAL_CERTIFICATE_API = 'patients/medical_certificate/';
 /*DELETE OBJECT*/
-export const TREATMENTPLANS_API = 'patients/procedure/?id=%s&complete=%s';
+export const TREATMENTPLANS_API = 'patients/procedure/'; //?id=patientId&complete=true/false
 export const TREATMENTPLANS_MARK_COMPLETE_API = 'patients/complete_procedure/?id=%s&complete=%s';
 export const ALL_PRESCRIPTIONS_API = 'patients/prescriptions/%s/';
-export const INVOICES_API = 'invoice/?id=%s';
+export const INVOICES_API = 'invoice/';
 export const CREATE_OR_EDIT_INVOICES = 'invoice/';
-export const PATIENT_CLINIC_NOTES_API = 'patients/clinic_notes/?id=%s';
+export const PATIENT_CLINIC_NOTES_API = 'patients/clinic_notes/';
 export const PATIENT_PAYMENTS_API = 'payment/';
 export const PRACTICE_PRINT_SETTING_API = 'clinics/%s/practice_print_settings/?type=%s&sub_type=%s';
 export const PATIENT_COMMUNICATION_HISTORY_API = 'users/sms_status_update/?user=%s';

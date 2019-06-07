@@ -6,6 +6,7 @@ import moment from "moment";
 import {Link, Redirect, Route, Switch} from "react-router-dom";
 import {SELECT_FIELD} from "../../../constants/dataKeys";
 import AddorEditDynamicCompletedTreatmentPlans from "./AddorEditDynamicCompletedTreatmentPlans";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 class PatientCompletedProcedures extends React.Component {
     constructor(props) {
@@ -16,6 +17,7 @@ class PatientCompletedProcedures extends React.Component {
             treatmentPlans: [],
             procedure_category: null,
             completedTreatmentPlans: [],
+            incompletedTreatmentPlans:[],
             productMargin: [],
             loading: true
         }
@@ -25,11 +27,11 @@ class PatientCompletedProcedures extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.match.params.id) {
+        // if (this.props.match.params.id) {
             this.loadTreatmentPlans();
             this.loadProcedureCategory();
             this.loadProductMargin();
-        }
+        // }
     }
 
     loadProductMargin() {
@@ -48,22 +50,27 @@ class PatientCompletedProcedures extends React.Component {
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
 
-    loadTreatmentPlans() {
+    loadTreatmentPlans(page=1) {
         let incompleted = [];
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                treatmentPlans: data,
-                loading: false
+            that.setState(function (prevState) {
+                return {
+                    treatmentPlans: [...prevState.treatmentPlans, ...data.results],
+                    next: data.next,
+                    loading: false
+                }
             })
-            data.forEach(function (treatmentplan) {
+            data.results.forEach(function (treatmentplan) {
                 if (!treatmentplan.is_completed) {
                     incompleted.push(treatmentplan)
                 }
             })
-            that.setState({
-                incompletedTreatmentPlans: incompleted,
-                loading: false
+            that.setState(function (prevState) {
+                return {
+                    incompletedTreatmentPlans: [...prevState.incompletedTreatmentPlans, ...incompleted],
+                    loading: false
+                }
             })
         }
         let errorFn = function () {
@@ -72,7 +79,18 @@ class PatientCompletedProcedures extends React.Component {
             })
 
         }
-        getAPI(interpolate(TREATMENTPLANS_API, [this.props.match.params.id, true]), successFn, errorFn)
+        let apiParams = {
+            page: page,
+            practice: this.props.active_practiceId,
+            complete:true
+        };
+        if (this.props.match.params.id) {
+            apiParams.patient = this.props.match.params.id;
+        }
+        if (this.props.showAllClinic && this.props.match.params.id) {
+            delete (apiParams.practice)
+        }
+        getAPI(TREATMENTPLANS_API, successFn, errorFn)
     }
 
     loadProcedureCategory() {
@@ -202,11 +220,11 @@ class PatientCompletedProcedures extends React.Component {
                                             size={"small"}
                                             style={{float: 'right'}}
                                             overlay={<Menu>
-                                                <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)}>
+                                                <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
                                                     <Icon type="edit"/>
                                                     Edit
                                                 </Menu.Item>
-                                                <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}>
+                                                <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
                                                     <Icon type="delete"/>
                                                     Delete
                                                 </Menu.Item>
@@ -229,15 +247,54 @@ class PatientCompletedProcedures extends React.Component {
 
                             </Card>
                         )}
-
+                        <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
+                                                  loading={this.state.loading}
+                                                  hidden={!this.state.next}/>
                     </Card>
                 </Switch>
             </div>
         }
         else {
-            return <Card>
-                <h2> select patient to further continue</h2>
-            </Card>
+            return <div>
+                {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
+                                                                    style={{marginTop: 15}}>
+                        <div style={{padding: 16}}>
+                            <h4>{treatment.date ? moment(treatment.date).format('ll') : null}
+                                <Dropdown.Button
+                                    size={"small"}
+                                    style={{float: 'right'}}
+                                    overlay={<Menu>
+                                        <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
+                                            <Icon type="edit"/>
+                                            Edit
+                                        </Menu.Item>
+                                        <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
+                                            <Icon type="delete"/>
+                                            Delete
+                                        </Menu.Item>
+                                        <Menu.Divider/>
+                                        <Menu.Item key="3">
+                                            <Icon type="clock-circle"/>
+                                            Patient Timeline
+                                        </Menu.Item>
+                                    </Menu>}>
+                                    <Icon type="printer"/>
+                                </Dropdown.Button>
+                            </h4>
+
+                        </div>
+                        <Table loading={this.state.loading} columns={columns}
+                               dataSource={treatment.treatment_plans}
+                               footer={() => treatmentFooter(treatment)}
+                               pagination={false}
+                               key={treatment.id}/>
+
+                    </Card>
+                )}
+                <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.next}/>
+            </div>
         }
 
     }
