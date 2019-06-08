@@ -97,18 +97,21 @@ class EditPatientDetails extends React.Component {
         console.log(this.props.currentPatient);
         const fields = [{
             label: "Patient Name",
+            placeholder:"Patient Name",
             key: "user.first_name",
             required: true,
             initialValue: this.props.currentPatient ? this.props.currentPatient.user.first_name : null,
             type: INPUT_FIELD
         }, {
             label: "Referral Code",
+            placeholder:"Referral Code",
             key: "user.referer_code",
             initialValue: this.props.currentPatient ? this.props.currentPatient.user.referer_code : null,
             type: INPUT_FIELD
         }, {
             label: "Aadhar ID",
             key: "aadhar_id",
+            placeholder:"Patient Aadhar Number",
             // required: true,
             initialValue: this.props.currentPatient ? this.props.currentPatient.aadhar_id : null,
             type: INPUT_FIELD
@@ -124,28 +127,33 @@ class EditPatientDetails extends React.Component {
         }, {
             label: "DOB",
             key: "dob",
+            placeholder:"Patient DOB",
             initialValue: this.props.currentPatient && this.props.currentPatient.dob ? moment(this.props.currentPatient.dob).format("YYYY-MM-DD") : '',
             format: "YYYY-MM-DD",
             type: DATE_PICKER
         }, {
             label: "Anniversary",
             key: "anniversary",
+            placeholder:"Patient Anniversary",
             initialValue: this.props.currentPatient && this.props.currentPatient.anniversary ? moment(this.props.currentPatient.anniversary) : null,
             format: "YYYY-MM-DD",
             type: DATE_PICKER
         }, {
             label: "Blood Group",
             key: "blood_group",
+            placeholder:"Patient Blood Group",
             initialValue: this.props.currentPatient ? this.props.currentPatient.blood_group : null,
             type: INPUT_FIELD
         }, {
             label: "Family Relation",
             key: "family_relation",
+            placeholder:"Patient Family Relation",
             initialValue: this.props.currentPatient ? this.props.currentPatient.family_relation : null,
             type: INPUT_FIELD,
         }, {
             label: "Mobile (Primary)",
             key: "user.mobile",
+            placeholder:"Patient Mobile Number (Primary)",
             initialValue: this.props.currentPatient ? this.props.currentPatient.user.mobile : null,
             type: INPUT_FIELD,
             required: true,
@@ -153,37 +161,44 @@ class EditPatientDetails extends React.Component {
         }, {
             label: "Mobile (Secondary)",
             key: "secondary_mobile_no",
+            placeholder:"Patient Mobile Number (Secondary",
             initialValue: this.props.currentPatient ? this.props.currentPatient.secondary_mobile_no : null,
             type: INPUT_FIELD,
         }, {
             label: "Landline",
             key: "landline_no",
+            placeholder:"Patient Landline Number",
             initialValue: this.props.currentPatient ? this.props.currentPatient.landline_no : null,
             type: INPUT_FIELD,
         }, {
             label: "Address",
             key: "address",
+            placeholder:"Patient Address",
             initialValue: this.props.currentPatient ? this.props.currentPatient.address : null,
             type: INPUT_FIELD,
         }, {
             label: "Locality",
             key: "locality",
+            placeholder:"Patient Locality",
             initialValue: this.props.currentPatient ? this.props.currentPatient.locality : null,
             type: INPUT_FIELD,
         }, {
             label: "City",
             key: "city",
+            placeholder:"Patient City",
             initialValue: this.props.currentPatient ? this.props.currentPatient.city : null,
             type: INPUT_FIELD
         }, {
             label: "Pincode",
             key: "pincode",
+            placeholder:"Patient PINCODE",
             initialValue: this.props.currentPatient ? this.props.currentPatient.pincode : null,
             type: INPUT_FIELD
         }, {
             label: "Email",
             required: true,
             key: "user.email",
+            placeholder:"Patient Email",
             initialValue: this.props.currentPatient ? this.props.currentPatient.user.email : null,
             type: EMAIL_FIELD
         }, {
