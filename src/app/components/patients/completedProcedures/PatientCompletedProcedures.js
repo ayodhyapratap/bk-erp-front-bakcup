@@ -1,12 +1,13 @@
 import React from "react";
 import {Button, Card, Checkbox, Divider, Icon, Table, Popconfirm, Menu, Dropdown, Tag} from "antd";
 import {getAPI, interpolate, putAPI, postAPI} from "../../../utils/common";
-import {PROCEDURE_CATEGORY, PRODUCT_MARGIN, TREATMENTPLANS_API, SINGLE_REATMENTPLANS_API} from "../../../constants/api";
+import {PROCEDURE_CATEGORY, PRODUCT_MARGIN, TREATMENTPLANS_API, SINGLE_REATMENTPLANS_API,TREATMENTPLANS_PDF} from "../../../constants/api";
 import moment from "moment";
 import {Link, Redirect, Route, Switch} from "react-router-dom";
 import {SELECT_FIELD} from "../../../constants/dataKeys";
 import AddorEditDynamicCompletedTreatmentPlans from "./AddorEditDynamicCompletedTreatmentPlans";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
+import {BACKEND_BASE_URL} from "../../../config/connect";
 
 class PatientCompletedProcedures extends React.Component {
     constructor(props) {
@@ -140,6 +141,18 @@ class PatientCompletedProcedures extends React.Component {
         postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id], null), reqData, successFn, errorFn);
     }
 
+    loadPDF(id) {
+        let that = this;
+        let successFn = function (data) {
+            if (data.report)
+                window.open(BACKEND_BASE_URL + data.report);
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(interpolate(TREATMENTPLANS_PDF, [id]), successFn, errorFn);
+    }
+
     render() {
         let that = this;
         const procedures = {}
@@ -234,7 +247,7 @@ class PatientCompletedProcedures extends React.Component {
                                                     Patient Timeline
                                                 </Menu.Item>
                                             </Menu>}>
-                                            <Icon type="printer"/>
+                                            <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
                                         </Dropdown.Button>
                                     </h4>
 
