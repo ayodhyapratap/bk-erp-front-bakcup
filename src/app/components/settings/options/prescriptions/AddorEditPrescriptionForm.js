@@ -65,7 +65,7 @@ class AddorEditPrescriptionForm extends React.Component {
             }
             let reqData = {
                 ...values,
-                practice: that.props.active_PracticeId,
+                practice: that.props.active_practiceId,
                 maintain_inventory: option,
                 item_type: DRUG
             }

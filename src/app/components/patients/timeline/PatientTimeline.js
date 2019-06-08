@@ -1,9 +1,18 @@
 import React from "react";
 import {Button, Card, Icon, Steps, Timeline, Row, Col, Checkbox, Spin, Tag, Table, Affix} from "antd";
-import {getAPI, interpolate, makeFileURL} from "../../../utils/common";
-import {PATIENT_TIMELINE_API} from "../../../constants/api";
+import {
+    getAPI,
+    interpolate,
+    makeFileURL,
+    postAPI,
+    startLoadingMessage,
+    stopLoadingMessage
+} from "../../../utils/common";
+import {PATIENT_TIMELINE_API, PATIENT_TIMELINE_PDF} from "../../../constants/api";
 import {CUSTOM_STRING_SEPERATOR} from "../../../constants/hardData";
 import moment from "moment";
+import {BACKEND_BASE_URL} from "../../../config/connect";
+import {ERROR_MSG_TYPE, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 
 const Step = Steps.Step;
 
@@ -52,11 +61,13 @@ class PatientTimeline extends React.Component {
                         lastDate = moment(item.sort_date);
                         timelineData.push({type: 'Time', date: item.sort_date})
                     }
-                    timelineData.push(item)
-                    if (checkList[item.type]) {
-                        checkList[item.type][item.id] = true;
-                    } else {
-                        checkList[item.type] = {[item.id]: true}
+                    timelineData.push(item);
+                    if (item.type != 'Appointments') {
+                        if (checkList[item.type]) {
+                            checkList[item.type][item.id] = true;
+                        } else {
+                            checkList[item.type] = {[item.id]: true}
+                        }
                     }
                 });
                 return {
@@ -130,6 +141,29 @@ class PatientTimeline extends React.Component {
             return returnObj;
         });
     };
+    printCaseSheet = () => {
+        let that = this;
+        let msg = startLoadingMessage("Starting print case sheet...");
+        let reqObj = {
+            practice: that.props.active_practiceId,
+            timeline: []
+        }
+        let keys = Object.keys(this.state.checkedTimelineCards);
+        keys.forEach(function (key) {
+            reqObj.timeline.push({
+                type: key,
+                id: Object.keys(that.state.checkedTimelineCards[key])
+            })
+        });
+        let successFn = function (data) {
+            stopLoadingMessage(msg,SUCCESS_MSG_TYPE,"Fetched report successfully!!");
+            window.open(BACKEND_BASE_URL + data.report);
+        }
+        let errorFn = function () {
+            stopLoadingMessage(msg,ERROR_MSG_TYPE,"Case sheet printing failed!!");
+        }
+        postAPI(interpolate(PATIENT_TIMELINE_PDF, [this.props.match.params.id]), reqObj, successFn, errorFn);
+    }
 
     render() {
         let that = this;
@@ -165,7 +199,7 @@ class PatientTimeline extends React.Component {
         return <Card title="Timeline"
                      extra={<Button.Group>
                          <Button>Email Case Sheet</Button>
-                         <Button type="primary">Print Case Sheet</Button>
+                         <Button type="primary" onClick={() => this.printCaseSheet()}>Print Case Sheet</Button>
                      </Button.Group>}>
             <Spin spinning={this.state.loading}>
                 <Row>
@@ -180,8 +214,6 @@ class PatientTimeline extends React.Component {
                     </Col>
                     <Col span={20}>
                         <Affix top={10}>
-
-
                             <h4 style={{
                                 textAlign: 'right', padding: '5px',
                                 backgroundImage: 'linear-gradient(to left, white , transparent)',
@@ -209,7 +241,9 @@ class PatientTimeline extends React.Component {
 
 export default PatientTimeline;
 
-function dateTimeStamp(item) {
+function
+
+dateTimeStamp(item) {
     return <span><Affix top={20} offsetTop={30}><h2 style={{
         marginLeft: '10px',
         padding: '5px',
@@ -218,7 +252,9 @@ function dateTimeStamp(item) {
     }}>{moment(item.date).format('LL')}</h2></Affix></span>
 }
 
-function timelineItem(item) {
+function
+
+timelineItem(item) {
     switch (item.type) {
         case 'Clinical Notes':
             return timelineClinicalNote(item);
@@ -245,11 +281,12 @@ function timelineItem(item) {
     }
 }
 
-function timelineAppointmentCard(item) {
+function
+
+timelineAppointmentCard(item) {
     return <Card hoverable>
-        <h2><Icon type="calendar"/> Appointment<Checkbox size="large" style={{float: 'right'}}
-                                                         checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
-                                                         onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/></h2>
+        <h2><Icon type="calendar"/> Appointment
+        </h2>
         {item.doctor_data ?
             <p style={{
                 borderLeft: '5px solid ' + item.doctor_data.calendar_colour,
@@ -259,20 +296,26 @@ function timelineAppointmentCard(item) {
     </Card>;
 }
 
-function timelineFilesCard(item) {
+function
+
+timelineFilesCard(item) {
     return <Card hoverable>
         <h2><Icon type="picture"/> File<Checkbox size="large" style={{float: 'right'}}
                                                  checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
-                                                 onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/></h2>
+                                                 onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+        </h2>
         <img src={makeFileURL(item.file_type)} alt="" style={{height: 100}}/>
     </Card>
 }
 
-function timelineInvoiceCard(item) {
+function
+
+timelineInvoiceCard(item) {
     return <Card hoverable>
         <h2><Icon type="audit"/> Invoice<Checkbox size="large" style={{float: 'right'}}
                                                   checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
-                                                  onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/></h2>
+                                                  onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+        </h2>
         {item.procedure.map(proc => <Tag>{proc.name}</Tag>)}
         {item.inventory.map(proc => <Tag>{proc.name}</Tag>)}
         <br/><b>INV{item.id}</b>
@@ -282,7 +325,9 @@ function timelineInvoiceCard(item) {
     </Card>
 }
 
-function timelineClinicalNote(item) {
+function
+
+timelineClinicalNote(item) {
     return <Card hoverable>
         <h2><Icon type="solution"/> Clinical Note Added<Checkbox size="large" style={{float: 'right'}}
                                                                  checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
@@ -331,7 +376,9 @@ function timelineClinicalNote(item) {
     </Card>;
 }
 
-function timelineVitalSignCard(item) {
+function
+
+timelineVitalSignCard(item) {
     const columns = [{
         title: 'Time',
         dataIndex: 'created_at',
@@ -365,7 +412,8 @@ function timelineVitalSignCard(item) {
     return <Card hoverable>
         <h2><Icon type="heart"/> Vital Sign Recorded<Checkbox size="large" style={{float: 'right'}}
                                                               checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
-                                                              onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/></h2>
+                                                              onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+        </h2>
         {item.doctor_data ?
             <p style={{
                 borderLeft: '5px solid ' + item.doctor_data.calendar_colour,
@@ -378,11 +426,14 @@ function timelineVitalSignCard(item) {
     </Card>
 }
 
-function timelinePrescriptionCard(item) {
+function
+
+timelinePrescriptionCard(item) {
     return <Card hoverable>
         <h2><Icon type="solution"/> Prescription Added<Checkbox size="large" style={{float: 'right'}}
                                                                 checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
-                                                                onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/></h2>
+                                                                onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+        </h2>
         {item.doctor ?
             <p style={{
                 borderLeft: '5px solid ' + item.doctor.calendar_colour,
@@ -392,21 +443,27 @@ function timelinePrescriptionCard(item) {
     </Card>
 }
 
-function timelinePaymentCard(item) {
+function
+
+timelinePaymentCard(item) {
     return <Card hoverable>
         <h2><Icon type="dollar"/> Payment<Checkbox size="large" style={{float: 'right'}}
                                                    checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
-                                                   onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/></h2>
+                                                   onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+        </h2>
         <b>RCPT{item.id}</b>
         <br/><b>Amount Paid: INR{item.total}</b>
     </Card>
 }
 
-function timelineProcedureCard(item) {
+function
+
+timelineProcedureCard(item) {
     return <Card>
         <h2>Procedure Performed<Checkbox size="large" style={{float: 'right'}}
                                          checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
-                                         onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/></h2>
+                                         onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+        </h2>
         {item.doctor ?
             <p style={{
                 borderLeft: '5px solid ' + item.doctor.calendar_colour,
@@ -416,11 +473,14 @@ function timelineProcedureCard(item) {
     </Card>
 }
 
-function timelineTreatmentPlanCard(item) {
+function
+
+timelineTreatmentPlanCard(item) {
     return <Card>
         <h2>Treatment Plan <Checkbox size="large" style={{float: 'right'}}
                                      checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
-                                     onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/></h2>
+                                     onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+        </h2>
         {item.doctor ?
             <p style={{
                 borderLeft: '5px solid ' + item.doctor.calendar_colour,
