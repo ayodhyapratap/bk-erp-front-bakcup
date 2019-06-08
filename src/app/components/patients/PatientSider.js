@@ -12,7 +12,7 @@ class PatientSider extends React.Component {
                       style={{overflow: 'auto', minHeight: 'calc(100vh - 64px)', background: '#fff'}}>
             {/*<div className="logo"/>*/}
             <Menu mode="inline">
-                <Menu.ItemGroup key="g1" title={<Divider style={{margin:'0px'}}>Patient</Divider>}>
+                <Menu.ItemGroup key="g1" title={<Divider style={{margin: '0px'}}>Patient</Divider>}>
                     <Menu.Item key="17">
                         <Link
                             to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/profile" : "/patients/profile"}>
@@ -25,14 +25,14 @@ class PatientSider extends React.Component {
                             <Icon type="calendar"/>Appointments
                         </Link>
                     </Menu.Item>
-                    <Menu.Item key="19" >
+                    <Menu.Item key="19">
                         <Link
                             to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/communications" : "/patients/communications"}>
                             <Icon type="message"/>Communications
                         </Link>
                     </Menu.Item>
                 </Menu.ItemGroup>
-                <Menu.ItemGroup key="g2" title={<Divider style={{margin:'0px'}}>EMR</Divider>}>
+                <Menu.ItemGroup key="g2" title={<Divider style={{margin: '0px'}}>EMR</Divider>}>
                     {/*<SubMenu key="nestedsub1" title={<span>EMR</span>}>*/}
                     <Menu.Item key="20">
                         <Link
@@ -69,12 +69,12 @@ class PatientSider extends React.Component {
                             <Icon type="solution"/>Prescriptions
                         </Link>
                     </Menu.Item>
-                    {/*<Menu.Item key="25" disabled={!this.props.currentPatient}>*/}
-                        {/*<Link*/}
-                            {/*to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/timeline" : "/patients/profile"}>*/}
-                            {/*<Icon type="clock-circle"/>Timeline*/}
-                        {/*</Link>*/}
-                    {/*</Menu.Item>*/}
+                    <Menu.Item key="25" disabled={!this.props.currentPatient}>
+                        <Link
+                            to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/timeline" : "/patients/profile"}>
+                            <Icon type="clock-circle"/>Timeline
+                        </Link>
+                    </Menu.Item>
                     <Menu.Item key="26" disabled={!this.props.currentPatient}>
                         <Link
                             to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/labtrackings" : "/patients/profile"}>
@@ -83,7 +83,7 @@ class PatientSider extends React.Component {
                     </Menu.Item>
                 </Menu.ItemGroup>
                 {/*</SubMenu>*/}
-                <Menu.ItemGroup key="g3" title={<Divider style={{margin:'0px'}}>Billing</Divider>}>
+                <Menu.ItemGroup key="g3" title={<Divider style={{margin: '0px'}}>Billing</Divider>}>
                     <Menu.Item key="27">
                         <Link
                             to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/invoices" : "/patients/billing/invoices"}>
@@ -97,10 +97,10 @@ class PatientSider extends React.Component {
                         </Link>
                     </Menu.Item>
                     {/*<Menu.Item key="29" disabled={!this.props.currentPatient}>*/}
-                        {/*<Link*/}
-                            {/*to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/ledger" : "/patients/profile"}>*/}
-                            {/*<Icon type="book"/>Ledger*/}
-                        {/*</Link>*/}
+                    {/*<Link*/}
+                    {/*to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/ledger" : "/patients/profile"}>*/}
+                    {/*<Icon type="book"/>Ledger*/}
+                    {/*</Link>*/}
                     {/*</Menu.Item>*/}
                 </Menu.ItemGroup>
             </Menu>

@@ -42,7 +42,6 @@ class AddorEditPatientVitalSigns extends React.Component {
     }
 
     render() {
-        console.log(this.props.currentPatient);
         const fields = [{
             label: "Pulse",
             key: "pulse",
@@ -88,7 +87,10 @@ class AddorEditPatientVitalSigns extends React.Component {
 
 
         let editformProp;
-        let defaultValues = []
+        let defaultValues = [{key: 'patient', value: this.props.match.params.id}, {
+            key: 'practice',
+            value: this.props.active_practiceId
+        }];
         let that = this;
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         if (this.state.editVitalSign) {
@@ -129,7 +131,9 @@ class AddorEditPatientVitalSigns extends React.Component {
                                            fields={fields}/> :
                            <Redirect to='/patients/profile'/>)}/>
                 <Route exact path='/patient/:id/emr/vitalsigns/add'
-                       render={() => <TestFormLayout title="Add vital sign" changeRedirect={this.changeRedirect}
+                       render={() => <TestFormLayout title="Add vital sign"
+                                                     defaultValues={defaultValues}
+                                                     changeRedirect={this.changeRedirect}
                                                      formProp={formProp} fields={fields}/>}/>
 
 

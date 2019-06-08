@@ -2,7 +2,7 @@ import React from "react";
 import {Avatar, Input, Table, Col, Button, Card, Icon, Divider, Tabs} from "antd";
 import {Link, Route, Switch} from "react-router-dom";
 import {PRESCRIPTION_PDF, VITAL_SIGN_PDF, VITAL_SIGNS_API} from "../../../constants/api";
-import {getAPI, interpolate, patchAPI, putAPI} from "../../../utils/common";
+import {getAPI, interpolate, patchAPI, postAPI, putAPI} from "../../../utils/common";
 import moment from 'moment';
 import PatientRequiredNoticeCard from "../PatientRequiredNoticeCard";
 import CustomizedTable from "../../common/CustomizedTable";
@@ -67,7 +67,7 @@ class PatientVitalSign extends React.Component {
         let errorFn = function () {
 
         }
-        patchAPI(interpolate(VITAL_SIGNS_API, [this.props.match.params.id]), reqData, successFn, errorFn)
+        postAPI(interpolate(VITAL_SIGNS_API, [this.props.match.params.id]), reqData, successFn, errorFn)
     }
     editObject = (record) => {
         this.setState({
@@ -92,50 +92,6 @@ class PatientVitalSign extends React.Component {
     }
 
     render() {
-        const data = [
-            {
-                "name": "Page A",
-                "uv": 4000,
-                "pv": 2400,
-                "amt": 2400
-            },
-            {
-                "name": "Page B",
-                "uv": 3000,
-                "pv": 1398,
-                "amt": 2210
-            },
-            {
-                "name": "Page C",
-                "uv": 2000,
-                "pv": 9800,
-                "amt": 2290
-            },
-            {
-                "name": "Page D",
-                "uv": 2780,
-                "pv": 3908,
-                "amt": 2000
-            },
-            {
-                "name": "Page E",
-                "uv": 1890,
-                "pv": 4800,
-                "amt": 2181
-            },
-            {
-                "name": "Page F",
-                "uv": 2390,
-                "pv": 3800,
-                "amt": 2500
-            },
-            {
-                "name": "Page G",
-                "uv": 3490,
-                "pv": 4300,
-                "amt": 2100
-            }
-        ]
         let that = this;
         const columns = [{
             title: 'Time',
@@ -172,12 +128,13 @@ class PatientVitalSign extends React.Component {
             render: (text, record) => (
                 <span>
                     <a onClick={() => this.loadPDF(record.id)}
-                       >Print</a>
+                    >Print</a>
                     <Divider type="vertical"/>
                   <a onClick={() => this.editObject(record)}
                      disabled={(record.practice != that.props.active_practiceId)}>Edit</a>
                     <Divider type="vertical"/>
-                    <a onClick={() => that.deleteVitalSign(record)} disabled={(record.practice != that.props.active_practiceId)}>Delete</a>
+                    <a onClick={() => that.deleteVitalSign(record)}
+                       disabled={(record.practice != that.props.active_practiceId)}>Delete</a>
                 </span>
             ),
         }];
@@ -186,10 +143,12 @@ class PatientVitalSign extends React.Component {
             return <Switch>
                 <Route path='/patient/:id/emr/vitalsigns/add'
                        render={(route) => <AddorEditPatientVitalSigns
+                           {...this.props}
                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}
                            loadData={this.loadVitalsigns}/>}/>
                 <Route path='/patient/:id/emr/vitalsigns/edit'
                        render={(route) => <AddorEditPatientVitalSigns
+                           {...this.props}
                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}
                            loadData={this.loadVitalsigns}/>}/>
                 <Route>

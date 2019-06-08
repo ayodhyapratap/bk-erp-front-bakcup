@@ -254,7 +254,8 @@ class PatientHome extends React.Component {
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />}/>
 
                                 {/*** Patient Timeline Routes*/}
-                                <Route path={"/patient/:id/emr/timeline"} component={PatientTimeline}/>
+                                <Route path={"/patient/:id/emr/timeline"} render={(route) => <PatientTimeline
+                                    key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
 
                                 {/*** Patient Lab Order Routes*/}
                                 <Route exact path='/patient/emr/labtrackings'

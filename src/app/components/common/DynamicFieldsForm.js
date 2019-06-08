@@ -12,7 +12,7 @@ import {
     Select,
     Checkbox,
     Upload,
-    message, Tag,
+    message, Tag, Modal,
 } from "antd";
 import {
     CHECKBOX_FIELD,
@@ -39,6 +39,7 @@ import {SwatchesPicker} from 'react-color';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import {EXTRA_DATA, FILE_UPLOAD_API} from "../../constants/api";
+import WebCamField from "./WebCamField";
 
 const {TextArea} = Input;
 const FormItem = Form.Item;
@@ -59,7 +60,8 @@ class DynamicFieldsForm extends React.Component {
             stateOptions: [],
             cityOptions: [],
             smsFields: {},
-            urlInitialValues: {}
+            urlInitialValues: {},
+            webCamState: {}
         }
         this.resetFormData = this.resetFormData.bind(this);
         this.submitForm = this.submitForm.bind(this);
@@ -149,7 +151,6 @@ class DynamicFieldsForm extends React.Component {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                console.log(values);
                 if (this.props.defaultValues) {
                     this.props.defaultValues.forEach(function (object) {
                         // values[object.key] = object.value;
@@ -271,6 +272,30 @@ class DynamicFieldsForm extends React.Component {
         });
     }
 
+    toggleWebCam = (type, value) => {
+        this.setState(function (prevState) {
+            return {
+                webCamState: {...prevState.webCamState, [type]: value}
+            }
+        })
+    }
+    getImageandUpload = (fieldKey, image) => {
+        let that = this;
+        let reqData = new FormData();
+
+        reqData.append('image', convertDataURIToBinary(image));
+
+        let successFn = function (data) {
+            that.props.form.setFieldsValue({[fieldKey]: data});
+        }
+        let errorFn = function () {
+
+        }
+        postAPI(FILE_UPLOAD_API, reqData, successFn, errorFn,{
+            'content-type': 'multipart/form-data'
+        });
+
+    }
 
     render() {
         const that = this;
@@ -506,6 +531,18 @@ class DynamicFieldsForm extends React.Component {
                                                  style={{maxWidth: '100%'}}/> : null}
                                     </Upload>
                                 )}
+                                {field.allowWebcam ? <span className="ant-form-text">
+                                    <a onClick={() => that.toggleWebCam(field.key, Math.random())}>
+                                        Open Webcam
+                                    </a>
+                                </span> : null}
+                                <Modal
+                                    footer={null}
+                                    onCancel={() => that.toggleWebCam(field.key, false)}
+                                    visible={!!that.state.webCamState[field.key]}
+                                    key={that.state.webCamState[field.key]}>
+                                    <WebCamField getScreenShot={(value) => that.getImageandUpload(field.key, value)}/>
+                                </Modal>
                             </Form.Item>;
                         case MULTI_IMAGE_UPLOAD_FIELD:
                             const multiuploadprops = {
@@ -622,3 +659,17 @@ class DynamicFieldsForm extends React.Component {
 }
 
 export default DynamicFieldsForm;
+
+var BASE64_MARKER = ';base64,';
+function convertDataURIToBinary(dataURI) {
+    var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+    var base64 = dataURI.substring(base64Index);
+    var raw = window.atob(base64);
+    // var rawLength = raw.length;
+    // var array = new ArrayBuffer(rawLength);
+
+    // for(let i = 0; i < rawLength; i++) {
+    //     array[i] = raw.charCodeAt(i);
+    // }
+    return raw;
+}

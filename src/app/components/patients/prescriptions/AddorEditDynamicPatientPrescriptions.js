@@ -247,20 +247,16 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            console.log("value form", values);
-
             if (!err) {
-
                 let reqData = {
                     drugs: [],
                     labs: [],
-                    patient: that.props.match.params.id,
+                    patient: parseInt(that.props.match.params.id),
                     practice: that.props.active_practiceId,
                     doctor: that.state.selectedDoctor ? that.state.selectedDoctor.id : null,
                     date: that.state.selectedDate ? that.state.selectedDate.format('YYYY-MM-DD') : null,
                     advice_data: []
                 };
-
                 that.state.formDrugList.forEach(function (item) {
                     console.log("advice search", item);
                     item.dosage = values.does[item._id];
@@ -307,7 +303,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 let errorFn = function () {
 
                 }
-                console.log("final", reqData);
                 postAPI(interpolate(PRESCRIPTIONS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
             } else {
                 console.log(err);

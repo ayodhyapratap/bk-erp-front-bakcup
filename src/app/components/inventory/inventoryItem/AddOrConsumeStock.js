@@ -474,7 +474,26 @@ class AddOrConsumeStock extends React.Component {
                                                 })(
                                                     <DatePicker/>
                                                 )}
-                                            </Form.Item>:
+                                            </Form.Item>
+                                            {this.state.classType == ADD_STOCK ? <Form.Item
+                                                key={`supplier`}
+                                                label={"Supplier"}
+                                                {...{
+                                                    labelCol: {span: 10},
+                                                    wrapperCol: {span: 14},
+                                                }}>
+                                                {getFieldDecorator(`supplier`, {
+                                                    validateTrigger: ['onChange', 'onBlur'],
+                                                    rules: [{
+                                                        required: true,
+                                                        message: "This field is required.",
+                                                    }],
+                                                })(
+                                                    <Select>
+
+                                                    </Select>
+                                                )}
+                                            </Form.Item> : null}
                                         </Col>
                                         {this.state.classType == ADD_STOCK ?
                                             <Col style={{textAlign: 'center'}}>
@@ -486,7 +505,8 @@ class AddOrConsumeStock extends React.Component {
                                                         }
                                                         return total
                                                     }, 0)}</b></h3>
-                                            </Col> : null}
+                                            </Col>
+                                            : null}
                                     </Row>
                                 </Card>
                             </Affix>

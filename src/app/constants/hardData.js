@@ -70,7 +70,7 @@ export const EMR_SUB_TYPE = [
     {title: 'MEDICAL LEAVE'},
     {title: 'VITAL SIGNS'},
     {title: 'LAB ORDER'},
-    {title: 'LAB ORDER RESULT'},
+    // {title: 'LAB ORDER RESULT'},
     {title: 'CLINICAL NOTES'}
 ];
 export const BILLING_SUB_TYPE = [

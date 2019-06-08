@@ -5,6 +5,7 @@ import {Route, Link, Switch} from "react-router-dom";
 import {getAPI, interpolate, postAPI} from "../../../../utils/common";
 import EditProcedure from "./EditProcedure";
 import PermissionDenied from "../../../common/errors/PermissionDenied";
+import CustomizedTable from "../../../common/CustomizedTable";
 
 
 const {Column, ColumnGroup} = Table;
@@ -72,6 +73,52 @@ class RecentProcedure extends React.Component {
 
     render() {
         let that = this;
+        let columns = [{
+            title: "Procedure Name",
+            dataIndex: "name",
+            key: "name",
+        }, {
+            title: "Procedure Unit Cost",
+            dataIndex: "cost",
+            key: "cost"
+        }, {
+            title: "MLM Margin",
+            dataIndex: "margin",
+            key: "margin",
+            render: (taxes) => (
+                <span>{taxes ? taxes.name : null}
+                </span>)
+        }, {
+            title: "Applicable Taxes",
+            dataIndex: "taxes",
+            key: "taxes",
+            render: (taxes) => (
+                <span>
+                                    {taxes && taxes.length ? taxes.map(tax =>
+                                        <Tag> {tax.name}|<b>{tax.tax_value}%</b></Tag>) : null}
+                                    </span>
+            )
+        }, {
+            title: "Standard Notes",
+            dataIndex: "default_notes",
+            key: "default_notes"
+        }, {
+            title: "Action",
+            key: "action",
+            render: (text, record) => (
+                <span>
+                    <Link
+                        to={"/settings/procedures/addprocedure?under=" + record.id}>Add SubCategory</Link>
+                        <Divider type="vertical"/>
+                        <a onClick={() => this.editProcedure(record)}>Edit</a>
+                        <Divider type="vertical"/>
+                        <Popconfirm title="Are you sure delete this?"
+                                    onConfirm={() => that.deleteObject(record)} okText="Yes"
+                                    cancelText="No">
+                        <a>Delete</a>
+                        </Popconfirm>
+                </span>)
+        }];
         return <Switch>
             <Route exact path="/settings/procedures/:id/editprocedure"
                    render={(route) => (that.props.activePracticePermissions.SettingsProcedureCatalog || that.props.allowAllPermissions ?
@@ -89,62 +136,10 @@ class RecentProcedure extends React.Component {
                 <Card>
                     {/*<Tabs defaultActiveKey="procedurecatalog">*/}
                     {/*<TabPane tab={<span><Icon type="android"/>Procedure Catalog</span>} key="procedurecatalog">*/}
-                    <Table loading={this.state.loading} dataSource={this.state.procedure_category}>
-                        <Column
-                            title="Procedure Name"
-                            dataIndex="name"
-                            key="name"
-                        />
-                        <Column
-                            title="Procedure Unit Cost"
-                            dataIndex="cost"
-                            key="cost"
-                        />
-                        <Column
-                            title="MLM Margin"
-                            dataIndex="margin"
-                            key="margin"
-                            render={taxes => (
-                                <span>
-                                            {taxes ? taxes.name : null}
-                                    </span>
-                            )}
-                        />
-                        <Column
-                            title="Applicable Taxes"
-                            dataIndex="taxes"
-                            key="taxes"
-                            render={taxes => (
-                                <span>
-                                    {taxes && taxes.length ? taxes.map(tax =>
-                                        <Tag> {tax.name}|<b>{tax.tax_value}%</b></Tag>) : null}
-                                    </span>
-                            )}
-                        />
-                        <Column
-                            title="Standard Notes"
-                            dataIndex="default_notes"
-                            key="default_notes"
-                        />
-                        <Column
-                            title="Action"
-                            key="action"
-                            render={(text, record) => (
-                                <span><Link
-                                    to={"/settings/procedures/addprocedure?under=" + record.id}>Add SubCategory</Link>
-                                        <Divider type="vertical"/>
-                                            <a onClick={() => this.editProcedure(record)}>Edit</a>
-                                        <Divider type="vertical"/>
-                                        <Popconfirm title="Are you sure delete this?"
-                                                    onConfirm={() => that.deleteObject(record)} okText="Yes"
-                                                    cancelText="No">
-                                            <a>Delete</a>
-                                        </Popconfirm>
-                                    </span>
-                            )}
-                        />
+                    <CustomizedTable columns={columns} loading={this.state.loading}
+                                     dataSource={this.state.procedure_category}/>
 
-                    </Table>
+
                     {/*</TabPane>*/}
 
                     {/*</Tabs>*/}
