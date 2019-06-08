@@ -77,11 +77,13 @@ class AddStaffDoctor extends React.Component {
                 label: "Doctor/Staff Name",
                 key: "user.first_name",
                 required: true,
+                placeholder:"Doctor/Staff Name",
                 initialValue: this.state.editStaff ? this.state.editStaff.user.first_name : null,
                 type: INPUT_FIELD
             }, {
                 label: "Mobile Number",
                 key: "user.mobile",
+                placeholder:"Mobile Number",
                 required: true,
                 initialValue: this.state.editStaff ? this.state.editStaff.user.mobile : null,
                 type: INPUT_FIELD,
@@ -89,6 +91,7 @@ class AddStaffDoctor extends React.Component {
             }, {
                 label: "Email Id",
                 key: "user.email",
+                placeholder:"Email Id",
                 required: true,
                 disabled: !!this.state.editStaff,
                 initialValue: this.state.editStaff ? this.state.editStaff.user.email : null,
@@ -96,6 +99,7 @@ class AddStaffDoctor extends React.Component {
             }, {
                 label: "Registration Number",
                 key: "registration_number",
+                placeholder:"Registration Number",
                 initialValue: this.state.editStaff ? this.state.editStaff.registration_number : null,
                 type: INPUT_FIELD
             }, {

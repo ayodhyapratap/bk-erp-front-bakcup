@@ -77,6 +77,7 @@ class PaymentModes extends React.Component {
         let that = this;
         const columns = [{
             title: 'Mode of Payment',
+            placeholder:"",
             dataIndex: 'mode',
             key: 'mode',
         }, {

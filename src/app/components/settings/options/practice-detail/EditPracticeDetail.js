@@ -69,70 +69,83 @@ class EditPracticeDetail extends React.Component {
                 label: "Practice Name",
                 key: "name",
                 required: true,
+                placeholder:"Practice Name",
                 initialValue: this.state.practiceDetail.name,
                 type: INPUT_FIELD
             }, {
                 label: "Practice Tagline",
                 key: "tagline",
+                placeholder:"Practice Tagline",
                 required: true,
                 initialValue: this.state.practiceDetail.tagline,
                 type: INPUT_FIELD
             }, {
                 label: "Practice Specialisation",
                 key: "specialisation",
+                placeholder:"Practice Specialisation",
                 initialValue: this.state.practiceDetail.specialisation,
                 type: INPUT_FIELD,
                 // options: specialisationsOptions
             }, {
                 label: "Practice Street Address",
                 key: "address",
+                placeholder:"Practice Street Address",
                 initialValue: this.state.practiceDetail.address,
                 type: INPUT_FIELD
             }, {
                 label: "Practice locality",
                 initialValue: this.state.practiceDetail.locality,
                 key: "locality",
+                placeholder:"Practice Locality",
                 type: INPUT_FIELD
             }, {
                 label: "Practice City",
                 initialValue: this.state.practiceDetail.City,
+                placeholder:"Practice City",
                 key: "city",
                 type: INPUT_FIELD,
                 //     options: [{label: "Hello", value: "1"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
             }, {
                 label: "Practice state",
                 key: "state",
+                placeholder:"Practice State",
                 initialValue: this.state.practiceDetail.state,
                 type: INPUT_FIELD,
                 // options: [{label: "Hello", value: "1"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
             }, {
                 label: "Practice Country",
                 key: "country",
+                placeholder:"Practice Country",
                 initialValue: this.state.practiceDetail.country,
                 type: INPUT_FIELD,
             }, {
                 label: "Practice PINCODE",
                 key: "pincode",
+                placeholder:"Practice PINCODE",
                 initialValue: this.state.practiceDetail.pincode,
                 type: INPUT_FIELD
             }, {
                 label: "Practice Contact Number",
                 key: "contact",
+                placeholder:"Practice Contact Number",
                 initialValue: this.state.practiceDetail.contact,
                 type: INPUT_FIELD
             }, {
                 label: "Practice Email",
                 key: "email",
+                placeholder:"Practice Email",
                 initialValue: this.state.practiceDetail.email,
                 type: EMAIL_FIELD
             }, {
                 label: "Practice website",
                 key: "website",
+                placeholder:"Practice Website",
                 initialValue: this.state.practiceDetail.website,
                 type: INPUT_FIELD
             }, {
                 label: "GSTIN",
                 initialValue: this.state.practiceDetail.gstin,
+                placeholder:"GSTIN",
                 key: "gstin",
                 type: INPUT_FIELD
             }, {

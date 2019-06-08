@@ -133,6 +133,7 @@ class ExpensesTypes extends React.Component {
         const fields = [{
             label: "Expense name",
             key: "name",
+            placeholder:'Expense Name',
             required: true,
             type: INPUT_FIELD
         },];
@@ -177,12 +178,13 @@ class ExpensesTypes extends React.Component {
                     <h4><a onClick={() => this.showDeletedExpenses()}>Show Deleted Expenses</a></h4>}
             </Card>
             <Modal
-                title="Basic Modal"
+                title="Edit Expence"
                 visible={this.state.visible}
                 footer={null}
+                onCancel={this.handleCancel}
             >
 
-                <TestFormLayout title="edit Expence" defaultValues={editFormDefaultValues} formProp={formProp}
+                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp}
                                 fields={editfields}/>
                 <Button key="back" onClick={this.handleCancel}>Return</Button>,
 

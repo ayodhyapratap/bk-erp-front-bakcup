@@ -52,35 +52,41 @@ class AppointmentSMS extends React.Component {
         const fields = [{
             label: "Contact Number",
             key: "contact_number",
+            placeholder:"Contact Number",
             initialValue: this.state.data ? this.state.data.contact_number : null,
             extra: "Maximum 15 characters & represented as {{CLINICCONTACTNUMBER}}",
             type: INPUT_FIELD
         }, {
             label: "Email",
             key: "email",
+            placeholder:"Email Address",
             initialValue: this.state.data ? this.state.data.email : null,
             extra: "All replies by Patients for emails will be sent to this address",
             type: INPUT_FIELD
         }, {
             label: "SMS Language",
             key: "sms_language",
+            placeholder:"SMS Language",
             initialValue: this.state.data ? this.state.data.sms_language : null,
             extra: "SMS to Patients will be sent in this language",
             type: INPUT_FIELD
         }, {
             label: "SMS clinic Name",
             key: "sms_clinic_name",
+            placeholder:"Clinic Name",
             initialValue: this.state.data ? this.state.data.sms_clinic_name : null,
             extra: "{{CLINIC}} will use this name.",
             type: INPUT_FIELD,
         }, {
             key: "appointment_confirmation_sms",
+            placeholder:"Appointment Confirmation SMS Text",
             initialValue: this.state.data ? this.state.data.appointment_confirmation_sms : false,
             type: SINGLE_CHECKBOX_FIELD,
             extra: "SMS is sent to the Patient on successfully adding an appointment",
             follow: <b>APPOINTMENT CONFIRMATION SMS</b>
         }, {
             key: "appointment_confirmation_text",
+            placeholder:"Appointment Cancellation SMS Text",
             initialValue: this.state.data ? this.state.data.appointment_confirmation_text : null,
             minRows: 4,
             type: SMS_FIELD,
@@ -93,18 +99,21 @@ class AppointmentSMS extends React.Component {
             follow: <b>APPOINTMENT CANCELLATION SMS</b>
         }, {
             key: "appointment_cancellation_text",
+            placeholder:"Appointment Cancellation SMS Text",
             initialValue: this.state.data ? this.state.data.appointment_cancellation_text : null,
             minRows: 4,
             type: SMS_FIELD,
             options: APPOINTMENT_CANCELATION_SMS_TAG_OPTIONS
         }, {
             key: "appointment_reminder_sms",
+            placeholder:"Appointment Reminder SMS Text",
             initialValue: this.state.data ? this.state.data.appointment_reminder_sms : false,
             type: SINGLE_CHECKBOX_FIELD,
             extra: "This SMS is automatically sent to the Patient at selected time & date before the appointment.",
             follow: <b>APPOINTMENT REMINDER SMS</b>
         }, {
             key: "appointment_reminder_text",
+            placeholder:"Appointment Reminder SMS Text",
             initialValue: this.state.data ? this.state.data.appointment_reminder_text : null,
             minRows: 4,
             type: SMS_FIELD,
@@ -130,6 +139,7 @@ class AppointmentSMS extends React.Component {
             follow: <b>FOLLOW UP REMINDER SMS</b>
         }, {
             key: "follow_up_reminder_sms_text",
+            placeholder:"Follow-up Reminder SMS Text",
             initialValue: this.state.data ? this.state.data.follow_up_reminder_sms_text : null,
             minRows: 4,
             type: SMS_FIELD,
@@ -147,6 +157,7 @@ class AppointmentSMS extends React.Component {
             follow: <b>PAYMENT SMS</b>
         }, {
             key: "payment_sms_text",
+            placeholder:"Payment SMS Text",
             initialValue: this.state.data ? this.state.data.payment_sms_text : null,
             minRows: 4,
             type: SMS_FIELD,
@@ -158,12 +169,14 @@ class AppointmentSMS extends React.Component {
             follow: <b>LAB ORDER CONFIRMATION SMS</b>
         }, {
             key: "lab_order_confirmation_text",
+            placeholder:"Lab Order Confirmation SMS Text",
             initialValue: this.state.data ? this.state.data.lab_order_confirmation_text : null,
             minRows: 4,
             type: SMS_FIELD,
             options: [{label: "{{CLINICCONTACTNUMBER}}", value: "{{CLINICCONTACTNUMBER}}"}]
         }, {
             key: "lab_order_due_on_sms",
+            placeholder:"Lab Order Due On SMS Text",
             initialValue: this.state.data ? this.state.data.lab_order_due_on_sms : false,
             extra: "This SMS is sent to the Patient informing lab order due date",
             type: SINGLE_CHECKBOX_FIELD,

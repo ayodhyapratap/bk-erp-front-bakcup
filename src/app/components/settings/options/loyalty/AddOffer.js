@@ -22,11 +22,13 @@ class AddOffer extends React.Component {
             fields: [{
                 label: "Offer Name ",
                 key: "code",
+                placeholder:"Offer Name",
                 required: true,
                 type: INPUT_FIELD
             }, {
                 label: "Description ",
                 key: "description",
+                placeholder:"E.g. 20% off on all services",
                 type: INPUT_FIELD
             }, {
                 label: "Discount",

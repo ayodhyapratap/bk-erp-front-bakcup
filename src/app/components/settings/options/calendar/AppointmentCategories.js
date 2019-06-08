@@ -113,6 +113,7 @@ class AppointmentCategories extends React.Component {
         const fields = [{
             label: "Category name",
             key: "name",
+            placeholder:"Category Name",
             required: true,
             type: INPUT_FIELD
         },];
@@ -146,9 +147,10 @@ class AppointmentCategories extends React.Component {
             <CustomizedTable loading={this.state.loading} columns={columns}
                              dataSource={this.state.appointmentCategories}/>
             <Modal
-                title="ADD Appointment Category"
+                title="Edit Appointment Category"
                 visible={this.state.visible}
                 footer={null}
+                onCancel={this.handleCancel}
             >
                 <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields}/>
                 <Button key="back" onClick={this.handleCancel}>Return</Button>,

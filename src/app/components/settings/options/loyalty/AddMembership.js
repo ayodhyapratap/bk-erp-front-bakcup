@@ -15,6 +15,7 @@ export default class AddMembership extends React.Component {
         const fields = [{
             label: "Membership Name ",
             key: "name",
+            placeholder:"Membership Name",
             required: true,
             type: INPUT_FIELD
         }, {

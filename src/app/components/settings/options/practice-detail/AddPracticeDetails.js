@@ -67,54 +67,66 @@ class AddPracticeDetails extends React.Component {
             type: SINGLE_IMAGE_UPLOAD_FIELD
         }, {
             label: "Practice Name",
-            key: "name",
+            key: "Practice Name",
+            placeholder:"Practice Name",
             required: true,
             type: INPUT_FIELD
         }, {
             label: "Practice Tagline",
             key: "tagline",
+            placeholder:"Practice Tagline",
             required: true,
             type: INPUT_FIELD
         }, {
             label: "Practice Specialisation",
             key: "specialisation",
+            placeholder:"Practice Specialisation",
             type: INPUT_FIELD,
             // options: specialisationsOptions,
         }, {
             label: "Practice Street Address",
             key: "address",
+            placeholder:"Practice Street Address",
             type: INPUT_FIELD
         }, {
             label: "Practice Locality",
             key: "locality",
+            placeholder:"Practice Locality",
             type: INPUT_FIELD
         }, {
             label: "Practice Country",
             key: "country",
+            placeholder:"Practice Country",
             type: INPUT_FIELD,
         }, {
             label: "Practice State",
             key: "state",
+            placeholder:"Practice State",
             type: INPUT_FIELD,
         }, {
             label: "Practice City",
             key: "city",
+            placeholder:"Practice City",
             type: INPUT_FIELD,
         }, {
             label: "Practice PINCODE",
             key: "pincode",
+            placeholder:"Practice PINCODE",
             type: INPUT_FIELD
         }, {
             label: "Practice Contact Number",
             key: "contact",
+            placeholder:"Practice Contact Number",
             type: INPUT_FIELD
         }, {
             label: "Practice Email",
             key: "email",
+            placeholder:"Practice Email",
             type: EMAIL_FIELD
         }, {
             label: "Practice Website",
             key: "website",
+            placeholder:"Practice Website",
             type: INPUT_FIELD
         },
             //     {
@@ -127,6 +139,7 @@ class AddPracticeDetails extends React.Component {
             {
                 label: "GSTIN",
                 key: "gstin",
+                placeholder:"GSTIN",
                 type: INPUT_FIELD
             }, {
                 label: "Normal Bed Count",

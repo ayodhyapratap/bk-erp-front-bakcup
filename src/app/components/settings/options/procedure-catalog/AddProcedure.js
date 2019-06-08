@@ -87,6 +87,7 @@ class AddProcedure extends React.Component {
         const formFields = [{
             label: "Procedure Name",
             key: "name",
+            placeholder:"Procedure Name",
             required: true,
             type: INPUT_FIELD
         }, {

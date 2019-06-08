@@ -99,7 +99,7 @@ class TaxCatalog extends React.Component {
             render: (text, record) => (
                 <span>
               {/*<a onClick={() => this.editTax(record)}>  Edit</a>*/}
-                <Divider type="vertical"/>
+                {/* <Divider type="vertical"/> */}
                     <Popconfirm title="Are you sure delete this?"
                                 onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
                       <a>Delete</a>
@@ -110,6 +110,7 @@ class TaxCatalog extends React.Component {
         const fields = [{
             label: "Tax name",
             key: "name",
+            placeholder:"Tax Name",
             required: true,
             type: INPUT_FIELD
         }, {

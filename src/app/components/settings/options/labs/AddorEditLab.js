@@ -51,6 +51,7 @@ export default class AddorEditLab extends React.Component {
         const fields = [{
             label: "Test Name",
             key: "name",
+            placeholder:"Test Name",
             type: INPUT_FIELD,
             initialValue: (this.state.editFields ? this.state.editFields.name : null),
             required: true
@@ -72,6 +73,7 @@ export default class AddorEditLab extends React.Component {
         }, {
             label: "Instructions",
             key: "instruction",
+            placeholder:"Test Instructions",
             initialValue: (this.state.editFields ? this.state.editFields.instruction : null),
             type: TEXT_FIELD,
         }];

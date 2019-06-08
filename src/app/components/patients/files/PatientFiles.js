@@ -315,7 +315,7 @@ class PatientFiles extends React.Component {
 
                             )}
                         />
-                        <Card title="Certificate">
+                        <Card title="MedicalCertificate">
                             <List loading={this.state.loading}
                                 grid={{gutter:16,column:3}}
                                 dataSource={this.state.medicalCertificate}
