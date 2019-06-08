@@ -63,6 +63,7 @@ export const ROOM_TYPE = 'clinics/room_types/';
 export const PATIENT_NOTES = 'patients/patient_notes/?patient=%s&practice=%s';
 export const LABPANEL_API = 'clinics/%s/labpanel/';
 export const PATIENT_TIMELINE_API = 'patients/%s/combine_patient_report/';
+export const PATIENT_TIMELINE_PDF = 'patients/%s/timeline_pdf/';
 export const MEDICAL_CERTIFICATE_API = 'patients/medical_certificate/?patient=%s';
 /*DELETE OBJECT*/
 export const TREATMENTPLANS_API = 'patients/procedure/'; //?id=patientId&complete=true/false
