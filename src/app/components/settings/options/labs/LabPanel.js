@@ -51,7 +51,7 @@ export default class LabPanel extends React.Component{
     }
     deleteLabPanel(record) {
         let that = this;
-        let reqData = {...record, is_active:false, 
+        let reqData = {...record, is_active:false,
             tests:Object.keys(this.state.selectedTest)
         }
         let successFn = function (data) {
@@ -124,7 +124,7 @@ export default class LabPanel extends React.Component{
                             </Link>
                         </h2>
                     </Row>
-                    <CustomizedTable loading={this.state.loading} columns={columns} expandedRowRender={record => <Table columns={subColumns} dataSource={record.tests}/>} dataSource={this.state.labPanel}/>
+                    <CustomizedTable loading={this.state.loading} columns={columns} expandedRowRender={record => <Card><Table pagunation={false} columns={subColumns} dataSource={record.tests}/></Card>} dataSource={this.state.labPanel}/>
                 </div>
             </Route>
 

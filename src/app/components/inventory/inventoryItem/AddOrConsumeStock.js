@@ -22,7 +22,7 @@ import {
     CONSUME_STOCK,
     TYPE_OF_CONSUMPTION
 } from "../../../constants/hardData";
-import {INVENTORY_ITEM_API, BULK_STOCK_ENTRY} from "../../../constants/api";
+import {INVENTORY_ITEM_API, BULK_STOCK_ENTRY, SUPPLIER_API} from "../../../constants/api";
 import moment from "moment";
 
 const {MonthPicker} = DatePicker;
@@ -42,12 +42,29 @@ class AddOrConsumeStock extends React.Component {
             tableFormValues: [],
             maxQuantityforConsume: {},
             searchStrings: {},
-            tempValues: {}
+            tempValues: {},
+            supplierList: []
         }
     }
 
     componentDidMount() {
         this.loadInventoryItemList();
+        this.loadSupplierList();
+    }
+
+    loadSupplierList = () => {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                supplierList: data
+            })
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(SUPPLIER_API, successFn, errorFn,{
+            practice:this.props.active_practiceId
+        })
     }
 
     loadInventoryItemList() {
@@ -414,28 +431,28 @@ class AddOrConsumeStock extends React.Component {
                                         )}
                                     </Form.Item>
                                     : null}
-                                {this.state.classType == CONSUME_STOCK ?
-                                    <Form.Item
-                                        key={`supplier`}
-                                        label={"Supplier"}
-                                        {...{
-                                            labelCol: {span: 6},
-                                            wrapperCol: {span: 14},
-                                        }}>
-                                        {getFieldDecorator(`addedOn`, {
-                                            validateTrigger: ['onChange', 'onBlur'],
-                                            rules: [{
-                                                message: "This field is required.",
-                                            }],
-                                            initialValue: moment()
-                                        })(
-                                            <Select>
-                                                {this.state.suppliersList.map(item => <Select.Option
-                                                    value={item.value}>{item.label}</Select.Option>)}
-                                            </Select>
-                                        )}
-                                    </Form.Item>
-                                    : null}
+                                {/*{this.state.classType == CONSUME_STOCK ?*/}
+                                    {/*<Form.Item*/}
+                                        {/*key={`supplier`}*/}
+                                        {/*label={"Supplier"}*/}
+                                        {/*{...{*/}
+                                            {/*labelCol: {span: 6},*/}
+                                            {/*wrapperCol: {span: 14},*/}
+                                        {/*}}>*/}
+                                        {/*{getFieldDecorator(`addedOn`, {*/}
+                                            {/*validateTrigger: ['onChange', 'onBlur'],*/}
+                                            {/*rules: [{*/}
+                                                {/*message: "This field is required.",*/}
+                                            {/*}],*/}
+                                        {/*})(*/}
+                                            {/*<Select>*/}
+                                                {/*/!*{this.state.suppliersList && this.state.suppliersList.map(item =>*!/*/}
+                                                    {/*/!*<Select.Option*!/*/}
+                                                        {/*/!*value={item.id}>{item.name}</Select.Option>)}*!/*/}
+                                            {/*</Select>*/}
+                                        {/*)}*/}
+                                    {/*</Form.Item>*/}
+                                    {/*: null}*/}
                             </Row>
                             <Table pagination={false}
                                    bordered={true}

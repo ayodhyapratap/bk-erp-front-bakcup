@@ -150,7 +150,7 @@ export const ITEM_TYPE_STOCK = "item_type_stock/";
 export const SINGLE_ITEM_TYPE_STOCK = "item_type_stock/%s/";
 export const STOCK_ENTRY = "stock_entry/";
 export const BULK_STOCK_ENTRY = "stock_entry/bulk/";
-
+export const SUPPLIER_API = 'stock_entry/practice_supplier';
 
 /**
  * MLM API
