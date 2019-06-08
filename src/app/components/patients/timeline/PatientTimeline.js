@@ -91,7 +91,7 @@ class PatientTimeline extends React.Component {
     onCheckAllTimelineCard = (e) => {
         this.setState(function (prevState) {
             return {
-                checkedTimelineCards: e.target.checked ? prevState.allCheckList : {},
+                checkedTimelineCards: e.target.checked ? {...prevState.allCheckList} : {},
                 indeterminate: false,
                 checkAll: e.target.checked,
             }
@@ -156,11 +156,11 @@ class PatientTimeline extends React.Component {
             })
         });
         let successFn = function (data) {
-            stopLoadingMessage(msg,SUCCESS_MSG_TYPE,"Fetched report successfully!!");
+            stopLoadingMessage(msg, SUCCESS_MSG_TYPE, "Fetched report successfully!!");
             window.open(BACKEND_BASE_URL + data.report);
         }
         let errorFn = function () {
-            stopLoadingMessage(msg,ERROR_MSG_TYPE,"Case sheet printing failed!!");
+            stopLoadingMessage(msg, ERROR_MSG_TYPE, "Case sheet printing failed!!");
         }
         postAPI(interpolate(PATIENT_TIMELINE_PDF, [this.props.match.params.id]), reqObj, successFn, errorFn);
     }
@@ -284,7 +284,7 @@ timelineItem(item) {
 function
 
 timelineAppointmentCard(item) {
-    return <Card hoverable>
+    return <Card hoverable bodyStyle={{backgroundColor:(item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id]? '#B5EEFF' : 'initial')}}>
         <h2><Icon type="calendar"/> Appointment
         </h2>
         {item.doctor_data ?
@@ -299,7 +299,7 @@ timelineAppointmentCard(item) {
 function
 
 timelineFilesCard(item) {
-    return <Card hoverable>
+    return <Card hoverable bodyStyle={{backgroundColor:(item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id]? '#B5EEFF' : 'initial')}}>
         <h2><Icon type="picture"/> File<Checkbox size="large" style={{float: 'right'}}
                                                  checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                                  onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
@@ -311,7 +311,7 @@ timelineFilesCard(item) {
 function
 
 timelineInvoiceCard(item) {
-    return <Card hoverable>
+    return <Card hoverable bodyStyle={{backgroundColor:(item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id]? '#B5EEFF' : 'initial')}}>
         <h2><Icon type="audit"/> Invoice<Checkbox size="large" style={{float: 'right'}}
                                                   checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                                   onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
@@ -328,7 +328,7 @@ timelineInvoiceCard(item) {
 function
 
 timelineClinicalNote(item) {
-    return <Card hoverable>
+    return <Card hoverable bodyStyle={{backgroundColor:(item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id]? '#B5EEFF' : 'initial')}}>
         <h2><Icon type="solution"/> Clinical Note Added<Checkbox size="large" style={{float: 'right'}}
                                                                  checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                                                  onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
@@ -383,7 +383,7 @@ timelineVitalSignCard(item) {
         title: 'Time',
         dataIndex: 'created_at',
         key: 'name',
-        render: created_at => <span>{moment(created_at).format('LLL')}</span>,
+        render: created_at => <span>{moment(created_at).format('hh:mm A')}</span>,
     }, {
         title: 'Temp(F)',
         key: 'temperature',
@@ -409,7 +409,7 @@ timelineVitalSignCard(item) {
         dataIndex: 'weight',
         key: 'weight',
     }];
-    return <Card hoverable>
+    return <Card hoverable bodyStyle={{backgroundColor:(item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id]? '#B5EEFF' : 'initial')}}>
         <h2><Icon type="heart"/> Vital Sign Recorded<Checkbox size="large" style={{float: 'right'}}
                                                               checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                                               onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
@@ -429,7 +429,7 @@ timelineVitalSignCard(item) {
 function
 
 timelinePrescriptionCard(item) {
-    return <Card hoverable>
+    return <Card hoverable bodyStyle={{backgroundColor:(item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id]? '#B5EEFF' : 'initial')}}>
         <h2><Icon type="solution"/> Prescription Added<Checkbox size="large" style={{float: 'right'}}
                                                                 checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                                                 onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
@@ -446,7 +446,7 @@ timelinePrescriptionCard(item) {
 function
 
 timelinePaymentCard(item) {
-    return <Card hoverable>
+    return <Card hoverable bodyStyle={{backgroundColor:(item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id]? '#B5EEFF' : 'initial')}}>
         <h2><Icon type="dollar"/> Payment<Checkbox size="large" style={{float: 'right'}}
                                                    checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                                    onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
@@ -459,7 +459,7 @@ timelinePaymentCard(item) {
 function
 
 timelineProcedureCard(item) {
-    return <Card>
+    return <Card hoverable bodyStyle={{backgroundColor:(item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id]? '#B5EEFF' : 'initial')}}>
         <h2>Procedure Performed<Checkbox size="large" style={{float: 'right'}}
                                          checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                          onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
@@ -476,7 +476,7 @@ timelineProcedureCard(item) {
 function
 
 timelineTreatmentPlanCard(item) {
-    return <Card>
+    return <Card hoverable bodyStyle={{backgroundColor:(item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id]? '#B5EEFF' : 'initial')}}>
         <h2>Treatment Plan <Checkbox size="large" style={{float: 'right'}}
                                      checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                      onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>

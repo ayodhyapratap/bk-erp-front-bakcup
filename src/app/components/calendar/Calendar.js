@@ -1,30 +1,26 @@
 import React, {Component} from "react";
 import moment from "moment";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
+import TimeGrid from 'react-big-calendar/lib/TimeGrid'
 import BigCalendar from 'react-big-calendar'
 import {
-    Card,
+    Modal,
     Row,
-    Timeline,
     Col,
-    Popover,
     Button,
-    List,
     Divider,
     Layout,
-    Badge,
     Spin,
     Menu,
     Dropdown,
     Icon,
-    DatePicker, Affix, Checkbox,
+    DatePicker, Checkbox,
 } from "antd"
-import {DOCTORS_ROLE, SUCCESS_MSG_TYPE,} from "../../constants/dataKeys";
-import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+import {DOCTORS_ROLE, SUCCESS_MSG_TYPE, WARNING_MSG_TYPE,} from "../../constants/dataKeys";
 import "./app.css";
 import {Route, Link, Switch} from "react-router-dom";
-import TimeGrid from 'react-big-calendar/lib/TimeGrid'
 import dates from 'date-arithmetic'
 import {getAPI, putAPI, interpolate, displayMessage} from "../../utils/common";
 import {
@@ -41,12 +37,19 @@ import {
     saveCalendarSettings
 } from "../../utils/calendarUtils";
 import CalendarRightPanel from "./CalendarRightPanel";
-import {CANCELLED_STATUS, CHECKOUT_STATUS, DAY_KEYS, ENGAGED_STATUS, WAITING_STATUS} from "../../constants/hardData";
+import {
+    CANCELLED_STATUS,
+    CHECKOUT_STATUS,
+    DAY_KEYS,
+    ENGAGED_STATUS,
+    SCHEDULE_STATUS,
+    WAITING_STATUS
+} from "../../constants/hardData";
 
 const localizer = BigCalendar.momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(BigCalendar)
 const {Content} = Layout;
-
+const confirm = Modal.confirm;
 
 class App extends Component {
     constructor(props) {
@@ -91,7 +94,6 @@ class App extends Component {
         this.loadDoctors();
         loadAppointmentCategories(this);
         this.appointmentList(moment().subtract(1, 'days'), moment().add(5, 'days'));
-        // this.todaysAppointments(moment(), moment());
     }
 
     loadDoctors() {
@@ -182,6 +184,10 @@ class App extends Component {
 
 
     moveEvent({event, start, end, isAllDay: droppedOnAllDaySlot}) {
+        if (event.appointment.status != SCHEDULE_STATUS) {
+            displayMessage(WARNING_MSG_TYPE, "Action Not Allowed");
+            return true;
+        }
         const {events} = this.state;
         const idx = events.indexOf(event)
         let allDay = event.allDay
@@ -195,7 +201,7 @@ class App extends Component {
         const nextEvents = [...events]
         let changedEvent = {
             // "id": event.id,
-            "schedule_at": moment(start).format("YYYY-MM-DD HH:mm:ss"),
+            "schedule_at": moment(start).format(),
             "slot": parseInt((end - start) / 60000)
         };
         let successFn = function (data) {
@@ -207,7 +213,17 @@ class App extends Component {
         }
         let errorFn = function () {
         }
-        putAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
+        confirm({
+            title: 'Are you sure to change the time of this appointment?',
+            // content: 'Some descriptions',
+            onOk() {
+                putAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
+
     }
 
     resizeEvent = ({event, start, end}) => {
