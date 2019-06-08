@@ -1,6 +1,6 @@
 import React from "react";
 import {Route} from "react-router";
-import { Form, Icon, Input, Button,Checkbox, Card,DatePicker, Radio ,Row,Col,Select} from 'antd';
+import { Form, Icon, Input, Button,Checkbox, Card,DatePicker, Radio ,Row,Col,Select,TimePicker} from 'antd';
 import {Redirect, Link} from 'react-router-dom'
 import {postAPI, interpolate, displayMessage} from "../../../utils/common";
 import {ATTENDANCE} from "../../../constants/hardData";
@@ -21,8 +21,9 @@ class PatientMedicalCertificate extends React.Component {
             excused_duty_checked:false,
             fit_light_duty_checked:false,
             attendance_checked:false,
-            startDate: this.props.value,
-            endDate: new Date(),
+            // startDate: this.props.value,
+            // endDate: new Date(),
+            proof_attendance_from:null,
             days:0,
         }
         this.handleChangeStart =this.handleChangeStart.bind(this);
@@ -74,12 +75,15 @@ class PatientMedicalCertificate extends React.Component {
     }
     totalDays(){
         let {startDate, endDate} = this.state;
-        console.log(startDate);
-        console.log(endDate);
-        let amount = (startDate-endDate);
+        let amount = endDate.diff(startDate ,"days");
         this.setState({
         days: amount
         });
+    }
+    onChange =(timeString)=> {
+       this.setState({
+        proof_attendance_from:timeString
+       });
     }
     
     handleSubmit = (e) => {
@@ -87,7 +91,19 @@ class PatientMedicalCertificate extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqData = {...values};
+                console.log("value",values);
+                let reqData = {...values,
+                    practice:that.props.active_practiceId,
+                    excused_duty_from:moment(values.excused_duty_from).format("YYYY-MM-DD"),
+                    excused_duty_to:moment(values.excused_duty_to).format("YYYY-MM-DD"),
+                    fit_light_duty_from:moment(values.fit_light_duty_from).format("YYYY-MM-DD"),
+                    fit_light_duty_to:moment(values.fit_light_duty_to).format("YYYY-MM-DD"),
+                    proof_attendance_date:moment(values.proof_attendance_date).format("YYYY-MM-DD"),
+                    proof_attendance_from:moment(values.proof_attendance_from).format('LT'),
+                    proof_attendance_to:moment(values.proof_attendance_to).format('LT'),
+                    patient: that.props.match.params.id,
+                    is_active:true
+                };
                 that.setState({
                 });
                 let successFn = function (data) {
@@ -138,21 +154,26 @@ class PatientMedicalCertificate extends React.Component {
                     <Row>
                         <Col span={6} offset={6}>
                             <Form.Item label="From">
-                                {getFieldDecorator('f',{})
-                                    (<DatePicker/>)
+                                {getFieldDecorator('excused_duty_from',{})
+                                    (
+                                        <DatePicker />
+                                        
+                                    )
                                 }
                             </Form.Item>
 
                             <Form.Item label="till">
-                                {getFieldDecorator('f',{})
-                                    (<DatePicker/>)
+                                {getFieldDecorator('excused_duty_to',{})
+                                    (
+                                        <DatePicker  />
+                                    )
                                 }
                             </Form.Item>
                             
                         </Col>
                         <Col span={6} >
                             <Form.Item>
-                                {getFieldDecorator('f',{})
+                                {getFieldDecorator('excused_duty_from_session',{})
                                 (
                                     <Select>
                                         <Option value="M">Morning</Option>
@@ -163,7 +184,7 @@ class PatientMedicalCertificate extends React.Component {
                             </Form.Item>
 
                             <Form.Item>
-                                {getFieldDecorator('f',{})
+                                {getFieldDecorator('excused_duty_to_session',{})
                                 (
                                     <Select>
                                         <Option value="M">Morning</Option>
@@ -171,8 +192,11 @@ class PatientMedicalCertificate extends React.Component {
                                     </Select>
                                 )}
                             </Form.Item>
+                            
                         </Col>
+                        
                     </Row>
+                    
                 :null}
                 
 
@@ -186,24 +210,24 @@ class PatientMedicalCertificate extends React.Component {
                     <Row>
                         <Col>
                             <Form.Item label="From">
-                                {getFieldDecorator('f',{})
+                                {getFieldDecorator('fit_light_duty_from',{})
                                     (
-                                        <DatePicker defaultValue={moment('2015/01/01', dateFormat)} format={dateFormat}  selected={this.state.startDate} onChange={this.state.handleChangeStart} />
+                                        <DatePicker />
                                     )
                                 }
                                 
                             </Form.Item>
 
                             <Form.Item label="till">
-                                {getFieldDecorator('f',{})
+                                {getFieldDecorator('fit_light_duty_to',{})
                                     (
-                                        <DatePicker defaultValue={moment('2015/01/01', dateFormat)} format={dateFormat} selected={this.state.endDate} onChange={this.state.handleChangeEnd} />
+                                        <DatePicker/>
                                     )
                                 }
                                 
                             </Form.Item>
                         </Col>
-                        <p>{this.props.value}</p>
+                       
                     </Row>
                     :null
                 }
@@ -216,59 +240,29 @@ class PatientMedicalCertificate extends React.Component {
                 {this.state.attendance_checked ? 
                     <Row>
                         <Form.Item label="on">
-                            {getFieldDecorator('f',{})
-                                (<DatePicker/>)
+                            {getFieldDecorator('proof_attendance_date',{})
+                                (<DatePicker />)
                             }
                         </Form.Item>
                         <Col span={6} offset={6}>
                             <Form.Item label="From">
-                                {getFieldDecorator('f',{})
+                                {getFieldDecorator('proof_attendance_from',{})
                                     (
-                                        <Select>
-                                            <Option value="M">5pm</Option>
-                                            <Option value="E">8pm</Option>
-                                        </Select>
+                                        <TimePicker use12Hours format="h:mm A"/>
                                     )
                                 }
                                
                             </Form.Item>
                             <Form.Item label="till">
-                                {getFieldDecorator('f',{})
+                                {getFieldDecorator('proof_attendance_to',{})
                                     (
-                                        <Select>
-                                            <Option value="M">8</Option>
-                                            <Option value="E">9</Option>
-                                        </Select>
+                                        <TimePicker use12Hours format="h:mm A" />
                                     )
                                 }
-                                
-                            </Form.Item>
+                            </Form.Item>                        
+                        </Col>
+                    </Row>
                         
-                        </Col>
-                        <Col span={4} >
-                            <Form.Item>
-                                {getFieldDecorator('f',{})
-                                    (
-                                        <Select>
-                                            <Option value="M">5pm</Option>
-                                            <Option value="E">8pm</Option>
-                                        </Select>
-                                    )
-                                }
-                            </Form.Item>
-    
-                            <Form.Item>
-                                {getFieldDecorator('f',{})
-                                    (
-                                        <Select>
-                                            <Option value="M">8</Option>
-                                            <Option value="E">9</Option>
-                                        </Select>
-                                    )
-                                }
-                            </Form.Item>
-                        </Col>
-                        </Row>
                     
                     
                     :null}
