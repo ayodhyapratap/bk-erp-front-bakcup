@@ -13,6 +13,7 @@ export default class LabPanel extends React.Component{
         this.state = {
             labPanel:null,
             editTest:null,
+            selectedTest:{},
         }
         this.loadLabPanel = this.loadLabPanel.bind(this);
         this.editPanels = this.editPanels.bind(this);
@@ -50,8 +51,9 @@ export default class LabPanel extends React.Component{
     }
     deleteLabPanel(record) {
         let that = this;
-        let reqData = record;
-        reqData.is_active = false;
+        let reqData = {...record, is_active:false, 
+            tests:Object.keys(this.state.selectedTest)
+        }
         let successFn = function (data) {
             that.loadLabPanel();
         }
@@ -68,7 +70,6 @@ export default class LabPanel extends React.Component{
                 product_margin[margin.id] = (margin.name)
             })
         }
-        console.log("table", product_margin)
         const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -91,6 +92,20 @@ export default class LabPanel extends React.Component{
               </span>
             ),
         }];
+
+        const subColumns =[{
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'code',
+        }, {
+            title: 'Cost',
+            dataIndex: 'cost',
+            key: 'cost',
+        }, {
+            title: ' Test Instructions',
+            dataIndex: 'instruction',
+            key: 'instruction',
+        }];
         return <Row>
             <Route exact path={'/settings/labs/add'}
                    render={(route) => <AddorEditLabPanel {...that.state}
@@ -109,7 +124,7 @@ export default class LabPanel extends React.Component{
                             </Link>
                         </h2>
                     </Row>
-                    <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.labPanel}/>
+                    <CustomizedTable loading={this.state.loading} columns={columns} expandedRowRender={record => <Table columns={subColumns} dataSource={record.tests}/>} dataSource={this.state.labPanel}/>
                 </div>
             </Route>
 

@@ -143,9 +143,11 @@ class AddorEditLab extends React.Component {
                     
                     <Form.Item  label={(<span>Panel Cost</span>)} {...formItemLayout}>
                         {getFieldDecorator('cost', {
+                            initialValue:TotalCost,
+                            // onChange:this.onChangeHandler,
                             
                         })(
-                            <InputNumber value={TotalCost} onChange={this.onChangeHandler}/>
+                            <InputNumber/>
                            
                         )}
                          <span className="ant-form-text"> Total : {typeof TotalCost === 'number'  ? TotalCost : 0}</span>

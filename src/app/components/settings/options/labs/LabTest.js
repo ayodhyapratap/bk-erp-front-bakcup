@@ -90,7 +90,6 @@ class LabTest extends React.Component {
                 product_margin[margin.id] = (margin.name)
             })
         }
-        console.log("table", product_margin)
         const columns = [{
             title: 'Name',
             dataIndex: 'name',
