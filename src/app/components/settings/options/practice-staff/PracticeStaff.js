@@ -234,6 +234,12 @@ class PracticeDetails extends React.Component {
             doctor: doctorList.join(',')
         });
     }
+    changeTab = (key) => {
+        this.setState({
+            defaultActiveTab: key
+        });
+        this.props.history.push('/settings/clinics-staff' + key);
+    }
 
     render() {
         let that = this;
@@ -336,7 +342,7 @@ class PracticeDetails extends React.Component {
                        render={(route) => <DoctorTiming {...this.props} {...route} loadData={that.loadData}/>}/>
                 <Route>
                     <Card>
-                        <Tabs defaultActiveKey={this.state.defaultActiveTab}>
+                        <Tabs defaultActiveKey={this.state.defaultActiveTab} onChange={this.changeTab}>
                             <TabPane tab={<span><Icon type="user-add"/>Manage Staff</span>} key="#staff">
                                 <h2>Doctors <Link to="/settings/clinics-staff/adddoctor">
                                     <Button type="primary" style={{float: 'right'}}>
