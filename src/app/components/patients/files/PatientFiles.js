@@ -212,6 +212,7 @@ class PatientFiles extends React.Component {
                          <Link to={"/patient/" + this.props.match.params.id + "/emr/create-medicalCertificate"}> <Button
                              type="primary">
                              <Icon type="plus"/>&nbsp;Add Medical Certificate</Button> </Link>
+
                          <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft">
                              <Button><Icon type="plus"/>AddFile/remove</Button>
                          </Dropdown>
