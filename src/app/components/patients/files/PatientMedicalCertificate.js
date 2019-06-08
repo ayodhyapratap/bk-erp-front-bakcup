@@ -1,16 +1,15 @@
 import React from "react";
 import {Route} from "react-router";
-import { Form, Icon, Input, Button,Checkbox, Card,DatePicker, Radio ,Row,Col,Select,TimePicker} from 'antd';
+import { Form, Icon, Input, Button,Checkbox, Card,DatePicker, Radio ,Row,Col,Select,TimePicker, Affix, Dropdown, Menu} from 'antd';
 import {Redirect, Link} from 'react-router-dom'
 import {postAPI, interpolate, displayMessage} from "../../../utils/common";
 import {ATTENDANCE} from "../../../constants/hardData";
 import {MEDICAL_CERTIFICATE_API} from "../../../constants/api";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import moment from 'moment';
+import {loadDoctors} from "../../../utils/clinicUtils";
 
 
-// const { MonthPicker, RangePicker } = DatePicker;
-const dateFormat = 'YYYY/MM/DD';
 const { TextArea } = Input;
 const { Option } = Select;
 class PatientMedicalCertificate extends React.Component {
@@ -21,15 +20,20 @@ class PatientMedicalCertificate extends React.Component {
             excused_duty_checked:false,
             fit_light_duty_checked:false,
             attendance_checked:false,
-            // startDate: this.props.value,
-            // endDate: new Date(),
+            startDate: this.props.value,
+            endDate: new Date(),
             proof_attendance_from:null,
             days:0,
+            practiceDoctors: [],
+            selectedDoctor: {},
+            selectedDate: moment()
         }
         this.handleChangeStart =this.handleChangeStart.bind(this);
         this.handleChangeEnd = this.handleChangeEnd.bind(this);
         this.totalDays = this.totalDays.bind(this);
-    console.log(this.props);
+    }
+    componentDidMount() {
+        loadDoctors(this);
     }
     changeRedirect() {
         var redirectVar = this.state.redirect;
@@ -85,7 +89,16 @@ class PatientMedicalCertificate extends React.Component {
         proof_attendance_from:timeString
        });
     }
-    
+    selectedDate = (date) => {
+        this.setState({
+            selectedDate: date
+        })
+    }
+    selectDoctor = (doctor) => {
+        this.setState({
+            selectedDoctor: doctor
+        })
+    }
     handleSubmit = (e) => {
         let that = this;
         e.preventDefault();
@@ -93,7 +106,9 @@ class PatientMedicalCertificate extends React.Component {
             if (!err) {
                 console.log("value",values);
                 let reqData = {...values,
+                    doctor: that.state.selectedDoctor.id,
                     practice:that.props.active_practiceId,
+                    date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
                     excused_duty_from:moment(values.excused_duty_from).format("YYYY-MM-DD"),
                     excused_duty_to:moment(values.excused_duty_to).format("YYYY-MM-DD"),
                     fit_light_duty_from:moment(values.fit_light_duty_from).format("YYYY-MM-DD"),
@@ -136,6 +151,8 @@ class PatientMedicalCertificate extends React.Component {
                 lg: { span: 16 },
             },
         };
+        console.log("state",this.state);
+        let that=this;
         const radioOption = ATTENDANCE.map((option) => <Radio value={option.value}>{option.label}</Radio>)
         return ( <Form onSubmit={this.handleSubmit} {...formItemLayout}> 
                 <Card title="ADD MEDICAL LEAVE CERTIFICATE"
@@ -173,22 +190,26 @@ class PatientMedicalCertificate extends React.Component {
                         </Col>
                         <Col span={6} >
                             <Form.Item>
-                                {getFieldDecorator('excused_duty_from_session',{})
+                                {getFieldDecorator('excused_duty_from_session',{
+                                    initialValue:"MORNING"
+                                })
                                 (
                                     <Select>
-                                        <Option value="M">Morning</Option>
-                                        <Option value="E">Evening</Option>
+                                        <Option value="MORNING">Morning Session</Option>
+                                        <Option value="EVENING">Evening Session</Option>
                                     </Select>
                                 )}
                                 
                             </Form.Item>
 
                             <Form.Item>
-                                {getFieldDecorator('excused_duty_to_session',{})
+                                {getFieldDecorator('excused_duty_to_session',{
+                                    initialValue:"MORNING"
+                                })
                                 (
                                     <Select>
-                                        <Option value="M">Morning</Option>
-                                        <Option value="E">Evening</Option>
+                                        <Option value="MORNING">Morning Session</Option>
+                                        <Option value="EVENING">Evening Session</Option>
                                     </Select>
                                 )}
                             </Form.Item>
@@ -283,6 +304,27 @@ class PatientMedicalCertificate extends React.Component {
                     )}
                     
                 </Form.Item>
+               <Affix offsetBottom={0}>
+                    <Card>
+                        <span>Issued by &nbsp;&nbsp;</span>
+                        <Dropdown placement="topCenter" overlay={<Menu>
+                            {this.state.practiceDoctors.map(doctor =>
+                                <Menu.Item key="0">
+                                    <a onClick={() => this.selectDoctor(doctor)}>{doctor.user.first_name}</a>
+                                </Menu.Item>)}
+                        </Menu>} trigger={['click']}>
+                            <a className="ant-dropdown-link" href="#">
+                                <b>
+                                    {this.state.selectedDoctor.user ? this.state.selectedDoctor.user.first_name : 'No DOCTORS Found'}
+                                </b>
+                            </a>
+                        </Dropdown>
+                        <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
+                        <DatePicker value={this.state.selectedDate}
+                                    onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}
+                                    allowClear={false}/>
+                    </Card>
+               </Affix>
                
             </Card>
         </Form>
