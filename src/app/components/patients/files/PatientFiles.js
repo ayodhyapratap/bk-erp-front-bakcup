@@ -173,27 +173,27 @@ class PatientFiles extends React.Component {
             action: interpolate(PATIENT_FILES, [this.props.match.params.id])
         }
 
-        const medicalFields = [{
-            key: 'name',
-            label: 'name',
-            type: INPUT_FIELD,
-        }, {
-            key: 'file_tags',
-            label: 'Tags',
-            type: MULTI_SELECT_FIELD,
-            options: this.state.tags.map(tag => ({label: tag.name, value: tag.id}))
-        }];
-        const medicalFormProps = {
-            method: 'post',
-            successFn: function () {
-                that.triggerAddMedicalCertificateModal(false);
-                that.loadData();
-            },
-            errorFn: function () {
+        // const medicalFields = [{
+        //     key: 'name',
+        //     label: 'name',
+        //     type: INPUT_FIELD,
+        // }, {
+        //     key: 'file_tags',
+        //     label: 'Tags',
+        //     type: MULTI_SELECT_FIELD,
+        //     options: this.state.tags.map(tag => ({label: tag.name, value: tag.id}))
+        // }];
+        // const medicalFormProps = {
+        //     method: 'post',
+        //     successFn: function () {
+        //         that.triggerAddMedicalCertificateModal(false);
+        //         that.loadData();
+        //     },
+        //     errorFn: function () {
 
-            },
-            action: interpolate(MEDICAL_CERTIFICATE_API, [this.props.match.params.id])
-        }
+        //     },
+        //     action: interpolate(MEDICAL_CERTIFICATE_API, [this.props.match.params.id])
+        // }
         const tagsMenu = (
             <Menu>
                 <Menu.Item>
@@ -213,8 +213,6 @@ class PatientFiles extends React.Component {
                              type="primary">
                              <Icon type="plus"/>&nbsp;Add Medical Certificate</Button> </Link>
 
-                         <Button onClick={() => this.triggerAddMedicalCertificateModal(true)}><Icon type="plus"/>Add
-                             Certificate</Button>
                          <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft">
                              <Button><Icon type="plus"/>AddFile/remove</Button>
                          </Dropdown>
