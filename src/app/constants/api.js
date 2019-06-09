@@ -74,6 +74,7 @@ export const CREATE_OR_EDIT_INVOICES = 'invoice/';
 export const PATIENT_CLINIC_NOTES_API = 'patients/clinic_notes/';
 export const PATIENT_PAYMENTS_API = 'payment/';
 export const PRACTICE_PRINT_SETTING_API = 'clinics/%s/practice_print_settings/?type=%s&sub_type=%s';
+export const SAVE_ALL_PRINT_SETTINGS = 'clinics/%s/all_print_settings/';
 export const PATIENT_COMMUNICATION_HISTORY_API = 'users/sms_status_update/?user=%s';
 export const PRESCRIPTION_TEMPLATE = "clinics/%s/prescription_template/";
 export const UNPAID_PRESCRIPTIONS = "patients/unpaid_prescriptions/?id=%s";
@@ -97,7 +98,7 @@ export const DRUG_UNIT_API = 'clinics/%s/drugunit/';
 
 export const PRINT_PREVIEW_RENDER = 'patients/print/';
 
-export const MEMBERSHIP_API = 'patients/membership/?id=%s'
+export const MEMBERSHIP_API = 'clinics/%s/membership/';
 /**
  * Blogs API
  * */

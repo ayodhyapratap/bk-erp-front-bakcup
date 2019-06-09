@@ -23,8 +23,7 @@ class PatientSettingForm extends React.Component {
             },
         };
 
-        const patientDetailsList = PATIENT_DETAILS_LIST.map((patient_details) => <li>
-            <Checkbox>{patient_details.value}</Checkbox></li>)
+
         let PreviewParamsURL = '?preview=true&type=' + this.props.type + '&sub_type=' + this.props.sub_type;
         if (this.state.print_setting) {
             let keys = Object.keys(this.state.print_setting);

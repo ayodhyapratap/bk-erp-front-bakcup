@@ -124,7 +124,7 @@ export default class LabPanel extends React.Component{
                             </Link>
                         </h2>
                     </Row>
-                    <CustomizedTable loading={this.state.loading} columns={columns} expandedRowRender={record => <Card><Table pagunation={false} columns={subColumns} dataSource={record.tests}/></Card>} dataSource={this.state.labPanel}/>
+                    <CustomizedTable loading={this.state.loading} columns={columns} expandedRowRender={record => <Card><Table pagination={false} columns={subColumns} dataSource={record.tests}/></Card>} dataSource={this.state.labPanel}/>
                 </div>
             </Route>
 

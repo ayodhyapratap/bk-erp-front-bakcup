@@ -6,7 +6,7 @@ import {PAPER_SIZE, PAGE_ORIENTATION, PRINTER_TYPE} from "../../../../constants/
 
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
-const OptionList = PAPER_SIZE.map((pageSize) => <Select.Option value={pageSize}>{pageSize}</Select.Option>)
+
 
 class PageSettingForm extends React.Component {
     constructor(props) {
@@ -93,7 +93,6 @@ class PageSettingForm extends React.Component {
                 lg: {span: 16},
             },
         };
-
 
         const {getFieldDecorator} = this.props.form;
         const pageOrientation = PAGE_ORIENTATION.map((pageOrientation) => <Radio
@@ -187,7 +186,9 @@ class PageSettingForm extends React.Component {
                 </Col>
                 <Col span={12} style={{textAlign: 'center'}}>
                     <iframe
-                        src={makeURL(PRINT_PREVIEW_RENDER + PreviewParamsURL)} style={{width: '100%', height: '100%', boxShadow: '-2px 0px 4px #B8B8B8'}}/>
+                        src={makeURL(PRINT_PREVIEW_RENDER + PreviewParamsURL)}
+
+                        style={{width: '100%', height: '100%', minHeight: '800px', boxShadow: '-2px 0px 4px #B8B8B8'}}/>
                 </Col>
 
             </Row>

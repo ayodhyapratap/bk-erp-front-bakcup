@@ -87,45 +87,7 @@ class FooterSetting extends React.Component {
         return (<Row gutter={16}>
                 <Col span={12}>
                     <Form onSubmit={this.handleSubmit}>
-                        <h2>Footer Setup</h2>
-                        <Form.Item key={'footer_margin_top'} {...formItemLayout}
-                                   label={(<span>Top Margin&nbsp;</span>)}>
-                            {getFieldDecorator('footer_margin_top', {
-                                initialValue: this.state.print_setting.footer_margin_top
-                            })(
-                                <InputNumber min={0} max={10}/>
-                            )}
-                            <span className="ant-form-text">Inches</span>
-                        </Form.Item>
-                        <Form.Item key={'footer_text'} {...formItemLayout}
-                                   label={(<span>Full Width Content&nbsp;</span>)}>
-                            {getFieldDecorator('footer_text', {
-                                initialValue: this.state.print_setting.footer_text
-                            })(
-                                <TextArea rows={3}/>
-                            )}
-                        </Form.Item>
 
-                        <Form.Item key={'footer_left_text'} {...formItemLayout}
-                                   label={(<span>Left Signature&nbsp;</span>)}>
-                            {getFieldDecorator('footer_left_text', {
-                                initialValue: this.state.print_setting.footer_left_text
-                            })(
-                                <TextArea/>
-                            )}
-                        </Form.Item>
-
-                        <Form.Item key={'footer_right_text'} {...formItemLayout}
-                                   label={(<span>Right Signature&nbsp;</span>)}>
-                            {getFieldDecorator('footer_right_text', {
-                                initialValue: this.state.print_setting.footer_right_text
-                            })(
-                                <TextArea/>
-                            )}
-                        </Form.Item>
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit">Submit</Button>
-                        </Form.Item>
 
                     </Form>
                 </Col>
