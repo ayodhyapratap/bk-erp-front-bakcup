@@ -1,17 +1,20 @@
 import React from "react";
-import {Button, Divider, Card, Icon, Row, Table} from "antd";
+import {Button, Divider, Card, Icon, Row, Table, Modal,Col, Avatar} from "antd";
 import {Link} from "react-router-dom";
 import {ALL_PRACTICE, PRACTICE_DELETE} from "../../../../constants/api";
-import {getAPI, interpolate, postAPI} from "../../../../utils/common";
+import {getAPI, interpolate, postAPI, makeFileURL} from "../../../../utils/common";
 
-
+const { Meta } = Card;
 class PracticeDetails extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             practiceList: [],
             specialisations: null,
-            loading:true
+            loading:true,
+            visible:false,
+            practice:{}
+
         };
         this.deletePractice = this.deletePractice.bind(this);
     }
@@ -77,6 +80,14 @@ class PracticeDetails extends React.Component {
         postAPI(interpolate(PRACTICE_DELETE, [value]), {}, successFn, errorFn);
 
     }
+    showModal=(item)=> {
+        this.setState(function () {
+            return {visible:true , practice:item}
+        });
+    };
+    handleCancel = () => {
+        this.setState({ visible: false });
+    };
 
     render() {
         let that = this;
@@ -90,7 +101,7 @@ class PracticeDetails extends React.Component {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            render: text => <a href="javascript:;">{text}</a>,
+            render:(text,record) => <a href="#" onClick={()=>this.showModal(record)}>{text}</a>,
         }, {
             title: 'Tagline',
             dataIndex: 'tagline',
@@ -127,8 +138,46 @@ class PracticeDetails extends React.Component {
             <Card loading={this.state.loading}>
                 <Table pagination={false} columns={columns} dataSource={this.state.practiceList}/>
             </Card>
+            <Modal
+                visible={this.state.visible}
+                closable={false}
+                onCancel={this.handleCancel}
+                footer={null}>
+                 <Button icon="close" type="danger" shape="circle" style={{position: 'absolute', top: '-50px', right: 0}}
+                       onClick={this.handleCancel} />
+                <Card >
+                    <Meta style={{float:"right"}}
+                        avatar={
+                        <Avatar src={makeFileURL(this.state.practice.logo)} />
+                        }/>
+
+                    <ProfileTables label={"Practice Name : "} value={this.state.practice.name}/>
+                    <ProfileTables label={"Tagline : "} value={this.state.practice.tagline}/>
+                    <ProfileTables label={"Email Id: "} value={this.state.practice.email}/>
+                    <ProfileTables label={"Contact Number : "} value={this.state.practice.email}/>
+                    <ProfileTables label={"Website : "}  value={this.state.practice.website}/>
+                    <ProfileTables label={"GSTIN : "} value={this.state.practice.gstin}/>
+                    <ProfileTables label={"Specialisation"}  value={this.state.practice.specialisation}/>
+                    {ProfileTables({label:'Address',value:this.state.practice.address + ' ' + this.state.practice.locality + ' ' + this.state.practice.city 
+                        + ' ' + this.state.practice.state + ' ' + this.state.practice.country + ' ' + this.state.practice.pincode
+                    })}
+
+                   
+                </Card>
+                
+                
+            </Modal>
         </Row>
     }
 }
 
 export default PracticeDetails;
+function ProfileTables(props){
+    return <Row gutter={16}>
+        <Col span={8}>
+            <p><b>{props.label}</b></p>
+        </Col> 
+        <Col span={16}>{props.value}</Col> 
+    </Row>  
+
+}

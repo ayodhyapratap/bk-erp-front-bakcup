@@ -23,6 +23,8 @@ class PatientFiles extends React.Component {
             showAddMedicalModel: false,
             // filterSearchMedical:''
             medicalCertificate:[],
+            visible: false,
+            filesData:{}
         };
         this.loadData = this.loadData.bind(this);
         this.loadMedicalCertificate =this.loadMedicalCertificate.bind(this);
@@ -193,14 +195,22 @@ class PatientFiles extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(interpolate(MEDICAL_CERTIFICATE_PDF, [id]), successFn, errorFn);
+        // getAPI(interpolate(, [id]), successFn, errorFn);
     }
 
+    showModal=(item)=> {
+        this.setState(function () {
+            return {visible:true , filesData:{...item}}
+        });
+        // console.log("this",this.state.filesData);
+    };
+   
+    handleCancel = () => {
+        this.setState({ visible: false });
+    };
     render() {
         let that = this;
-        console.log("certificate",this.state.medicalCertificate);
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
-        const PatientMedicalCertificateForm = Form.create()(DynamicFieldsForm);
         const fields = [{
             key: 'file_type',
             label: 'File',
@@ -234,7 +244,8 @@ class PatientFiles extends React.Component {
 
             </Menu>
         );
-        const defaultFields = [{key: 'is_active', value: true}, {key: 'patient', value: this.props.match.params.id}]
+      
+        const defaultFields = [{key: 'is_active', value: true}, {key: 'patient', value: this.props.match.params.id},{key:'practice', value: this.props.active_practiceId}]
         return <Card title="Files"
                      extra={<Button.Group>
                          <Link to={"/patient/" + this.props.match.params.id + "/emr/create-medicalCertificate"}> <Button
@@ -275,7 +286,7 @@ class PatientFiles extends React.Component {
                     
                     <Radio.Group buttonStyle="solid" defaultValue="">
                         <h2>Generated Files</h2>
-                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="d">
+                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="d" >
                             Emailed Files
                         </Radio.Button>
 
@@ -288,8 +299,8 @@ class PatientFiles extends React.Component {
                             grid={{gutter: 16, column: 3}}
                             dataSource={this.state.files}
                             renderItem={item => (
-                                <List.Item style={{textAlign: 'center'}} key={item.id}>
-                                    <div style={{
+                                <List.Item style={{textAlign: 'center'}} key={item.id} >
+                                    <div onClick={()=>this.showModal(item)} style={{
                                         width: '100%',
                                         height: '150px',
                                         border: '1px solid #bbb',
@@ -347,8 +358,26 @@ class PatientFiles extends React.Component {
                    footer={null}>
                 <PatientFilesForm title="Add Files"
                                   fields={fields}
-                                  defaultFields={defaultFields}
+                                  defaultValues={defaultFields}
                                   formProp={formProps}/>
+            </Modal>
+
+            <Modal
+                visible={this.state.visible}
+                closable={false}
+                onCancel={this.handleCancel}
+                footer={null}>
+                 <Button icon="close" type="danger" shape="circle" style={{position: 'absolute', top: '-50px', right: 0}}
+                       onClick={this.handleCancel} />
+                <Card  hoverable
+                        cover={<img  src={makeFileURL(this.state.filesData.file_type)}/>} 
+                        extra={ <Button.Group>
+                        <Button><a onClick={() => this.loadPDF(this.state.filesData.id)}><Icon type="printer"/></a></Button>
+                        <Button icon="cloud-download"><a href={makeFileURL(this.state.filesData.file_type)} download></a></Button>
+                        </Button.Group>}>
+                </Card>
+                
+                
             </Modal>
 
         </Card>

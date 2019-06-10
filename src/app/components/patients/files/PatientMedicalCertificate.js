@@ -12,6 +12,7 @@ import {loadDoctors} from "../../../utils/clinicUtils";
 
 const { TextArea } = Input;
 const { Option } = Select;
+
 class PatientMedicalCertificate extends React.Component {
     constructor(props) {
         super(props);
@@ -63,7 +64,6 @@ class PatientMedicalCertificate extends React.Component {
         });
     }
     handleChangeStart = (date)=> {
-        console.log("date kya h0",this.state.startDate)
         this.setState({
           startDate: date
         });
@@ -72,7 +72,6 @@ class PatientMedicalCertificate extends React.Component {
     
     
     handleChangeEnd(date) {
-        console.log(date);
         this.setState({
           endDate: date
         });
@@ -104,7 +103,6 @@ class PatientMedicalCertificate extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log("value",values);
                 let reqData = {...values,
                     doctor: that.state.selectedDoctor.id,
                     practice:that.props.active_practiceId,
@@ -130,7 +128,6 @@ class PatientMedicalCertificate extends React.Component {
                     that.setState({
                     });
                 }
-                console.log(reqData);
                 postAPI(interpolate(MEDICAL_CERTIFICATE_API, [this.props.currentPatient.id]), reqData, successFn, errorFn);
             }
         });
@@ -151,7 +148,6 @@ class PatientMedicalCertificate extends React.Component {
                 lg: { span: 16 },
             },
         };
-        console.log("state",this.state);
         let that=this;
         const radioOption = ATTENDANCE.map((option) => <Radio value={option.value}>{option.label}</Radio>)
         return ( <Form onSubmit={this.handleSubmit} {...formItemLayout}> 
