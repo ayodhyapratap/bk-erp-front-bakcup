@@ -8,6 +8,7 @@ import {
 } from "../../../../constants/hardData";
 import {displayMessage, getAPI, interpolate, makeURL, postAPI} from "../../../../utils/common";
 import {
+    CLINIC_NOTES_PDF,
     FILE_UPLOAD_API,
     PRACTICE_PRINT_SETTING_API,
     PRINT_PREVIEW_RENDER,
@@ -15,6 +16,7 @@ import {
 } from "../../../../constants/api";
 import {message} from "antd/lib/index";
 import {SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
+import {BACKEND_BASE_URL} from "../../../../config/connect";
 
 const {TextArea} = Input;
 const radioTabList = CUSTOMIZE_PAPER_TYPE.map((radioTab) => <Radio.Button value={radioTab}>{radioTab}</Radio.Button>);
@@ -50,8 +52,7 @@ class PrintSettings extends React.Component {
             if (data.length)
                 that.setState({
                     print_setting: data[0],
-                })
-            console.log("all retrive", JSON.stringify(that.state.print_setting));
+                });
         };
         let errorFn = function () {
         };
@@ -95,6 +96,17 @@ class PrintSettings extends React.Component {
         this.setState(function (prevState) {
             return {editedPrintSettings: {...prevState.editedPrintSettings, [type]: value}}
         })
+    }
+    loadPDF = (path) => {
+        let that = this;
+        let successFn = function (data) {
+            if (data.report)
+                window.open(BACKEND_BASE_URL + data.report);
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(path, successFn, errorFn);
     }
 
     render() {
@@ -151,13 +163,15 @@ class PrintSettings extends React.Component {
         const printer_type = PRINTER_TYPE.map((printerType) => <Radio
             value={printerType.value}>{printerType.value}</Radio>)
         let PreviewParamsURL = '?preview=true&type=' + this.props.type + '&sub_type=' + this.props.sub_type;
+
         if (this.state.print_setting) {
-            let editedObject = {...this.state.print_setting, ...this.state.editedPrintSettings}
+            let editedObject = {...this.state.print_setting, ...this.state.editedPrintSettings};
             let keys = Object.keys(editedObject);
             keys.forEach(function (key) {
-                if (that.state.print_setting[key])
-                    PreviewParamsURL += '&' + key + '=' + that.state.print_setting[key]
+                if (editedObject[key])
+                    PreviewParamsURL += '&' + key + '=' + editedObject[key]
             });
+
         }
         const {getFieldDecorator} = this.props.form;
         return (<Row>
@@ -409,7 +423,11 @@ class PrintSettings extends React.Component {
                                             )}
                                         </Form.Item>
                                         <Form.Item>
-                                            <Button type="primary" htmlType="submit" value={"ALL"}>Save</Button>
+                                            <Button style={{margin: 5}} type="primary" htmlType="submit"
+                                                    value={"ALL"}>Save</Button>
+                                            <Button style={{margin: 5}}
+                                                    onClick={() => this.loadPDF(PRINT_PREVIEW_RENDER + PreviewParamsURL + '&pdf=1')}>Show
+                                                Print Preview</Button>
                                         </Form.Item>
                                     </Row>
                                 </Col>
