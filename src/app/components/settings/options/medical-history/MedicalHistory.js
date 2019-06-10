@@ -125,7 +125,7 @@ class MedicalHistory extends React.Component {
                   <a>Delete</a>
               </Popconfirm>
               </span> : <span>
-                    <Popconfirm title="Are you sure show this?"
+                    <Popconfirm title="Are you sure to show this?"
                                 onConfirm={() => that.deleteObject(record,true)} okText="Yes" cancelText="No">
                   <a>Show</a>
               </Popconfirm>

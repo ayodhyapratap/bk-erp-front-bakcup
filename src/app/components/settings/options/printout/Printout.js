@@ -45,7 +45,8 @@ class Printout extends React.Component {
                                                 key={(i.toString() == that.state.activeKey.toString() ? item.title + that.state.randomKey : item.title)}
                                                 sub_type={item.title}
                                                 active_practiceId={this.props.active_practiceId}
-                                                type={"EMR"}/></TabPane>)
+                                                type={"EMR"}/>
+                                        </TabPane>)
                                     })}
                                 </Tabs>
                             </div>
@@ -63,7 +64,8 @@ class Printout extends React.Component {
                                                 key={(i.toString() == that.state.activeKey.toString() ? item.title + that.state.randomKey : item.title)}
                                                 sub_type={item.title}
                                                 active_practiceId={this.props.active_practiceId}
-                                                type={"BILLING"}/></TabPane>)
+                                                type={"BILLING"}/>
+                                        </TabPane>)
                                     })}
                                 </Tabs>
 

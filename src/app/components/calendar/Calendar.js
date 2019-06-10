@@ -28,7 +28,7 @@ import {
     APPOINTMENT_API,
     PRACTICESTAFF,
     CALENDER_SETTINGS,
-    BLOCK_CALENDAR
+    BLOCK_CALENDAR, DOCTOR_VISIT_TIMING_API
 } from "../../constants/api";
 import EventComponent from "./EventComponent";
 import {
@@ -77,6 +77,7 @@ class App extends Component {
             blockedCalendar: [],
             showCalendarEvents: true,
             showAppointments: true,
+            doctorTiming: {},
             ...getCalendarSettings()
         }
         ;
@@ -457,9 +458,9 @@ class App extends Component {
                 })
             }
         } else if (e.length) {
-            if(e.length==7){
-                this.appointmentList(moment(e[0]).subtract(1,'day'), moment(e[e.length - 1]).subtract(1,'day'));
-            }else {
+            if (e.length == 7) {
+                this.appointmentList(moment(e[0]).subtract(1, 'day'), moment(e[e.length - 1]).subtract(1, 'day'));
+            } else {
                 this.appointmentList(moment(e[0]), moment(e[e.length - 1]));
             }
             this.setState({
@@ -504,6 +505,9 @@ class App extends Component {
         }
     }
     changeFilter = (type, value) => {
+        if (type == "selectedDoctor" && value != 'ALL') {
+            this.loadDoctorTiming(value)
+        }
         this.setState(function (prevState) {
             let filteredEvent = [];
             prevState.events.forEach(function (event) {
@@ -531,6 +535,50 @@ class App extends Component {
         }, function () {
             saveCalendarSettings(type, value)
         })
+    }
+    loadDoctorTiming = (id) => {
+        let that = this;
+        let successFn = function (data) {
+            let dataObject = {};
+            if (data.length)
+                dataObject = data[0];
+            let timing = {};
+            DAY_KEYS.forEach(function (dayKey) {
+                timing[dayKey] = {};
+                if (dataObject.visting_hour_same_week) {
+                    timing[dayKey].startTime = moment(dataObject.first_start_time, 'HH:mm:ss');
+                    timing[dayKey].endTime = moment(dataObject.second_end_time, 'HH:mm:ss');
+                    if (dataObject.is_two_sessions) {
+                        timing[dayKey].lunch = true;
+                        timing[dayKey].lunchStartTime = moment(dataObject.first_end_time, 'HH:mm:ss');
+                        timing[dayKey].lunchEndTime = moment(dataObject.second_start_time, 'HH:mm:ss');
+                    } else {
+                        timing[dayKey].lunch = false
+                    }
+                } else if (dataObject[dayKey]) {
+                    timing[dayKey].startTime = moment(dataObject[`first_start_time_${dayKey}`], 'HH:mm:ss');
+                    timing[dayKey].endTime = moment(dataObject[`second_end_time_${dayKey}`], 'HH:mm:ss');
+                    if (dataObject[`is_two_sessions_${dayKey}`]) {
+                        timing[dayKey].lunch = true;
+                        timing[dayKey].lunchStartTime = moment(dataObject[`first_end_time_${dayKey}`], 'HH:mm:ss');
+                        timing[dayKey].lunchEndTime = moment(dataObject[`second_start_time_${dayKey}`], 'HH:mm:ss');
+                    } else {
+                        timing[dayKey].lunch = false
+                    }
+                } else {
+                    timing[dayKey] = null
+                }
+            });
+            that.setState(function (prevState) {
+                return {doctorTiming: {...prevState.doctorTiming, [id]: {...timing}}}
+            });
+        }
+        let errorFn = function () {
+
+        };
+        getAPI(interpolate(DOCTOR_VISIT_TIMING_API, [this.props.active_practiceId]), successFn, errorFn, {
+            doctor: id
+        });
     }
 
     render() {
@@ -724,6 +772,7 @@ class App extends Component {
                                                                                 key={options.value.toString()}
                                                                                 blockedCalendar={that.state.blockedCalendar}
                                                                                 calendarTimings={that.state.timing}
+                                                                                doctorTimings={that.state.doctorTiming[that.state.selectedDoctor]}
                                                                                 filterType={that.state.filterType}
                                                                                 selectedDoctor={that.state.selectedDoctor}
                                                                                 showCalendarEvents={that.state.showCalendarEvents}/>
@@ -792,32 +841,59 @@ MyWeek.title = date => {
 function TimeSlotWrapper(props) {
     let flag = true;
     let dayValue = moment(props.value).isValid() ? moment(props.value).format('dddd').toLowerCase() : null;
-    /**
-     * Checking for Calendar Clinic Timings
-     * */
-    if (props.calendarTimings && dayValue && props.calendarTimings[dayValue]) {
-        let daysTimings = props.calendarTimings[dayValue];
-        if (daysTimings.lunch) {
-            if (
-                (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss')
-                    || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')
-                ) || (
-                    moment(props.value, 'HH:mm:ss').format('HH:mm:ss') < daysTimings.lunchEndTime.format('HH:mm:ss')
-                    && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') >= daysTimings.lunchStartTime.format('HH:mm:ss')
-                )
-            ) {
-                flag = false;
-            }
-        } else {
-            if (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
-                flag = false;
-            }
-        }
-    } else if (dayValue && !props.calendarTimings[dayValue]) {
+    if (props.filterType != 'DOCTOR' || props.selectedDoctor == 'ALL') {
         /**
-         * If the practice isnot opening for the day
+         * Checking for Calendar Clinic Timings
          * */
-        flag = false;
+        if (props.calendarTimings && dayValue && props.calendarTimings[dayValue]) {
+            let daysTimings = props.calendarTimings[dayValue];
+            if (daysTimings.lunch) {
+                if (
+                    (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss')
+                        || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')
+                    ) || (
+                        moment(props.value, 'HH:mm:ss').format('HH:mm:ss') < daysTimings.lunchEndTime.format('HH:mm:ss')
+                        && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') >= daysTimings.lunchStartTime.format('HH:mm:ss')
+                    )
+                ) {
+                    flag = false;
+                }
+            } else {
+                if (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
+                    flag = false;
+                }
+            }
+        } else if (dayValue && !props.calendarTimings[dayValue]) {
+            /**
+             * If the practice is not opening for the day
+             * */
+            flag = false;
+        }
+    } else {
+        if (props.doctorTimings && dayValue && props.doctorTimings[dayValue]) {
+            let daysTimings = props.doctorTimings[dayValue];
+            if (daysTimings.lunch) {
+                if (
+                    (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss')
+                        || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')
+                    ) || (
+                        moment(props.value, 'HH:mm:ss').format('HH:mm:ss') < daysTimings.lunchEndTime.format('HH:mm:ss')
+                        && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') >= daysTimings.lunchStartTime.format('HH:mm:ss')
+                    )
+                ) {
+                    flag = false;
+                }
+            } else {
+                if (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
+                    flag = false;
+                }
+            }
+        } else if (props.doctorTimings && dayValue && !props.doctorTimings[dayValue]) {
+            /**
+             * If the doctor is not working for the day
+             * */
+            flag = false;
+        }
     }
     /**
      * Checking for Events Timings
@@ -837,6 +913,7 @@ function TimeSlotWrapper(props) {
             }
         }
     }
+
     if (flag)
         return props.children;
 
