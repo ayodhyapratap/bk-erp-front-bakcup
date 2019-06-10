@@ -6,6 +6,7 @@ import {APPOINTMENT_CATEGORIES} from "../constants/api";
 import {hashCode, intToRGB} from "./clinicUtils";
 import * as lockr from "lockr";
 import {CALENDAR_SETTINGS} from "../constants/dataKeys";
+import moment from "moment/moment";
 
 export const calendarSettingMenu = (<Menu>
         <Menu.Item key="1">
@@ -69,4 +70,89 @@ export const getCalendarSettings = function () {
         settings = {}
     }
     return settings;
+}
+
+
+export const TimeSlotWrapper = function (props) {
+    let flag = true;
+    let dayValue = moment(props.value).isValid() ? moment(props.value).format('dddd').toLowerCase() : null;
+    if (props.filterType != 'DOCTOR' || props.selectedDoctor == 'ALL') {
+        /**
+         * Checking for Calendar Clinic Timings
+         * */
+        if (props.calendarTimings && dayValue && props.calendarTimings[dayValue]) {
+            let daysTimings = props.calendarTimings[dayValue];
+            if (daysTimings.lunch) {
+                if (
+                    (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss')
+                        || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')
+                    ) || (
+                        moment(props.value, 'HH:mm:ss').format('HH:mm:ss') < daysTimings.lunchEndTime.format('HH:mm:ss')
+                        && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') >= daysTimings.lunchStartTime.format('HH:mm:ss')
+                    )
+                ) {
+                    flag = false;
+                }
+            } else {
+                if (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
+                    flag = false;
+                }
+            }
+        } else if (dayValue && !props.calendarTimings[dayValue]) {
+            /**
+             * If the practice is not opening for the day
+             * */
+            flag = false;
+        }
+    } else {
+        if (props.doctorTimings && dayValue && props.doctorTimings[dayValue]) {
+            let daysTimings = props.doctorTimings[dayValue];
+            if (daysTimings.lunch) {
+                if (
+                    (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss')
+                        || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')
+                    ) || (
+                        moment(props.value, 'HH:mm:ss').format('HH:mm:ss') < daysTimings.lunchEndTime.format('HH:mm:ss')
+                        && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') >= daysTimings.lunchStartTime.format('HH:mm:ss')
+                    )
+                ) {
+                    flag = false;
+                }
+            } else {
+                if (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
+                    flag = false;
+                }
+            }
+        } else if (props.doctorTimings && dayValue && !props.doctorTimings[dayValue]) {
+            /**
+             * If the doctor is not working for the day
+             * */
+            flag = false;
+        }
+    }
+    /**
+     * Checking for Events Timings
+     * */
+    if (props.showCalendarEvents && flag) {
+        for (let i = 0; i < props.blockedCalendar.length; i++) {
+            if (props.blockedCalendar[i].doctor && props.filterType == 'DOCTOR') {
+                if (props.blockedCalendar[i].doctor == props.selectedDoctor && moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
+                    flag = false;
+                    break;
+                }
+            } else {
+                if (moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
+                    flag = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (flag)
+        return props.children;
+
+
+    const child = React.Children.only(props.children);
+    return React.cloneElement(child, {className: child.props.className + ' rbc-off-range-bg'});
 }

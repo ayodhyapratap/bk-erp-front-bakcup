@@ -17,6 +17,7 @@ import {
     Dropdown,
     Icon,
     DatePicker, Checkbox,
+    Radio
 } from "antd"
 import {DOCTORS_ROLE, SUCCESS_MSG_TYPE, WARNING_MSG_TYPE,} from "../../constants/dataKeys";
 import "./app.css";
@@ -34,7 +35,7 @@ import EventComponent from "./EventComponent";
 import {
     getCalendarSettings,
     loadAppointmentCategories,
-    saveCalendarSettings
+    saveCalendarSettings, TimeSlotWrapper
 } from "../../utils/calendarUtils";
 import CalendarRightPanel from "./CalendarRightPanel";
 import {
@@ -72,6 +73,7 @@ class App extends Component {
             selectedCategory: 'ALL',
             selectedDate: moment(),
             filterType: 'DOCTOR',
+            calendarType: 'APPOINTMENTS',
             doctorsAppointmentCount: {},
             categoriesAppointmentCount: {},
             blockedCalendar: [],
@@ -95,6 +97,25 @@ class App extends Component {
         this.loadDoctors();
         loadAppointmentCategories(this);
         this.appointmentList(moment().subtract(1, 'days'), moment().add(5, 'days'));
+    }
+
+    changeCalendarType = (value) => {
+        let that = this;
+        this.setState({
+            calendarType: value,
+            selectedDoctor: 'ALL',
+            selectedCategory: 'ALL',
+            filterType: 'DOCTOR',
+        }, function () {
+            if (value == 'APPOINTMENTS') {
+                that.changeFilter('selectedDoctor', 'ALL');
+
+            } else if (value == 'AVAILABILITY') {
+                if (that.state.practice_doctors.length) {
+                    that.changeFilter('selectedDoctor', that.state.practice_doctors[0].id);
+                }
+            }
+        })
     }
 
     loadDoctors() {
@@ -591,6 +612,8 @@ class App extends Component {
             endTime = new Date(new moment(this.state.calendarTimings.end_time, 'HH:mm:ss'))
 
         }
+        let summaryEvents = [];
+        // if(this.state.calendarType==)
         return (<Content className="main-container">
                 <div style={{padding: '5px'}}>
                     <Switch>
@@ -603,39 +626,42 @@ class App extends Component {
                                         <DatePicker onChange={this.onSelectedDateChange}
                                                     value={this.state.selectedDate}
                                                     format={"DD-MM-YYYY"} style={{margin: 5}} allowClear={false}/>
-                                        <Button block style={{margin: 5}}>
-                                            <Link to={"/calendar/blockcalendar"}>
-                                                <Icon type="stop"/> Block Calendar
-                                            </Link>
-                                        </Button>
-                                        <Dropdown trigger={'click'} overlay={
-                                            <Menu onClick={this.setFilterType}>
-                                                <Menu.Item key={"DOCTOR"}>
-                                                    DOCTOR
-                                                </Menu.Item>
-                                                <Menu.Item key={"CATEGORY"}>
-                                                    CATEGORY
-                                                </Menu.Item>
-                                            </Menu>
-                                        }>
-                                            <Button block style={{margin: 5}}>
-                                                {this.state.filterType} <Icon type={"caret-down"}/>
-                                            </Button>
-                                        </Dropdown>
-
+                                        {this.state.calendarType == 'APPOINTMENTS' ?
+                                            <div>
+                                                <Button block style={{margin: 5}}>
+                                                    <Link to={"/calendar/blockcalendar"}>
+                                                        <Icon type="stop"/> Block Calendar
+                                                    </Link>
+                                                </Button>
+                                                <Dropdown trigger={'click'} overlay={
+                                                    <Menu onClick={this.setFilterType}>
+                                                        <Menu.Item key={"DOCTOR"}>
+                                                            DOCTOR
+                                                        </Menu.Item>
+                                                        <Menu.Item key={"CATEGORY"}>
+                                                            CATEGORY
+                                                        </Menu.Item>
+                                                    </Menu>
+                                                }>
+                                                    <Button block style={{margin: 5}}>
+                                                        {this.state.filterType} <Icon type={"caret-down"}/>
+                                                    </Button>
+                                                </Dropdown>
+                                            </div> : null}
                                         <Spin spinning={this.state.loading}>
                                             {this.state.filterType == 'DOCTOR' ?
                                                 <Menu selectedKeys={[this.state.selectedDoctor]}
                                                       size={'small'}
                                                       onClick={(e) => this.changeFilter('selectedDoctor', e.key)}>
-                                                    <Menu.Item key={"ALL"} style={{
-                                                        marginBottom: 2,
-                                                        textOverflow: "ellipsis",
-                                                        borderLeft: '5px solid black',
-                                                        borderRight: 'none'
-                                                    }}>
-                                                        <span>({this.state.doctorsAppointmentCount['ALL'] ? (!this.state.filterCancelledAppointment ? (this.state.doctorsAppointmentCount['ALL'].ALL - this.state.doctorsAppointmentCount['ALL'].CANCELLED) : this.state.doctorsAppointmentCount['ALL'].ALL) : 0}) All Doctors</span>
-                                                    </Menu.Item>
+                                                    {this.state.calendarType == 'APPOINTMENTS' ?
+                                                        <Menu.Item key={"ALL"} style={{
+                                                            marginBottom: 2,
+                                                            textOverflow: "ellipsis",
+                                                            borderLeft: '5px solid black',
+                                                            borderRight: 'none'
+                                                        }}>
+                                                            <span>({this.state.doctorsAppointmentCount['ALL'] ? (!this.state.filterCancelledAppointment ? (this.state.doctorsAppointmentCount['ALL'].ALL - this.state.doctorsAppointmentCount['ALL'].CANCELLED) : this.state.doctorsAppointmentCount['ALL'].ALL) : 0}) All Doctors</span>
+                                                        </Menu.Item> : null}
                                                     {this.state.practice_doctors.map(item =>
                                                         <Menu.Item key={item.id} style={{
                                                             textOverflow: "ellipsis",
@@ -673,6 +699,19 @@ class App extends Component {
                                                         </Menu.Item>
                                                     )}
                                                 </Menu>}
+                                            <div style={{marginTop: 16}}>
+                                                <Radio.Group size="small" checked={this.state.calendarType}
+                                                             defaultValue={this.state.calendarType}
+                                                             buttonStyle="solid"
+                                                             onChange={(e) => this.changeCalendarType(e.target.value)}>
+                                                    <Radio.Button value={"APPOINTMENTS"}>
+                                                        <small>Appointments</small>
+                                                    </Radio.Button>
+                                                    <Radio.Button value={"AVAILABILITY"}>
+                                                        <small>Availability</small>
+                                                    </Radio.Button>
+                                                </Radio.Group>
+                                            </div>
                                             <div style={{position: 'fixed', bottom: 10, zIndex: 9}}>
                                                 {this.state.openMorePanel ?
                                                     <div style={{
@@ -743,9 +782,56 @@ class App extends Component {
                                             </div>
                                         </Spin>
                                     </Col>
-                                    <Col span={16}>
-                                        <Spin size="large" spinning={this.state.loading}>
+                                    {this.state.calendarType == 'APPOINTMENTS' ?
+                                        <div>
+                                            <Col span={16}>
+                                                <Spin size="large" spinning={this.state.loading}>
+                                                    <DragAndDropCalendar
+                                                        key={'APPOINTMENTS'}
+                                                        defaultDate={new Date()}
+                                                        localizer={localizer}
+                                                        defaultView="week"
+                                                        step={10}
+                                                        timeslots={1}
+                                                        truncateEvents={false}
+                                                        events={this.state.showAppointments ? this.state.filteredEvent : []}
+                                                        onEventDrop={this.moveEvent}
+                                                        onEventResize={this.resizeEvent}
+                                                        resizable
+                                                        selectable
+                                                        popup={this.onSelectEvent}
+                                                        onSelectSlot={this.onSelectSlot}
+                                                        // onSelectEvent={this.onSelectEvent}
+                                                        views={{month: true, week: MyWeek, day: true, agenda: true}}
+                                                        style={{height: "calc(100vh - 85px)"}}
+                                                        eventPropGetter={(this.eventStyleGetter)}
+                                                        date={new Date(this.state.selectedDate.format())}
+                                                        onRangeChange={this.onRangeChange}
+                                                        components={{
+                                                            event: EventComponent,
+                                                            timeSlotWrapper: function (options) {
+                                                                return <TimeSlotWrapper {...options}
+                                                                                        key={options.value.toString()}
+                                                                                        blockedCalendar={that.state.blockedCalendar}
+                                                                                        calendarTimings={that.state.timing}
+                                                                                        doctorTimings={that.state.doctorTiming[that.state.selectedDoctor]}
+                                                                                        filterType={that.state.filterType}
+                                                                                        selectedDoctor={that.state.selectedDoctor}
+                                                                                        showCalendarEvents={that.state.showCalendarEvents}/>
+                                                            },
+                                                        }}/>
+
+                                                </Spin>
+                                            </Col>
+                                            <Col span={5}>
+                                                <CalendarRightPanel {...this.props} {...this.state}
+                                                                    key={moment(this.state.selectedDate).toISOString()}/>
+                                            </Col>
+                                        </div>
+                                        :
+                                        <Col span={21}>
                                             <DragAndDropCalendar
+                                                key={'AVAILABILITY'}
                                                 defaultDate={new Date()}
                                                 localizer={localizer}
                                                 defaultView="week"
@@ -760,7 +846,7 @@ class App extends Component {
                                                 popup={this.onSelectEvent}
                                                 onSelectSlot={this.onSelectSlot}
                                                 // onSelectEvent={this.onSelectEvent}
-                                                views={{month: true, week: MyWeek, day: true, agenda: true}}
+                                                views={{week: true, day: true}}
                                                 style={{height: "calc(100vh - 85px)"}}
                                                 eventPropGetter={(this.eventStyleGetter)}
                                                 date={new Date(this.state.selectedDate.format())}
@@ -778,13 +864,8 @@ class App extends Component {
                                                                                 showCalendarEvents={that.state.showCalendarEvents}/>
                                                     },
                                                 }}/>
-
-                                        </Spin>
-                                    </Col>
-                                    <Col span={5}>
-                                        <CalendarRightPanel {...this.props} {...this.state}
-                                                            key={moment(this.state.selectedDate).toISOString()}/>
-                                    </Col>
+                                        </Col>
+                                    }
                                 </Row>
                             </div>
                         </Route>
@@ -838,89 +919,6 @@ MyWeek.title = date => {
     return ` ${date.toLocaleDateString()}`
 }
 
-function TimeSlotWrapper(props) {
-    let flag = true;
-    let dayValue = moment(props.value).isValid() ? moment(props.value).format('dddd').toLowerCase() : null;
-    if (props.filterType != 'DOCTOR' || props.selectedDoctor == 'ALL') {
-        /**
-         * Checking for Calendar Clinic Timings
-         * */
-        if (props.calendarTimings && dayValue && props.calendarTimings[dayValue]) {
-            let daysTimings = props.calendarTimings[dayValue];
-            if (daysTimings.lunch) {
-                if (
-                    (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss')
-                        || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')
-                    ) || (
-                        moment(props.value, 'HH:mm:ss').format('HH:mm:ss') < daysTimings.lunchEndTime.format('HH:mm:ss')
-                        && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') >= daysTimings.lunchStartTime.format('HH:mm:ss')
-                    )
-                ) {
-                    flag = false;
-                }
-            } else {
-                if (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
-                    flag = false;
-                }
-            }
-        } else if (dayValue && !props.calendarTimings[dayValue]) {
-            /**
-             * If the practice is not opening for the day
-             * */
-            flag = false;
-        }
-    } else {
-        if (props.doctorTimings && dayValue && props.doctorTimings[dayValue]) {
-            let daysTimings = props.doctorTimings[dayValue];
-            if (daysTimings.lunch) {
-                if (
-                    (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss')
-                        || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')
-                    ) || (
-                        moment(props.value, 'HH:mm:ss').format('HH:mm:ss') < daysTimings.lunchEndTime.format('HH:mm:ss')
-                        && moment(props.value, 'HH:mm:ss').format('HH:mm:ss') >= daysTimings.lunchStartTime.format('HH:mm:ss')
-                    )
-                ) {
-                    flag = false;
-                }
-            } else {
-                if (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
-                    flag = false;
-                }
-            }
-        } else if (props.doctorTimings && dayValue && !props.doctorTimings[dayValue]) {
-            /**
-             * If the doctor is not working for the day
-             * */
-            flag = false;
-        }
-    }
-    /**
-     * Checking for Events Timings
-     * */
-    if (props.showCalendarEvents && flag) {
-        for (let i = 0; i < props.blockedCalendar.length; i++) {
-            if (props.blockedCalendar[i].doctor && props.filterType == 'DOCTOR') {
-                if (props.blockedCalendar[i].doctor == props.selectedDoctor && moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
-                    flag = false;
-                    break;
-                }
-            } else {
-                if (moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
-                    flag = false;
-                    break;
-                }
-            }
-        }
-    }
-
-    if (flag)
-        return props.children;
-
-
-    const child = React.Children.only(props.children);
-    return React.cloneElement(child, {className: child.props.className + ' rbc-off-range-bg'});
-}
 
 function MonthEventWrapper(props) {
     return props.children;
