@@ -141,15 +141,18 @@ class PracticeDetails extends React.Component {
             <Modal
                 visible={this.state.visible}
                 closable={false}
+                width={600}
                 onCancel={this.handleCancel}
                 footer={null}>
                  <Button icon="close" type="danger" shape="circle" style={{position: 'absolute', top: '-50px', right: 0}}
                        onClick={this.handleCancel} />
-                <Card >
-                    <Meta style={{float:"right"}}
-                        avatar={
-                        <Avatar src={makeFileURL(this.state.practice.logo)} />
-                        }/>
+                {/* <Card > */}
+                <Row style={{paddingBottom:"25px"}}>
+                    <Col span={12} offset={10}>
+                        <Avatar shape="square" size="large"  src={makeFileURL(this.state.practice.logo)} />
+                    </Col>
+                </Row>
+                    
 
                     <ProfileTables label={"Practice Name : "} value={this.state.practice.name}/>
                     <ProfileTables label={"Tagline : "} value={this.state.practice.tagline}/>
@@ -163,7 +166,7 @@ class PracticeDetails extends React.Component {
                     })}
 
                    
-                </Card>
+                {/* </Card> */}
                 
                 
             </Modal>
