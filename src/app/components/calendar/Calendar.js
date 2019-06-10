@@ -209,6 +209,8 @@ class App extends Component {
             nextEvents.splice(idx, 1, updatedEvent);
             that.setState({
                 events: nextEvents,
+            }, function () {
+                that.refreshFilterList();
             })
         }
         let errorFn = function () {
@@ -220,13 +222,16 @@ class App extends Component {
                 putAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
             },
             onCancel() {
-                console.log('Cancel');
             },
         });
 
     }
 
     resizeEvent = ({event, start, end}) => {
+        if (event.appointment.status != SCHEDULE_STATUS) {
+            displayMessage(WARNING_MSG_TYPE, "Action Not Allowed");
+            return true;
+        }
         const {events} = this.state
         let changedEvent = {};
         let that = this;
@@ -235,7 +240,7 @@ class App extends Component {
             if (existingEvent.id == event.id) {
                 changedEvent = {
                     // "id": event.id,
-                    "schedule_at": moment(start).format("YYYY-MM-DD HH:mm:ss"),
+                    "schedule_at": moment(start).format(),
                     "slot": parseInt((end - start) / 60000)
                 };
             }
@@ -250,11 +255,22 @@ class App extends Component {
             });
             that.setState({
                 events: nextEvents,
+            }, function () {
+                that.refreshFilterList();
             })
         }
         let errorFn = function () {
         }
-        putAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
+        confirm({
+            title: 'Are you sure to change the time of this appointment?',
+            // content: 'Some descriptions',
+            onOk() {
+                putAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
     }
 
 
@@ -441,7 +457,11 @@ class App extends Component {
                 })
             }
         } else if (e.length) {
-            this.appointmentList(moment(e[0]), moment(e[e.length - 1]));
+            if(e.length==7){
+                this.appointmentList(moment(e[0]).subtract(1,'day'), moment(e[e.length - 1]).subtract(1,'day'));
+            }else {
+                this.appointmentList(moment(e[0]), moment(e[e.length - 1]));
+            }
             this.setState({
                 selectedDate: moment(e[0])
             });
@@ -475,7 +495,14 @@ class App extends Component {
             that.changeFilter('tempKey', 'ALL')
         })
     }
-
+    refreshFilterList = () => {
+        let stateValues = this.state;
+        if (stateValues.filterType == 'DOCTOR') {
+            this.changeFilter('selectedDoctor', stateValues['selectedDoctor'])
+        } else if (stateValues.filterType == 'CATEGORY') {
+            this.changeFilter('selectedCategory', stateValues['selectedCategory'])
+        }
+    }
     changeFilter = (type, value) => {
         this.setState(function (prevState) {
             let filteredEvent = [];
@@ -496,7 +523,8 @@ class App extends Component {
                 filteredEvent: filteredEvent
             }
         })
-    }
+    };
+
     changeState = (type, value) => {
         this.setState({
             [type]: value

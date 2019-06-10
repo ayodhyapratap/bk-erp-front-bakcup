@@ -63,14 +63,16 @@ class AppointmentSMS extends React.Component {
             initialValue: this.state.data ? this.state.data.email : null,
             extra: "All replies by Patients for emails will be sent to this address",
             type: INPUT_FIELD
-        }, {
-            label: "SMS Language",
-            key: "sms_language",
-            placeholder:"SMS Language",
-            initialValue: this.state.data ? this.state.data.sms_language : null,
-            extra: "SMS to Patients will be sent in this language",
-            type: INPUT_FIELD
-        }, {
+        },
+        //     {
+        //     label: "SMS Language",
+        //     key: "sms_language",
+        //     placeholder:"SMS Language",
+        //     initialValue: this.state.data ? this.state.data.sms_language : null,
+        //     extra: "SMS to Patients will be sent in this language",
+        //     type: INPUT_FIELD
+        // },
+            {
             label: "SMS clinic Name",
             key: "sms_clinic_name",
             placeholder:"Clinic Name",

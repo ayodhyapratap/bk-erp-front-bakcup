@@ -123,7 +123,7 @@ export default class EventPatientPopover extends React.Component {
                             <Icon
                                 type="clock-circle"/> {moment(this.state.appointment.schedule_at).format('HH:mm A on MMMM Do')} for {this.state.appointment.slot} mins.
                         </small>
-
+                        {showStatusTimeline(appointment)}
                         <Row style={{height: '100px', overflow: 'scroll', backgroundColor: '#eee', padding: 5}}>
                             <div>
                                 {appointment.status == SCHEDULE_STATUS ?
@@ -168,4 +168,25 @@ export default class EventPatientPopover extends React.Component {
             </Spin>
         </div>
     }
+}
+
+function showStatusTimeline(appointment) {
+    switch (appointment.status) {
+        case WAITING_STATUS:
+            return <div>
+                <br/><small>Engaged At {moment(appointment.waiting).format('lll')}</small>
+            </div>
+        case ENGAGED_STATUS:
+            return <div>
+                <small>Waiting Time {moment(appointment.engaged).from(moment(appointment.waiting))}</small>
+                <br/><small>Engaged At {moment(appointment.engaged).format('lll')}</small>
+            </div>
+        case CHECKOUT_STATUS:
+            return <div>
+                <small>Waiting Time {moment(appointment.engaged).from(moment(appointment.waiting))}</small>
+                <br/><small>Engaged Time {moment(appointment.checkout).from(moment(appointment.engaged))}</small>
+                <br/><small>Total Stay Time {moment(appointment.checkout).from(moment(appointment.waiting))}</small>
+            </div>
+    }
+    return null
 }

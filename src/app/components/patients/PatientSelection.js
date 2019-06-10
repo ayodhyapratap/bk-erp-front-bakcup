@@ -31,8 +31,11 @@ class PatientSelection extends React.Component {
     getPatientGroup() {
         let that = this;
         let successFn = function (data) {
+            let filteredData = data.sort(function (a, b) {
+                return b.patient_count - a.patient_count
+            })
             that.setState({
-                patientGroup: data,
+                patientGroup: filteredData,
                 loading: false
             });
         };

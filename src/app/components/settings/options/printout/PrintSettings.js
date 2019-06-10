@@ -432,6 +432,16 @@ class PrintSettings extends React.Component {
                                     </Row>
                                 </Col>
                                 <Col span={12} style={{textAlign: 'center'}}>
+                                    <div style={{
+                                        position: 'absolute',
+                                        backgroundColor: 'black',
+                                        color: 'white',
+                                        padding: 10,
+                                        right: 20,
+                                        top: 50
+                                    }}>
+                                        <b>PREVIEW</b>
+                                    </div>
                                     <iframe
                                         src={makeURL(PRINT_PREVIEW_RENDER + PreviewParamsURL)}
                                         style={{
