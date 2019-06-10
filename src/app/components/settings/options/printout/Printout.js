@@ -15,10 +15,22 @@ const TabPane = Tabs.TabPane;
 class Printout extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            randomKey: Math.random(),
+            activeKey: 'a'
+        }
     }
 
+    setRandomKey = (key) => {
+        console.log(key)
+        this.setState({
+            randomKey: Math.random(),
+            activeKey: key
+        })
+    }
 
     render() {
+        let that = this;
         return (<div>
             <h2>Print Settings</h2>
             <Tabs defaultActiveKey={EMR_TYPE} size="small" type="card">
@@ -26,12 +38,14 @@ class Printout extends React.Component {
                     <Card>
                         <h4>
                             <div>
-                                <Tabs size="small">
+                                <Tabs size="small" onChange={this.setRandomKey}>
                                     {EMR_SUB_TYPE.map((item, i) => {
-                                        return (<TabPane tab={item.title} key={i}><PrintSettings key={item.title}
-                                                                                                 sub_type={item.title}
-                                                                                                 active_practiceId={this.props.active_practiceId}
-                                                                                                 type={"EMR"}/></TabPane>)
+                                        return (<TabPane tab={item.title} key={i}>
+                                            <PrintSettings
+                                                key={(i.toString() == that.state.activeKey.toString() ? item.title + that.state.randomKey : item.title)}
+                                                sub_type={item.title}
+                                                active_practiceId={this.props.active_practiceId}
+                                                type={"EMR"}/></TabPane>)
                                     })}
                                 </Tabs>
                             </div>
@@ -42,12 +56,14 @@ class Printout extends React.Component {
                     <Card>
                         <h4>
                             <div>
-                                <Tabs size="small">
+                                <Tabs size="small" onChange={this.setRandomKey}>
                                     {BILLING_SUB_TYPE.map((item, i) => {
-                                        return (<TabPane tab={item.title} key={i}><PrintSettings key={item.title}
-                                                                                                 sub_type={item.title}
-                                                                                                 active_practiceId={this.props.active_practiceId}
-                                                                                                 type={"BILLING"}/></TabPane>)
+                                        return (<TabPane tab={item.title} key={i}>
+                                            <PrintSettings
+                                                key={(i.toString() == that.state.activeKey.toString() ? item.title + that.state.randomKey : item.title)}
+                                                sub_type={item.title}
+                                                active_practiceId={this.props.active_practiceId}
+                                                type={"BILLING"}/></TabPane>)
                                     })}
                                 </Tabs>
 
