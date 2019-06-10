@@ -174,7 +174,7 @@ function showStatusTimeline(appointment) {
     switch (appointment.status) {
         case WAITING_STATUS:
             return <div>
-                <br/><small>Engaged At {moment(appointment.waiting).format('lll')}</small>
+                <br/><small>Checked in At {moment(appointment.waiting).format('lll')}</small>
             </div>
         case ENGAGED_STATUS:
             return <div>

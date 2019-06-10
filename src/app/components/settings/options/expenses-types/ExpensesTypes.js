@@ -81,7 +81,7 @@ class ExpensesTypes extends React.Component {
         this.setState({visible: false});
     }
 
-    deleteObject(record,type) {
+    deleteObject(record, type) {
         let that = this;
         let reqData = record;
         reqData.is_active = type;
@@ -114,17 +114,17 @@ class ExpensesTypes extends React.Component {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-                record.is_active?<span>
+                record.is_active ? <span>
 
               <a onClick={() => this.editTax(record)}>  Edit</a>
                 <Divider type="vertical"/>
                 <Popconfirm title="Are you sure to delete this?"
-                            onConfirm={() => that.deleteObject(record,false)} okText="Yes" cancelText="No">
+                            onConfirm={() => that.deleteObject(record, false)} okText="Yes" cancelText="No">
                   <a>Delete</a>
               </Popconfirm>
               </span> : <span>
-                    <Popconfirm title="Are you sure show this?"
-                                onConfirm={() => that.deleteObject(record,true)} okText="Yes" cancelText="No">
+                    <Popconfirm title="Are you sure to show this?"
+                                onConfirm={() => that.deleteObject(record, true)} okText="Yes" cancelText="No">
                   <a>Show</a>
               </Popconfirm>
                 </span>
@@ -133,7 +133,7 @@ class ExpensesTypes extends React.Component {
         const fields = [{
             label: "Expense name",
             key: "name",
-            placeholder:'Expense Name',
+            placeholder: 'Expense Name',
             required: true,
             type: INPUT_FIELD
         },];
@@ -181,13 +181,10 @@ class ExpensesTypes extends React.Component {
                 title="Edit Expence"
                 visible={this.state.visible}
                 footer={null}
-                onCancel={this.handleCancel}
-            >
-
+                onCancel={this.handleCancel}>
                 <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp}
                                 fields={editfields}/>
                 <Button key="back" onClick={this.handleCancel}>Return</Button>,
-
             </Modal>
         </div>
     }
