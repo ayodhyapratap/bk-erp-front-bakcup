@@ -9,6 +9,8 @@ import {Redirect, Link} from 'react-router-dom';
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import Meta from "antd/lib/card/Meta";
 import {BACKEND_BASE_URL} from "../../../config/connect";
+import ModalImage from "react-modal-image";
+
 class PatientFiles extends React.Component {
     constructor(props) {
         super(props);
@@ -367,15 +369,21 @@ class PatientFiles extends React.Component {
                 closable={false}
                 onCancel={this.handleCancel}
                 footer={null}>
-                 <Button icon="close" type="danger" shape="circle" style={{position: 'absolute', top: '-50px', right: 0}}
-                       onClick={this.handleCancel} />
-                <Card  hoverable
+               
+                
+                <ModalImage
+                    small={makeFileURL(this.state.filesData.file_type)}
+                    large={makeFileURL(this.state.filesData.file_type)}
+                    // alt="Hello World!"
+                />
+                {/* <Card  hoverable
                         cover={<img  src={makeFileURL(this.state.filesData.file_type)}/>} 
-                        extra={ <Button.Group>
-                        <Button><a onClick={() => this.loadPDF(this.state.filesData.id)}><Icon type="printer"/></a></Button>
-                        <Button icon="cloud-download"><a href={makeFileURL(this.state.filesData.file_type)} download></a></Button>
-                        </Button.Group>}>
-                </Card>
+                        // extra={ <Button.Group>
+                        // <Button><a onClick={() => this.loadPDF(this.state.filesData.id)}><Icon type="printer"/></a></Button>
+                        // <Button icon="cloud-download"><a href={makeFileURL(this.state.filesData.file_type)} download></a></Button>
+                        // </Button.Group>}
+                    >
+                </Card> */}
                 
                 
             </Modal>
