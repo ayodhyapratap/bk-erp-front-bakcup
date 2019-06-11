@@ -149,7 +149,11 @@ class PracticeDetails extends React.Component {
                 {/* <Card > */}
                 <Row style={{paddingBottom:"25px"}}>
                     <Col span={12} offset={10}>
-                        <Avatar shape="square" size="large"  src={makeFileURL(this.state.practice.logo)} />
+                        {this.state.practice.logo ?
+                            <Avatar shape="square" size="large"  src={makeFileURL(this.state.practice.logo)} />
+                        
+                        :null}
+                       
                     </Col>
                 </Row>
                     
