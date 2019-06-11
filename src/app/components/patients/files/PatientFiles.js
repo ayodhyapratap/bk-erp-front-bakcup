@@ -235,19 +235,37 @@ class PatientFiles extends React.Component {
         }
 
     
-        const tagsMenu = (
-            <Menu>
-                <Menu.Item>
-                    <Checkbox.Group options={this.state.tags.map(tag => ({label: tag.name, value: tag.id}))}
-                                    onChange={this.tagsCompleteToggle}>
-                    </Checkbox.Group>
-                    <Button onClick={() => this.filesWithTags()} style={{float: 'right'}}>Done</Button>
-                </Menu.Item>
+        const tagsMenu = (<div
+            style={{
+                // width: 100,
+                boxShadow: '0 2px 4px #111',
+                border: '1px solid #bbb',
+                borderRadius: 2,
+                padding: 5,
+                backgroundColor: 'white'}}>
 
-            </Menu>
+                <ul style={{listStyle: 'none', paddingInlineStart: 0}}>
+                    {this.state.tags ? 
+                        <li><Checkbox> </Checkbox></li>    
+                        :null}
+                    
+                </ul>
+            </div>
+            // <Menu>
+            //     <Menu.Item>
+            //         <Checkbox.Group options={this.state.tags.map(tag => ({label: tag.name, value: tag.id}))}
+            //                         onChange={this.tagsCompleteToggle}>
+            //         </Checkbox.Group>
+                    
+            //     </Menu.Item>
+            //     <Menu.Item>
+            //         <Button onClick={() => this.filesWithTags()} style={{float: 'right'}}>Done</Button>
+            //     </Menu.Item>
+
+            // </Menu>
         );
       
-        const defaultFields = [{key: 'is_active', value: true}, {key: 'patient', value: this.props.match.params.id},{key:'practice', value: this.props.active_practiceId}]
+        const defaultFields = [{key: 'is_active', value: true}, {key: 'patient', value: this.props.match.params.id} , {key:'practice', value: this.props.active_practiceId}]
         return <Card title="Files"
                      extra={<Button.Group>
                          <Link to={"/patient/" + this.props.match.params.id + "/emr/create-medicalCertificate"}> <Button
