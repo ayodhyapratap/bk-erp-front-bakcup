@@ -138,9 +138,9 @@ class PatientFiles extends React.Component {
     }
 
     tagsCompleteToggle = (e) => {
-
+        // console.log("e valiue",e);
         this.setState({
-            selectedTags: e,
+            selectedTags: e.target.value,
         })
     }
 
@@ -148,7 +148,8 @@ class PatientFiles extends React.Component {
         let that = this;
         let reqData = {
             id: Object.keys(this.state.selectedFiles),
-            file_tags: this.state.selectedTags,
+            file_tags: [this.state.selectedTags],
+            patient:this.props.match.params.id,
         };
         let successFn = function () {
             that.setState({
@@ -241,15 +242,18 @@ class PatientFiles extends React.Component {
                 boxShadow: '0 2px 4px #111',
                 border: '1px solid #bbb',
                 borderRadius: 2,
-                padding: 5,
+                paddingBottom:'30px',
                 backgroundColor: 'white'}}>
 
-                <ul style={{listStyle: 'none', paddingInlineStart: 0}}>
+                <ul style={{listStyle: 'none', paddingInlineStart: 0 ,paddingTop:10}}>
                     {this.state.tags ? 
-                        <li><Checkbox> </Checkbox></li>    
+                        <div>
+                            {this.state.tags.map((tag)=><li><Checkbox value={tag.id} onChange={this.tagsCompleteToggle}>{tag.name} </Checkbox></li>)}
+                        </div>       
                         :null}
                     
                 </ul>
+                <span><Button type="primary" onClick={() => this.filesWithTags()} style={{float:"right" ,borderStyle:"none"}}>Done</Button></span>
             </div>
             // <Menu>
             //     <Menu.Item>
@@ -264,7 +268,7 @@ class PatientFiles extends React.Component {
 
             // </Menu>
         );
-      
+        console.log("value test",this.props.match.params.id);
         const defaultFields = [{key: 'is_active', value: true}, {key: 'patient', value: this.props.match.params.id} , {key:'practice', value: this.props.active_practiceId}]
         return <Card title="Files"
                      extra={<Button.Group>
