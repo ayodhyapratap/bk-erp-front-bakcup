@@ -226,6 +226,7 @@ export default class AddorEditInventoryItem extends React.Component {
                        render={(route) => <AddInventoryFormLayout title="Add Inventory Item"
                                                                   {...route}
                                                                   changeRedirect={this.changeRedirect}
+                                                                  defaultValues={defaultValues}
                                                                   formProp={formProp}
                                                                   fields={fields}/>}/>
 

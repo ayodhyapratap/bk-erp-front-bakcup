@@ -69,7 +69,7 @@ export default class InventoryItemList extends React.Component {
                 loading: false
             })
         }
-        getAPI(INVENTORY_ITEM_API, successFn, errorFn, {maintain_inventory: true});
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn, {maintain_inventory: true , practice:this.props.active_practiceId});
     }
 
     loadManufactureList() {
