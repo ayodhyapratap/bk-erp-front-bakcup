@@ -198,7 +198,7 @@ class PatientFiles extends React.Component {
         let errorFn = function () {
 
         }
-        // getAPI(interpolate(, [id]), successFn, errorFn);
+        getAPI(interpolate(MEDICAL_CERTIFICATE_PDF ,[id]), successFn, errorFn);
     }
 
     showModal=(item)=> {
@@ -211,6 +211,13 @@ class PatientFiles extends React.Component {
     handleCancel = () => {
         this.setState({ visible: false });
     };
+
+    // changeState = (type, value) => {
+    //     this.setState({
+    //         [type]: value
+    //     })
+    // }
+    
     render() {
         let that = this;
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
@@ -255,18 +262,6 @@ class PatientFiles extends React.Component {
                 </ul>
                 <span><Button type="primary" onClick={() => this.filesWithTags()} style={{float:"right" ,borderStyle:"none"}}>Done</Button></span>
             </div>
-            // <Menu>
-            //     <Menu.Item>
-            //         <Checkbox.Group options={this.state.tags.map(tag => ({label: tag.name, value: tag.id}))}
-            //                         onChange={this.tagsCompleteToggle}>
-            //         </Checkbox.Group>
-                    
-            //     </Menu.Item>
-            //     <Menu.Item>
-            //         <Button onClick={() => this.filesWithTags()} style={{float: 'right'}}>Done</Button>
-            //     </Menu.Item>
-
-            // </Menu>
         );
         console.log("value test",this.props.match.params.id);
         const defaultFields = [{key: 'is_active', value: true}, {key: 'patient', value: this.props.match.params.id} , {key:'practice', value: this.props.active_practiceId}]
@@ -279,7 +274,7 @@ class PatientFiles extends React.Component {
                          <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft">
                              <Button><Icon type="plus"/>AddFile/remove</Button>
                          </Dropdown>
-
+                        
                          <Button onClick={() => this.triggerAddModal(true)}><Icon type="plus"/>Add</Button>
                      </Button.Group>}>
             <Row gutter={8}>

@@ -3,7 +3,7 @@ import {Route} from "react-router";
 import { Form, Icon, Input, Button,Checkbox, Card,DatePicker, Radio ,Row,Col,Select,TimePicker, Affix, Dropdown, Menu} from 'antd';
 import {Redirect, Link} from 'react-router-dom'
 import {postAPI, interpolate, displayMessage} from "../../../utils/common";
-import {ATTENDANCE} from "../../../constants/hardData";
+import {NOTES} from "../../../constants/hardData";
 import {MEDICAL_CERTIFICATE_API} from "../../../constants/api";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import moment from 'moment';
@@ -27,11 +27,12 @@ class PatientMedicalCertificate extends React.Component {
             days:0,
             practiceDoctors: [],
             selectedDoctor: {},
-            selectedDate: moment()
+            selectedDate: moment(),
+            value:''
         }
         this.handleChangeStart =this.handleChangeStart.bind(this);
         this.handleChangeEnd = this.handleChangeEnd.bind(this);
-        this.totalDays = this.totalDays.bind(this);
+        // this.totalDays = this.totalDays.bind(this);
     }
     componentDidMount() {
         loadDoctors(this);
@@ -54,8 +55,9 @@ class PatientMedicalCertificate extends React.Component {
         });
     }
     onChangeHandle = (e)=>{
+        console.log(e);
         this.setState({
-            
+            value:e.target.value,
         });
     }
     handleAttendanceCheck = (e) =>{
@@ -70,19 +72,19 @@ class PatientMedicalCertificate extends React.Component {
        
     }
     
-    
     handleChangeEnd(date) {
         this.setState({
           endDate: date
         });
     }
-    totalDays(){
-        let {startDate, endDate} = this.state;
-        let amount = endDate.diff(startDate ,"days");
-        this.setState({
-        days: amount
-        });
-    }
+    // totalDays(){
+    //     let {startDate, endDate} = this.state;
+    //     let amount = endDate.diff(startDate ,"days");
+    //     this.setState({
+    //     days: amount
+    //     });
+    // }
+
     onChange =(timeString)=> {
        this.setState({
         proof_attendance_from:timeString
@@ -149,7 +151,7 @@ class PatientMedicalCertificate extends React.Component {
             },
         };
         let that=this;
-        const radioOption = ATTENDANCE.map((option) => <Radio value={option.value}>{option.label}</Radio>)
+        const radioOption = NOTES.map((option) => <Radio value={option.value}>{option.label}</Radio>)
         return ( <Form onSubmit={this.handleSubmit} {...formItemLayout}> 
                 <Card title="ADD MEDICAL LEAVE CERTIFICATE"
                     extra={<Button.Group>
@@ -293,8 +295,8 @@ class PatientMedicalCertificate extends React.Component {
 
                 
                 <Form.Item>
-                    {getFieldDecorator('xxf', { })(
-                        <Radio.Group onChange={this.onChangeHandle}>
+                    {getFieldDecorator('notes', {onChange:this.onChangeHandle })(
+                        <Radio.Group >
                            {radioOption}
                         </Radio.Group>
                     )}
