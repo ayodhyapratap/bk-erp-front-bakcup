@@ -50,7 +50,7 @@ export default class AddItemType extends React.Component {
     }
 
 
-    loadInventoryItemData() {
+    loadInventoryItemData=()=> {
         let that = this;
         let successFn = function (data) {
             that.setState({
@@ -64,7 +64,7 @@ export default class AddItemType extends React.Component {
         getAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [this.props.match.params.id]), successFn, errorFn);
     }
 
-    loadDrugType() {
+    loadDrugType=()=> {
         let that = this;
         let successFn = function (data) {
             that.setState({
@@ -74,10 +74,10 @@ export default class AddItemType extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(DRUG_TYPE_API, successFn, errorFn);
+        getAPI(interpolate(DRUG_TYPE_API,[this.props.active_practiceId]), successFn, errorFn);
     }
 
-    loadData() {
+    loadData=()=> {
         let that = this;
         let successFn = function (data) {
             that.setState({

@@ -69,7 +69,10 @@ export default class InventoryItemList extends React.Component {
                 loading: false
             })
         }
-        getAPI(INVENTORY_ITEM_API, successFn, errorFn, {maintain_inventory: true});
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn, {
+            maintain_inventory: true,
+            practice: this.props.active_practiceId
+        });
     }
 
     loadManufactureList() {
@@ -292,21 +295,22 @@ export default class InventoryItemList extends React.Component {
             }];
         return <div>
             <Switch>
-                <Route path="/inventory/add" render={(route) => <AddorEditInventoryItem {...route} {...this.state}/>}/>
+                <Route path="/inventory/add"
+                       render={(route) => <AddorEditInventoryItem {...route} {...this.state} {...this.props}/>}/>
                 <Route path="/inventory/edit-item-type/:id"
-                       render={(route) => <AddItemType {...route} {...this.state}/>}/>
+                       render={(route) => <AddItemType  {...this.state} {...this.props} {...route}/>}/>
                 <Route exact path='/inventory/edit/:id'
-                       render={(route) => <AddorEditInventoryItem {...this.state} {...route}/>}/>
+                       render={(route) => <AddorEditInventoryItem {...this.state} {...this.props} {...route}/>}/>
                 <Route exact path='/inventory/consume-stock'
                        render={(route) => <AddOrConsumeStock key={CONSUME_STOCK}
                                                              type={CONSUME_STOCK}
                                                              loadData={this.loadData}
-                                                             {...this.state} {...route}/>}/>
+                                                             {...this.state} {...route} {...this.props}/>}/>
                 <Route exact path='/inventory/add-stock'
                        render={(route) => <AddOrConsumeStock key={ADD_STOCK}
                                                              type={ADD_STOCK}
                                                              loadData={this.loadData}
-                                                             {...this.state} {...route}/>}/>
+                                                             {...this.state} {...route} {...this.props}/>}/>
                 <Route>
                     <Card title="Inventory List"
                           extra={<Button.Group>

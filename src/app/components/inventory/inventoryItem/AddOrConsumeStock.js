@@ -62,8 +62,8 @@ class AddOrConsumeStock extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(SUPPLIER_API, successFn, errorFn,{
-            practice:this.props.active_practiceId
+        getAPI(SUPPLIER_API, successFn, errorFn, {
+            practice: this.props.active_practiceId
         })
     }
 
@@ -100,7 +100,10 @@ class AddOrConsumeStock extends React.Component {
         }
         let errorFn = function () {
         }
-        getAPI(INVENTORY_ITEM_API, successFn, errorFn, {maintain_inventory: true});
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn, {
+            maintain_inventory: true,
+            practice: this.props.active_practiceId
+        });
     }
 
     remove = (k) => {
@@ -432,27 +435,27 @@ class AddOrConsumeStock extends React.Component {
                                     </Form.Item>
                                     : null}
                                 {/*{this.state.classType == CONSUME_STOCK ?*/}
-                                    {/*<Form.Item*/}
-                                        {/*key={`supplier`}*/}
-                                        {/*label={"Supplier"}*/}
-                                        {/*{...{*/}
-                                            {/*labelCol: {span: 6},*/}
-                                            {/*wrapperCol: {span: 14},*/}
-                                        {/*}}>*/}
-                                        {/*{getFieldDecorator(`addedOn`, {*/}
-                                            {/*validateTrigger: ['onChange', 'onBlur'],*/}
-                                            {/*rules: [{*/}
-                                                {/*message: "This field is required.",*/}
-                                            {/*}],*/}
-                                        {/*})(*/}
-                                            {/*<Select>*/}
-                                                {/*/!*{this.state.suppliersList && this.state.suppliersList.map(item =>*!/*/}
-                                                    {/*/!*<Select.Option*!/*/}
-                                                        {/*/!*value={item.id}>{item.name}</Select.Option>)}*!/*/}
-                                            {/*</Select>*/}
-                                        {/*)}*/}
-                                    {/*</Form.Item>*/}
-                                    {/*: null}*/}
+                                {/*<Form.Item*/}
+                                {/*key={`supplier`}*/}
+                                {/*label={"Supplier"}*/}
+                                {/*{...{*/}
+                                {/*labelCol: {span: 6},*/}
+                                {/*wrapperCol: {span: 14},*/}
+                                {/*}}>*/}
+                                {/*{getFieldDecorator(`addedOn`, {*/}
+                                {/*validateTrigger: ['onChange', 'onBlur'],*/}
+                                {/*rules: [{*/}
+                                {/*message: "This field is required.",*/}
+                                {/*}],*/}
+                                {/*})(*/}
+                                {/*<Select>*/}
+                                {/*/!*{this.state.suppliersList && this.state.suppliersList.map(item =>*!/*/}
+                                {/*/!*<Select.Option*!/*/}
+                                {/*/!*value={item.id}>{item.name}</Select.Option>)}*!/*/}
+                                {/*</Select>*/}
+                                {/*)}*/}
+                                {/*</Form.Item>*/}
+                                {/*: null}*/}
                             </Row>
                             <Table pagination={false}
                                    bordered={true}
