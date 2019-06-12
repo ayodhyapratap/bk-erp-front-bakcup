@@ -10,6 +10,7 @@ import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import Meta from "antd/lib/card/Meta";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import ModalImage from "react-modal-image";
+import { object } from "prop-types";
 
 class PatientFiles extends React.Component {
     constructor(props) {
@@ -20,7 +21,7 @@ class PatientFiles extends React.Component {
             showAddModal: false,
             loading: true,
             selectedFiles: {},
-            selectedTags: [],
+            selectedTags: {},
             filterSearchTag: null,
             showAddMedicalModel: false,
             // filterSearchMedical:''
@@ -137,18 +138,22 @@ class PatientFiles extends React.Component {
         });
     }
 
-    tagsCompleteToggle = (e) => {
-        // console.log("e valiue",e);
-        this.setState({
-            selectedTags: e.target.value,
-        })
+    tagsCompleteToggle(id, option) {
+        this.setState(function (prevState) {
+            let selected = {...prevState.selectedTags}
+            if (option) {
+                selected[id] = !!option
+            } else {
+                delete selected[id];
+            }
+            return {selectedTags: {...selected}}
+        });
     }
-
     filesWithTags() {
         let that = this;
         let reqData = {
             id: Object.keys(this.state.selectedFiles),
-            file_tags: [this.state.selectedTags],
+            file_tags: Object.keys(this.state.selectedTags),
             patient:this.props.match.params.id,
         };
         let successFn = function () {
@@ -220,6 +225,7 @@ class PatientFiles extends React.Component {
     
     render() {
         let that = this;
+        console.log("selected",this.state.selectedFiles);
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
         const fields = [{
             key: 'file_type',
@@ -255,7 +261,10 @@ class PatientFiles extends React.Component {
                 <ul style={{listStyle: 'none', paddingInlineStart: 0 ,paddingTop:10}}>
                     {this.state.tags ? 
                         <div>
-                            {this.state.tags.map((tag)=><li><Checkbox value={tag.id} onChange={this.tagsCompleteToggle}>{tag.name} </Checkbox></li>)}
+                            {this.state.tags.map((tag)=><li><Checkbox value={tag.id} 
+                             onChange={(e) => that.tagsCompleteToggle(tag.id, e.target.checked)}
+                             checked={that.state.selectedTags[tag.id]}>{tag.name} </Checkbox></li>)}
+                            {/* onChange={this.tagsCompleteToggle}> */}
                         </div>       
                         :null}
                     
