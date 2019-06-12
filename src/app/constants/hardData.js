@@ -181,8 +181,8 @@ export const CUSTOM_STRING_SEPERATOR = '$_$';
 
 export const DAY_KEYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-export const ATTENDANCE =[
-    {label:"Valid for absence from court attendance", value: "valid_court"},
-    {label:"Invalid for absence from court attendance", value: "invalid_court"},
-    {label:"Dont mention", value: "no_mention"}
+export const NOTES =[
+    {label:"Valid for absence from court attendance", value: "Valid for absence from court attendance"},
+    {label:"Invalid for absence from court attendance", value: "Invalid for absence from court attendance"},
+    {label:"Dont mention", value: "Dont mention"}
 ];

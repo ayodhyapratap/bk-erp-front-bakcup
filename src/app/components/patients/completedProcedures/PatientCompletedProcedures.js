@@ -1,7 +1,13 @@
 import React from "react";
 import {Button, Card, Checkbox, Divider, Icon, Table, Popconfirm, Menu, Dropdown, Tag} from "antd";
 import {getAPI, interpolate, putAPI, postAPI} from "../../../utils/common";
-import {PROCEDURE_CATEGORY, PRODUCT_MARGIN, TREATMENTPLANS_API, SINGLE_REATMENTPLANS_API,TREATMENTPLANS_PDF} from "../../../constants/api";
+import {
+    PROCEDURE_CATEGORY,
+    PRODUCT_MARGIN,
+    TREATMENTPLANS_API,
+    SINGLE_REATMENTPLANS_API,
+    TREATMENTPLANS_PDF
+} from "../../../constants/api";
 import moment from "moment";
 import {Link, Redirect, Route, Switch} from "react-router-dom";
 import {SELECT_FIELD} from "../../../constants/dataKeys";
@@ -18,7 +24,7 @@ class PatientCompletedProcedures extends React.Component {
             treatmentPlans: [],
             procedure_category: null,
             completedTreatmentPlans: [],
-            incompletedTreatmentPlans:[],
+            incompletedTreatmentPlans: [],
             productMargin: [],
             loading: true
         }
@@ -29,9 +35,9 @@ class PatientCompletedProcedures extends React.Component {
 
     componentDidMount() {
         // if (this.props.match.params.id) {
-            this.loadTreatmentPlans();
-            this.loadProcedureCategory();
-            this.loadProductMargin();
+        this.loadTreatmentPlans();
+        this.loadProcedureCategory();
+        this.loadProductMargin();
         // }
     }
 
@@ -51,7 +57,7 @@ class PatientCompletedProcedures extends React.Component {
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
 
-    loadTreatmentPlans(page=1) {
+    loadTreatmentPlans(page = 1) {
         let incompleted = [];
         let that = this;
         let successFn = function (data) {
@@ -83,7 +89,7 @@ class PatientCompletedProcedures extends React.Component {
         let apiParams = {
             page: page,
             practice: this.props.active_practiceId,
-            complete:true
+            complete: true
         };
         if (this.props.match.params.id) {
             apiParams.patient = this.props.match.params.id;
@@ -91,7 +97,7 @@ class PatientCompletedProcedures extends React.Component {
         if (this.props.showAllClinic && this.props.match.params.id) {
             delete (apiParams.practice)
         }
-        getAPI(TREATMENTPLANS_API, successFn, errorFn)
+        getAPI(TREATMENTPLANS_API, successFn, errorFn, apiParams)
     }
 
     loadProcedureCategory() {
@@ -218,52 +224,62 @@ class PatientCompletedProcedures extends React.Component {
                                <AddorEditDynamicCompletedTreatmentPlans {...this.state} {...route}
                                                                         editId={this.state.editTreatmentPlan.id}/> :
                                <Redirect to={"/patient/" + this.props.match.params.id + "/emr/workdone"}/>)}/>
-                    <Card
-                        title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Completed Procedures" : "Completed Procedures "}
-                        extra={<Button.Group>
-                            <Link to={"/patient/" + this.props.match.params.id + "/emr/workdone/add"}><Button><Icon
-                                type="plus"/>Add</Button></Link>
-                        </Button.Group>}>
+                    <Route>
 
-                        {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
-                                                                            style={{marginTop: 15}}>
-                                <div style={{padding: 16}}>
-                                    <h4>{treatment.date ? moment(treatment.date).format('ll') : null}
-                                        <Dropdown.Button
-                                            size={"small"}
-                                            style={{float: 'right'}}
-                                            overlay={<Menu>
-                                                <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
-                                                    <Icon type="edit"/>
-                                                    Edit
-                                                </Menu.Item>
-                                                <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
-                                                    <Icon type="delete"/>
-                                                    Delete
-                                                </Menu.Item>
-                                                <Menu.Divider/>
-                                                <Menu.Item key="3">
-                                                    <Icon type="clock-circle"/>
-                                                    Patient Timeline
-                                                </Menu.Item>
-                                            </Menu>}>
-                                            <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
-                                        </Dropdown.Button>
-                                    </h4>
+                        <div>
 
-                                </div>
-                                <Table loading={this.state.loading} columns={columns}
-                                       dataSource={treatment.treatment_plans}
-                                       footer={() => treatmentFooter(treatment)}
-                                       pagination={false}
-                                       key={treatment.id}/>
 
+                            <Card
+                                bodyStyle={{padding: 0}}
+                                title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Completed Procedures" : "Completed Procedures "}
+                                extra={<Button.Group>
+                                    <Link
+                                        to={"/patient/" + this.props.match.params.id + "/emr/workdone/add"}><Button><Icon
+                                        type="plus"/>Add</Button></Link>
+                                </Button.Group>}>
                             </Card>
-                        )}
-                        <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
-                                                  loading={this.state.loading}
-                                                  hidden={!this.state.next}/>
-                    </Card>
+                            {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
+                                                                                style={{marginTop: 15}}>
+                                    <div style={{padding: 16}}>
+                                        <h4>{treatment.date ? moment(treatment.date).format('ll') : null}
+                                            <Dropdown.Button
+                                                size={"small"}
+                                                style={{float: 'right'}}
+                                                overlay={<Menu>
+                                                    <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)}
+                                                               disabled={(treatment.practice != this.props.active_practiceId)}>
+                                                        <Icon type="edit"/>
+                                                        Edit
+                                                    </Menu.Item>
+                                                    <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}
+                                                               disabled={(treatment.practice != this.props.active_practiceId)}>
+                                                        <Icon type="delete"/>
+                                                        Delete
+                                                    </Menu.Item>
+                                                    <Menu.Divider/>
+                                                    <Menu.Item key="3">
+                                                        <Icon type="clock-circle"/>
+                                                        Patient Timeline
+                                                    </Menu.Item>
+                                                </Menu>}>
+                                                <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
+                                            </Dropdown.Button>
+                                        </h4>
+
+                                    </div>
+                                    <Table loading={this.state.loading} columns={columns}
+                                           dataSource={treatment.treatment_plans}
+                                           footer={() => treatmentFooter(treatment)}
+                                           pagination={false}
+                                           key={treatment.id}/>
+
+                                </Card>
+                            )}
+                            <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
+                                                      loading={this.state.loading}
+                                                      hidden={!this.state.next}/>
+                        </div>
+                    </Route>
                 </Switch>
             </div>
         }
@@ -277,11 +293,13 @@ class PatientCompletedProcedures extends React.Component {
                                     size={"small"}
                                     style={{float: 'right'}}
                                     overlay={<Menu>
-                                        <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
+                                        <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)}
+                                                   disabled={(treatment.practice != this.props.active_practiceId)}>
                                             <Icon type="edit"/>
                                             Edit
                                         </Menu.Item>
-                                        <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
+                                        <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}
+                                                   disabled={(treatment.practice != this.props.active_practiceId)}>
                                             <Icon type="delete"/>
                                             Delete
                                         </Menu.Item>

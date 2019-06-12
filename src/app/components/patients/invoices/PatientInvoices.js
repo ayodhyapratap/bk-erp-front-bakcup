@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Divider, Icon, Table, Tag, Row, Col, Statistic, Alert, Menu, Dropdown, Modal, Spin} from "antd";
-import {getAPI, interpolate, postAPI} from "../../../utils/common";
+import {getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {DRUG_CATALOG, INVOICES_API, PRESCRIPTIONS_API, PROCEDURE_CATEGORY, TAXES} from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
@@ -131,7 +131,7 @@ class PatientInvoices extends React.Component {
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                let reqData = {"id": record.id, is_active: false};
+                let reqData = {...record, is_active: false};
                 let successFn = function (data) {
                     that.loadInvoices();
                 }
@@ -243,11 +243,11 @@ class PatientInvoices extends React.Component {
                                                     </Link>
                                                 </Menu.Item>
                                                 <Menu.Divider/>
-                                                <Menu.Item key="2"
-                                                           disabled={(invoice.practice != this.props.active_practiceId)}>
-                                                    <Icon type="edit"/>
-                                                    Edit
-                                                </Menu.Item>
+                                                {/*<Menu.Item key="2"*/}
+                                                           {/*disabled={(invoice.practice != this.props.active_practiceId)}>*/}
+                                                    {/*<Icon type="edit"/>*/}
+                                                    {/*Edit*/}
+                                                {/*</Menu.Item>*/}
                                                 <Menu.Item key="3" onClick={() => that.deleteInvoice(invoice)}
                                                            disabled={(invoice.practice != this.props.active_practiceId)}>
                                                     <Icon type="delete"/>
@@ -267,7 +267,8 @@ class PatientInvoices extends React.Component {
                                             {invoice.is_cancelled ?
                                                 <Alert message="Cancelled" type="error" showIcon/> : null}
                                             <Divider>INV{invoice.id}</Divider>
-                                            <Statistic title="Paid / Total " value={invoice.payments_data}
+                                            <Statistic title="Paid / Total "
+                                                       value={(invoice.payments_data ? invoice.payments_data : 0)}
                                                        suffix={"/ " + invoice.total}/>
                                         </Col>
                                         <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
@@ -297,8 +298,8 @@ class PatientInvoices extends React.Component {
             </div>
         } else {
             return <div>
-                <Alert banner showIcon type={"info"}
-                       message={"The invoices shown are only for the current selected practice!"}/>
+                {/*<Alert banner showIcon type={"info"}*/}
+                {/*message={"The invoices shown are only for the current selected practice!"}/>*/}
                 {this.state.invoices.map(invoice => <div style={{marginBottom: '20px'}}>
                     <Card>
                         <h4>{invoice.date ? moment(invoice.date).format('ll') : null}
@@ -314,10 +315,10 @@ class PatientInvoices extends React.Component {
                                         </Link>
                                     </Menu.Item>
                                     <Menu.Divider/>
-                                    <Menu.Item key="2" disabled={(invoice.practice != this.props.active_practiceId)}>
-                                        <Icon type="edit"/>
-                                        Edit
-                                    </Menu.Item>
+                                    {/*<Menu.Item key="2" disabled={(invoice.practice != this.props.active_practiceId)}>*/}
+                                        {/*<Icon type="edit"/>*/}
+                                        {/*Edit*/}
+                                    {/*</Menu.Item>*/}
                                     <Menu.Item key="3" onClick={() => that.deleteInvoice(invoice)}
                                                disabled={(invoice.practice != this.props.active_practiceId)}>
                                         <Icon type="delete"/>
@@ -337,7 +338,9 @@ class PatientInvoices extends React.Component {
                                 {invoice.is_cancelled ?
                                     <Alert message="Cancelled" type="error" showIcon/> : null}
                                 <Divider>INV{invoice.id}</Divider>
-                                <Statistic title="Paid / Total " value={invoice.payments_data}
+                                <Statistic title="Paid / Total "
+
+                                           value={(invoice.payments_data ? invoice.payments_data : 0)}
                                            suffix={"/ " + invoice.total}/>
                             </Col>
                             <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
