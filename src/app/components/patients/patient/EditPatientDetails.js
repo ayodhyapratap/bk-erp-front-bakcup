@@ -2,7 +2,7 @@ import React from "react";
 import {Route} from "react-router";
 import {Button, Card, Form, Icon, Row, Input, Select, DatePicker} from "antd";
 import {PATIENTS_LIST, PATIENT_PROFILE, MEDICAL_HISTORY, PATIENT_GROUPS, MEMBERSHIP_API} from "../../../constants/api";
-import {getAPI, postAPI, interpolate, displayMessage} from "../../../utils/common";
+import {getAPI, postAPI, interpolate, displayMessage, putAPI} from "../../../utils/common";
 import moment from 'moment';
 
 const {Option} = Select;
@@ -83,7 +83,6 @@ class EditPatientDetails extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-
             if (!err) {
                 let reqData = {
                     ...values,
@@ -113,7 +112,11 @@ class EditPatientDetails extends React.Component {
                 let errorFn = function () {
                     that.setState({})
                 }
-                postAPI(interpolate(PATIENTS_LIST, [that.props.match.params.id]), reqData, successFn, errorFn);
+                if (that.props.currentPatient) {
+                    putAPI(interpolate(PATIENT_PROFILE, [that.props.currentPatient.id]), reqData, successFn, errorFn);
+                } else {
+                    postAPI(interpolate(PATIENTS_LIST, [that.props.match.params.id]), reqData, successFn, errorFn);
+                }
             }
         });
     }
@@ -258,8 +261,8 @@ class EditPatientDetails extends React.Component {
                     </Form.Item>
 
                     <Form.Item label="Medical History" {...formItemLayout}>
-                        {getFieldDecorator("medical_history", {initialValue: this.props.currentPatient ? this.props.currentPatient.medical_history : null})
-                        (<Select placeholder="Medical History">
+                        {getFieldDecorator("medical_history", {initialValue: this.props.currentPatient ? this.props.currentPatient.medical_history : []})
+                        (<Select placeholder="Medical History" mode={"multiple"}>
                             {historyOption.map((option) => <Select.Option
                                 value={option.value}>{option.label}</Select.Option>)}
                         </Select>)
@@ -267,20 +270,18 @@ class EditPatientDetails extends React.Component {
                     </Form.Item>
 
                     <Form.Item label="Patient Group" {...formItemLayout}>
-                        {getFieldDecorator("patient_group", {initialValue: this.props.currentPatient ? this.props.currentPatient.patient_group : null})
-                        (<Select placeholder="Patient Group">
+                        {getFieldDecorator("patient_group", {initialValue: this.props.currentPatient ? this.props.currentPatient.patient_group : []})
+                        (<Select placeholder="Patient Group" mode={"multiple"}>
                             {patientGroupOption.map((option) => <Select.Option
                                 value={option.value}>{option.label}</Select.Option>)}
                         </Select>)
                         }
                     </Form.Item>
-
-                    {/* <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        Submit
-                    </Button>
-                </Form.Item> */}
-
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Submit
+                        </Button>
+                    </Form.Item>
                 </Card>
             </Form>)
     }

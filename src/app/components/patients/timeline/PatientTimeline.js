@@ -287,9 +287,9 @@ timelineAppointmentCard(item) {
     return <Card hoverable
                  bodyStyle={{backgroundColor: (item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id] ? '#B5EEFF' : 'initial')}}>
         <h2><Icon type="calendar"/> Appointment
-            {item.practice ? <Tag style={{float: 'right'}}>
+            {item.practice_data ? <Tag style={{float: 'right'}}>
                 <Tooltip title="Practice Name">
-                    <b>{item.practice.name} </b>
+                    <b>{item.practice_data.name} </b>
                 </Tooltip>
             </Tag> : null}
         </h2>
@@ -298,6 +298,7 @@ timelineAppointmentCard(item) {
                 borderLeft: '5px solid ' + item.doctor_data.calendar_colour,
                 paddingLeft: '5px'
             }}>{item.doctor_data.user.first_name}</p> : null}
+
         {moment(item.schedule_at).format('hh:mm A')} to {moment(item.schedule_at).add(item.slot, 'mins').format('HH:mm A')}
     </Card>;
 }
@@ -310,9 +311,9 @@ timelineFilesCard(item) {
         <h2><Icon type="picture"/> File<Checkbox size="large" style={{float: 'right'}}
                                                  checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                                  onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
-            {item.practice ? <Tag style={{float: 'right'}}>
+            {item.practice_data ? <Tag style={{float: 'right'}}>
                 <Tooltip title="Practice Name">
-                    <b>{item.practice.name} </b>
+                    <b>{item.practice_data.name} </b>
                 </Tooltip>
             </Tag> : null}
         </h2>
