@@ -1,6 +1,5 @@
 import React from "react";
 import {Route} from "react-router";
-
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon, Row, Input,Select, DatePicker} from "antd";
 import {
@@ -30,8 +29,11 @@ class EditPatientDetails extends React.Component {
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
+<<<<<<< Updated upstream
         this.handleSubmit = this.handleSubmit.bind(this);
 
+=======
+>>>>>>> Stashed changes
     }
 
     componentDidMount() {
@@ -96,6 +98,7 @@ class EditPatientDetails extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
 
+<<<<<<< Updated upstream
             if (!err) {
                 let reqData = {
                     ...values,

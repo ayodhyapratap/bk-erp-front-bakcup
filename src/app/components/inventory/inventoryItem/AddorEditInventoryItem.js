@@ -175,7 +175,7 @@ export default class AddorEditInventoryItem extends React.Component {
             key: 'taxes',
             type: CHECKBOX_FIELD,
             options: taxesOption,
-            initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.taxes : null,
+            initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.taxes : [],
             mode: "multiple"
         }, {
             label: 'Item Type',
@@ -212,7 +212,8 @@ export default class AddorEditInventoryItem extends React.Component {
             action: INVENTORY_ITEM_API,
             method: "post",
         }
-        let defaultValues = [{key: 'practice', value: this.props.active_practiceId}];
+        let defaultValues = [{key: 'practice', value: that.props.active_practiceId}];
+        console.log('default', defaultValues);
 
         return <Row>
             <Card>
@@ -225,6 +226,7 @@ export default class AddorEditInventoryItem extends React.Component {
                 <Route exact path='/inventory/add'
                        render={(route) => <AddInventoryFormLayout title="Add Inventory Item"
                                                                   {...route}
+                                                                  defaultValues={defaultValues}
                                                                   changeRedirect={this.changeRedirect}
                                                                   defaultValues={defaultValues}
                                                                   formProp={formProp}

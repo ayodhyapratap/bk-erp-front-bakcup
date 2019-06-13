@@ -7981,6 +7981,10 @@ react-lifecycles-compat@^3.0.2, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
 
+react-modal-image@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/react-modal-image/-/react-modal-image-2.3.2.tgz#8ec3a935bc407799d4c187c477d810d4b625e8c0"
+
 react-overlays@^0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-0.8.3.tgz#fad65eea5b24301cca192a169f5dddb0b20d3ac5"

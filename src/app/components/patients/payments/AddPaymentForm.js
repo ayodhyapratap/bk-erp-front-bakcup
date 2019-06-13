@@ -56,9 +56,10 @@ class AddPaymentForm extends React.Component {
             })
 
         }
-        getAPI(interpolate(INVOICES_API, [this.props.match.params.id]), successFn, errorFn, {
+        getAPI(INVOICES_API, successFn, errorFn, {
             page: that.state.loadMoreInvoice || 1,
-            is_pending: true
+            is_pending: true,
+            patient: this.props.match.params.id
         });
     }
     addInvoiceToPayments = (id) => {

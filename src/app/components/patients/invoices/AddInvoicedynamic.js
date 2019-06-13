@@ -290,7 +290,6 @@ class Addinvoicedynamic extends React.Component {
                             break;
                         default:
                             return null;
-
                     }
                 });
                 console.log(reqData);
@@ -497,7 +496,7 @@ class Addinvoicedynamic extends React.Component {
                     validateTrigger: ['onChange', 'onBlur'],
 
                 })(
-                    <Select placeholder="Batch Number" size={'small'}>{taxesOption}</Select>
+                    <Select placeholder="Batch Number" size={'small'} mode={"multiple"}>{taxesOption}</Select>
                 )}
             </Form.Item>
         },]);
