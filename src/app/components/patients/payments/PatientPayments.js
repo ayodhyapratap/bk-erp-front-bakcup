@@ -29,7 +29,7 @@ class PatientPayments extends React.Component {
     }
 
 
-    loadPayments(page = 1) {
+    loadPayments=(page = 1)=> {
         let that = this;
         this.setState({
             loading: true
@@ -62,7 +62,7 @@ class PatientPayments extends React.Component {
         getAPI(PATIENT_PAYMENTS_API, successFn, errorFn, apiParams);
     }
 
-    loadInvoices() {
+    loadInvoices = () => {
         let that = this;
         let successFn = function (data) {
             that.setState({
@@ -131,7 +131,7 @@ class PatientPayments extends React.Component {
                 <Switch>
                     <Route exact path='/patient/:id/billing/payments/add'
                            render={(route) => <AddPaymentForm {...this.state} {...route}
-                                                              loadData={this.loadInvoices}/>}/>
+                                                              loadData={this.loadPayments}/>}/>
                     <Route exact path='/patient/:id/billing/payments/edit'
                            render={(route) => <AddPayment {...this.state} {...route}/>}/>
                     <Route>

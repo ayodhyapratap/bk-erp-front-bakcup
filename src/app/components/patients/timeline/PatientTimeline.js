@@ -287,6 +287,11 @@ timelineAppointmentCard(item) {
     return <Card hoverable
                  bodyStyle={{backgroundColor: (item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id] ? '#B5EEFF' : 'initial')}}>
         <h2><Icon type="calendar"/> Appointment
+            {item.practice ? <Tag style={{float: 'right'}}>
+                <Tooltip title="Practice Name">
+                    <b>{item.practice.name} </b>
+                </Tooltip>
+            </Tag> : null}
         </h2>
         {item.doctor_data ?
             <p style={{
@@ -305,6 +310,11 @@ timelineFilesCard(item) {
         <h2><Icon type="picture"/> File<Checkbox size="large" style={{float: 'right'}}
                                                  checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                                  onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+            {item.practice ? <Tag style={{float: 'right'}}>
+                <Tooltip title="Practice Name">
+                    <b>{item.practice.name} </b>
+                </Tooltip>
+            </Tag> : null}
         </h2>
         <img src={makeFileURL(item.file_type)} alt="" style={{height: 100}}/>
     </Card>
@@ -318,6 +328,11 @@ timelineInvoiceCard(item) {
         <h2><Icon type="audit"/> Invoice<Checkbox size="large" style={{float: 'right'}}
                                                   checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                                   onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+            {item.practice_data ? <Tag style={{float: 'right'}}>
+                <Tooltip title="Practice Name">
+                    <b>{item.practice_data.name} </b>
+                </Tooltip>
+            </Tag> : null}
         </h2>
         {item.procedure.map(proc => <Tag>{proc.name}</Tag>)}
         {item.inventory.map(proc => <Tag>{proc.name}</Tag>)}
@@ -336,6 +351,11 @@ timelineClinicalNote(item) {
         <h2><Icon type="solution"/> Clinical Note Added<Checkbox size="large" style={{float: 'right'}}
                                                                  checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                                                  onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+            {item.practice ? <Tag style={{float: 'right'}}>
+                <Tooltip title="Practice Name">
+                    <b>{item.practice.name} </b>
+                </Tooltip>
+            </Tag> : null}
         </h2>
         {item.chief_complaints ?
             <p>Chief Complaints
@@ -418,6 +438,11 @@ timelineVitalSignCard(item) {
         <h2><Icon type="heart"/> Vital Sign Recorded<Checkbox size="large" style={{float: 'right'}}
                                                               checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                                               onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+            {item.practice_data ? <Tag style={{float: 'right'}}>
+                <Tooltip title="Practice Name">
+                    <b>{item.practice_data.name} </b>
+                </Tooltip>
+            </Tag> : null}
         </h2>
         {item.doctor_data ?
             <p style={{
@@ -463,6 +488,11 @@ timelinePaymentCard(item) {
         <h2><Icon type="dollar"/> Payment<Checkbox size="large" style={{float: 'right'}}
                                                    checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                                    onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+            {item.practice_data ? <Tag style={{float: 'right'}}>
+                <Tooltip title="Practice Name">
+                    <b>{item.practice_data.name} </b>
+                </Tooltip>
+            </Tag> : null}
         </h2>
         <b>RCPT{item.id}</b>
         <br/><b>Amount Paid: INR{item.total}</b>
@@ -477,6 +507,11 @@ timelineProcedureCard(item) {
         <h2>Procedure Performed<Checkbox size="large" style={{float: 'right'}}
                                          checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                          onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+            {item.practice ? <Tag style={{float: 'right'}}>
+                <Tooltip title="Practice Name">
+                    <b>{item.practice.name} </b>
+                </Tooltip>
+            </Tag> : null}
         </h2>
         {item.doctor ?
             <p style={{
@@ -495,6 +530,11 @@ timelineTreatmentPlanCard(item) {
         <h2>Treatment Plan <Checkbox size="large" style={{float: 'right'}}
                                      checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                      onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+            {item.practice ? <Tag style={{float: 'right'}}>
+                <Tooltip title="Practice Name">
+                    <b>{item.practice.name} </b>
+                </Tooltip>
+            </Tag> : null}
         </h2>
         {item.doctor ?
             <p style={{

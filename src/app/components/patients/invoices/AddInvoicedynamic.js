@@ -51,7 +51,8 @@ class Addinvoicedynamic extends React.Component {
             maxQuantityforConsume: {},
             items: {},
             practiceDoctors: [],
-            selectedPrescriptions: []
+            selectedPrescriptions: [],
+            selectedDate:moment()
         }
 
     }
@@ -63,7 +64,6 @@ class Addinvoicedynamic extends React.Component {
         this.loadPrescriptions();
         this.loadTaxes();
     }
-
     loadInventoryItemList() {
         let that = this;
         let successFn = function (reqData) {
@@ -247,7 +247,8 @@ class Addinvoicedynamic extends React.Component {
                     total: null,
                     procedure: [],
                     inventory: [],
-                    prescription: that.state.selectedPrescriptions
+                    prescription: that.state.selectedPrescriptions,
+                    date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
                 };
                 that.state.tableFormValues.forEach(function (item) {
                     item.quantity = values.quantity[item._id];
@@ -330,11 +331,11 @@ class Addinvoicedynamic extends React.Component {
         const formItemLayoutWithOutLabel = {
             labelCol: {
                 xs: {span: 24},
-                sm: {span: 4},
+                sm: {span: 24},
             },
             wrapperCol: {
                 xs: {span: 24},
-                sm: {span: 20},
+                sm: {span: 24},
             },
         };
         getFieldDecorator('keys', {initialValue: []});
@@ -420,34 +421,32 @@ class Addinvoicedynamic extends React.Component {
             width: 100,
             dataIndex: 'unit',
             render: (item, record) => (record.item_type == INVENTORY ? <Form.Item
-                key={`name[${record._id}]`}
+                key={`quantity[${record._id}]`}
                 {...formItemLayout}>
                 {getFieldDecorator(`quantity[${record._id}]`, {
                     validateTrigger: ['onChange', 'onBlur'],
                     initialValue: record.selectedBatch ? 1 : null,
                     rules: [{
-                        min: 0,
-                        max: record.selectedBatch ? record.selectedBatch.quantity : 0,
                         required: true,
                         message: "This field is required.",
                     }],
                 })(
-                    <InputNumber placeholder="quantity" size={'small'}
+                    <InputNumber min={1} max={(record.selectedBatch ? record.selectedBatch.quantity : 0)}
+                                 placeholder="quantity" size={'small'}
                                  disabled={!record.selectedBatch}/>
                 )}
             </Form.Item> : <Form.Item
-                key={`name[${record._id}]`}
+                key={`quantity[${record._id}]`}
                 {...formItemLayout}>
                 {getFieldDecorator(`quantity[${record._id}]`, {
+                    initialValue: 0,
                     validateTrigger: ['onChange', 'onBlur'],
-                    initialValue: 1,
                     rules: [{
-                        min: 0,
                         required: true,
                         message: "This field is required.",
                     }],
                 })(
-                    <InputNumber min={0} placeholder="quantity" size={'small'}/>
+                    <InputNumber min={1} max={100} placeholder="discount" size={'small'}/>
                 )}
             </Form.Item>)
         }, {
@@ -465,7 +464,7 @@ class Addinvoicedynamic extends React.Component {
                         message: "This field is required.",
                     }],
                 })(
-                    <InputNumber placeholder="Unit Cost" size={'small'}/>
+                    <InputNumber min={0} placeholder="Unit Cost" size={'small'}/>
                 )}
             </Form.Item>
         }, {
@@ -504,13 +503,13 @@ class Addinvoicedynamic extends React.Component {
         consumeRow = consumeRow.concat([{
             key: '_id',
             dataIndex: '_id',
-            render: (value, record) => <Button icon={"close"} onClick={() => this.removeDrug(record._id)}
+            render: (value, record) => <Button icon={"close"} onClick={() => that.remove(record._id)}
                                                type={"danger"} shape="circle"
                                                size="small"/>
         }]);
 
         return <div>
-            <Card title={this.state.classType + " Stock"} bodyStyle={{padding: 0}}>
+            <Card title={"Add Invoice"} bodyStyle={{padding: 0}}>
                 <Row gutter={16}>
                     <Col span={7}>
                         <Tabs size="small" type="card">
@@ -574,8 +573,18 @@ class Addinvoicedynamic extends React.Component {
                             {/*<List>{formItems}</List>*/}
                             <Affix offsetBottom={0}>
                                 <Card>
-                                    <Form.Item {...formItemLayoutWithOutLabel}>
-                                        <Button type="primary" htmlType="submit">Submit</Button>
+                                    <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
+                                    <DatePicker value={this.state.selectedDate}
+                                                onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}
+                                                allowClear={false}/>
+                                    <Form.Item {...formItemLayoutWithOutLabel}
+                                               style={{marginBottom: 0, float: 'right'}}>
+                                        <Button type="primary" htmlType="submit" style={{margin: 5}}>Save Invoice</Button>
+                                        {that.props.history ?
+                                            <Button style={{margin: 5, float: 'right'}}
+                                                    onClick={() => that.props.history.goBack()}>
+                                                Cancel
+                                            </Button> : null}
                                     </Form.Item>
                                 </Card>
                             </Affix>

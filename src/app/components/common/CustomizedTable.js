@@ -1,5 +1,5 @@
 import React from "react";
-import {Row, Col, Table, Button, Icon, Input} from "antd";
+import {Row, Col, Table, Button, Icon, Input, Tag} from "antd";
 import {exportToExcel, exportToPDF} from "../../utils/export";
 import moment from "moment";
 import Highlighter from 'react-highlight-words';
@@ -139,7 +139,10 @@ export default class CustomizedTable extends React.Component {
                     pageSizeOptions: ['10', '20', '30', '40', '50', '100'],
                     showSizeChanger: true,
                     showQuickJumper: true,
-                    size: "small"
+                    size: "small",
+                    showTotal: function (total, range) {
+                        return <Tag>Showing <b>{range[0]}</b> to <b>{range[1]}</b> of <b>{total}</b> items</Tag>
+                    }
                 }} {...this.state} columns={columns}/>
             </Row>
         </div>

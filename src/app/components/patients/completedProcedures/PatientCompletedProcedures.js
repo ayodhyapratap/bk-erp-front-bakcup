@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Checkbox, Divider, Icon, Table, Popconfirm, Menu, Dropdown, Tag} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Table, Popconfirm, Menu, Dropdown, Tag, Tooltip} from "antd";
 import {getAPI, interpolate, putAPI, postAPI} from "../../../utils/common";
 import {
     PROCEDURE_CATEGORY,
@@ -62,6 +62,12 @@ class PatientCompletedProcedures extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState(function (prevState) {
+                if(data.current == 1)
+                return {
+                    treatmentPlans: [...data.results],
+                    next: data.next,
+                    loading: false
+                }
                 return {
                     treatmentPlans: [...prevState.treatmentPlans, ...data.results],
                     next: data.next,
@@ -132,11 +138,7 @@ class PatientCompletedProcedures extends React.Component {
     deleteTreatmentPlans(record) {
         let that = this;
         let obj = {...record, is_active: false}
-        let reqData = {
-            treatment: [],
-            patient: that.props.match.params.id
-        }
-        reqData.treatment.push(obj);
+
 
         let successFn = function (data) {
             that.loadTreatmentPlans();
@@ -144,7 +146,7 @@ class PatientCompletedProcedures extends React.Component {
         let errorFn = function () {
 
         };
-        postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id], null), reqData, successFn, errorFn);
+        postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id], null), obj, successFn, errorFn);
     }
 
     loadPDF(id) {
@@ -330,6 +332,11 @@ function treatmentFooter(presc) {
         return <div>
             {presc.doctor ? <Tag color={presc.doctor ? presc.doctor.calendar_colour : null}>
                 <b>{"prescribed by  " + presc.doctor.user.first_name} </b>
+            </Tag> : null}
+            {presc.practice ? <Tag style={{float: 'right'}}>
+                <Tooltip title="Practice Name">
+                    <b>{presc.practice.name} </b>
+                </Tooltip>
             </Tag> : null}
         </div>
     }

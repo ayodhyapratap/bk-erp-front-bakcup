@@ -182,7 +182,6 @@ class AddPaymentForm extends React.Component {
             that.setState({
                 loading: false
             });
-
         }
         postAPI(PATIENT_PAYMENTS_API, reqData, successFn, errorFn)
     }
@@ -193,8 +192,7 @@ class AddPaymentForm extends React.Component {
             <Row gutter={8}>
                 <Col xs={24} sm={24} md={16} lg={16} xl={18} xxl={18}>
                     <Card>
-                        <Row
-                        >
+                        <Row>
                             <Col span={24}>
                                 {/*<Statistic title="Paid / Total " value={93} suffix={"/ " + invoice.total}/>*/}
                                 {/*</Col>*/}

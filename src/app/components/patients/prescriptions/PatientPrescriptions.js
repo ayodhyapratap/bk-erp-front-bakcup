@@ -110,11 +110,13 @@ class PatientPrescriptions extends React.Component {
     }
 
     editPrescriptionData(record) {
+        let that = this;
         this.setState({
             editPrescription: record,
+        }, function () {
+            that.props.history.push("/patient/" + record.patient + "/emr/prescriptions/edit")
         });
-        let id = this.props.match.params.id
-        this.props.history.push("/patient/" + id + "/emr/prescriptions/edit")
+
 
     }
 
@@ -126,7 +128,7 @@ class PatientPrescriptions extends React.Component {
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                let reqData = {"id": record.id, is_active: false};
+                let reqData = {"id": record.id, patient: record.patient, is_active: false};
                 let successFn = function (data) {
                     that.loadPrescriptions();
                 }

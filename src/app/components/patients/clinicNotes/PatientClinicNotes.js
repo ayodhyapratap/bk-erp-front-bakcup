@@ -1,4 +1,4 @@
-import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag, Spin} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag, Spin, Tooltip} from "antd";
 import React from "react";
 import {getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {INVOICES_API, PATIENT_CLINIC_NOTES_API, CLINIC_NOTES_PDF} from "../../../constants/api";
@@ -40,6 +40,12 @@ class PatientClinicNotes extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState(function (prevState) {
+                if (data.current == 1)
+                    return {
+                        clinicNotes: [...data.results],
+                        next: data.next,
+                        loading: false
+                    }
                 return {
                     clinicNotes: [...prevState.clinicNotes, ...data.results],
                     next: data.next,
@@ -87,13 +93,13 @@ class PatientClinicNotes extends React.Component {
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                let reqData = {"id": record.id, is_active: false};
+                let reqData = {id: record.id, patient: record.patient, is_active: false};
                 let successFn = function (data) {
                     that.loadClinicNotes();
                 }
                 let errorFn = function () {
                 }
-                putAPI(interpolate(PATIENT_CLINIC_NOTES_API, [that.props.match.params.id]), reqData, successFn, errorFn);
+                postAPI(interpolate(PATIENT_CLINIC_NOTES_API, [that.props.match.params.id]), reqData, successFn, errorFn);
             },
             onCancel() {
                 console.log('Cancel');
@@ -280,6 +286,11 @@ class PatientClinicNotes extends React.Component {
                                     <Tag color={clinicNote.doctor ? clinicNote.doctor.calendar_colour : null}>
                                         <b>{"prescribed by  " + clinicNote.doctor.user.first_name} </b>
                                     </Tag> : null}
+                                {clinicNote.practice ? <Tag style={{float: 'right'}}>
+                                    <Tooltip title="Practice Name">
+                                        <b>{clinicNote.practice.name} </b>
+                                    </Tooltip>
+                                </Tag> : null}
                             </div>
                         </Card>)}
                         <Spin spinning={this.state.loading}>
@@ -393,6 +404,11 @@ class PatientClinicNotes extends React.Component {
                             <Tag color={clinicNote.doctor ? clinicNote.doctor.calendar_colour : null}>
                                 <b>{"prescribed by  " + clinicNote.doctor.user.first_name} </b>
                             </Tag> : null}
+                        {clinicNote.practice ? <Tag style={{float: 'right'}}>
+                            <Tooltip title="Practice Name">
+                                <b>{clinicNote.practice.name} </b>
+                            </Tooltip>
+                        </Tag> : null}
                     </div>
                 </Card>)}
                 <Spin spinning={this.state.loading}>
