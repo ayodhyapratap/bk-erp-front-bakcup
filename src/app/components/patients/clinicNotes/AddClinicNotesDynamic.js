@@ -222,6 +222,7 @@ class AddClinicNotesDynamic extends React.Component {
                 reqData.notes = values.Notes.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
                 reqData.observations = values.Observations.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
                 reqData.patient = that.props.match.params.id;
+                reqData.practice = that.props.active_practiceId;
                 reqData.doctor = that.state.selectedDoctor && that.state.selectedDoctor.id ? that.state.selectedDoctor.id : that.state.selectedDoctor;
                 reqData.date = that.state.selectedDate && moment(that.state.selectedDate).isValid() ? moment(that.state.selectedDate).format('YYYY-MM-DD') : null
                 if (that.state.editClinicNotes)

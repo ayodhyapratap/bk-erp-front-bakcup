@@ -7,7 +7,7 @@ import {
     Icon,
     Tag, Menu,
     Dropdown,
-    Modal
+    Modal, Spin
 } from "antd";
 import {Link} from "react-router-dom";
 import {
@@ -120,7 +120,7 @@ class PatientTreatmentPlans extends React.Component {
             editTreatmentPlan: record,
             loading: false
         });
-        let id = this.props.match.params.id;
+        let id = record.patient;
         this.props.history.push("/patient/" + id + "/emr/plans/edit")
 
     }
@@ -269,6 +269,7 @@ class PatientTreatmentPlans extends React.Component {
                            <Redirect to={"/patient/" + this.props.match.params.id + "/emr/plans"}/>)}/>
                 <div>
                     <Card
+                        bodyStyle={{padding:0}}
                         title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " TreatmentPlans" : "TreatmentPlans"}
                         extra={<Button.Group>
                             <Button onClick={this.submitCompleteTreatment}>
@@ -281,6 +282,7 @@ class PatientTreatmentPlans extends React.Component {
                             </Link>
                         </Button.Group>
                         }/>
+                    <Spin spinning={this.state.loading}>
                     {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
                                                                         style={{marginTop: 15}}>
                             <div style={{padding: 16}}>
@@ -299,8 +301,11 @@ class PatientTreatmentPlans extends React.Component {
                                             </Menu.Item>
                                             <Menu.Divider/>
                                             <Menu.Item key="3">
+                                                <Link to={"/patient/"+treatment.patient+"/emr/timeline"}>
                                                 <Icon type="clock-circle"/>
+                                                    &nbsp;
                                                 Patient Timeline
+                                                </Link>
                                             </Menu.Item>
                                         </Menu>}>
                                         <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
@@ -315,7 +320,7 @@ class PatientTreatmentPlans extends React.Component {
                                    key={treatment.id}/>
 
                         </Card>
-                    )}
+                    )}</Spin>
                     <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
                                               loading={this.state.loading}
                                               hidden={!this.state.next}/>
@@ -326,6 +331,7 @@ class PatientTreatmentPlans extends React.Component {
         }
         else {
             return <div>
+                <Spin spinning={this.state.loading}>
                 {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
                                                                     style={{marginTop: 15}}>
                         <div style={{padding: 16}}>
@@ -344,8 +350,11 @@ class PatientTreatmentPlans extends React.Component {
                                         </Menu.Item>
                                         <Menu.Divider/>
                                         <Menu.Item key="3">
+                                            <Link to={"/patient/"+treatment.patient+"/emr/timeline"}>
                                             <Icon type="clock-circle"/>
+                                                &nbsp;
                                             Patient Timeline
+                                            </Link>
                                         </Menu.Item>
                                     </Menu>}>
                                     <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
@@ -361,6 +370,7 @@ class PatientTreatmentPlans extends React.Component {
 
                     </Card>
                 )}
+                </Spin>
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
                                           loading={this.state.loading}
                                           hidden={!this.state.next}/>

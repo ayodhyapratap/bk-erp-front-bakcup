@@ -43,7 +43,8 @@ class AddOrConsumeStock extends React.Component {
             maxQuantityforConsume: {},
             searchStrings: {},
             tempValues: {},
-            supplierList: []
+            supplierList: [],
+            customSupplier: false
         }
     }
 
@@ -52,6 +53,11 @@ class AddOrConsumeStock extends React.Component {
         this.loadSupplierList();
     }
 
+    changeSupplierType = (value) => {
+        this.setState({
+            customSupplier: !!value
+        })
+    }
     loadSupplierList = () => {
         let that = this;
         let successFn = function (data) {
@@ -156,7 +162,12 @@ class AddOrConsumeStock extends React.Component {
                     }
                     reqData.push(itemObject);
                 });
-                console.log(reqData);
+                reqData.date = moment(values.date).isValid() ? moment(values.date).format() : null;
+                if (that.state.customSupplier)
+                    reqData.supplier_name = values.supplier_name;
+                else
+                    reqData.supplier = values.supplier;
+
                 let successFn = function (data) {
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
@@ -478,13 +489,13 @@ class AddOrConsumeStock extends React.Component {
                                         </Col>
                                         <Col span={8}>
                                             <Form.Item
-                                                key={`addedOn`}
+                                                key={`date`}
                                                 label={this.state.classType == ADD_STOCK ? "Added On" : "Consumed On"}
                                                 {...{
                                                     labelCol: {span: 10},
                                                     wrapperCol: {span: 14},
                                                 }}>
-                                                {getFieldDecorator(`addedOn`, {
+                                                {getFieldDecorator(`date`, {
                                                     validateTrigger: ['onChange', 'onBlur'],
                                                     rules: [{
                                                         required: true,
@@ -495,28 +506,52 @@ class AddOrConsumeStock extends React.Component {
                                                     <DatePicker/>
                                                 )}
                                             </Form.Item>
-                                            {this.state.classType == ADD_STOCK ? <Form.Item
-                                                key={`supplier`}
-                                                label={"Supplier"}
-                                                {...{
-                                                    labelCol: {span: 10},
-                                                    wrapperCol: {span: 14},
-                                                }}>
-                                                {getFieldDecorator(`supplier`, {
-                                                    validateTrigger: ['onChange', 'onBlur'],
-                                                    rules: [{
-                                                        required: true,
-                                                        message: "This field is required.",
-                                                    }],
-                                                })(
-                                                    <Select>
-
-                                                    </Select>
-                                                )}
-                                            </Form.Item> : null}
+                                            {this.state.classType == ADD_STOCK ? <div>
+                                                {this.state.customSupplier ?
+                                                    <Form.Item
+                                                        key={`supplier_name`}
+                                                        label={"Supplier"}
+                                                        {...{
+                                                            labelCol: {span: 10},
+                                                            wrapperCol: {span: 14},
+                                                        }}>
+                                                        {getFieldDecorator(`supplier_name`, {
+                                                            validateTrigger: ['onChange', 'onBlur'],
+                                                            rules: [{
+                                                                required: true,
+                                                                message: "This field is required.",
+                                                            }],
+                                                        })(
+                                                            <Input/>
+                                                        )}
+                                                        {this.state.customSupplier ?
+                                                            <a onClick={() => this.changeSupplierType(false)}>Cancel</a> : null}
+                                                    </Form.Item> : <Form.Item
+                                                        key={`supplier`}
+                                                        label={"Supplier"}
+                                                        {...{
+                                                            labelCol: {span: 10},
+                                                            wrapperCol: {span: 14},
+                                                        }}>
+                                                        {getFieldDecorator(`supplier`, {
+                                                            validateTrigger: ['onChange', 'onBlur'],
+                                                            rules: [{
+                                                                required: true,
+                                                                message: "This field is required.",
+                                                            }],
+                                                        })(<Select>
+                                                            {this.state.supplierList.map(item => <Select.Option
+                                                                value={item.id}>
+                                                                {item.name}
+                                                            </Select.Option>)}
+                                                        </Select>)}
+                                                        {this.state.customSupplier ? null :
+                                                            <a onClick={() => this.changeSupplierType(true)}>Add
+                                                                New</a>}
+                                                    </Form.Item>} </div> : null}
                                         </Col>
                                         {this.state.classType == ADD_STOCK ?
-                                            <Col style={{textAlign: 'center'}}>
+                                            <Col style={{textAlign: 'center'}} span={8}>
 
                                                 <h3>Grand
                                                     Total: <b>{this.state.tableFormValues.reduce(function (total, item) {

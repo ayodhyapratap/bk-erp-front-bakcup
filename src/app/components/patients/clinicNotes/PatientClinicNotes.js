@@ -1,6 +1,6 @@
 import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag, Spin} from "antd";
 import React from "react";
-import {getAPI, interpolate, postAPI} from "../../../utils/common";
+import {getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {INVOICES_API, PATIENT_CLINIC_NOTES_API, CLINIC_NOTES_PDF} from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
@@ -93,7 +93,7 @@ class PatientClinicNotes extends React.Component {
                 }
                 let errorFn = function () {
                 }
-                postAPI(interpolate(PATIENT_CLINIC_NOTES_API, [that.props.match.params.id]), reqData, successFn, errorFn);
+                putAPI(interpolate(PATIENT_CLINIC_NOTES_API, [that.props.match.params.id]), reqData, successFn, errorFn);
             },
             onCancel() {
                 console.log('Cancel');
@@ -183,7 +183,7 @@ class PatientClinicNotes extends React.Component {
 
                         </Card>
                         {this.state.clinicNotes.map(clinicNote => <Card style={{marginTop: 20}}>
-                            <div>
+                            <div style={{padding: 16}}>
                                 <h4>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}
                                     <Dropdown.Button
                                         size={"small"}
@@ -201,76 +201,80 @@ class PatientClinicNotes extends React.Component {
                                             </Menu.Item>
                                             <Menu.Divider/>
                                             <Menu.Item key="3">
-                                                <Icon type="clock-circle"/>
-                                                Patient Timeline
+                                                <Link to={"/patient/" + clinicNote.patient + "/emr/timeline"}>
+                                                    <Icon type="clock-circle"/>
+                                                    &nbsp;
+                                                    Patient Timeline
+                                                </Link>
                                             </Menu.Item>
                                         </Menu>}>
                                         <a onClick={() => this.loadPDF(clinicNote.id)}><Icon type="printer"/></a>
 
                                     </Dropdown.Button>
                                 </h4>
-                                <Divider style={{margin: 0}}/>
-                                <Row>
-                                    <Col span={6}>
-                                        <h3>Complaints</h3>
-                                    </Col>
-                                    <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                        <div style={{minHeight: 30}}>
-                                            {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                                <span>{str}<br/></span>) : null}
-                                        </div>
-                                        <Divider style={{margin: 0}}/>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col span={6}>
-                                        <h3>Observations</h3>
-                                    </Col>
-                                    <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                        <div style={{minHeight: 30}}>
-                                            {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                                <span>{str}<br/></span>) : null}
-                                        </div>
-                                        <Divider style={{margin: 0}}/>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col span={6}>
-                                        <h3>Investigations</h3>
-                                    </Col>
-                                    <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                        <div style={{minHeight: 30}}>
-                                            {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                                <span>{str}<br/></span>) : null}
-                                        </div>
-                                        <Divider style={{margin: 0}}/>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col span={6}>
-                                        <h3>Diagnoses</h3>
-                                    </Col>
-                                    <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                        <div style={{minHeight: 30}}>
-                                            {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                                <span>{str}<br/></span>) : null}
-                                        </div>
-                                        <Divider style={{margin: 0}}/>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col span={6}>
-                                        <h3>Notes</h3>
-                                    </Col>
-                                    <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                        <div style={{minHeight: 30}}>
-                                            {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                                <span>{str}<br/></span>) : null}
-                                        </div>
-                                        <Divider style={{margin: 0}}/>
-                                    </Col>
-                                </Row>
                             </div>
+                            <Divider style={{margin: 0}}/>
+                            <Row>
+                                <Col span={6}>
+                                    <h3>Complaints</h3>
+                                </Col>
+                                <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                    <div style={{minHeight: 30}}>
+                                        {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                            <span>{str}<br/></span>) : null}
+                                    </div>
+                                    <Divider style={{margin: 0}}/>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col span={6}>
+                                    <h3>Observations</h3>
+                                </Col>
+                                <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                    <div style={{minHeight: 30}}>
+                                        {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                            <span>{str}<br/></span>) : null}
+                                    </div>
+                                    <Divider style={{margin: 0}}/>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col span={6}>
+                                    <h3>Investigations</h3>
+                                </Col>
+                                <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                    <div style={{minHeight: 30}}>
+                                        {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                            <span>{str}<br/></span>) : null}
+                                    </div>
+                                    <Divider style={{margin: 0}}/>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col span={6}>
+                                    <h3>Diagnoses</h3>
+                                </Col>
+                                <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                    <div style={{minHeight: 30}}>
+                                        {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                            <span>{str}<br/></span>) : null}
+                                    </div>
+                                    <Divider style={{margin: 0}}/>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col span={6}>
+                                    <h3>Notes</h3>
+                                </Col>
+                                <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                    <div style={{minHeight: 30}}>
+                                        {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                            <span>{str}<br/></span>) : null}
+                                    </div>
+                                    <Divider style={{margin: 0}}/>
+                                </Col>
+                            </Row>
+
                             <div>
                                 {clinicNote.doctor ?
                                     <Tag color={clinicNote.doctor ? clinicNote.doctor.calendar_colour : null}>
@@ -292,7 +296,7 @@ class PatientClinicNotes extends React.Component {
         else {
             return <Card>
                 {this.state.clinicNotes.map(clinicNote => <Card style={{marginTop: 20}}>
-                    <div>
+                    <div style={{padding: 16}}>
                         <h4>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}
                             <Dropdown.Button
                                 size={"small"}
@@ -310,76 +314,80 @@ class PatientClinicNotes extends React.Component {
                                     </Menu.Item>
                                     <Menu.Divider/>
                                     <Menu.Item key="3">
-                                        <Icon type="clock-circle"/>
-                                        Patient Timeline
+                                        <Link to={"/patient/" + clinicNote.patient + "/emr/timeline"}>
+                                            <Icon type="clock-circle"/>
+                                            &nbsp;
+                                            Patient Timeline
+                                        </Link>
                                     </Menu.Item>
                                 </Menu>}>
                                 <a onClick={() => this.loadPDF(clinicNote.id)}><Icon type="printer"/></a>
 
                             </Dropdown.Button>
                         </h4>
-                        <Divider style={{margin: 0}}/>
-                        <Row>
-                            <Col span={6}>
-                                <h3>Complaints</h3>
-                            </Col>
-                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                <div style={{minHeight: 30}}>
-                                    {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                        <span>{str}<br/></span>) : null}
-                                </div>
-                                <Divider style={{margin: 0}}/>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col span={6}>
-                                <h3>Observations</h3>
-                            </Col>
-                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                <div style={{minHeight: 30}}>
-                                    {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                        <span>{str}<br/></span>) : null}
-                                </div>
-                                <Divider style={{margin: 0}}/>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col span={6}>
-                                <h3>Investigations</h3>
-                            </Col>
-                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                <div style={{minHeight: 30}}>
-                                    {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                        <span>{str}<br/></span>) : null}
-                                </div>
-                                <Divider style={{margin: 0}}/>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col span={6}>
-                                <h3>Diagnoses</h3>
-                            </Col>
-                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                <div style={{minHeight: 30}}>
-                                    {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                        <span>{str}<br/></span>) : null}
-                                </div>
-                                <Divider style={{margin: 0}}/>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col span={6}>
-                                <h3>Notes</h3>
-                            </Col>
-                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                <div style={{minHeight: 30}}>
-                                    {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                        <span>{str}<br/></span>) : null}
-                                </div>
-                                <Divider style={{margin: 0}}/>
-                            </Col>
-                        </Row>
                     </div>
+                    <Divider style={{margin: 0}}/>
+                    <Row>
+                        <Col span={6}>
+                            <h3>Complaints</h3>
+                        </Col>
+                        <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                            <div style={{minHeight: 30}}>
+                                {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                    <span>{str}<br/></span>) : null}
+                            </div>
+                            <Divider style={{margin: 0}}/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={6}>
+                            <h3>Observations</h3>
+                        </Col>
+                        <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                            <div style={{minHeight: 30}}>
+                                {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                    <span>{str}<br/></span>) : null}
+                            </div>
+                            <Divider style={{margin: 0}}/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={6}>
+                            <h3>Investigations</h3>
+                        </Col>
+                        <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                            <div style={{minHeight: 30}}>
+                                {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                    <span>{str}<br/></span>) : null}
+                            </div>
+                            <Divider style={{margin: 0}}/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={6}>
+                            <h3>Diagnoses</h3>
+                        </Col>
+                        <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                            <div style={{minHeight: 30}}>
+                                {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                    <span>{str}<br/></span>) : null}
+                            </div>
+                            <Divider style={{margin: 0}}/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={6}>
+                            <h3>Notes</h3>
+                        </Col>
+                        <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                            <div style={{minHeight: 30}}>
+                                {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                    <span>{str}<br/></span>) : null}
+                            </div>
+                            <Divider style={{margin: 0}}/>
+                        </Col>
+                    </Row>
+
                     <div>
                         {clinicNote.doctor ?
                             <Tag color={clinicNote.doctor ? clinicNote.doctor.calendar_colour : null}>
