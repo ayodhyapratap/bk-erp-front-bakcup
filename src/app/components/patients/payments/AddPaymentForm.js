@@ -253,7 +253,7 @@ class AddPaymentForm extends React.Component {
                         <Row gutter={16} style={{marginTop: '20px'}}>
                             <Col span={6}><h3>Pay Now:</h3></Col>
                             <Col span={6}>
-                                <InputNumber min={0} max={this.state.totalPayableAmount}
+                                <InputNumber min={0} step={1} max={this.state.totalPayableAmount}
                                              value={this.state.totalPayingAmount} onChange={this.setPaymentAmount}/>
                             </Col>
                             <Col span={6}>

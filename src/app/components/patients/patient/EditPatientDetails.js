@@ -162,7 +162,7 @@ class EditPatientDetails extends React.Component {
 
         return(
             <Form onSubmit={that.handleSubmit}>
-            <Card title="Create Patient"  extra={<Button type="primary" htmlType="submit">submit</Button>}>
+            <Card title="Edit Profile"  extra={<Button type="primary" htmlType="submit">submit</Button>}>
                 <Form.Item label="Patient Name" {...formItemLayout}>
                     {getFieldDecorator('first_name', { initialValue: this.props.currentPatient ? this.props.currentPatient.user.first_name : null})
                         (<Input placeholder="Patient Name"/>)
