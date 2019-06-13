@@ -228,6 +228,7 @@ export default class AddorEditInventoryItem extends React.Component {
                                                                   {...route}
                                                                   defaultValues={defaultValues}
                                                                   changeRedirect={this.changeRedirect}
+                                                                  defaultValues={defaultValues}
                                                                   formProp={formProp}
                                                                   fields={fields}/>}/>
 

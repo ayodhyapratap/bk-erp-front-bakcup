@@ -122,6 +122,9 @@ class PatientInvoices extends React.Component {
         this.props.history.push("/patient/" + id + "/billing/invoices/edit")
 
     }
+    editPrescriptionData(record){
+        
+    }
 
     deleteInvoice(record) {
         let that = this;
@@ -235,7 +238,8 @@ class PatientInvoices extends React.Component {
                                             size={"small"}
                                             style={{float: 'right'}}
                                             overlay={<Menu>
-                                                <Menu.Item key="1" onClick={() => that.editPrescriptionData(invoice)}>
+                                                {/* <Menu.Item key="1" onClick={() => that.editPrescriptionData(invoice)}> */}
+                                                <Menu.Item key="1" >
                                                     <Link
                                                         to={"/patient/" + this.props.match.params.id + "/billing/payments/add"}>
                                                         <Icon type="money"/>

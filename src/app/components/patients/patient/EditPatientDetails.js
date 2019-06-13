@@ -114,7 +114,6 @@ class EditPatientDetails extends React.Component {
                     that.setState({})
                 }
                 postAPI(interpolate(PATIENTS_LIST, [that.props.match.params.id]), reqData, successFn, errorFn);
-
             }
         });
     }
@@ -151,6 +150,7 @@ class EditPatientDetails extends React.Component {
                 <Card title="Create Patient" extra={<Button type="primary" htmlType="submit">submit</Button>}>
                     <Form.Item label="Patient Name" {...formItemLayout}>
                         {getFieldDecorator('first_name', {initialValue: this.props.currentPatient ? this.props.currentPatient.user.first_name : null})
+
                         (<Input placeholder="Patient Name"/>)
                         }
                     </Form.Item>

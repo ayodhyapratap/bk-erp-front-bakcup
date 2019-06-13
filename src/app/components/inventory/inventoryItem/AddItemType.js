@@ -31,7 +31,6 @@ export default class AddItemType extends React.Component {
             redirect: false,
         };
         this.changeRedirect = this.changeRedirect.bind(this);
-
     }
 
     changeRedirect() {
@@ -74,7 +73,11 @@ export default class AddItemType extends React.Component {
         let errorFn = function () {
 
         }
+<<<<<<< HEAD
+        getAPI(interpolate(DRUG_TYPE_API,[this.props.match.params.id]), successFn, errorFn);
+=======
         getAPI(interpolate(DRUG_TYPE_API,[this.props.active_practiceId]), successFn, errorFn);
+>>>>>>> caab08e350707de6b97fd3c24d1cb3d25b44199f
     }
 
     loadData=()=> {

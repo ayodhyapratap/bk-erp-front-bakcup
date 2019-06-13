@@ -95,9 +95,10 @@ class Appointment extends React.Component {
             loading: true,
         })
         let successFn = function (data) {
+            // console.log("DataKya h",data);
             let appointmentArray = data;
             // appointmentArray.push(data);
-            console.log(JSON.stringify(appointmentArray));
+            // console.log("AppointmentArray",JSON.stringify(appointmentArray));
             that.setState({
                 appointments: appointmentArray.data,
                 loading: false,
@@ -195,9 +196,7 @@ class Appointment extends React.Component {
 
     deleteAppointment(record) {
         let that = this;
-        console.log("data", record);
         let reqData = {'is_active': false, 'status': "Cancelled"}
-        console.log("regData", reqData);
         let successFn = function (data) {
             that.setState({})
 
@@ -220,15 +219,12 @@ class Appointment extends React.Component {
                 doctors[doctor.id] = doctor.user.first_name
             })
         }
-        console.log("doctor", doctors);
-        console.log("doctor", procedures);
         const treatmentNotes = [];
         if (this.state.treatmentNotes) {
             this.state.treatmentNotes.forEach(function (treatmentNote) {
                 treatmentNotes[treatmentNote.id] = treatmentNote.name
             })
         }
-        console.log("doctor", treatmentNotes);
         const categories = {1: "fast", 2: "Full Stomach", 3: "No Liquids"}
         const columns = [{
             title: 'Schedule Time',
