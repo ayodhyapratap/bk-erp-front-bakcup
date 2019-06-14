@@ -1,14 +1,5 @@
 import React from "react";
-import {
-    Checkbox,
-    Table,
-    Button,
-    Card,
-    Icon,
-    Tag, Menu,
-    Dropdown,
-    Modal
-} from "antd";
+import {Checkbox,Table,Button,Card,Icon,Tag, Menu,Dropdown,Modal} from "antd";
 import {Link} from "react-router-dom";
 import {
     PROCEDURE_CATEGORY,

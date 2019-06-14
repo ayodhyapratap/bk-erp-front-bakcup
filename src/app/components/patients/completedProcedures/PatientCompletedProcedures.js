@@ -227,8 +227,6 @@ class PatientCompletedProcedures extends React.Component {
                     <Route>
 
                         <div>
-
-
                             <Card
                                 bodyStyle={{padding: 0}}
                                 title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Completed Procedures" : "Completed Procedures "}

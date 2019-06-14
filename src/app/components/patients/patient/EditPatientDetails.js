@@ -29,11 +29,8 @@ class EditPatientDetails extends React.Component {
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
-<<<<<<< Updated upstream
         this.handleSubmit = this.handleSubmit.bind(this);
 
-=======
->>>>>>> Stashed changes
     }
 
     componentDidMount() {
@@ -97,8 +94,6 @@ class EditPatientDetails extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-
-<<<<<<< Updated upstream
             if (!err) {
                 let reqData = {
                     ...values,
@@ -166,7 +161,7 @@ class EditPatientDetails extends React.Component {
         return(
             <Form onSubmit={that.handleSubmit}>
             <Card title="Edit Profile"  extra={<Button type="primary" htmlType="submit">submit</Button>}>
-                <Form.Item label="Patient Name" {...formItemLayout}>
+            <Form.Item label="Patient Name" {...formItemLayout}>
                     {getFieldDecorator('first_name', { initialValue: this.props.currentPatient ? this.props.currentPatient.user.first_name : null})
                         (<Input placeholder="Patient Name"/>)
                     }
@@ -179,13 +174,13 @@ class EditPatientDetails extends React.Component {
                 </Form.Item>
 
                 <Form.Item label="Aadhar ID" {...formItemLayout}>
-                    {getFieldDecorator('aadhar_id' ,{initialValue:this.props.currentPatient ? this.props.currentPatient.user.aadhar_id:null})
+                    {getFieldDecorator('aadhar_id' ,{initialValue:this.props.currentPatient ? this.props.currentPatient.aadhar_id:null})
                     (<Input placeholder="Patient Aadhar Number"/>)
                     }
                 </Form.Item>
                 
                 <Form.Item label="Gender" {...formItemLayout}>
-                    {getFieldDecorator('gender',{initialValue:"male"})
+                    {getFieldDecorator('gender',{initialValue:this.props.currentPatient ? this.props.currentPatient.gender:null})
                     ( <Select>
                         <Option value="male">Male</Option>
                         <Option value="female">Female</Option>
@@ -195,73 +190,73 @@ class EditPatientDetails extends React.Component {
                 </Form.Item>
 
                 <Form.Item label="DOB" {...formItemLayout}>
-                    {getFieldDecorator('dob' ,{})
+                    {getFieldDecorator('dob' ,{defaultValue:this.props.currentPatient ? this.props.currentPatient.dob:null})
                     (<DatePicker/>)
                     }
                 </Form.Item>
 
                 <Form.Item label="Anniversary" {...formItemLayout}>
-                    {getFieldDecorator('anniversary' ,{})
+                    {getFieldDecorator('anniversary' ,{defaultValue:this.props.currentPatient ? this.props.currentPatient.anniversary:null})
                     (<DatePicker/>)
                     }
                 </Form.Item>
 
                 <Form.Item label="Blood Group" {...formItemLayout}>
-                    {getFieldDecorator('blood_group' ,{})
+                    {getFieldDecorator('blood_group' ,{initialValue:this.props.currentPatient ? this.props.currentPatient.blood_group:null})
                     (<Input placeholder="Patient Blood Group"/>)
                     }
                 </Form.Item>
 
                 <Form.Item label="Family Relation" {...formItemLayout}>
-                    {getFieldDecorator('family_relation' ,{})
+                    {getFieldDecorator('family_relation' ,{initialValue:this.props.currentPatient ? this.props.currentPatient.family_relation:null})
                     (<Input placeholder="Patient Family Relation"/>)
                     }
                 </Form.Item>
 
                 <Form.Item label="Mobile (Primary)" {...formItemLayout}>
-                    {getFieldDecorator('mobile' ,{ rules: [{ required: true, message: 'Input Mobile Number' }]})
+                    {getFieldDecorator('mobile' ,{ initialValue: this.props.currentPatient ? this.props.currentPatient.user.mobile : null ,rules: [{ required: true, message: 'Input Mobile Number' }]})
                     (<Input placeholder="Patient Mobile Number (Primary)"/>)
                     }
                 </Form.Item>
 
                 <Form.Item label="Mobile (Secondary)" {...formItemLayout}>
-                    {getFieldDecorator('secondary_mobile_no' ,{})
+                    {getFieldDecorator('secondary_mobile_no' ,{initialValue:this.props.currentPatient ? this.props.currentPatient.secondary_mobile_no:null})
                     (<Input placeholder="Patient Mobile Number (Secondary)"/>)
                     }
                 </Form.Item>
 
                 <Form.Item label="Landline" {...formItemLayout}>
-                    {getFieldDecorator('landline_no' ,{})
+                    {getFieldDecorator('landline_no' ,{initialValue:this.props.currentPatient ? this.props.currentPatient.landline_no:null})
                     (<Input placeholder="Patient Landline Number"/>)
                     }
                 </Form.Item>
 
                 <Form.Item label="Address" {...formItemLayout}>
-                    {getFieldDecorator('address' ,{})
+                    {getFieldDecorator('address' ,{initialValue:this.props.currentPatient ? this.props.currentPatient.address:null})
                     (<Input placeholder="Patient Address"/>)
                     }
                 </Form.Item>
 
                 <Form.Item label="Locality" {...formItemLayout}>
-                    {getFieldDecorator('locality' ,{})
+                    {getFieldDecorator('locality' ,{initialValue:this.props.currentPatient ? this.props.currentPatient.locality:null})
                     (<Input placeholder="Patient Locality"/>)
                     }
                 </Form.Item>
 
                 <Form.Item label="City" {...formItemLayout}>
-                    {getFieldDecorator('city' ,{})
+                    {getFieldDecorator('city' ,{initialValue:this.props.currentPatient ? this.props.currentPatient.city:null})
                     (<Input placeholder="Patient City"/>)
                     }
                 </Form.Item>
 
                 <Form.Item label="Pincode" {...formItemLayout}>
-                    {getFieldDecorator('pincode' ,{})
+                    {getFieldDecorator('pincode' ,{initialValue:this.props.currentPatient ? this.props.currentPatient.pincode:null})
                     (<Input placeholder="Patient PINCODE"/>)
                     }
                 </Form.Item>
 
                 <Form.Item label="Email" {...formItemLayout}>
-                    {getFieldDecorator('email' ,{ rules: [{ required: true, message: 'Input Email ID!' }]})
+                    {getFieldDecorator('email' ,{ initialValue: this.props.currentPatient ? this.props.currentPatient.user.email : null , rules: [{ required: true, message: 'Input Email ID!' }]})
                     (<Input placeholder="Patient Email"/>)
                     }
                 </Form.Item>
