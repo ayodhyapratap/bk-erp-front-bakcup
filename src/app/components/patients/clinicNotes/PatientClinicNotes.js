@@ -1,6 +1,6 @@
-import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag, Spin} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag, Spin, Tooltip} from "antd";
 import React from "react";
-import {getAPI, interpolate, postAPI} from "../../../utils/common";
+import {getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {INVOICES_API, PATIENT_CLINIC_NOTES_API, CLINIC_NOTES_PDF} from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
@@ -40,6 +40,12 @@ class PatientClinicNotes extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState(function (prevState) {
+                if (data.current == 1)
+                    return {
+                        clinicNotes: [...data.results],
+                        next: data.next,
+                        loading: false
+                    }
                 return {
                     clinicNotes: [...prevState.clinicNotes, ...data.results],
                     next: data.next,
@@ -87,7 +93,7 @@ class PatientClinicNotes extends React.Component {
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                let reqData = {"id": record.id, is_active: false};
+                let reqData = {id: record.id, patient: record.patient, is_active: false};
                 let successFn = function (data) {
                     that.loadClinicNotes();
                 }
@@ -183,99 +189,108 @@ class PatientClinicNotes extends React.Component {
 
                         </Card>
                         {this.state.clinicNotes.map(clinicNote => <Card style={{marginTop: 20}}>
-                            <div>
+                            <div style={{padding: 16}}>
                                 <h4>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}
                                     <Dropdown.Button
                                         size={"small"}
                                         style={{float: 'right'}}
                                         overlay={<Menu>
                                             <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}
-                                                       disabled={(clinicNote.practice != this.props.active_practiceId)}>
+                                                       disabled={(clinicNote.practice &&clinicNote.practice.id != this.props.active_practiceId)}>
                                                 <Icon type="edit"/>
                                                 Edit
                                             </Menu.Item>
                                             <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}
-                                                       disabled={(clinicNote.practice != this.props.active_practiceId)}>
+                                                       disabled={(clinicNote.practice &&clinicNote.practice.id != this.props.active_practiceId)}>
                                                 <Icon type="delete"/>
                                                 Delete
                                             </Menu.Item>
                                             <Menu.Divider/>
                                             <Menu.Item key="3">
-                                                <Icon type="clock-circle"/>
-                                                Patient Timeline
+                                                <Link to={"/patient/" + clinicNote.patient + "/emr/timeline"}>
+                                                    <Icon type="clock-circle"/>
+                                                    &nbsp;
+                                                    Patient Timeline
+                                                </Link>
                                             </Menu.Item>
                                         </Menu>}>
                                         <a onClick={() => this.loadPDF(clinicNote.id)}><Icon type="printer"/></a>
 
                                     </Dropdown.Button>
                                 </h4>
-                                <Divider style={{margin: 0}}/>
-                                <Row>
-                                    <Col span={6}>
-                                        <h3>Complaints</h3>
-                                    </Col>
-                                    <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                        <div style={{minHeight: 30}}>
-                                            {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                                <span>{str}<br/></span>) : null}
-                                        </div>
-                                        <Divider style={{margin: 0}}/>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col span={6}>
-                                        <h3>Observations</h3>
-                                    </Col>
-                                    <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                        <div style={{minHeight: 30}}>
-                                            {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                                <span>{str}<br/></span>) : null}
-                                        </div>
-                                        <Divider style={{margin: 0}}/>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col span={6}>
-                                        <h3>Investigations</h3>
-                                    </Col>
-                                    <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                        <div style={{minHeight: 30}}>
-                                            {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                                <span>{str}<br/></span>) : null}
-                                        </div>
-                                        <Divider style={{margin: 0}}/>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col span={6}>
-                                        <h3>Diagnoses</h3>
-                                    </Col>
-                                    <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                        <div style={{minHeight: 30}}>
-                                            {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                                <span>{str}<br/></span>) : null}
-                                        </div>
-                                        <Divider style={{margin: 0}}/>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col span={6}>
-                                        <h3>Notes</h3>
-                                    </Col>
-                                    <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                        <div style={{minHeight: 30}}>
-                                            {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                                <span>{str}<br/></span>) : null}
-                                        </div>
-                                        <Divider style={{margin: 0}}/>
-                                    </Col>
-                                </Row>
                             </div>
+                            <Divider style={{margin: 0}}/>
+                            <Row>
+                                <Col span={6}>
+                                    <h3>Complaints</h3>
+                                </Col>
+                                <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                    <div style={{minHeight: 30}}>
+                                        {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                            <span>{str}<br/></span>) : null}
+                                    </div>
+                                    <Divider style={{margin: 0}}/>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col span={6}>
+                                    <h3>Observations</h3>
+                                </Col>
+                                <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                    <div style={{minHeight: 30}}>
+                                        {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                            <span>{str}<br/></span>) : null}
+                                    </div>
+                                    <Divider style={{margin: 0}}/>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col span={6}>
+                                    <h3>Investigations</h3>
+                                </Col>
+                                <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                    <div style={{minHeight: 30}}>
+                                        {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                            <span>{str}<br/></span>) : null}
+                                    </div>
+                                    <Divider style={{margin: 0}}/>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col span={6}>
+                                    <h3>Diagnoses</h3>
+                                </Col>
+                                <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                    <div style={{minHeight: 30}}>
+                                        {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                            <span>{str}<br/></span>) : null}
+                                    </div>
+                                    <Divider style={{margin: 0}}/>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col span={6}>
+                                    <h3>Notes</h3>
+                                </Col>
+                                <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                    <div style={{minHeight: 30}}>
+                                        {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                            <span>{str}<br/></span>) : null}
+                                    </div>
+                                    <Divider style={{margin: 0}}/>
+                                </Col>
+                            </Row>
+
                             <div>
                                 {clinicNote.doctor ?
                                     <Tag color={clinicNote.doctor ? clinicNote.doctor.calendar_colour : null}>
                                         <b>{"prescribed by  " + clinicNote.doctor.user.first_name} </b>
                                     </Tag> : null}
+                                {clinicNote.practice ? <Tag style={{float: 'right'}}>
+                                    <Tooltip title="Practice Name">
+                                        <b>{clinicNote.practice.name} </b>
+                                    </Tooltip>
+                                </Tag> : null}
                             </div>
                         </Card>)}
                         <Spin spinning={this.state.loading}>
@@ -292,99 +307,108 @@ class PatientClinicNotes extends React.Component {
         else {
             return <Card>
                 {this.state.clinicNotes.map(clinicNote => <Card style={{marginTop: 20}}>
-                    <div>
+                    <div style={{padding: 16}}>
                         <h4>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}
                             <Dropdown.Button
                                 size={"small"}
                                 style={{float: 'right'}}
                                 overlay={<Menu>
                                     <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}
-                                               disabled={(clinicNote.practice != this.props.active_practiceId)}>
+                                               disabled={(clinicNote.practice && clinicNote.practice.id != this.props.active_practiceId)}>
                                         <Icon type="edit"/>
                                         Edit
                                     </Menu.Item>
                                     <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}
-                                               disabled={(clinicNote.practice != this.props.active_practiceId)}>
+                                               disabled={(clinicNote.practice &&clinicNote.practice.id != this.props.active_practiceId)}>
                                         <Icon type="delete"/>
                                         Delete
                                     </Menu.Item>
                                     <Menu.Divider/>
                                     <Menu.Item key="3">
-                                        <Icon type="clock-circle"/>
-                                        Patient Timeline
+                                        <Link to={"/patient/" + clinicNote.patient + "/emr/timeline"}>
+                                            <Icon type="clock-circle"/>
+                                            &nbsp;
+                                            Patient Timeline
+                                        </Link>
                                     </Menu.Item>
                                 </Menu>}>
                                 <a onClick={() => this.loadPDF(clinicNote.id)}><Icon type="printer"/></a>
 
                             </Dropdown.Button>
                         </h4>
-                        <Divider style={{margin: 0}}/>
-                        <Row>
-                            <Col span={6}>
-                                <h3>Complaints</h3>
-                            </Col>
-                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                <div style={{minHeight: 30}}>
-                                    {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                        <span>{str}<br/></span>) : null}
-                                </div>
-                                <Divider style={{margin: 0}}/>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col span={6}>
-                                <h3>Observations</h3>
-                            </Col>
-                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                <div style={{minHeight: 30}}>
-                                    {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                        <span>{str}<br/></span>) : null}
-                                </div>
-                                <Divider style={{margin: 0}}/>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col span={6}>
-                                <h3>Investigations</h3>
-                            </Col>
-                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                <div style={{minHeight: 30}}>
-                                    {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                        <span>{str}<br/></span>) : null}
-                                </div>
-                                <Divider style={{margin: 0}}/>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col span={6}>
-                                <h3>Diagnoses</h3>
-                            </Col>
-                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                <div style={{minHeight: 30}}>
-                                    {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                        <span>{str}<br/></span>) : null}
-                                </div>
-                                <Divider style={{margin: 0}}/>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col span={6}>
-                                <h3>Notes</h3>
-                            </Col>
-                            <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
-                                <div style={{minHeight: 30}}>
-                                    {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                        <span>{str}<br/></span>) : null}
-                                </div>
-                                <Divider style={{margin: 0}}/>
-                            </Col>
-                        </Row>
                     </div>
+                    <Divider style={{margin: 0}}/>
+                    <Row>
+                        <Col span={6}>
+                            <h3>Complaints</h3>
+                        </Col>
+                        <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                            <div style={{minHeight: 30}}>
+                                {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                    <span>{str}<br/></span>) : null}
+                            </div>
+                            <Divider style={{margin: 0}}/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={6}>
+                            <h3>Observations</h3>
+                        </Col>
+                        <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                            <div style={{minHeight: 30}}>
+                                {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                    <span>{str}<br/></span>) : null}
+                            </div>
+                            <Divider style={{margin: 0}}/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={6}>
+                            <h3>Investigations</h3>
+                        </Col>
+                        <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                            <div style={{minHeight: 30}}>
+                                {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                    <span>{str}<br/></span>) : null}
+                            </div>
+                            <Divider style={{margin: 0}}/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={6}>
+                            <h3>Diagnoses</h3>
+                        </Col>
+                        <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                            <div style={{minHeight: 30}}>
+                                {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                    <span>{str}<br/></span>) : null}
+                            </div>
+                            <Divider style={{margin: 0}}/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={6}>
+                            <h3>Notes</h3>
+                        </Col>
+                        <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                            <div style={{minHeight: 30}}>
+                                {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
+                                    <span>{str}<br/></span>) : null}
+                            </div>
+                            <Divider style={{margin: 0}}/>
+                        </Col>
+                    </Row>
+
                     <div>
                         {clinicNote.doctor ?
                             <Tag color={clinicNote.doctor ? clinicNote.doctor.calendar_colour : null}>
                                 <b>{"prescribed by  " + clinicNote.doctor.user.first_name} </b>
                             </Tag> : null}
+                        {clinicNote.practice ? <Tag style={{float: 'right'}}>
+                            <Tooltip title="Practice Name">
+                                <b>{clinicNote.practice.name} </b>
+                            </Tooltip>
+                        </Tag> : null}
                     </div>
                 </Card>)}
                 <Spin spinning={this.state.loading}>

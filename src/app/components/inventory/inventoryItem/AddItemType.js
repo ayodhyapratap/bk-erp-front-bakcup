@@ -154,7 +154,7 @@ export default class AddItemType extends React.Component {
                 initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.strength : null,
                 type: NUMBER_FIELD,
             }, {
-                label: 'stength_unit',
+                label: 'Stength Unit',
                 key: 'stength_unit',
                 type: INPUT_FIELD,
                 initialValue: this.state.editInventoryItemType ? this.state.editInventoryItemType.stength_unit : null,

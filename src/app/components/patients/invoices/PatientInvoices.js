@@ -1,13 +1,21 @@
 import React from "react";
 import {Button, Card, Divider, Icon, Table, Tag, Row, Col, Statistic, Alert, Menu, Dropdown, Modal, Spin} from "antd";
 import {getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
-import {DRUG_CATALOG, INVOICES_API, PRESCRIPTIONS_API, PROCEDURE_CATEGORY, TAXES} from "../../../constants/api";
+import {
+    DRUG_CATALOG, INVOICE_PDF_API,
+    INVOICES_API,
+    PRESCRIPTION_PDF,
+    PRESCRIPTIONS_API,
+    PROCEDURE_CATEGORY,
+    TAXES
+} from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
 import AddInvoice from "./AddInvoice";
 import AddInvoicedynamic from "./AddInvoicedynamic";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {Link} from "react-router-dom";
+import {BACKEND_BASE_URL} from "../../../config/connect";
 
 const confirm = Modal.confirm;
 
@@ -122,8 +130,9 @@ class PatientInvoices extends React.Component {
         this.props.history.push("/patient/" + id + "/billing/invoices/edit")
 
     }
-    editPrescriptionData(record){
-        
+
+    editPrescriptionData(record) {
+
     }
 
     deleteInvoice(record) {
@@ -146,6 +155,18 @@ class PatientInvoices extends React.Component {
                 console.log('Cancel');
             },
         });
+    }
+
+    loadPDF = (id) => {
+        let that = this;
+        let successFn = function (data) {
+            if (data.report)
+                window.open(BACKEND_BASE_URL + data.report);
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(interpolate(INVOICE_PDF_API, [id]), successFn, errorFn);
     }
 
     render() {
@@ -233,39 +254,42 @@ class PatientInvoices extends React.Component {
                             </Card>
                             {this.state.invoices.map(invoice => <div style={{marginBottom: '20px'}}>
                                 <Card>
-                                    <h4>{invoice.date ? moment(invoice.date).format('ll') : null}
-                                        <Dropdown.Button
-                                            size={"small"}
-                                            style={{float: 'right'}}
-                                            overlay={<Menu>
-                                                {/* <Menu.Item key="1" onClick={() => that.editPrescriptionData(invoice)}> */}
-                                                <Menu.Item key="1" >
-                                                    <Link
-                                                        to={"/patient/" + this.props.match.params.id + "/billing/payments/add"}>
-                                                        <Icon type="money"/>
-                                                        Pay
-                                                    </Link>
-                                                </Menu.Item>
-                                                <Menu.Divider/>
-                                                {/*<Menu.Item key="2"*/}
-                                                           {/*disabled={(invoice.practice != this.props.active_practiceId)}>*/}
+                                    <div style={{padding: 16}}>
+                                        <h4>{invoice.date ? moment(invoice.date).format('ll') : null}
+                                            <Dropdown.Button
+                                                size={"small"}
+                                                style={{float: 'right'}}
+                                                overlay={<Menu>
+                                                    {/* <Menu.Item key="1" onClick={() => that.editPrescriptionData(invoice)}> */}
+                                                    <Menu.Item key="1">
+                                                        <Link
+                                                            to={"/patient/" + this.props.match.params.id + "/billing/payments/add"}>
+                                                            <Icon type="dollar"/>
+                                                            &nbsp;
+                                                            Pay
+                                                        </Link>
+                                                    </Menu.Item>
+                                                    <Menu.Divider/>
+                                                    {/*<Menu.Item key="2"*/}
+                                                    {/*disabled={(invoice.practice != this.props.active_practiceId)}>*/}
                                                     {/*<Icon type="edit"/>*/}
                                                     {/*Edit*/}
-                                                {/*</Menu.Item>*/}
-                                                <Menu.Item key="3" onClick={() => that.deleteInvoice(invoice)}
-                                                           disabled={(invoice.practice != this.props.active_practiceId)}>
-                                                    <Icon type="delete"/>
-                                                    Delete
-                                                </Menu.Item>
-                                                <Menu.Divider/>
-                                                <Menu.Item key="4">
-                                                    <Icon type="clock-circle"/>
-                                                    Patient Timeline
-                                                </Menu.Item>
-                                            </Menu>}>
-                                            <Icon type="printer"/>
-                                        </Dropdown.Button>
-                                    </h4>
+                                                    {/*</Menu.Item>*/}
+                                                    <Menu.Item key="3" onClick={() => that.deleteInvoice(invoice)}
+                                                               disabled={(invoice.practice != this.props.active_practiceId)}>
+                                                        <Icon type="delete"/>
+                                                        Delete
+                                                    </Menu.Item>
+                                                    <Menu.Divider/>
+                                                    <Menu.Item key="4">
+                                                        <Icon type="clock-circle"/>
+                                                        Patient Timeline
+                                                    </Menu.Item>
+                                                </Menu>}>
+                                                <a onClick={() => this.loadPDF(invoice.id)}><Icon type="printer"/></a>
+                                            </Dropdown.Button>
+                                        </h4>
+                                    </div>
                                     <Row gutter={8}>
                                         <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4}>
                                             {invoice.is_cancelled ?
@@ -306,37 +330,40 @@ class PatientInvoices extends React.Component {
                 {/*message={"The invoices shown are only for the current selected practice!"}/>*/}
                 {this.state.invoices.map(invoice => <div style={{marginBottom: '20px'}}>
                     <Card>
-                        <h4>{invoice.date ? moment(invoice.date).format('ll') : null}
-                            <Dropdown.Button
-                                size={"small"}
-                                style={{float: 'right'}}
-                                overlay={<Menu>
-                                    <Menu.Item key="1" onClick={() => that.editPrescriptionData(invoice)}>
-                                        <Link
-                                            to={"/patient/" + this.props.match.params.id + "/billing/payments/add"}>
-                                            <Icon type="money"/>
-                                            Pay
-                                        </Link>
-                                    </Menu.Item>
-                                    <Menu.Divider/>
-                                    {/*<Menu.Item key="2" disabled={(invoice.practice != this.props.active_practiceId)}>*/}
+                        <div style={{padding: 16}}>
+                            <h4>{invoice.date ? moment(invoice.date).format('ll') : null}
+                                <Dropdown.Button
+                                    size={"small"}
+                                    style={{float: 'right'}}
+                                    overlay={<Menu>
+                                        <Menu.Item key="1" onClick={() => that.editPrescriptionData(invoice)}>
+                                            <Link
+                                                to={"/patient/" + this.props.match.params.id + "/billing/payments/add"}>
+                                                <Icon type="dollar"/>
+                                                &nbsp;
+                                                Pay
+                                            </Link>
+                                        </Menu.Item>
+                                        <Menu.Divider/>
+                                        {/*<Menu.Item key="2" disabled={(invoice.practice != this.props.active_practiceId)}>*/}
                                         {/*<Icon type="edit"/>*/}
                                         {/*Edit*/}
-                                    {/*</Menu.Item>*/}
-                                    <Menu.Item key="3" onClick={() => that.deleteInvoice(invoice)}
-                                               disabled={(invoice.practice != this.props.active_practiceId)}>
-                                        <Icon type="delete"/>
-                                        Delete
-                                    </Menu.Item>
-                                    <Menu.Divider/>
-                                    <Menu.Item key="4">
-                                        <Icon type="clock-circle"/>
-                                        Patient Timeline
-                                    </Menu.Item>
-                                </Menu>}>
-                                <Icon type="printer"/>
-                            </Dropdown.Button>
-                        </h4>
+                                        {/*</Menu.Item>*/}
+                                        <Menu.Item key="3" onClick={() => that.deleteInvoice(invoice)}
+                                                   disabled={(invoice.practice != this.props.active_practiceId)}>
+                                            <Icon type="delete"/>
+                                            Delete
+                                        </Menu.Item>
+                                        <Menu.Divider/>
+                                        <Menu.Item key="4">
+                                            <Icon type="clock-circle"/>
+                                            Patient Timeline
+                                        </Menu.Item>
+                                    </Menu>}>
+                                    <a onClick={() => this.loadPDF(invoice.id)}><Icon type="printer"/></a>
+                                </Dropdown.Button>
+                            </h4>
+                        </div>
                         <Row gutter={8}>
                             <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4}>
                                 {invoice.is_cancelled ?

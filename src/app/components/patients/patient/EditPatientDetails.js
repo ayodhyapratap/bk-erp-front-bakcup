@@ -1,22 +1,12 @@
 import React from "react";
 import {Route} from "react-router";
-import DynamicFieldsForm from "../../common/DynamicFieldsForm";
-import {Button, Card, Form, Icon, Row, Input,Select, DatePicker} from "antd";
-import {
-    CHECKBOX_FIELD,
-    DATE_PICKER,
-    NUMBER_FIELD,
-    SUCCESS_MSG_TYPE,
-    INPUT_FIELD,
-    RADIO_FIELD,
-    SELECT_FIELD, EMAIL_FIELD, MULTI_SELECT_FIELD
-} from "../../../constants/dataKeys";
+import {Button, Card, Form, Icon, Row, Input, Select, DatePicker} from "antd";
 import {PATIENTS_LIST, PATIENT_PROFILE, MEDICAL_HISTORY, PATIENT_GROUPS, MEMBERSHIP_API} from "../../../constants/api";
-import {getAPI, postAPI,interpolate, displayMessage} from "../../../utils/common";
-import {Link, Redirect} from 'react-router-dom'
+import {getAPI, postAPI, interpolate, displayMessage, putAPI} from "../../../utils/common";
 import moment from 'moment';
 
-const { Option } = Select;
+const {Option} = Select;
+
 class EditPatientDetails extends React.Component {
     constructor(props) {
         super(props);
@@ -30,7 +20,6 @@ class EditPatientDetails extends React.Component {
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-
     }
 
     componentDidMount() {
@@ -97,15 +86,16 @@ class EditPatientDetails extends React.Component {
             if (!err) {
                 let reqData = {
                     ...values,
-                    medical_history:[values.medical_history],
-                    patient_group:[values.patient_group],
-                    user:{first_name:values.first_name,
-                            mobile:values.mobile, 
-                            referer_code:values.referer_code,
-                            email: values.email
-                        },
-                    dob:moment(values.dob).format("YYYY-MM-DD"),
-                    anniversary:moment(values.anniversary).format("YYYY-MM-DD"),
+                    medical_history: [values.medical_history],
+                    patient_group: [values.patient_group],
+                    user: {
+                        first_name: values.first_name ? values.first_name : null,
+                        mobile: values.mobile,
+                        referer_code: values.referer_code ? values.referer_code : null,
+                        email: values.email
+                    },
+                    dob: moment(values.dob).format("YYYY-MM-DD"),
+                    anniversary: moment(values.anniversary).format("YYYY-MM-DD"),
                 };
                 delete reqData.first_name;
                 delete reqData.email;
@@ -113,26 +103,26 @@ class EditPatientDetails extends React.Component {
                 delete reqData.mobile;
                 delete reqData.medical_history;
                 delete reqData.patient_group;
-                that.setState({
-                });
+                that.setState({});
                 let successFn = function (data) {
-                    displayMessage("successfully");
-                    that.setState({
-
-                    });
+                    displayMessage("Patient Saved Successfully!!");
+                    that.props.history.push('/patient/' + data.id + '/profile');
 
                 }
                 let errorFn = function () {
-                    that.setState({
-
-                    })
+                    that.setState({})
                 }
-                postAPI(interpolate(PATIENTS_LIST, [that.props.match.params.id]), reqData, successFn, errorFn);
+                if (that.props.currentPatient) {
+                    putAPI(interpolate(PATIENT_PROFILE, [that.props.currentPatient.id]), reqData, successFn, errorFn);
+                } else {
+                    postAPI(interpolate(PATIENTS_LIST, [that.props.match.params.id]), reqData, successFn, errorFn);
+                }
             }
         });
     }
+
     render() {
-        let that =this;
+        let that = this;
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = ({
             labelCol: {span: 6},
@@ -144,31 +134,31 @@ class EditPatientDetails extends React.Component {
                 historyOption.push({label: (historyItem.name), value: historyItem.id});
             })
         }
-        const patientGroupOption=[]
-        if(this.state.patientGroup){
-            this.state.patientGroup.forEach(function (patientGroupItem){
-                patientGroupOption.push({label:(patientGroupItem.name) , value:patientGroupItem.id});
+        const patientGroupOption = []
+        if (this.state.patientGroup) {
+            this.state.patientGroup.forEach(function (patientGroupItem) {
+                patientGroupOption.push({label: (patientGroupItem.name), value: patientGroupItem.id});
             });
         }
 
-        const membershipOption=[]
-        if(this.state.membership){
-            this.state.membership.forEach(function (membershipItem){
-                membershipOption.push({label:(membershipItem.name) , value:membershipItem.id});
+        const membershipOption = []
+        if (this.state.membership) {
+            this.state.membership.forEach(function (membershipItem) {
+                membershipOption.push({label: (membershipItem.name), value: membershipItem.id});
             });
         }
 
-        return(
+        return (
             <Form onSubmit={that.handleSubmit}>
             <Card title="Edit Profile"  extra={<Button type="primary" htmlType="submit">submit</Button>}>
             <Form.Item label="Patient Name" {...formItemLayout}>
                     {getFieldDecorator('first_name', { initialValue: this.props.currentPatient ? this.props.currentPatient.user.first_name : null})
                         (<Input placeholder="Patient Name"/>)
-                    }
-                </Form.Item>
+                        }
+                    </Form.Item>
 
-                <Form.Item label="Referral Code" {...formItemLayout}>
-                    {getFieldDecorator('referer_code', { initialValue: this.props.currentPatient ? this.props.currentPatient.user.referer_code : null})
+                    <Form.Item label="Referral Code" {...formItemLayout}>
+                        {getFieldDecorator('referer_code', {initialValue: this.props.currentPatient ? this.props.currentPatient.user.referer_code : null})
                         (<Input placeholder="Referral Code"/>)
                     }
                 </Form.Item>
@@ -267,35 +257,114 @@ class EditPatientDetails extends React.Component {
                         {historyOption.map((option) => <Select.Option
                             value={option.value}>{option.label}</Select.Option>)}
                         </Select>)
-                    }
-                </Form.Item>
+                        }
+                    </Form.Item>
 
-                <Form.Item label="Patient Group" {...formItemLayout}>
-                    {getFieldDecorator("patient_group",{})
-                        (<Select placeholder="Patient Group">
-                        {patientGroupOption.map((option) => <Select.Option
-                            value={option.value}>{option.label}</Select.Option>)}
-                        </Select>)
-                    }
-                </Form.Item>
+                    <Form.Item label="DOB" {...formItemLayout}>
+                        {getFieldDecorator('dob', {initialValue: this.props.currentPatient && moment(this.props.currentPatient.dob).isValid() ? moment(this.props.currentPatient.dob) : null})
+                        (<DatePicker/>)
+                        }
+                    </Form.Item>
 
-                <Form.Item label="Membership" {...formItemLayout}>
-                    {getFieldDecorator("medical_membership",{})
-                        (<Select placeholder="Membership">
-                        {membershipOption.map((option) => <Select.Option
-                            value={option.value}>{option.label}</Select.Option>)}
+                    <Form.Item label="Anniversary" {...formItemLayout}>
+                        {getFieldDecorator('anniversary', {initialValue: this.props.currentPatient && moment(this.props.currentPatient.anniversary).isValid() ? moment(this.props.currentPatient.anniversary) : null})
+                        (<DatePicker/>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="Blood Group" {...formItemLayout}>
+                        {getFieldDecorator('blood_group', {initialValue: this.props.currentPatient ? this.props.currentPatient.blood_group : null})
+                        (<Input placeholder="Patient Blood Group"/>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="Family Relation" {...formItemLayout}>
+                        {getFieldDecorator('family_relation', {initialValue: this.props.currentPatient ? this.props.currentPatient.family_relation : null})
+                        (<Input placeholder="Patient Family Relation"/>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="Mobile (Primary)" {...formItemLayout}>
+                        {getFieldDecorator('mobile', {
+                            initialValue: this.props.currentPatient ? this.props.currentPatient.user.mobile : null,
+                            rules: [{required: true, message: 'Input Mobile Number'}],
+                            disabled: this.props.currentPatient && this.props.currentPatient.user.mobile
+                        })
+                        (<Input placeholder="Patient Mobile Number (Primary)"/>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="Mobile (Secondary)" {...formItemLayout}>
+                        {getFieldDecorator('secondary_mobile_no', {initialValue: this.props.currentPatient ? this.props.currentPatient.secondary_mobile_no : null})
+                        (<Input placeholder="Patient Mobile Number (Secondary)"/>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="Landline" {...formItemLayout}>
+                        {getFieldDecorator('landline_no', {initialValue: this.props.currentPatient ? this.props.currentPatient.landline_no : null})
+                        (<Input placeholder="Patient Landline Number"/>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="Address" {...formItemLayout}>
+                        {getFieldDecorator('address', {initialValue: this.props.currentPatient ? this.props.currentPatient.address : null})
+                        (<Input placeholder="Patient Address"/>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="Locality" {...formItemLayout}>
+                        {getFieldDecorator('locality', {initialValue: this.props.currentPatient ? this.props.currentPatient.locality : null})
+                        (<Input placeholder="Patient Locality"/>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="City" {...formItemLayout}>
+                        {getFieldDecorator('city', {initialValue: this.props.currentPatient ? this.props.currentPatient.city : null})
+                        (<Input placeholder="Patient City"/>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="Pincode" {...formItemLayout}>
+                        {getFieldDecorator('pincode', {initialValue: this.props.currentPatient ? this.props.currentPatient.pincode : null})
+                        (<Input placeholder="Patient PINCODE"/>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="Email" {...formItemLayout}>
+                        {getFieldDecorator('email', {
+                            initialValue: this.props.currentPatient ? this.props.currentPatient.user.email : null,
+                            rules: [{required: true, message: 'Input Email ID!'}],
+                            disabled: this.props.currentPatient && this.props.currentPatient.user.email
+                        })
+                        (<Input placeholder="Patient Email"/>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="Medical History" {...formItemLayout}>
+                        {getFieldDecorator("medical_history", {initialValue: this.props.currentPatient ? this.props.currentPatient.medical_history : []})
+                        (<Select placeholder="Medical History" mode={"multiple"}>
+                            {historyOption.map((option) => <Select.Option
+                                value={option.value}>{option.label}</Select.Option>)}
                         </Select>)
-                    }
-                </Form.Item>
-                {/* <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        Submit
-                    </Button>
-                </Form.Item> */}
-            
-        </Card> 
-        </Form>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="Patient Group" {...formItemLayout}>
+                        {getFieldDecorator("patient_group", {initialValue: this.props.currentPatient ? this.props.currentPatient.patient_group : []})
+                        (<Select placeholder="Patient Group" mode={"multiple"}>
+                            {patientGroupOption.map((option) => <Select.Option
+                                value={option.value}>{option.label}</Select.Option>)}
+                        </Select>)
+                        }
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Submit
+                        </Button>
+                    </Form.Item>
+                </Card>
+            </Form>)
     }
 }
 
-export default  Form.create()(EditPatientDetails);
+export default Form.create()(EditPatientDetails);

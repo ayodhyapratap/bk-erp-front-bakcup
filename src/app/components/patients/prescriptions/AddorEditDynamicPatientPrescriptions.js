@@ -18,7 +18,7 @@ import {
     Popconfirm,
     DatePicker,
     Dropdown,
-    Menu
+    Menu, Tag
 } from 'antd';
 import {DRUG_CATALOG, INVENTORY_ITEM_API, LABTEST_API, PRACTICESTAFF} from "../../../constants/api";
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
@@ -127,7 +127,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         getAPI(INVENTORY_ITEM_API, successFn, errorFn, {
             practice: this.props.active_practiceId,
             item_type: DRUG,
-            maintain_inventory: false
         });
     }
 
@@ -576,9 +575,11 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                   itemLayout="horizontal"
                                   dataSource={this.state.filteredItems["Drugs"]}
                                   renderItem={item => (
-                                      <List.Item onClick={() => this.addDrug(item)}>
+                                      <List.Item onClick={() => this.addDrug(item)}
+                                                 actions={(item.maintain_inventory ? null : [<Tag>Not Sold</Tag>])}>
                                           <List.Item.Meta
-                                              title={item.name}/>
+                                              title={item.name}
+                                          />
                                       </List.Item>)}/>
                         </TabPane>
                         <TabPane tab="Labs" key="2">

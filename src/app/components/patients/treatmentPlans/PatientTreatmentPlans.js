@@ -1,5 +1,5 @@
 import React from "react";
-import {Checkbox,Table,Button,Card,Icon,Tag, Menu,Dropdown,Modal} from "antd";
+import {Checkbox,Table,Button,Card,Icon,Tag, Menu,Dropdown,Modal,Spin,Tooltip} from "antd";
 import {Link} from "react-router-dom";
 import {
     PROCEDURE_CATEGORY,
@@ -111,7 +111,7 @@ class PatientTreatmentPlans extends React.Component {
             editTreatmentPlan: record,
             loading: false
         });
-        let id = this.props.match.params.id;
+        let id = record.patient;
         this.props.history.push("/patient/" + id + "/emr/plans/edit")
 
     }
@@ -126,7 +126,7 @@ class PatientTreatmentPlans extends React.Component {
             cancelText: 'No',
             onOk() {
                 let reqData = {
-                    ...record,
+                    id: record.id,
                     is_active: false,
                     doctor: (record.doctor && record.doctor.id ? record.doctor.id : null)
                 }
@@ -212,9 +212,11 @@ class PatientTreatmentPlans extends React.Component {
             )
         }, {
             title: 'Procedure',
-            key: 'procedure.name',
-            dataIndex: 'procedure.name',
-
+            key: 'procedure',
+            initialValue: (this.state.editFields ? this.state.editFields.procedure : null),
+            render: (text, record) => (
+                <span> {procedures[record.procedure]}</span>
+            )
         }, {
             title: 'Quantity',
             dataIndex: 'quantity',
@@ -260,6 +262,7 @@ class PatientTreatmentPlans extends React.Component {
                            <Redirect to={"/patient/" + this.props.match.params.id + "/emr/plans"}/>)}/>
                 <div>
                     <Card
+                        bodyStyle={{padding: 0}}
                         title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " TreatmentPlans" : "TreatmentPlans"}
                         extra={<Button.Group>
                             <Button onClick={this.submitCompleteTreatment}>
@@ -272,6 +275,58 @@ class PatientTreatmentPlans extends React.Component {
                             </Link>
                         </Button.Group>
                         }/>
+                    <Spin spinning={this.state.loading}>
+                        {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
+                                                                            style={{marginTop: 15}}>
+                                <div style={{padding: 16}}>
+                                    <h4>{treatment.date ? moment(treatment.date).format('ll') : null}
+                                        <Dropdown.Button
+                                            size={"small"}
+                                            style={{float: 'right'}}
+                                            overlay={<Menu>
+                                                <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)}
+                                                           disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
+                                                    <Icon type="edit"/>
+                                                    Edit
+                                                </Menu.Item>
+                                                <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}
+                                                           disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
+                                                    <Icon type="delete"/>
+                                                    Delete
+                                                </Menu.Item>
+                                                <Menu.Divider/>
+                                                <Menu.Item key="3">
+                                                    <Link to={"/patient/" + treatment.patient + "/emr/timeline"}>
+                                                        <Icon type="clock-circle"/>
+                                                        &nbsp;
+                                                        Patient Timeline
+                                                    </Link>
+                                                </Menu.Item>
+                                            </Menu>}>
+                                            <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
+                                        </Dropdown.Button>
+                                    </h4>
+
+                                </div>
+                                <Table loading={this.state.loading} columns={columns}
+                                       dataSource={treatment.treatment_plans}
+                                       footer={() => treatmentFooter(treatment)}
+                                       pagination={false}
+                                       key={treatment.id}/>
+
+                            </Card>
+                        )}</Spin>
+                    <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
+                                              loading={this.state.loading}
+                                              hidden={!this.state.next}/>
+                </div>
+            </Switch>
+
+            </div>
+        }
+        else {
+            return <div>
+                <Spin spinning={this.state.loading}>
                     {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
                                                                         style={{marginTop: 15}}>
                             <div style={{padding: 16}}>
@@ -280,18 +335,23 @@ class PatientTreatmentPlans extends React.Component {
                                         size={"small"}
                                         style={{float: 'right'}}
                                         overlay={<Menu>
-                                            <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
+                                            <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)}
+                                                       disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
                                                 <Icon type="edit"/>
                                                 Edit
                                             </Menu.Item>
-                                            <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
+                                            <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}
+                                                       disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
                                                 <Icon type="delete"/>
                                                 Delete
                                             </Menu.Item>
                                             <Menu.Divider/>
                                             <Menu.Item key="3">
-                                                <Icon type="clock-circle"/>
-                                                Patient Timeline
+                                                <Link to={"/patient/" + treatment.patient + "/emr/timeline"}>
+                                                    <Icon type="clock-circle"/>
+                                                    &nbsp;
+                                                    Patient Timeline
+                                                </Link>
                                             </Menu.Item>
                                         </Menu>}>
                                         <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
@@ -307,51 +367,7 @@ class PatientTreatmentPlans extends React.Component {
 
                         </Card>
                     )}
-                    <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
-                                              loading={this.state.loading}
-                                              hidden={!this.state.next}/>
-                </div>
-            </Switch>
-
-            </div>
-        }
-        else {
-            return <div>
-                {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
-                                                                    style={{marginTop: 15}}>
-                        <div style={{padding: 16}}>
-                            <h4>{treatment.date ? moment(treatment.date).format('ll') : null}
-                                <Dropdown.Button
-                                    size={"small"}
-                                    style={{float: 'right'}}
-                                    overlay={<Menu>
-                                        <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
-                                            <Icon type="edit"/>
-                                            Edit
-                                        </Menu.Item>
-                                        <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)} disabled={(treatment.practice != this.props.active_practiceId)}>
-                                            <Icon type="delete"/>
-                                            Delete
-                                        </Menu.Item>
-                                        <Menu.Divider/>
-                                        <Menu.Item key="3">
-                                            <Icon type="clock-circle"/>
-                                            Patient Timeline
-                                        </Menu.Item>
-                                    </Menu>}>
-                                    <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
-                                </Dropdown.Button>
-                            </h4>
-
-                        </div>
-                        <Table loading={this.state.loading} columns={columns}
-                               dataSource={treatment.treatment_plans}
-                               footer={() => treatmentFooter(treatment)}
-                               pagination={false}
-                               key={treatment.id}/>
-
-                    </Card>
-                )}
+                </Spin>
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
                                           loading={this.state.loading}
                                           hidden={!this.state.next}/>
@@ -370,6 +386,11 @@ function treatmentFooter(presc) {
         return <div>
             {presc.doctor ? <Tag color={presc.doctor ? presc.doctor.calendar_colour : null}>
                 <b>{"prescribed by  " + presc.doctor.user.first_name} </b>
+            </Tag> : null}
+            {presc.practice ? <Tag style={{float: 'right'}}>
+                <Tooltip title="Practice Name">
+                    <b>{presc.practice.name} </b>
+                </Tooltip>
             </Tag> : null}
         </div>
     }

@@ -100,9 +100,9 @@ class PatientProfile extends React.Component {
                         <Divider>Groups</Divider>
                         <List dataSource={patient.patient_group_data}
                               renderItem={(item) => <List.Item>{item.name}</List.Item>}/>
-                        {/*<Divider>Medical Membership</Divider>*/}
-                        {/*<List dataSource={patient.medical_membership}*/}
-                              {/*renderItem={(item) => <List.Item>{item}</List.Item>}/>*/}
+                        <Divider>Medical Membership</Divider>
+                        <List dataSource={patient.medical_membership}
+                              renderItem={(item) => <List.Item>{item}</List.Item>}/>
                     </Col>
                 </Row>
             </Card>;

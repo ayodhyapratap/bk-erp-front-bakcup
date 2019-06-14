@@ -5,7 +5,7 @@ import {
     Card,
     Icon,
     Tag, Menu,
-    Dropdown, Modal
+    Dropdown, Modal, Tooltip
 } from "antd";
 import {Link} from "react-router-dom";
 import {
@@ -110,11 +110,13 @@ class PatientPrescriptions extends React.Component {
     }
 
     editPrescriptionData(record) {
+        let that = this;
         this.setState({
             editPrescription: record,
+        }, function () {
+            that.props.history.push("/patient/" + record.patient + "/emr/prescriptions/edit")
         });
-        let id = this.props.match.params.id
-        this.props.history.push("/patient/" + id + "/emr/prescriptions/edit")
+
 
     }
 
@@ -126,7 +128,7 @@ class PatientPrescriptions extends React.Component {
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                let reqData = {"id": record.id, is_active: false};
+                let reqData = {"id": record.id, patient: record.patient, is_active: false};
                 let successFn = function (data) {
                     that.loadPrescriptions();
                 }
@@ -189,52 +191,52 @@ class PatientPrescriptions extends React.Component {
                            <Redirect to={"/patient/" + that.props.match.params.id + "/emr/prescriptions"}/>)}/>
                 <Route>
                     <div>
-                        <Card>
-                            <h3>
-                                {this.state.currentPatient ? this.state.currentPatient.user.first_name + " Prescriptions" : "Prescriptions"}
-                                <Button.Group style={{float: 'right'}}>
-                                    <Link to={"/patient/" + this.props.match.params.id + "/emr/prescriptions/add"}>
-                                        <Button type={"primary"}><Icon type="plus"/>Add</Button>
-                                    </Link>
-                                </Button.Group>
-                            </h3>
-                        </Card>
-                        {this.state.prescription.map((presc) => <div>
+                        <Card
+                            bodyStyle={{padding: 0}}
+                            title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Prescriptions" : "Prescriptions"}
+                            extra={<Button.Group style={{float: 'right'}}>
+                                <Link to={"/patient/" + this.props.match.params.id + "/emr/prescriptions/add"}>
+                                    <Button type={"primary"}><Icon type="plus"/>Add</Button>
+                                </Link>
+                            </Button.Group>}/>
 
-                            <Card style={{margin: 10, marginBottom: 20}}
+                        {this.state.prescription.map((presc) => <div>
+                            <Card style={{marginTop: 20}}
                                   bodyStyle={{padding: 0}}>
                                 <div style={{padding: 16}}>
                                     <h4>{presc.date ? moment(presc.date).format('ll') : null}
                                         <Dropdown.Button
-
                                             size={"small"}
                                             style={{float: 'right'}}
                                             overlay={<Menu>
                                                 <Menu.Item key="1" onClick={() => that.editPrescriptionData(presc)}
-                                                           disabled={(presc.practice != this.props.active_practiceId)}>
+                                                           disabled={(presc.practice && presc.practice.id != that.props.active_practiceId)}>
                                                     <Icon type="edit"/>
                                                     Edit
                                                 </Menu.Item>
                                                 <Menu.Item key="2" onClick={() => that.deletePrescriptions(presc)}
-                                                           disabled={(presc.practice != this.props.active_practiceId)}>
+                                                           disabled={(presc.practice && presc.practice.id != that.props.active_practiceId)}>
                                                     <Icon type="delete"/>
                                                     Delete
                                                 </Menu.Item>
                                                 <Menu.Divider/>
                                                 <Menu.Item key="3">
-                                                    <Icon type="clock-circle"/>
-                                                    Patient Timeline
+                                                    <Link to={"/patient/" + presc.patient + "/emr/timeline"}>
+                                                        <Icon type="clock-circle"/>
+                                                        &nbsp;
+                                                        Patient Timeline
+                                                    </Link>
                                                 </Menu.Item>
                                             </Menu>}>
                                             <a onClick={() => this.loadPDF(presc.id)}><Icon type="printer"/></a>
                                         </Dropdown.Button>
                                     </h4>
-
                                 </div>
                                 <Table columns={columns} dataSource={presc.drugs} pagination={false}
                                        footer={() => prescriptonFooter(presc)}
                                        key={presc.id}/>
-                            </Card></div>)}
+                            </Card>
+                        </div>)}
                         <InfiniteFeedLoaderButton loading={this.state.loading}
                                                   loaderFunction={() => this.loadPrescriptions(this.state.nextPrescriptionPage)}
                                                   hidden={!this.state.nextPrescriptionPage}/>
@@ -258,19 +260,22 @@ class PatientPrescriptions extends React.Component {
                                     style={{float: 'right'}}
                                     overlay={<Menu>
                                         <Menu.Item key="1" onClick={() => that.editPrescriptionData(presc)}
-                                                   disabled={(presc.practice != this.props.active_practiceId)}>
+                                                   disabled={(presc.practice && presc.practice.id != that.props.active_practiceId)}>
                                             <Icon type="edit"/>
                                             Edit
                                         </Menu.Item>
                                         <Menu.Item key="2" onClick={() => that.deletePrescriptions(presc)}
-                                                   disabled={(presc.practice != this.props.active_practiceId)}>
+                                                   disabled={(presc.practice && presc.practice.id != that.props.active_practiceId)}>
                                             <Icon type="delete"/>
                                             Delete
                                         </Menu.Item>
                                         <Menu.Divider/>
                                         <Menu.Item key="3">
-                                            <Icon type="clock-circle"/>
-                                            Patient Timeline
+                                            <Link to={"/patient/" + presc.patient + "/emr/timeline"}>
+                                                <Icon type="clock-circle"/>
+                                                &nbsp;
+                                                Patient Timeline
+                                            </Link>
                                         </Menu.Item>
                                     </Menu>}>
                                     <a onClick={() => this.loadPDF(presc.id)}><Icon type="printer"/></a>
@@ -297,8 +302,13 @@ function prescriptonFooter(presc) {
     if (presc) {
 
         return <div>
-            {presc.doctor ? <Tag color={presc.doctor ? presc.doctor.calendar_colour : null}>
+            {presc.doctor ? <Tooltip title="Doctor"><Tag color={presc.doctor ? presc.doctor.calendar_colour : null}>
                 <b>{"prescribed by  " + presc.doctor.user.first_name} </b>
+            </Tag></Tooltip> : null}
+            {presc.practice ? <Tag style={{float: 'right'}}>
+                <Tooltip title="Practice Name">
+                    <b>{presc.practice.name} </b>
+                </Tooltip>
             </Tag> : null}
             {presc.labs.length ? <div>
                 +{presc.labs.length}&nbsp;Lab Orders

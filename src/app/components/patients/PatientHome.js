@@ -147,15 +147,15 @@ class PatientHome extends React.Component {
                                                                key={this.state.currentPatient}
                                                                setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
                                 <Route exact path='/patients/profile/add'
-                                       render={() => <EditPatientDetails
-                                           key={this.state.currentPatient} {...this.props}/>}/>
+                                       render={(route) => <EditPatientDetails
+                                           key={this.state.currentPatient} {...this.props} {...route}/>}/>
                                 <Route exact path='/patient/:id/profile'
                                        render={() => <PatientProfile {...this.state}
                                                                      key={this.state.currentPatient}
                                                                      setCurrentPatient={this.setCurrentPatient} {...this.props}/>}/>
                                 <Route exact path='/patient/:id/profile/edit'
-                                       render={() => <EditPatientDetails
-                                           key={this.state.currentPatient}{...this.state} />}/>
+                                       render={(route) => <EditPatientDetails
+                                           key={this.state.currentPatient}{...this.state}{...this.props} {...route}/>}/>
 
                                 {/*** Patient Appointment Routes*/}
                                 <Route exact path='/patients/appointments'

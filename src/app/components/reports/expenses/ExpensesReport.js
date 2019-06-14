@@ -5,79 +5,99 @@ import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
 
-export default class ExpensesReport  extends React.Component{
-  constructor(props) {
-      super(props);
-      this.state={
-        report:[],
-        loading:true
-      }
-      this.report=this.report.bind(this);
-      this.report();
-  }
-  report(){
-    let that =this;
-      let successFn = function (data) {
-        console.log(data);
-        that.setState({
-          report:data.data,
-          loading:false
-        });
-      };
-      let errorFn = function () {
-        that.setState({
-          loading:false
+export default class ExpensesReport extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            report: [],
+            startDate: this.props.startDate,
+            endDate: this.props.endDate,
+            loading: true
+        }
+        this.report = this.report.bind(this);
+        this.report();
+    }
+
+    componentWillReceiveProps(newProps) {
+        let that = this;
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
+            this.setState({
+                startDate: newProps.startDate,
+                endDate: newProps.endDate
+            }, function () {
+                that.report();
+            })
+
+    }
+
+    report() {
+        let that = this;
+        this.setState({
+            loading: true
         })
-      };
-     getAPI(interpolate( EXPENSE_REPORT, [this.props.active_practiceId,"start="+this.props.startDate+"&end="+this.props.endDate]), successFn, errorFn);
-  }
+        let successFn = function (data) {
+            that.setState({
+                report: data.data,
+                loading: false
+            });
+        };
+        let errorFn = function () {
+            that.setState({
+                loading: false
+            })
+        };
+        getAPI(interpolate(EXPENSE_REPORT, [this.props.active_practiceId]), successFn, errorFn, {
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD')
+        });
+    }
 
 
-    render(){
-      const columns = [{
-                title: 'Date',
-                key: 'date',
-                render: (text, record) => (
-                  <span>
-                {  moment(record.created_at).format('LL')}
+    render() {
+        const columns = [{
+            title: 'Date',
+            key: 'date',
+            render: (text, record) => (
+                <span>
+                {moment(record.created_at).format('LL')}
                   </span>
-                ),
-                }, {
-                title: 'Scheduled At	',
-                key: 'time',
-                render: (text, record) => (
-                  <span>
-                  {  moment(record.created_at).format('HH:mm')}
+            ),
+        }, {
+            title: 'Scheduled At	',
+            key: 'time',
+            render: (text, record) => (
+                <span>
+                  {moment(record.created_at).format('HH:mm')}
 
                   </span>
-                ),
-                }, {
-                title: '	Expense Type',
-                dataIndex: 'age',
-                key: 'age',
-                }, {
-                title: 'Expense Amount (INR)',
-                dataIndex: 'age',
-                key: 'age',
-                }, {
-                title: 'Mode Of Payment',
-                dataIndex: 'age',
-                key: 'age',
-                }, {
-                title: 'Vendor',
-                dataIndex: 'age',
-                key: 'age',
-                }, {
-                title: 'Notes',
-                dataIndex: 'patient_name',
-                key: 'patient_name',
-                },];
+            ),
+        }, {
+            title: '	Expense Type',
+            dataIndex: 'age',
+            key: 'age',
+        }, {
+            title: 'Expense Amount (INR)',
+            dataIndex: 'age',
+            key: 'age',
+        }, {
+            title: 'Mode Of Payment',
+            dataIndex: 'age',
+            key: 'age',
+        }, {
+            title: 'Vendor',
+            dataIndex: 'age',
+            key: 'age',
+        }, {
+            title: 'Notes',
+            dataIndex: 'patient_name',
+            key: 'patient_name',
+        },];
 
 
         const relatedReport = [
-            {name:'Daily Expenses',value:'b'},
-            {name:'Expenses For Each Type',value:'c'},
-            {name:'Monthly Expenses',value:'d'},];
+            {name: 'Daily Expenses', value: 'b'},
+            {name: 'Expenses For Each Type', value: 'c'},
+            {name: 'Monthly Expenses', value: 'd'},];
 
         return <div>
             <h2>Expenses Report
@@ -85,7 +105,8 @@ export default class ExpensesReport  extends React.Component{
             <Card>
                 <Row gutter={16}>
                     <Col span={16}>
-                        <CustomizedTable loading={this.state.loading} columns={columns} size={'small'} dataSource={this.state.report}/>
+                        <CustomizedTable loading={this.state.loading} columns={columns} size={'small'}
+                                         dataSource={this.state.report}/>
                     </Col>
                     <Col span={8}>
                         <Radio.Group buttonStyle="solid" defaultValue="all">
