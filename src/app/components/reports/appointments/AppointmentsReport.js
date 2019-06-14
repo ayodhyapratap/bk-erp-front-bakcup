@@ -10,6 +10,8 @@ export default class AppointmentsReport extends React.Component {
         super(props);
         this.state = {
             appointmentReports: [],
+            startDate: this.props.startDate,
+            endDate: this.props.endDate,
             loading: true
         }
         this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
@@ -17,12 +19,22 @@ export default class AppointmentsReport extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
+        let that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
-            this.loadAppointmentReport();
+            this.setState({
+                startDate: newProps.startDate,
+                endDate: newProps.endDate
+            },function(){
+                that.loadAppointmentReport();
+            })
+
     }
 
-    loadAppointmentReport() {
+    loadAppointmentReport = () => {
         let that = this;
+        this.setState({
+            loading:true
+        })
         let successFn = function (data) {
             console.log(data);
             that.setState({
@@ -36,7 +48,10 @@ export default class AppointmentsReport extends React.Component {
                 loading: false
             })
         };
-        getAPI(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId, "start=" + this.props.startDate + "&end=" + this.props.endDate]), successFn, errorFn);
+        getAPI(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId]), successFn, errorFn, {
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD')
+        });
     }
 
     render() {

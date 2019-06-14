@@ -292,12 +292,12 @@ class PatientTreatmentPlans extends React.Component {
                                             style={{float: 'right'}}
                                             overlay={<Menu>
                                                 <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)}
-                                                           disabled={(treatment.practice != this.props.active_practiceId)}>
+                                                           disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
                                                     <Icon type="edit"/>
                                                     Edit
                                                 </Menu.Item>
                                                 <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}
-                                                           disabled={(treatment.practice != this.props.active_practiceId)}>
+                                                           disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
                                                     <Icon type="delete"/>
                                                     Delete
                                                 </Menu.Item>
@@ -343,12 +343,12 @@ class PatientTreatmentPlans extends React.Component {
                                         style={{float: 'right'}}
                                         overlay={<Menu>
                                             <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)}
-                                                       disabled={(treatment.practice != this.props.active_practiceId)}>
+                                                       disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
                                                 <Icon type="edit"/>
                                                 Edit
                                             </Menu.Item>
                                             <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}
-                                                       disabled={(treatment.practice != this.props.active_practiceId)}>
+                                                       disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
                                                 <Icon type="delete"/>
                                                 Delete
                                             </Menu.Item>

@@ -20,8 +20,8 @@ class ReportsHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            startDate: moment().format("YYYY-MM-DD"),
-            endDate: moment().format("YYYY-MM-DD"),
+            startDate: moment(),
+            endDate: moment(),
             active_practiceId: this.props.active_practiceId,
         }
         this.reportsDateRange = this.reportsDateRange.bind(this);
@@ -30,8 +30,8 @@ class ReportsHome extends React.Component {
     reportsDateRange(dateString) {
         console.log(dateString);
         this.setState({
-            startDate: moment(dateString[0], 'DD/MM/YYYY').format("YYYY-MM-DD"),
-            endDate: moment(dateString[1], 'DD/MM/YYYY').format("YYYY-MM-DD"),
+            startDate: moment(dateString[0], 'DD/MM/YYYY'),
+            endDate: moment(dateString[1], 'DD/MM/YYYY'),
         });
     }
 

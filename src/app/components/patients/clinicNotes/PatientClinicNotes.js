@@ -196,12 +196,12 @@ class PatientClinicNotes extends React.Component {
                                         style={{float: 'right'}}
                                         overlay={<Menu>
                                             <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}
-                                                       disabled={(clinicNote.practice != this.props.active_practiceId)}>
+                                                       disabled={(clinicNote.practice &&clinicNote.practice.id != this.props.active_practiceId)}>
                                                 <Icon type="edit"/>
                                                 Edit
                                             </Menu.Item>
                                             <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}
-                                                       disabled={(clinicNote.practice != this.props.active_practiceId)}>
+                                                       disabled={(clinicNote.practice &&clinicNote.practice.id != this.props.active_practiceId)}>
                                                 <Icon type="delete"/>
                                                 Delete
                                             </Menu.Item>
@@ -314,12 +314,12 @@ class PatientClinicNotes extends React.Component {
                                 style={{float: 'right'}}
                                 overlay={<Menu>
                                     <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}
-                                               disabled={(clinicNote.practice != this.props.active_practiceId)}>
+                                               disabled={(clinicNote.practice && clinicNote.practice.id != this.props.active_practiceId)}>
                                         <Icon type="edit"/>
                                         Edit
                                     </Menu.Item>
                                     <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}
-                                               disabled={(clinicNote.practice != this.props.active_practiceId)}>
+                                               disabled={(clinicNote.practice &&clinicNote.practice.id != this.props.active_practiceId)}>
                                         <Icon type="delete"/>
                                         Delete
                                     </Menu.Item>

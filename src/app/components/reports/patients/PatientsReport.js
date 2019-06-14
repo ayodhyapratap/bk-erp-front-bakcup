@@ -10,27 +10,45 @@ export default class PatientsReport extends React.Component {
         super(props);
         this.state = {
             report: [],
-            loading:true
+            startDate: this.props.startDate,
+            endDate: this.props.endDate,
+            loading: true
         }
         this.report = this.report.bind(this);
         this.report();
     }
 
+    componentWillReceiveProps(newProps) {
+        let that = this;
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
+            this.setState({
+                startDate: newProps.startDate,
+                endDate: newProps.endDate
+            }, function () {
+                that.report();
+            })
+    }
+
     report() {
         let that = this;
+        that.setState({
+            loading: true
+        })
         let successFn = function (data) {
-            console.log(data);
             that.setState({
                 report: data.data,
-                loading:false
+                loading: false
             });
         };
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         };
-        getAPI(interpolate(PATIENTS_REPORTS, [this.props.active_practiceId, "start=" + this.props.startDate + "&end=" + this.props.endDate]), successFn, errorFn);
+        getAPI(interpolate(PATIENTS_REPORTS, [this.props.active_practiceId]), successFn, errorFn, {
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD')
+        });
     }
 
     render() {
@@ -52,12 +70,12 @@ export default class PatientsReport extends React.Component {
             ),
         }, {
             title: 'Name',
-            dataIndex: 'name',
-            key: 'age',
+            dataIndex: 'patient.user.first_name',
+            key: 'patient.user.first_name',
         }, {
             title: 'Patient Number',
-            dataIndex: 'mobile',
-            key: 'age',
+            dataIndex: 'patient.user.mobile',
+            key: 'patient.user.mobile',
         },];
 
 
@@ -74,11 +92,11 @@ export default class PatientsReport extends React.Component {
                 <Row gutter={16}>
                     <Col span={16}>
                         <CustomizedTable
-                                        loading={this.state.loading} 
-                                        columns={columns}
-                                        size={'small'}
-                                        pagination={true}
-                                        dataSource={this.state.report}/>
+                            loading={this.state.loading}
+                            columns={columns}
+                            size={'small'}
+                            pagination={true}
+                            dataSource={this.state.report}/>
                     </Col>
                     <Col span={8}>
                         <Radio.Group buttonStyle="solid" defaultValue="all">

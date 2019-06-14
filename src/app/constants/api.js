@@ -70,7 +70,7 @@ export const TREATMENTPLANS_API = 'patients/procedure/'; //?id=patientId&complet
 export const TREATMENTPLANS_MARK_COMPLETE_API = 'patients/complete_procedure/?id=%s&complete=%s';
 export const ALL_PRESCRIPTIONS_API = 'patients/prescriptions/%s/';
 export const INVOICES_API = 'invoice/';
-export const INVOICE_PDF_API= 'invoice/%s/get_pdf';
+export const INVOICE_PDF_API = 'invoice/%s/get_pdf';
 export const CREATE_OR_EDIT_INVOICES = 'invoice/';
 export const PATIENT_CLINIC_NOTES_API = 'patients/clinic_notes/';
 export const PATIENT_PAYMENTS_API = 'payment/';
@@ -89,11 +89,11 @@ export const EXTRA_DATA = 'clinics/extra_data';
 //reports
 
 export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/'
-export const EXPENSE_REPORT = 'clinics/%s/expense_report/?%s'
-export const INVOICE_REPORTS = 'clinics/%s/invoice_report/?%s'
-export const PATIENTS_REPORTS = 'clinics/%s/patients_report/?%s'
-export const PAYMENTS_REPORTS = 'clinics/%s/payments_report/?%s'
-export const TREATMENT_REPORTS = 'clinics/%s/treatment_report/?%s'
+export const EXPENSE_REPORT = 'clinics/%s/expense_report/'
+export const INVOICE_REPORTS = 'clinics/%s/invoice_report/'
+export const PATIENTS_REPORTS = 'clinics/%s/patients_report/'
+export const PAYMENTS_REPORTS = 'clinics/%s/payments_report/'
+export const TREATMENT_REPORTS = 'clinics/%s/treatment_report/'
 export const DRUG_TYPE_API = 'clinics/%s/drugtype/';
 export const DRUG_UNIT_API = 'clinics/%s/drugunit/';
 
