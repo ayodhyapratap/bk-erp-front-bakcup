@@ -106,7 +106,6 @@ class EditPatientDetails extends React.Component {
                 that.setState({});
                 let successFn = function (data) {
                     displayMessage("Patient Saved Successfully!!");
-                    that.props.history.push('/patient/' + data.id + '/profile');
 
                 }
                 let errorFn = function () {
@@ -122,6 +121,7 @@ class EditPatientDetails extends React.Component {
     }
 
     render() {
+        console.log("props",this.props);
         let that = this;
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = ({
