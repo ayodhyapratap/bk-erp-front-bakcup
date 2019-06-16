@@ -75,7 +75,7 @@ class PatientSider extends React.Component {
                             <Icon type="clock-circle"/>Timeline
                         </Link>
                     </Menu.Item>
-                    <Menu.Item key="26" disabled={!this.props.currentPatient}>
+                    <Menu.Item key="26" disabled={!this.props.currentPatient || true}>
                         <Link
                             to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/labtrackings" : "/patients/profile"}>
                             <Icon type="solution"/>Lab Orders

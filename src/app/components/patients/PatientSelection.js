@@ -36,12 +36,10 @@ class PatientSelection extends React.Component {
             })
             that.setState({
                 patientGroup: filteredData,
-                loading: false
             });
         };
         let errorFn = function () {
             that.setState({
-                loading: false
             })
 
         };

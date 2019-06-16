@@ -1,5 +1,5 @@
 import React from "react";
-import {Checkbox,Table,Button,Card,Icon,Tag, Menu,Dropdown,Modal,Spin,Tooltip} from "antd";
+import {Checkbox, Table, Button, Card, Icon, Tag, Menu, Dropdown, Modal, Spin, Tooltip} from "antd";
 import {Link} from "react-router-dom";
 import {
     PROCEDURE_CATEGORY,
@@ -47,10 +47,17 @@ class PatientTreatmentPlans extends React.Component {
         let incompleted = [];
         let that = this;
         this.setState({
-            loading:true
+            loading: true
         })
         let successFn = function (data) {
             that.setState(function (prevState) {
+                if (data.current == 1) {
+                    return {
+                        treatmentPlans: [...data.results],
+                        next: data.next,
+                        loading: false
+                    }
+                }
                 return {
                     treatmentPlans: [...prevState.treatmentPlans, ...data.results],
                     next: data.next,
@@ -63,6 +70,12 @@ class PatientTreatmentPlans extends React.Component {
                 }
             })
             that.setState(function (prevState) {
+                if (data.current == 1) {
+                    return {
+                        incompletedTreatmentPlans: [...incompleted],
+                        loading: false
+                    }
+                }
                 return {
                     incompletedTreatmentPlans: [...prevState.incompletedTreatmentPlans, ...incompleted],
                     loading: false
@@ -100,8 +113,7 @@ class PatientTreatmentPlans extends React.Component {
 
         }
         let errorFn = function () {
-            that.setState({
-            })
+            that.setState({})
 
         }
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn)
@@ -129,8 +141,8 @@ class PatientTreatmentPlans extends React.Component {
             onOk() {
                 let reqData = {
                     id: record.id,
+                    patient: record.patient,
                     is_active: false,
-                    doctor: (record.doctor && record.doctor.id ? record.doctor.id : null)
                 }
                 let successFn = function (data) {
                     that.loadTreatmentPlans();
@@ -212,10 +224,10 @@ class PatientTreatmentPlans extends React.Component {
                           value={this.state.selectedTreatments[record.id]}/>)
         }, {
             title: 'Procedure',
+            dataIndex: 'procedure',
             key: 'procedure',
-            initialValue: (this.state.editFields ? this.state.editFields.procedure : null),
             render: (text, record) => (
-                <span> {procedures[record.procedure]}</span>
+                <span> {text.name}</span>
             )
         }, {
             title: 'Quantity',
@@ -238,10 +250,12 @@ class PatientTreatmentPlans extends React.Component {
         if (this.props.match.params.id) {
             return <div><Switch>
                 <Route exact path='/patient/:id/emr/plans/add'
-                       render={(route) => <AddorEditDynamicTreatmentPlans {...this.state} {...route}/>}/>
+                       render={(route) => <AddorEditDynamicTreatmentPlans {...this.state} {...route}
+                                                                          loadData={this.loadTreatmentPlans}/>}/>
                 <Route exact path='/patient/:id/emr/plans/edit'
                        render={(route) => (this.state.editTreatmentPlan ?
                            <AddorEditDynamicTreatmentPlans {...this.state} {...route}
+                                                           loadData={this.loadTreatmentPlans}
                                                            editId={this.state.editTreatmentPlan.id}/> :
                            <Redirect to={"/patient/" + this.props.match.params.id + "/emr/plans"}/>)}/>
                 <div>

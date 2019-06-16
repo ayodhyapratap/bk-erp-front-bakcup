@@ -45,7 +45,7 @@ class AddorEditPatientVitalSigns extends React.Component {
         const fields = [{
             label: "Pulse",
             key: "pulse",
-            required: true,
+            // required: true,
             initialValue: this.props.editVitalSign ? this.props.editVitalSign.pulse : null,
             type: NUMBER_FIELD
         }, {

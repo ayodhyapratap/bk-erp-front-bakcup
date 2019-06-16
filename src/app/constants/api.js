@@ -73,6 +73,7 @@ export const TREATMENTPLANS_API = 'patients/procedure/'; //?id=patientId&complet
 export const TREATMENTPLANS_MARK_COMPLETE_API = 'patients/complete_procedure/?id=%s&complete=%s';
 export const ALL_PRESCRIPTIONS_API = 'patients/prescriptions/%s/';
 export const INVOICES_API = 'invoice/';
+export const SINGLE_INVOICES_API = 'invoice/%s/'
 export const INVOICE_PDF_API = 'invoice/%s/get_pdf';
 export const CREATE_OR_EDIT_INVOICES = 'invoice/';
 export const PATIENT_CLINIC_NOTES_API = 'patients/clinic_notes/';

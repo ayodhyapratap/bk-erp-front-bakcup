@@ -2,7 +2,7 @@ import React from "react";
 import {Avatar, Input, Table, Col, Button, Card, Icon, Divider, Tabs} from "antd";
 import {Link, Route, Switch} from "react-router-dom";
 import {PRESCRIPTION_PDF, VITAL_SIGN_PDF, VITAL_SIGNS_API} from "../../../constants/api";
-import {getAPI, interpolate, patchAPI, postAPI, putAPI} from "../../../utils/common";
+import {displayMessage, getAPI, interpolate, patchAPI, postAPI, putAPI} from "../../../utils/common";
 import moment from 'moment';
 import PatientRequiredNoticeCard from "../PatientRequiredNoticeCard";
 import CustomizedTable from "../../common/CustomizedTable";
@@ -10,10 +10,12 @@ import AddorEditPatientVitalSigns from "./AddorEditPatientVitalSigns";
 import {AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Area, LineChart, Line} from 'recharts';
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
+import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {Modal} from "antd";
 
 const {Meta} = Card;
 const Search = Input.Search;
-
+const confirm = Modal.confirm;
 
 class PatientVitalSign extends React.Component {
     constructor(props) {
@@ -35,6 +37,13 @@ class PatientVitalSign extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState(function (prevState) {
+                if (data.current == 1) {
+                    return {
+                        vitalsign: [...data.results],
+                        next: data.next,
+                        loading: false
+                    }
+                }
                 return {
                     vitalsign: [...prevState.vitalsign, ...data.results],
                     next: data.next,
@@ -60,14 +69,27 @@ class PatientVitalSign extends React.Component {
 
     deleteVitalSign = (record) => {
         let that = this;
-        let reqData = {...record, is_active: false};
-        let successFn = function (data) {
+        confirm({
+            title: 'Are you sure to delete this item?',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                let that = this;
+                let reqData = {...record, is_active: false};
+                let successFn = function (data) {
+                    displayMessage(SUCCESS_MSG_TYPE, "Deleted Successfully!!")
+                    that.loadVitalsigns();
+                }
+                let errorFn = function () {
 
-        }
-        let errorFn = function () {
-
-        }
-        postAPI(interpolate(VITAL_SIGNS_API, [this.props.match.params.id]), reqData, successFn, errorFn)
+                }
+                postAPI(interpolate(VITAL_SIGNS_API, [this.props.match.params.id]), reqData, successFn, errorFn)
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
     }
     editObject = (record) => {
         this.setState({
@@ -116,7 +138,7 @@ class PatientVitalSign extends React.Component {
             title: 'SYS/DIA mmhg',
             key: 'address',
             render: (text, record) => (
-                <span> {record.pulse},{record.position}</span>
+                <span> {record.blood_pressure},{record.position}</span>
             )
         }, {
             title: 'WEIGHT kg',

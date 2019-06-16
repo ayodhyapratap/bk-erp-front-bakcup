@@ -52,7 +52,7 @@ class Addinvoicedynamic extends React.Component {
             items: {},
             practiceDoctors: [],
             selectedPrescriptions: [],
-            selectedDate:moment()
+            selectedDate: moment()
         }
 
     }
@@ -64,6 +64,7 @@ class Addinvoicedynamic extends React.Component {
         this.loadPrescriptions();
         this.loadTaxes();
     }
+
     loadInventoryItemList() {
         let that = this;
         let successFn = function (reqData) {
@@ -110,11 +111,11 @@ class Addinvoicedynamic extends React.Component {
     loadPrescriptions() {
         var that = this;
         let successFn = function (data) {
-            let items = that.state.items;
-            console.log(items);
-            items[PRESCRIPTIONS] = data.results;
-            that.setState({
-                items: items,
+
+            that.setState(function (prevState) {
+                return {
+                    items: {...prevState.items, [PRESCRIPTIONS]: data}
+                }
             })
         };
         let errorFn = function () {
@@ -224,8 +225,8 @@ class Addinvoicedynamic extends React.Component {
     addPrescription = (item) => {
         let that = this;
         item.drugs.forEach(function (drug_item) {
-            if (drug_item.maintain_inventory)
-                that.add({...drug_item, item_type: INVENTORY})
+            if (drug_item.inventory.maintain_inventory)
+                that.add({...drug_item.inventory, item_type: INVENTORY})
         });
         that.setState(function (prevState) {
             return {selectedPrescriptions: [...prevState.selectedPrescriptions, item.id]}
@@ -521,7 +522,7 @@ class Addinvoicedynamic extends React.Component {
                                           <List.Item>
                                               <List.Item.Meta
                                                   title={item.drugs.map(drug_item => <div>
-                                                      <span>{drug_item.name}</span> {drug_item.maintain_inventory ? null :
+                                                      <span>{drug_item.name}</span> {drug_item.inventory.maintain_inventory ? null :
                                                       <Tag color="red" style={{float: 'right', lineHeight: '18px'}}>Not
                                                           Sold</Tag>}<br/></div>)}
                                                   description={item.doctor ?
@@ -579,7 +580,8 @@ class Addinvoicedynamic extends React.Component {
                                                 allowClear={false}/>
                                     <Form.Item {...formItemLayoutWithOutLabel}
                                                style={{marginBottom: 0, float: 'right'}}>
-                                        <Button type="primary" htmlType="submit" style={{margin: 5}}>Save Invoice</Button>
+                                        <Button type="primary" htmlType="submit" style={{margin: 5}}>Save
+                                            Invoice</Button>
                                         {that.props.history ?
                                             <Button style={{margin: 5, float: 'right'}}
                                                     onClick={() => that.props.history.goBack()}>

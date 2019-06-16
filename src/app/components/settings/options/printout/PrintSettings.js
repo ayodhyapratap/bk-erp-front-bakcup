@@ -447,7 +447,7 @@ class PrintSettings extends React.Component {
                                         style={{
                                             width: '100%',
                                             height: '100%',
-                                            // minHeight: '600px',
+                                            minHeight: '600px',
                                             boxShadow: '-2px 0px 4px #B8B8B8'
                                         }}/>
                                 </Col>

@@ -45,8 +45,8 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                 this.props.editTreatmentPlan.treatment_plans.forEach(function (treatment) {
                     let randId = Math.random().toFixed(7);
                     tableValues.push({
-                        ...treatment.procedure,
                         ...treatment,
+                        ...treatment.procedure,
                         _id: randId,
                     })
                 });
@@ -159,18 +159,19 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                         "cost": item.cost,
                         "quantity": item.quantity,
                         "margin": item.margin,
-                        "default_notes": item.notes,
+                        "default_notes": item.default_notes,
                         "is_active": true,
-                        "is_completed": false,
+                        "is_completed": item.is_completed || false,
                         "discount": item.discount,
                         "discount_type": "%",
-
                     };
                     reqData.treatment_plans.push(sendingItem);
                 });
 
                 let successFn = function (data) {
                     displayMessage("Inventory updated successfully");
+                    if(that.props.loadData)
+                        that.props.loadData();
                     let url = '/patient/' + that.props.match.params.id + '/emr/plans';
                     that.props.history.push(url);
                 }
@@ -246,7 +247,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                     <Form.Item
                         key={`default_notes[${record._id}]`}
                         {...formItemLayout}>
-                        {getFieldDecorator(`notes[${record._id}]`, {
+                        {getFieldDecorator(`default_notes[${record._id}]`, {
                             validateTrigger: ['onChange', 'onBlur'],
                             rules: [{
                                 message: "This field is required.",
@@ -357,7 +358,8 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                                                 allowClear={false}/>
                                     <Form.Item {...formItemLayoutWithOutLabel}
                                                style={{marginBottom: 0, float: 'right'}}>
-                                        <Button type="primary" htmlType="submit" style={{margin: 5}}>Save Treatment Plan</Button>
+                                        <Button type="primary" htmlType="submit" style={{margin: 5}}>Save Treatment
+                                            Plan</Button>
                                         {that.props.history ?
                                             <Button style={{margin: 5, float: 'right'}}
                                                     onClick={() => that.props.history.goBack()}>
@@ -375,7 +377,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                         <Affix offsetTop={0}>
                             <div style={{backgroundColor: '#ddd', padding: 8}}>
                                 <Input.Search placeholder={"Search in plans ..."}
-                                              onChange={e => this.searchValues( e.target.value)}/>
+                                              onChange={e => this.searchValues(e.target.value)}/>
                             </div>
                             <List size={"small"}
                                   style={{maxHeight: '100vh', overflowX: 'scroll'}}

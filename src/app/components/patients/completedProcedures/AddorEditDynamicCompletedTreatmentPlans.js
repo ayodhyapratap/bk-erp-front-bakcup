@@ -45,8 +45,8 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
                 this.props.editTreatmentPlan.treatment_plans.forEach(function (treatment) {
                     let randId = Math.random().toFixed(7);
                     tableValues.push({
-                        ...treatment.procedure,
                         ...treatment,
+                        ...treatment.procedure,
                         _id: randId,
                     })
                 });

@@ -512,12 +512,6 @@ export default class CreateAppointmentForm extends React.Component {
         });
         const {getFieldDecorator} = this.props.form;
 
-        const procedureOption = []
-        if (this.state.procedure_category) {
-            this.state.procedure_category.forEach(function (drug) {
-                procedureOption.push({label: (drug.name), value: drug.id});
-            })
-        }
         const doctorOption = []
         if (this.state.practice_doctors.length) {
             this.state.practice_doctors.forEach(function (drug) {
@@ -674,9 +668,11 @@ export default class CreateAppointmentForm extends React.Component {
                         {getFieldDecorator("procedure", {initialValue: this.state.appointment ? this.state.appointment.procedure : null}, {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
-                            <Select placeholder="Procedures Planned">
-                                {procedureOption.map((option) => <Select.Option
-                                    value={option.value}>{option.label}</Select.Option>)}
+                            <Select placeholder="Procedures Planned" >
+                                {this.state.procedure_category && this.state.procedure_category.map((drug) =>
+                                    <Select.Option
+                                        value={drug.id}>{drug.name}</Select.Option>
+                                )}
                             </Select>
                         )}
                     </FormItem>

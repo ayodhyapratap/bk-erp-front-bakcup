@@ -49,7 +49,8 @@ class PatientSettingForm extends React.Component {
                 </Col>
                 <Col span={12} style={{textAlign: 'center'}}>
                     <iframe
-                        src={makeURL(PRINT_PREVIEW_RENDER + PreviewParamsURL)} style={{width: '100%', height: '100%', boxShadow: '-2px 0px 4px #B8B8B8'}}/>
+                        src={makeURL(PRINT_PREVIEW_RENDER + PreviewParamsURL)}
+                        style={{width: '100%', height: '100%', minHeight: 800, boxShadow: '-2px 0px 4px #B8B8B8'}}/>
                 </Col>
 
             </Row>

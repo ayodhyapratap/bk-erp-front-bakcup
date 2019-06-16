@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Checkbox, Divider, Icon, Table, Popconfirm, Menu, Dropdown, Tag, Tooltip} from "antd";
-import {getAPI, interpolate, putAPI, postAPI} from "../../../utils/common";
+import {getAPI, interpolate, putAPI, postAPI, displayMessage} from "../../../utils/common";
 import {
     PROCEDURE_CATEGORY,
     PRODUCT_MARGIN,
@@ -10,10 +10,13 @@ import {
 } from "../../../constants/api";
 import moment from "moment";
 import {Link, Redirect, Route, Switch} from "react-router-dom";
-import {SELECT_FIELD} from "../../../constants/dataKeys";
+import {SELECT_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import AddorEditDynamicCompletedTreatmentPlans from "./AddorEditDynamicCompletedTreatmentPlans";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {BACKEND_BASE_URL} from "../../../config/connect";
+import {Modal} from "antd";
+
+const confirm = Modal.confirm;
 
 class PatientCompletedProcedures extends React.Component {
     constructor(props) {
@@ -62,12 +65,12 @@ class PatientCompletedProcedures extends React.Component {
         let that = this;
         let successFn = function (data) {
             that.setState(function (prevState) {
-                if(data.current == 1)
-                return {
-                    treatmentPlans: [...data.results],
-                    next: data.next,
-                    loading: false
-                }
+                if (data.current == 1)
+                    return {
+                        treatmentPlans: [...data.results],
+                        next: data.next,
+                        loading: false
+                    }
                 return {
                     treatmentPlans: [...prevState.treatmentPlans, ...data.results],
                     next: data.next,
@@ -137,16 +140,32 @@ class PatientCompletedProcedures extends React.Component {
 
     deleteTreatmentPlans(record) {
         let that = this;
-        let obj = {...record, is_active: false}
+        confirm({
+            title: 'Are you sure to delete this item?',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                let obj = {
+                    id: record.id,
+                    patient: record.patient,
+                    is_active: false
+                }
 
 
-        let successFn = function (data) {
-            that.loadTreatmentPlans();
-        }
-        let errorFn = function () {
+                let successFn = function (data) {
+                    displayMessage(SUCCESS_MSG_TYPE, "Completed Procedure Deleted Successfully!");
+                    that.loadTreatmentPlans();
+                }
+                let errorFn = function () {
 
-        };
-        postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id], null), obj, successFn, errorFn);
+                };
+                postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id], null), obj, successFn, errorFn);
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
     }
 
     loadPDF(id) {
@@ -237,7 +256,7 @@ class PatientCompletedProcedures extends React.Component {
                                                         Edit
                                                     </Menu.Item>
                                                     <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}
-                                                               disabled={(treatment.practice  && treatment.practice.id!= this.props.active_practiceId)}>
+                                                               disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
                                                         <Icon type="delete"/>
                                                         Delete
                                                     </Menu.Item>

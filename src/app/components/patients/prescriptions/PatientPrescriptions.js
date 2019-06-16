@@ -182,12 +182,12 @@ class PatientPrescriptions extends React.Component {
             return <div><Switch>
                 <Route exact path='/patient/:id/emr/prescriptions/add'
                        render={(route) => <AddorEditDynamicPatientPrescriptions {...this.state}
-                                                                                loadPrescriptions={this.loadPrescriptions}
+                                                                                loadData={this.loadPrescriptions}
                                                                                 {...route}/>}/>
                 <Route exact path='/patient/:id/emr/prescriptions/edit'
                        render={(route) => (that.state.editPrescription ?
                            <AddorEditDynamicPatientPrescriptions {...this.state} {...route}
-                                                                 loadPrescriptions={this.loadPrescriptions}
+                                                                 loadData={this.loadPrescriptions}
                                                                  editId={that.state.editPrescription.id}/> :
                            <Redirect to={"/patient/" + that.props.match.params.id + "/emr/prescriptions"}/>)}/>
                 <Route>

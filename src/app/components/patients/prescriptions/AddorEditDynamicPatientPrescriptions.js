@@ -211,7 +211,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
 
             let prevDrugs = [...prevState.formDrugList];
             let prevAddedDrugs = {...prevState.addedDrugs};
-            item.drug.forEach(function (drugs) {
+            item.drugs.forEach(function (drugs) {
                 let randId = Math.random().toFixed(7);
                 prevDrugs.push({
                     ...drugs,
@@ -296,6 +296,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                     reqData.labs.push(item.id);
                 });
                 let successFn = function (data) {
+                    if (that.props.loadData)
+                        that.props.loadData();
                     let url = '/patient/' + that.props.match.params.id + '/emr/prescriptions';
                     that.props.history.push(url);
                 }
@@ -555,9 +557,14 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                 <DatePicker value={this.state.selectedDate}
                                             onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}/>
 
-                                <Button type="primary" htmlType="submit" style={{float: 'right'}}>
+                                <Button type="primary" htmlType="submit" style={{margin: 5, float: 'right'}}>
                                     Save
                                 </Button>
+                                {that.props.history ?
+                                    <Button style={{margin: 5, float: 'right'}}
+                                            onClick={() => that.props.history.goBack()}>
+                                        Cancel
+                                    </Button> : null}
                             </Card>
                         </Affix>
                     </Form>

@@ -1,12 +1,12 @@
 import React from "react";
 import {Button, Card, Divider, Icon, Table, Tag, Row, Col, Statistic, Alert, Menu, Dropdown, Modal, Spin} from "antd";
-import {getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
+import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {
     DRUG_CATALOG, INVOICE_PDF_API,
     INVOICES_API,
     PRESCRIPTION_PDF,
     PRESCRIPTIONS_API,
-    PROCEDURE_CATEGORY,
+    PROCEDURE_CATEGORY, SINGLE_INVOICES_API,
     TAXES
 } from "../../../constants/api";
 import moment from "moment";
@@ -16,6 +16,7 @@ import AddInvoicedynamic from "./AddInvoicedynamic";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {Link} from "react-router-dom";
 import {BACKEND_BASE_URL} from "../../../config/connect";
+import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 
 const confirm = Modal.confirm;
 
@@ -135,18 +136,19 @@ class PatientInvoices extends React.Component {
     deleteInvoice(record) {
         let that = this;
         confirm({
-            title: 'Are you sure to delete this item?',
+            title: 'Are you sure to cancel this item?',
             okText: 'Yes',
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                let reqData = {...record, is_active: false};
+                let reqData = {patient: record.patient, is_cancelled: true};
                 let successFn = function (data) {
+                    displayMessage(SUCCESS_MSG_TYPE, "Invoice cancelled successfully")
                     that.loadInvoices();
                 }
                 let errorFn = function () {
                 }
-                postAPI(interpolate(INVOICES_API, [that.props.match.params.id]), reqData, successFn, errorFn);
+                putAPI(interpolate(SINGLE_INVOICES_API, [record.id]), reqData, successFn, errorFn);
             },
             onCancel() {
                 console.log('Cancel');
@@ -273,13 +275,15 @@ class PatientInvoices extends React.Component {
                                                     {/*</Menu.Item>*/}
                                                     <Menu.Item key="3" onClick={() => that.deleteInvoice(invoice)}
                                                                disabled={(invoice.practice != this.props.active_practiceId)}>
-                                                        <Icon type="delete"/>
-                                                        Delete
+                                                        <Icon type="cross"/>
+                                                        Cancel
                                                     </Menu.Item>
                                                     <Menu.Divider/>
                                                     <Menu.Item key="4">
-                                                        <Icon type="clock-circle"/>
-                                                        Patient Timeline
+                                                        <Link to={"/patient/" + invoice.patient + "/emr/timeline"}>
+                                                            <Icon type="clock-circle"/>
+                                                            Patient Timeline
+                                                        </Link>
                                                     </Menu.Item>
                                                 </Menu>}>
                                                 <a onClick={() => this.loadPDF(invoice.id)}><Icon type="printer"/></a>
@@ -352,8 +356,10 @@ class PatientInvoices extends React.Component {
                                         </Menu.Item>
                                         <Menu.Divider/>
                                         <Menu.Item key="4">
-                                            <Icon type="clock-circle"/>
-                                            Patient Timeline
+                                            <Link to={"/patient/" + invoice.patient + "/emr/timeline"}>
+                                                <Icon type="clock-circle"/>
+                                                Patient Timeline
+                                            </Link>
                                         </Menu.Item>
                                     </Menu>}>
                                     <a onClick={() => this.loadPDF(invoice.id)}><Icon type="printer"/></a>
