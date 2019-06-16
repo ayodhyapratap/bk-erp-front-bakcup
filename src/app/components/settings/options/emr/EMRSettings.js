@@ -9,9 +9,10 @@ import {
     EMR_COMPLAINTS,
     EMR_OBSERVATIONS,
     EMR_INVESTIGATIONS,
-    EMR_TREATMENTNOTES
+    EMR_TREATMENTNOTES,
+    EMR_VITAL_SIGNS
 } from "../../../../constants/api"
-
+import VITALSINGS from "../emr/VitalSigns";
 const TabPane = Tabs.TabPane;
 
 
@@ -24,6 +25,7 @@ class EMRSettings extends React.Component {
     }
 
     render() {
+        console.log("propss",this.props)
         return <div>
             <Row>
                 <h2>EMR Settings</h2>
@@ -46,6 +48,9 @@ class EMRSettings extends React.Component {
                         </TabPane>
                         <TabPane tab={<span><Icon type="file"/>File Labels</span>} key="#filetags">
                             <TableData {...this.props} id={EMR_FILETAGS} name="File Labels"/>
+                        </TabPane>
+                        <TabPane tab={<span><Icon type="heart"/>Vital Signs</span>} key="#vitalsigns">
+                            <VITALSINGS {...this.props}/>
                         </TabPane>
                     </Tabs>
 

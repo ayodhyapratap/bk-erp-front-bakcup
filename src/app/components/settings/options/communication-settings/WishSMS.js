@@ -1,47 +1,74 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
-
+import { SMS_FIELD, SUCCESS_MSG_TYPE, SINGLE_CHECKBOX_FIELD} from "../../../../constants/dataKeys";
+import {APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS} from "../../../../constants/hardData";
+import {displayMessage, interpolate} from "../../../../utils/common";
 class WishSMS extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            fields: [{
-                label: "Name 1",
-                key: "name1",
-                required: true,
-                initialValue: "My Name",
-                type: INPUT_FIELD
-            }, {
-                label: "Name 2",
-                key: "name2",
-                required: true,
-                initialValue: "My Name",
-                type: RADIO_FIELD,
-                options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
-            }, {
-                label: "Name 3",
-                key: "name3",
-                required: true,
-                initialValue: "My Name",
-                type: CHECKBOX_FIELD,
-                options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
-            }, {
-                label: "Name 4",
-                key: "name4",
-                required: true,
-                initialValue: "My Name",
-                type: SELECT_FIELD,
-                options: [{label: "Hello", value: "12"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
-            },]
+           
         }
     }
 
     render() {
+        let that=this;
+        console.log("Propsssssssss",this.props);
+        const fields=[{
+            key: "birthday",
+            // initialValue: this.state.data ? this.state.data.appointment_confirmation_sms : false,
+            type: SINGLE_CHECKBOX_FIELD,
+            extra: "This SMS is sent to the Patient on the morning of their birthday",
+            follow: <b>BIRTHDAY WISH SMS</b>
+        },{
+            key: "birthday_sms",
+            placeholder:"{clinic}{patient}}",
+            // initialValue: this.state.data ? this.state.data.appointment_confirmation_text : null,
+            minRows: 4,
+            type: SMS_FIELD,
+            options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS,
+            
+        }, {
+            key: "anniversary",
+            // initialValue: this.state.data ? this.state.data.appointment_confirmation_sms : false,
+            type: SINGLE_CHECKBOX_FIELD,
+            extra: "This SMS is sent to the Patient on the morning of their anniversary",
+            follow: <b>ANNIVERSARY WISH SMS</b>
+        },{
+            key:"anniversary_sms",
+            placeholder:"{anniversary}",
+            minRows:4,
+            type:SMS_FIELD,
+            options:APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS
+        }, {
+            key:"online appointment",
+            type:SINGLE_CHECKBOX_FIELD,
+            extra:"This SMS is sent to the Patient when they request an appointment on your practice marketing page",
+            follow:<b>ONLINE APPOINTMENT SMS</b>
+        }, {
+           key:"onlineAppointment_sms",
+           placeholder:"{online appointment}",
+           minRows:4,
+           type:SMS_FIELD,
+           options:APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS
+        }];
+        const formProp = {
+            successFn: function (data) {
+                displayMessage(SUCCESS_MSG_TYPE, "success");
+            },
+            errorFn: function () {
+
+            },
+            // action: interpolate(COMMUNICATONS_API, [that.props.active_practiceId]),
+            method: "post",
+        };
+        const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
+
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
-            <TestFormLayout fields={this.state.fields}/>
+            <TestFormLayout formProp={formProp} defaultValues={defaultValues}
+                            fields={fields}/>
         </div>
     }
 }

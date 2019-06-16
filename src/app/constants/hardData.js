@@ -186,3 +186,19 @@ export const NOTES =[
     {label:"Invalid for absence from court attendance", value: "Invalid for absence from court attendance"},
     {label:"Dont mention", value: "Dont mention"}
 ];
+
+export const DEFAULT_TEMPERATURE_IN=[
+    {label:"Degree Fahrenheit" ,value:"1"},
+    {label:"Degree Celsius" , value:"2"}
+];
+export const DEFAULT_TEMPERATURE_METHOD=[
+    {label:"Armpit", value:""},
+    {label:"Forehead", value:"2"},
+    {label:"Anus", value:"3"},
+    {label:"Mouth", value:"4"},
+    {label:"Ear" , value:"5"}
+];
+export const DEFAULT_BP_METHOD=[
+    {label:"Sitting",value:"1"},
+    {label:"Standing" ,value:"2"}
+];
