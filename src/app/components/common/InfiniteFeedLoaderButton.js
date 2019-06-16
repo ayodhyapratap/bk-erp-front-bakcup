@@ -1,4 +1,4 @@
-import {Button, Row} from "antd";
+import {Button, Row, Spin} from "antd";
 import React from "react";
 
 export default class InfiniteFeedLoaderButton extends React.Component {
@@ -32,6 +32,11 @@ export default class InfiniteFeedLoaderButton extends React.Component {
     }
 
     render() {
+        if (this.props.loading) {
+            return <Spin spinning={this.props.loading}>
+                <Row style={{minHeight: 200}}/>
+            </Spin>
+        }
         if (this.props.hidden) {
             return <Row>
                 <div style={{textAlign: 'center', margin: '15px 0px'}}>

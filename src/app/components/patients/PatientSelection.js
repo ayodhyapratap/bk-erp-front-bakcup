@@ -182,7 +182,8 @@ class PatientSelection extends React.Component {
                 <Radio.Group buttonStyle="solid" defaultValue={this.state.selectedPatientGroup}
                              onChange={this.changeSelectedPatientGroup}>
                     <h2>Patients</h2>
-                    <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="all">
+                    <Radio.Button key={'all'} style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                  value="all">
                         All Patents
                         <Tag color="#87d068" style={{float: 'right', margin: 4}}>
                             {this.state.totalPatients ? this.state.totalPatients : 0}
@@ -200,6 +201,7 @@ class PatientSelection extends React.Component {
                         <a style={{float: 'right'}}
                            onClick={() => this.togglePatientGroupEditing(true)}>Manage</a></p>
                     {this.state.patientGroup.map((group) => <Radio.Button
+                        key={group.id}
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={group.id}>
                         {group.name}
                         <Tag color="#87d068" style={{float: 'right', margin: 4}}>
@@ -209,19 +211,19 @@ class PatientSelection extends React.Component {
                     {/*<p><br/></p>*/}
                     <p><b>Smart Groups</b></p>
                     <Radio.Button
-                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={"smart_a"}>
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_a"} value={"smart_a"}>
                         All Male Customers
                     </Radio.Button>
                     <Radio.Button
-                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={"smart_b"}>
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_b"} value={"smart_b"}>
                         All FeMale Customers
                     </Radio.Button>
                     <Radio.Button
-                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={"smart_c"}>
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_c"} value={"smart_c"}>
                         Female Customers Over 30
                     </Radio.Button>
                     <Radio.Button
-                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={"smart_d"}>
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_d"} value={"smart_d"}>
                         Female Customers Under 30
                     </Radio.Button>
                     <p><br/></p>

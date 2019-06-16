@@ -5,7 +5,7 @@ import {
     Card,
     Icon,
     Tag, Menu,
-    Dropdown, Modal, Tooltip
+    Dropdown, Modal, Tooltip, Spin, Row
 } from "antd";
 import {Link} from "react-router-dom";
 import {
@@ -52,6 +52,9 @@ class PatientPrescriptions extends React.Component {
 
     loadPrescriptions(page = 1) {
         let that = this;
+        this.setState({
+            loading:true
+        })
         let successFn = function (data) {
             that.setState({
                 prescription: data.results,
@@ -96,13 +99,11 @@ class PatientPrescriptions extends React.Component {
         let successFn = function (data) {
             that.setState({
                 drug_catalog: data,
-                loading: false
             })
 
         }
         let errorFn = function () {
             that.setState({
-                loading: false
             })
 
         }
@@ -237,6 +238,10 @@ class PatientPrescriptions extends React.Component {
                                        key={presc.id}/>
                             </Card>
                         </div>)}
+                        <Spin spinning={this.state.loading}>
+                            <Row>
+                            </Row>
+                        </Spin>
                         <InfiniteFeedLoaderButton loading={this.state.loading}
                                                   loaderFunction={() => this.loadPrescriptions(this.state.nextPrescriptionPage)}
                                                   hidden={!this.state.nextPrescriptionPage}/>
@@ -248,7 +253,7 @@ class PatientPrescriptions extends React.Component {
         }
         else {
             return <div>
-                {this.state.prescription.map((presc) => <div>
+                {this.state.prescription.map((presc) => <div key={presc.id}>
 
                     <Card style={{margin: 10, marginBottom: 20}}
                           bodyStyle={{padding: 0}}>
@@ -287,6 +292,10 @@ class PatientPrescriptions extends React.Component {
                                footer={() => prescriptonFooter(presc)}
                                key={presc.id}/>
                     </Card></div>)}
+                <Spin spinning={this.state.loading}>
+                    <Row>
+                    </Row>
+                </Spin>
                 <InfiniteFeedLoaderButton loading={this.state.loading}
                                           loaderFunction={() => this.loadPrescriptions(this.state.nextPrescriptionPage)}
                                           hidden={!this.state.nextPrescriptionPage}/>

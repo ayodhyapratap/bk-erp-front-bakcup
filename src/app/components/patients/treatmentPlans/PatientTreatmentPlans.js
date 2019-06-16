@@ -46,6 +46,9 @@ class PatientTreatmentPlans extends React.Component {
     loadTreatmentPlans(page = 1) {
         let incompleted = [];
         let that = this;
+        this.setState({
+            loading:true
+        })
         let successFn = function (data) {
             that.setState(function (prevState) {
                 return {
@@ -92,13 +95,12 @@ class PatientTreatmentPlans extends React.Component {
         let successFn = function (data) {
             that.setState({
                 procedure_category: data,
-                loading: false
+
             })
 
         }
         let errorFn = function () {
             that.setState({
-                loading: false
             })
 
         }
@@ -199,17 +201,15 @@ class PatientTreatmentPlans extends React.Component {
                 procedures[procedure.id] = (procedure.name)
             })
         }
-        console.log(this.state.procedure_category);
 
         const columns = [{
             title: '',
             key: 'is_completed',
             render: (text, record) => (record.is_completed ?
-                    <Icon type="check-circle" theme="twoTone" style={{marginLeft: '8px', fontSize: '20px'}}/> :
-                    <Checkbox key={record.id}
-                              onChange={(e) => this.treatmentCompleteToggle(record.id, e.target.checked)}
-                              value={this.state.selectedTreatments[record.id]}/>
-            )
+                <Icon type="check-circle" theme="twoTone" style={{marginLeft: '8px', fontSize: '20px'}}/> :
+                <Checkbox key={record.id}
+                          onChange={(e) => this.treatmentCompleteToggle(record.id, e.target.checked)}
+                          value={this.state.selectedTreatments[record.id]}/>)
         }, {
             title: 'Procedure',
             key: 'procedure',
@@ -233,23 +233,7 @@ class PatientTreatmentPlans extends React.Component {
             title: 'Notes',
             dataIndex: 'default_notes',
             key: 'default_notes',
-        },
-            //     {
-            //     title: 'Action',
-            //     key: 'action',
-            //     render: (text, record) => (
-            //         <span>
-            //        <a onClick={() => this.editTreatmentPlanData(record)}>Edit</a>
-            //
-            //         <Divider type="vertical"/>
-            //         <Popconfirm title="Are you sure delete this item?"
-            //                     onConfirm={() => this.deleteTreatmentPlans(record)} okText="Yes" cancelText="No">
-            //             <a>Delete</a>
-            //         </Popconfirm>
-            //       </span>
-            //     ),
-            // }
-        ];
+        }];
 
         if (this.props.match.params.id) {
             return <div><Switch>
@@ -323,11 +307,11 @@ class PatientTreatmentPlans extends React.Component {
             </Switch>
 
             </div>
-        }
-        else {
+        } else {
             return <div>
                 <Spin spinning={this.state.loading}>
                     {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
+                                                                        key={treatment.id}
                                                                         style={{marginTop: 15}}>
                             <div style={{padding: 16}}>
                                 <h4>{treatment.date ? moment(treatment.date).format('ll') : null}

@@ -85,7 +85,6 @@ class PatientInvoices extends React.Component {
             that.setState({
                 drug_catalog: data,
             })
-
         }
         let errorFn = function () {
 
@@ -99,7 +98,6 @@ class PatientInvoices extends React.Component {
             that.setState({
                 procedure_category: data,
             })
-
         }
         let errorFn = function () {
 
@@ -111,7 +109,6 @@ class PatientInvoices extends React.Component {
     loadTaxes() {
         var that = this;
         let successFn = function (data) {
-            console.log("get table");
             that.setState({
                 taxes_list: data,
             })
@@ -191,7 +188,6 @@ class PatientInvoices extends React.Component {
                 taxesdata[tax.id] = tax.name;
             })
         }
-        console.log(taxesdata)
 
         const columns = [{
             title: 'Treatment & Products',
@@ -328,7 +324,7 @@ class PatientInvoices extends React.Component {
             return <div>
                 {/*<Alert banner showIcon type={"info"}*/}
                 {/*message={"The invoices shown are only for the current selected practice!"}/>*/}
-                {this.state.invoices.map(invoice => <div style={{marginBottom: '20px'}}>
+                {this.state.invoices.map(invoice => <div style={{marginBottom: '20px'}} key={invoice.id}>
                     <Card>
                         <div style={{padding: 16}}>
                             <h4>{invoice.date ? moment(invoice.date).format('ll') : null}

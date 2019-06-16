@@ -36,10 +36,15 @@ import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {getAPI, makeFileURL, makeURL, postAPI, putAPI} from "../../utils/common";
 import moment from "moment";
 import {SwatchesPicker} from 'react-color';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+// import ReactQuill from 'react-quill';
+// import 'react-quill/dist/quill.snow.css';
 import {EXTRA_DATA, FILE_UPLOAD_API} from "../../constants/api";
 import WebCamField from "./WebCamField";
+import {Editor} from 'react-draft-wysiwyg';
+import '../../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import {EditorState, convertToRaw, ContentState} from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
 
 const {TextArea} = Input;
 const FormItem = Form.Item;
@@ -61,7 +66,8 @@ class DynamicFieldsForm extends React.Component {
             cityOptions: [],
             smsFields: {},
             urlInitialValues: {},
-            webCamState: {}
+            webCamState: {},
+            editorState: {}
         }
         this.resetFormData = this.resetFormData.bind(this);
         this.submitForm = this.submitForm.bind(this);
@@ -88,6 +94,7 @@ class DynamicFieldsForm extends React.Component {
                 }]
             }
         }
+
         return {
             initialValue: formData[field.key] ? formData[field.key] : (urlInitialValues[field.key] ? urlInitialValues[field.key] : formData[field.key]),
             rules: [{
@@ -178,6 +185,9 @@ class DynamicFieldsForm extends React.Component {
                         if (formFields.format) {
                             values[key] = moment(values[key]).isValid() ? moment(values[key]).format(formFields.format) : null;
                         }
+                    } else if (formFields.type == QUILL_TEXT_FIELD) {
+                        let key = formFields.key;
+                        values[key] = that.state.editorState[key] ? draftToHtml(convertToRaw(that.state.editorState[key].getCurrentContent())) : formFields.initialValue;
                     }
                 });
                 if (that.state.formProp.beforeSend) {
@@ -291,11 +301,19 @@ class DynamicFieldsForm extends React.Component {
         let errorFn = function () {
 
         }
-        postAPI(FILE_UPLOAD_API, reqData, successFn, errorFn,{
+        postAPI(FILE_UPLOAD_API, reqData, successFn, errorFn, {
             'content-type': 'multipart/form-data'
         });
 
     }
+    onEditorStateChange = (key, editorState) => {
+        this.setState(function (prevState) {
+            return {
+                editorState: {...prevState.editorState, [key]: editorState}
+
+            }
+        });
+    };
 
     render() {
         const that = this;
@@ -429,7 +447,7 @@ class DynamicFieldsForm extends React.Component {
                                 )}
                             </FormItem>;
                         case TEXT_FIELD:
-                            return <div>
+                            return <div key={field.key}>
                                 <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
                                     {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData))(
                                         <TextArea autosize={{minRows: field.minRows, maxRows: field.maxRows}}
@@ -465,7 +483,20 @@ class DynamicFieldsForm extends React.Component {
                                             message: REQUIRED_FIELD_MESSAGE
                                         }]
                                     })(
-                                        <ReactQuill theme="snow" placeholder={field.placeholder}/>)}
+                                        <div style={{border: '1px solid #eee'}}>
+                                            <Editor
+                                                editorState={(that.state.editorState[field.key] ? that.state.editorState[field.key] : (field.initialValue ? EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(field.initialValue))) : EditorState.createEmpty()))}
+                                                onEditorStateChange={(editorState) => that.onEditorStateChange(field.key, editorState)}/>
+                                            {/*// <ReactQuill theme="snow" placeholder={field.placeholder}/>*/}
+                                        </div>
+                                    )}
+                                    {field.preview ? <div>
+                                        <Divider>Preview</Divider>
+                                        <div style={{maxHeight: 200, overflowY: 'scroll'}}
+                                             dangerouslySetInnerHTML={{__html: `${that.state.editorState[field.key] ? draftToHtml(convertToRaw(that.state.editorState[field.key].getCurrentContent())) : field.initialValue}` || ''}}/>
+                                        <Divider/>
+                                    </div> : null}
+                                    {/*<div dangerouslySetInnerHTML={{__html: field.initialValue}}/>*/}
                                 </FormItem>
                             </div>;
                         case TIME_PICKER:
@@ -661,6 +692,7 @@ class DynamicFieldsForm extends React.Component {
 export default DynamicFieldsForm;
 
 var BASE64_MARKER = ';base64,';
+
 function convertDataURIToBinary(dataURI) {
     var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
     var base64 = dataURI.substring(base64Index);

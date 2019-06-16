@@ -226,7 +226,6 @@ class PatientFiles extends React.Component {
 
     render() {
         let that = this;
-        console.log("selected",this.state.selectedFiles);
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
         const fields = [{
             key: 'file_type',
@@ -248,7 +247,6 @@ class PatientFiles extends React.Component {
             },
             action: interpolate(PATIENT_FILES, [this.props.match.params.id])
         }
-
         const tagsMenu = (<div
             style={{
                 // width: 100,
@@ -261,7 +259,7 @@ class PatientFiles extends React.Component {
                 <ul style={{listStyle: 'none', paddingInlineStart: 0 ,paddingTop:10}}>
                     {this.state.tags ?
                         <div>
-                            {this.state.tags.map((tag)=><li><Checkbox value={tag.id}
+                            {this.state.tags.map((tag)=><li key={tag.id}><Checkbox value={tag.id}
                              onChange={(e) => that.tagsCompleteToggle(tag.id, e.target.checked)}
                              checked={that.state.selectedTags[tag.id]}>{tag.name} </Checkbox></li>)}
                             {/* onChange={this.tagsCompleteToggle}> */}
@@ -272,7 +270,6 @@ class PatientFiles extends React.Component {
                 <span><Button type="primary" onClick={() => this.filesWithTags()} style={{float:"right" ,borderStyle:"none"}}>Done</Button></span>
             </div>
         );
-        console.log("value test",this.props.match.params.id);
         const defaultFields = [{key: 'is_active', value: true}, {key: 'patient', value: this.props.match.params.id} , {key:'practice', value: this.props.active_practiceId}]
         return <Card title="Files"
                      extra={<Button.Group>
@@ -301,6 +298,7 @@ class PatientFiles extends React.Component {
                                       value={null}>
                             All Files</Radio.Button>
                         {this.state.tags.map(tag => <Radio.Button
+                            key={tag.id}
                             style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={tag.id}>
                             {tag.name}
                         </Radio.Button>)}

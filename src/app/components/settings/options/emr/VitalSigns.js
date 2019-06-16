@@ -7,7 +7,7 @@ import {getAPI, interpolate, displayMessage} from "../../../../utils/common";
 // import CustomizedTable from "../../../common/CustomizedTable";
 import {DEFAULT_TEMPERATURE_IN,DEFAULT_BP_METHOD,DEFAULT_TEMPERATURE_METHOD} from "../../../../constants/hardData";
 
-class VitalSigns extends React.Component {
+class VitalSigns extends React.Component {  
     constructor(props) {
         super(props);
 

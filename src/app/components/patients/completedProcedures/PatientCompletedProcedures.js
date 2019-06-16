@@ -274,6 +274,7 @@ class PatientCompletedProcedures extends React.Component {
         else {
             return <div>
                 {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
+                                                                    key={treatment.id}
                                                                     style={{marginTop: 15}}>
                         <div style={{padding: 16}}>
                             <h4>{treatment.date ? moment(treatment.date).format('ll') : null}
