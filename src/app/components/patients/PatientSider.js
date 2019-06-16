@@ -96,12 +96,12 @@ class PatientSider extends React.Component {
                             <Icon type="dollar"/>Payments
                         </Link>
                     </Menu.Item>
-                    {/*<Menu.Item key="29" disabled={!this.props.currentPatient}>*/}
-                    {/*<Link*/}
-                    {/*to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/ledger" : "/patients/profile"}>*/}
-                    {/*<Icon type="book"/>Ledger*/}
-                    {/*</Link>*/}
-                    {/*</Menu.Item>*/}
+                    <Menu.Item key="29" disabled={!this.props.currentPatient}>
+                        <Link
+                            to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/ledger" : "/patients/profile"}>
+                            <Icon type="book"/>Ledger
+                        </Link>
+                    </Menu.Item>
                 </Menu.ItemGroup>
             </Menu>
         </Sider>

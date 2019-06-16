@@ -66,6 +66,8 @@ export const LABPANEL_API = 'clinics/%s/labpanel/';
 export const PATIENT_TIMELINE_API = 'patients/%s/combine_patient_report/';
 export const PATIENT_TIMELINE_PDF = 'patients/%s/timeline_pdf/';
 export const MEDICAL_CERTIFICATE_API = 'patients/medical_certificate/?patient=%s';
+export const MEDICAL_MEMBERSHIP_CANCEL_API ='patients/cancel_membership/'
+export const PATIENTS_MEMBERSHIP_API='patients/membership/?patient=%s'
 /*DELETE OBJECT*/
 export const TREATMENTPLANS_API = 'patients/procedure/'; //?id=patientId&complete=true/false
 export const TREATMENTPLANS_MARK_COMPLETE_API = 'patients/complete_procedure/?id=%s&complete=%s';

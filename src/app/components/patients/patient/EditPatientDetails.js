@@ -121,7 +121,7 @@ class EditPatientDetails extends React.Component {
     }
 
     render() {
-        console.log("props",this.props);
+        
         let that = this;
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = ({

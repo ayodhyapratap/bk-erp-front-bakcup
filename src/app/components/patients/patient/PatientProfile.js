@@ -3,8 +3,9 @@ import PatientSelection from "../PatientSelection";
 import {Avatar, Button, Card, Col, Divider, Icon, List, Row} from "antd";
 import {Link} from "react-router-dom";
 import {getAPI, interpolate} from "../../../utils/common";
-import {MEDICAL_HISTORY, PATIENT_PROFILE} from "../../../constants/api";
+import {MEDICAL_MEMBERSHIP_CANCEL_API, MEMBERSHIP_API,PATIENT_PROFILE} from "../../../constants/api";
 import PatientNotes from "./PatientNotes";
+import MedicalMembership from "./MedicalMembership";
 
 class PatientProfile extends React.Component {
     constructor(props) {
@@ -13,14 +14,18 @@ class PatientProfile extends React.Component {
             patientProfile: null,
             currentPatient: this.props.currentPatient,
             medicalHistory: {},
-            loading: true
+            loading: true,
+            add:'',
+            MedicalMembership:''
         };
         this.loadProfile = this.loadProfile.bind(this);
+        this.loadMedicalMembership =this.loadMedicalMembership.bind(this);
     }
 
     componentDidMount() {
         if (this.state.currentPatient) {
             this.loadProfile();
+            this.loadMedicalMembership();
 
         }
     }
@@ -54,7 +59,32 @@ class PatientProfile extends React.Component {
         if (that.state.currentPatient)
             getAPI(interpolate(PATIENT_PROFILE, [that.state.currentPatient.id]), successFn, errorFn);
     }
+    loadMedicalMembership(){
+        let that=this;
+        let successFn =function (data){
+            that.setState({
+                MedicalMembership:data,
+                loading:false
+            })
+        };
+        let errorFn = function(){
+            that.setState({
+                loading:false
+            })
+        };
+        if(that.state.currentPatient){
+            getAPI(interpolate(MEMBERSHIP_API ,[that.props.active_practiceId]),successFn,errorFn);
+        }
 
+    }
+    onClickHandler(value){
+        this.setState({
+            add:value
+        });
+    }
+    deleteMembership(){
+        console.log("delete");
+    }
     render() {
         let that = this;
         if (this.props.currentPatient) {
@@ -73,7 +103,26 @@ class PatientProfile extends React.Component {
                                 {patient.user.first_name ? patient.user.first_name :
                                     <Icon type="user"/>}
                             </Avatar>)}
+                        <Col>
+                            <Divider/>
+                            {this.state.add ?<div><h1>MedicalMembership <a href="#" onClick={() => this.onClickHandler(false)}>Cancel</a></h1>
+                                <MedicalMembership {...this.props} {...this.state} patientId={patient.id}/></div>
+                                :<div style={{ padding: '0px'}}><h1>MedicalMembership <a href="#" onClick={() => this.onClickHandler(true)}>Renew</a></h1>
+                                    <Card size="small" title={"Membership" + patient.user.first_name} extra={ <Button icon={"close"} type={"danger"}
+                                        shape="circle"
+                                        size="small" onClick={this.deleteMembership}/>} style={{ width: 300 }}>
+                                        <p><strong>Balance :</strong> <span>hello</span></p>
+                                        <p><strong>Start Date :</strong> <span>25-09-2019</span></p>
+                                        <p><strong>Valid Till :</strong> <span>25-10-2019</span></p>
+                                    </Card>
+                                    {/* <List dataSource={patient.medical_membership}
+                                        renderItem={(item) => <List.Item>{item}</List.Item>}/> */}
+                                    </div>
+                            
+                            }
+                        </Col>
                     </Col>
+                   
                     <Col span={12}>
                         <PatientRow label="Patient Name" value={patient.user.first_name}/>
                         <PatientRow label="Patient ID" value={patient.id}/>
@@ -100,9 +149,9 @@ class PatientProfile extends React.Component {
                         <Divider>Groups</Divider>
                         <List dataSource={patient.patient_group_data}
                               renderItem={(item) => <List.Item>{item.name}</List.Item>}/>
-                        <Divider>Medical Membership</Divider>
+                        {/* <Divider>Medical Membership</Divider>
                         <List dataSource={patient.medical_membership}
-                              renderItem={(item) => <List.Item>{item}</List.Item>}/>
+                              renderItem={(item) => <List.Item>{item}</List.Item>}/> */}
                     </Col>
                 </Row>
             </Card>;

@@ -26,7 +26,6 @@ export default class PrintPatientForm extends React.Component {
     }
 
     render() {
-        console.log(this.props.activePracticeData);
         if (this.props.activePracticeData)
             return <html className="PrintPatientForm">
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>

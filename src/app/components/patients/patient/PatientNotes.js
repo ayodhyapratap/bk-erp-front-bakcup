@@ -45,7 +45,7 @@ export default class PatientNotes extends React.Component {
         }]
         const formProp = {
             successFn: function (data) {
-                console.log(data);
+                
                 displayMessage(SUCCESS_MSG_TYPE, "Patient Note Added");
                 that.loadPatientNotes();
             },
@@ -55,7 +55,7 @@ export default class PatientNotes extends React.Component {
             action: interpolate(PATIENT_NOTES, [this.props.patientId, this.props.active_practiceId]),
             method: "post",
             beforeSubmit: function (data) {
-                console.log(data)
+                
             }
         }
         const defaultValues = [{key: 'patient', value: this.props.patientId}, {

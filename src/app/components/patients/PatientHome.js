@@ -294,8 +294,8 @@ class PatientHome extends React.Component {
 
                                 {/*** Patient Ledger Routes*/}
                                 <Route exact path='/patient/:id/billing/ledger'
-                                       render={() => <PatientLedgers
-                                           key={this.state.currentPatient ? this.state.currentPatient.id : null}/>}/>
+                                       render={(route) => <PatientLedgers
+                                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
 
                                 <Route exact path='/patient/:id/prescriptions/template/add'
                                        render={(route) => <PrescriptionTemplate
