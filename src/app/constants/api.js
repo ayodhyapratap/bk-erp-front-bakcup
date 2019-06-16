@@ -96,9 +96,7 @@ export const PAYMENTS_REPORTS = 'clinics/%s/payments_report/'
 export const TREATMENT_REPORTS = 'clinics/%s/treatment_report/'
 export const DRUG_TYPE_API = 'clinics/%s/drugtype/';
 export const DRUG_UNIT_API = 'clinics/%s/drugunit/';
-
 export const PRINT_PREVIEW_RENDER = 'patients/print/';
-
 export const MEMBERSHIP_API = 'clinics/%s/membership/';
 /**
  * Blogs API

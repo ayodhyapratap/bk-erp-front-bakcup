@@ -103,6 +103,7 @@ export default class AddPost extends React.Component {
             required:true,
             initialValue:this.state.editBlogData?this.state.editBlogData.content:null,
             type: QUILL_TEXT_FIELD,
+            preview:true
         }, ];
 
 

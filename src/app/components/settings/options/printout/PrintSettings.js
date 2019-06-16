@@ -169,7 +169,7 @@ class PrintSettings extends React.Component {
             let keys = Object.keys(editedObject);
             keys.forEach(function (key) {
                 if (editedObject[key])
-                    PreviewParamsURL += '&' + key + '=' + editedObject[key]
+                    PreviewParamsURL += '&' + key + '=' + encodeURIComponent(editedObject[key])
             });
 
         }

@@ -196,12 +196,12 @@ class PatientClinicNotes extends React.Component {
                                         style={{float: 'right'}}
                                         overlay={<Menu>
                                             <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}
-                                                       disabled={(clinicNote.practice &&clinicNote.practice.id != this.props.active_practiceId)}>
+                                                       disabled={(clinicNote.practice && clinicNote.practice.id != this.props.active_practiceId)}>
                                                 <Icon type="edit"/>
                                                 Edit
                                             </Menu.Item>
                                             <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}
-                                                       disabled={(clinicNote.practice &&clinicNote.practice.id != this.props.active_practiceId)}>
+                                                       disabled={(clinicNote.practice && clinicNote.practice.id != this.props.active_practiceId)}>
                                                 <Icon type="delete"/>
                                                 Delete
                                             </Menu.Item>
@@ -305,8 +305,8 @@ class PatientClinicNotes extends React.Component {
             </div>
         }
         else {
-            return <Card>
-                {this.state.clinicNotes.map(clinicNote => <Card style={{marginTop: 20}}>
+            return <div>
+                {this.state.clinicNotes.map(clinicNote => <Card style={{marginTop: 20}} key={clinicNote.id}>
                     <div style={{padding: 16}}>
                         <h4>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}
                             <Dropdown.Button
@@ -319,7 +319,7 @@ class PatientClinicNotes extends React.Component {
                                         Edit
                                     </Menu.Item>
                                     <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}
-                                               disabled={(clinicNote.practice &&clinicNote.practice.id != this.props.active_practiceId)}>
+                                               disabled={(clinicNote.practice && clinicNote.practice.id != this.props.active_practiceId)}>
                                         <Icon type="delete"/>
                                         Delete
                                     </Menu.Item>
@@ -345,7 +345,7 @@ class PatientClinicNotes extends React.Component {
                         <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                             <div style={{minHeight: 30}}>
                                 {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                    <span>{str}<br/></span>) : null}
+                                    <span key={str}>{str}<br/></span>) : null}
                             </div>
                             <Divider style={{margin: 0}}/>
                         </Col>
@@ -357,7 +357,7 @@ class PatientClinicNotes extends React.Component {
                         <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                             <div style={{minHeight: 30}}>
                                 {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                    <span>{str}<br/></span>) : null}
+                                    <span key={str}>{str}<br/></span>) : null}
                             </div>
                             <Divider style={{margin: 0}}/>
                         </Col>
@@ -369,7 +369,7 @@ class PatientClinicNotes extends React.Component {
                         <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                             <div style={{minHeight: 30}}>
                                 {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                    <span>{str}<br/></span>) : null}
+                                    <span key={str}>{str}<br/></span>) : null}
                             </div>
                             <Divider style={{margin: 0}}/>
                         </Col>
@@ -381,7 +381,7 @@ class PatientClinicNotes extends React.Component {
                         <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                             <div style={{minHeight: 30}}>
                                 {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                    <span>{str}<br/></span>) : null}
+                                    <span key={str}>{str}<br/></span>) : null}
                             </div>
                             <Divider style={{margin: 0}}/>
                         </Col>
@@ -393,7 +393,7 @@ class PatientClinicNotes extends React.Component {
                         <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                             <div style={{minHeight: 30}}>
                                 {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                    <span>{str}<br/></span>) : null}
+                                    <span key={str}>{str}<br/></span>) : null}
                             </div>
                             <Divider style={{margin: 0}}/>
                         </Col>
@@ -417,7 +417,7 @@ class PatientClinicNotes extends React.Component {
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadClinicNotes(that.state.next)}
                                           loading={this.state.loading}
                                           hidden={!this.state.next}/>
-            </Card>
+            </div>
         }
 
     }
