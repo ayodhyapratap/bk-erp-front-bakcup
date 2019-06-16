@@ -2,16 +2,15 @@ import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form} from "antd";
 import {
-    CHECKBOX_FIELD, DIVIDER_FIELD,
-    INPUT_FIELD,
-    RADIO_FIELD,
-    SELECT_FIELD,
+    DIVIDER_FIELD,
     SUCCESS_MSG_TYPE,
-    SINGLE_CHECKBOX_FIELD, TIME_PICKER
+    SINGLE_CHECKBOX_FIELD, TIME_PICKER, MAIL_TEMPLATE_FIELD
 } from "../../../../constants/dataKeys";
 import {EMAIL_COMMUNICATONS_API} from "../../../../constants/api"
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
 import moment from "moment/moment";
+import {APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS} from "../../../../constants/hardData";
+
 
 class Emails extends React.Component {
     constructor(props) {
@@ -19,6 +18,7 @@ class Emails extends React.Component {
         this.state = {};
         this.loadData = this.loadData.bind(this);
     }
+
     componentDidMount() {
         this.loadData();
     }
@@ -36,37 +36,48 @@ class Emails extends React.Component {
     }
 
     render() {
-        let that=this;
+        let that = this;
         const fields = [{
             key: "appointment_confirmation_email",
             initialValue: this.state.data ? this.state.data.appointment_confirmation_email : false,
             type: SINGLE_CHECKBOX_FIELD,
             follow: <b>APPOINTMENT CONFIRMATION EMAIL</b>,
+            options: [],
             extra: "Email is sent to the Patient on successfully adding an appointment"
+        }, {
+            key: "appointment_confirmation_email_text",
+            initialValue: this.state.data ? this.state.data.appointment_confirmation_email_text : '',
+            type: MAIL_TEMPLATE_FIELD,
+            options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS,
         }, {
             type: DIVIDER_FIELD
         }, {
             key: "appointment_cancellation_email",
-            initialValue:this.state.data ? this.state.data.appointment_cancellation_email : false,
+            initialValue: this.state.data ? this.state.data.appointment_cancellation_email : false,
             type: SINGLE_CHECKBOX_FIELD,
             follow: <b>APPOINTMENT CANCELLATION EMAIL</b>,
             extra: "Email is sent to the Patient when the appointment is cancelled"
         }, {
+            key: "appointment_cancellation_email_text",
+            initialValue: this.state.data ? this.state.data.appointment_cancellation_email_text : '',
+            type: MAIL_TEMPLATE_FIELD,
+            options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS,
+        }, {
             type: DIVIDER_FIELD
         }, {
             key: "appointment_reminder_email",
-            initialValue:this.state.data ? this.state.data.appointment_reminder_email : false,
+            initialValue: this.state.data ? this.state.data.appointment_reminder_email : false,
             type: SINGLE_CHECKBOX_FIELD,
             follow: <b>APPOINTMENT REMINDER EMAIL</b>,
             extra: "Email is sent to the Patient on the morning of the appointment date"
         }, {
             key: "send_on_day_of_appointment",
-            initialValue:this.state.data ? this.state.data.send_on_day_of_appointment: false,
+            initialValue: this.state.data ? this.state.data.send_on_day_of_appointment : false,
             type: SINGLE_CHECKBOX_FIELD,
             follow: "Send reminder SMS on the day of appointment at 7:30 AM",
         }, {
             key: "send_before_day_of_appointment",
-            initialValue:this.state.data ? this.state.data.send_before_day_of_appointment: false,
+            initialValue: this.state.data ? this.state.data.send_before_day_of_appointment : false,
             follow: "Send reminder SMS on the day before the appointment at",
             type: SINGLE_CHECKBOX_FIELD,
         }, {
@@ -74,54 +85,89 @@ class Emails extends React.Component {
             initialValue: this.state.data && moment(this.state.data.send_on_day_of_appointment_time).isValid() ? moment(this.state.data.send_on_day_of_appointment_time) : null,
             type: TIME_PICKER
         }, {
+            key: "appointment_cancellation_email_text",
+            initialValue: this.state.data ? this.state.data.appointment_cancellation_email_text : '',
+            type: MAIL_TEMPLATE_FIELD,
+            options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS,
+        }, {
             type: DIVIDER_FIELD
         }, {
             key: "followup_reminder_email",
-            initialValue:this.state.data ? this.state.data.followup_reminder_email : false,
+            initialValue: this.state.data ? this.state.data.followup_reminder_email : false,
             type: SINGLE_CHECKBOX_FIELD,
             follow: <b>FOLLOW-UP REMINDER EMAIL</b>,
             extra: "Email is sent to the Patient on the morning of their planned follow-up date"
         }, {
+            key: "appointment_reminder_email_text",
+            initialValue: this.state.data ? this.state.data.appointment_reminder_email_text : '',
+            type: MAIL_TEMPLATE_FIELD,
+            options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS,
+        }, {
             type: DIVIDER_FIELD
         }, {
             key: "birthday_wish_email",
-            initialValue:this.state.data ? this.state.data.birthday_wish_email : false,
+            initialValue: this.state.data ? this.state.data.birthday_wish_email : false,
             type: SINGLE_CHECKBOX_FIELD,
             follow: <b>BIRTHDAY WISH EMAIL</b>,
             extra: "Email is sent to the Patient on the morning of their birthday"
         }, {
+            key: "birthday_wish_email_text",
+            initialValue: this.state.data ? this.state.data.birthday_wish_email_text : '',
+            type: MAIL_TEMPLATE_FIELD,
+            options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS,
+        }, {
             type: DIVIDER_FIELD
         }, {
             key: "lab_order_confirmation_email",
-            initialValue:this.state.data ? this.state.data.lab_order_confirmation_email: false,
+            initialValue: this.state.data ? this.state.data.lab_order_confirmation_email : false,
             type: SINGLE_CHECKBOX_FIELD,
             follow: <b>LAB ORDER CONFIRMATION EMAIL</b>,
             extra: "Email is sent to the Patient when he is prescribed a Lab Order"
         }, {
+            key: "lab_order_confirmation_email_text",
+            initialValue: this.state.data ? this.state.data.lab_order_confirmation_email_text : '',
+            type: MAIL_TEMPLATE_FIELD,
+            options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS,
+        }, {
             type: DIVIDER_FIELD
         }, {
             key: "lab_order_due_date_email",
-            initialValue:this.state.data ? this.state.data.lab_order_due_date_email: false,
+            initialValue: this.state.data ? this.state.data.lab_order_due_date_email : false,
             type: SINGLE_CHECKBOX_FIELD,
             follow: <b>LAB ORDER DUE DATE EMAIL</b>,
             extra: "Email is sent to the Patient when due date is entered for a Lab Order"
         }, {
+            key: "lab_order_due_date_email_text",
+            initialValue: this.state.data ? this.state.data.lab_order_due_date_email_text : '',
+            type: MAIL_TEMPLATE_FIELD,
+            options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS,
+        }, {
             type: DIVIDER_FIELD
         }, {
             key: "lab_order_result_email",
-            initialValue: this.state.data ? this.state.data.lab_order_result_email: false,
+            initialValue: this.state.data ? this.state.data.lab_order_result_email : false,
             type: SINGLE_CHECKBOX_FIELD,
             follow: <b>LAB ORDER RESULT EMAIL</b>,
             extra: "Email is sent to the Patient when result for a Lab Order is ready"
         }, {
+            key: "alab_order_result_email_text",
+            initialValue: this.state.data ? this.state.data.alab_order_result_email_text : '',
+            type: MAIL_TEMPLATE_FIELD,
+            options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS,
+        }, {
             type: DIVIDER_FIELD
         }, {
             key: "anniversary_wish_email",
-            initialValue:this.state.data ? this.state.data.anniversary_wish_email: false,
+            initialValue: this.state.data ? this.state.data.anniversary_wish_email : false,
             type: SINGLE_CHECKBOX_FIELD,
             follow: <b>ANNIVERSARY WISH EMAIL</b>,
             extra: "Email is sent to the Patient on the morning of their anniversary"
-        }]
+        }, {
+            key: "anniversary_wish_email_text",
+            initialValue: this.state.data ? this.state.data.anniversary_wish_email_text : '',
+            type: MAIL_TEMPLATE_FIELD,
+            options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS,
+        }];
 
         const formProp = {
             successFn: function (data) {
@@ -134,7 +180,7 @@ class Emails extends React.Component {
             method: "post",
         };
 
-        const defaultValues = [{"key": "practice", "value": this.props.active_practiceId , "is_active": false}, {
+        const defaultValues = [{"key": "practice", "value": this.props.active_practiceId, "is_active": false}, {
             "key": "id",
             "value": this.state.data ? this.state.data.id : null,
         }];
