@@ -45,21 +45,14 @@ export const APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS = [{
 }, {
     label: "APPOINTMENT CATEGORY",
     value: "{{CATEGORY}}"
+},{
+    label:"DATE",
+    value:"{{DATE}}"
+},{
+    label:"TIME",
+    value:"{{TIME}}"
 }];
 
-export const APPOINTMENT_CANCELATION_SMS_TAG_OPTIONS = [{
-    label: "CLINIC CONTACT",
-    value: "{{CLINICCONTACTNUMBER}}"
-}, {
-    label: "CLINIC NAME",
-    value: "{{CLINIC}}"
-}, {
-    label: "PATIENT NAME",
-    value: "{{PATIENT}}"
-}, {
-    label: "APPOINTMENT CATEGORY",
-    value: "{{CATEGORY}}"
-}];
 export const EMR_TYPE = "EMR";
 export const BILLING_TYPE = "BILLING";
 

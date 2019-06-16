@@ -30,6 +30,7 @@ import {
     COUNTRY_FIELD,
     STATE_FIELD,
     EMAIL_FIELD,
+    MAIL_TEMPLATE_FIELD,
     CITY_FIELD, PASSWORD_FIELD, MULTI_SELECT_FIELD, MULTI_IMAGE_UPLOAD_FIELD, SMS_FIELD, DATE_TIME_PICKER, DIVIDER_FIELD
 } from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
@@ -282,6 +283,19 @@ class DynamicFieldsForm extends React.Component {
         });
     }
 
+    addMailTemplateTag = (key, value) => {
+        let that = this;
+        this.setState(function (prevState) {
+            let currentHtml = prevState.editorState[key] ? draftToHtml(convertToRaw(prevState.editorState[key].getCurrentContent())) : '';
+            currentHtml += value;
+            return {
+                editorState: {
+                    ...prevState.editorState,
+                    [key]: EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(currentHtml)))
+                }
+            }
+        })
+    }
     toggleWebCam = (type, value) => {
         this.setState(function (prevState) {
             return {
@@ -472,9 +486,37 @@ class DynamicFieldsForm extends React.Component {
                                              onClick={() => that.addSMSTag(field.key, item.value)}>{item.label}</Tag>)}
                                 </FormItem>
                             </div>;
+                        case MAIL_TEMPLATE_FIELD:
+                            return <div>
+                                <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
+                                    {getFieldDecorator(field.key, {
+                                        initialValue: (field.initialValue && field.initialValue.length ? field.initialValue : ''),
+                                        rules: [{
+                                            required: field.required,
+                                            message: REQUIRED_FIELD_MESSAGE
+                                        }]
+                                    })(
+                                        <div style={{border: '1px solid #eee'}}>
+                                            <Editor
+                                                editorState={(that.state.editorState[field.key] ? that.state.editorState[field.key] : (field.initialValue ? EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(field.initialValue))) : EditorState.createEmpty()))}
+                                                onEditorStateChange={(editorState) => that.onEditorStateChange(field.key, editorState)}/>
+                                            {/*// <ReactQuill theme="snow" placeholder={field.placeholder}/>*/}
+                                        </div>
+                                    )}
+                                    {field.options && field.options.map(item =>
+                                        <Tag color="#108ee9"
+                                             onClick={() => that.addMailTemplateTag(field.key, item.value)}>{item.label}</Tag>)}
+                                    {field.preview ? <div>
+                                        <Divider>Preview</Divider>
+                                        <div style={{maxHeight: 200, overflowY: 'scroll'}}
+                                             dangerouslySetInnerHTML={{__html: `${that.state.editorState[field.key] ? draftToHtml(convertToRaw(that.state.editorState[field.key].getCurrentContent())) : field.initialValue}` || ''}}/>
+                                        <Divider/>
+                                    </div> : null}
+                                    {/*<div dangerouslySetInnerHTML={{__html: field.initialValue}}/>*/}
+                                </FormItem>
+                            </div>;
                         case QUILL_TEXT_FIELD:
                             return <div>
-                                <Divider/>
                                 <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
                                     {getFieldDecorator(field.key, {
                                         initialValue: (field.initialValue && field.initialValue.length ? field.initialValue : ''),
