@@ -13,15 +13,15 @@ class VitalSigns extends React.Component {
 
         this.state = {
             redirect: false,
-            // vitalSign: null,
-            // editVitalSign: this.props.editVitalSign ? this.props.editVitalSign : null,
-
+            vitalSign: null,
         }
         this.changeRedirect = this.changeRedirect.bind(this);
-        console.log("Working or not");
+        this.loadVitalSign =this.loadVitalSign.bind(this);
 
     }
-
+    componentDidMount() {
+        this.loadVitalSign();
+    }
 
     changeRedirect() {
         var redirectVar = this.state.redirect;
@@ -30,76 +30,48 @@ class VitalSigns extends React.Component {
         });
     }
 
-    render() {
-        let that =this;
-        const columns = [{
-            title: 'Temperature In',
-            dataIndex: 'default_temperature',
-            key: 'default_temperature',
-        }, {
-            title:'Temperature Measurement Method',
-            dataIndex:'',
-            key:''
-        },
-        {
-            title:'BP Measurement Method',
-            dataIndex:'',
-            key:''
+    loadVitalSign(){
+        let that=this;
+        let successFn =function (data){
+            that.setState({
+                vitalSign:data
+            })
         }
-        // {
-        //     title: 'Action',
-        //     key: 'action',
-        //     render: (text, record) => (
-        //         <span>
-        //       <a onClick={() => this.editFunction(record)}>  Edit</a>
-        //         <Divider type="vertical"/>
-        //             <Popconfirm title="Are you sure delete this item?"
-        //                         onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
-        //               <a>Delete</a>
-        //           </Popconfirm>
-        //       </span>
-        //     ),
-        // }
-    ];
-        
+        let errorFn = function(){
+            that.setState({
+
+            })
+        }
+        getAPI(interpolate(EMR_VITAL_SIGNS, [that.props.active_practiceId]), successFn, errorFn);
+    }
+
+    render() {
         const fields = [{
             label: "Default temperature measurement in",
             key: "temperature_unit",
             type: SELECT_FIELD,
+            initialValue:'Degree Fahrenheit',
             options: DEFAULT_TEMPERATURE_IN.map(Temp_in => ({label: Temp_in.label, value: Temp_in.value}))
         }, {
             label: "Default temperature measurement method",
             key: "temperature_method",
             type: SELECT_FIELD,
+            initialValue:"Armpit",
             options: DEFAULT_TEMPERATURE_METHOD.map(TempMethod =>({label:TempMethod.label ,value:TempMethod.value}))
         },{
             label: "Default blood pressure measurement method",
             key: "blood_pressure_method",
+            initialValue:"Sitting",
             type: SELECT_FIELD,
             options:DEFAULT_BP_METHOD.map(BPMETHOD =>({label:BPMETHOD.label , value:BPMETHOD.value}))
         }];
 
-
-        let editformProp;
         let defaultValues = [{ key: 'practice', value: this.props.active_practiceId}];
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        if (this.state.editVitalSign) {
-            editformProp = {
-                successFn: function (data) {
-                    displayMessage(SUCCESS_MSG_TYPE, "success")
-                },
-                errorFn: function () {
-
-                },
-                action: interpolate(EMR_VITAL_SIGNS, [this.props.active_practiceId]),
-                method: "post",
-            }
-            defaultValues.push({"key": "id", "value": this.state.editVitalSign.id})
-        }
+       
         const formProp = {
             successFn: function (data) {
-
                 displayMessage(SUCCESS_MSG_TYPE, "success")
             },
             errorFn: function () {
@@ -109,12 +81,9 @@ class VitalSigns extends React.Component {
             method: "post",
         }
 
-
         return <Row>
             <Card>
                 <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
-                <Divider/>
-                <Table loading={this.state.loading} columns={columns} dataSource={this.state.data}/>
             </Card>
         </Row>
 
