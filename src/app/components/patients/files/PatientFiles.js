@@ -200,7 +200,20 @@ class PatientFiles extends React.Component {
         };
         postAPI(interpolate(MEDICAL_CERTIFICATE_API, [that.props.currentPatient.id]), reqData, successFn, errorFn);
     }
+    deleteFile(item){
+        let that= this;
+        let reqData={
+            id:item.id,
+            patient:that.props.currentPatient.id,
+            id_active:false
+        }
+        let successFn =function(data){
+        }
+        let errorFn = function(){
 
+        }
+        postAPI(interpolate(PATIENT_FILES,[this.props.match.params.id]),reqData,successFn,errorFn);
+    }
     loadPDF(id) {
         let that = this;
         let successFn = function (data) {
@@ -350,11 +363,12 @@ class PatientFiles extends React.Component {
                                                 }}
                                                 onChange={(e) => that.filesCompleteToggle(item.id, e.target.checked)}
                                                 checked={that.state.selectedFiles[item.id]}/>
-                                      <ModalImage
+                                      <ModalImage style={{border:"3px solid red"}}
                                           // small={makeFileURL(this.state.filesData.file_type)}
                                           large={makeFileURL(item.file_type)}
                                           small={makeFileURL(item.file_type)}
-                                          // alt="Hello World!"
+                                          alt={ <Button type="danger" onClick={() => this.deleteFile(item)}>
+                                                        <Icon type="delete"/></Button>}
                                       />
                                   </div>
                               </List.Item>
@@ -401,18 +415,18 @@ class PatientFiles extends React.Component {
                                   formProp={formProps}/>
             </Modal>
 
-            <Modal
+            {/* <Modal
                 visible={this.state.visible}
                 closable={false}
                 onCancel={this.handleCancel}
-                footer={null}>
+                footer={null}> */}
 
 
-                <ModalImage
+                {/* <ModalImage
                     small={makeFileURL(this.state.filesData.file_type)}
                     large={makeFileURL(this.state.filesData.file_type)}
                     // alt="Hello World!"
-                />
+                /> */}
                 {/* <Card  hoverable
                         cover={<img  src={makeFileURL(this.state.filesData.file_type)}/>}
                         // extra={ <Button.Group>
@@ -423,7 +437,7 @@ class PatientFiles extends React.Component {
                 </Card> */}
 
 
-            </Modal>
+            {/* </Modal> */}
 
         </Card>
     }
