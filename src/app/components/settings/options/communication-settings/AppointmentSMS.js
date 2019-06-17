@@ -30,8 +30,9 @@ class AppointmentSMS extends React.Component {
     loadData() {
         var that = this;
         let successFn = function (data) {
+            console.log("length",data.length-1);
             that.setState({
-                data: data[0],
+                data: data[data.length-1],
             })
         };
         let errorFn = function () {
@@ -52,14 +53,14 @@ class AppointmentSMS extends React.Component {
             label: "Contact Number",
             key: "contact_number",
             placeholder: "Contact Number",
-            initialValue: this.state.data ? this.state.data.contact_number : null,
+            initialValue: this.state.data ? this.state.data.contact_number : ' ',
             extra: "Maximum 15 characters & represented as {{CLINICCONTACTNUMBER}}",
             type: INPUT_FIELD
         }, {
             label: "Email",
             key: "email",
             placeholder: "Email Address",
-            initialValue: this.state.data ? this.state.data.email : null,
+            initialValue: this.state.data ? this.state.data.email : ' ',
             extra: "All replies by Patients for emails will be sent to this address",
             type: INPUT_FIELD
         },
@@ -75,7 +76,7 @@ class AppointmentSMS extends React.Component {
                 label: "SMS clinic Name",
                 key: "sms_clinic_name",
                 placeholder: "Clinic Name",
-                initialValue: this.state.data ? this.state.data.sms_clinic_name : null,
+                initialValue: this.state.data ? this.state.data.sms_clinic_name : ' ',
                 extra: "{{CLINIC}} will use this name.",
                 type: INPUT_FIELD,
             }, {
