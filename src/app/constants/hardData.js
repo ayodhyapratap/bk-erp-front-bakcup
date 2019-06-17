@@ -175,23 +175,23 @@ export const CUSTOM_STRING_SEPERATOR = '$_$';
 export const DAY_KEYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
 export const NOTES =[
-    {label:"Valid for absence from court attendance", value: "Valid for absence from court attendance"},
-    {label:"Invalid for absence from court attendance", value: "Invalid for absence from court attendance"},
-    {label:"Dont mention", value: "Dont mention"}
+    {label:"Valid for absence from court attendance", value: "valid_court"},
+    {label:"Invalid for absence from court attendance", value: "invalid_court"},
+    {label:"Dont mention", value: "no_mention"}
 ];
 
 export const DEFAULT_TEMPERATURE_IN=[
-    {label:"Degree Fahrenheit" ,value:"1"},
-    {label:"Degree Celsius" , value:"2"}
+    {label:"Degree Fahrenheit" ,value:"Degree Fahrenheit"},
+    {label:"Degree Celsius" , value:"Degree Celsius"}
 ];
 export const DEFAULT_TEMPERATURE_METHOD=[
-    {label:"Armpit", value:""},
-    {label:"Forehead", value:"2"},
-    {label:"Anus", value:"3"},
-    {label:"Mouth", value:"4"},
-    {label:"Ear" , value:"5"}
+    {label:"Armpit", value:"Armpit"},
+    {label:"Forehead", value:"Forehead"},
+    {label:"Anus", value:"Anus"},
+    {label:"Mouth", value:"Mouth"},
+    {label:"Ear" , value:"Ear"}
 ];
 export const DEFAULT_BP_METHOD=[
-    {label:"Sitting",value:"1"},
-    {label:"Standing" ,value:"2"}
+    {label:"Sitting",value:"Sitting"},
+    {label:"Standing" ,value:"Standing"}
 ];
