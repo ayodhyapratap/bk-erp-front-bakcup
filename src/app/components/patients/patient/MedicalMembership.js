@@ -5,27 +5,34 @@ import {PATIENTS_MEMBERSHIP_API,MEMBERSHIP_API} from "../../../constants/api"
 import {INPUT_FIELD,DATE_PICKER ,SUCCESS_MSG_TYPE, SELECT_FIELD} from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import moment from "moment";
-
+import {Redirect} from "react-router-dom";
 
 export default class MedicalMembership extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
             currentPatient: this.props.currentPatient,
-            MedicalMembership:[]
+            Membership:[]
         }
-        this.loadMedicalMembership =this.loadMedicalMembership.bind(this);
+        this.loadMembership =this.loadMembership.bind(this);
     }
 
     componentDidMount() {
-        this.loadMedicalMembership();
+        this.loadMembership();
     }
 
-    loadMedicalMembership(){
+    changeRedirect(){
+        var redirectVar=this.state.redirect;
+        this.setState({
+            redirect:  !redirectVar,
+        })  ;
+    }
+
+    loadMembership(){
         let that=this;
         let successFn =function (data){
             that.setState({
-                MedicalMembership:data,
+                Membership:data,
                 loading:false
             })
         };
@@ -43,36 +50,63 @@ export default class MedicalMembership extends React.Component{
 
     render(){
         console.log("props",this.props);
+        console.log("state",this.state)
         let that = this;
         const fields = [{
             label: "Type",
             key: "medical_membership",
+            initilValue:"",
             type: SELECT_FIELD,
-            options: this.state.MedicalMembership.map(Membership => ({label: Membership.name, value: Membership.id}))
+            options: this.state.Membership.map(MembershipItem => ({label: MembershipItem.name, value: MembershipItem.id}))
         },{
             label:"Start Date",
             key:"medical_from",
             type:DATE_PICKER,format:'YYYY-MM-DD'
 
         }];
-        const formProp = {
-            successFn: function (data) {
-                displayMessage(SUCCESS_MSG_TYPE, "Patient Note Added");
-                that.loadMedicalMembership();
-            },
-            errorFn: function () {
-                
-            },
-            action: interpolate(PATIENTS_MEMBERSHIP_API, [this.props.patientId]),
-            method: "post"
-        }
+        
+            const editformProp = {
+                successFn: function (data) {
+                    displayMessage(SUCCESS_MSG_TYPE, "Medical Membership Update");
+                    that.loadMedicalMembership();
+                    that.setState({
+                        redirect:true
+                    })
+                },
+                errorFn: function () {
+                    
+                },
+                action: interpolate(PATIENTS_MEMBERSHIP_API, [this.props.patientId]),
+                method: "put",
+
+            }
+            const formProp = {
+                successFn: function (data) {
+                    displayMessage(SUCCESS_MSG_TYPE, "Medical Membership added");
+                    that.loadMedicalMembership();
+                    that.setState({
+                        redirect:true
+                    })
+                },
+                errorFn: function () {
+                    
+                },
+                action: interpolate(PATIENTS_MEMBERSHIP_API, [this.props.patientId]),
+                method: "post"
+            }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         const defaultValues = [{key: 'patient', value: this.props.patientId}, {key: 'practice', value: this.props.active_practiceId}]
 
         return<div>
-            <TestFormLayout formProp={formProp}
+            {this.props.MedicalMembership ?<TestFormLayout formProp={editformProp}
                             defaultValues={defaultValues}
                             fields={fields}/>
+                :<TestFormLayout formProp={formProp}
+                defaultValues={defaultValues}
+                fields={fields}/>
+            
+            }
+            {/* {this.state.redirect && <Redirect to={'/patient/' + this.props.patientId + 'profile'} />} */}
         </div>
     }
 }
