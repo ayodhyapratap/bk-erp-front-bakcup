@@ -34,7 +34,7 @@ class VitalSigns extends React.Component {
         let that=this;
         let successFn =function (data){
             that.setState({
-                vitalSign:data
+                vitalSign:data[data.length-1]
             })
         }
         let errorFn = function(){
@@ -50,26 +50,29 @@ class VitalSigns extends React.Component {
             label: "Default temperature measurement in",
             key: "temperature_unit",
             type: SELECT_FIELD,
-            initialValue:'Degree Fahrenheit',
+            initialValue:this.state.vitalSign ? this.state.vitalSign.temperature_unit:null,
             options: DEFAULT_TEMPERATURE_IN.map(Temp_in => ({label: Temp_in.label, value: Temp_in.value}))
         }, {
             label: "Default temperature measurement method",
             key: "temperature_method",
             type: SELECT_FIELD,
-            initialValue:"Armpit",
+            initialValue:this.state.vitalSign ? this.state.vitalSign.temperature_method:null,
             options: DEFAULT_TEMPERATURE_METHOD.map(TempMethod =>({label:TempMethod.label ,value:TempMethod.value}))
         },{
             label: "Default blood pressure measurement method",
             key: "blood_pressure_method",
-            initialValue:"Sitting",
+            initialValue:this.state.vitalSign ? this.state.vitalSign.blood_pressure_method:null,
             type: SELECT_FIELD,
             options:DEFAULT_BP_METHOD.map(BPMETHOD =>({label:BPMETHOD.label , value:BPMETHOD.value}))
         }];
 
-        let defaultValues = [{ key: 'practice', value: this.props.active_practiceId}];
+        let defaultValues = [{ key: 'practice', value: this.props.active_practiceId}, {
+            "key": "id",
+            "value": this.state.vitalSign ? this.state.vitalSign.id : null,
+        }];
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-       
+    
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
@@ -84,6 +87,8 @@ class VitalSigns extends React.Component {
         return <Row>
             <Card>
                 <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
+               
+                
             </Card>
         </Row>
 
