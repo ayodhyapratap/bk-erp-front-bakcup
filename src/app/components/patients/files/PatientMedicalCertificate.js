@@ -21,7 +21,7 @@ import {Redirect, Link} from 'react-router-dom'
 import {postAPI, interpolate, displayMessage} from "../../../utils/common";
 import {NOTES} from "../../../constants/hardData";
 import {MEDICAL_CERTIFICATE_API} from "../../../constants/api";
-import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {SUCCESS_MSG_TYPE ,ERROR_MSG_TYPE} from "../../../constants/dataKeys";
 import moment from 'moment';
 import {loadDoctors} from "../../../utils/clinicUtils";
 
@@ -48,7 +48,6 @@ class PatientMedicalCertificate extends React.Component {
         }
         this.handleChangeStart = this.handleChangeStart.bind(this);
         this.handleChangeEnd = this.handleChangeEnd.bind(this);
-        // this.totalDays = this.totalDays.bind(this);
     }
 
     componentDidMount() {
@@ -73,7 +72,7 @@ class PatientMedicalCertificate extends React.Component {
         });
     }
     onChangeHandle = (e) => {
-        console.log(e);
+        console.log("handlechanged",e);
         this.setState({
             value: e.target.value,
         });
@@ -123,32 +122,43 @@ class PatientMedicalCertificate extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            if (!err) {
-                let reqData = {
-                    ...values,
-                    doctor: that.state.selectedDoctor.id,
-                    practice: that.props.active_practiceId,
-                    date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
-                    excused_duty_from: moment(values.excused_duty_from).format("YYYY-MM-DD"),
-                    excused_duty_to: moment(values.excused_duty_to).format("YYYY-MM-DD"),
-                    fit_light_duty_from: moment(values.fit_light_duty_from).format("YYYY-MM-DD"),
-                    fit_light_duty_to: moment(values.fit_light_duty_to).format("YYYY-MM-DD"),
-                    proof_attendance_date: moment(values.proof_attendance_date).format("YYYY-MM-DD"),
-                    proof_attendance_from: moment(values.proof_attendance_from).format('LT'),
-                    proof_attendance_to: moment(values.proof_attendance_to).format('LT'),
-                    patient: that.props.match.params.id,
-                    is_active: true
-                };
-                that.setState({});
-                let successFn = function (data) {
-                    displayMessage(SUCCESS_MSG_TYPE, "Saved Successfully!!");
-                    that.props.history.push('/patient/' + that.props.match.params.id + '/emr/files');
+            
+            if(values.excused_duty || values.fit_light_duty || values.proof_attendance){
+                if (!err) {
+                    let reqData = {
+                        ...values,
+                        doctor: that.state.selectedDoctor.id,
+                        practice: that.props.active_practiceId,
+                        date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
+                        excused_duty_from: moment(values.excused_duty_from).format("YYYY-MM-DD"),
+                        excused_duty_to: moment(values.excused_duty_to).format("YYYY-MM-DD"),
+                        fit_light_duty_from: moment(values.fit_light_duty_from).format("YYYY-MM-DD"),
+                        fit_light_duty_to: moment(values.fit_light_duty_to).format("YYYY-MM-DD"),
+                        proof_attendance_date: moment(values.proof_attendance_date).format("YYYY-MM-DD"),
+                        proof_attendance_from: moment(values.proof_attendance_from).format('LT'),
+                        proof_attendance_to: moment(values.proof_attendance_to).format('LT'),
+                        patient: that.props.match.params.id,
+                        is_active: true,
+                        valid_court:false,
+                        invalid_court:false,
+                        no_mention:false
+                    };
+                    if(values.group)
+                        reqData[values.group] = true
+                    delete reqData.group;
+                    let successFn = function (data) {
+                        displayMessage(SUCCESS_MSG_TYPE, "Medical Certificate Generated.");
+                        that.props.history.push('/patient/' + that.props.match.params.id + '/emr/files');
+                    }
+                    let errorFn = function () {
+                        that.setState({});
+                    }
+                    postAPI(interpolate(MEDICAL_CERTIFICATE_API, [this.props.currentPatient.id]), reqData, successFn, errorFn);
                 }
-                let errorFn = function () {
-                    that.setState({});
-                }
-                postAPI(interpolate(MEDICAL_CERTIFICATE_API, [this.props.currentPatient.id]), reqData, successFn, errorFn);
+            }else{
+               displayMessage(ERROR_MSG_TYPE,"Please select at least one of the above options");
             }
+           
         });
     }
 
@@ -315,7 +325,7 @@ class PatientMedicalCertificate extends React.Component {
 
 
                     <Form.Item>
-                        {getFieldDecorator('notes', {onChange: this.onChangeHandle})(
+                        {getFieldDecorator('group', {initialValue:'no_mention'})(
                             <Radio.Group>
                                 {radioOption}
                             </Radio.Group>
