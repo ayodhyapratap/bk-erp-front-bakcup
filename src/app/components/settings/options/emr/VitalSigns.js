@@ -85,11 +85,7 @@ class VitalSigns extends React.Component {
         }
 
         return <Row>
-            <Card>
                 <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
-               
-                
-            </Card>
         </Row>
 
     }
