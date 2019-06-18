@@ -1,12 +1,12 @@
 import React from "react";
 import PatientSelection from "../PatientSelection";
 import {Avatar, Button, Card, Col, Divider, Icon, List, Row} from "antd";
-import {Link} from "react-router-dom";
-import {getAPI,postAPI, interpolate} from "../../../utils/common";
+import {Link,Redirect} from "react-router-dom";
+import {getAPI,postAPI, interpolate,displayMessage} from "../../../utils/common";
 import {MEDICAL_MEMBERSHIP_CANCEL_API, PATIENTS_MEMBERSHIP_API,PATIENT_PROFILE} from "../../../constants/api";
 import PatientNotes from "./PatientNotes";
 import MedicalMembership from "./MedicalMembership";
-import moment from 'moment';
+import {SUCCESS_MSG_TYPE,ERROR_MSG_TYPE} from "../../../constants/dataKeys";
 
 class PatientProfile extends React.Component {
     constructor(props) {
@@ -17,7 +17,8 @@ class PatientProfile extends React.Component {
             medicalHistory: {},
             loading: true,
             add:'',
-            MedicalMembership:null
+            MedicalMembership:null,
+            hide:false
         };
         this.loadProfile = this.loadProfile.bind(this);
         this.loadMedicalMembership =this.loadMedicalMembership.bind(this);
@@ -31,6 +32,12 @@ class PatientProfile extends React.Component {
         }
     }
 
+    formChange =(value)=>{
+        console.log("hi",value);
+        this.setState({
+            add:value,
+        });
+    }
 
     componentWillReceiveProps(newProps) {
         let that = this;
@@ -64,7 +71,7 @@ class PatientProfile extends React.Component {
         let that=this;
         let successFn =function (data){
             that.setState({
-                MedicalMembership:data[0],
+                MedicalMembership:data[data.length-1],
                 loading:false
             })
         };
@@ -77,27 +84,37 @@ class PatientProfile extends React.Component {
 
     }
     onClickHandler(value){
-        this.setState({
-            add:value
-        });
+        let that=this;
+        if(this.state.MedicalMembership){
+            displayMessage(ERROR_MSG_TYPE, "Membership !!");
+            that.setState({
+                add:false
+            })
+        }else{
+            this.setState({
+                add:value
+            });
+        }
+       
     }
     deleteMembership(id){
-        console.log("delete",id);
         let that =this;
         let reqData={
             id:id,
             is_active:false
         }
         let successFn = function (data){
-
+            that.loadProfile();
+            that.loadMedicalMembership();
         }
         let errorFn =function(){
 
         };
-        postAPI(interpolate(PATIENTS_MEMBERSHIP_API, [that.props.currentPatient.id]), reqData, successFn, errorFn);
+        postAPI(interpolate(MEDICAL_MEMBERSHIP_CANCEL_API, [that.props.currentPatient.id]), reqData, successFn, errorFn);
     }
     render() {
         let that = this;
+        console.log("fff",this.state);
         if (this.props.currentPatient) {
             let patient = this.state.patientProfile;
             if (!patient)
@@ -116,10 +133,11 @@ class PatientProfile extends React.Component {
                             </Avatar>)}
                         <Col>
                             <Divider/>
+
                             {this.state.add ?<div><h1>MedicalMembership <a href="#" onClick={() => this.onClickHandler(false)}>Cancel</a></h1>
-                                <MedicalMembership {...this.props} {...this.state} patientId={patient.id}/></div>
+                                <MedicalMembership {...this.props} {...this.state} patientId={patient.id} loadMedicalMembership={that.loadMedicalMembership} formChange={that.formChange} loadProfile={that.loadProfile}/></div>
                                 :<div style={{ padding: '0px'}}><h1>MedicalMembership <a href="#" onClick={() => this.onClickHandler(true)}>Renew</a></h1>
-                                    {this.state.MedicalMembership ? <Card size="small" title={"Membership " + patient.user.first_name} extra={ <Button icon={"close"} type={"danger"}
+                                    {this.state.MedicalMembership ? <Card size="small" title={"Membership "} extra={ <Button icon={"close"} type={"danger"}
                                             shape="circle"
                                             size="small" onClick={() => this.deleteMembership(this.state.MedicalMembership.id)}/>} style={{ width: 300 }}>
                                             <p><strong>Balance :</strong> <span>{this.state.MedicalMembership.membership_payments}</span></p>
@@ -128,7 +146,6 @@ class PatientProfile extends React.Component {
                                         </Card>
                                     :null}
                                 </div>
-                            
                             }
                         </Col>
                     </Col>
@@ -164,6 +181,7 @@ class PatientProfile extends React.Component {
                               renderItem={(item) => <List.Item>{item}</List.Item>}/> */}
                     </Col>
                 </Row>
+                
             </Card>;
         }
         return <PatientSelection {...this.props}/>

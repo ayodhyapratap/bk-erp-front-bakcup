@@ -11,21 +11,16 @@ export default class MedicalMembership extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            redirect:false,
             currentPatient: this.props.currentPatient,
-            Membership:[]
+            Membership:[],
+            
         }
         this.loadMembership =this.loadMembership.bind(this);
     }
 
     componentDidMount() {
         this.loadMembership();
-    }
-
-    changeRedirect(){
-        var redirectVar=this.state.redirect;
-        this.setState({
-            redirect:  !redirectVar,
-        })  ;
     }
 
     loadMembership(){
@@ -46,47 +41,27 @@ export default class MedicalMembership extends React.Component{
         }
 
     }
-
-
     render(){
-        console.log("props",this.props);
-        console.log("state",this.state)
         let that = this;
+        console.log("form state",this.state)
         const fields = [{
             label: "Type",
             key: "medical_membership",
-            initilValue:"",
             type: SELECT_FIELD,
             options: this.state.Membership.map(MembershipItem => ({label: MembershipItem.name, value: MembershipItem.id}))
         },{
             label:"Start Date",
             key:"medical_from",
+            initilValue:moment(),
             type:DATE_PICKER,format:'YYYY-MM-DD'
 
         }];
-        
-            const editformProp = {
-                successFn: function (data) {
-                    displayMessage(SUCCESS_MSG_TYPE, "Medical Membership Update");
-                    that.loadMedicalMembership();
-                    that.setState({
-                        redirect:true
-                    })
-                },
-                errorFn: function () {
-                    
-                },
-                action: interpolate(PATIENTS_MEMBERSHIP_API, [this.props.patientId]),
-                method: "put",
-
-            }
             const formProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Medical Membership added");
-                    that.loadMedicalMembership();
-                    that.setState({
-                        redirect:true
-                    })
+                    that.props.loadProfile();
+                    that.props.loadMedicalMembership();
+                    that.props.formChange();
                 },
                 errorFn: function () {
                     
@@ -97,16 +72,6 @@ export default class MedicalMembership extends React.Component{
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         const defaultValues = [{key: 'patient', value: this.props.patientId}, {key: 'practice', value: this.props.active_practiceId}]
 
-        return<div>
-            {this.props.MedicalMembership ?<TestFormLayout formProp={editformProp}
-                            defaultValues={defaultValues}
-                            fields={fields}/>
-                :<TestFormLayout formProp={formProp}
-                defaultValues={defaultValues}
-                fields={fields}/>
-            
-            }
-            {/* {this.state.redirect && <Redirect to={'/patient/' + this.props.patientId + 'profile'} />} */}
-        </div>
+        return<TestFormLayout formProp={formProp} defaultValues={defaultValues} fields={fields}/>
     }
 }
