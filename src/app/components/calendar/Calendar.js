@@ -135,7 +135,7 @@ class App extends Component {
                         practice_staff: doctor,
                     })
                 }
-            })
+            });
             let doctor_object = {}
             if (that.state.practice_doctors) {
                 that.state.practice_doctors.forEach(function (drug) {

@@ -302,6 +302,17 @@ class Appointment extends React.Component {
                 ),
             }];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
+        if (this.props.match.params.id) {
+            return <Card extra={<Link to={"/calendar/create-appointment?patient=" + this.props.match.params.id}>
+                <Button type="primary">
+                    <Icon type="plus"/>&nbsp;Add Appointment</Button>
+            </Link>}>
+                <Table loading={this.state.loading} columns={columns} scroll={{x: 1300}}
+                       dataSource={this.state.appointments}/>
+
+
+            </Card>
+        }
         return <Card extra={<Link to="/calendar/create-appointment">
             <Button type="primary">
                 <Icon type="plus"/>&nbsp;Add Appointment</Button>

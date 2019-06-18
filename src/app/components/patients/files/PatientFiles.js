@@ -16,7 +16,11 @@ import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import Meta from "antd/lib/card/Meta";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import ModalImage from "react-modal-image";
+<<<<<<< Updated upstream
 import {ERROR_MSG_TYPE, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+=======
+import {object} from "prop-types";
+>>>>>>> Stashed changes
 
 class PatientFiles extends React.Component {
     constructor(props) {
@@ -155,12 +159,13 @@ class PatientFiles extends React.Component {
             return {selectedTags: {...selected}}
         });
     }
+
     filesWithTags() {
         let that = this;
         let reqData = {
             id: Object.keys(this.state.selectedFiles),
             file_tags: Object.keys(this.state.selectedTags),
-            patient:this.props.match.params.id,
+            patient: this.props.match.params.id,
         };
         let successFn = function () {
             that.setState({
@@ -200,6 +205,7 @@ class PatientFiles extends React.Component {
         };
         postAPI(interpolate(MEDICAL_CERTIFICATE_API, [that.props.currentPatient.id]), reqData, successFn, errorFn);
     }
+<<<<<<< Updated upstream
     deleteFile(item){
         let that= this;
         let reqData={
@@ -212,10 +218,24 @@ class PatientFiles extends React.Component {
         }
         let errorFn = function(){
             displayMessage(ERROR_MSG_TYPE, "Please Select Patient.")
+=======
+
+    deleteFile(item) {
+        let that = this;
+        let reqData = {
+            id: item.id,
+            patient: that.props.currentPatient.id,
+            is_active: false
+        }
+        let successFn = function (data) {
+        }
+        let errorFn = function () {
+>>>>>>> Stashed changes
 
         }
-        postAPI(interpolate(PATIENT_FILES,[this.props.match.params.id]),reqData,successFn,errorFn);
+        postAPI(interpolate(PATIENT_FILES, [this.props.match.params.id]), reqData, successFn, errorFn);
     }
+
     loadPDF(id) {
         let that = this;
         let successFn = function (data) {
@@ -225,7 +245,7 @@ class PatientFiles extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(interpolate(MEDICAL_CERTIFICATE_PDF ,[id]), successFn, errorFn);
+        getAPI(interpolate(MEDICAL_CERTIFICATE_PDF, [id]), successFn, errorFn);
     }
 
     showModal = (item) => {
@@ -262,30 +282,35 @@ class PatientFiles extends React.Component {
             },
             action: interpolate(PATIENT_FILES, [this.props.match.params.id])
         }
-        const tagsMenu = (<div
-            style={{
+        const tagsMenu = (<div style={{
                 // width: 100,
                 boxShadow: '0 2px 4px #111',
                 border: '1px solid #bbb',
                 borderRadius: 2,
-                paddingBottom:'30px',
-                backgroundColor: 'white'}}>
-
-                <ul style={{listStyle: 'none', paddingInlineStart: 0 ,paddingTop:10}}>
+                paddingBottom: '30px',
+                backgroundColor: 'white'
+            }}>
+                <ul style={{listStyle: 'none', paddingInlineStart: 0, paddingTop: 10}}>
                     {this.state.tags ?
                         <div>
-                            {this.state.tags.map((tag)=><li key={tag.id}><Checkbox value={tag.id}
-                             onChange={(e) => that.tagsCompleteToggle(tag.id, e.target.checked)}
-                             checked={that.state.selectedTags[tag.id]}>{tag.name} </Checkbox></li>)}
-                            {/* onChange={this.tagsCompleteToggle}> */}
+                            {this.state.tags.map((tag) => <li key={tag.id}>
+                                <Checkbox value={tag.id}
+                                          onChange={(e) => that.tagsCompleteToggle(tag.id, e.target.checked)}
+                                          checked={that.state.selectedTags[tag.id]}>{tag.name} </Checkbox>
+                            </li>)}
                         </div>
-                        :null}
-
+                        : null}
                 </ul>
-                <span><Button type="primary" onClick={() => this.filesWithTags()} style={{float:"right" ,borderStyle:"none"}}>Done</Button></span>
+                <span>
+                    <Button type="primary" onClick={() => this.filesWithTags()}
+                            style={{float: "right", borderStyle: "none"}}>Done</Button>
+                </span>
             </div>
         );
-        const defaultFields = [{key: 'is_active', value: true}, {key: 'patient', value: this.props.match.params.id} , {key:'practice', value: this.props.active_practiceId}]
+        const defaultFields = [{key: 'is_active', value: true}, {
+            key: 'patient',
+            value: this.props.match.params.id
+        }, {key: 'practice', value: this.props.active_practiceId}]
         return <Card title="Files"
                      extra={<Button.Group>
                          <Link to={"/patient/" + this.props.match.params.id + "/emr/create-medicalCertificate"}> <Button
@@ -351,7 +376,7 @@ class PatientFiles extends React.Component {
                                           // background: '#fff url("' + makeFileURL(item.file_type) + '") no-repeat center center',
                                           backgroundSize: 'cover',
                                           padding: 'auto',
-                                          overflow:'hidden'
+                                          overflow: 'hidden'
 
                                       }}>
                                       <Checkbox key={item.id}
@@ -365,12 +390,12 @@ class PatientFiles extends React.Component {
                                                 }}
                                                 onChange={(e) => that.filesCompleteToggle(item.id, e.target.checked)}
                                                 checked={that.state.selectedFiles[item.id]}/>
-                                      <ModalImage style={{border:"3px solid red"}}
+                                      <ModalImage style={{border: "3px solid red"}}
                                           // small={makeFileURL(this.state.filesData.file_type)}
-                                          large={makeFileURL(item.file_type)}
-                                          small={makeFileURL(item.file_type)}
-                                          alt={ <Button type="danger" onClick={() => this.deleteFile(item)}>
-                                                        <Icon type="delete"/></Button>}
+                                                  large={makeFileURL(item.file_type)}
+                                                  small={makeFileURL(item.file_type)}
+                                                  alt={<Button type="danger" onClick={() => this.deleteFile(item)}>
+                                                      <Icon type="delete"/></Button>}
                                       />
                                   </div>
                               </List.Item>
@@ -424,12 +449,12 @@ class PatientFiles extends React.Component {
                 footer={null}> */}
 
 
-                {/* <ModalImage
+            {/* <ModalImage
                     small={makeFileURL(this.state.filesData.file_type)}
                     large={makeFileURL(this.state.filesData.file_type)}
                     // alt="Hello World!"
                 /> */}
-                {/* <Card  hoverable
+            {/* <Card  hoverable
                         cover={<img  src={makeFileURL(this.state.filesData.file_type)}/>}
                         // extra={ <Button.Group>
                         // <Button><a onClick={() => this.loadPDF(this.state.filesData.id)}><Icon type="printer"/></a></Button>

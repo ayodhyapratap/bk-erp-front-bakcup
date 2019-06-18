@@ -56,10 +56,53 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     }
 
     componentDidMount() {
+        let that = this;
         this.loadDrugList();
         this.loadLabList();
         this.loadPrescriptionTemplate();
         loadDoctors(this);
+        if (this.props.editId) {
+            this.setState(function (prevState) {
+                let drugList = [];
+                let addInstructions = {};
+                let addedLabs = {};
+                // let dosage = {};
+                // let frequency = {};
+                // let duration = {};
+                // let duration_type = {};
+                that.props.editPrescription.drugs.forEach(function (drug) {
+                    let _id = Math.random();
+                    drugList.push({...drug, _id: _id, food_time: (drug.after_food ? 1 : 0)});
+                    addInstructions[_id] = !!drug.instruction;
+                    // dosage[_id] = drug.dosage;
+                    // frequency[_id] = drug.frequency;
+                    // duration[_id] = drug.duration;
+                    // duration_type[_id] = drug.duration_type;
+                });
+                let labList = []
+                that.props.editPrescription.labs.forEach(lab => {
+                    labList.push({
+                        ...lab,
+                        _id: Math.random()
+                    });
+                    addedLabs[lab.id] = true
+                })
+
+                return {
+                    ...that.props.editPrescription,
+                    formDrugList: [...drugList],
+                    formLabList: [...labList],
+                    addInstructions: {...addInstructions},
+                    addedLabs: {...addedLabs},
+                    // dosage: {...dosage},
+                    // frequency: {...frequency},
+                    // duration: {...duration},
+                    // duration_type: {...duration_type},
+                    selectedDoctor: that.props.editPrescription.doctor,
+                    selectedDate: moment(that.props.editPrescription.date).isValid() ? moment(that.props.editPrescription.date) : moment()
+                }
+            })
+        }
     }
 
     selectDoctor = (doctor) => {
@@ -177,7 +220,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     addLabs = (item) => {
         this.setState(function (prevState) {
             let randId = Math.random().toFixed(7);
-            console.log("LAb state", prevState);
             if (prevState.addedLabs[item.id]) {
                 displayMessage(WARNING_MSG_TYPE, "Item Already Added");
                 return false;
@@ -256,11 +298,14 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                     date: that.state.selectedDate ? that.state.selectedDate.format('YYYY-MM-DD') : null,
                     advice_data: []
                 };
+                if (that.props.editId) {
+                    reqData.id = that.props.editId;
+                }
                 that.state.formDrugList.forEach(function (item) {
-                    console.log("advice search", item);
-                    item.dosage = values.does[item._id];
-                    item.duration_type = values.duration_unit[item._id];
-                    item.frequency = values.does_frequency[item._id];
+                    item.dosage = values.dosage[item._id];
+                    item.duration_type = values.duration_type[item._id];
+                    item.duration = values.duration[item._id];
+                    item.frequency = values.frequency[item._id];
                     if (values.instruction) {
                         item.instruction = values.instruction[item._id];
                     }
@@ -283,10 +328,10 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         "dosage": item.dosage,
                         "frequency": item.frequency,
                         "duration_type": item.duration_type,
+                        "duration": item.duration,
                         "instruction": item.instruction,
                         "before_food": item.before_food,
                         "after_food": item.after_food,
-
                         "is_active": true,
                     };
                     reqData.drugs.push(drugItem);
@@ -361,26 +406,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
 
     render() {
         let that = this;
-        const formItemLayout = {
-            labelCol: {
-                xs: {span: 24},
-                sm: {span: 4},
-            },
-            wrapperCol: {
-                xs: {span: 24},
-                sm: {span: 20},
-            },
-        };
-        const formItemLayoutWithOutLabel = {
-            labelCol: {
-                xs: {span: 24},
-                sm: {span: 24},
-            },
-            wrapperCol: {
-                xs: {span: 24},
-                sm: {span: 24},
-            },
-        };
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const drugTableColumns = [{
             title: 'Drug Name',
@@ -391,28 +416,27 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             title: 'Dosage & Frequency',
             dataIndex: 'dosage',
             key: 'dosage',
-            render: (dosage, record) => <div><Form.Item
-                extra={<span>does(s)</span>}
-                key={`does[${record._id}]`}>
-                {getFieldDecorator(`does[${record._id}]`, {
-                        validateTrigger: ['onChange', 'onBlur'],
-
-                    },
-                    {
-                        rules: [{message: "This field is required.",}],
-                    })(
-                    <InputNumber min={0} size={"small"}/>
-                )}
-
-            </Form.Item>
+            render: (dosage, record) => <div>
                 <Form.Item
-                    key={`does_frequency[${record._id}]`}>
-                    {getFieldDecorator(`does_frequency[${record._id}]`, {
+                    extra={<span>does(s)</span>}
+                    key={`dosage[${record._id}]`}>
+                    {getFieldDecorator(`dosage[${record._id}]`, {
+                        validateTrigger: ['onChange', 'onBlur'],
+                        rules: [{message: "This field is required.",}],
+                        initialValue: record.dosage,
+                        min:0
+                    })(
+                        <InputNumber size={"small"}/>
+                    )}
+                </Form.Item>
+                <Form.Item
+                    key={`frequency[${record._id}]`}>
+                    {getFieldDecorator(`frequency[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{
                             message: "This field is required.",
                         }],
-                        initialValue: 'twice daily'
+                        initialValue: record.frequency || DOSE_REQUIRED[0].value
                     })(
                         <Select size={"small"} onChange={() => this.changeDurationUnits(record._id, false)}>
                             {DOSE_REQUIRED.map(item => <Select.Option
@@ -429,22 +453,22 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 <Form.Item
                     key={`duration[${record._id}]`}>
                     {getFieldDecorator(`duration[${record._id}]`, {
-                            validateTrigger: ['onChange', 'onBlur']
-                        },
-                        {
-                            rules: [{message: "This field is required.",}],
-                        })(
-                        <InputNumber min={0} size={"small"}/>
+                        validateTrigger: ['onChange', 'onBlur'],
+                        rules: [{message: "This field is required.",}],
+                        initialValue: record.duration,
+                        min:0
+                    })(
+                        <InputNumber  size={"small"}/>
                     )}
                 </Form.Item>
                 <Form.Item
-                    key={`duration_unit[${record._id}]`}>
-                    {getFieldDecorator(`duration_unit[${record._id}]`, {
+                    key={`duration_type[${record._id}]`}>
+                    {getFieldDecorator(`duration_type[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{
                             message: "This field is required.",
                         }],
-                        initialValue: 'day(s)'
+                        initialValue: record.duration_type || DURATIONS_UNIT[0].value
                     })(
                         <Select size={"small"} onChange={() => this.changeDurationUnits(record._id, false)}>
                             {DURATIONS_UNIT.map(item => <Select.Option
@@ -453,56 +477,57 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                     )}
                 </Form.Item>
             </div>
-        },
-            // {this.state.prescriptionTemplate.advice_data ? true:false},
-            {
-                title: 'Instructions',
-                dataIndex: 'instruction',
-                key: 'instruction',
-                render: (instruction, record) =>
-                    <div>
-                        {this.state.addInstructions[record._id] ?
-                            <Form.Item
-                                extra={<a onClick={() => this.addInstructions(record._id, false)}>Remove
-                                    Instructions</a>}
-                                key={`instruction[${record._id}]`}>
-                                {getFieldDecorator(`instruction[${record._id}]`, {
-                                    validateTrigger: ['onChange', 'onBlur'],
-                                    rules: [{
-                                        message: "This field is required.",
-                                    }],
-                                })(
-                                    <Input.TextArea min={0} placeholder={"Instructions..."} size={"small"}/>
-                                )}
+        }, {
+            title: 'Instructions',
+            dataIndex: 'instruction',
+            key: 'instruction',
+            render: (instruction, record) =>
+                <div>
+                    {this.state.addInstructions[record._id] ?
+                        <Form.Item
+                            extra={<a onClick={() => this.addInstructions(record._id, false)}>Remove
+                                Instructions</a>}
+                            key={`instruction[${record._id}]`}>
+                            {getFieldDecorator(`instruction[${record._id}]`, {
+                                validateTrigger: ['onChange', 'onBlur'],
+                                rules: [{
+                                    message: "This field is required.",
+                                }],
+                                initialValue: record.instruction
+                            })(
+                                <Input.TextArea  placeholder={"Instructions..."} size={"small"}/>
+                            )}
 
-                            </Form.Item>
-                            : <a onClick={() => this.addInstructions(record._id, true)}>+ Add Instructions</a>}
-                    </div>
-            }, {
-                title: "Timing",
-                dataIndex: "food_time",
-                key: 'food_time',
-                render: (timing, record) => <div>
-                    <Form.Item key={`food_time[${record._id}]`}>
-                        {getFieldDecorator(`food_time[${record._id}]`)(
-                            <Radio.Group onChange={this.onChange}>
-                                <Radio value={1}>after</Radio>
-                                <Radio value={0}>before</Radio>
-                            </Radio.Group>
-                        )}
-                    </Form.Item>
-
+                        </Form.Item>
+                        : <a onClick={() => this.addInstructions(record._id, true)}>+ Add Instructions</a>}
                 </div>
-
-            }, {
-                title: '',
-                dataIndex: 'action',
-                key: 'action',
-                render: (instructions, record) => <Form.Item>
-                    <Button icon={"close"} onClick={() => this.removeDrug(record._id)} type={"danger"} shape="circle"
-                            size="small"/>
+        }, {
+            title: "Timing",
+            dataIndex: "food_time",
+            key: 'food_time',
+            render: (timing, record) => <div>
+                <Form.Item key={`food_time[${record._id}]`}>
+                    {getFieldDecorator(`food_time[${record._id}]`, {
+                        initialValue: record.food_time || 0
+                    })(
+                        <Radio.Group onChange={this.onChange}>
+                            <Radio value={1}>after</Radio>
+                            <Radio value={0}>before</Radio>
+                        </Radio.Group>
+                    )}
                 </Form.Item>
-            }];
+
+            </div>
+
+        }, {
+            title: '',
+            dataIndex: 'action',
+            key: 'action',
+            render: (instructions, record) => <Form.Item>
+                <Button icon={"close"} onClick={() => this.removeDrug(record._id)} type={"danger"} shape="circle"
+                        size="small"/>
+            </Form.Item>
+        }];
         const labTablecolums = [{
             title: 'Name',
             dataIndex: 'name',

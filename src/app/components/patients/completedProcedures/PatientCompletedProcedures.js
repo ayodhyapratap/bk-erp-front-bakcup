@@ -279,7 +279,6 @@ class PatientCompletedProcedures extends React.Component {
                                            footer={() => treatmentFooter(treatment)}
                                            pagination={false}
                                            key={treatment.id}/>
-
                                 </Card>
                             )}
                             <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
@@ -292,6 +291,15 @@ class PatientCompletedProcedures extends React.Component {
         }
         else {
             return <div>
+                <Card
+                    bodyStyle={{padding: 0}}
+                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Completed Procedures" : "Completed Procedures "}
+                    extra={<Button.Group>
+                        <Button onClick={() => this.props.togglePatientListModal(true)}>
+                            <Icon
+                                type="plus"/>Add
+                        </Button>
+                    </Button.Group>}/>
                 {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
                                                                     key={treatment.id}
                                                                     style={{marginTop: 15}}>

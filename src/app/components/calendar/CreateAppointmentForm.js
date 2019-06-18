@@ -60,7 +60,8 @@ export default class CreateAppointmentForm extends React.Component {
             timeToCheckBlock: {
                 schedule_at: moment(),
                 slot: 10,
-            }
+            },
+            procedureObjectsById: {}
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -73,6 +74,7 @@ export default class CreateAppointmentForm extends React.Component {
     }
 
     componentDidMount() {
+        let that = this;
         this.loadDoctors();
         this.loadProcedureCategory();
         this.loadTreatmentNotes();
@@ -80,8 +82,18 @@ export default class CreateAppointmentForm extends React.Component {
         this.loadPracticeTiming()
         if (this.props.match.params.appointmentid) {
             this.loadAppointment();
-        } else {
-            // this.findBlockedTiming();
+        } else if (this.props.history && this.props.history.location.search) {
+            let pairValueArray = this.props.history.location.search.substr(1).split('&');
+            if (pairValueArray.length) {
+                pairValueArray.forEach(function (item) {
+                    let keyValue = item.split('=');
+                    if (keyValue && keyValue.length == 2) {
+                        if (keyValue[0] == 'patient' && keyValue[1]) {
+                            that.handlePatientSelect(keyValue[1])
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -361,8 +373,13 @@ export default class CreateAppointmentForm extends React.Component {
     loadProcedureCategory() {
         let that = this;
         let successFn = function (data) {
+            let obj = {};
+            data.forEach(function (item) {
+                obj[item.id] = item
+            })
             that.setState({
-                procedure_category: data
+                procedure_category: data,
+                procedureObjectsById: {...obj}
             })
         }
         let errorFn = function () {
@@ -444,6 +461,22 @@ export default class CreateAppointmentForm extends React.Component {
                     formData.patient = this.state.patientDetails;
                 }
                 formData.practice = that.props.active_practiceId;
+                formData.treatment_plans = []
+                values.procedure.forEach(function (id) {
+                    let item = that.state.procedureObjectsById[id];
+                    formData.treatment_plans.push({
+                        "procedure": item.id,
+                        "cost": item.cost,
+                        "quantity": 1,
+                        "margin": item.margin,
+                        "default_notes": item.default_notes,
+                        "is_active": true,
+                        "is_completed": false,
+                        "discount": item.discount,
+                        "discount_type": "%",
+                    })
+                });
+                delete formData.procedure;
                 console.log(formData);
                 let successFn = function (data) {
                     that.setState({
@@ -473,15 +506,12 @@ export default class CreateAppointmentForm extends React.Component {
 
     }
     handlePatientSelect = (event) => {
-        console.log(event);
         if (event) {
             let that = this;
             let successFn = function (data) {
                 that.setState({
                     patientDetails: data
-
                 });
-                // console.log("event",that.state.patientDetails);
             };
             let errorFn = function () {
             };
@@ -665,10 +695,10 @@ export default class CreateAppointmentForm extends React.Component {
                         )}
                     </FormItem>
                     <FormItem key="procedure" {...formItemLayout} label="Procedures Planned">
-                        {getFieldDecorator("procedure", {initialValue: this.state.appointment ? this.state.appointment.procedure : null}, {
+                        {getFieldDecorator("procedure", {initialValue: this.state.appointment ? this.state.appointment.procedure : []}, {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
-                            <Select placeholder="Procedures Planned" >
+                            <Select placeholder="Procedures Planned" mode={"multiple"}>
                                 {this.state.procedure_category && this.state.procedure_category.map((drug) =>
                                     <Select.Option
                                         value={drug.id}>{drug.name}</Select.Option>

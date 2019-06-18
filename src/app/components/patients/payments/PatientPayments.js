@@ -29,7 +29,7 @@ class PatientPayments extends React.Component {
     }
 
 
-    loadPayments=(page = 1)=> {
+    loadPayments = (page = 1) => {
         let that = this;
         this.setState({
             loading: true
@@ -169,44 +169,31 @@ class PatientPayments extends React.Component {
         }
         else {
             return <div>
+                <Card
+                    bodyStyle={{padding: 0}}
+                    title={this.state.currentPatient ? this.state.currentPatient.name + " Payments" : "Payments"}
+                    extra={<Button.Group>
+                        <Button onClick={() => this.props.togglePatientListModal(true)}>
+                            <Icon type="plus"/>Add
+                        </Button>
+                    </Button.Group>}>
+                </Card>
+                {this.state.payments.map(payment => <div>
 
-                <Switch>
-                    <Route exact path='/patient/:id/billing/payments/add'
-                           render={(route) => <AddPaymentForm {...this.state} {...route}
-                                                              loadData={this.loadPayments}/>}/>
-                    <Route exact path='/patient/:id/billing/payments/edit'
-                           render={(route) => <AddPayment {...this.state} {...route}/>}/>
-                    <Route>
-                        <div>
-                            <Alert banner showIcon type={"info"}
-                                   message={"The payments shown are only for the current selected practice!"}/>
-                            <Card
-                                bodyStyle={{padding: 0}}
-                                title={this.state.currentPatient ? this.state.currentPatient.name + " Payments" : "Payments"}
-                                extra={<Button.Group>
-                                    <Link
-                                        to={"/patient/" + this.props.match.params.id + "/billing/payments/add"}><Button><Icon
-                                        type="plus"/>Add</Button></Link>
-                                </Button.Group>}>
-                            </Card>
-                            {this.state.payments.map(payment => <div>
+                    <Card style={{marginTop: 20}}>
+                        <h4>{payment.created_at ? moment(payment.created_at).format('lll') : null}</h4>
+                        <Table loading={this.state.loading} columns={columns}
+                               pagination={false}
+                               dataSource={payment.invoices}/>
+                    </Card>
+                </div>)}
+                <Spin spinning={this.state.loading}>
+                    <Row/>
+                </Spin>
+                <InfiniteFeedLoaderButton loaderFunction={() => this.loadPayments(that.state.next)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.next}/>
 
-                                <Card style={{marginTop: 20}}>
-                                    <h4>{payment.created_at ? moment(payment.created_at).format('lll') : null}</h4>
-                                    <Table loading={this.state.loading} columns={columns}
-                                           pagination={false}
-                                           dataSource={payment.invoices}/>
-                                </Card>
-                            </div>)}
-                            <Spin spinning={this.state.loading}>
-                                <Row/>
-                            </Spin>
-                            <InfiniteFeedLoaderButton loaderFunction={() => this.loadPayments(that.state.next)}
-                                                      loading={this.state.loading}
-                                                      hidden={!this.state.next}/>
-                        </div>
-                    </Route>
-                </Switch>
             </div>
         }
 

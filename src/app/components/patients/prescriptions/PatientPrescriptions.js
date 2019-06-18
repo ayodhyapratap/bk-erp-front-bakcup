@@ -53,7 +53,7 @@ class PatientPrescriptions extends React.Component {
     loadPrescriptions(page = 1) {
         let that = this;
         this.setState({
-            loading:true
+            loading: true
         })
         let successFn = function (data) {
             that.setState({
@@ -103,8 +103,7 @@ class PatientPrescriptions extends React.Component {
 
         }
         let errorFn = function () {
-            that.setState({
-            })
+            that.setState({})
 
         }
         getAPI(interpolate(DRUG_CATALOG, [this.props.active_practiceId]), successFn, errorFn)
@@ -253,6 +252,14 @@ class PatientPrescriptions extends React.Component {
         }
         else {
             return <div>
+                <Card
+                    bodyStyle={{padding: 0}}
+                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Prescriptions" : "Prescriptions"}
+                    extra={<Button.Group style={{float: 'right'}}>
+                        <Button type={"primary"} onClick={() => this.props.togglePatientListModal(true)}>
+                            <Icon type="plus"/>Add
+                        </Button>
+                    </Button.Group>}/>
                 {this.state.prescription.map((presc) => <div key={presc.id}>
 
                     <Card style={{margin: 10, marginBottom: 20}}

@@ -307,9 +307,17 @@ class PatientVitalSign extends React.Component {
         }
         else {
             return <div>
-                <CustomizedTable loading={this.state.loading} columns={columns}
-                                 pagination={false}
-                                 dataSource={this.state.vitalsign}/>
+                <Card
+                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Vital Sign" : "Patient Vital Sign"}
+                    extra={<Button.Group>
+                        <Button type={"primary"} onClick={() => this.props.togglePatientListModal(true)}>
+                            <Icon type="plus"/>Add
+                        </Button>
+                    </Button.Group>}>
+                    <CustomizedTable loading={this.state.loading} columns={columns}
+                                     pagination={false}
+                                     dataSource={this.state.vitalsign}/>
+                </Card>
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadInvoices(that.state.next)}
                                           loading={this.state.loading}
                                           hidden={!this.state.next}/>

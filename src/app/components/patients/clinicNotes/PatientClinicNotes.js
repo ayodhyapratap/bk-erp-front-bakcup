@@ -306,6 +306,13 @@ class PatientClinicNotes extends React.Component {
         }
         else {
             return <div>
+                <Card bodyStyle={{padding: 0}}
+                      title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Clinic Notes" : "Clinic Notes"}
+                      extra={<Button.Group>
+                              <Button type={"primary"} onClick={() => this.props.togglePatientListModal(true)}>
+                                  <Icon type="plus"/>Add
+                              </Button>
+                      </Button.Group>}/>
                 {this.state.clinicNotes.map(clinicNote => <Card style={{marginTop: 20}} key={clinicNote.id}>
                     <div style={{padding: 16}}>
                         <h4>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}

@@ -323,6 +323,18 @@ class PatientTreatmentPlans extends React.Component {
             </div>
         } else {
             return <div>
+                <Card
+                    bodyStyle={{padding: 0}}
+                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " TreatmentPlans" : "TreatmentPlans"}
+                    extra={<Button.Group>
+                        <Button onClick={this.submitCompleteTreatment}>
+                            <Icon type="save"/>Save
+                        </Button>
+                        <Button type={"primary"} onClick={() => this.props.togglePatientListModal(true)}>
+                            <Icon type="plus"/>Add
+                        </Button>
+                    </Button.Group>
+                    }/>
                 <Spin spinning={this.state.loading}>
                     {this.state.treatmentPlans.map((treatment) => <Card bodyStyle={{padding: 0}}
                                                                         key={treatment.id}

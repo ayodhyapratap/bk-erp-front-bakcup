@@ -326,6 +326,16 @@ class PatientInvoices extends React.Component {
             </div>
         } else {
             return <div>
+                <Card
+                    bodyStyle={{padding: 0}}
+                    style={{marginBottom: '20px'}}
+                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Invoice" : "Invoice"}
+                    extra={<Button.Group>
+                            <Button type={"primary"} onClick={() => this.props.togglePatientListModal(true)}>
+                                <Icon type="plus"/>Add
+                            </Button>
+                    </Button.Group>}>
+                </Card>
                 {/*<Alert banner showIcon type={"info"}*/}
                 {/*message={"The invoices shown are only for the current selected practice!"}/>*/}
                 {this.state.invoices.map(invoice => <div style={{marginBottom: '20px'}} key={invoice.id}>
