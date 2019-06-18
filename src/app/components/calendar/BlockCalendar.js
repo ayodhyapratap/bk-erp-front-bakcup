@@ -75,7 +75,7 @@ class BlockCalendar extends React.Component {
    
    
     render(){
-        console.log("Doctor list",this.state.practiceDoctors)
+        // console.log("Doctor list",this.state.practiceDoctors)
         let that = this;
         const {getFieldDecorator} = this.props.form;
  
