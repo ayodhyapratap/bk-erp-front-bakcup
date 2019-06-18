@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Col, Icon, List, Modal, Radio, Row, Checkbox, Menu, Dropdown, Input, Popconfirm} from "antd";
-import {getAPI, postAPI, putAPI, interpolate, makeFileURL} from "../../../utils/common";
+import {getAPI, postAPI, putAPI, interpolate, makeFileURL,displayMessage} from "../../../utils/common";
 import {
     ALL_PATIENT_FILES,
     EMR_FILETAGS,
@@ -16,7 +16,7 @@ import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import Meta from "antd/lib/card/Meta";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import ModalImage from "react-modal-image";
-import { object } from "prop-types";
+import {ERROR_MSG_TYPE, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 
 class PatientFiles extends React.Component {
     constructor(props) {
@@ -205,11 +205,13 @@ class PatientFiles extends React.Component {
         let reqData={
             id:item.id,
             patient:that.props.currentPatient.id,
-            id_active:false
+            is_active:false
         }
         let successFn =function(data){
+                that.loadData();
         }
         let errorFn = function(){
+            displayMessage(ERROR_MSG_TYPE, "Please Select Patient.")
 
         }
         postAPI(interpolate(PATIENT_FILES,[this.props.match.params.id]),reqData,successFn,errorFn);

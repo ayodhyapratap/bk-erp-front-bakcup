@@ -52,6 +52,9 @@ class PatientLedgers extends React.Component{
         }];
         return <Row>
                 <Card title="Patient Ledgers"  extra={<Button.Group>
+                        <Button type="primary" >
+                            <Icon type="printer"/>Print billing summary
+                        </Button>
                         <Link to={"/patient/"+ this.props.match.params.id +"/billing/payments"}> <Button
                             type="primary">
                             <Icon type="plus"/>&nbsp;Add Payment</Button> 
@@ -67,7 +70,7 @@ class PatientLedgers extends React.Component{
                         </Button>&nbsp;
 
                         <Button type="primary" onClick={this.submitLedgers}>
-                            <Icon type="save"/>Save
+                            <Icon type="save"/>Send Payment Reminder
                         </Button>
 
                        
