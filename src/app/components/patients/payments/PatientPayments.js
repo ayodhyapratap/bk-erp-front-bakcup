@@ -173,7 +173,7 @@ class PatientPayments extends React.Component {
                     bodyStyle={{padding: 0}}
                     title={this.state.currentPatient ? this.state.currentPatient.name + " Payments" : "Payments"}
                     extra={<Button.Group>
-                        <Button onClick={() => this.props.togglePatientListModal(true)}>
+                       <Button type={"primary"} onClick={() => that.props.togglePatientListModal(true)}>
                             <Icon type="plus"/>Add
                         </Button>
                     </Button.Group>}>

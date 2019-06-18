@@ -114,7 +114,6 @@ class PatientProfile extends React.Component {
     }
     render() {
         let that = this;
-        console.log("fff",this.state);
         if (this.props.currentPatient) {
             let patient = this.state.patientProfile;
             if (!patient)
