@@ -15,7 +15,7 @@ import {
     SAVE_ALL_PRINT_SETTINGS
 } from "../../../../constants/api";
 import {message} from "antd/lib/index";
-import {SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
+import {SINGLE_IMAGE_UPLOAD_FIELD, SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
 import {BACKEND_BASE_URL} from "../../../../config/connect";
 
 const {TextArea} = Input;
@@ -71,6 +71,13 @@ class PrintSettings extends React.Component {
                     type: that.state.type,
                     ...formData
                 }
+
+                let key = "logo_path";
+                if (reqData[key] && formData[key].file && formData[key].file.response)
+                    reqData[key] = formData[key].file.response.image_path;
+                else
+                    reqData[key] = that.state.print_setting.logo_path;
+
                 if (!reqData.save_for_all) {
                     reqData = {
                         ...reqData,
