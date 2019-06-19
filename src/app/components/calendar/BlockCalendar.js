@@ -9,7 +9,7 @@ import {
 } from "../../constants/dataKeys";
 import moment from "moment";
 import DynamicFieldsForm from "../common/DynamicFieldsForm";
-import {Form, Card, Row, Col,Popover, List,Button, DatePicker,TimePicker,Input,Select} from "antd";
+import {Form, Card, Row, Col,Popover, List,Button, DatePicker,TimePicker,Input,Select,Divider} from "antd";
 import {APPOINTMENT_PERPRACTICE_API, BLOCK_CALENDAR, PRACTICESTAFF} from "../../constants/api";
 import {displayMessage, getAPI, interpolate} from "../../utils/common";
 import { loadDoctors } from "../../utils/clinicUtils";
@@ -164,12 +164,14 @@ function AppointmentCard(appointment) {
     return <div style={{width: '100%'}}>
 
         <p style={{marginBottom: 0}}>
+        <Divider type="vertical" />
             <Popover placement="right"
                      content={<EventPatientPopover appointmentId={appointment.id}
                                                    key={appointment.id}/>}>
             <span
-                style={{width: 'calc(100% - 60px)'}}><b>{moment(appointment.schedule_at).format("LT")}</b>&nbsp;
+                style={{width: 'calc(100% - 60px)'}}><b>{moment(appointment.schedule_at).format("LLL")}</b>&nbsp;
                 {appointment.patient.user.first_name}</span>
+            <p color={{color:appointment.calendar_colour}}><Divider type="vertical"/><span>{appointment.doctor_data.user.first_name}</span></p>
             </Popover>
         </p>
     </div>;
