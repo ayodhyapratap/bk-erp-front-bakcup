@@ -21,6 +21,7 @@ import {
     WAITING_STATUS
 } from "../../constants/hardData";
 import EventPatientPopover from "./EventPatientPopover";
+import { tag } from "postcss-selector-parser";
 
 class BlockCalendar extends React.Component {
     constructor(props) {
@@ -171,7 +172,7 @@ function AppointmentCard(appointment) {
             <span
                 style={{width: 'calc(100% - 60px)'}}><b>{moment(appointment.schedule_at).format("LLL")}</b>&nbsp;
                 {appointment.patient.user.first_name}</span>
-            <p color={{color:appointment.calendar_colour}}><Divider type="vertical"/><span>{appointment.doctor_data.user.first_name}</span></p>
+            <p style={{color:appointment.doctor_data ?appointment.doctor_data.calendar_colour:null}}><Divider type="vertical"/><span>{appointment.doctor_data ? appointment.doctor_data.user.first_name:null}</span></p>
             </Popover>
         </p>
     </div>;
