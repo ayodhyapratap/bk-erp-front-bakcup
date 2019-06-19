@@ -357,7 +357,7 @@ function treatmentFooter(presc) {
 
         return <div>
             {presc.doctor ? <Tag color={presc.doctor ? presc.doctor.calendar_colour : null}>
-                <b>{"prescribed by  " + presc.doctor.user.first_name} </b>
+                <b>{"Completed by  " + presc.doctor.user.first_name} </b>
             </Tag> : null}
             {presc.practice ? <Tag style={{float: 'right'}}>
                 <Tooltip title="Practice Name">
