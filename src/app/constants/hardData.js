@@ -195,3 +195,9 @@ export const DEFAULT_BP_METHOD=[
     {label:"Sitting",value:"Sitting"},
     {label:"Standing" ,value:"Standing"}
 ];
+
+export const APPOINTMENT_STATUS =[
+    {label:"Scheduled",value:SCHEDULE_STATUS},
+    {label:"Cancelled",value:CANCELLED_STATUS},
+    {label:"Engaged",value:ENGAGED_STATUS}
+]
