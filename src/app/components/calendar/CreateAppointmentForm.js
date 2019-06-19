@@ -30,7 +30,7 @@ import {
 import {Checkbox, Radio} from "antd/lib/index";
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../utils/common";
 import {Redirect} from "react-router-dom";
-import {DAY_KEYS} from "../../constants/hardData";
+import {DAY_KEYS ,APPOINTMENT_STATUS} from "../../constants/hardData";
 
 const {TextArea} = Input;
 const FormItem = Form.Item;
@@ -71,6 +71,7 @@ export default class CreateAppointmentForm extends React.Component {
         this.searchPatient = this.searchPatient.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.loadAppointment = this.loadAppointment.bind(this);
+        console.log("props",this.props);
     }
 
     componentDidMount() {
@@ -444,6 +445,7 @@ export default class CreateAppointmentForm extends React.Component {
         let patient = {};
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
+            console.log('value',values);
             if (!err) {
                 that.setState({
                     saving: true
@@ -566,6 +568,7 @@ export default class CreateAppointmentForm extends React.Component {
             appointmentTime = new moment(new Date()).format();
         }
         const fields = [];
+        console.log("patientDetails",this.state.patientDetails);
         return <Card loading={this.state.loading}>
             <Spin spinning={this.state.saving}>
                 <Form onSubmit={this.handleSubmit}>
@@ -706,6 +709,19 @@ export default class CreateAppointmentForm extends React.Component {
                             </Select>
                         )}
                     </FormItem>
+                    {this.state.appointment ?
+                        <FormItem key="status" {...formItemLayout} label="Status">
+                            {getFieldDecorator("status", {initialValue:this.state.appointment.status})
+                            (
+                                <Select placeholder="Status">
+                                    {APPOINTMENT_STATUS.map((option) => <Select.Option
+                                        value={option.value}>{option.label}</Select.Option>)}
+                                </Select>
+                            )}
+                        </FormItem>:null
+                    }
+                    
+
                     <FormItem key="notes" {...formItemLayout} label="Notes">
                         {getFieldDecorator("notes", {initialValue: this.state.appointment ? this.state.appointment.notes : null}, {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
