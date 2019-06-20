@@ -1,4 +1,4 @@
-import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag, Spin, Tooltip,Avatar} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag, Spin, Tooltip, Avatar} from "antd";
 import React from "react";
 import {getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {INVOICES_API, PATIENT_CLINIC_NOTES_API, CLINIC_NOTES_PDF} from "../../../constants/api";
@@ -188,60 +188,51 @@ class PatientClinicNotes extends React.Component {
                             {/*<Table loading={this.state.loading} columns={columns} dataSource={this.state.clinicNotes}/>*/}
 
                         </Card>
-                        {this.state.clinicNotes.map(clinicNote => <Card style={{marginTop: 20}}>
-                            <div style={{padding: 16}}>
-                                <h4>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}
-                                    <Dropdown.Button
-                                        size={"small"}
-                                        style={{float: 'right'}}
-                                        overlay={<Menu>
-                                            <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}
-                                                       disabled={(clinicNote.practice && clinicNote.practice.id != this.props.active_practiceId)}>
-                                                <Icon type="edit"/>
-                                                Edit
-                                            </Menu.Item>
-                                            <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}
-                                                       disabled={(clinicNote.practice && clinicNote.practice.id != this.props.active_practiceId)}>
-                                                <Icon type="delete"/>
-                                                Delete
-                                            </Menu.Item>
-                                            <Menu.Divider/>
-                                            <Menu.Item key="3">
-                                                <Link to={"/patient/" + clinicNote.patient + "/emr/timeline"}>
-                                                    <Icon type="clock-circle"/>
-                                                    &nbsp;
-                                                    Patient Timeline
-                                                </Link>
-                                            </Menu.Item>
-                                        </Menu>}>
-                                        <a onClick={() => this.loadPDF(clinicNote.id)}><Icon type="printer"/></a>
+                        {this.state.clinicNotes.map(clinicNote => <Card
+                            style={{marginTop: 20}}
+                            title={<small>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}</small>}
+                            extra={<Dropdown.Button
+                                size={"small"}
+                                style={{float: 'right'}}
+                                overlay={<Menu>
+                                    <Menu.Item key="1"
+                                               onClick={() => that.editClinicNotesData(clinicNote)}
+                                               disabled={(clinicNote.practice && clinicNote.practice.id != this.props.active_practiceId)}>
+                                        <Icon type="edit"/>
+                                        Edit
+                                    </Menu.Item>
+                                    <Menu.Item key="2"
+                                               onClick={() => that.deleteClinicNote(clinicNote)}
+                                               disabled={(clinicNote.practice && clinicNote.practice.id != this.props.active_practiceId)}>
+                                        <Icon type="delete"/>
+                                        Delete
+                                    </Menu.Item>
+                                    <Menu.Divider/>
+                                    <Menu.Item key="3">
+                                        <Link
+                                            to={"/patient/" + clinicNote.patient + "/emr/timeline"}>
+                                            <Icon
+                                                type="clock-circle"/>
+                                            &nbsp;
+                                            Patient Timeline
+                                        </Link>
+                                    </Menu.Item>
+                                </Menu>}>
+                                <a onClick={() => this.loadPDF(clinicNote.id)}><Icon
+                                    type="printer"/>
+                                </a>
 
-                                    </Dropdown.Button>
-                                </h4>
-                            </div>
-                            <Divider style={{marginBottom:15}}/>
-                                <Row>
-                                    <Col span={6}>
-                                        <Avatar size="large" shape="square" icon="user" />
-                                        <span>&nbsp;&nbsp; {clinicNote.patient ? clinicNote.patient.user.first_name:null}</span>
-                                    </Col>
-                                    <Col span={6}>
-                                        <p>{clinicNote.patient?clinicNote.patient.gender:null}</p>
-                                    </Col>
-                                    <Col span={6}>
-                                        <p><b>ID : </b>{clinicNote.patient.id}</p>
-                                    </Col>
-                                    
-                                </Row>
-                            <Divider style={{margin: 0 ,marginTop:15}}/>
+                            </Dropdown.Button>}>
+
+
                             <Row>
                                 <Col span={6}>
                                     <h3>Complaints</h3>
                                 </Col>
                                 <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                                     <div style={{minHeight: 30}}>
-                                        {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                            <span>{str}<br/></span>) : null}
+                                        {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map((str, index) =>
+                                            <span>{index ? <br/> : null}{str}</span>) : null}
                                     </div>
                                     <Divider style={{margin: 0}}/>
                                 </Col>
@@ -252,8 +243,8 @@ class PatientClinicNotes extends React.Component {
                                 </Col>
                                 <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                                     <div style={{minHeight: 30}}>
-                                        {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                            <span>{str}<br/></span>) : null}
+                                        {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map((str, index) =>
+                                            <span>{index ? <br/> : null}{str}</span>) : null}
                                     </div>
                                     <Divider style={{margin: 0}}/>
                                 </Col>
@@ -264,8 +255,8 @@ class PatientClinicNotes extends React.Component {
                                 </Col>
                                 <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                                     <div style={{minHeight: 30}}>
-                                        {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                            <span>{str}<br/></span>) : null}
+                                        {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map((str, index) =>
+                                            <span>{index ? <br/> : null}{str}</span>) : null}
                                     </div>
                                     <Divider style={{margin: 0}}/>
                                 </Col>
@@ -276,8 +267,8 @@ class PatientClinicNotes extends React.Component {
                                 </Col>
                                 <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                                     <div style={{minHeight: 30}}>
-                                        {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                            <span>{str}<br/></span>) : null}
+                                        {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map((str, index) =>
+                                            <span>{index ? <br/> : null}{str}</span>) : null}
                                     </div>
                                     <Divider style={{margin: 0}}/>
                                 </Col>
@@ -288,8 +279,8 @@ class PatientClinicNotes extends React.Component {
                                 </Col>
                                 <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                                     <div style={{minHeight: 30}}>
-                                        {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                            <span>{str}<br/></span>) : null}
+                                        {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map((str, index) =>
+                                            <span>{index ? <br/> : null}{str}</span>) : null}
                                     </div>
                                     <Divider style={{margin: 0}}/>
                                 </Col>
@@ -323,64 +314,56 @@ class PatientClinicNotes extends React.Component {
                 <Card bodyStyle={{padding: 0}}
                       title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Clinic Notes" : "Clinic Notes"}
                       extra={<Button.Group>
-                              <Button type={"primary"} onClick={() => this.props.togglePatientListModal(true)}>
-                                  <Icon type="plus"/>Add
-                              </Button>
+                          <Button type={"primary"} onClick={() => this.props.togglePatientListModal(true)}>
+                              <Icon type="plus"/>Add
+                          </Button>
                       </Button.Group>}/>
-                {this.state.clinicNotes.map(clinicNote => <Card style={{marginTop: 20}} key={clinicNote.id}>
-                    <div style={{padding: 16}}>
-                        <h4>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}
-                            <Dropdown.Button
-                                size={"small"}
-                                style={{float: 'right'}}
-                                overlay={<Menu>
-                                    <Menu.Item key="1" onClick={() => that.editClinicNotesData(clinicNote)}
-                                               disabled={(clinicNote.practice && clinicNote.practice.id != this.props.active_practiceId)}>
-                                        <Icon type="edit"/>
-                                        Edit
-                                    </Menu.Item>
-                                    <Menu.Item key="2" onClick={() => that.deleteClinicNote(clinicNote)}
-                                               disabled={(clinicNote.practice && clinicNote.practice.id != this.props.active_practiceId)}>
-                                        <Icon type="delete"/>
-                                        Delete
-                                    </Menu.Item>
-                                    <Menu.Divider/>
-                                    <Menu.Item key="3">
-                                        <Link to={"/patient/" + clinicNote.patient + "/emr/timeline"}>
-                                            <Icon type="clock-circle"/>
-                                            &nbsp;
-                                            Patient Timeline
-                                        </Link>
-                                    </Menu.Item>
-                                </Menu>}>
-                                <a onClick={() => this.loadPDF(clinicNote.id)}><Icon type="printer"/></a>
-
-                            </Dropdown.Button>
-                        </h4>
-                    </div>
-                    <Divider style={{marginBottom:15}}/>
-                        <Row>
-                            <Col span={6}>
-                                <Avatar size="large" shape="square" icon="user" />
-                                <span>&nbsp;&nbsp; {clinicNote.patient ? clinicNote.patient.user.first_name:null}</span>
-                            </Col>
-                            <Col span={6}>
-                                <p>{clinicNote.patient?clinicNote.patient.gender:null}</p>
-                            </Col>
-                            <Col span={6}>
-                                <p><b>ID : </b>{clinicNote.patient.id}</p>
-                            </Col>
-                            
-                        </Row>
-                    <Divider style={{margin: 0 ,marginTop:15}}/>
+                {this.state.clinicNotes.map(clinicNote => <Card
+                    style={{marginTop: 10}} key={clinicNote.id}
+                    extra={<Dropdown.Button
+                        size={"small"}
+                        overlay={<Menu>
+                            <Menu.Item key="1"
+                                       onClick={() => that.editClinicNotesData(clinicNote)}
+                                       disabled={(clinicNote.practice && clinicNote.practice.id != this.props.active_practiceId)}>
+                                <Icon type="edit"/>
+                                Edit
+                            </Menu.Item>
+                            <Menu.Item key="2"
+                                       onClick={() => that.deleteClinicNote(clinicNote)}
+                                       disabled={(clinicNote.practice && clinicNote.practice.id != this.props.active_practiceId)}>
+                                <Icon type="delete"/>
+                                Delete
+                            </Menu.Item>
+                            <Menu.Divider/>
+                            <Menu.Item key="3">
+                                <Link
+                                    to={"/patient/" + clinicNote.patient + "/emr/timeline"}>
+                                    <Icon type="clock-circle"/>
+                                    &nbsp;
+                                    Patient Timeline
+                                </Link>
+                            </Menu.Item>
+                        </Menu>}>
+                        <a onClick={() => this.loadPDF(clinicNote.id)}><Icon
+                            type="printer"/></a>
+                    </Dropdown.Button>}
+                    title={<div>
+                        <small>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}
+                            <Link to={"/patient/" + clinicNote.patient.id + "/emr/clinicnotes"}>
+                                &nbsp;&nbsp; {clinicNote.patient.user ? clinicNote.patient.user.first_name : null} (ID: {clinicNote.patient.id})&nbsp;
+                            </Link>
+                            <span>, {clinicNote.patient.gender}</span>
+                        </small>
+                    </div>}>
                     <Row>
                         <Col span={6}>
                             <h3>Complaints</h3>
                         </Col>
                         <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                             <div style={{minHeight: 30}}>
-                                {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                    <span key={str}>{str}<br/></span>) : null}
+                                {clinicNote.chief_complaints ? clinicNote.chief_complaints.split(CUSTOM_STRING_SEPERATOR).map((str, index) =>
+                                    <span key={str}>{index ? <br/> : null}{str}</span>) : null}
                             </div>
                             <Divider style={{margin: 0}}/>
                         </Col>
@@ -391,8 +374,8 @@ class PatientClinicNotes extends React.Component {
                         </Col>
                         <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                             <div style={{minHeight: 30}}>
-                                {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                    <span key={str}>{str}<br/></span>) : null}
+                                {clinicNote.observations ? clinicNote.observations.split(CUSTOM_STRING_SEPERATOR).map((str, index) =>
+                                    <span key={str}>{index ? <br/> : null}{str}</span>) : null}
                             </div>
                             <Divider style={{margin: 0}}/>
                         </Col>
@@ -403,8 +386,8 @@ class PatientClinicNotes extends React.Component {
                         </Col>
                         <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                             <div style={{minHeight: 30}}>
-                                {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                    <span key={str}>{str}<br/></span>) : null}
+                                {clinicNote.investigations ? clinicNote.investigations.split(CUSTOM_STRING_SEPERATOR).map((str, index) =>
+                                    <span key={str}>{index ? <br/> : null}{str}</span>) : null}
                             </div>
                             <Divider style={{margin: 0}}/>
                         </Col>
@@ -415,8 +398,8 @@ class PatientClinicNotes extends React.Component {
                         </Col>
                         <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                             <div style={{minHeight: 30}}>
-                                {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                    <span key={str}>{str}<br/></span>) : null}
+                                {clinicNote.diagnosis ? clinicNote.diagnosis.split(CUSTOM_STRING_SEPERATOR).map((str, index) =>
+                                    <span key={str}>{index ? <br/> : null}{str}</span>) : null}
                             </div>
                             <Divider style={{margin: 0}}/>
                         </Col>
@@ -427,8 +410,8 @@ class PatientClinicNotes extends React.Component {
                         </Col>
                         <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
                             <div style={{minHeight: 30}}>
-                                {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map(str =>
-                                    <span key={str}>{str}<br/></span>) : null}
+                                {clinicNote.notes ? clinicNote.notes.split(CUSTOM_STRING_SEPERATOR).map((str, index) =>
+                                    <span key={str}>{index ? <br/> : null}{str}</span>) : null}
                             </div>
                             <Divider style={{margin: 0}}/>
                         </Col>

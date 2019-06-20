@@ -1,6 +1,6 @@
 import React from "react";
 
-import {Button, Card, Checkbox, Divider, Icon, Spin, Table, Tag, Row, Alert} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Spin, Table, Tag, Row, Alert, Tooltip} from "antd";
 import {getAPI, interpolate} from "../../../utils/common";
 import {PAYMENT_MODES, INVOICES_API, PATIENT_PAYMENTS_API, TAXES} from "../../../constants/api";
 import moment from "moment";
@@ -113,16 +113,6 @@ class PatientPayments extends React.Component {
                 paymentmodes[mode.id] = mode.mode;
             })
         }
-        const columns = [{
-            title: 'INVOICE',
-            dataIndex: 'invoice',
-            key: 'invoice',
-            render: invoice => <span>INV{invoice}</span>,
-        }, {
-            title: 'Amount Paid',
-            key: 'pay_amount',
-            dataIndex: 'pay_amount'
-        }];
 
 
         if (this.props.match.params.id) {
@@ -147,15 +137,7 @@ class PatientPayments extends React.Component {
                                         type="plus"/>Add</Button></Link>
                                 </Button.Group>}>
                             </Card>
-                            {this.state.payments.map(payment => <div>
-
-                                <Card style={{marginTop: 20}}>
-                                    <h4>{payment.created_at ? moment(payment.created_at).format('lll') : null}</h4>
-                                    <Table loading={this.state.loading} columns={columns}
-                                           pagination={false}
-                                           dataSource={payment.invoices}/>
-                                </Card>
-                            </div>)}
+                            {this.state.payments.map(payment => PaymentCard(payment, this))}
                             <Spin spinning={this.state.loading}>
                                 <Row/>
                             </Spin>
@@ -173,34 +155,12 @@ class PatientPayments extends React.Component {
                     bodyStyle={{padding: 0}}
                     title={this.state.currentPatient ? this.state.currentPatient.name + " Payments" : "Payments"}
                     extra={<Button.Group>
-                       <Button type={"primary"} onClick={() => that.props.togglePatientListModal(true)}>
+                        <Button type={"primary"} onClick={() => that.props.togglePatientListModal(true)}>
                             <Icon type="plus"/>Add
                         </Button>
                     </Button.Group>}>
                 </Card>
-                {this.state.payments.map(payment => <div>
-
-                    <Card style={{marginTop: 20}}>
-                        {payment.patient_data?
-                        <h4>{payment.created_at ? moment(payment.created_at).format('lll') : null}
-                                <Link to={"/patient/"+ payment.patient_data.id +"/billing/payments"}>
-                                &nbsp;&nbsp; {payment.patient_data.user.first_name} (ID: {payment.patient_data.id})&nbsp;
-                                </Link>
-                                <span>, {payment.patient_data.gender}</span></h4>
-                                :<h4>{payment.created_at ? moment(payment.created_at).format('lll') : null}
-                                <Link to={"/patient/billing/payments"}>
-                                &nbsp;&nbsp; {payment.patient_data ? payment.patient_data.user.first_name:null} (ID: {payment.patient_data?payment.patient_data.id:null})&nbsp;
-                            </Link>
-                                <span>, {payment.patient_data ?payment.patient_data.gender:null}</span>
-                            </h4>
-                        }
-                       
-                        
-                        <Table loading={this.state.loading} columns={columns}
-                               pagination={false}
-                               dataSource={payment.invoices}/>
-                    </Card>
-                </div>)}
+                {this.state.payments.map(payment => PaymentCard(payment, this))}
                 <Spin spinning={this.state.loading}>
                     <Row/>
                 </Spin>
@@ -215,3 +175,47 @@ class PatientPayments extends React.Component {
 }
 
 export default PatientPayments;
+
+const columns = [{
+    title: 'INVOICE',
+    dataIndex: 'invoice',
+    key: 'invoice',
+    render: invoice => <span>INV{invoice}</span>,
+}, {
+    title: 'Amount Paid',
+    key: 'pay_amount',
+    dataIndex: 'pay_amount'
+}];
+
+function PaymentCard(payment, that) {
+    return <Card style={{marginTop: 10}}
+                 bodyStyle={{padding: 0}}
+                 title={(payment.patient_data && !that.props.currentPatient ?
+                     <small>{payment.created_at ? moment(payment.created_at).format('lll') : null}
+                         <Link to={"/patient/" + payment.patient_data.id + "/billing/payments"}>
+                             &nbsp;&nbsp; {payment.patient_data.user.first_name} (ID: {payment.patient_data.id})&nbsp;
+                         </Link>
+                         <span>, {payment.patient_data.gender}</span></small>
+                     : <small>{payment.created_at ? moment(payment.created_at).format('lll') : null}</small>)}>
+        <Table columns={columns}
+               pagination={false}
+               footer={() => PaymentFooter({practice: payment.practice_data})}
+               dataSource={payment.invoices}/>
+    </Card>
+}
+
+function PaymentFooter(presc) {
+    if (presc) {
+        return <p>
+            {presc.doctor ? <Tooltip title="Doctor"><Tag color={presc.doctor ? presc.doctor.calendar_colour : null}>
+                <b>{"prescribed by  " + presc.doctor.user.first_name} </b>
+            </Tag></Tooltip> : null}
+            {presc.practice ? <Tag style={{float: 'right'}}>
+                <Tooltip title="Practice Name">
+                    <b>{presc.practice.name} </b>
+                </Tooltip>
+            </Tag> : null}
+        </p>
+    }
+    return null
+}

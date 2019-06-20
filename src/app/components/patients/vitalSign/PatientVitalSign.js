@@ -121,10 +121,6 @@ class PatientVitalSign extends React.Component {
             key: 'name',
             render: created_at => <span>{moment(created_at).format('LLL')}</span>,
         },{
-            title: 'Patient Name',
-            dataIndex: 'patient_data.user.first_name',
-            key: 'patient_name',
-        }, {
             title: 'Temp(F)',
             key: 'temperature',
             render: (text, record) => (
@@ -295,7 +291,7 @@ class PatientVitalSign extends React.Component {
                                 </LineChart>
                             </Tabs.TabPane>
                             <Tabs.TabPane tab={"Details"} key={2}>
-                                <CustomizedTable loading={this.state.loading} columns={columns}
+                                <CustomizedTable columns={columns}
                                                  pagination={false}
                                                  dataSource={this.state.vitalsign}/>
                                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadInvoices(that.state.next)}
@@ -312,16 +308,29 @@ class PatientVitalSign extends React.Component {
         else {
             return <div>
                 <Card
+                    bodyStyle={{padding: 0}}
                     title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Vital Sign" : "Patient Vital Sign"}
                     extra={<Button.Group>
                         <Button type={"primary"} onClick={() => this.props.togglePatientListModal(true)}>
                             <Icon type="plus"/>Add
                         </Button>
-                    </Button.Group>}>
-                    <CustomizedTable loading={this.state.loading} columns={columns}
-                                     pagination={false}
-                                     dataSource={this.state.vitalsign}/>
-                </Card>
+                    </Button.Group>}/>
+                {this.state.vitalsign.map(vitalsign => <div>
+                    <Card style={{marginTop: 10}}
+                          title={<small>{vitalsign.date ? moment(vitalsign.date).format('ll') : null}
+                              <Link to={"/patient/" + vitalsign.patient_data.id + "/emr/vitalsigns"}>
+                                  &nbsp;&nbsp; {vitalsign.patient_data.user ? vitalsign.patient_data.user.first_name : null} (ID: {vitalsign.patient_data.id})&nbsp;
+                              </Link>
+                              <span>, {vitalsign.patient_data.gender}</span>
+                          </small>}
+                          bodyStyle={{padding: 0}}>
+                        <Table columns={columns}
+                               pagination={false}
+                               dataSource={[vitalsign]}/>
+                    </Card>
+                </div>)}
+
+
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadInvoices(that.state.next)}
                                           loading={this.state.loading}
                                           hidden={!this.state.next}/>
