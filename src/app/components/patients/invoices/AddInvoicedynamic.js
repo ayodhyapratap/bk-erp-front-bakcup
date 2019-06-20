@@ -63,6 +63,32 @@ class Addinvoicedynamic extends React.Component {
         this.loadProcedures();
         this.loadPrescriptions();
         this.loadTaxes();
+        if (this.props.editId) {
+            let invoice = this.props.editInvoice;
+            this.setState(function (prevState) {
+                let tableValues = [];
+                invoice.procedure.forEach(function (proc) {
+                    tableValues.push({
+                        ...proc,
+                        selectedDoctor: proc.doctor_data,
+                        selectedDate: moment(proc.date).isValid() ? moment(proc.date) : null,
+                        _id: Math.random().toFixed(7),
+                        item_type: PROCEDURES
+                    })
+                });
+                invoice.inventory.forEach(function (proc) {
+                    tableValues.push({
+                        ...proc,
+                        selectedDoctor: proc.doctor_data,
+                        _id: Math.random().toFixed(7),
+                        item_type: INVENTORY
+                    })
+                });
+                return {
+                    tableFormValues: tableValues
+                }
+            })
+        }
     }
 
     loadInventoryItemList() {
@@ -252,7 +278,7 @@ class Addinvoicedynamic extends React.Component {
                     date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
                 };
                 that.state.tableFormValues.forEach(function (item) {
-                    item.quantity = values.quantity[item._id];
+                    item.unit = values.unit[item._id];
                     item.taxes = values.taxes[item._id];
                     item.unit_cost = values.unit_cost[item._id];
                     item.discount = values.discount[item._id];
@@ -261,7 +287,7 @@ class Addinvoicedynamic extends React.Component {
                         case PROCEDURES:
                             reqData.procedure.push({
                                 "name": item.name,
-                                "unit": item.quantity,
+                                "unit": item.unit,
                                 "procedure": item.id,
                                 "default_notes": null,
                                 "is_active": true,
@@ -387,7 +413,7 @@ class Addinvoicedynamic extends React.Component {
                             <span><br/>by &nbsp;&nbsp;</span>
                             <Dropdown placement="topCenter" overlay={<Menu>
                                 {that.state.practiceDoctors.map(doctor =>
-                                    <Menu.Item key="0">
+                                    <Menu.Item key={doctor.id}>
                                         <a onClick={() => that.selectDoctor(doctor, record._id, PROCEDURES)}>{doctor.user.first_name}</a>
                                     </Menu.Item>)}
                             </Menu>} trigger={['click']}>
@@ -422,32 +448,32 @@ class Addinvoicedynamic extends React.Component {
             width: 100,
             dataIndex: 'unit',
             render: (item, record) => (record.item_type == INVENTORY ? <Form.Item
-                key={`quantity[${record._id}]`}
+                key={`unit[${record._id}]`}
                 {...formItemLayout}>
-                {getFieldDecorator(`quantity[${record._id}]`, {
+                {getFieldDecorator(`unit[${record._id}]`, {
                     validateTrigger: ['onChange', 'onBlur'],
-                    initialValue: record.selectedBatch ? 1 : null,
+                    initialValue: record.unit ? 1 : null,
                     rules: [{
                         required: true,
                         message: "This field is required.",
                     }],
                 })(
                     <InputNumber min={1} max={(record.selectedBatch ? record.selectedBatch.quantity : 0)}
-                                 placeholder="quantity" size={'small'}
+                                 placeholder="units" size={'small'}
                                  disabled={!record.selectedBatch}/>
                 )}
             </Form.Item> : <Form.Item
-                key={`quantity[${record._id}]`}
+                key={`unit[${record._id}]`}
                 {...formItemLayout}>
-                {getFieldDecorator(`quantity[${record._id}]`, {
-                    initialValue: 0,
+                {getFieldDecorator(`unit[${record._id}]`, {
+                    initialValue: record.unit || 1,
                     validateTrigger: ['onChange', 'onBlur'],
                     rules: [{
                         required: true,
                         message: "This field is required.",
                     }],
                 })(
-                    <InputNumber min={1} max={100} placeholder="discount" size={'small'}/>
+                    <InputNumber min={1} max={100} placeholder="unit" size={'small'}/>
                 )}
             </Form.Item>)
         }, {
@@ -460,6 +486,7 @@ class Addinvoicedynamic extends React.Component {
                 {...formItemLayout}>
                 {getFieldDecorator(`unit_cost[${record._id}]`, {
                     validateTrigger: ['onChange', 'onBlur'],
+                    initialValue: record.unit_cost,
                     rules: [{
                         required: true,
                         message: "This field is required.",
@@ -477,7 +504,7 @@ class Addinvoicedynamic extends React.Component {
                 key={`discount[${record._id}]`}
                 {...formItemLayout}>
                 {getFieldDecorator(`discount[${record._id}]`, {
-                    initialValue: 0,
+                    initialValue: record.discount,
                     validateTrigger: ['onChange', 'onBlur'],
 
                 })(
@@ -493,10 +520,11 @@ class Addinvoicedynamic extends React.Component {
                 key={`taxes[${record._id}]`}
                 {...formItemLayout}>
                 {getFieldDecorator(`taxes[${record._id}]`, {
+                    initialValue: record.taxes,
                     validateTrigger: ['onChange', 'onBlur'],
 
                 })(
-                    <Select placeholder="Batch Number" size={'small'} mode={"multiple"}>{taxesOption}</Select>
+                    <Select placeholder="Taxes" size={'small'} mode={"multiple"}>{taxesOption}</Select>
                 )}
             </Form.Item>
         },]);
@@ -510,7 +538,8 @@ class Addinvoicedynamic extends React.Component {
         }]);
 
         return <div>
-            <Card title={"Add Invoice"} bodyStyle={{padding: 0}}>
+            <Card title={this.props.editId ? "Edit Invoice (INV " + this.props.editId + ")" : "Add Invoice"}
+                  bodyStyle={{padding: 0}}>
                 <Row gutter={16}>
                     <Col span={7}>
                         <Tabs size="small" type="card">
