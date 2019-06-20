@@ -200,4 +200,5 @@ export const APPOINTMENT_STATUS =[
     {label:"Scheduled",value:SCHEDULE_STATUS},
     {label:"Cancelled",value:CANCELLED_STATUS},
     {label:"Engaged",value:ENGAGED_STATUS}
-]
+];
+export const MAILED ='true'
