@@ -6,7 +6,8 @@ import {
     EMR_FILETAGS,
     PATIENT_FILES,
     MEDICAL_CERTIFICATE_API,
-    MEDICAL_CERTIFICATE_PDF
+    MEDICAL_CERTIFICATE_PDF,
+    ALL_MEDICAL_CERITICATE_API
 } from "../../../constants/api";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Form} from "antd/lib/index";
@@ -87,6 +88,11 @@ class PatientFiles extends React.Component {
         } else if (this.state.filterSearchTag == '') {
             apiParams.notag = true
         }
+        // if(this.state.filterSearchEmailed){
+        //     apiParams.mailed=this.state.filterSearchEmailed
+        // }else{
+        //     apiParams.mailed=false
+        // }
         getAPI(PATIENT_FILES, successFn, errorFn, apiParams);
 
     }
@@ -110,14 +116,20 @@ class PatientFiles extends React.Component {
     loadMedicalCertificate() {
         let that = this;
         let successFn = function (data) {
+            console.log("Data",data)
             that.setState({
-                medicalCertificate: data,
+                medicalCertificate: data.results,
             })
         }
         let errorFn = function () {
 
         }
-        getAPI(interpolate(MEDICAL_CERTIFICATE_API, [this.props.currentPatient.id]), successFn, errorFn);
+        if(this.props.currentPatient){
+            getAPI(interpolate(MEDICAL_CERTIFICATE_API, [this.props.active_practiceId,this.props.currentPatient.id]), successFn, errorFn);
+        }else{
+            getAPI(interpolate(ALL_MEDICAL_CERITICATE_API ,[this.props.active_practiceId]), successFn, errorFn);
+        }
+        
     }
 
     triggerAddModal(option) {
@@ -183,12 +195,20 @@ class PatientFiles extends React.Component {
             that.loadData();
         })
     }
-
+    filterEmailed=(e)=>{
+        console.log("event",e);
+        let that=this;
+        this.setState({
+            filterSearchEmailed:e.target.value
+        },function(){
+            that.loadData();
+        })
+    }
     deleteMedicalCertificate(item) {
         let that = this;
         let reqData = {
             is_active: false,
-            patient: that.props.currentPatient.id,
+            patient: item.patient,
             id: item.id
         }
 
@@ -199,7 +219,7 @@ class PatientFiles extends React.Component {
         let errorFn = function () {
 
         };
-        postAPI(interpolate(MEDICAL_CERTIFICATE_API, [that.props.currentPatient.id]), reqData, successFn, errorFn);
+        postAPI(interpolate(MEDICAL_CERTIFICATE_API, [that.props.active_practiceId]), reqData, successFn, errorFn);
     }
     deleteFile(item){
         let that= this;
@@ -471,14 +491,14 @@ class PatientFiles extends React.Component {
 
                     </Radio.Group>
 
-                    <Radio.Group buttonStyle="solid" defaultValue="">
+                    <Radio.Group buttonStyle="solid" defaultValue="" onChange={this.filterEmailed}>
                         <h2>Generated Files</h2>
-                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="d">
+                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value='true'>
                             Emailed Files
                         </Radio.Button>
 
                         <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                      onClick={this.loadMedicalCertificate}>
+                                      onClick={this.loadMedicalCertificate} value=''>
                             Medical Leave Certificate </Radio.Button>
                     </Radio.Group>
                 </Col>
