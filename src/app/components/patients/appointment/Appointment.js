@@ -58,8 +58,7 @@ class Appointment extends React.Component {
         else {
             this.loadAllAppointments();
         }
-
-        console.log("id", this.props.match.params.id);
+        
     }
 
     loadAppointment(id) {
@@ -74,7 +73,7 @@ class Appointment extends React.Component {
                 loading: false,
 
             });
-            console.log("log", that.state.appointments)
+            
 
         }
 
@@ -195,6 +194,7 @@ class Appointment extends React.Component {
     }
 
     deleteAppointment(record) {
+        
         let that = this;
         let reqData = {'is_active': false, 'status': "Cancelled"}
         let successFn = function (data) {

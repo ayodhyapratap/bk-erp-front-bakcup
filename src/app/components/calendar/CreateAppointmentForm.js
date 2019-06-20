@@ -50,7 +50,7 @@ export default class CreateAppointmentForm extends React.Component {
             appointment: null,
             loading: false,
             patientListData: [],
-            patientDetails: null,
+            // patientDetails: null,
             appointmentDetail: null,
             saving: false,
             doctorBlock: false,
@@ -71,7 +71,7 @@ export default class CreateAppointmentForm extends React.Component {
         this.searchPatient = this.searchPatient.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.loadAppointment = this.loadAppointment.bind(this);
-        console.log("props",this.props);
+        
     }
 
     componentDidMount() {
@@ -445,7 +445,6 @@ export default class CreateAppointmentForm extends React.Component {
         let patient = {};
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            console.log('value',values);
             if (!err) {
                 that.setState({
                     saving: true
@@ -463,23 +462,23 @@ export default class CreateAppointmentForm extends React.Component {
                     formData.patient = this.state.patientDetails;
                 }
                 formData.practice = that.props.active_practiceId;
-                formData.treatment_plans = []
-                values.procedure.forEach(function (id) {
-                    let item = that.state.procedureObjectsById[id];
-                    formData.treatment_plans.push({
-                        "procedure": item.id,
-                        "cost": item.cost,
-                        "quantity": 1,
-                        "margin": item.margin,
-                        "default_notes": item.default_notes,
-                        "is_active": true,
-                        "is_completed": false,
-                        "discount": item.discount,
-                        "discount_type": "%",
-                    })
-                });
-                delete formData.procedure;
-                console.log(formData);
+                // formData.treatment_plans = []
+                // values.procedure.forEach(function (id) {
+                //     let item = that.state.procedureObjectsById[id];
+                //     formData.treatment_plans.push({
+                //         "procedure": item.id,
+                //         "cost": item.cost,
+                //         "quantity": 1,
+                //         "margin": item.margin,
+                //         "default_notes": item.default_notes,
+                //         "is_active": true,
+                //         "is_completed": false,
+                //         "discount": item.discount,
+                //         "discount_type": "%",
+                //     })
+                // });
+                // delete formData.procedure;
+                // console.log(formData);
                 let successFn = function (data) {
                     that.setState({
                         saving: false
@@ -520,11 +519,11 @@ export default class CreateAppointmentForm extends React.Component {
             getAPI(interpolate(PATIENT_PROFILE, [event]), successFn, errorFn);
         }
     }
-    handleChange = (event) => {
-        this.setState({})
+    // handleChange = (event) => {
+    //     this.setState({})
 
-        // this.setState({ value: event.target.value });
-    };
+    //     // this.setState({ value: event.target.value });
+    // };
     handleClick = (e) => {
 
         this.setState({
@@ -556,7 +555,6 @@ export default class CreateAppointmentForm extends React.Component {
                 treatmentNotesOption.push({label: drug.name, value: drug.id});
             })
         }
-        // console.log("doctor list",JSON.stringify(this.state.treatmentNotes));
         const categoryOptions = [];
         if (this.state.appointmentCategories) {
             this.state.appointmentCategories.forEach(function (category) {
@@ -568,10 +566,10 @@ export default class CreateAppointmentForm extends React.Component {
             appointmentTime = new moment(new Date()).format();
         }
         const fields = [];
-        console.log("patientDetails",this.state.patientDetails);
-        return <Card loading={this.state.loading}>
+        
+        return <Card>
             <Spin spinning={this.state.saving}>
-                <Form onSubmit={this.handleSubmit}>
+                <Form onSubmit={this.handleSubmit} > 
                     {this.props.title ? <h2>{this.props.title}</h2> : null}
 
                     <FormItem key="schedule_at" label="Appointment Schedule" {...formItemLayout}>
@@ -602,8 +600,8 @@ export default class CreateAppointmentForm extends React.Component {
                         <span className="ant-form-text">mins</span>
                     </FormItem>
 
-
-                    {this.state.patientDetails ?
+                    
+                    {that.state.patientDetails?
                         <FormItem key="id" value={this.state.patientDetails.id} {...formPatients}>
                             <Card bordered={false} style={{background: '#ECECEC'}}>
                                 <Meta
@@ -618,7 +616,7 @@ export default class CreateAppointmentForm extends React.Component {
                                     Patient</Button>
                             </Card>
                         </FormItem>
-                        : <div>
+                        :<div>
                             <FormItem key="patient_name" label="Patient Name"  {...formItemLayout}>
                                 {getFieldDecorator("patient_name", {
                                     initialValue: this.state.appointment ? this.state.appointment.patient.user.first_name : null,
@@ -652,8 +650,7 @@ export default class CreateAppointmentForm extends React.Component {
                                     initialValue: this.state.appointment ? this.state.appointment.patient.user.mobile : null,
                                     rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                 })(
-                                    <Input placeholder="Mobile Number"
-                                    />
+                                    <Input placeholder="Mobile Number"/>
                                 )}
                             </FormItem>
                             <FormItem key="patient_email" label="Email Address"  {...formItemLayout}>
@@ -697,8 +694,8 @@ export default class CreateAppointmentForm extends React.Component {
                             </Select>
                         )}
                     </FormItem>
-                    <FormItem key="procedure" {...formItemLayout} label="Procedures Planned">
-                        {getFieldDecorator("procedure", {initialValue: this.state.appointment ? this.state.appointment.procedure : []}, {
+                    {/* <FormItem key="procedure" {...formItemLayout} label="Procedures Planned">
+                        {getFieldDecorator("procedure", {initialValue: this.state.appointment ? this.state.appointment.procedure_data.treatment_plans.id :null}, {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
                             <Select placeholder="Procedures Planned" mode={"multiple"}>
@@ -708,7 +705,7 @@ export default class CreateAppointmentForm extends React.Component {
                                 )}
                             </Select>
                         )}
-                    </FormItem>
+                    </FormItem> */}
                     {this.state.appointment ?
                         <FormItem key="status" {...formItemLayout} label="Status">
                             {getFieldDecorator("status", {initialValue:this.state.appointment.status})
