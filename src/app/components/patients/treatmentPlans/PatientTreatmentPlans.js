@@ -340,7 +340,12 @@ class PatientTreatmentPlans extends React.Component {
                                                                         key={treatment.id}
                                                                         style={{marginTop: 15}}>
                             <div style={{padding: 16}}>
-                                <h4>{treatment.date ? moment(treatment.date).format('ll') : null}
+                                <h4>{treatment.date ? moment(treatment.date).format('ll') : null} 
+                                <Link to={"/patient/" + treatment.patient.id + "/emr/plans"}>
+                                    &nbsp;&nbsp; {treatment.patient.user?treatment.patient.user.first_name:null} (ID: {treatment.patient.id})&nbsp;
+                                </Link>
+                                <span>, {treatment.patient.gender}</span>
+                                    
                                     <Dropdown.Button
                                         size={"small"}
                                         style={{float: 'right'}}

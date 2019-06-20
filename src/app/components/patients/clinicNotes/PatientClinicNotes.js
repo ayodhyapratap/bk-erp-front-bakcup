@@ -1,4 +1,4 @@
-import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag, Spin, Tooltip} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag, Spin, Tooltip,Avatar} from "antd";
 import React from "react";
 import {getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {INVOICES_API, PATIENT_CLINIC_NOTES_API, CLINIC_NOTES_PDF} from "../../../constants/api";
@@ -219,7 +219,21 @@ class PatientClinicNotes extends React.Component {
                                     </Dropdown.Button>
                                 </h4>
                             </div>
-                            <Divider style={{margin: 0}}/>
+                            <Divider style={{marginBottom:15}}/>
+                                <Row>
+                                    <Col span={6}>
+                                        <Avatar size="large" shape="square" icon="user" />
+                                        <span>&nbsp;&nbsp; {clinicNote.patient ? clinicNote.patient.user.first_name:null}</span>
+                                    </Col>
+                                    <Col span={6}>
+                                        <p>{clinicNote.patient?clinicNote.patient.gender:null}</p>
+                                    </Col>
+                                    <Col span={6}>
+                                        <p><b>ID : </b>{clinicNote.patient.id}</p>
+                                    </Col>
+                                    
+                                </Row>
+                            <Divider style={{margin: 0 ,marginTop:15}}/>
                             <Row>
                                 <Col span={6}>
                                     <h3>Complaints</h3>
@@ -344,7 +358,21 @@ class PatientClinicNotes extends React.Component {
                             </Dropdown.Button>
                         </h4>
                     </div>
-                    <Divider style={{margin: 0}}/>
+                    <Divider style={{marginBottom:15}}/>
+                        <Row>
+                            <Col span={6}>
+                                <Avatar size="large" shape="square" icon="user" />
+                                <span>&nbsp;&nbsp; {clinicNote.patient ? clinicNote.patient.user.first_name:null}</span>
+                            </Col>
+                            <Col span={6}>
+                                <p>{clinicNote.patient?clinicNote.patient.gender:null}</p>
+                            </Col>
+                            <Col span={6}>
+                                <p><b>ID : </b>{clinicNote.patient.id}</p>
+                            </Col>
+                            
+                        </Row>
+                    <Divider style={{margin: 0 ,marginTop:15}}/>
                     <Row>
                         <Col span={6}>
                             <h3>Complaints</h3>

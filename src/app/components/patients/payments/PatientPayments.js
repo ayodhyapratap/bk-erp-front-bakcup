@@ -181,7 +181,21 @@ class PatientPayments extends React.Component {
                 {this.state.payments.map(payment => <div>
 
                     <Card style={{marginTop: 20}}>
-                        <h4>{payment.created_at ? moment(payment.created_at).format('lll') : null}</h4>
+                        {payment.patient_data?
+                        <h4>{payment.created_at ? moment(payment.created_at).format('lll') : null}
+                                <Link to={"/patient/"+ payment.patient_data.id +"/billing/payments"}>
+                                &nbsp;&nbsp; {payment.patient_data.user.first_name} (ID: {payment.patient_data.id})&nbsp;
+                                </Link>
+                                <span>, {payment.patient_data.gender}</span></h4>
+                                :<h4>{payment.created_at ? moment(payment.created_at).format('lll') : null}
+                                <Link to={"/patient/billing/payments"}>
+                                &nbsp;&nbsp; {payment.patient_data ? payment.patient_data.user.first_name:null} (ID: {payment.patient_data?payment.patient_data.id:null})&nbsp;
+                            </Link>
+                                <span>, {payment.patient_data ?payment.patient_data.gender:null}</span>
+                            </h4>
+                        }
+                       
+                        
                         <Table loading={this.state.loading} columns={columns}
                                pagination={false}
                                dataSource={payment.invoices}/>

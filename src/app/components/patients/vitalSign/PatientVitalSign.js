@@ -120,6 +120,10 @@ class PatientVitalSign extends React.Component {
             dataIndex: 'created_at',
             key: 'name',
             render: created_at => <span>{moment(created_at).format('LLL')}</span>,
+        },{
+            title: 'Patient Name',
+            dataIndex: 'patient_data.user.first_name',
+            key: 'patient_name',
         }, {
             title: 'Temp(F)',
             key: 'temperature',

@@ -341,7 +341,13 @@ class PatientInvoices extends React.Component {
                 {this.state.invoices.map(invoice => <div style={{marginBottom: '20px'}} key={invoice.id}>
                     <Card>
                         <div style={{padding: 16}}>
-                            <h4>{invoice.date ? moment(invoice.date).format('ll') : null}
+                        <h4>{invoice.date ? moment(invoice.date).format('ll') : null}
+                        <Link to={"/patient/"+ invoice.patient_data.id +"/billing/invoices"}>
+                                &nbsp;&nbsp; {invoice.patient_data.user.first_name} (ID: {invoice.patient_data.id})&nbsp;
+                                </Link>
+                                <span>, {invoice.patient_data.gender}</span>
+
+                            
                                 <Dropdown.Button
                                     size={"small"}
                                     style={{float: 'right'}}

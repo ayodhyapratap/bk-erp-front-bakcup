@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Checkbox, Divider, Icon, Table, Popconfirm, Menu, Dropdown, Tag, Tooltip} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Table, Popconfirm, Menu, Dropdown, Tag, Tooltip,} from "antd";
 import {getAPI, interpolate, putAPI, postAPI, displayMessage} from "../../../utils/common";
 import {
     PROCEDURE_CATEGORY,
@@ -305,6 +305,10 @@ class PatientCompletedProcedures extends React.Component {
                                                                     style={{marginTop: 15}}>
                         <div style={{padding: 16}}>
                             <h4>{treatment.date ? moment(treatment.date).format('ll') : null}
+                            <Link to={"/patient/" + treatment.patient.id + "/emr/workdone"}>
+                             &nbsp;&nbsp; {treatment.patient.user?treatment.patient.user.first_name:null} (ID: {treatment.patient.id})&nbsp;
+                            </Link>
+                            <span>, {treatment.patient.gender}</span>
                                 <Dropdown.Button
                                     size={"small"}
                                     style={{float: 'right'}}
