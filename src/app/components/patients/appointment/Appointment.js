@@ -194,14 +194,22 @@ class Appointment extends React.Component {
     }
 
     deleteAppointment(record) {
-        
         let that = this;
+        that.setState({
+            loading:true
+        })
         let reqData = {'is_active': false, 'status': "Cancelled"}
         let successFn = function (data) {
-            that.setState({})
+            that.loadAllAppointments();
+            that.setState({
+                loading:false
+            })
 
         }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
         }
         putAPI(interpolate(APPOINTMENT_API, [record.id]), reqData, successFn, errorFn);
     }
