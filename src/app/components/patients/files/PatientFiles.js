@@ -91,11 +91,6 @@ class PatientFiles extends React.Component {
         } else if (this.state.filterSearchTag == '') {
             apiParams.notag = true
         }
-        // if(this.state.filterSearchEmailed){
-        //     apiParams.mailed=this.state.filterSearchEmailed
-        // }else{
-        //     apiParams.mailed=false
-        // }
         getAPI(PATIENT_FILES, successFn, errorFn, apiParams);
 
     }
@@ -119,7 +114,6 @@ class PatientFiles extends React.Component {
     loadMedicalCertificate() {
         let that = this;
         let successFn = function (data) {
-            console.log("Data",data)
             that.setState({
                 medicalCertificate: data.results,
             })
@@ -140,9 +134,8 @@ class PatientFiles extends React.Component {
     loadMailedFiles=()=>{
         let that =this;
         let successFn=function(data){
-            console.log('mailed',data);
             that.setState({
-                mailedfiles:data.results
+                files:data.results
             })
         }
         let errorFn=function(){
@@ -223,15 +216,6 @@ class PatientFiles extends React.Component {
             that.loadData();
         })
     }
-    // filterEmailed=(e)=>{
-    //     console.log("event",e);
-    //     let that=this;
-    //     this.setState({
-    //         filterSearchEmailed:e.target.value
-    //     },function(){
-    //         that.loadData();
-    //     })
-    // }
     deleteMedicalCertificate(item) {
         let that = this;
         let reqData = {
@@ -282,7 +266,6 @@ class PatientFiles extends React.Component {
         this.setState(function () {
             return {visible: true, filesData: {...item}}
         });
-        // console.log("this",this.state.filesData);
     };
 
     handleCancel = () => {
@@ -290,7 +273,6 @@ class PatientFiles extends React.Component {
     };
 
     render() {
-        console.log("props",this.state.mailedfiles);
         let that = this;
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
         const fields = [{
