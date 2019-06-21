@@ -19,6 +19,7 @@ import Meta from "antd/lib/card/Meta";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import ModalImage from "react-modal-image";
 import {ERROR_MSG_TYPE, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import moment from "moment";
 
 class PatientFiles extends React.Component {
     constructor(props) {
@@ -69,6 +70,23 @@ class PatientFiles extends React.Component {
                 }
 
             })
+            // let lastDate = moment().add(5,'year')
+            //     that.setState(function(){
+            //         let files = [];
+            //         data.results.forEach(function(item) {
+            //             if (lastDate.format('YMD') != moment(item.modified_at).format('YMD')) {
+            //                 lastDate = moment(item.modified_at);
+            //                 // files.push({type: 'Time', date: item.modified_at})
+            //             }
+            //             console.log("item kay h",item)
+            //             files.push(item);
+            //         });
+            //         return {
+            //             files:files,
+            //             loading:false
+            //         }
+            //     });
+                
         }
         let errorFn = function () {
             that.setState({
@@ -135,8 +153,24 @@ class PatientFiles extends React.Component {
         let that =this;
         let successFn=function(data){
             that.setState({
-                files:data.results
+                files:data.results,
             })
+            // let lastDate = moment().add(5,'year')
+            // that.setState(function(){
+            //     let files = [];
+            //     data.results.forEach(function(item) {
+            //         if (lastDate.format('YMD') != moment(item.modified_at).format('YMD')) {
+            //             lastDate = moment(item.modified_at);
+            //             // files.push({type: 'Time', date: item.modified_at})
+            //         }
+            //         console.log("item kay h",item)
+            //         files.push(item);
+            //     });
+            //     return {
+            //         files:files,
+            //         loading:false
+            //     }
+            // });
         }
         let errorFn=function(){
 
@@ -273,6 +307,7 @@ class PatientFiles extends React.Component {
     };
 
     render() {
+        console.log("Files",this.state.files);
         let that = this;
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
         const fields = [{
