@@ -9,9 +9,9 @@ import {
     Col,
     Table,
     Tabs,
-    InputNumber, Select, DatePicker, Menu, Dropdown, Tag, Affix
+    InputNumber, Select, DatePicker, Menu, Dropdown, Tag, Affix, Spin
 } from "antd";
-import {displayMessage, interpolate, getAPI, postAPI} from "../../../utils/common";
+import {displayMessage, interpolate, getAPI, postAPI, putAPI} from "../../../utils/common";
 import {
     INVOICE_ITEM_TYPE,
     PROCEDURES,
@@ -28,7 +28,7 @@ import {
     TAXES,
     DRUG_CATALOG,
     PROCEDURE_CATEGORY,
-    CREATE_OR_EDIT_INVOICES, PRACTICESTAFF, UNPAID_PRESCRIPTIONS
+    CREATE_OR_EDIT_INVOICES, PRACTICESTAFF, UNPAID_PRESCRIPTIONS, SINGLE_INVENTORY_API, SINGLE_INVOICE_API
 } from "../../../constants/api";
 import moment from "moment";
 import {loadDoctors} from "../../../utils/clinicUtils";
@@ -52,7 +52,10 @@ class Addinvoicedynamic extends React.Component {
             items: {},
             practiceDoctors: [],
             selectedPrescriptions: [],
-            selectedDate: moment()
+            selectedDate: moment(),
+            stocks: {},
+            itemBatches: {},
+            saveLoading: false
         }
 
     }
@@ -64,31 +67,57 @@ class Addinvoicedynamic extends React.Component {
         this.loadPrescriptions();
         this.loadTaxes();
         if (this.props.editId) {
-            let invoice = this.props.editInvoice;
-            this.setState(function (prevState) {
-                let tableValues = [];
-                invoice.procedure.forEach(function (proc) {
-                    tableValues.push({
-                        ...proc,
-                        selectedDoctor: proc.doctor_data,
-                        selectedDate: moment(proc.date).isValid() ? moment(proc.date) : null,
-                        _id: Math.random().toFixed(7),
-                        item_type: PROCEDURES
-                    })
-                });
-                invoice.inventory.forEach(function (proc) {
-                    tableValues.push({
-                        ...proc,
-                        selectedDoctor: proc.doctor_data,
-                        _id: Math.random().toFixed(7),
-                        item_type: INVENTORY
-                    })
-                });
-                return {
-                    tableFormValues: tableValues
-                }
-            })
+            this.loadEditInvoiceData();
         }
+    }
+
+    loadEditInvoiceData = () => {
+        let invoice = this.props.editInvoice;
+        this.setState(function (prevState) {
+            let tableValues = [];
+            invoice.procedure.forEach(function (proc) {
+                tableValues.push({
+                    ...proc,
+                    selectedDoctor: proc.doctor_data,
+                    selectedDate: moment(proc.date).isValid() ? moment(proc.date) : null,
+                    _id: Math.random().toFixed(7),
+                    item_type: PROCEDURES
+                })
+            });
+            let stocks = {...prevState.stocks};
+            invoice.inventory.forEach(function (proc) {
+
+                if (prevState.itemBatches[proc.inventory]) {
+                    if (stocks[proc.inventory]) {
+                        let stock_quantity = stocks[proc.inventory];
+                        if (stock_quantity[proc.batch_number])
+                            stock_quantity[proc.batch_number] += proc.unit;
+                        else
+                            stock_quantity[proc.batch_number] += proc.unit;
+                    } else {
+                        let stock_quantity = {};
+                        stock_quantity[proc.batch_number] = proc.unit;
+                        stocks[proc.inventory] = stock_quantity;
+                    }
+                    prevState.itemBatches[proc.inventory].forEach(function (batchObj) {
+                        if (batchObj.batch_number == proc.batch_number)
+                            proc.selectedBatch = batchObj;
+                    });
+                }
+                tableValues.push({
+                    ...proc,
+                    selectedDoctor: proc.doctor_data,
+                    _id: Math.random().toFixed(7),
+                    item_type: INVENTORY
+                });
+            });
+
+            return {
+                tableFormValues: tableValues,
+                selectedDate: moment(invoice.date).isValid() ? moment(invoice.date) : null,
+                stocks: stocks
+            }
+        })
     }
 
     loadInventoryItemList() {
@@ -98,16 +127,41 @@ class Addinvoicedynamic extends React.Component {
             let drugItems = [];
             let equipmentItems = [];
             let supplesItems = [];
-            data.forEach(function (item) {
-                if (item.item_type == DRUG) {
-                    drugItems.push(item);
+
+            that.setState(function (prevState) {
+                let stocks = {...prevState.stocks};
+                let itemBatches = {};
+                data.forEach(function (item) {
+                    if (item.item_type == DRUG) {
+                        drugItems.push(item);
+                        if (stocks[item.id]) {
+                            let stock_quantity = stocks[item.id]
+                            item.item_type_stock.item_stock.forEach(function (stock) {
+                                if (stock_quantity[stock.batch_number])
+                                    stock_quantity[stock.batch_number] += stock.quantity;
+                                else
+                                    stock_quantity[stock.batch_number] += stock.quantity;
+                            });
+                        } else {
+                            let stock_quantity = {}
+                            item.item_type_stock.item_stock.forEach(function (stock) {
+                                stock_quantity[stock.batch_number] = stock.quantity
+                            });
+                            stocks[item.id] = stock_quantity;
+                        }
+                        itemBatches[item.id] = item.item_type_stock.item_stock;
+                    }
+
+                });
+                let items = that.state.items;
+                items[INVENTORY] = drugItems;
+                return {
+                    items: items,
+                    stocks: {...prevState.stocks, ...stocks},
+                    itemBatches: {...prevState.itemBatches, ...itemBatches}
                 }
-            });
-            let items = that.state.items;
-            console.log(items);
-            items[INVENTORY] = drugItems;
-            that.setState({
-                items: items,
+            }, function () {
+                that.loadEditInvoiceData();
             })
         }
         let errorFn = function () {
@@ -183,13 +237,18 @@ class Addinvoicedynamic extends React.Component {
             if (item.item_type == PROCEDURES) {
                 item = {
                     ...item,
+                    id: undefined,
                     unit_cost: item.cost,
+                    procedure: item.id,
                     selectedDoctor: prevState.selectedDoctor ? prevState.selectedDoctor : null,
-                    selectedDate: moment()
+                    selectedDate: moment(),
+                    taxes: item.taxes.map(tax => tax.id)
                 }
             } else if (item.item_type == INVENTORY) {
                 item = {
                     ...item,
+                    id: undefined,
+                    inventory: item.id,
                     unit_cost: item.cost,
                     selectedDoctor: prevState.selectedDoctor ? prevState.selectedDoctor : null,
                 }
@@ -198,6 +257,7 @@ class Addinvoicedynamic extends React.Component {
                 tableFormValues: [...prevState.tableFormValues, {
                     ...tableFormFields,
                     ...item,
+                    id: undefined,
                     _id: Math.random().toFixed(7),
                 }]
             }
@@ -252,7 +312,7 @@ class Addinvoicedynamic extends React.Component {
         let that = this;
         item.drugs.forEach(function (drug_item) {
             if (drug_item.inventory.maintain_inventory)
-                that.add({...drug_item.inventory, item_type: INVENTORY})
+                that.add({...drug_item.inventory, item_type: INVENTORY, inventory: item.inventory.id, id: undefined})
         });
         that.setState(function (prevState) {
             return {selectedPrescriptions: [...prevState.selectedPrescriptions, item.id]}
@@ -263,7 +323,9 @@ class Addinvoicedynamic extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
+                that.setState({
+                    saveLoading: true
+                });
                 let reqData = {
                     practice: that.props.active_practiceId,
                     patient: that.props.match.params.id,
@@ -288,7 +350,7 @@ class Addinvoicedynamic extends React.Component {
                             reqData.procedure.push({
                                 "name": item.name,
                                 "unit": item.unit,
-                                "procedure": item.id,
+                                "procedure": item.procedure,
                                 "default_notes": null,
                                 "is_active": true,
                                 "margin": item.margin,
@@ -297,14 +359,15 @@ class Addinvoicedynamic extends React.Component {
                                 "discount": item.discount,
                                 "discount_type": "%",
                                 "offers": 1,
-                                "doctor": item.selectedDoctor ? item.selectedDoctor.id : null
+                                "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
+                                id: that.props.editId ? item.id : undefined
                             });
                             break;
                         case INVENTORY:
                             reqData.inventory.push({
-                                "inventory": item.id,
+                                "inventory": item.inventory,
                                 "name": item.name,
-                                "unit": item.quantity,
+                                "unit": item.unit,
                                 "taxes": item.taxes,
                                 "unit_cost": item.unit_cost,
                                 "discount": item.discount,
@@ -313,36 +376,40 @@ class Addinvoicedynamic extends React.Component {
                                 "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
                                 "instruction": item.instruction,
                                 "is_active": true,
-                                batch_number: item.selectedBatch ? item.selectedBatch.batch_number : null
+                                batch_number: item.selectedBatch ? item.selectedBatch.batch_number : null,
+                                id: that.props.editId ? item.id : null
                             });
                             break;
                         default:
                             return null;
                     }
                 });
-                console.log(reqData);
                 let successFn = function (data) {
+                    that.setState({
+                        saveLoading: false
+                    });
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
                     let url = '/patient/' + that.props.match.params.id + '/billing/invoices';
                     that.props.history.push(url);
                 }
                 let errorFn = function () {
-
+                    that.setState({
+                        saveLoading: false
+                    });
                 }
-                postAPI(CREATE_OR_EDIT_INVOICES, reqData, successFn, errorFn);
+                if (that.props.editId) {
+                    putAPI(interpolate(SINGLE_INVOICE_API, [that.props.editId]), reqData, successFn, errorFn);
+                } else {
+                    postAPI(CREATE_OR_EDIT_INVOICES, reqData, successFn, errorFn);
+                }
+
             }
         });
     }
 
 
     render() {
-        const taxesOption = []
-        if (this.state.taxes_list) {
-            this.state.taxes_list.forEach(function (tax) {
-                taxesOption.push(<Select.Option value={tax.id}>{tax.name}</Select.Option>);
-            })
-        }
         let that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const formItemLayout = {
@@ -352,7 +419,10 @@ class Addinvoicedynamic extends React.Component {
             },
             wrapperCol: {
                 xs: {span: 24},
-                sm: {span: 20},
+                sm: {span: 24},
+                md: {span: 24},
+                lg: {span: 24},
+                xl: {span: 24},
             },
         };
         const formItemLayoutWithOutLabel = {
@@ -425,7 +495,7 @@ class Addinvoicedynamic extends React.Component {
                             </Dropdown>
                             <span><br/>from batch &nbsp;&nbsp;</span>
                             <Dropdown placement="topCenter" overlay={<Menu>
-                                {record.item_type_stock && record.item_type_stock.item_stock && record.item_type_stock.item_stock.map(batch =>
+                                {that.state.itemBatches[record.inventory] && that.state.itemBatches[record.inventory].map(batch =>
                                     <Menu.Item key="0">
                                         <a onClick={() => that.selectBatch(batch, record._id, INVENTORY)}>{batch.batch_number}&nbsp;({batch.quantity}) &nbsp;&nbsp;{batch.expiry_date}</a>
                                     </Menu.Item>)}
@@ -452,15 +522,16 @@ class Addinvoicedynamic extends React.Component {
                 {...formItemLayout}>
                 {getFieldDecorator(`unit[${record._id}]`, {
                     validateTrigger: ['onChange', 'onBlur'],
-                    initialValue: record.unit ? 1 : null,
+                    initialValue: record.unit || 1,
                     rules: [{
                         required: true,
                         message: "This field is required.",
                     }],
                 })(
-                    <InputNumber min={1} max={(record.selectedBatch ? record.selectedBatch.quantity : 0)}
+                    <InputNumber min={1}
+                                 max={(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number] ? that.state.stocks[record.inventory][record.selectedBatch.batch_number] : 0)}
                                  placeholder="units" size={'small'}
-                                 disabled={!record.selectedBatch}/>
+                                 disabled={!(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number])}/>
                 )}
             </Form.Item> : <Form.Item
                 key={`unit[${record._id}]`}
@@ -515,16 +586,17 @@ class Addinvoicedynamic extends React.Component {
             title: 'Taxes',
             key: 'taxes',
             dataIndex: 'taxes',
-            width: 100,
             render: (item, record) => <Form.Item
                 key={`taxes[${record._id}]`}
                 {...formItemLayout}>
                 {getFieldDecorator(`taxes[${record._id}]`, {
-                    initialValue: record.taxes,
+                    initialValue: record.taxes || [],
                     validateTrigger: ['onChange', 'onBlur'],
-
                 })(
-                    <Select placeholder="Taxes" size={'small'} mode={"multiple"}>{taxesOption}</Select>
+                    <Select placeholder="Taxes" size={'small'} mode={"multiple"}>
+                        {this.state.taxes_list && this.state.taxes_list.map((tax) => <Select.Option
+                            value={tax.id}>{tax.name}</Select.Option>)}
+                    </Select>
                 )}
             </Form.Item>
         },]);
@@ -538,91 +610,93 @@ class Addinvoicedynamic extends React.Component {
         }]);
 
         return <div>
-            <Card title={this.props.editId ? "Edit Invoice (INV " + this.props.editId + ")" : "Add Invoice"}
-                  bodyStyle={{padding: 0}}>
-                <Row gutter={16}>
-                    <Col span={7}>
-                        <Tabs size="small" type="card">
-                            <TabPane tab={PRESCRIPTIONS} key={PRESCRIPTIONS}>
-                                <List size={"small"}
-                                      itemLayout="horizontal"
-                                      dataSource={this.state.items ? this.state.items[PRESCRIPTIONS] : []}
-                                      renderItem={item => (
-                                          <List.Item>
-                                              <List.Item.Meta
-                                                  title={item.drugs.map(drug_item => <div>
-                                                      <span>{drug_item.name}</span> {drug_item.inventory.maintain_inventory ? null :
-                                                      <Tag color="red" style={{float: 'right', lineHeight: '18px'}}>Not
-                                                          Sold</Tag>}<br/></div>)}
-                                                  description={item.doctor ?
-                                                      <Tag color={item.doctor ? item.doctor.calendar_colour : null}>
-                                                          <b>{"prescribed by  " + item.doctor.user.first_name} </b>
-                                                      </Tag> : null}
-                                              />
-                                              <Button type="primary" size="small" shape="circle"
-                                                      onClick={() => this.addPrescription({...item})}
-                                                      icon={"arrow-right"}/>
-                                          </List.Item>)}/>
-                            </TabPane>
-                            <TabPane tab={PROCEDURES} key={PROCEDURES}>
-                                <List size={"small"}
-                                      itemLayout="horizontal"
-                                      dataSource={this.state.items ? this.state.items[PROCEDURES] : []}
-                                      renderItem={item => (
-                                          <List.Item>
-                                              <List.Item.Meta
-                                                  title={item.name}
-                                              />
-                                              <Button type="primary" size="small" shape="circle"
-                                                      onClick={() => this.add({...item, item_type: PROCEDURES})}
-                                                      icon={"arrow-right"}/>
-                                          </List.Item>)}/>
-                            </TabPane>
-                            <TabPane tab={INVENTORY} key={INVENTORY}>
-                                <List size={"small"}
-                                      itemLayout="horizontal"
-                                      dataSource={this.state.items ? this.state.items[INVENTORY] : []}
-                                      renderItem={item => (
-                                          <List.Item>
-                                              <List.Item.Meta
-                                                  title={item.name}
-                                              />
-                                              <Button type="primary" size="small" shape="circle"
-                                                      onClick={() => this.add({...item, item_type: INVENTORY})}
-                                                      icon={"arrow-right"}/>
-                                          </List.Item>)}/>
-                            </TabPane>
-                        </Tabs>
-                    </Col>
-                    <Col span={17}>
-                        <Form onSubmit={this.handleSubmit}>
-                            <Table pagination={false}
-                                   bordered={true}
-                                   dataSource={this.state.tableFormValues}
-                                   columns={consumeRow}/>
-                            {/*<List>{formItems}</List>*/}
-                            <Affix offsetBottom={0}>
-                                <Card>
-                                    <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
-                                    <DatePicker value={this.state.selectedDate}
-                                                onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}
-                                                allowClear={false}/>
-                                    <Form.Item {...formItemLayoutWithOutLabel}
-                                               style={{marginBottom: 0, float: 'right'}}>
-                                        <Button type="primary" htmlType="submit" style={{margin: 5}}>Save
-                                            Invoice</Button>
-                                        {that.props.history ?
-                                            <Button style={{margin: 5, float: 'right'}}
-                                                    onClick={() => that.props.history.goBack()}>
-                                                Cancel
-                                            </Button> : null}
-                                    </Form.Item>
-                                </Card>
-                            </Affix>
-                        </Form>
-                    </Col>
-                </Row>
-            </Card>
+            <Spin spinning={this.state.saveLoading} tip="Saving Invoice...">
+                <Card title={this.props.editId ? "Edit Invoice (INV " + this.props.editId + ")" : "Add Invoice"}
+                      bodyStyle={{padding: 0}}>
+                    <Row gutter={16}>
+                        <Col span={7}>
+                            <Tabs size="small" type="card">
+                                <TabPane tab={PRESCRIPTIONS} key={PRESCRIPTIONS}>
+                                    <List size={"small"}
+                                          itemLayout="horizontal"
+                                          dataSource={this.state.items ? this.state.items[PRESCRIPTIONS] : []}
+                                          renderItem={item => (
+                                              <List.Item>
+                                                  <List.Item.Meta
+                                                      title={item.drugs.map(drug_item => <div>
+                                                          <span>{drug_item.name}</span> {drug_item.inventory.maintain_inventory ? null :
+                                                          <Tag color="red" style={{float: 'right', lineHeight: '18px'}}>Not
+                                                              Sold</Tag>}<br/></div>)}
+                                                      description={item.doctor ?
+                                                          <Tag color={item.doctor ? item.doctor.calendar_colour : null}>
+                                                              <b>{"prescribed by  " + item.doctor.user.first_name} </b>
+                                                          </Tag> : null}
+                                                  />
+                                                  <Button type="primary" size="small" shape="circle"
+                                                          onClick={() => this.addPrescription({...item})}
+                                                          icon={"arrow-right"}/>
+                                              </List.Item>)}/>
+                                </TabPane>
+                                <TabPane tab={PROCEDURES} key={PROCEDURES}>
+                                    <List size={"small"}
+                                          itemLayout="horizontal"
+                                          dataSource={this.state.items ? this.state.items[PROCEDURES] : []}
+                                          renderItem={item => (
+                                              <List.Item>
+                                                  <List.Item.Meta
+                                                      title={item.name}
+                                                  />
+                                                  <Button type="primary" size="small" shape="circle"
+                                                          onClick={() => this.add({...item, item_type: PROCEDURES})}
+                                                          icon={"arrow-right"}/>
+                                              </List.Item>)}/>
+                                </TabPane>
+                                <TabPane tab={INVENTORY} key={INVENTORY}>
+                                    <List size={"small"}
+                                          itemLayout="horizontal"
+                                          dataSource={this.state.items ? this.state.items[INVENTORY] : []}
+                                          renderItem={item => (
+                                              <List.Item>
+                                                  <List.Item.Meta
+                                                      title={item.name}
+                                                  />
+                                                  <Button type="primary" size="small" shape="circle"
+                                                          onClick={() => this.add({...item, item_type: INVENTORY})}
+                                                          icon={"arrow-right"}/>
+                                              </List.Item>)}/>
+                                </TabPane>
+                            </Tabs>
+                        </Col>
+                        <Col span={17}>
+                            <Form onSubmit={this.handleSubmit}>
+                                <Table pagination={false}
+                                       bordered={true}
+                                       dataSource={this.state.tableFormValues}
+                                       columns={consumeRow}/>
+                                {/*<List>{formItems}</List>*/}
+                                <Affix offsetBottom={0}>
+                                    <Card>
+                                        <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
+                                        <DatePicker value={this.state.selectedDate}
+                                                    onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}
+                                                    allowClear={false}/>
+                                        <Form.Item {...formItemLayoutWithOutLabel}
+                                                   style={{marginBottom: 0, float: 'right'}}>
+                                            <Button type="primary" htmlType="submit" style={{margin: 5}}>Save
+                                                Invoice</Button>
+                                            {that.props.history ?
+                                                <Button style={{margin: 5, float: 'right'}}
+                                                        onClick={() => that.props.history.goBack()}>
+                                                    Cancel
+                                                </Button> : null}
+                                        </Form.Item>
+                                    </Card>
+                                </Affix>
+                            </Form>
+                        </Col>
+                    </Row>
+                </Card>
+            </Spin>
         </div>
 
     }

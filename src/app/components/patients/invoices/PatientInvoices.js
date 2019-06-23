@@ -168,7 +168,7 @@ class PatientInvoices extends React.Component {
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                let reqData = {patient: record.patient, is_cancelled: true};
+                let reqData = {patient: record.patient,is_cancelled: true};
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Invoice cancelled successfully")
                     that.loadInvoices();
@@ -228,7 +228,8 @@ class PatientInvoices extends React.Component {
                            render={(route) => (
                                this.state.editInvoice ?
                                    <AddInvoicedynamic {...this.state} {...route}
-                                                      editId={this.state.editInvoice.id}/> :
+                                                      editId={this.state.editInvoice.id}
+                                                      loadData={this.loadInvoices}/> :
                                    <Redirect to={"/patient/" + this.props.match.params.id + "/billing/invoices"}/>
                            )}/>
                     <Route>
@@ -330,14 +331,14 @@ function InvoiceCard(invoice, that) {
                 </Menu.Item>
                 <Menu.Divider/>
                 <Menu.Item key="2" onClick={() => that.editInvoiceData(invoice)}
-                           disabled={(invoice.practice != that.props.active_practiceId)}>
+                           disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>
                     <Icon type="edit"/>
                     Edit
                 </Menu.Item>
                 <Menu.Item key="3" onClick={() => that.deleteInvoice(invoice)}
-                           disabled={(invoice.practice != that.props.active_practiceId)}>
+                           disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>
                     <Icon type="delete"/>
-                    Delete
+                    Cancel
                 </Menu.Item>
                 <Menu.Divider/>
                 <Menu.Item key="4">

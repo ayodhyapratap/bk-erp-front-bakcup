@@ -1,15 +1,42 @@
 import React from "react";
 
-import {Button, Card, Checkbox, Divider, Icon, Spin, Table, Tag, Row, Alert, Tooltip} from "antd";
-import {getAPI, interpolate} from "../../../utils/common";
-import {PAYMENT_MODES, INVOICES_API, PATIENT_PAYMENTS_API, TAXES} from "../../../constants/api";
+import {
+    Button,
+    Card,
+    Checkbox,
+    Dropdown,
+    Menu,
+    Divider,
+    Icon,
+    Spin,
+    Table,
+    Tag,
+    Row,
+    Alert,
+    Tooltip,
+    Statistic,
+    Col
+} from "antd";
+import {displayMessage, getAPI, interpolate, putAPI} from "../../../utils/common";
+import {
+    PAYMENT_MODES,
+    INVOICES_API,
+    PATIENT_PAYMENTS_API,
+    TAXES,
+    INVOICE_PDF_API,
+    PAYMENT_PDF, SINGLE_INVOICES_API, SINGLE_PAYMENT_API
+} from "../../../constants/api";
 import moment from "moment";
 import {Link} from "react-router-dom";
 import {Route, Switch} from "react-router";
 import AddPayment from "./AddPayment";
 import AddPaymentForm from "./AddPaymentForm";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
+import {BACKEND_BASE_URL} from "../../../config/connect";
+import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {Modal} from "antd/lib/index";
 
+const confirm = Modal.confirm;
 
 class PatientPayments extends React.Component {
     constructor(props) {
@@ -23,9 +50,7 @@ class PatientPayments extends React.Component {
     }
 
     componentDidMount() {
-        this.loadPaymentModes();
         this.loadPayments();
-        this.loadInvoices();
     }
 
 
@@ -36,6 +61,12 @@ class PatientPayments extends React.Component {
         })
         let successFn = function (data) {
             that.setState(function (prevState) {
+                if (data.current == 1)
+                    return {
+                        payments: [...data.results],
+                        next: data.next,
+                        loading: false
+                    }
                 return {
                     payments: [...prevState.payments, ...data.results],
                     next: data.next,
@@ -62,39 +93,6 @@ class PatientPayments extends React.Component {
         getAPI(PATIENT_PAYMENTS_API, successFn, errorFn, apiParams);
     }
 
-    loadInvoices = () => {
-        let that = this;
-        let successFn = function (data) {
-            that.setState({
-                invoices: data,
-                loading: false
-            })
-        }
-        let errorFn = function () {
-            that.setState({
-                loading: false
-            })
-
-        }
-        getAPI(interpolate(INVOICES_API, [this.props.match.params.id]), successFn, errorFn);
-    }
-
-    loadPaymentModes() {
-        var that = this;
-        let successFn = function (data) {
-            console.log("get table");
-            that.setState({
-                paymentModes: data,
-                loading: false
-            })
-        };
-        let errorFn = function () {
-            that.setState({
-                loading: false
-            })
-        };
-        getAPI(interpolate(PAYMENT_MODES, [this.props.active_practiceId]), successFn, errorFn);
-    }
 
     editInvoiceData(record) {
         this.setState({
@@ -103,6 +101,41 @@ class PatientPayments extends React.Component {
         let id = this.props.match.params.id
         this.props.history.push("/patient/" + id + "/billing/invoices/edit")
 
+    }
+
+    loadPDF = (id) => {
+        let that = this;
+        let successFn = function (data) {
+            if (data.report)
+                window.open(BACKEND_BASE_URL + data.report);
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(interpolate(PAYMENT_PDF, [id]), successFn, errorFn);
+    }
+
+    deletePayment(record) {
+        let that = this;
+        confirm({
+            title: 'Are you sure to cancel this item?',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                let reqData = {patient: record.patient, is_cancelled: true};
+                let successFn = function (data) {
+                    displayMessage(SUCCESS_MSG_TYPE, "Payment cancelled successfully")
+                    that.loadPayments();
+                }
+                let errorFn = function () {
+                }
+                putAPI(interpolate(SINGLE_PAYMENT_API, [record.id]), reqData, successFn, errorFn);
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
     }
 
     render() {
@@ -196,11 +229,45 @@ function PaymentCard(payment, that) {
                              &nbsp;&nbsp; {payment.patient_data.user.first_name} (ID: {payment.patient_data.id})&nbsp;
                          </Link>
                          <span>, {payment.patient_data.gender}</span></small>
-                     : <small>{payment.created_at ? moment(payment.created_at).format('lll') : null}</small>)}>
-        <Table columns={columns}
-               pagination={false}
-               footer={() => PaymentFooter({practice: payment.practice_data})}
-               dataSource={payment.invoices}/>
+                     : <small>{payment.created_at ? moment(payment.created_at).format('lll') : null}</small>)}
+                 extra={<Dropdown.Button
+                     size={"small"}
+                     style={{float: 'right'}}
+                     overlay={<Menu>
+                         {/*<Menu.Item key="2" onClick={() => that.editInvoiceData(payment)}*/}
+                                    {/*disabled={(payment.practice != that.props.active_practiceId)}>*/}
+                             {/*<Icon type="edit"/>*/}
+                             {/*Edit*/}
+                         {/*</Menu.Item>*/}
+                         {/*<Menu.Item key="3" onClick={() => that.deletePayment(payment)}*/}
+                                    {/*disabled={(payment.practice != that.props.active_practiceId) || payment.is_cancelled}>*/}
+                             {/*<Icon type="delete"/>*/}
+                             {/*Cancel*/}
+                         {/*</Menu.Item>*/}
+                         <Menu.Divider/>
+                         <Menu.Item key="4">
+                             <Link to={"/patient/" + payment.patient + "/emr/timeline"}>
+                                 <Icon type="clock-circle"/>
+                                 Patient Timeline
+                             </Link>
+                         </Menu.Item>
+                     </Menu>}>
+                     <a onClick={() => that.loadPDF(payment.id)}><Icon
+                         type="printer"/></a>
+                 </Dropdown.Button>}>
+        <Row gutter={8}>
+            <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4} style={{padding: 10}}>
+                {payment.is_cancelled ?
+                    <Alert message="Cancelled" type="error" showIcon/> : null}
+                <Divider style={{marginBottom: 0}}>RCPT{payment.id}</Divider>
+            </Col>
+            <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
+                <Table columns={columns}
+                       pagination={false}
+                       footer={() => PaymentFooter({practice: payment.practice_data})}
+                       dataSource={payment.invoices}/>
+            </Col>
+        </Row>
     </Card>
 }
 
