@@ -10,7 +10,6 @@ export const loadDoctors = function (that) {
         let doctor = [];
         let selectedDoctor = {};
         data.staff.forEach(function (usersdata) {
-            console.log(usersdata);
             if (usersdata.role.indexOf(parseInt(DOCTORS_ROLE)) > -1 || usersdata.role.indexOf(DOCTORS_ROLE) > -1) {
                 doctor.push(usersdata);
                 if (that.state.selectedDoctor) {

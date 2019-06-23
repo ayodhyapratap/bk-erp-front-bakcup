@@ -78,8 +78,10 @@ export const INVOICES_API = 'invoice/';
 export const SINGLE_INVOICES_API = 'invoice/%s/'
 export const INVOICE_PDF_API = 'invoice/%s/get_pdf';
 export const CREATE_OR_EDIT_INVOICES = 'invoice/';
+export const SINGLE_INVOICE_API = 'invoice/%s/';
 export const PATIENT_CLINIC_NOTES_API = 'patients/clinic_notes/';
 export const PATIENT_PAYMENTS_API = 'payment/';
+export const SINGLE_PAYMENT_API = 'payment/%s/';
 export const PRACTICE_PRINT_SETTING_API = 'clinics/%s/practice_print_settings/?type=%s&sub_type=%s';
 export const SAVE_ALL_PRINT_SETTINGS = 'clinics/%s/all_print_settings/';
 export const PATIENT_COMMUNICATION_HISTORY_API = 'users/sms_status_update/?user=%s';
@@ -177,5 +179,6 @@ export const VITAL_SIGN_PDF = 'patients/vital_sign_pdf/?id=%s';
 export const CLINIC_NOTES_PDF = 'patients/clinic_notes_pdf/?id=%s';
 export const TREATMENTPLANS_PDF = 'patients/treatment_plan_pdf/?id=%s';
 export const MEDICAL_CERTIFICATE_PDF = 'patients/medical_certificate_pdf/?id=%s';
+export const PAYMENT_PDF = 'payment/%s/get_pdf/';
 
 
