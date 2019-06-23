@@ -71,6 +71,11 @@ class Addinvoicedynamic extends React.Component {
         }
     }
 
+    selectedDefaultDate = (date) => {
+        this.setState({
+            selectedDate: date
+        })
+    }
     loadEditInvoiceData = () => {
         let invoice = this.props.editInvoice;
         this.setState(function (prevState) {
@@ -129,40 +134,43 @@ class Addinvoicedynamic extends React.Component {
             let supplesItems = [];
 
             that.setState(function (prevState) {
-                let stocks = {...prevState.stocks};
-                let itemBatches = {};
-                data.forEach(function (item) {
-                    if (item.item_type == DRUG) {
-                        drugItems.push(item);
-                        if (stocks[item.id]) {
-                            let stock_quantity = stocks[item.id]
-                            item.item_type_stock.item_stock.forEach(function (stock) {
-                                if (stock_quantity[stock.batch_number])
-                                    stock_quantity[stock.batch_number] += stock.quantity;
-                                else
-                                    stock_quantity[stock.batch_number] += stock.quantity;
-                            });
-                        } else {
-                            let stock_quantity = {}
-                            item.item_type_stock.item_stock.forEach(function (stock) {
-                                stock_quantity[stock.batch_number] = stock.quantity
-                            });
-                            stocks[item.id] = stock_quantity;
+                    let stocks = {...prevState.stocks};
+                    let itemBatches = {};
+                    data.forEach(function (item) {
+                        if (item.item_type == DRUG) {
+                            drugItems.push(item);
+                            if (stocks[item.id]) {
+                                let stock_quantity = stocks[item.id]
+                                item.item_type_stock.item_stock.forEach(function (stock) {
+                                    if (stock_quantity[stock.batch_number])
+                                        stock_quantity[stock.batch_number] += stock.quantity;
+                                    else
+                                        stock_quantity[stock.batch_number] += stock.quantity;
+                                });
+                            } else {
+                                let stock_quantity = {}
+                                item.item_type_stock.item_stock.forEach(function (stock) {
+                                    stock_quantity[stock.batch_number] = stock.quantity
+                                });
+                                stocks[item.id] = stock_quantity;
+                            }
+                            itemBatches[item.id] = item.item_type_stock.item_stock;
                         }
-                        itemBatches[item.id] = item.item_type_stock.item_stock;
-                    }
 
-                });
-                let items = that.state.items;
-                items[INVENTORY] = drugItems;
-                return {
-                    items: items,
-                    stocks: {...prevState.stocks, ...stocks},
-                    itemBatches: {...prevState.itemBatches, ...itemBatches}
+                    });
+                    let items = that.state.items;
+                    items[INVENTORY] = drugItems;
+                    return {
+                        items: items,
+                        stocks: {...prevState.stocks, ...stocks},
+                        itemBatches: {...prevState.itemBatches, ...itemBatches}
+                    }
+                }, function () {
+                    if (that.props.editId) {
+                        that.loadEditInvoiceData();
+                    }
                 }
-            }, function () {
-                that.loadEditInvoiceData();
-            })
+            )
         }
         let errorFn = function () {
         }
@@ -678,7 +686,8 @@ class Addinvoicedynamic extends React.Component {
                                     <Card>
                                         <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
                                         <DatePicker value={this.state.selectedDate}
-                                                    onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}
+                                                    onChange={(value) => this.selectedDefaultDate(value)}
+                                                    format={"DD-MM-YYYY"}
                                                     allowClear={false}/>
                                         <Form.Item {...formItemLayoutWithOutLabel}
                                                    style={{marginBottom: 0, float: 'right'}}>

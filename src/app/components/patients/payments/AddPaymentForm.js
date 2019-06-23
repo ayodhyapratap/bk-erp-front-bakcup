@@ -58,6 +58,7 @@ class AddPaymentForm extends React.Component {
         }
         getAPI(INVOICES_API, successFn, errorFn, {
             page: that.state.loadMoreInvoice || 1,
+            is_cancelled:false,
             is_pending: true,
             patient: this.props.match.params.id
         });
