@@ -159,7 +159,7 @@ class EditPatientDetails extends React.Component {
                               </Button> : null}
                               </div>}>
                     <Form.Item label="Patient Name" {...formItemLayout}>
-                        {getFieldDecorator('first_name', {initialValue: this.props.currentPatient ? this.props.currentPatient.user.first_name : null})
+                        {getFieldDecorator('first_name', { rules: [{required: true, message: 'Input Patient Name!'}],initialValue: this.props.currentPatient ? this.props.currentPatient.user.first_name : null})
                         (<Input placeholder="Patient Name"/>)
                         }
                     </Form.Item>
@@ -258,7 +258,7 @@ class EditPatientDetails extends React.Component {
                     <Form.Item label="Email" {...formItemLayout}>
                         {getFieldDecorator('email', {
                             initialValue: this.props.currentPatient ? this.props.currentPatient.user.email : null,
-                            rules: [{required: true, message: 'Input Email ID!'}]
+
                         })
                         (<Input placeholder="Patient Email"/>)
                         }

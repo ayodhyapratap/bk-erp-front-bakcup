@@ -210,7 +210,7 @@ class PracticeDetails extends React.Component {
                 loading: false
             })
         };
-        getAPI(interpolate(PRACTICESTAFF, [this.props.active_practiceId]), successFn, errorFn);
+        getAPI(interpolate(PRACTICESTAFF, [this.props.active_practiceId]), successFn, errorFn, {all: true});
     }
 
 
@@ -331,7 +331,8 @@ class PracticeDetails extends React.Component {
               <a>Edit</a>
             </Link>
                      <Divider type="vertical"/>
-                        <a onClick={() => that.editPermissions(record.id)} disabled={!record.in_practice}>Permissions</a>
+                        <a onClick={() => that.editPermissions(record.id)}
+                           disabled={!record.in_practice}>Permissions</a>
                     <Divider type="vertical"/>
                     <Popconfirm title="Are you sure delete this staff?"
                                 onConfirm={() => that.deleteStaff(record.id)} okText="Yes" cancelText="No">
