@@ -47,7 +47,7 @@ export const loggedInactivePractice = function () {
         let practice = lockr.get(PRACTICE);
         if (practice && practice.length) {
             console.log(practice);
-            setCurrentPractice(practice[0].pratice.id);
+            setCurrentPractice(practice[0].practice.id);
             return loggedInactivePractice();
         }
     }
@@ -95,8 +95,8 @@ export const logInUser = function (data, successFn, errorFn) {
         let data = response.data;
         lockr.set(ROLE, data.user);
         lockr.set(AUTH_TOKEN, data.token);
-        lockr.set(PRACTICE, data.practice_permissions);
-        lockr.set('PERMISSIONS', data.permissions_list);
+        lockr.set(PRACTICE, data.practice_list);
+        // lockr.set('PERMISSIONS', data.permissions_list);
         successFn()
     }).catch(function (error) {
         console.log(error);
@@ -104,16 +104,16 @@ export const logInUser = function (data, successFn, errorFn) {
         errorFn();
     })
 };
-export const loadUserDetails = function (callBackFn) {
+export const loadUserDetails = function (practice,callBackFn) {
     let successFn = function (data) {
         lockr.set(ROLE, data.user);
-        lockr.set(PRACTICE, data.practice_permissions);
-        callBackFn();
+        // lockr.set(PRACTICE, data.practice_permissions);
+        callBackFn(data);
     }
     let errorFn = function () {
 
     }
-    getAPI(USER_DATA, successFn, errorFn);
+    getAPI(USER_DATA, successFn, errorFn,{practice:practice});
 }
 export const saveAuthToken = function (response, successFn) {
     let data = response;

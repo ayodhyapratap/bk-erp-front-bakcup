@@ -170,7 +170,7 @@ class AddStaffDoctor extends React.Component {
                 method: "put",
             }
         }
-        const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}]
+        const defaultValues = [];
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <Row>

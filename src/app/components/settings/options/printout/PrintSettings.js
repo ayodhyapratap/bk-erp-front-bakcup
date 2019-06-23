@@ -304,7 +304,7 @@ class PrintSettings extends React.Component {
                                             {getFieldDecorator('header_left_text', {
                                                 initialValue: this.state.print_setting.header_left_text
                                             })(
-                                                <Input
+                                                <TextArea
                                                     onChange={(e) => this.handleFormEditSettings('header_left_text', e.target.value)}/>
                                             )}
                                         </Form.Item>
@@ -312,7 +312,7 @@ class PrintSettings extends React.Component {
                                         <Form.Item key={'header_right_text'} {...formItemLayout}
                                                    label={(<span>Right Text&nbsp;</span>)}>
                                             {getFieldDecorator('header_right_text', {initialValue: this.state.print_setting.header_right_text})
-                                            (<Input
+                                            (<TextArea
                                                 onChange={(e) => this.handleFormEditSettings('header_right_text', e.target.value)}/>)
                                             }
                                         </Form.Item>
@@ -395,7 +395,7 @@ class PrintSettings extends React.Component {
                                                 initialValue: this.state.print_setting.footer_text
                                             })(
                                                 <TextArea rows={3}
-                                                          onChange={(value) => this.handleFormEditSettings('footer_text', value)}/>
+                                                          onChange={(e) => this.handleFormEditSettings('footer_text', e.target.value)}/>
                                             )}
                                         </Form.Item>
 
@@ -405,7 +405,7 @@ class PrintSettings extends React.Component {
                                                 initialValue: this.state.print_setting.footer_left_text
                                             })(
                                                 <TextArea
-                                                    onChange={(value) => this.handleFormEditSettings('footer_left_text', value)}/>
+                                                    onChange={(e) => this.handleFormEditSettings('footer_left_text', e.target.value)}/>
                                             )}
                                         </Form.Item>
 
@@ -415,7 +415,7 @@ class PrintSettings extends React.Component {
                                                 initialValue: this.state.print_setting.footer_right_text
                                             })(
                                                 <TextArea
-                                                    onChange={(value) => this.handleFormEditSettings('footer_right_text', value)}/>
+                                                    onChange={(e) => this.handleFormEditSettings('footer_right_text', e.target.value)}/>
                                             )}
                                         </Form.Item>
 

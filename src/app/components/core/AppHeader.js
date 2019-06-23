@@ -128,8 +128,8 @@ class AppHeader extends React.Component {
                     <Select onChange={this.props.switchPractice} defaultValue={this.props.active_practiceId}
                             style={{width: '300px', maxWidth: '70vw'}}>
                         {this.props.practiceList && this.props.practiceList.map((option) => <Select.Option
-                            key={option.pratice.id}
-                            value={option.pratice.id}>{option.pratice.name}</Select.Option>)}
+                            key={option.practice.id}
+                            value={option.practice.id}>{option.practice.name}</Select.Option>)}
                     </Select>
                 </Menu.Item>
                 {/*<Menu.Item key="3"><Search*/}
