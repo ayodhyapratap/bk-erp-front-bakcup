@@ -41,7 +41,6 @@ class PatientFiles extends React.Component {
         };
         this.loadData = this.loadData.bind(this);
         this.loadMedicalCertificate = this.loadMedicalCertificate.bind(this);
-        // this.loadMailedFiles = this.loadMailedFiles.bind(this);
     }
 
     componentWillMount() {
@@ -60,33 +59,19 @@ class PatientFiles extends React.Component {
                 if (data.current == 1) {
                     return {
                         files: [...data.results],
-                        loading: false
+                        total: data.count,
+                        loadMoreFiles:data.next,
+                        loading: false,
                     }
                 } else {
                     return {
                         files: [...prevState.files, ...data.results],
+                        loadMoreFiles:data.next,
                         loading: false
                     }
                 }
 
             })
-            // let lastDate = moment().add(5,'year')
-            //     that.setState(function(){
-            //         let files = [];
-            //         data.results.forEach(function(item) {
-            //             if (lastDate.format('YMD') != moment(item.modified_at).format('YMD')) {
-            //                 lastDate = moment(item.modified_at);
-            //                 // files.push({type: 'Time', date: item.modified_at})
-            //             }
-            //             console.log("item kay h",item)
-            //             files.push(item);
-            //         });
-            //         return {
-            //             files:files,
-            //             loading:false
-            //         }
-            //     });
-                
         }
         let errorFn = function () {
             that.setState({
@@ -129,54 +114,80 @@ class PatientFiles extends React.Component {
         getAPI(interpolate(EMR_FILETAGS, [this.props.active_practiceId]), successFn, errorFn);
     }
 
-    loadMedicalCertificate() {
+    loadMedicalCertificate(page = 1) {
         let that = this;
+        that.setState({
+            loading: true
+        });
         let successFn = function (data) {
-            that.setState({
-                medicalCertificate: data.results,
-            })
+            if (data.current == 1) {
+                that.setState({
+                    total: data.count,
+                    medicalCertificate: data.results,
+                    loading: false,
+                    loadMoreCertificate: data.next
+                })
+            } else {
+                that.setState(function (prevState) {
+                    return {
+                        total: data.count,
+                        medicalCertificate: [...prevState.medicalCertificate, ...data.results],
+                        loading: false,
+                        loadMoreCertificate: data.next
+                    }
+                })
+            }
         }
+
+
+        //     that.setState({
+        //         medicalCertificate: data.results,
+        //         loading:false
+        //     })
+        // }
         let errorFn = function () {
+            that.setState({
+                loading:false
+            })
 
         }
         if(this.props.currentPatient){
-            getAPI(interpolate(MEDICAL_CERTIFICATE_API, [this.props.active_practiceId,this.props.currentPatient.id]), successFn, errorFn);
+            getAPI(interpolate(MEDICAL_CERTIFICATE_API, [this.props.active_practiceId,this.props.currentPatient.id ,page]), successFn, errorFn);
         }if(this.props.showAllClinic && this.props.currentPatient){
-            getAPI(interpolate(ALL_MEDICAL_CERITICATE_API ,[this.props.currentPatient.id]), successFn, errorFn);
+            getAPI(interpolate(ALL_MEDICAL_CERITICATE_API ,[this.props.currentPatient.id ,page]), successFn, errorFn);
         }else{
-            getAPI(interpolate(ALL_MEDICAL_CERITICATE_API ,[this.props.active_practiceId]), successFn, errorFn);
+            getAPI(interpolate(ALL_MEDICAL_CERITICATE_API ,[this.props.active_practiceId ,page]), successFn, errorFn);
         }
         
     }
 
-    loadMailedFiles=()=>{
+    loadMailedFiles=(page = 1)=>{
         let that =this;
-        let successFn=function(data){
-            that.setState({
-                files:data.results,
+        let successFn = function (data) {
+            that.setState(function (prevState) {
+                if (data.current == 1) {
+                    return {
+                        files: [...data.results],
+                        total: data.count,
+                        loadMoreFiles:data.next,
+                        loading: false,
+                    }
+                } else {
+                    return {
+                        files: [...prevState.files, ...data.results],
+                        loadMoreFiles:data.next,
+                        loading: false
+                    }
+                }
+
             })
-            // let lastDate = moment().add(5,'year')
-            // that.setState(function(){
-            //     let files = [];
-            //     data.results.forEach(function(item) {
-            //         if (lastDate.format('YMD') != moment(item.modified_at).format('YMD')) {
-            //             lastDate = moment(item.modified_at);
-            //             // files.push({type: 'Time', date: item.modified_at})
-            //         }
-            //         console.log("item kay h",item)
-            //         files.push(item);
-            //     });
-            //     return {
-            //         files:files,
-            //         loading:false
-            //     }
-            // });
         }
         let errorFn=function(){
 
         }
         let params = {
             mailed:true,
+            page:page,
             practice : this.props.active_practiceId,
         }
         if(this.props.currentPatient){
@@ -307,7 +318,7 @@ class PatientFiles extends React.Component {
     };
 
     render() {
-        console.log("Files",this.state.files);
+        console.log("Files",this.state);
         let that = this;
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
         const fields = [{
@@ -403,12 +414,12 @@ class PatientFiles extends React.Component {
 
                         <Radio.Group buttonStyle="solid" defaultValue="">
                             <h2>Generated Files</h2>
-                            <Radio.Button key="0" style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="a" onClick={this.loadMailedFiles}>
+                            <Radio.Button key="0" style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="a" onClick={() =>this.loadMailedFiles()}>
                                 Emailed Files
                             </Radio.Button>
 
                             <Radio.Button key="1" style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                        onClick={this.loadMedicalCertificate}>
+                                        onClick={()=>this.loadMedicalCertificate()}>
                                 Medical Leave Certificate </Radio.Button>
                         </Radio.Group>
                     </Col>
@@ -455,9 +466,9 @@ class PatientFiles extends React.Component {
 
                             )}
                         />
-                        <InfiniteFeedLoaderButton loaderFunction={() => this.loadData(that.state.next)}
+                        <InfiniteFeedLoaderButton loaderFunction={() => this.loadData(that.state.loadMoreFiles)}
                                                 loading={this.state.loading}
-                                                hidden={!this.state.next}/>
+                                                hidden={!this.state.loadMoreFiles}/>
                         <Card title="Medical Certificate">
                             <List loading={this.state.loading}
                                 grid={{gutter: 16, column: 3}}
@@ -479,6 +490,9 @@ class PatientFiles extends React.Component {
                                     </Card>
                                 )}
                             />
+                             <InfiniteFeedLoaderButton loaderFunction={() => this.loadData(that.state.loadMoreCertificate)}
+                                                loading={this.state.loading}
+                                                hidden={!this.state.loadMoreCertificate}/>
                         </Card>
 
 
@@ -538,12 +552,12 @@ class PatientFiles extends React.Component {
 
                     <Radio.Group buttonStyle="solid" defaultValue="">
                         <h2>Generated Files</h2>
-                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="b" onClick={this.loadMailedFiles}>
+                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="b" onClick={() => this.loadMailedFiles()}>
                             Emailed Files
                         </Radio.Button>
 
                         <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                      onClick={this.loadMedicalCertificate} value=''>
+                                      onClick={()=>this.loadMedicalCertificate()} value=''>
                             Medical Leave Certificate </Radio.Button>
                     </Radio.Group>
                 </Col>
@@ -589,9 +603,9 @@ class PatientFiles extends React.Component {
 
                           )}
                     />
-                    <InfiniteFeedLoaderButton loaderFunction={() => this.loadData(that.state.next)}
-                                              loading={this.state.loading}
-                                              hidden={!this.state.next}/>
+                   <InfiniteFeedLoaderButton loaderFunction={() => this.loadData(that.state.loadMoreFiles)}
+                                    loading={this.state.loading}
+                                    hidden={!this.state.loadMoreFiles}/>
                     <Card title="Medical Certificate">
                         <List loading={this.state.loading}
                               grid={{gutter: 16, column: 3}}
@@ -613,6 +627,9 @@ class PatientFiles extends React.Component {
                                   </Card>
                               )}
                         />
+                        <InfiniteFeedLoaderButton loaderFunction={() => this.loadMedicalCertificate(that.state.loadMoreCertificate)}
+                                              loading={this.state.loading}
+                                              hidden={!this.state.loadMoreCertificate}/>
                     </Card>
 
 
