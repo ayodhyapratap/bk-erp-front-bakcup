@@ -69,6 +69,7 @@ export const ALL_MEDICAL_CERITICATE_API= 'patients/medical_certificate/?practice
 export const MEDICAL_CERTIFICATE_API = 'patients/medical_certificate/?practice=%s&patient=%s';
 export const MEDICAL_MEMBERSHIP_CANCEL_API ='patients/cancel_membership/'
 export const PATIENTS_MEMBERSHIP_API='patients/membership/?patient=%s'
+export const PATIENT_MAILEDFILES = 'patients/files/';
 /*DELETE OBJECT*/
 export const TREATMENTPLANS_API = 'patients/procedure/'; //?id=patientId&complete=true/false
 export const TREATMENTPLANS_MARK_COMPLETE_API = 'patients/complete_procedure/?id=%s&complete=%s';

@@ -214,7 +214,7 @@ class PatientSelection extends React.Component {
                     </Radio.Button>
                     <Radio.Button
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_b"} value={"smart_b"}>
-                        All FeMale Customers
+                        All Female Customers
                     </Radio.Button>
                     <Radio.Button
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_c"} value={"smart_c"}>

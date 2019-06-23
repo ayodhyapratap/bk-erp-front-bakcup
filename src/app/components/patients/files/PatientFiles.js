@@ -7,7 +7,8 @@ import {
     PATIENT_FILES,
     MEDICAL_CERTIFICATE_API,
     MEDICAL_CERTIFICATE_PDF,
-    ALL_MEDICAL_CERITICATE_API
+    ALL_MEDICAL_CERITICATE_API,
+    PATIENT_MAILEDFILES
 } from "../../../constants/api";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Form} from "antd/lib/index";
@@ -18,6 +19,7 @@ import Meta from "antd/lib/card/Meta";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import ModalImage from "react-modal-image";
 import {ERROR_MSG_TYPE, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import moment from "moment";
 
 class PatientFiles extends React.Component {
     constructor(props) {
@@ -34,16 +36,18 @@ class PatientFiles extends React.Component {
             // filterSearchMedical:''
             medicalCertificate: [],
             visible: false,
-            filesData: {}
+            filesData: {},
+            mailedfiles:[]
         };
         this.loadData = this.loadData.bind(this);
         this.loadMedicalCertificate = this.loadMedicalCertificate.bind(this);
+        // this.loadMailedFiles = this.loadMailedFiles.bind(this);
     }
 
     componentWillMount() {
         this.loadData();
         this.loadTags();
-        // this.loadMedicalCertificate();
+        this.loadMedicalCertificate();
     }
 
     loadData(page = 1) {
@@ -66,6 +70,23 @@ class PatientFiles extends React.Component {
                 }
 
             })
+            // let lastDate = moment().add(5,'year')
+            //     that.setState(function(){
+            //         let files = [];
+            //         data.results.forEach(function(item) {
+            //             if (lastDate.format('YMD') != moment(item.modified_at).format('YMD')) {
+            //                 lastDate = moment(item.modified_at);
+            //                 // files.push({type: 'Time', date: item.modified_at})
+            //             }
+            //             console.log("item kay h",item)
+            //             files.push(item);
+            //         });
+            //         return {
+            //             files:files,
+            //             loading:false
+            //         }
+            //     });
+                
         }
         let errorFn = function () {
             that.setState({
@@ -88,11 +109,6 @@ class PatientFiles extends React.Component {
         } else if (this.state.filterSearchTag == '') {
             apiParams.notag = true
         }
-        // if(this.state.filterSearchEmailed){
-        //     apiParams.mailed=this.state.filterSearchEmailed
-        // }else{
-        //     apiParams.mailed=false
-        // }
         getAPI(PATIENT_FILES, successFn, errorFn, apiParams);
 
     }
@@ -116,7 +132,6 @@ class PatientFiles extends React.Component {
     loadMedicalCertificate() {
         let that = this;
         let successFn = function (data) {
-            console.log("Data",data)
             that.setState({
                 medicalCertificate: data.results,
             })
@@ -126,10 +141,50 @@ class PatientFiles extends React.Component {
         }
         if(this.props.currentPatient){
             getAPI(interpolate(MEDICAL_CERTIFICATE_API, [this.props.active_practiceId,this.props.currentPatient.id]), successFn, errorFn);
+        }if(this.props.showAllClinic && this.props.currentPatient){
+            getAPI(interpolate(ALL_MEDICAL_CERITICATE_API ,[this.props.currentPatient.id]), successFn, errorFn);
         }else{
             getAPI(interpolate(ALL_MEDICAL_CERITICATE_API ,[this.props.active_practiceId]), successFn, errorFn);
         }
         
+    }
+
+    loadMailedFiles=()=>{
+        let that =this;
+        let successFn=function(data){
+            that.setState({
+                files:data.results,
+            })
+            // let lastDate = moment().add(5,'year')
+            // that.setState(function(){
+            //     let files = [];
+            //     data.results.forEach(function(item) {
+            //         if (lastDate.format('YMD') != moment(item.modified_at).format('YMD')) {
+            //             lastDate = moment(item.modified_at);
+            //             // files.push({type: 'Time', date: item.modified_at})
+            //         }
+            //         console.log("item kay h",item)
+            //         files.push(item);
+            //     });
+            //     return {
+            //         files:files,
+            //         loading:false
+            //     }
+            // });
+        }
+        let errorFn=function(){
+
+        }
+        let params = {
+            mailed:true,
+            practice : this.props.active_practiceId,
+        }
+        if(this.props.currentPatient){
+          params.patient = this.props.currentPatient.id;
+        }if(this.props.showAllClinic && this.props.currentPatient){
+            delete (params.practice)
+        }
+        getAPI(PATIENT_MAILEDFILES, successFn,errorFn,params);
     }
 
     triggerAddModal(option) {
@@ -195,15 +250,6 @@ class PatientFiles extends React.Component {
             that.loadData();
         })
     }
-    filterEmailed=(e)=>{
-        console.log("event",e);
-        let that=this;
-        this.setState({
-            filterSearchEmailed:e.target.value
-        },function(){
-            that.loadData();
-        })
-    }
     deleteMedicalCertificate(item) {
         let that = this;
         let reqData = {
@@ -254,7 +300,6 @@ class PatientFiles extends React.Component {
         this.setState(function () {
             return {visible: true, filesData: {...item}}
         });
-        // console.log("this",this.state.filesData);
     };
 
     handleCancel = () => {
@@ -262,7 +307,7 @@ class PatientFiles extends React.Component {
     };
 
     render() {
-        console.log("props",this.props);
+        console.log("Files",this.state.files);
         let that = this;
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
         const fields = [{
@@ -358,11 +403,11 @@ class PatientFiles extends React.Component {
 
                         <Radio.Group buttonStyle="solid" defaultValue="">
                             <h2>Generated Files</h2>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="d">
+                            <Radio.Button key="0" style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="a" onClick={this.loadMailedFiles}>
                                 Emailed Files
                             </Radio.Button>
 
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                            <Radio.Button key="1" style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
                                         onClick={this.loadMedicalCertificate}>
                                 Medical Leave Certificate </Radio.Button>
                         </Radio.Group>
@@ -491,9 +536,9 @@ class PatientFiles extends React.Component {
 
                     </Radio.Group>
 
-                    <Radio.Group buttonStyle="solid" defaultValue="" onChange={this.filterEmailed}>
+                    <Radio.Group buttonStyle="solid" defaultValue="">
                         <h2>Generated Files</h2>
-                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value='true'>
+                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="b" onClick={this.loadMailedFiles}>
                             Emailed Files
                         </Radio.Button>
 

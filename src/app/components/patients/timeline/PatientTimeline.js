@@ -166,6 +166,7 @@ class PatientTimeline extends React.Component {
     }
 
     render() {
+        console.log("timeline",this.state.timelineData);
         let that = this;
         let checkboxOption = [{
             label: <span style={{width: '100%'}}>Appointment</span>,
@@ -252,9 +253,7 @@ dateTimeStamp(item) {
     }}>{moment(item.date).format('LL')}</h2></Affix></span>
 }
 
-function
-
-timelineItem(item) {
+function timelineItem(item) {
     switch (item.type) {
         case 'Clinical Notes':
             return timelineClinicalNote(item);
@@ -303,9 +302,7 @@ timelineAppointmentCard(item) {
     </Card>;
 }
 
-function
-
-timelineFilesCard(item) {
+function timelineFilesCard(item) {
     return <Card hoverable
                  bodyStyle={{backgroundColor: (item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id] ? '#B5EEFF' : 'initial')}}>
         <h2><Icon type="picture"/> File<Checkbox size="large" style={{float: 'right'}}
