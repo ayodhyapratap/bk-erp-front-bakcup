@@ -385,7 +385,7 @@ class Addinvoicedynamic extends React.Component {
                                 "instruction": item.instruction,
                                 "is_active": true,
                                 batch_number: item.selectedBatch ? item.selectedBatch.batch_number : null,
-                                id: that.props.editId ? item.id : null
+                                id: that.props.editId ? item.id : undefined
                             });
                             break;
                         default:
