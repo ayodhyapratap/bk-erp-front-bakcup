@@ -1,7 +1,28 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Checkbox, Card, Form, Icon, Tabs, Divider, Tag, Row, Table, Modal, Popconfirm} from "antd";
-import {CHECKBOX_FIELD, DOCTORS_ROLE, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
+import {
+    Button,
+    Checkbox,
+    Card,
+    Form,
+    Icon,
+    Tabs,
+    Divider,
+    Tag,
+    Row,
+    Table,
+    Modal,
+    Popconfirm,
+    Switch as AntSwitch
+} from "antd";
+import {
+    CHECKBOX_FIELD,
+    DOCTORS_ROLE,
+    INPUT_FIELD,
+    RADIO_FIELD,
+    SELECT_FIELD,
+    SUCCESS_MSG_TYPE
+} from "../../../../constants/dataKeys";
 import {
     PRACTICESTAFF,
     STAFF_ROLES,
@@ -11,10 +32,10 @@ import {
     USER_PRACTICE_PERMISSIONS,
     SET_USER_PERMISSION,
     SET_SPECIFIC_USER_PERMISSION,
-    DOCTOR_VISIT_TIMING_API
+    DOCTOR_VISIT_TIMING_API, ENABLE_STAFF_IN_PRACTICE, ALL_PERMISSIONS
 } from "../../../../constants/api"
 import {Link, Route, Switch} from "react-router-dom";
-import {deleteAPI, getAPI, interpolate, patchAPI, postAPI} from "../../../../utils/common";
+import {deleteAPI, displayMessage, getAPI, interpolate, patchAPI, postAPI} from "../../../../utils/common";
 import {getAllPermissions, loggedInUserPractices} from "../../../../utils/auth";
 import moment from "moment";
 import DoctorTiming from "./DoctorTiming";
@@ -33,7 +54,8 @@ class PracticeDetails extends React.Component {
             roles: null,
             permissionEditModal: false,
             editPermissions: {},
-            allPermissions: getAllPermissions(),
+            allPermissions: [],
+            allGlobalPermissions: [],
             loading: true,
             defaultActiveTab: this.props.location.hash,
             doctorsTiming: {}
@@ -43,10 +65,11 @@ class PracticeDetails extends React.Component {
     }
 
     componentDidMount() {
+        this.getAllPermissions();
         this.loadData();
     }
 
-    setPermission(codename, e) {
+    setPermission(codename, name, e, sendPractice) {
         let that = this;
         let value = e.target.checked;
         this.setState(function (prevState) {
@@ -56,11 +79,11 @@ class PracticeDetails extends React.Component {
         });
         if (value) {
             let reqData = {
-                "name": null,
+                "name": name,
                 "codename": codename,
                 "is_active": true,
-                "practice": that.props.active_practiceId,
-                "user": that.state.currentUser
+                "practice": sendPractice ? that.props.active_practiceId : null,
+                "staff": that.state.currentUser
             }
             let successFn = function (data) {
                 that.setState(function (prevState) {
@@ -94,6 +117,19 @@ class PracticeDetails extends React.Component {
         }
     }
 
+    getAllPermissions = () => {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                allPermissions: data.practice_permissions,
+                allGlobalPermissions: data.global_permissions
+            })
+        }
+        let errorFn = function () {
+        }
+        getAPI(ALL_PERMISSIONS, successFn, errorFn);
+    }
+
     editPermissions(user) {
         let that = this;
         if (!user) {
@@ -123,10 +159,7 @@ class PracticeDetails extends React.Component {
     }
 
     loadData() {
-
         this.admin_StaffData();
-
-
     }
 
     deleteStaff(value) {
@@ -138,7 +171,6 @@ class PracticeDetails extends React.Component {
         let errorFn = function () {
         };
         deleteAPI(interpolate(SINGLE_PRACTICE_STAFF_API, [value]), successFn, errorFn);
-
     }
 
     staffRoles() {
@@ -178,7 +210,7 @@ class PracticeDetails extends React.Component {
                 loading: false
             })
         };
-        getAPI(interpolate(PRACTICESTAFF, [this.props.active_practiceId]), successFn, errorFn);
+        getAPI(interpolate(PRACTICESTAFF, [this.props.active_practiceId]), successFn, errorFn, {all: true});
     }
 
 
@@ -240,6 +272,23 @@ class PracticeDetails extends React.Component {
         });
         this.props.history.push('/settings/clinics-staff' + key);
     }
+    toggleEnableStaffPractice = (staff, e) => {
+        let that = this;
+        let successFn = function (data) {
+            if (e)
+                displayMessage(SUCCESS_MSG_TYPE, "Staff enabled for this practice successfully!!")
+            else
+                displayMessage(SUCCESS_MSG_TYPE, "Staff disabled for this practice successfully!!")
+            that.admin_StaffData();
+        }
+        let errorFn = function () {
+
+        }
+        postAPI(interpolate(ENABLE_STAFF_IN_PRACTICE, [staff]), {
+            practice: that.props.active_practiceId,
+            is_active: !!e
+        }, successFn, errorFn)
+    }
 
     render() {
         let that = this;
@@ -261,6 +310,12 @@ class PracticeDetails extends React.Component {
             dataIndex: "registration_number",
             key: "registration_number",
         }, {
+            title: "Enable Staff",
+            dataIndex: "in_practice",
+            key: "enable_staff",
+            render: (item, record) => (
+                <AntSwitch defaultChecked={!!item} onChange={(e) => that.toggleEnableStaffPractice(record.id, e)}/>)
+        }, {
             title: "Last Login",
             key: "user",
             render: (text, record) => (record.user && record.user.is_active ? (record.user.last_login ? moment(record.user.last_login).fromNow() : '--') :
@@ -276,7 +331,8 @@ class PracticeDetails extends React.Component {
               <a>Edit</a>
             </Link>
                      <Divider type="vertical"/>
-                        <a onClick={() => that.editPermissions(record.user.id)}>Permissions</a>
+                        <a onClick={() => that.editPermissions(record.id)}
+                           disabled={!record.in_practice}>Permissions</a>
                     <Divider type="vertical"/>
                     <Popconfirm title="Are you sure delete this staff?"
                                 onConfirm={() => that.deleteStaff(record.id)} okText="Yes" cancelText="No">
@@ -393,8 +449,14 @@ class PracticeDetails extends React.Component {
                             {that.state.allPermissions.map(item => <Checkbox value={item.codename}
                                                                              checked={that.state.editPermissions[item.codename]}
                                                                              disabled={that.state.editPermissions[item.codename] && that.state.editPermissions[item.codename].loading}
-                                                                             onClick={(e) => this.setPermission(item.codename, e)}
+                                                                             onClick={(e) => this.setPermission(item.codename, item.name, e, true)}
                                                                              style={{display: 'list-item'}}>{item.id} {item.name}</Checkbox>)}
+                            <Divider>Global Permissions</Divider>
+                            {that.state.allGlobalPermissions.map(item => <Checkbox value={item.codename}
+                                                                                   checked={that.state.editPermissions[item.codename]}
+                                                                                   disabled={that.state.editPermissions[item.codename] && that.state.editPermissions[item.codename].loading}
+                                                                                   onClick={(e) => this.setPermission(item.codename, item.name, e, false)}
+                                                                                   style={{display: 'list-item'}}>{item.id} {item.name}</Checkbox>)}
                         </Modal>
                     </Card>
                 </Route>

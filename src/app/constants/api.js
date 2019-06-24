@@ -13,11 +13,13 @@ export const RESET_PASSWORD_MAIL = 'users/staff_reset_mail/';
 export const LOGIN_URL = 'users/login/';
 export const USER_DATA = 'users/user_clone/';
 export const PRACTICESTAFF = 'clinics/%s/practice_staff/';
+export const ENABLE_STAFF_IN_PRACTICE = 'staff/%s/practice_list/'
 export const DOCTOR_VISIT_TIMING_API = 'clinics/%s/doctor_timing/';
-export const USER_PRACTICE_PERMISSIONS = 'user_permissions/?user=%s&practice=%s';
+export const USER_PRACTICE_PERMISSIONS = 'user_permissions/?staff=%s&practice=%s';
 export const SET_USER_PERMISSION = 'user_permissions/';
 export const SET_SPECIFIC_USER_PERMISSION = 'user_permissions/%s/';
 export const ALL_PRACTICE = 'clinics/';
+export const ALL_PERMISSIONS = 'users/all_permissions/';
 export const PRACTICE = 'clinics/%s/';
 export const PRACTICE_DELETE = 'clinics/%s/delete_clinic/';
 export const TAXES = 'clinics/%s/taxes/';

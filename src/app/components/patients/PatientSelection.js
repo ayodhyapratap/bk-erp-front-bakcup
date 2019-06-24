@@ -182,7 +182,7 @@ class PatientSelection extends React.Component {
                     <h2>Patients</h2>
                     <Radio.Button key={'all'} style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
                                   value="all">
-                        All Patents
+                        All Patients
                         <Tag color="#87d068" style={{float: 'right', margin: 4}}>
                             {this.state.totalPatients ? this.state.totalPatients : 0}
                         </Tag>

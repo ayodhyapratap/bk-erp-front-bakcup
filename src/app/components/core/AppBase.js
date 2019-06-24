@@ -34,23 +34,30 @@ class AppBase extends React.Component {
             allowAllPermissions: false,
         };
         this.activeData = this.activeData.bind(this);
-        this.clinicData = this.clinicData.bind(this);
+        // this.clinicData = this.clinicData.bind(this);
         this.switchPractice = this.switchPractice.bind(this);
     }
 
     componentDidMount() {
         // this.activeData()
         let that = this;
-        let successFn = function () {
-            that.setState({
-                active_practiceId: loggedInactivePractice(),
-                practiceList: loggedInUserPractices()
+        let successFn = function (data) {
+            that.setState(function(prevState){
+                let permissions = {};
+                data.practice_permissions.forEach(function(permission){
+                    permissions[permission.codename] = permission;
+                });
+                data.global_permissions.forEach(function(permission){
+                    permissions[permission.codename] = permission;
+                });
+                return {
+                    activePracticePermissions: permissions,
+                }
             }, function () {
-                that.clinicData();
+                // that.clinicData();
             });
         }
-        loadUserDetails(successFn);
-
+        loadUserDetails(this.state.active_practiceId, successFn);
     }
 
     toggleSider = (option) => {
@@ -61,21 +68,20 @@ class AppBase extends React.Component {
 
     activeData() {
         let that = this;
-
         that.setState(function (prevState) {
             let permissions = {};
             let activePracticeObj = null
             prevState.practiceList.forEach(function (practiceObj) {
-                if (practiceObj.pratice.id == prevState.active_practiceId) {
-                    practiceObj.permissions_data.forEach(function (permission) {
-                        permissions[permission.codename] = permission
-                    });
-                    activePracticeObj = practiceObj.pratice
+                if (practiceObj.practice.id == prevState.active_practiceId) {
+                    // practiceObj.permissions_data.forEach(function (permission) {
+                    //     permissions[permission.codename] = permission
+                    // });
+                    activePracticeObj = practiceObj.practice
                 }
             });
             return {
                 activePracticeData: activePracticeObj,
-                activePracticePermissions: permissions
+                // activePracticePermissions: permissions
             }
         })
     }
@@ -94,39 +100,39 @@ class AppBase extends React.Component {
 
     }
 
-    clinicData() {
-        var that = this;
-        that.setState(function (prevState) {
-            let returnObj = {};
-            let practices = loggedInUserPractices();
-            let flag = true;
-            practices.forEach(function (practiceObj) {
-                if (prevState.active_practiceId && prevState.active_practiceId == practiceObj.pratice.id) {
-                    let permissions = {};
-                    practiceObj.permissions_data.forEach(function (permission) {
-                        permissions[permission.codename] = permission
-                    });
-                    flag = false;
-                    returnObj = {
-                        activePracticeData: practiceObj.pratice,
-                        activePracticePermissions: permissions,
-                        active_practiceId: practiceObj.pratice.id
-                    }
-                } else if (flag) {
-                    let permissions = {};
-                    practiceObj.permissions_data.forEach(function (permission) {
-                        permissions[permission.codename] = permission
-                    });
-                    returnObj = {
-                        activePracticeData: practiceObj.pratice,
-                        activePracticePermissions: permissions,
-                        active_practiceId: practiceObj.pratice.id
-                    }
-                }
-            });
-            return returnObj;
-        });
-    }
+    // clinicData() {
+    //     var that = this;
+    //     that.setState(function (prevState) {
+    //         let returnObj = {};
+    //         let practices = loggedInUserPractices();
+    //         let flag = true;
+    //         practices.forEach(function (practiceObj) {
+    //             if (prevState.active_practiceId && prevState.active_practiceId == practiceObj.practice.id) {
+    //                 let permissions = {};
+    //                 // practiceObj.permissions_data.forEach(function (permission) {
+    //                 //     permissions[permission.codename] = permission
+    //                 // });
+    //                 flag = false;
+    //                 returnObj = {
+    //                     activePracticeData: practiceObj.practice,
+    //                     // activePracticePermissions: permissions,
+    //                     active_practiceId: practiceObj.practice.id
+    //                 }
+    //             } else if (flag) {
+    //                 let permissions = {};
+    //                 practiceObj.permissions_data.forEach(function (permission) {
+    //                     permissions[permission.codename] = permission
+    //                 });
+    //                 returnObj = {
+    //                     activePracticeData: practiceObj.pratice,
+    //                     // activePracticePermissions: permissions,
+    //                     active_practiceId: practiceObj.pratice.id
+    //                 }
+    //             }
+    //         });
+    //         return returnObj;
+    //     });
+    // }
 
 
     render() {

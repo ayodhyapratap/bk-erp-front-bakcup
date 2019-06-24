@@ -91,12 +91,6 @@ class PracticeDetails extends React.Component {
 
     render() {
         let that = this;
-        let specialisations = {};
-        if (this.props.activePracticeData) {
-            this.props.activePracticeData.specialisations.forEach(function (speciality) {
-                specialisations[speciality.id] = speciality.name
-            });
-        }
         const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -151,12 +145,12 @@ class PracticeDetails extends React.Component {
                     <Col span={12} offset={10}>
                         {this.state.practice.logo ?
                             <Avatar shape="square" size="large"  src={makeFileURL(this.state.practice.logo)} />
-                        
+
                         :null}
-                       
+
                     </Col>
                 </Row>
-                    
+
 
                     <ProfileTables label={"Practice Name : "} value={this.state.practice.name}/>
                     <ProfileTables label={"Tagline : "} value={this.state.practice.tagline}/>
@@ -165,14 +159,14 @@ class PracticeDetails extends React.Component {
                     <ProfileTables label={"Website : "}  value={this.state.practice.website}/>
                     <ProfileTables label={"GSTIN : "} value={this.state.practice.gstin}/>
                     <ProfileTables label={"Specialisation"}  value={this.state.practice.specialisation}/>
-                    {ProfileTables({label:'Address',value:this.state.practice.address + ' ' + this.state.practice.locality + ' ' + this.state.practice.city 
+                    {ProfileTables({label:'Address',value:this.state.practice.address + ' ' + this.state.practice.locality + ' ' + this.state.practice.city
                         + ' ' + this.state.practice.state + ' ' + this.state.practice.country + ' ' + this.state.practice.pincode
                     })}
 
-                   
+
                 {/* </Card> */}
-                
-                
+
+
             </Modal>
         </Row>
     }
@@ -183,8 +177,8 @@ function ProfileTables(props){
     return <Row gutter={16}>
         <Col span={8}>
             <p><b>{props.label}</b></p>
-        </Col> 
-        <Col span={16}>{props.value}</Col> 
-    </Row>  
+        </Col>
+        <Col span={16}>{props.value}</Col>
+    </Row>
 
 }

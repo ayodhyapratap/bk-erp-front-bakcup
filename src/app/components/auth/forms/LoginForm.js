@@ -85,7 +85,7 @@ class LoginForm extends React.Component {
                         rules: [{required: true, message: 'Please input your username!'}],
                     })(
                         <Input size="large" prefix={<Icon type="phone" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                               placeholder="Mobile NUmber"/>
+                               placeholder="Mobile Number"/>
                     )}
                 </FormItem>
                 <FormItem>
