@@ -37,7 +37,6 @@ class ReportsHome extends React.Component {
     }
 
     render() {
-        console.log("porps",this.props);
         let that=this;
         return <Layout>
             <ReportsHeader reportsDateRange={this.reportsDateRange} {...this.props}/>
