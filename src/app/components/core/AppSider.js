@@ -50,16 +50,17 @@ class AppSider extends React.Component {
                   openKeys={this.state.openKeys}
                   onOpenChange={this.onOpenChange}
                   theme="dark">
-                <Menu.Item key="1">
-                    <Link to="/calendar">
-                        <Icon type="schedule"/>
-                        <span className="nav-text">Calendar</span>
-                    </Link>
-                </Menu.Item>
+                {this.props.activePracticePermissions.ViewCalendar ?
+                    <Menu.Item key="1">
+                        <Link to="/calendar">
+                            <Icon type="schedule"/>
+                            <span className="nav-text">Calendar</span>
+                        </Link>
+                    </Menu.Item> : null}
                 <Menu.Item key="26">
                     <Link
                         to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/profile" : "/patients/profile"}>
-                       <Icon type="user"/>
+                        <Icon type="user"/>
                         <span className="nav-text">Patients</span>
                     </Link>
                 </Menu.Item>

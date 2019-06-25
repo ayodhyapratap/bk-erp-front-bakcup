@@ -20,6 +20,7 @@ import Profile from "../auth/Profile";
 import PrintPatientForm from "../patients/patient/PrintPatientForm";
 import CreateAppointment from "../calendar/CreateAppointment";
 import BlockCalendar from "../calendar/BlockCalendar";
+import PermissionDenied from "../common/errors/PermissionDenied";
 
 class AppBase extends React.Component {
     constructor(props) {
@@ -42,12 +43,12 @@ class AppBase extends React.Component {
         // this.activeData()
         let that = this;
         let successFn = function (data) {
-            that.setState(function(prevState){
+            that.setState(function (prevState) {
                 let permissions = {};
-                data.practice_permissions.forEach(function(permission){
+                data.practice_permissions.forEach(function (permission) {
                     permissions[permission.codename] = permission;
                 });
-                data.global_permissions.forEach(function(permission){
+                data.global_permissions.forEach(function (permission) {
                     permissions[permission.codename] = permission;
                 });
                 return {
@@ -166,18 +167,17 @@ class AppBase extends React.Component {
                                                                              startTime={this.state.startTime}/>}/>
                                 <Route exact path="/calendar/blockcalendar"
                                        render={(route) => <BlockCalendar {...this.state} {...this.props} {...route}/>}/>
-                                <Route path="/calendar" render={(route) => <Calendar {...this.state}
-                                                                                     {...this.props}
-                                                                                     {...route}
-                                                                                     key={that.state.active_practiceId}/>}/>
+                                <Route path="/calendar"
+                                       render={(route) => (that.state.activePracticePermissions.ViewCalendar ?
+                                           <Calendar {...that.state}
+                                                     {...that.props}
+                                                     {...route}
+                                                     key={that.state.active_practiceId}/> : <PermissionDenied/>)}/>
                                 <Route path="/patient/:id" render={(route) => <PatientHome {...this.state}
                                                                                            {...this.props}
                                                                                            {...route}
                                                                                            key={that.state.active_practiceId + "|" + route.match.params.id}/>}/>
-                                <Route path="/patients" render={(route) => <PatientHome {...this.state}
-                                                                                        {...this.props}
-                                                                                        {...route}
-                                                                                        key={that.state.active_practiceId}/>}/>
+
                                 <Route path="/settings" render={(route) => <SettingsDash {...this.state}
                                                                                          {...this.props}
                                                                                          {...route}
@@ -196,10 +196,16 @@ class AppBase extends React.Component {
                                                                                    {...this.props}
                                                                                    {...route}
                                                                                    key={that.state.active_practiceId}/>}/>
-                                <Route exact path="/" render={(route) => <Calendar {...this.state}
-                                                                                   {...this.props}
-                                                                                   {...route}
-                                                                                   key={that.state.active_practiceId}/>}/>
+                                {this.state.activePracticePermissions.ViewCalendar ?
+                                    <Route exact path="/" render={(route) => <Calendar {...this.state}
+                                                                                       {...this.props}
+                                                                                       {...route}
+                                                                                       key={that.state.active_practiceId}/>}/> : null}
+
+                                <Route render={(route) => <PatientHome {...this.state}
+                                                                       {...this.props}
+                                                                       {...route}
+                                                                       key={that.state.active_practiceId}/>}/>
                                 <Route component={Error404}/>
 
                             </Switch>

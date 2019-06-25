@@ -77,7 +77,7 @@ class PatientHome extends React.Component {
         getAPI(interpolate(PATIENT_PROFILE, [id]), successFn, errorFn);
     }
 
-    setCurrentPatient(patientObj,redirectUrl=null) {
+    setCurrentPatient(patientObj, redirectUrl = null) {
         let that = this;
         let urlArray = this.props.location.pathname.split("/");
         if (!isNaN(parseInt(urlArray[2]))) {
@@ -100,9 +100,9 @@ class PatientHome extends React.Component {
             currentPatient: patientObj,
             loading: false,
             listModalVisible: false
-        },function(){
-            if(redirectUrl)
-                that.props.history.push(interpolate(redirectUrl,[patientObj.id]))
+        }, function () {
+            if (redirectUrl)
+                that.props.history.push(interpolate(redirectUrl, [patientObj.id]))
         });
     }
 
@@ -298,8 +298,8 @@ class PatientHome extends React.Component {
                                        render={(route) => (this.state.currentPatient ?
                                            <Redirect
                                                to={"/patient/" + this.state.currentPatient.id + "/billing/payments"}/> :
-                                               <PatientPayments
-                                       key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>)}/>
+                                           <PatientPayments
+                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>)}/>
                                 <Route path='/patient/:id/billing/payments'
                                        render={(route) => <PatientPayments
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
@@ -312,6 +312,13 @@ class PatientHome extends React.Component {
                                 <Route exact path='/patient/:id/prescriptions/template/add'
                                        render={(route) => <PrescriptionTemplate
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                                <Route render={(route) =>
+                                    (this.state.currentPatient ?
+                                        <Redirect
+                                            to={"/patient/" + this.state.currentPatient.id + "/profile"}/> :
+                                        <PatientProfile {...this.state}
+                                                        key={this.state.currentPatient}
+                                                        setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
                             </Switch>
                         </Content>
                     </Layout>

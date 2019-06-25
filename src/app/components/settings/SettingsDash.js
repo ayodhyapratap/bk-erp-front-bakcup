@@ -138,16 +138,17 @@ class SettingsDash extends React.Component {
                                                 key={this.state.active_practiceId}/> : <PermissionDenied/>
                                )}/>
                         <Route path="/settings/printout"
-                               render={(route) => (
+                               render={(route) => (this.props.activePracticePermissions.SettingsPrintouts || this.props.allowAllPermissions ?
                                    <Printout {...this.state}
                                              {...route}
-                                             {...this.props}/>
+                                             {...this.props}
+                                             key={this.state.active_practiceId}/> : <PermissionDenied/>
                                )}/>
                         <Route path="/settings/mailpdfsettings"
-                               render={(route) => (
+                               render={(route) => (this.props.activePracticePermissions.SettingsEmailPDFSettings || this.props.allowAllPermissions ?
                                    <MailPDFSettings {...this.state}
                                                     {...route}
-                                                    {...this.props}/>
+                                                    {...this.props}/> : <PermissionDenied/>
                                )}/>
                         <Route path="/settings/integration"
                                render={(route) => <IntegrationHome {...this.state}
