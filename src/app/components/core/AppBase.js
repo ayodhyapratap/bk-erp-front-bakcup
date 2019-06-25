@@ -33,6 +33,7 @@ class AppBase extends React.Component {
             activePracticePermissions: {},
             specialisations: null,
             allowAllPermissions: false,
+            loadingPermissions: false,
         };
         this.activeData = this.activeData.bind(this);
         // this.clinicData = this.clinicData.bind(this);
@@ -40,25 +41,8 @@ class AppBase extends React.Component {
     }
 
     componentDidMount() {
-        // this.activeData()
-        let that = this;
-        let successFn = function (data) {
-            that.setState(function (prevState) {
-                let permissions = {};
-                data.practice_permissions.forEach(function (permission) {
-                    permissions[permission.codename] = permission;
-                });
-                data.global_permissions.forEach(function (permission) {
-                    permissions[permission.codename] = permission;
-                });
-                return {
-                    activePracticePermissions: permissions,
-                }
-            }, function () {
-                // that.clinicData();
-            });
-        }
-        loadUserDetails(this.state.active_practiceId, successFn);
+        this.activeData()
+
     }
 
     toggleSider = (option) => {
@@ -70,21 +54,44 @@ class AppBase extends React.Component {
     activeData() {
         let that = this;
         that.setState(function (prevState) {
-            let permissions = {};
             let activePracticeObj = null
             prevState.practiceList.forEach(function (practiceObj) {
                 if (practiceObj.practice.id == prevState.active_practiceId) {
-                    // practiceObj.permissions_data.forEach(function (permission) {
-                    //     permissions[permission.codename] = permission
-                    // });
                     activePracticeObj = practiceObj.practice
                 }
             });
+            if (activePracticeObj || !prevState.practiceList.length)
+                return {
+                    activePracticeData: activePracticeObj,
+                    loadingPermissions: true
+                }
+            setCurrentPractice(prevState.practiceList[0].practice.id);
             return {
-                activePracticeData: activePracticeObj,
-                // activePracticePermissions: permissions
+                activePracticeData: prevState.practiceList[0].practice,
+                active_practiceId: prevState.practiceList[0].practice.id,
+                loadingPermissions: true
             }
+        }, function () {
+            loadUserDetails(that.state.active_practiceId, successFn);
         })
+        let successFn = function (data) {
+            that.setState(function (prevState) {
+                let permissions = {};
+                data.practice_permissions.forEach(function (permission) {
+                    permissions[permission.codename] = permission;
+                });
+                data.global_permissions.forEach(function (permission) {
+                    permissions[permission.codename] = permission;
+                });
+                return {
+                    activePracticePermissions: permissions,
+                    loadingPermissions: false
+                }
+            }, function () {
+                // that.clinicData();
+            });
+        }
+
     }
 
     switchPractice(practiceId) {
@@ -138,8 +145,12 @@ class AppBase extends React.Component {
 
     render() {
         let that = this;
+        if (this.state.loadingPermissions) {
+            return <Spin spinning={this.state.loadingPermissions} tip={"Loading Permissions...."}>
+                <div style={{width: '100vw', height: '100vh'}}/>
+            </Spin>
+        }
         return <Layout style={{minHeight: '100vh'}}>
-            {/*<Spin spinning={!this.state.activePracticeData}>*/}
             <Switch>
                 <Route path={"/patients/patientprintform"}
                        render={(route) => <PrintPatientForm {...this.state} key={that.state.active_practiceId}/>}/>
@@ -160,13 +171,16 @@ class AppBase extends React.Component {
                                                                                         key={that.state.active_practiceId}/>}/>
                                     : null}
                                 <Route exact path="/calendar/create-appointment"
-                                       render={(route) => <CreateAppointment {...this.state}{...this.props} {...route}
-                                                                             startTime={this.state.startTime}/>}/>
+                                       render={(route) =>
+                                           <CreateAppointment {...this.state}{...this.props} {...route}
+                                                              startTime={this.state.startTime}/>}/>
                                 <Route exact path="/calendar/:appointmentid/edit-appointment"
-                                       render={(route) => <CreateAppointment {...this.state}{...this.props} {...route}
-                                                                             startTime={this.state.startTime}/>}/>
+                                       render={(route) =>
+                                           <CreateAppointment {...this.state}{...this.props} {...route}
+                                                              startTime={this.state.startTime}/>}/>
                                 <Route exact path="/calendar/blockcalendar"
-                                       render={(route) => <BlockCalendar {...this.state} {...this.props} {...route}/>}/>
+                                       render={(route) =>
+                                           <BlockCalendar {...this.state} {...this.props} {...route}/>}/>
                                 <Route path="/calendar"
                                        render={(route) => (that.state.activePracticePermissions.ViewCalendar ?
                                            <Calendar {...that.state}
@@ -214,8 +228,8 @@ class AppBase extends React.Component {
                     </Layout>
                 </Route>
             </Switch>
-            {/*</Spin>*/}
-        </Layout>;
+        </Layout>
+            ;
     }
 }
 

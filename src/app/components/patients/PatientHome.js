@@ -28,6 +28,7 @@ import {ERROR_MSG_TYPE} from "../../constants/dataKeys";
 import PatientMerge from "./merge/PatientMerge";
 import PatientRequiredNoticeCard from "./PatientRequiredNoticeCard";
 import PatientMedicalCertificate from "./files/PatientMedicalCertificate";
+import PermissionDenied from "../common/errors/PermissionDenied";
 
 const {Content} = Layout;
 
@@ -121,14 +122,15 @@ class PatientHome extends React.Component {
     }
 
     render() {
+        let that = this;
         return <Content>
             <Spin spinning={this.state.loading} size={"large"}>
-                <PatientHeader {...this.state} togglePatientListModal={this.togglePatientListModal}
+                <PatientHeader {...this.state} {...this.props} togglePatientListModal={this.togglePatientListModal}
                                setCurrentPatient={this.setCurrentPatient}
                                toggleShowAllClinic={this.toggleShowAllClinic}/>
 
                 <Layout>
-                    <PatientSider {...this.state}/>
+                    <PatientSider {...this.state} {...this.props}/>
                     <Layout>
                         <Content className="main-container"
                                  key={this.state.showAllClinic.toString()}
@@ -141,7 +143,8 @@ class PatientHome extends React.Component {
                             <Switch>
                                 {/*** Patient Profile Routes*/}
                                 <Route exact path={"/patients/merge"}
-                                       render={(route) => <PatientMerge {...this.state}/>}/>
+                                       render={(route) => (that.props.activePracticePermissions.MergePatients || that.props.allowAllPermissions ?
+                                           <PatientMerge {...this.state}/> : <PermissionDenied/>)}/>
                                 <Route exact path='/patients/profile'
                                        render={(route) =>
                                            (this.state.currentPatient ?
@@ -151,15 +154,19 @@ class PatientHome extends React.Component {
                                                                key={this.state.currentPatient}
                                                                setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
                                 <Route exact path='/patients/profile/add'
-                                       render={(route) => <EditPatientDetails
-                                           key={this.state.currentPatient} {...this.props} {...route}/>}/>
+                                       render={(route) => (that.props.activePracticePermissions.AddPatient || that.props.allowAllPermissions ?
+                                           <EditPatientDetails
+                                               key={this.state.currentPatient} {...this.props} {...route}/> :
+                                           <PermissionDenied/>)}/>
                                 <Route exact path='/patient/:id/profile'
                                        render={() => <PatientProfile {...this.state}
                                                                      key={this.state.currentPatient}
                                                                      setCurrentPatient={this.setCurrentPatient} {...this.props}/>}/>
                                 <Route exact path='/patient/:id/profile/edit'
-                                       render={(route) => <EditPatientDetails
-                                           key={this.state.currentPatient}{...this.state}{...this.props} {...route}/>}/>
+                                       render={(route) => (that.props.activePracticePermissions.AddPatient || that.props.allowAllPermissions ?
+                                           <EditPatientDetails
+                                               key={this.state.currentPatient}{...this.state}{...this.props} {...route}/> :
+                                           <PermissionDenied/>)}/>
 
                                 {/*** Patient Appointment Routes*/}
                                 <Route exact path='/patients/appointments'

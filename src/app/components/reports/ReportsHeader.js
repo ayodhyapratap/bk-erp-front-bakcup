@@ -29,7 +29,7 @@ export default class ReportsHeader extends React.Component {
             {name: 'Expenses', value: '/reports/expenses'},
             {name: 'Inventory', value: '/reports/inventory'},
             {name: 'EMR', value: '/reports/emr'},
-            {name: 'Inventory Details', value: '/reports/inventorydetails'},];
+            {name: 'Inventory Details', value: '/reports/inventorydetails'}];
         return <Header style={{background: '#fff'}}>
             <ul style={{listStyle: 'none'}}>
                 <li style={{display: 'inline'}}>

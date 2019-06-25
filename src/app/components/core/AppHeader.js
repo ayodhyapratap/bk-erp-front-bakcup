@@ -58,6 +58,7 @@ class AppHeader extends React.Component {
     }
 
     render() {
+        let that = this;
         const userMenu = (
             <Menu>
                 {/*<Menu.Item>*/}
@@ -66,11 +67,13 @@ class AppHeader extends React.Component {
                 <Menu.Item key="profile">
                     <Link to="/profile">Profile</Link>
                 </Menu.Item>
-                <Menu.Divider />
+                <Menu.Divider/>
                 <Menu.Item key={"website"}>
-                    <a href={'https://bkarogyam.com'}><small>Switch to Website ></small></a>
+                    <a href={'https://bkarogyam.com'}>
+                        <small>Switch to Website ></small>
+                    </a>
                 </Menu.Item>
-                <Menu.Divider />
+                <Menu.Divider/>
                 <Menu.Item key="logout">
                     <a onClick={this.props.logout}>Log out</a>
                 </Menu.Item>
@@ -112,20 +115,23 @@ class AppHeader extends React.Component {
                 </Menu.Item>
                 <Menu.Item key="4">
                     <Button.Group>
-                        <Link to={"/patients/profile/add"}>
-                            <Button type={"primary"}>
-                                <Icon type={"plus"}/>Add Patient
-                            </Button>
-                        </Link>
-                        <Link to={"/patients/merge"}>
-                            <Button type={"primary"}>
-                                <Icon type={"user-add"}/>Merge Patients
-                            </Button>
-                        </Link>
+                        {that.props.activePracticePermissions.AddPatient || that.props.allowAllPermissions ?
+                            <Link to={"/patients/profile/add"}>
+                                <Button type={"primary"}>
+                                    <Icon type={"plus"}/>Add Patient
+                                </Button>
+                            </Link> : null}
+                        {that.props.activePracticePermissions.MergePatients || that.props.allowAllPermissions ?
+                            <Link to={"/patients/merge"}>
+                                <Button type={"primary"}>
+                                    <Icon type={"user-add"}/>Merge Patients
+                                </Button>
+                            </Link> : null}
                     </Button.Group>
                 </Menu.Item>
                 <Menu.Item key="3">
                     <Select onChange={this.props.switchPractice} defaultValue={this.props.active_practiceId}
+                            value={this.props.active_practiceId}
                             style={{width: '300px', maxWidth: '70vw'}}>
                         {this.props.practiceList && this.props.practiceList.map((option) => <Select.Option
                             key={option.practice.id}

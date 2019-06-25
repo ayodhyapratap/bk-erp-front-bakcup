@@ -1,7 +1,7 @@
 import lockr from 'lockr';
 import axios from 'axios';
-import {AUTH_TOKEN, PASSWORD, ROLE, EMAIL, PRACTICE, GROUP} from "../constants/dataKeys";
-import {getAPI, handleErrorResponse, makeURL} from "./common";
+import {AUTH_TOKEN, PASSWORD, ROLE, EMAIL, PRACTICE, GROUP, ERROR_MSG_TYPE} from "../constants/dataKeys";
+import {displayMessage, getAPI, handleErrorResponse, makeURL} from "./common";
 import {LOGIN_URL, USER_DATA} from "../constants/api";
 import {CURRENT_PRACTICE} from "../constants/formLabels";
 
@@ -76,7 +76,7 @@ export const getAllPermissions = function () {
     return permissions
 }
 
-export const getSuperUserPermissions = function (){
+export const getSuperUserPermissions = function () {
     let permissions = [];
     let lockrPermissions = lockr.get('PERMISSIONS');
     if (lockrPermissions && lockrPermissions.SUPERUSER && lockrPermissions.SUPERUSER.length) {
@@ -104,16 +104,16 @@ export const logInUser = function (data, successFn, errorFn) {
         errorFn();
     })
 };
-export const loadUserDetails = function (practice,callBackFn) {
+export const loadUserDetails = function (practice, callBackFn) {
     let successFn = function (data) {
         lockr.set(ROLE, data.user);
         // lockr.set(PRACTICE, data.practice_permissions);
         callBackFn(data);
     }
     let errorFn = function () {
-
+        displayMessage(ERROR_MSG_TYPE, "Permission Loading Failed. Kindly refresh or check your internet connection...");
     }
-    getAPI(USER_DATA, successFn, errorFn,{practice:practice});
+    getAPI(USER_DATA, successFn, errorFn, {practice: practice});
 }
 export const saveAuthToken = function (response, successFn) {
     let data = response;
