@@ -74,16 +74,18 @@ class SettingSider extends React.Component {
                             <Icon type="experiment"/>Labs
                         </Link>
                     </Menu.Item> : null}
-                    <Menu.Item key="18">
-                        <Link to="/settings/printout">
-                            <Icon type="printer"/> Printout
-                        </Link>
-                    </Menu.Item>
+                    {this.props.activePracticePermissions.SettingsPrintouts ?
+                        <Menu.Item key="18">
+                            <Link to="/settings/printout">
+                                <Icon type="printer"/> Printout
+                            </Link>
+                        </Menu.Item> : null}
+                    {this.props.activePracticePermissions.SettingsEmailPDFSettings ?
                     <Menu.Item key="21">
                         <Link to="/settings/mailpdfsettings">
                             <Icon type="mail"/> Email PDF Settings
                         </Link>
-                    </Menu.Item>
+                    </Menu.Item> : null}
                     {this.props.activePracticePermissions.SettingsMedicalHistory ? <Menu.Item key="15">
                         <Link to="/settings/medical-history">
                             <Icon type="file-text"/> Medical History
@@ -95,27 +97,27 @@ class SettingSider extends React.Component {
                         </Link>
                     </Menu.Item> : null}
                     {/*<Menu.Item key="20">*/}
-                        {/*<Link to="/settings/integration">*/}
-                            {/*<Icon type="link"/> My Integrations*/}
-                        {/*</Link>*/}
+                    {/*<Link to="/settings/integration">*/}
+                    {/*<Icon type="link"/> My Integrations*/}
+                    {/*</Link>*/}
                     {/*</Menu.Item>*/}
                 </Menu.ItemGroup>
                 {/*<Menu.ItemGroup key="g2" title={<Divider style={{margin: '0px'}}>Bed & Medicine</Divider>}>*/}
-                    {/*<Menu.Item key="22">*/}
-                        {/*<Link to="/settings/roomtypes">*/}
-                            {/*<Icon type="apartment" /> Room Types*/}
-                        {/*</Link>*/}
-                    {/*</Menu.Item>*/}
-                    {/*<Menu.Item key="23">*/}
-                        {/*<Link to="/settings/bed-packages">*/}
-                            {/*<Icon type="box-plot"/> Bed Packages*/}
-                        {/*</Link>*/}
-                    {/*</Menu.Item>*/}
-                    {/*/!*<Menu.Item key="24">*!/*/}
-                        {/*/!*<Link to="/settings/bed-packages">*!/*/}
-                            {/*/!*<Icon type="medicine-box" /> Medicines*!/*/}
-                        {/*/!*</Link>*!/*/}
-                    {/*/!*</Menu.Item>*!/*/}
+                {/*<Menu.Item key="22">*/}
+                {/*<Link to="/settings/roomtypes">*/}
+                {/*<Icon type="apartment" /> Room Types*/}
+                {/*</Link>*/}
+                {/*</Menu.Item>*/}
+                {/*<Menu.Item key="23">*/}
+                {/*<Link to="/settings/bed-packages">*/}
+                {/*<Icon type="box-plot"/> Bed Packages*/}
+                {/*</Link>*/}
+                {/*</Menu.Item>*/}
+                {/*/!*<Menu.Item key="24">*!/*/}
+                {/*/!*<Link to="/settings/bed-packages">*!/*/}
+                {/*/!*<Icon type="medicine-box" /> Medicines*!/*/}
+                {/*/!*</Link>*!/*/}
+                {/*/!*</Menu.Item>*!/*/}
                 {/*</Menu.ItemGroup>*/}
             </Menu>
 

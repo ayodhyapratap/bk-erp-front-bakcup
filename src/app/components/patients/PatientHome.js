@@ -28,6 +28,7 @@ import {ERROR_MSG_TYPE} from "../../constants/dataKeys";
 import PatientMerge from "./merge/PatientMerge";
 import PatientRequiredNoticeCard from "./PatientRequiredNoticeCard";
 import PatientMedicalCertificate from "./files/PatientMedicalCertificate";
+import PermissionDenied from "../common/errors/PermissionDenied";
 
 const {Content} = Layout;
 
@@ -77,7 +78,7 @@ class PatientHome extends React.Component {
         getAPI(interpolate(PATIENT_PROFILE, [id]), successFn, errorFn);
     }
 
-    setCurrentPatient(patientObj,redirectUrl=null) {
+    setCurrentPatient(patientObj, redirectUrl = null) {
         let that = this;
         let urlArray = this.props.location.pathname.split("/");
         if (!isNaN(parseInt(urlArray[2]))) {
@@ -100,9 +101,9 @@ class PatientHome extends React.Component {
             currentPatient: patientObj,
             loading: false,
             listModalVisible: false
-        },function(){
-            if(redirectUrl)
-                that.props.history.push(interpolate(redirectUrl,[patientObj.id]))
+        }, function () {
+            if (redirectUrl)
+                that.props.history.push(interpolate(redirectUrl, [patientObj.id]))
         });
     }
 
@@ -121,14 +122,15 @@ class PatientHome extends React.Component {
     }
 
     render() {
+        let that = this;
         return <Content>
             <Spin spinning={this.state.loading} size={"large"}>
-                <PatientHeader {...this.state} togglePatientListModal={this.togglePatientListModal}
+                <PatientHeader {...this.state} {...this.props} togglePatientListModal={this.togglePatientListModal}
                                setCurrentPatient={this.setCurrentPatient}
                                toggleShowAllClinic={this.toggleShowAllClinic}/>
 
                 <Layout>
-                    <PatientSider {...this.state}/>
+                    <PatientSider {...this.state} {...this.props}/>
                     <Layout>
                         <Content className="main-container"
                                  key={this.state.showAllClinic.toString()}
@@ -141,7 +143,8 @@ class PatientHome extends React.Component {
                             <Switch>
                                 {/*** Patient Profile Routes*/}
                                 <Route exact path={"/patients/merge"}
-                                       render={(route) => <PatientMerge {...this.state}/>}/>
+                                       render={(route) => (that.props.activePracticePermissions.MergePatients || that.props.allowAllPermissions ?
+                                           <PatientMerge {...this.state}/> : <PermissionDenied/>)}/>
                                 <Route exact path='/patients/profile'
                                        render={(route) =>
                                            (this.state.currentPatient ?
@@ -151,15 +154,19 @@ class PatientHome extends React.Component {
                                                                key={this.state.currentPatient}
                                                                setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
                                 <Route exact path='/patients/profile/add'
-                                       render={(route) => <EditPatientDetails
-                                           key={this.state.currentPatient} {...this.props} {...route}/>}/>
+                                       render={(route) => (that.props.activePracticePermissions.AddPatient || that.props.allowAllPermissions ?
+                                           <EditPatientDetails
+                                               key={this.state.currentPatient} {...this.props} {...route}/> :
+                                           <PermissionDenied/>)}/>
                                 <Route exact path='/patient/:id/profile'
                                        render={() => <PatientProfile {...this.state}
                                                                      key={this.state.currentPatient}
                                                                      setCurrentPatient={this.setCurrentPatient} {...this.props}/>}/>
                                 <Route exact path='/patient/:id/profile/edit'
-                                       render={(route) => <EditPatientDetails
-                                           key={this.state.currentPatient}{...this.state}{...this.props} {...route}/>}/>
+                                       render={(route) => (that.props.activePracticePermissions.AddPatient || that.props.allowAllPermissions ?
+                                           <EditPatientDetails
+                                               key={this.state.currentPatient}{...this.state}{...this.props} {...route}/> :
+                                           <PermissionDenied/>)}/>
 
                                 {/*** Patient Appointment Routes*/}
                                 <Route exact path='/patients/appointments'
@@ -298,8 +305,8 @@ class PatientHome extends React.Component {
                                        render={(route) => (this.state.currentPatient ?
                                            <Redirect
                                                to={"/patient/" + this.state.currentPatient.id + "/billing/payments"}/> :
-                                               <PatientPayments
-                                       key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>)}/>
+                                           <PatientPayments
+                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>)}/>
                                 <Route path='/patient/:id/billing/payments'
                                        render={(route) => <PatientPayments
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
@@ -312,6 +319,13 @@ class PatientHome extends React.Component {
                                 <Route exact path='/patient/:id/prescriptions/template/add'
                                        render={(route) => <PrescriptionTemplate
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                                <Route render={(route) =>
+                                    (this.state.currentPatient ?
+                                        <Redirect
+                                            to={"/patient/" + this.state.currentPatient.id + "/profile"}/> :
+                                        <PatientProfile {...this.state}
+                                                        key={this.state.currentPatient}
+                                                        setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
                             </Switch>
                         </Content>
                     </Layout>

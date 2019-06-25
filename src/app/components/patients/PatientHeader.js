@@ -42,7 +42,7 @@ class PatientHeader extends React.Component {
                         </Tooltip>
                         <Switch
                             checked={this.props.showAllClinic}
-                            onChange={(value)=>this.props.toggleShowAllClinic(value)}
+                            onChange={(value) => this.props.toggleShowAllClinic(value)}
                             checkedChildren={"All Clinics"}
                             unCheckedChildren={"Current Clinic"}
                         />
@@ -56,11 +56,12 @@ class PatientHeader extends React.Component {
                         <Icon type="setting"/> Settings <Icon type="down"/>
                     </Button>
                 </Dropdown>
-                <Link to="/patients/profile/add">
-                    <Button type="primary" style={{float: 'right', margin: '15px'}}>
-                        <Icon type="plus"/> Add Patient
-                    </Button>
-                </Link>
+                {that.props.activePracticePermissions.AddPatient || that.props.allowAllPermissions ?
+                    <Link to="/patients/profile/add">
+                        <Button type="primary" style={{float: 'right', margin: '15px'}}>
+                            <Icon type="plus"/> Add Patient
+                        </Button>
+                    </Link> : null}
 
             </div>
             <Drawer

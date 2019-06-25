@@ -4,6 +4,7 @@ import {getAPI, interpolate, postAPI} from "../../utils/common";
 import {PATIENT_GROUPS, SEARCH_PATIENT, PATIENTS_LIST} from "../../constants/api";
 import InfiniteFeedLoaderButton from "../common/InfiniteFeedLoaderButton";
 import PatientGroups from "./patientGroups/PatientGroups";
+import {hideEmail, hideMobile} from "../../utils/permissionUtils";
 
 const {Meta} = Card;
 const Search = Input.Search;
@@ -39,8 +40,7 @@ class PatientSelection extends React.Component {
             });
         };
         let errorFn = function () {
-            that.setState({
-            })
+            that.setState({})
 
         };
         getAPI(interpolate(PATIENT_GROUPS, [this.props.active_practiceId]), successFn, errorFn);
@@ -209,19 +209,23 @@ class PatientSelection extends React.Component {
                     {/*<p><br/></p>*/}
                     <p><b>Smart Groups</b></p>
                     <Radio.Button
-                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_a"} value={"smart_a"}>
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_a"}
+                        value={"smart_a"}>
                         All Male Customers
                     </Radio.Button>
                     <Radio.Button
-                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_b"} value={"smart_b"}>
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_b"}
+                        value={"smart_b"}>
                         All Female Customers
                     </Radio.Button>
                     <Radio.Button
-                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_c"} value={"smart_c"}>
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_c"}
+                        value={"smart_c"}>
                         Female Customers Over 30
                     </Radio.Button>
                     <Radio.Button
-                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_d"} value={"smart_d"}>
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_d"}
+                        value={"smart_d"}>
                         Female Customers Under 30
                     </Radio.Button>
                     <p><br/></p>
@@ -237,6 +241,9 @@ class PatientSelection extends React.Component {
 
                         {this.state.patientListData.length ?
                             this.state.patientListData.map((patient) => <PatientCard {...patient}
+                                                                                     key={patient.id}
+                                                                                     showMobile={that.props.activePracticePermissions.PatientPhoneNumber}
+                                                                                     showEmail={that.props.activePracticePermissions.PatientEmailId}
                                                                                      setCurrentPatient={that.props.setCurrentPatient}/>) :
                             <p style={{textAlign: 'center'}}>No Data Found</p>
                         }
@@ -267,7 +274,8 @@ function PatientCard(patient) {
                         <Icon type="user"/>}
                 </Avatar>)}
                   title={patient.user.first_name}
-                  description={<span>{patient.user.mobile}<br/>{patient.user.email}</span>}/>
+                  description={
+                      <span>{patient.showMobile ? patient.user.mobile : hideMobile(patient.user.mobile)}<br/>{patient.showEmail ? patient.user.email : hideEmail(patient.user.email)}</span>}/>
         </Card>
     </Col>;
 }

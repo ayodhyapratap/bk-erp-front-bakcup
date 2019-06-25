@@ -106,7 +106,10 @@ class EditPatientDetails extends React.Component {
                 that.setState({});
                 let successFn = function (data) {
                     displayMessage("Patient Saved Successfully!!");
-                    that.props.history.push('/patient/' + that.props.currentPatient.id + '/profile')
+                    if (that.props.currentPatient)
+                        that.props.history.push('/patient/' + that.props.currentPatient.id + '/profile')
+                    else
+                        that.props.history.push('/patients/profile')
                 }
                 let errorFn = function () {
                     that.setState({})
@@ -150,16 +153,19 @@ class EditPatientDetails extends React.Component {
 
         return (
             <Form onSubmit={that.handleSubmit}>
-                <Card title="Add Profile"
+                <Card title={that.props.currentPatient ? "Edit Profile" : "Add Patient"}
                       extra={<div>
                           <Button style={{margin: 5}} type="primary" htmlType="submit">Submit</Button>
                           {that.props.history ?
                               <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
                                   Cancel
                               </Button> : null}
-                              </div>}>
+                      </div>}>
                     <Form.Item label="Patient Name" {...formItemLayout}>
-                        {getFieldDecorator('first_name', { rules: [{required: true, message: 'Input Patient Name!'}],initialValue: this.props.currentPatient ? this.props.currentPatient.user.first_name : null})
+                        {getFieldDecorator('first_name', {
+                            rules: [{required: true, message: 'Input Patient Name!'}],
+                            initialValue: this.props.currentPatient ? this.props.currentPatient.user.first_name : null
+                        })
                         (<Input placeholder="Patient Name"/>)
                         }
                     </Form.Item>
@@ -258,8 +264,6 @@ class EditPatientDetails extends React.Component {
                     <Form.Item label="Email" {...formItemLayout}>
                         {getFieldDecorator('email', {
                             initialValue: this.props.currentPatient ? this.props.currentPatient.user.email : null,
-                            rules: [{type: 'email', message: 'The input is not valid E-mail!'},
-                                        {required: true, message: REQUIRED_FIELD_MESSAGE}],
 
                         })
                         (<Input placeholder="Patient Email"/>)
@@ -274,8 +278,6 @@ class EditPatientDetails extends React.Component {
                         </Select>)
                         }
                     </Form.Item>
-
-                   
 
                     <Form.Item label="Patient Group" {...formItemLayout}>
                         {getFieldDecorator("patient_group", {initialValue: this.props.currentPatient ? this.props.currentPatient.patient_group : []})
