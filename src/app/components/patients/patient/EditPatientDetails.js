@@ -4,7 +4,7 @@ import {Button, Card, Form, Icon, Row, Input, Select, DatePicker} from "antd";
 import {PATIENTS_LIST, PATIENT_PROFILE, MEDICAL_HISTORY, PATIENT_GROUPS, MEMBERSHIP_API} from "../../../constants/api";
 import {getAPI, postAPI, interpolate, displayMessage, putAPI} from "../../../utils/common";
 import moment from 'moment';
-
+import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 const {Option} = Select;
 
 class EditPatientDetails extends React.Component {

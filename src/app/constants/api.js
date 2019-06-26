@@ -67,8 +67,8 @@ export const PATIENT_NOTES = 'patients/patient_notes/?patient=%s&practice=%s';
 export const LABPANEL_API = 'clinics/%s/labpanel/';
 export const PATIENT_TIMELINE_API = 'patients/%s/combine_patient_report/';
 export const PATIENT_TIMELINE_PDF = 'patients/%s/timeline_pdf/';
-export const ALL_MEDICAL_CERITICATE_API= 'patients/medical_certificate/?practice=%s'
-export const MEDICAL_CERTIFICATE_API = 'patients/medical_certificate/?practice=%s&patient=%s';
+export const ALL_MEDICAL_CERITICATE_API= 'patients/medical_certificate/?practice=%s&page=%s'
+export const MEDICAL_CERTIFICATE_API = 'patients/medical_certificate/?practice=%s&patient=%s'; 
 export const MEDICAL_MEMBERSHIP_CANCEL_API ='patients/cancel_membership/'
 export const PATIENTS_MEMBERSHIP_API='patients/membership/?patient=%s'
 export const PATIENT_MAILEDFILES = 'patients/files/';

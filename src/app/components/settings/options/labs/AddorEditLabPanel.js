@@ -14,8 +14,10 @@ class AddorEditLab extends React.Component {
            panelCost:0,
            tests:[],
            selectedTest:{},
+        //    redirect:false,
         };
         this.loadTests = this.loadTests.bind(this);
+        this.handleCancel = this.handleCancel.bind(this);
     }
     componentDidMount() {
         this.loadTests();
@@ -98,6 +100,9 @@ class AddorEditLab extends React.Component {
     onChangeCostCalculate(){
 
     }
+    handleCancel(){
+        this.props.history.push('/settings/labs');
+    }
     render() {
         let that = this;
         const formItemLayout = {
@@ -156,7 +161,7 @@ class AddorEditLab extends React.Component {
                     <Form.Item>
                         <Button type="primary" htmlType="submit">Submit</Button>
                         &nbsp;&nbsp;&nbsp;
-                        <Button onClick={this.handleReset}>Cancel</Button>
+                        <Button onClick={this.handleCancel}>Cancel</Button>
                     </Form.Item>
                 </Form>
             </Col>

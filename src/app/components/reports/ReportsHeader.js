@@ -18,18 +18,18 @@ export default class ReportsHeader extends React.Component {
     }
 
     render() {
-
       let that =this;
-        const reportCategory = [{name: 'Daily Summary', value: '/reports/summary'},
-            {name: 'Income', value: '/reports/income'},
-            {name: 'Payments', value: '/reports/payments'},
-            {name: 'Appointment', value: '/reports/appointments'},
-            {name: 'Patients', value: '/reports/patients'},
-            {name: 'Amount Due', value: '/reports/amountdue'},
-            {name: 'Expenses', value: '/reports/expenses'},
-            {name: 'Inventory', value: '/reports/inventory'},
-            {name: 'EMR', value: '/reports/emr'},
-            {name: 'Inventory Details', value: '/reports/inventorydetails'}];
+
+        const reportCategory = [{name: 'Daily Summary', value: '/reports/summary' ,active:'ReportsDailySummary'},
+            {name: 'Income', value: '/reports/income' ,active:'ReportsIncome'},
+            {name: 'Payments', value: '/reports/payments' ,active:'ReportsPayments'},
+            {name: 'Appointment', value: '/reports/appointments' ,active:'ReportsAppointments'},
+            {name: 'Patients', value: '/reports/patients' ,active:'ReportsPatients'},
+            {name: 'Amount Due', value: '/reports/amountdue' ,active:'ReportsAmountDue'},
+            {name: 'Expenses', value: '/reports/expenses' ,active:'ReportsExpenses'},
+            {name: 'Inventory', value: '/reports/inventory' ,active:'ReportsInventory'},
+            {name: 'EMR', value: '/reports/emr' ,active:'ReportsEMR'},
+            {name: 'Inventory Retails', value: '/reports/inventoryretails' ,active:'ReportsInventoryRetail'}];
         return <Header style={{background: '#fff'}}>
             <ul style={{listStyle: 'none'}}>
                 <li style={{display: 'inline'}}>
@@ -38,7 +38,7 @@ export default class ReportsHeader extends React.Component {
                 <li style={{display: 'inline'}}>
                     <Select style={{minWidth: '200px'}} defaultValue={reportCategory[3].name}
                             onChange={this.changeReport}>
-                        {reportCategory.map((item) => <Select.Option value={item.value}>{item.name}</Select.Option>)}
+                        {reportCategory.map((item) => <Select.Option value={item.value} disabled={item.active ||that.props.allowAllPermissions?false:true}>{item.name}</Select.Option>)}
                     </Select>
                 </li>
                 <li style={{display: 'inline', float: 'right'}}>
