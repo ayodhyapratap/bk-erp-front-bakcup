@@ -1,6 +1,6 @@
 import React from "react";
 import PatientSelection from "../PatientSelection";
-import {Avatar, Button, Card, Col, Divider, Icon, List, Row} from "antd";
+import {Avatar, Button, Card, Col, Divider, Icon, List, Row, Popconfirm} from "antd";
 import {Link, Redirect} from "react-router-dom";
 import {getAPI, postAPI, interpolate, displayMessage} from "../../../utils/common";
 import {MEDICAL_MEMBERSHIP_CANCEL_API, PATIENTS_MEMBERSHIP_API, PATIENT_PROFILE} from "../../../constants/api";
@@ -149,11 +149,13 @@ class PatientProfile extends React.Component {
                                                                                          onClick={() => this.onClickHandler(true)}>Renew</a>
                                 </h1>
                                     {this.state.MedicalMembership ? <Card size="small" title={"Membership "}
-                                                                          extra={<Button icon={"close"} type={"danger"}
+                                                                          extra={<Popconfirm title="Are you sure delete this Membership?" 
+                                                                          onConfirm={() => that.deleteMembership(this.state.MedicalMembership.id)}
+                                                                          okText="Yes" cancelText="No">
+                                                                             <Button icon={"close"} type={"danger"}
                                                                                          shape="circle"
-                                                                                         size="small"
-                                                                                         onClick={() => this.deleteMembership(this.state.MedicalMembership.id)}/>}
-                                                                          style={{width: 300}}>
+                                                                                         size="small"/>
+                                                                          </Popconfirm>} style={{width: 300}}>
                                             <p><strong>Balance :</strong>
                                                 <span>{this.state.MedicalMembership.membership_payments}</span></p>
                                             <p><strong>Start Date :</strong>
