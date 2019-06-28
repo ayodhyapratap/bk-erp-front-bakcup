@@ -139,13 +139,13 @@ class PatientProfile extends React.Component {
                         <Col>
                             <Divider/>
 
-                            {this.state.add ? <div><h1>MedicalMembership <a href="#"
+                            {this.state.add ? <div><h1 style={{fontSize:'18px'}}>MedicalMembership <a href="#"
                                                                             onClick={() => this.onClickHandler(false)}>Cancel</a>
                                 </h1>
                                     <MedicalMembership {...this.props} {...this.state} patientId={patient.id}
                                                        loadMedicalMembership={that.loadMedicalMembership}
                                                        formChange={that.formChange} loadProfile={that.loadProfile}/></div>
-                                : <div style={{padding: '0px'}}><h1>MedicalMembership <a href="#"
+                                : <div style={{padding: '0px'}}><h1 style={{fontSize:'18px'}}>MedicalMembership <a href="#"
                                                                                          onClick={() => this.onClickHandler(true)}>Renew</a>
                                 </h1>
                                     {this.state.MedicalMembership ? <Card size="small" title={"Membership "}
@@ -155,7 +155,7 @@ class PatientProfile extends React.Component {
                                                                              <Button icon={"close"} type={"danger"}
                                                                                          shape="circle"
                                                                                          size="small"/>
-                                                                          </Popconfirm>} style={{width: 300}}>
+                                                                          </Popconfirm>}>
                                             <p><strong>Balance :</strong>
                                                 <span>{this.state.MedicalMembership.membership_payments}</span></p>
                                             <p><strong>Start Date :</strong>
