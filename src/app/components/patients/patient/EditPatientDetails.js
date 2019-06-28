@@ -264,6 +264,8 @@ class EditPatientDetails extends React.Component {
                     <Form.Item label="Email" {...formItemLayout}>
                         {getFieldDecorator('email', {
                             initialValue: this.props.currentPatient ? this.props.currentPatient.user.email : null,
+                            rules: [{type: 'email', message: 'The input is not valid E-mail!'},
+                            {required: true, message: REQUIRED_FIELD_MESSAGE}],
 
                         })
                         (<Input placeholder="Patient Email"/>)
