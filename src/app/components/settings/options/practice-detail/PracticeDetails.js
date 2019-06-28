@@ -159,8 +159,8 @@ class PracticeDetails extends React.Component {
                     <ProfileTables label={"Website : "}  value={this.state.practice.website}/>
                     <ProfileTables label={"GSTIN : "} value={this.state.practice.gstin}/>
                     <ProfileTables label={"Specialisation"}  value={this.state.practice.specialisation}/>
-                    {ProfileTables({label:'Address',value:this.state.practice.address + ' ' + this.state.practice.locality + ' ' + this.state.practice.city
-                        + ' ' + this.state.practice.state + ' ' + this.state.practice.country + ' ' + this.state.practice.pincode
+                    {ProfileTables({label:'Address',value:this.state.practice.address?this.state.practice.address:'' + ' ' + this.state.practice.locality?this.state.practice.locality:'' + ' ' + this.state.practice.city?this.state.practice.city:''
+                        + ' ' + this.state.practice.state?this.state.practice.state:'' + ' ' + this.state.practice.country?this.state.practice.country:'' + ' ' + this.state.practice.pincode?this.state.practice.pincode:''
                     })}
 
 
