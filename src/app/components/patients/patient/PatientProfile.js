@@ -145,23 +145,25 @@ class PatientProfile extends React.Component {
                                     <MedicalMembership {...this.props} {...this.state} patientId={patient.id}
                                                        loadMedicalMembership={that.loadMedicalMembership}
                                                        formChange={that.formChange} loadProfile={that.loadProfile}/></div>
-                                : <div style={{padding: '0px'}}><h1 style={{fontSize:'18px'}}>MedicalMembership <a href="#"
+                                : <div style={{padding: '0px'}}><h1 style={{fontSize:'18px' ,textAlign:'center'}}>MedicalMembership <a href="#"
                                                                                          onClick={() => this.onClickHandler(true)}>Renew</a>
                                 </h1>
-                                    {this.state.MedicalMembership ? <Card size="small" title={"Membership "}
+                                    {this.state.MedicalMembership ? <Card size="small" title={"Membership"}
                                                                           extra={<Popconfirm title="Are you sure delete this Membership?" 
                                                                           onConfirm={() => that.deleteMembership(this.state.MedicalMembership.id)}
                                                                           okText="Yes" cancelText="No">
                                                                              <Button icon={"close"} type={"danger"}
                                                                                          shape="circle"
                                                                                          size="small"/>
-                                                                          </Popconfirm>}>
-                                            <p><strong>Balance :</strong>
-                                                <span>{this.state.MedicalMembership.membership_payments}</span></p>
-                                            <p><strong>Start Date :</strong>
-                                                <span>{this.state.MedicalMembership.medical_from}</span></p>
-                                            <p><strong>Valid Till :</strong>
-                                                <span>{this.state.MedicalMembership.medical_to}</span></p>
+                                                                          </Popconfirm>} style={{textAlign:"center"}}>
+                                            <div style={{textAlign:"left"}}>
+                                                <p><strong>Balance :</strong>
+                                                    <span>{this.state.MedicalMembership.membership_payments}</span></p>
+                                                <p><strong>Start Date :</strong>
+                                                    <span>{this.state.MedicalMembership.medical_from}</span></p>
+                                                <p><strong>Valid Till :</strong>
+                                                    <span>{this.state.MedicalMembership.medical_to}</span></p>
+                                            </div>
                                         </Card>
                                         : null}
                                 </div>
