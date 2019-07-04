@@ -155,7 +155,7 @@ class PracticeDetails extends React.Component {
                     <ProfileTables label={"Practice Name : "} value={this.state.practice.name}/>
                     <ProfileTables label={"Tagline : "} value={this.state.practice.tagline}/>
                     <ProfileTables label={"Email Id: "} value={this.state.practice.email}/>
-                    <ProfileTables label={"Contact Number : "} value={this.state.practice.email}/>
+                    <ProfileTables label={"Contact Number : "} value={this.state.practice.contact}/>
                     <ProfileTables label={"Website : "}  value={this.state.practice.website}/>
                     <ProfileTables label={"GSTIN : "} value={this.state.practice.gstin}/>
                     <ProfileTables label={"Specialisation"}  value={this.state.practice.specialisation}/>
