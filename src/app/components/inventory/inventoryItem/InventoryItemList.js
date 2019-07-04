@@ -296,11 +296,11 @@ export default class InventoryItemList extends React.Component {
         return <div>
             <Switch>
                 <Route path="/inventory/add"
-                       render={(route) => <AddorEditInventoryItem {...route} {...this.state} {...this.props}/>}/>
+                       render={(route) => <AddorEditInventoryItem {...route} {...this.state} {...this.props}  loadData={this.loadData}/>}/>
                 <Route path="/inventory/edit-item-type/:id"
-                       render={(route) => <AddItemType  {...this.state} {...this.props} {...route}/>}/>
+                       render={(route) => <AddItemType  {...this.state} {...this.props} {...route} />}/>
                 <Route exact path='/inventory/edit/:id'
-                       render={(route) => <AddorEditInventoryItem {...this.state} {...this.props} {...route}/>}/>
+                       render={(route) => <AddorEditInventoryItem {...this.state} {...this.props} {...route} loadData={this.loadData}/>}/>
                 <Route exact path='/inventory/consume-stock'
                        render={(route) => <AddOrConsumeStock key={CONSUME_STOCK}
                                                              type={CONSUME_STOCK}
