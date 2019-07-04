@@ -72,7 +72,7 @@ class AppBase extends React.Component {
                 loadingPermissions: true
             }
         }, function () {
-            loadUserDetails(that.state.active_practiceId, successFn);
+            loadUserDetails(that.state.active_practiceId, successFn,errorFn);
         })
         let successFn = function (data) {
             that.setState(function (prevState) {
@@ -90,6 +90,11 @@ class AppBase extends React.Component {
             }, function () {
                 // that.clinicData();
             });
+        }
+        let errorFn = function(){
+            that.setState({
+                loadingPermissions: false
+            })
         }
 
     }

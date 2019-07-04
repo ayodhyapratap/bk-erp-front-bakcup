@@ -104,7 +104,7 @@ export const logInUser = function (data, successFn, errorFn) {
         errorFn();
     })
 };
-export const loadUserDetails = function (practice, callBackFn) {
+export const loadUserDetails = function (practice, callBackFn,callBackErrorFn) {
     let successFn = function (data) {
         lockr.set(ROLE, data.user);
         // lockr.set(PRACTICE, data.practice_permissions);
@@ -112,6 +112,7 @@ export const loadUserDetails = function (practice, callBackFn) {
     }
     let errorFn = function () {
         displayMessage(ERROR_MSG_TYPE, "Permission Loading Failed. Kindly refresh or check your internet connection...");
+        callBackErrorFn();
     }
     getAPI(USER_DATA, successFn, errorFn, {practice: practice});
 }
