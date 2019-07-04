@@ -25,7 +25,7 @@ export default class WebAdminSider extends React.Component {
                     </Menu.Item>
                     <Menu.Item key="web-3">
                         <Link to="/web/blog">
-                            <Icon type="database"/>
+                            <Icon type="pic-right"/>
                             <span className="nav-text">Blogs</span>
                         </Link>
                     </Menu.Item>
@@ -43,7 +43,7 @@ export default class WebAdminSider extends React.Component {
                     </Menu.Item>
                     <Menu.Item key="web-6">
                         <Link to="/web/pageseo">
-                            <Icon type="phone"/>
+                            <Icon type="search"/>
                             <span className="nav-text">Page SEO</span>
                         </Link>
                     </Menu.Item>
@@ -55,7 +55,7 @@ export default class WebAdminSider extends React.Component {
                     </Menu.Item>
                     <Menu.Item key="web-8">
                         <Link to="/web/facilities">
-                            <Icon type="phone"/>
+                            <Icon type="gift"/>
                             <span className="nav-text">Facilities</span>
                         </Link>
                     </Menu.Item>
