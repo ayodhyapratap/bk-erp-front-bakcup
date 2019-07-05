@@ -174,7 +174,7 @@ class AddorEditPrescriptionForm extends React.Component {
                                     value={option.id}>{option.name}</Select.Option>)}
                             </Select>
                         )}
-                        <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Drug Type</a>
+                        <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Drug Unit</a>
                     </Form.Item>}
                 <Form.Item key={"instructions"} {...formItemLayout} label={"Instructions"}>
                     {getFieldDecorator("instructions", {
