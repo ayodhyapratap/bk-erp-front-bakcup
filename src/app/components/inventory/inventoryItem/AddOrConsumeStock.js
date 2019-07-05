@@ -11,7 +11,7 @@ import {
     Tabs,
     InputNumber, Select, DatePicker, AutoComplete, Affix
 } from "antd";
-import {displayMessage, getAPI, postAPI} from "../../../utils/common";
+import {displayMessage, getAPI, postAPI,interpolate} from "../../../utils/common";
 
 import {
     INVENTORY_ITEM_TYPE,
@@ -45,7 +45,8 @@ class AddOrConsumeStock extends React.Component {
             tempValues: {},
             supplierList: [],
             customSupplier: false
-        }
+        };
+        this.loadSupplierList =this.loadSupplierList.bind(this);
     }
 
     componentDidMount() {
@@ -58,9 +59,11 @@ class AddOrConsumeStock extends React.Component {
             customSupplier: !!value
         })
     }
-    loadSupplierList = () => {
+    loadSupplierList (){
         let that = this;
+        let params={practice: this.props.active_practiceId}
         let successFn = function (data) {
+            console.log("bhai kaha ",data)
             that.setState({
                 supplierList: data
             })
@@ -68,9 +71,10 @@ class AddOrConsumeStock extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(SUPPLIER_API, successFn, errorFn, {
-            practice: this.props.active_practiceId
-        })
+        getAPI(interpolate(SUPPLIER_API, [this.props.active_practiceId]), successFn, errorFn,params);
+        // getAPI(SUPPLIER_API, successFn, errorFn, {
+        //     practice: this.props.active_practiceId
+        // })
     }
 
     loadInventoryItemList() {
@@ -236,6 +240,7 @@ class AddOrConsumeStock extends React.Component {
     }
 
     render() {
+        console.log("supplierList",this.state.supplierList)
         let that = this;
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
