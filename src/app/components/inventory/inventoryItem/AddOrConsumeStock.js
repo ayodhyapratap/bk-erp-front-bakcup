@@ -20,11 +20,12 @@ import {
     EQUIPMENT,
     ADD_STOCK,
     CONSUME_STOCK,
-    TYPE_OF_CONSUMPTION
+    TYPE_OF_CONSUMPTION, INVENTORY
 } from "../../../constants/hardData";
-import {INVENTORY_ITEM_API, BULK_STOCK_ENTRY, SUPPLIER_API} from "../../../constants/api";
+import {INVENTORY_ITEM_API, BULK_STOCK_ENTRY, SUPPLIER_API, SEARCH_THROUGH_QR} from "../../../constants/api";
 import moment from "moment";
 
+const {Search} = Input;
 const {MonthPicker} = DatePicker;
 const TabPane = Tabs.TabPane;
 
@@ -44,8 +45,9 @@ class AddOrConsumeStock extends React.Component {
             searchStrings: {},
             tempValues: {},
             supplierList: [],
-            customSupplier: false
-        };
+            customSupplier: false,
+            qrValue: ''
+        }
         this.loadSupplierList =this.loadSupplierList.bind(this);
     }
 
@@ -143,6 +145,10 @@ class AddOrConsumeStock extends React.Component {
     };
 
     handleSubmit = (e) => {
+
+        if(e.keyCode==13){
+            return false;
+        }
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -239,6 +245,41 @@ class AddOrConsumeStock extends React.Component {
             return {tempValues: {...prevState.tempValues, [type.toString() + id.toString()]: value}}
         });
     }
+    addItemThroughQR = (value) => {
+        let that = this;
+        that.setState({
+            loadingQr: true,
+        })
+        let successFn = function (data) {
+            let item = data;
+            that.setState(function (prevState) {
+                if (prevState.items && prevState.items[INVENTORY]) {
+                    prevState.items[INVENTORY].forEach(function (inventItem) {
+                        console.log(item.inventory_item)
+                        if (inventItem.id == item.inventory_item) {
+                            console.log(inventItem);
+                            that.add({...inventItem, item_type: INVENTORY});
+
+                        }
+                    })
+                }
+                return {
+                    loadinQr: false,
+                    qrValue: ''
+                }
+            });
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(SEARCH_THROUGH_QR, successFn, errorFn, {qr: value})
+    }
+    setQrValue = (e) => {
+        let value = e.target.value;
+        this.setState({
+            qrValue: value
+        })
+    }
 
     render() {
         console.log("supplierList",this.state.tableFormValues)
@@ -308,7 +349,7 @@ class AddOrConsumeStock extends React.Component {
                                       dataSource={record.item_type_stock && record.item_type_stock.item_stock ? record.item_type_stock.item_stock.map(itemStock => itemStock.batch_number ? itemStock.batch_number : '--') : []}/>
                     )}
                 </Form.Item>
-            }, 
+            },
             {
                 title:'QR Code',
                 key:'qr_code',
@@ -443,51 +484,65 @@ class AddOrConsumeStock extends React.Component {
                     </Col>
                     <Col span={17}>
                         <Form onSubmit={this.handleSubmit}>
-                            <Row>
-                                {this.state.classType == CONSUME_STOCK ?
-                                    <Form.Item
-                                        key={`type_of_consumption`}
-                                        label={"Type of Consumption"}
-                                        {...{
-                                            labelCol: {span: 6},
-                                            wrapperCol: {span: 14},
-                                        }}>
-                                        {getFieldDecorator(`type_of_consumption`, {
-                                            validateTrigger: ['onChange', 'onBlur'],
-                                            rules: [{
-                                                message: "This field is required.",
-                                            }],
-                                        })(
-                                            <Select>
-                                                {TYPE_OF_CONSUMPTION.map(item => <Select.Option
-                                                    value={item.value}>{item.label}</Select.Option>)}
-                                            </Select>
-                                        )}
-                                    </Form.Item>
-                                    : null}
-                                {/*{this.state.classType == CONSUME_STOCK ?*/}
-                                {/*<Form.Item*/}
-                                {/*key={`supplier`}*/}
-                                {/*label={"Supplier"}*/}
-                                {/*{...{*/}
-                                {/*labelCol: {span: 6},*/}
-                                {/*wrapperCol: {span: 14},*/}
-                                {/*}}>*/}
-                                {/*{getFieldDecorator(`addedOn`, {*/}
-                                {/*validateTrigger: ['onChange', 'onBlur'],*/}
-                                {/*rules: [{*/}
-                                {/*message: "This field is required.",*/}
-                                {/*}],*/}
-                                {/*})(*/}
-                                {/*<Select>*/}
-                                {/*/!*{this.state.suppliersList && this.state.suppliersList.map(item =>*!/*/}
-                                {/*/!*<Select.Option*!/*/}
-                                {/*/!*value={item.id}>{item.name}</Select.Option>)}*!/*/}
-                                {/*</Select>*/}
-                                {/*)}*/}
-                                {/*</Form.Item>*/}
-                                {/*: null}*/}
-                            </Row>
+                            {this.state.classType == CONSUME_STOCK ?
+                                <Row>
+                                    <Col span={16}>
+                                        <Form.Item
+                                            key={`type_of_consumption`}
+                                            label={"Type of Consumption"}
+                                            {...{
+                                                labelCol: {span: 6},
+                                                wrapperCol: {span: 14},
+                                            }}>
+                                            {getFieldDecorator(`type_of_consumption`, {
+                                                validateTrigger: ['onChange', 'onBlur'],
+                                                rules: [{
+                                                    message: "This field is required.",
+                                                }],
+                                            })(
+                                                <Select>
+                                                    {TYPE_OF_CONSUMPTION.map(item => <Select.Option
+                                                        value={item.value}>{item.label}</Select.Option>)}
+                                                </Select>
+                                            )}
+                                        </Form.Item>
+                                    </Col>
+                                    {/*<Col span={8}>*/}
+                                        {/*<Search*/}
+                                            {/*loading={this.state.loadingQr}*/}
+                                            {/*value={this.state.qrValue}*/}
+                                            {/*onChange={this.setQrValue}*/}
+                                            {/*placeholder="Search QR Code"*/}
+                                            {/*onSearch={this.addItemThroughQR}*/}
+                                            {/*style={{width: 200}}*/}
+                                        {/*/>*/}
+                                    {/*</Col>*/}
+                                </Row>
+                                : null}
+
+                            {/*{this.state.classType == CONSUME_STOCK ?*/}
+                            {/*<Form.Item*/}
+                            {/*key={`supplier`}*/}
+                            {/*label={"Supplier"}*/}
+                            {/*{...{*/}
+                            {/*labelCol: {span: 6},*/}
+                            {/*wrapperCol: {span: 14},*/}
+                            {/*}}>*/}
+                            {/*{getFieldDecorator(`addedOn`, {*/}
+                            {/*validateTrigger: ['onChange', 'onBlur'],*/}
+                            {/*rules: [{*/}
+                            {/*message: "This field is required.",*/}
+                            {/*}],*/}
+                            {/*})(*/}
+                            {/*<Select>*/}
+                            {/*/!*{this.state.suppliersList && this.state.suppliersList.map(item =>*!/*/}
+                            {/*/!*<Select.Option*!/*/}
+                            {/*/!*value={item.id}>{item.name}</Select.Option>)}*!/*/}
+                            {/*</Select>*/}
+                            {/*)}*/}
+                            {/*</Form.Item>*/}
+                            {/*: null}*/}
+
                             <Table pagination={false}
                                    bordered={true}
                                    dataSource={this.state.tableFormValues}

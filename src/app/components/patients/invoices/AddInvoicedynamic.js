@@ -28,11 +28,17 @@ import {
     TAXES,
     DRUG_CATALOG,
     PROCEDURE_CATEGORY,
-    CREATE_OR_EDIT_INVOICES, PRACTICESTAFF, UNPAID_PRESCRIPTIONS, SINGLE_INVENTORY_API, SINGLE_INVOICE_API
+    CREATE_OR_EDIT_INVOICES,
+    PRACTICESTAFF,
+    UNPAID_PRESCRIPTIONS,
+    SINGLE_INVENTORY_API,
+    SINGLE_INVOICE_API,
+    SEARCH_THROUGH_QR
 } from "../../../constants/api";
 import moment from "moment";
 import {loadDoctors} from "../../../utils/clinicUtils";
 
+const {Search} = Input;
 const {MonthPicker} = DatePicker;
 const TabPane = Tabs.TabPane;
 
@@ -55,7 +61,8 @@ class Addinvoicedynamic extends React.Component {
             selectedDate: moment(),
             stocks: {},
             itemBatches: {},
-            saveLoading: false
+            saveLoading: false,
+            qrValue: ''
         }
 
     }
@@ -141,17 +148,19 @@ class Addinvoicedynamic extends React.Component {
                             drugItems.push(item);
                             if (stocks[item.id]) {
                                 let stock_quantity = stocks[item.id]
-                                item.item_type_stock.item_stock.forEach(function (stock) {
-                                    if (stock_quantity[stock.batch_number])
-                                        stock_quantity[stock.batch_number] += stock.quantity;
-                                    else
-                                        stock_quantity[stock.batch_number] += stock.quantity;
-                                });
+                                if (item.item_type_stock && item.item_type_stock.item_stock)
+                                    item.item_type_stock.item_stock.forEach(function (stock) {
+                                        if (stock_quantity[stock.batch_number])
+                                            stock_quantity[stock.batch_number] += stock.quantity;
+                                        else
+                                            stock_quantity[stock.batch_number] += stock.quantity;
+                                    });
                             } else {
                                 let stock_quantity = {}
-                                item.item_type_stock.item_stock.forEach(function (stock) {
-                                    stock_quantity[stock.batch_number] = stock.quantity
-                                });
+                                if (item.item_type_stock && item.item_type_stock.item_stock)
+                                    item.item_type_stock.item_stock.forEach(function (stock) {
+                                        stock_quantity[stock.batch_number] = stock.quantity
+                                    });
                                 stocks[item.id] = stock_quantity;
                             }
                             itemBatches[item.id] = item.item_type_stock.item_stock;
@@ -415,7 +424,41 @@ class Addinvoicedynamic extends React.Component {
             }
         });
     }
+    addItemThroughQR = (value) => {
+        let that = this;
+        that.setState({
+            loadingQr: true,
+        })
+        let successFn = function (data) {
+            let item = data;
+            that.setState(function (prevState) {
+                if (prevState.items && prevState.items[INVENTORY]) {
+                    prevState.items[INVENTORY].forEach(function (inventItem) {
+                        console.log(item.inventory_item)
+                        if (inventItem.id == item.inventory_item) {
+                            console.log(inventItem);
+                            that.add({...inventItem, item_type: INVENTORY});
 
+                        }
+                    })
+                }
+                return {
+                    loadinQr: false,
+                    qrValue: ''
+                }
+            });
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(SEARCH_THROUGH_QR, successFn, errorFn, {qr: value})
+    }
+    setQrValue = (e) => {
+        let value = e.target.value;
+        this.setState({
+            qrValue: value
+        })
+    }
 
     render() {
         let that = this;
@@ -620,6 +663,14 @@ class Addinvoicedynamic extends React.Component {
         return <div>
             <Spin spinning={this.state.saveLoading} tip="Saving Invoice...">
                 <Card title={this.props.editId ? "Edit Invoice (INV " + this.props.editId + ")" : "Add Invoice"}
+                      extra={<Search
+                          loading={this.state.loadingQr}
+                          value={this.state.qrValue}
+                          onChange={this.setQrValue}
+                          placeholder="Search QR Code"
+                          onSearch={this.addItemThroughQR}
+                          style={{width: 200}}
+                      />}
                       bodyStyle={{padding: 0}}>
                     <Row gutter={16}>
                         <Col span={7}>
