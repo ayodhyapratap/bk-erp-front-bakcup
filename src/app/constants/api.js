@@ -68,7 +68,7 @@ export const LABPANEL_API = 'clinics/%s/labpanel/';
 export const PATIENT_TIMELINE_API = 'patients/%s/combine_patient_report/';
 export const PATIENT_TIMELINE_PDF = 'patients/%s/timeline_pdf/';
 export const ALL_MEDICAL_CERITICATE_API= 'patients/medical_certificate/?practice=%s&page=%s'
-export const MEDICAL_CERTIFICATE_API = 'patients/medical_certificate/?practice=%s&patient=%s'; 
+export const MEDICAL_CERTIFICATE_API = 'patients/medical_certificate/?practice=%s&patient=%s';
 export const MEDICAL_MEMBERSHIP_CANCEL_API ='patients/cancel_membership/'
 export const PATIENTS_MEMBERSHIP_API='patients/membership/?patient=%s'
 export const PATIENT_MAILEDFILES = 'patients/files/';
@@ -161,7 +161,7 @@ export const SINGLE_ITEM_TYPE_STOCK = "item_type_stock/%s/";
 export const STOCK_ENTRY = "stock_entry/";
 export const BULK_STOCK_ENTRY = "stock_entry/bulk/";
 export const SUPPLIER_API = 'stock_entry/practice_supplier';
-
+export const SEARCH_THROUGH_QR = 'item_type_stock/find_item';
 /**
  * MLM API
  * */
