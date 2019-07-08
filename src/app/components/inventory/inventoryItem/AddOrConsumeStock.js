@@ -155,6 +155,7 @@ class AddOrConsumeStock extends React.Component {
                         inventory_item: item.id,
                         quantity: values.quantity[item._id],
                         batch_number: values.batch[item._id],
+                        qr_code:values.qr_code[item._id],
                     };
                     if (that.state.classType == ADD_STOCK) {
                         itemObject = {
