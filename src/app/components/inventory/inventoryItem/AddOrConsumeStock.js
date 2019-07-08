@@ -240,7 +240,7 @@ class AddOrConsumeStock extends React.Component {
     }
 
     render() {
-        console.log("supplierList",this.state.supplierList)
+        console.log("supplierList",this.state.tableFormValues)
         let that = this;
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
@@ -307,7 +307,21 @@ class AddOrConsumeStock extends React.Component {
                                       dataSource={record.item_type_stock && record.item_type_stock.item_stock ? record.item_type_stock.item_stock.map(itemStock => itemStock.batch_number ? itemStock.batch_number : '--') : []}/>
                     )}
                 </Form.Item>
-            }, {
+            }, 
+            {
+                title:'QR Code',
+                key:'qr_code',
+                dataIndex:'qr_code',
+                render:(item, record) => <Form.Item
+                    key={`qr_code[${record._id}]`}
+                    {...formItemLayout}>
+                    {getFieldDecorator(`qr_code[${record._id}]`, {
+                        validateTrigger: ['onChange', 'onBlur'],
+                    })(
+                        <Input placeholder="QR Code" disabled={record.item_type == 'Drug' ?false:true}/>
+                    )}
+                </Form.Item>
+            },{
                 title: 'Expiry Date',
                 key: 'expiry',
                 dataIndex: 'expiry',

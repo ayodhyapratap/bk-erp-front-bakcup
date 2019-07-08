@@ -305,7 +305,7 @@ class AddorEditInventoryItem extends React.Component {
                                         }
                                         </Form.Item>
                                         {this.state.drugUnit && this.state.drugUnit == INPUT_FIELD ?
-                                            <Form.Item key={'unit_type_extra'} label={"Drug Unit"}  {...formItemLayout}>
+                                            <Form.Item key={'unit_type_extra'} label={"Strength Unit"}  {...formItemLayout}>
                                                 {getFieldDecorator("unit_type_extra", {
                                                     initialValue: that.state.editPrescreption ? that.state.editPrescreption.unit_type_extra : null,
                                                     rules: [{
@@ -315,9 +315,9 @@ class AddorEditInventoryItem extends React.Component {
                                                 })(
                                                     <Input/>
                                                 )}
-                                                <a onClick={() => that.setFormParams('drugUnit', SELECT_FIELD)}>Choose Drug Unit</a>
+                                                <a onClick={() => that.setFormParams('drugUnit', SELECT_FIELD)}>Choose Strength Unit</a>
                                             </Form.Item>
-                                            : <Form.Item key={"stength_unit"} {...formItemLayout} label={"Drug Unit"}>
+                                            : <Form.Item key={"stength_unit"} {...formItemLayout} label={"Strength Unit"}>
                                                 {getFieldDecorator("stength_unit", {
                                                     initialValue: this.state.editPrescreption ? this.state.editPrescreption.stength_unit : null,
                                                     rules: [{
@@ -330,13 +330,14 @@ class AddorEditInventoryItem extends React.Component {
                                                             value={option.id}>{option.name}</Select.Option>)}
                                                     </Select>
                                                 )}
-                                                <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Drug Unit</a>
+                                                <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Strength Unit</a>
                                             </Form.Item>}
                                         <Form.Item label="Instructions" {...formItemLayout}>
                                             {getFieldDecorator('instructions',{ initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.instructions : null})
                                             (<TextArea/>)
                                         }
                                         </Form.Item>
+                                       
                                     </div>
                                 
                                 :null}
@@ -346,9 +347,14 @@ class AddorEditInventoryItem extends React.Component {
                                                 (<Checkbox></Checkbox>)
                                             }
                                         </Form.Item>
+                                        <Form.Item label="Strength Unit" {...formItemLayout}>
+                                            {getFieldDecorator('strength',{initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.strength : null})
+                                            (<Input/>)
+                                        }
+                                        </Form.Item>
 
                                         {this.state.drugUnit && this.state.drugUnit == INPUT_FIELD ?
-                                            <Form.Item key={'unit_type_extra'} label={"Drug Unit"}  {...formItemLayout}>
+                                            <Form.Item key={'unit_type_extra'} label={"Strength Unit"}  {...formItemLayout}>
                                                 {getFieldDecorator("unit_type_extra", {
                                                     initialValue: that.state.editPrescreption ? that.state.editPrescreption.unit_type_extra : null,
                                                     rules: [{
@@ -358,9 +364,9 @@ class AddorEditInventoryItem extends React.Component {
                                                 })(
                                                     <Input/>
                                                 )}
-                                                <a onClick={() => that.setFormParams('drugUnit', SELECT_FIELD)}>Choose Drug Unit</a>
+                                                <a onClick={() => that.setFormParams('drugUnit', SELECT_FIELD)}>Choose Strength Unit</a>
                                             </Form.Item>
-                                            : <Form.Item key={"stength_unit"} {...formItemLayout} label={"Drug Unit"}>
+                                            : <Form.Item key={"stength_unit"} {...formItemLayout} label={"Strength Unit"}>
                                                 {getFieldDecorator("stength_unit", {
                                                     initialValue: this.state.editPrescreption ? this.state.editPrescreption.stength_unit : null,
                                                     rules: [{
@@ -373,13 +379,9 @@ class AddorEditInventoryItem extends React.Component {
                                                             value={option.id}>{option.name}</Select.Option>)}
                                                     </Select>
                                                 )}
-                                                <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Drug Unit</a>
+                                                <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Strength Unit</a>
                                             </Form.Item>}
-                                        <Form.Item label="Strength Unit" {...formItemLayout}>
-                                            {getFieldDecorator('stength_unit',{initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.stength_unit : null})
-                                            (<Input/>)
-                                        }
-                                        </Form.Item>
+
                                         <Form.Item label="Instructions" {...formItemLayout}>
                                             {getFieldDecorator('instructions',{initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.instructions : null})
                                             (<TextArea/>)

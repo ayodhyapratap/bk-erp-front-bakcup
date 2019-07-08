@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Row, Radio} from "antd";
-import {getAPI, interpolate, deleteAPI, patchAPI} from "../../../utils/common";
+import {getAPI, putAPI,interpolate, deleteAPI, patchAPI} from "../../../utils/common";
 import {
     INVENTORY_ITEM_API,
     SINGLE_INVENTORY_ITEM_API,
@@ -128,13 +128,15 @@ export default class InventoryItemList extends React.Component {
 
     deleteObject(value) {
         var that = this;
+        let reqData={
+            is_active:false
+        }
         let successFn = function (data) {
             that.loadData();
-            console.log("Deleted");
         };
         let errorFn = function () {
         };
-        deleteAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [value]), successFn, errorFn);
+        putAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [value]),reqData, successFn, errorFn);
 
     }
 
