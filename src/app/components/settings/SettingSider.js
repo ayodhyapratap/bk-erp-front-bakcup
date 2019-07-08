@@ -88,7 +88,7 @@ class SettingSider extends React.Component {
                     </Menu.Item> : null}
                     {this.props.activePracticePermissions.SettingsMedicalHistory ? <Menu.Item key="15">
                         <Link to="/settings/medical-history">
-                            <Icon type="file-text"/> Medical History
+                            <Icon type="medicine-box"/> Medical History
                         </Link>
                     </Menu.Item> : null}
                     {this.props.activePracticePermissions.SettingsExpenseTypes ? <Menu.Item key="16">

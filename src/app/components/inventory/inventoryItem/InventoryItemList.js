@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Row, Radio} from "antd";
-import {getAPI, interpolate, deleteAPI, patchAPI} from "../../../utils/common";
+import {getAPI, putAPI,interpolate, deleteAPI, patchAPI} from "../../../utils/common";
 import {
     INVENTORY_ITEM_API,
     SINGLE_INVENTORY_ITEM_API,
@@ -128,13 +128,15 @@ export default class InventoryItemList extends React.Component {
 
     deleteObject(value) {
         var that = this;
+        let reqData={
+            is_active:false
+        }
         let successFn = function (data) {
             that.loadData();
-            console.log("Deleted");
         };
         let errorFn = function () {
         };
-        deleteAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [value]), successFn, errorFn);
+        putAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [value]),reqData, successFn, errorFn);
 
     }
 
@@ -284,8 +286,8 @@ export default class InventoryItemList extends React.Component {
                     return <div>
                         <Link to={"/inventory/edit/" + item.id}>Edit Details </Link>
                         <Divider type="vertical"/>
-                        <Link to={"/inventory/edit-item-type/" + item.id}>Edit stock type </Link>
-                        <Divider type="vertical"/>
+                        {/* <Link to={"/inventory/edit-item-type/" + item.id}>Edit stock type </Link>
+                        <Divider type="vertical"/> */}
                         <Popconfirm title="Are you sure delete this item?"
                                     onConfirm={() => that.deleteObject(item.id)} okText="Yes" cancelText="No">
                             <a>Delete</a>
@@ -296,11 +298,15 @@ export default class InventoryItemList extends React.Component {
         return <div>
             <Switch>
                 <Route path="/inventory/add"
-                       render={(route) => <AddorEditInventoryItem {...route} {...this.state} {...this.props}/>}/>
-                <Route path="/inventory/edit-item-type/:id"
-                       render={(route) => <AddItemType  {...this.state} {...this.props} {...route}/>}/>
+                       render={(route) => <AddorEditInventoryItem {...route} {...this.state} {...this.props}  loadData={this.loadData}/>}/>
+                {/* <Route path="/inventory/edit-item-type/:id"
+                       render={(route) => <AddOrConsumeStock key={ADD_STOCK}
+                       type={ADD_STOCK}
+                       loadData={this.loadData}
+                       {...this.state} {...route} {...this.props}/>}/> */}
+                       
                 <Route exact path='/inventory/edit/:id'
-                       render={(route) => <AddorEditInventoryItem {...this.state} {...this.props} {...route}/>}/>
+                       render={(route) => <AddorEditInventoryItem {...this.state} {...this.props} {...route} loadData={this.loadData}/>}/>
                 <Route exact path='/inventory/consume-stock'
                        render={(route) => <AddOrConsumeStock key={CONSUME_STOCK}
                                                              type={CONSUME_STOCK}
