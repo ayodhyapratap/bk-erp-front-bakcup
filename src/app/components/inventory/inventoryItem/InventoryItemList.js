@@ -36,9 +36,9 @@ export default class InventoryItemList extends React.Component {
 
     componentDidMount() {
         this.loadData();
-        this.loadTaxes();
-        this.loadManufactureList();
-        this.loadVendorList();
+        // this.loadTaxes();
+        // this.loadManufactureList();
+        // this.loadVendorList();
     }
 
     loadData() {
@@ -241,16 +241,18 @@ export default class InventoryItemList extends React.Component {
                 return <span>{totalStock} {totalStock <= record.re_order_level ?
                     <Tag color="#f50">Low</Tag> : null}</span>;
             }
-        }, {
-            title: 'Retail Price (INR)',
-            dataIndex: 'retail_price',
-            key: 'retail_price',
-            render: (value, record) => <span>{record.retail_price}
-                {record.taxes && record.taxes.map(tax =>
-                    <small> {(taxesdata[tax] ? taxesdata[tax].name + "@" + taxesdata[tax].tax_value + "%" : null)}</small>
-                )}
-                </span>
-        }, {
+        },
+        //     {
+        //     title: 'Retail Price (INR)',
+        //     dataIndex: 'retail_price',
+        //     key: 'retail_price',
+        //     render: (value, record) => <span>{record.retail_price}
+        //         {record.taxes && record.taxes.map(tax =>
+        //             <small> {(taxesdata[tax] ? taxesdata[tax].name + "@" + taxesdata[tax].tax_value + "%" : null)}</small>
+        //         )}
+        //         </span>
+        // },
+            {
             title: 'Item type',
             dataIndex: 'item_type',
             key: 'item_type',
@@ -264,10 +266,10 @@ export default class InventoryItemList extends React.Component {
             title: 'Manufacturer',
             key: 'manufacturer',
             export: function (text, record) {
-                return manufacturerData[record.manufacturer]
+                return record.manufacturer_data ? record.manufacturer_data.name : '';
             },
             render: (text, record) => (
-                <span> {manufacturerData[record.manufacturer]}</span>
+                <span> {record.manufacturer_data ? record.manufacturer_data.name : ''}</span>
             )
         },
             //     {
@@ -304,7 +306,7 @@ export default class InventoryItemList extends React.Component {
                        type={ADD_STOCK}
                        loadData={this.loadData}
                        {...this.state} {...route} {...this.props}/>}/> */}
-                       
+
                 <Route exact path='/inventory/edit/:id'
                        render={(route) => <AddorEditInventoryItem {...this.state} {...this.props} {...route} loadData={this.loadData}/>}/>
                 <Route exact path='/inventory/consume-stock'

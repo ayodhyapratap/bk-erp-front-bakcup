@@ -11,7 +11,7 @@ import {
     Tabs,
     InputNumber, Select, DatePicker, AutoComplete, Affix
 } from "antd";
-import {displayMessage, getAPI, postAPI,interpolate} from "../../../utils/common";
+import {displayMessage, getAPI, postAPI, interpolate} from "../../../utils/common";
 
 import {
     INVENTORY_ITEM_TYPE,
@@ -39,6 +39,7 @@ class AddOrConsumeStock extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            items: {},
             classType: props.type,
             tableFormValues: [],
             maxQuantityforConsume: {},
@@ -48,7 +49,7 @@ class AddOrConsumeStock extends React.Component {
             customSupplier: false,
             qrValue: ''
         }
-        this.loadSupplierList =this.loadSupplierList.bind(this);
+        this.loadSupplierList = this.loadSupplierList.bind(this);
     }
 
     componentDidMount() {
@@ -61,11 +62,12 @@ class AddOrConsumeStock extends React.Component {
             customSupplier: !!value
         })
     }
-    loadSupplierList (){
+
+    loadSupplierList() {
         let that = this;
-        let params={practice: this.props.active_practiceId}
+        let params = {practice: this.props.active_practiceId}
         let successFn = function (data) {
-            console.log("bhai kaha ",data)
+            console.log("bhai kaha ", data)
             that.setState({
                 supplierList: data
             })
@@ -73,7 +75,7 @@ class AddOrConsumeStock extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(interpolate(SUPPLIER_API, [this.props.active_practiceId]), successFn, errorFn,params);
+        getAPI(interpolate(SUPPLIER_API, [this.props.active_practiceId]), successFn, errorFn, params);
         // getAPI(SUPPLIER_API, successFn, errorFn, {
         //     practice: this.props.active_practiceId
         // })
@@ -81,43 +83,47 @@ class AddOrConsumeStock extends React.Component {
 
     loadInventoryItemList() {
         let that = this;
-        let successFn = function (recData) {
-            let data = recData.results;
-            let drugItems = [];
-            let equipmentItems = [];
-            let supplesItems = [];
-            data.forEach(function (item) {
-                if (item.item_type == DRUG) {
-                    drugItems.push(item);
-                }
-                if (item.item_type == SUPPLIES) {
-                    supplesItems.push(item);
-                }
-                if (item.item_type == EQUIPMENT) {
-                    equipmentItems.push(item);
-                }
-            });
-            that.setState({
-                items: {
-                    [DRUG]: drugItems,
-                    [EQUIPMENT]: equipmentItems,
-                    [SUPPLIES]: supplesItems,
-                },
-                filteredItems: {
-                    [DRUG]: drugItems,
-                    [EQUIPMENT]: equipmentItems,
-                    [SUPPLIES]: supplesItems,
-                }
-            })
-        }
-        let errorFn = function () {
-        }
-        getAPI(INVENTORY_ITEM_API, successFn, errorFn, {
-            maintain_inventory: true,
-            practice: this.props.active_practiceId
+        INVENTORY_ITEM_TYPE.forEach(function (type) {
+            that.loadItemsList(type.value)
         });
     }
 
+    loadItemsList = (type, page = 1) => {
+        let that = this;
+        let successFn = function (recData) {
+            let data = recData.results;
+            if (recData.current == 1) {
+                that.setState(function (prevState) {
+                    return {
+                        items: {
+                            ...prevState.items,
+                            [type]: data,
+                        }
+                    }
+                });
+            } else {
+                that.setState(function (prevState) {
+                    return {
+                        items: {
+                            ...prevState.items,
+                            [type]: [...prevState.items[type], ...data],
+                        }
+                    }
+                });
+            }
+        }
+        let errorFn = function () {
+        }
+        let params = {
+            maintain_inventory: true,
+            practice: this.props.active_practiceId,
+            item_type: type,
+        }
+        if (that.state.searchStrings[type]) {
+            params.item_name = that.state.searchStrings[type]
+        }
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn, params);
+    }
     remove = (k) => {
         this.setState(function (prevState) {
             let newTableFormValues = [];
@@ -132,13 +138,14 @@ class AddOrConsumeStock extends React.Component {
         });
     }
 
-    add = (item) => {
+    add = (item, randId = Math.random().toFixed(7)) => {
+        console.log(randId);
         this.setState(function (prevState) {
             return {
                 tableFormValues: [...prevState.tableFormValues, {
                     ...tableFormFields,
                     ...item,
-                    _id: Math.random().toFixed(7),
+                    _id: randId,
                 }]
             }
         });
@@ -146,7 +153,7 @@ class AddOrConsumeStock extends React.Component {
 
     handleSubmit = (e) => {
 
-        if(e.keyCode==13){
+        if (e.keyCode == 13) {
             return false;
         }
         let that = this;
@@ -161,7 +168,6 @@ class AddOrConsumeStock extends React.Component {
                         inventory_item: item.id,
                         quantity: values.quantity[item._id],
                         batch_number: values.batch[item._id],
-                        qr_code:values.qr_code[item._id],
                     };
                     if (that.state.classType == ADD_STOCK) {
                         itemObject = {
@@ -215,7 +221,7 @@ class AddOrConsumeStock extends React.Component {
             searchValues[type] = value;
             return {searchStrings: searchValues}
         }, function () {
-            that.filterValues(type);
+            that.loadItemsList(type);
         });
     }
     filterValues = (type) => {
@@ -249,22 +255,53 @@ class AddOrConsumeStock extends React.Component {
         let that = this;
         that.setState({
             loadingQr: true,
-        })
+        });
+        let qrSplitted = value.split('*');
         let successFn = function (data) {
             let item = data;
-            that.setState(function (prevState) {
-                if (prevState.items && prevState.items[INVENTORY]) {
-                    prevState.items[INVENTORY].forEach(function (inventItem) {
-                        console.log(item.inventory_item)
-                        if (inventItem.id == item.inventory_item) {
-                            console.log(inventItem);
-                            that.add({...inventItem, item_type: INVENTORY});
-
-                        }
-                    })
+            let {setFieldsValue, getFieldsValue, getFieldValue} = that.props.form;
+            let randomId = Math.random().toFixed(7);
+            let flag = true
+            that.state.tableFormValues.forEach(function (row) {
+                if (row.item_name == qrSplitted[0]) {
+                    let _id = row._id;
+                    let batch = getFieldsValue(`batch[${_id}]`);
+                    if (batch == qrSplitted[3]) {
+                        let quantity = getFieldsValue(`quantity[${_id}]`);
+                        flag = false
+                        setFieldsValue({
+                            [`quantity[${_id}]`]: quantity + 1
+                        })
+                    }
                 }
+            })
+            if (flag) {
+                that.add(data, randomId);
+                that.storeValue('batch', randomId, qrSplitted[1]);
+
+                setFieldsValue({
+                    [`batch[${randomId}]`]: qrSplitted[1],
+                    [`unit_cost[${randomId}]`]: qrSplitted[3],
+                    [`expiry_date[${randomId}]`]: moment(qrSplitted[2], 'MM/YY')
+                })
+            }
+            console.log(getFieldsValue(), {
+                [`batch[${randomId}]`]: qrSplitted[0]
+            });
+            that.setState(function (prevState) {
+
+                // if (prevState.items && prevState.items[INVENTORY]) {
+                //     prevState.items[INVENTORY].forEach(function (inventItem) {
+                //         console.log(item.inventory_item)
+                //         if (inventItem.id == item.inventory_item) {
+                //             console.log(inventItem);
+                //             that.add({...inventItem, item_type: INVENTORY});
+                //
+                //         }
+                //     })
+                // }
                 return {
-                    loadinQr: false,
+                    loadingQr: false,
                     qrValue: ''
                 }
             });
@@ -272,7 +309,7 @@ class AddOrConsumeStock extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(SEARCH_THROUGH_QR, successFn, errorFn, {qr: value})
+        getAPI(SEARCH_THROUGH_QR, successFn, errorFn, {qr: value, form: 'Inventory'})
     }
     setQrValue = (e) => {
         let value = e.target.value;
@@ -282,7 +319,7 @@ class AddOrConsumeStock extends React.Component {
     }
 
     render() {
-        console.log("supplierList",this.state.tableFormValues)
+        console.log("supplierList", this.state.tableFormValues)
         let that = this;
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
@@ -349,21 +386,7 @@ class AddOrConsumeStock extends React.Component {
                                       dataSource={record.item_type_stock && record.item_type_stock.item_stock ? record.item_type_stock.item_stock.map(itemStock => itemStock.batch_number ? itemStock.batch_number : '--') : []}/>
                     )}
                 </Form.Item>
-            },
-            {
-                title:'QR Code',
-                key:'qr_code',
-                dataIndex:'qr_code',
-                render:(item, record) => <Form.Item
-                    key={`qr_code[${record._id}]`}
-                    {...formItemLayout}>
-                    {getFieldDecorator(`qr_code[${record._id}]`, {
-                        validateTrigger: ['onChange', 'onBlur'],
-                    })(
-                        <Input placeholder="QR Code" disabled={record.item_type == 'Drug' ?false:true}/>
-                    )}
-                </Form.Item>
-            },{
+            }, {
                 title: 'Expiry Date',
                 key: 'expiry',
                 dataIndex: 'expiry',
@@ -455,7 +478,15 @@ class AddOrConsumeStock extends React.Component {
             render: (value, record) => <a onClick={() => that.remove(record._id)}>Delete</a>
         }]);
         return <div>
-            <Card title={this.state.classType + " Stock"}>
+            <Card title={this.state.classType + " Stock"} extra={
+                <Search
+                    loading={this.state.loadingQr}
+                    value={this.state.qrValue}
+                    onChange={this.setQrValue}
+                    placeholder="Search QR Code"
+                    onSearch={this.addItemThroughQR}
+                    style={{width: 200}}
+                />}>
                 <Row gutter={16}>
                     <Col span={7}>
                         <Tabs size="small" type="card">
@@ -469,7 +500,7 @@ class AddOrConsumeStock extends React.Component {
                                 </div>
                                 <List size={"small"}
                                       itemLayout="horizontal"
-                                      dataSource={this.state.filteredItems ? this.state.filteredItems[itemType.value] : []}
+                                      dataSource={this.state.items ? this.state.items[itemType.value] : []}
                                       renderItem={item => (
                                           <List.Item>
                                               <List.Item.Meta
@@ -508,14 +539,14 @@ class AddOrConsumeStock extends React.Component {
                                         </Form.Item>
                                     </Col>
                                     {/*<Col span={8}>*/}
-                                        {/*<Search*/}
-                                            {/*loading={this.state.loadingQr}*/}
-                                            {/*value={this.state.qrValue}*/}
-                                            {/*onChange={this.setQrValue}*/}
-                                            {/*placeholder="Search QR Code"*/}
-                                            {/*onSearch={this.addItemThroughQR}*/}
-                                            {/*style={{width: 200}}*/}
-                                        {/*/>*/}
+                                    {/*<Search*/}
+                                    {/*loading={this.state.loadingQr}*/}
+                                    {/*value={this.state.qrValue}*/}
+                                    {/*onChange={this.setQrValue}*/}
+                                    {/*placeholder="Search QR Code"*/}
+                                    {/*onSearch={this.addItemThroughQR}*/}
+                                    {/*style={{width: 200}}*/}
+                                    {/*/>*/}
                                     {/*</Col>*/}
                                 </Row>
                                 : null}

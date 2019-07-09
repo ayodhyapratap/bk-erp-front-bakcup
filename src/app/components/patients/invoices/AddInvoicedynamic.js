@@ -249,7 +249,7 @@ class Addinvoicedynamic extends React.Component {
     }
 
 
-    add = (item) => {
+    add = (item,randId=Math.random().toFixed(7)) => {
         this.setState(function (prevState) {
             if (item.item_type == PROCEDURES) {
                 item = {
@@ -275,7 +275,7 @@ class Addinvoicedynamic extends React.Component {
                     ...tableFormFields,
                     ...item,
                     id: undefined,
-                    _id: Math.random().toFixed(7),
+                    _id: randId,
                 }]
             }
         });
@@ -429,21 +429,53 @@ class Addinvoicedynamic extends React.Component {
         that.setState({
             loadingQr: true,
         })
+        let qrSplitted = value.split('*');
         let successFn = function (data) {
-            let item = data;
-            that.setState(function (prevState) {
-                if (prevState.items && prevState.items[INVENTORY]) {
-                    prevState.items[INVENTORY].forEach(function (inventItem) {
-                        console.log(item.inventory_item)
-                        if (inventItem.id == item.inventory_item) {
-                            console.log(inventItem);
-                            that.add({...inventItem, item_type: INVENTORY});
 
-                        }
-                    })
+            let item = data;
+            let {setFieldsValue, getFieldsValue, getFieldValue} = that.props.form;
+            let randomId = Math.random().toFixed(7);
+            let flag = true
+            that.state.tableFormValues.forEach(function (row) {
+                if (row.item_name == qrSplitted[0]) {
+                    let _id = row._id;
+                    let batch = getFieldsValue(`batch[${_id}]`);
+                    if (batch == qrSplitted[3]) {
+                        let quantity = getFieldsValue(`quantity[${_id}]`);
+                        flag = false
+                        setFieldsValue({
+                            [`quantity[${_id}]`]: quantity + 1
+                        })
+                    }
                 }
+            })
+
+            if (flag) {
+               if( data.item_type_stock && data.item_type_stock.item_stock)
+                   data.item_type_stock.item_stock.forEach(function(stock){
+                       if(stock.batch_number==qrSplitted[1]){
+                           data.selectedBatch = stock;
+                       }
+                   })
+                that.add({...data,item_type:INVENTORY}, randomId);
+
+                setFieldsValue({
+                    [`unit_cost[${randomId}]`]: qrSplitted[3],
+                })
+            }
+            that.setState(function (prevState) {
+                // if (prevState.items && prevState.items[INVENTORY]) {
+                //     prevState.items[INVENTORY].forEach(function (inventItem) {
+                //         console.log(item.inventory_item)
+                //         if (inventItem.id == item.inventory_item) {
+                //             console.log(inventItem);
+                //             that.add({...inventItem, item_type: INVENTORY});
+                //
+                //         }
+                //     })
+                // }
                 return {
-                    loadinQr: false,
+                    loadingQr: false,
                     qrValue: ''
                 }
             });
@@ -451,7 +483,7 @@ class Addinvoicedynamic extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(SEARCH_THROUGH_QR, successFn, errorFn, {qr: value})
+        getAPI(SEARCH_THROUGH_QR, successFn, errorFn, {qr: value,form:'Invoice'})
     }
     setQrValue = (e) => {
         let value = e.target.value;
