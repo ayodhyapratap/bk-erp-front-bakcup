@@ -322,7 +322,7 @@ function InvoiceCard(invoice, that) {
             style={{float: 'right'}}
             overlay={<Menu>
                 <Menu.Item key="1"
-                           onClick={() => that.editPrescriptionData(invoice)} disabled={!that.props.match.params.id}>
+                           onClick={() => that.editInvoiceData(invoice)} disabled={!that.props.match.params.id}>
                     <Link to={"/patient/" + that.props.match.params.id + "/billing/payments/add"}>
                         <Icon type="dollar"/>
                         &nbsp;
