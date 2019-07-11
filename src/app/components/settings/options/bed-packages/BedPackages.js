@@ -3,8 +3,8 @@ import {Button, Card, Divider, Icon, Popconfirm} from 'antd';
 import {Link, Redirect, Route, Switch} from "react-router-dom";
 import CustomizedTable from "../../../common/CustomizedTable";
 import AddorEditBedPackages from "./AddorEditBedPackages";
-import {postAPI} from "../../../../utils/common";
-import {INVENTORY_ITEM_API} from "../../../../constants/api";
+import {getAPI, interpolate, postAPI} from "../../../../utils/common";
+import {BED_PACKAGES, INVENTORY_ITEM_API} from "../../../../constants/api";
 
 export default class BedPackages extends React.Component {
     constructor(props) {
@@ -27,11 +27,12 @@ export default class BedPackages extends React.Component {
                 packages: data
             })
         }
-        let erroFn = function () {
+        let errorFn = function () {
             that.setState({
                 loading: false,
             })
         }
+        getAPI(interpolate(BED_PACKAGES, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     deleteObject(record) {
@@ -43,10 +44,10 @@ export default class BedPackages extends React.Component {
         }
         let errorFn = function () {
         }
-        postAPI(INVENTORY_ITEM_API, reqData, successFn, errorFn);
+        postAPI(interpolate(BED_PACKAGES, [this.props.active_practiceId]), reqData, successFn, errorFn);
     }
 
-    editObject=(record)=> {
+    editObject = (record) => {
         this.setState({
             editPackage: record,
             loading: false
@@ -60,7 +61,18 @@ export default class BedPackages extends React.Component {
             title: "Package Name",
             dataIndex: 'name',
             key: 'name'
-
+        }, {
+            title: "Days",
+            dataIndex: 'no_of_days',
+            key: 'no_of_days'
+        }, {
+            title: "Price (INR)",
+            dataIndex: 'normal_price',
+            key: 'normal_price'
+        }, {
+            title: "Tatkal Price (INR)",
+            dataIndex: 'tatkal_price',
+            key: 'tatkal_price'
         }, {
             title: 'Action',
             key: 'action',
@@ -78,10 +90,11 @@ export default class BedPackages extends React.Component {
         }]
         return <Switch>
             <Route path={"/settings/bed-packages/add"}
-                   render={(route) => <AddorEditBedPackages {...this.state}{...this.props} {...route}/>}/>
+                   render={(route) => <AddorEditBedPackages {...this.state}{...this.props} {...route}
+                                                            loadData={this.loadData}/>}/>
             <Route path={"/settings/bed-packages/edit"}
                    render={(route) => (this.state.editPackage ?
-                       <AddorEditBedPackages {...this.state} {...this.props} {...route}/> :
+                       <AddorEditBedPackages {...this.state} {...this.props} {...route} loadData={this.loadData}/> :
                        <Redirect to={"/settings/bed-packages"}/>)
                    }/>
             <Route>

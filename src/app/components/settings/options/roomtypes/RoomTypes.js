@@ -9,8 +9,7 @@ import {
     NUMBER_FIELD,
     SELECT_FIELD
 } from "../../../../constants/dataKeys";
-import {EXPENSE_TYPE, ROOM_TYPE} from "../../../../constants/api"
-import {Link} from "react-router-dom";
+import {EXPENSE_TYPE, ROOM_TYPE} from "../../../../constants/api";
 import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
 import CustomizedTable from "../../../common/CustomizedTable";
 
@@ -63,9 +62,9 @@ class RoomTypes extends React.Component {
             }
         };
         if (deleted) {
-            getAPI(ROOM_TYPE, successFn, errorFn, {deleted: true,practice:this.props.active_practiceId});
+            getAPI(interpolate(ROOM_TYPE,[this.props.active_practiceId]), successFn, errorFn, {deleted: true,practice:this.props.active_practiceId});
         } else {
-            getAPI(ROOM_TYPE, successFn, errorFn,{practice:this.props.active_practiceId});
+            getAPI(interpolate(ROOM_TYPE,[this.props.active_practiceId]), successFn, errorFn);
         }
     }
 
@@ -102,7 +101,7 @@ class RoomTypes extends React.Component {
         }
         let errorFn = function () {
         };
-        postAPI(ROOM_TYPE, reqData, successFn, errorFn)
+        postAPI(interpolate(ROOM_TYPE,[this.props.active_practiceId]), reqData, successFn, errorFn)
     }
 
     showDeletedExpenses = () => {
@@ -163,7 +162,7 @@ class RoomTypes extends React.Component {
             errorFn: function () {
 
             },
-            action: ROOM_TYPE,
+            action: interpolate(ROOM_TYPE,[this.props.active_practiceId]),
             method: "post",
         }
         const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];

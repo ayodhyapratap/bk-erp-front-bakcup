@@ -9,10 +9,13 @@ import {
 import AppBase from "./app/components/core/AppBase";
 import Auth from "./app/components/auth/Auth";
 import momenttz from 'moment-timezone';
+import ReactGA from 'react-ga';
 
 class App extends Component {
     constructor(props) {
         super(props);
+        ReactGA.initialize('UA-143616458-1');
+
         this.state = {
             user: loggedInUser(),
             redirect: false,
@@ -50,6 +53,7 @@ class App extends Component {
     }
 
     render() {
+        ReactGA.pageview(window.location.pathname + window.location.search);
         return <Layout>
             <Switch>
                 <Route exact path="/login" render={() => <Auth {...this.state} login={this.login}/>}/>

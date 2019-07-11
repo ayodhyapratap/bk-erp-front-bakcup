@@ -62,7 +62,7 @@ export const VITAL_SIGNS_API = 'patients/vital_sign/'; //?patient=patientId&prac
 export const PRESCRIPTIONS_API = 'patients/prescriptions/'; //?id=patientId&practice=practiceId
 export const SINGLE_REATMENTPLANS_API = 'patients/procedure/?id=%s';
 export const BLOCK_CALENDAR = 'appointment/block_calendar/';
-export const ROOM_TYPE = 'clinics/room_types/';
+
 export const PATIENT_NOTES = 'patients/patient_notes/?patient=%s&practice=%s';
 export const LABPANEL_API = 'clinics/%s/labpanel/';
 export const PATIENT_TIMELINE_API = 'patients/%s/combine_patient_report/';
@@ -95,9 +95,9 @@ export const SEARCH_PATIENT = 'patients/search/?name=%s';
 
 //extra data
 export const EXTRA_DATA = 'clinics/extra_data';
-
-//reports
-
+/**
+ * Reports API
+ * */
 export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/'
 export const EXPENSE_REPORT = 'clinics/%s/expense_report/'
 export const INVOICE_REPORTS = 'clinics/%s/invoice_report/'
@@ -183,4 +183,9 @@ export const TREATMENTPLANS_PDF = 'patients/treatment_plan_pdf/?id=%s';
 export const MEDICAL_CERTIFICATE_PDF = 'patients/medical_certificate_pdf/?id=%s';
 export const PAYMENT_PDF = 'payment/%s/get_pdf/';
 
-
+/**
+ * Reservation System
+ * */
+export const ROOM_TYPE = 'clinics/%s/room_types/';
+export const BED_PACKAGES = 'clinics/%s/bed_packages/';
+export const MEDICINE_PACKAGES = 'clinics/%s/medicine_packages/';

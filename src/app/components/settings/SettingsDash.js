@@ -26,6 +26,7 @@ import BedPackages from "./options/bed-packages/BedPackages";
 import RoomTypes from "./options/roomtypes/RoomTypes";
 import LoyaltySettings from "./options/loyalty/LoyaltySettings";
 import LabTracking from "./options/labs/LabTracking";
+import MedicinePackages from "./options/medicine-packages/MedicinePackages";
 
 const Content = Layout.Content;
 
@@ -160,6 +161,10 @@ class SettingsDash extends React.Component {
                                )}/>
                         <Route path="/settings/bed-packages"
                                render={(route) => <BedPackages {...this.state}
+                                                               {...this.props}
+                                                               {...route}/>}/>
+                        <Route path="/settings/medicine-packages"
+                               render={(route) => <MedicinePackages {...this.state}
                                                                {...this.props}
                                                                {...route}/>}/>
                         <Route component={Error404}/>
