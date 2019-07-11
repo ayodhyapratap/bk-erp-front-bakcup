@@ -174,7 +174,13 @@ class AddOrConsumeStock extends React.Component {
                             ...itemObject,
                             expiry_date: moment(values.expiry_date[item._id]).format('YYYY-MM-DD'),
                             unit_cost: values.unit_cost[item._id],
-                            total_cost: values.unit_cost[item._id] * values.quantity[item._id]
+                            total_cost: values.unit_cost[item._id] * values.quantity[item._id],
+
+                        }
+                        if(values.supplier){
+                            itemObject.supplier = values.supplier;
+                        }else if(values.supplier_name){
+                            itemObject.supplier_name = values.supplier_name;
                         }
                     }
                     reqData.push(itemObject);
@@ -272,13 +278,14 @@ class AddOrConsumeStock extends React.Component {
                         setFieldsValue({
                             [`quantity[${_id}]`]: quantity + 1
                         })
+                        that.storeValue('quantity',_id,value);
                     }
                 }
             })
             if (flag) {
                 that.add(data, randomId);
                 that.storeValue('batch', randomId, qrSplitted[1]);
-
+                that.storeValue('unit_cost',randomId,qrSplitted[3]);
                 setFieldsValue({
                     [`batch[${randomId}]`]: qrSplitted[1],
                     [`unit_cost[${randomId}]`]: qrSplitted[3],

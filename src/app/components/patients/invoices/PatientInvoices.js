@@ -59,10 +59,6 @@ class PatientInvoices extends React.Component {
 
     componentDidMount() {
         this.loadInvoices();
-        this.loadDrugCatalog();
-        this.loadProcedureCategory()
-        this.loadTaxes();
-
     }
 
     loadInvoices(page = 1) {
@@ -323,7 +319,7 @@ function InvoiceCard(invoice, that) {
             overlay={<Menu>
                 <Menu.Item key="1"
                            onClick={() => that.editInvoiceData(invoice)} disabled={!that.props.match.params.id}>
-                    <Link to={"/patient/" + that.props.match.params.id + "/billing/payments/add"}>
+                    <Link to={"/patient/" + invoice.patient_data.id + "/billing/payments/add"}>
                         <Icon type="dollar"/>
                         &nbsp;
                         Pay
@@ -377,7 +373,7 @@ const columns = [{
     dataIndex: 'drug',
     key: 'drug',
     render: (text, record) => (
-        <span> <b>{record.inventory ? record.inventory_item_data.name : null}{record.procedure ? record.procedure_data.name : null}</b>
+        <span> <b>{record.inventory ? record.name : null}{record.procedure ? record.name : null}</b>
                     <br/> {record.doctor_data ?
                 <Tag color={record.doctor_data ? record.doctor_data.calendar_colour : null}>
                     <b>{"prescribed by  " + record.doctor_data.user.first_name} </b>
