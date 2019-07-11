@@ -146,7 +146,7 @@ class PatientProfile extends React.Component {
                                                        loadMedicalMembership={that.loadMedicalMembership}
                                                        formChange={that.formChange} loadProfile={that.loadProfile}/></div>
                                 : <div style={{padding: '0px'}}><h1 style={{fontSize:'18px' ,textAlign:'center'}}>MedicalMembership <a href="#"
-                                                                                         onClick={() => this.onClickHandler(true)}>Renew</a>
+                                                                                         onClick={() => this.onClickHandler(true)}>{this.state.MedicalMembership?'Renew':'add'}</a>
                                 </h1>
                                     {this.state.MedicalMembership ? <Card size="small" title={"Membership"}
                                                                           extra={<Popconfirm title="Are you sure delete this Membership?" 
@@ -157,11 +157,11 @@ class PatientProfile extends React.Component {
                                                                                          size="small"/>
                                                                           </Popconfirm>} style={{textAlign:"center"}}>
                                             <div style={{textAlign:"left"}}>
-                                                <p><strong>Balance :</strong>
-                                                    <span>{this.state.MedicalMembership.membership_payments}</span></p>
-                                                <p><strong>Start Date :</strong>
+                                                <p><strong>Membership Code : </strong>
+                                                    <span>{this.state.MedicalMembership.membership_code}</span></p>
+                                                <p><strong>Start Date : </strong>
                                                     <span>{this.state.MedicalMembership.medical_from}</span></p>
-                                                <p><strong>Valid Till :</strong>
+                                                <p><strong>Valid Till : </strong>
                                                     <span>{this.state.MedicalMembership.medical_to}</span></p>
                                             </div>
                                         </Card>
