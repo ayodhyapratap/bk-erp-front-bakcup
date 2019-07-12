@@ -315,7 +315,10 @@ class AddorEditInventoryItem extends React.Component {
                         <Form.Item label="Retail Price" {...formItemLayout}>
                             {getFieldDecorator('retail_with_tax', {
                                 initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.retail_with_tax : null,
-                                required: true
+                                rules: [{
+                                    required: true,
+                                    message: REQUIRED_FIELD_MESSAGE
+                                }]
                             })
                             (<InputNumber onChange={this.changeNetPrice}/>)
                             }<span className="ant-form-text">INR</span>

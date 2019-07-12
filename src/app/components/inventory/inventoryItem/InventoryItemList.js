@@ -1,13 +1,13 @@
 import React from "react";
-import {Button, Card, Divider, Icon, Modal, Popconfirm, Radio, Row, Spin, Tag} from "antd";
+import {Button, Card, Col, Divider, Icon, Input, Modal, Popconfirm, Radio, Row, Spin, Table, Tag} from "antd";
 import {getAPI, interpolate, putAPI} from "../../../utils/common";
 import {INVENTORY_ITEM_API, SINGLE_INVENTORY_ITEM_API} from "../../../constants/api";
 import {Link, Route, Switch} from "react-router-dom";
 import AddorEditInventoryItem from "./AddorEditInventoryItem";
 import AddOrConsumeStock from "./AddOrConsumeStock"
 import {ADD_STOCK, CONSUME_STOCK, INVENTORY_ITEM_TYPE} from "../../../constants/hardData"
-import CustomizedTable from "../../common/CustomizedTable";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
+import moment from "moment";
 
 export default class InventoryItemList extends React.Component {
     constructor(props) {
@@ -36,7 +36,7 @@ export default class InventoryItemList extends React.Component {
     loadData(page = 1) {
         let that = this;
         that.setState({
-            loading:true
+            loading: true
         });
         let successFn = function (recData) {
             let data = recData.results;
@@ -71,6 +71,12 @@ export default class InventoryItemList extends React.Component {
         }
         if (that.state.itemStockFilter != 'ALL') {
             reqParams.filter_type = that.state.itemStockFilter
+        }
+        if (that.state.filterItemName) {
+            reqParams.item_name = that.state.filterItemName
+        }
+        if (that.state.filterItemCode) {
+            reqParams.code = that.state.filterItemCode
         }
         getAPI(INVENTORY_ITEM_API, successFn, errorFn, reqParams);
     }
@@ -109,6 +115,14 @@ export default class InventoryItemList extends React.Component {
             [e.target.name]: e.target.value
         }, function () {
             that.loadData()
+        })
+    }
+    changeInventoryFilters = (key, value) => {
+        let that = this;
+        that.setState(function (prevState) {
+            return {
+                [key]: value
+            }
         })
     }
 
@@ -164,6 +178,30 @@ export default class InventoryItemList extends React.Component {
                     <Tag color="#f50">Low</Tag> : null}</span>;
             }
         }, {
+            title: 'Expired Stock',
+            dataIndex: 'item_type_stock',
+            key: 'expired_stock',
+            export: function (item_type_stock, record) {
+                let totalStock = 0;
+                let currentDate = moment();
+                if (item_type_stock.item_stock)
+                    item_type_stock.item_stock.forEach(function (stock) {
+                        if (currentDate >= moment(stock.expiry_date, "YYYY-MM-DD"))
+                            totalStock += (Number.isInteger(stock.quantity) ? stock.quantity : 0)
+                    });
+                return totalStock;
+            },
+            render: function (item_type_stock, record) {
+                let totalStock = 0;
+                let currentDate = moment();
+                if (item_type_stock.item_stock)
+                    item_type_stock.item_stock.forEach(function (stock) {
+                        if (currentDate >= moment(stock.expiry_date, "YYYY-MM-DD"))
+                            totalStock += (Number.isInteger(stock.quantity) ? stock.quantity : 0)
+                    });
+                return <span>{totalStock}</span>;
+            }
+        }, {
             title: 'Retail Price (INR)',
             dataIndex: 'retail_without_tax',
             key: 'retail_without_tax',
@@ -214,7 +252,7 @@ export default class InventoryItemList extends React.Component {
                 title: 'Actions',
                 render: (item) => {
                     return <div>
-                        <Link to={"/inventory/edit/" + item.id}>Edit Details </Link>
+                        <Link to={"/inventory/edit/" + item.id}>Edit</Link>
                         <Divider type="vertical"/>
                         {/* <Link to={"/inventory/edit-item-type/" + item.id}>Edit stock type </Link>
                         <Divider type="vertical"/> */}
@@ -273,12 +311,35 @@ export default class InventoryItemList extends React.Component {
                                 <Radio.Button value={"Expired"}>Expired</Radio.Button>
                             </Radio.Group>
                         </Row>
+                        <Row gutter={16} style={{marginBottom: 10}}>
+                            <Col span={4} style={{textAlign: "right"}}>
+                                <b> Item Name</b>
+                            </Col>
+                            <Col span={4}>
+                                <Input style={{width: '100%'}} value={this.state.filterItemName}
+                                       allowClear={true}
+                                       disabled={this.state.loading}
+                                       onChange={(e) => this.changeInventoryFilters('filterItemName', e.target.value)}/>
+                            </Col>
+                            <Col span={4} style={{textAlign: "right"}}>
+                                <b> Item Code</b>
+                            </Col>
+                            <Col span={4}>
+                                <Input style={{width: '100%'}} value={this.state.filterItemCode}
+                                       allowClear={true}
+                                       disabled={this.state.loading}
+                                       onChange={(e) => this.changeInventoryFilters('filterItemCode', e.target.value)}/>
+                            </Col>
+                            <Col span={8}>
+                                <Button type={"primary"} onClick={this.loadData}> Filter Items</Button>
+                            </Col>
+                        </Row>
                         <Row>
-                            <CustomizedTable bordered={true}
-                                             pagination={false}
-                                             hideReport={true}
-                                             dataSource={this.state.inventoryItems}
-                                             columns={columns}/>
+                            <Table bordered={true}
+                                   pagination={false}
+                                   hideReport={true}
+                                   dataSource={this.state.inventoryItems}
+                                   columns={columns}/>
                             <Spin spinning={this.state.loading}>
                                 <Row/>
                             </Spin>
