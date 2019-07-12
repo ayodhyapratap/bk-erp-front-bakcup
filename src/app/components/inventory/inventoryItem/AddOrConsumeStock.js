@@ -168,6 +168,8 @@ class AddOrConsumeStock extends React.Component {
                         inventory_item: item.id,
                         quantity: values.quantity[item._id],
                         batch_number: values.batch[item._id],
+                        date:moment(values.date).format('YYYY-MM-DD'),
+                        bill_number:values.bill_number,
                     };
                     if (that.state.classType == ADD_STOCK) {
                         itemObject = {
@@ -175,7 +177,6 @@ class AddOrConsumeStock extends React.Component {
                             expiry_date: moment(values.expiry_date[item._id]).format('YYYY-MM-DD'),
                             unit_cost: values.unit_cost[item._id],
                             total_cost: values.unit_cost[item._id] * values.quantity[item._id],
-
                         }
                         if(values.supplier){
                             itemObject.supplier = values.supplier;
@@ -619,6 +620,26 @@ class AddOrConsumeStock extends React.Component {
                                                     <DatePicker/>
                                                 )}
                                             </Form.Item>
+
+                                            <Form.Item
+                                                key={`bill_number`}
+                                                label='Bill Number'
+                                                {...{
+                                                    labelCol: {span: 10},
+                                                    wrapperCol: {span: 14},
+                                                }}>
+                                                {getFieldDecorator(`bill_number`, {
+                                                    validateTrigger: ['onChange', 'onBlur'],
+                                                    rules: [{
+                                                        required: true,
+                                                        message: "This field is required.",
+                                                    }],
+                        
+                                                })(
+                                                    <Input/>
+                                                )}
+                                            </Form.Item>
+
                                             {this.state.classType == ADD_STOCK ? <div>
                                                 {this.state.customSupplier ?
                                                     <Form.Item
