@@ -1,31 +1,26 @@
 import React from "react";
-import {Button, Card, Icon, Modal, Tag, Divider, Popconfirm, Row, Radio} from "antd";
-import {getAPI, putAPI,interpolate, deleteAPI, patchAPI} from "../../../utils/common";
-import {
-    INVENTORY_ITEM_API,
-    SINGLE_INVENTORY_ITEM_API,
-    MANUFACTURER_API,
-    TAXES,
-    VENDOR_API
-} from "../../../constants/api";
+import {Button, Card, Divider, Icon, Modal, Popconfirm, Radio, Row, Spin, Tag} from "antd";
+import {getAPI, interpolate, putAPI} from "../../../utils/common";
+import {INVENTORY_ITEM_API, SINGLE_INVENTORY_ITEM_API} from "../../../constants/api";
 import {Link, Route, Switch} from "react-router-dom";
 import AddorEditInventoryItem from "./AddorEditInventoryItem";
-import AddItemType from "./AddItemType";
 import AddOrConsumeStock from "./AddOrConsumeStock"
 import {ADD_STOCK, CONSUME_STOCK, INVENTORY_ITEM_TYPE} from "../../../constants/hardData"
 import CustomizedTable from "../../common/CustomizedTable";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class InventoryItemList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            invantoryItems: [], //All List
+            inventoryItems: [], //All List
             inventoryItemList: [], // Filtered List
             // active_practiceId: this.props.active_practiceId,
             stockModalVisibility: false,
             itemTypeFilter: "ALL",
             itemStockFilter: "ALL",
-            loading: true
+            loading: true,
+            nextItemPage: null
         }
         this.loadData = this.loadData.bind(this);
         this.showAddOrConsumeModal = this.showAddOrConsumeModal.bind(this);
@@ -36,107 +31,61 @@ export default class InventoryItemList extends React.Component {
 
     componentDidMount() {
         this.loadData();
-        // this.loadTaxes();
-        // this.loadManufactureList();
-        // this.loadVendorList();
     }
 
-    loadData() {
+    loadData(page = 1) {
         let that = this;
+        that.setState({
+            loading:true
+        });
         let successFn = function (recData) {
             let data = recData.results;
             that.setState(function (prevState) {
-                let inventoryItemList = [];
-                if (prevState.itemTypeFilter == "ALL") {
-                    inventoryItemList = data
-
+                if (recData.current == 1) {
+                    return {
+                        inventoryItems: data,
+                        loading: false,
+                        nextItemPage: recData.next
+                    }
                 } else {
-                    data.forEach(function (item) {
-                        if (item.item_type == prevState.itemTypeFilter)
-                            inventoryItemList.push(item);
-                    })
-                }
-                return {
-                    invantoryItems: data,
-                    inventoryItemList: inventoryItemList,
-                    loading: false
+                    return {
+                        inventoryItems: [...prevState.inventoryItems, ...data],
+                        loading: false,
+                        nextItemPage: recData.next
+                    }
                 }
 
             })
-        }
+        };
         let errorFn = function () {
             that.setState({
                 loading: false
             })
-        }
-        getAPI(INVENTORY_ITEM_API, successFn, errorFn, {
+        };
+        let reqParams = {
             maintain_inventory: true,
-            practice: this.props.active_practiceId
-        });
-    }
-
-    loadManufactureList() {
-        let that = this;
-        let successFn = function (data) {
-            that.setState({
-                manufacture_list: data,
-                loading: false
-            })
-        }
-        let errorFn = function () {
-            that.setState({
-                loading: false
-            })
-        }
-        getAPI(MANUFACTURER_API, successFn, errorFn);
-    }
-
-    loadTaxes() {
-        var that = this;
-        let successFn = function (data) {
-            console.log("get table");
-            that.setState({
-                taxes_list: data,
-                loading: false
-            })
+            practice: this.props.active_practiceId,
         };
-        let errorFn = function () {
-            that.setState({
-                loading: false
-            })
-        };
-        getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
-
-    }
-
-    loadVendorList() {
-        let that = this;
-        let successFn = function (data) {
-            that.setState({
-                vendor_list: data,
-                loading: false
-            })
+        if (that.state.itemTypeFilter != 'ALL') {
+            reqParams.item_type = that.state.itemTypeFilter
         }
-        let errorFn = function () {
-            that.setState({
-                loading: false
-            })
-
+        if (that.state.itemStockFilter != 'ALL') {
+            reqParams.filter_type = that.state.itemStockFilter
         }
-        getAPI(interpolate(VENDOR_API, [this.props.active_practiceId]), successFn, errorFn);
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn, reqParams);
     }
 
     deleteObject(value) {
         var that = this;
-        let reqData={
-            is_active:false
+        let reqData = {
+            is_active: false
         }
         let successFn = function (data) {
             that.loadData();
         };
         let errorFn = function () {
         };
-        putAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [value]),reqData, successFn, errorFn);
+        putAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [value]), reqData, successFn, errorFn);
 
     }
 
@@ -159,34 +108,7 @@ export default class InventoryItemList extends React.Component {
         this.setState({
             [e.target.name]: e.target.value
         }, function () {
-            that.setState(function (prevState) {
-                let filteredList = [];
-                if (prevState.itemTypeFilter == "ALL" && prevState.itemStockFilter == "ALL") {
-                    filteredList = prevState.invantoryItems;
-                } else {
-                    prevState.invantoryItems.forEach(function (item) {
-                        let approved = 0;
-                        if (prevState.itemTypeFilter == "ALL" || prevState.itemTypeFilter == item.item_type) {
-                            approved += 1
-                        }
-                        if (prevState.itemStockFilter == 'ALL') {
-                            approved += 1
-                        } else if (prevState.itemStockFilter == 'LOW' && item.re_order_level && item.item_type_stock.item_stock) {
-                            let sum = item.item_type_stock.item_stock.reduce(function (total, itemObj) {
-                                return total + itemObj.quantity;
-                            }, 0);
-                            console.log(sum, item.re_order_level);
-                            if (sum <= parseInt(item.re_order_level)) {
-                                approved += 1
-                            }
-                        }
-                        if (approved > 1) {
-                            filteredList.push(item)
-                        }
-                    });
-                }
-                return {inventoryItemList: filteredList}
-            })
+            that.loadData()
         })
     }
 
@@ -241,18 +163,24 @@ export default class InventoryItemList extends React.Component {
                 return <span>{totalStock} {totalStock <= record.re_order_level ?
                     <Tag color="#f50">Low</Tag> : null}</span>;
             }
-        },
-        //     {
-        //     title: 'Retail Price (INR)',
-        //     dataIndex: 'retail_price',
-        //     key: 'retail_price',
-        //     render: (value, record) => <span>{record.retail_price}
-        //         {record.taxes && record.taxes.map(tax =>
-        //             <small> {(taxesdata[tax] ? taxesdata[tax].name + "@" + taxesdata[tax].tax_value + "%" : null)}</small>
-        //         )}
-        //         </span>
-        // },
-            {
+        }, {
+            title: 'Retail Price (INR)',
+            dataIndex: 'retail_without_tax',
+            key: 'retail_without_tax',
+            render: (value, record) => <span>{record.retail_without_tax}
+                </span>
+        }, {
+            title: 'Tax',
+            dataIndex: 'taxes',
+            key: 'taxes',
+            render: (value, record) => <span>
+                {record.taxes_data && record.taxes_data.map(tax =>
+                    <Tag>
+                        <small> {(tax ? tax.name + "@" + tax.tax_value + "%" : null)}</small>
+                    </Tag>
+                )}
+                </span>
+        }, {
             title: 'Item type',
             dataIndex: 'item_type',
             key: 'item_type',
@@ -300,7 +228,8 @@ export default class InventoryItemList extends React.Component {
         return <div>
             <Switch>
                 <Route path="/inventory/add"
-                       render={(route) => <AddorEditInventoryItem {...route} {...this.state} {...this.props}  loadData={this.loadData}/>}/>
+                       render={(route) => <AddorEditInventoryItem {...route} {...this.state} {...this.props}
+                                                                  loadData={this.loadData}/>}/>
                 {/* <Route path="/inventory/edit-item-type/:id"
                        render={(route) => <AddOrConsumeStock key={ADD_STOCK}
                        type={ADD_STOCK}
@@ -308,7 +237,8 @@ export default class InventoryItemList extends React.Component {
                        {...this.state} {...route} {...this.props}/>}/> */}
 
                 <Route exact path='/inventory/edit/:id'
-                       render={(route) => <AddorEditInventoryItem {...this.state} {...this.props} {...route} loadData={this.loadData}/>}/>
+                       render={(route) => <AddorEditInventoryItem {...this.state} {...this.props} {...route}
+                                                                  loadData={this.loadData}/>}/>
                 <Route exact path='/inventory/consume-stock'
                        render={(route) => <AddOrConsumeStock key={CONSUME_STOCK}
                                                              type={CONSUME_STOCK}
@@ -339,16 +269,23 @@ export default class InventoryItemList extends React.Component {
                             <Radio.Group name="itemStockFilter" size="small" defaultValue={"ALL"} buttonStyle="solid"
                                          style={{margin: '10px', float: 'right'}} onChange={this.changeFilter}>
                                 <Radio.Button value={"ALL"}>ALL</Radio.Button>
-                                <Radio.Button value={"LOW"}>Low</Radio.Button>
-                                <Radio.Button value={"EXPIRED"}>Expired</Radio.Button>
+                                <Radio.Button value={"Low"}>Low</Radio.Button>
+                                <Radio.Button value={"Expired"}>Expired</Radio.Button>
                             </Radio.Group>
                         </Row>
                         <Row>
-
-
-                            <CustomizedTable loading={this.state.loading} bordered={true}
-                                             dataSource={this.state.inventoryItemList}
+                            <CustomizedTable bordered={true}
+                                             pagination={false}
+                                             hideReport={true}
+                                             dataSource={this.state.inventoryItems}
                                              columns={columns}/>
+                            <Spin spinning={this.state.loading}>
+                                <Row/>
+                            </Spin>
+                            <InfiniteFeedLoaderButton
+                                loaderFunction={() => this.loadData(this.state.nextItemPage)}
+                                loading={this.state.loading}
+                                hidden={!this.state.nextItemPage}/>
                         </Row>
                         <Modal visible={this.state.stockModalVisibility}
                                title={"Stock" + this.state.actionType}

@@ -172,7 +172,7 @@ class AddorEditInventoryItem extends React.Component {
             if (!err) {
                 let reqData = {
                     ...formData,
-                    // retail_price: that.state.retail_price,
+                    retail_without_tax: that.state.retail_price,
                     net_price: undefined,
                     practice: this.props.active_practiceId,
 
@@ -205,7 +205,7 @@ class AddorEditInventoryItem extends React.Component {
         const {getFieldsValue, setFields} = this.props.form;
         setTimeout(function () {
             let values = getFieldsValue();
-            if (values.net_price) {
+            if (values.retail_with_tax) {
                 let totalTaxAmount = 0;
                 values.taxes.forEach(function (taxid) {
                     that.state.taxes_list.forEach(function (taxObj) {
@@ -213,7 +213,7 @@ class AddorEditInventoryItem extends React.Component {
                             totalTaxAmount += taxObj.tax_value;
                     })
                 });
-                let retailPrice = values.net_price / (1 + totalTaxAmount * 0.01);
+                let retailPrice = values.retail_with_tax / (1 + totalTaxAmount * 0.01);
                 that.setState({
                     retail_price: retailPrice.toFixed(2)
                 })
@@ -312,14 +312,14 @@ class AddorEditInventoryItem extends React.Component {
                             (<InputNumber placeholder="Re-Order Level"/>)
                             }
                         </Form.Item>
-                        {/*<Form.Item label="Net Price" {...formItemLayout}>*/}
-                            {/*{getFieldDecorator('net_price', {*/}
-                                {/*initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.net_price : null,*/}
-                                {/*required: true*/}
-                            {/*})*/}
-                            {/*(<InputNumber onChange={this.changeNetPrice}/>)*/}
-                            {/*}<span className="ant-form-text">INR</span>*/}
-                        {/*</Form.Item>*/}
+                        <Form.Item label="Retail Price" {...formItemLayout}>
+                            {getFieldDecorator('retail_with_tax', {
+                                initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.retail_with_tax : null,
+                                required: true
+                            })
+                            (<InputNumber onChange={this.changeNetPrice}/>)
+                            }<span className="ant-form-text">INR</span>
+                        </Form.Item>
                         <Form.Item label="Tax" {...formItemLayout}>
                             {getFieldDecorator('taxes', {initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.taxes : []})
                             (<CheckboxGroup onChange={this.changeNetPrice}>
@@ -329,9 +329,9 @@ class AddorEditInventoryItem extends React.Component {
                             </CheckboxGroup>)
                             }
                         </Form.Item>
-                        {/*<Form.Item label="Retail Price" {...formItemLayout}>*/}
-                            {/*<span className="ant-form-text"><b>{that.state.retail_price}</b>&nbsp;INR</span>*/}
-                        {/*</Form.Item>*/}
+                        <Form.Item label="Retail Price" {...formItemLayout}>
+                            <span className="ant-form-text"><b>{that.state.retail_price}</b>&nbsp;INR</span>
+                        </Form.Item>
 
 
                         <Form.Item label="Item Type" {...formItemLayout}>

@@ -287,11 +287,13 @@ class AddOrConsumeStock extends React.Component {
                 that.add(data, randomId);
                 that.storeValue('batch', randomId, qrSplitted[1]);
                 that.storeValue('unit_cost',randomId,qrSplitted[3]);
-                setFieldsValue({
+                let fieldsToBeSet = {
                     [`batch[${randomId}]`]: qrSplitted[1],
-                    [`unit_cost[${randomId}]`]: qrSplitted[3],
                     [`expiry_date[${randomId}]`]: moment(qrSplitted[2], 'MM/YY')
-                })
+                };
+                if(that.state.classType == CONSUME_STOCK)
+                    fieldsToBeSet[`unit_cost[${randomId}]`] = qrSplitted[3]
+                setFieldsValue(fieldsToBeSet)
             }
             console.log(getFieldsValue(), {
                 [`batch[${randomId}]`]: qrSplitted[0]
@@ -634,7 +636,7 @@ class AddOrConsumeStock extends React.Component {
                                                         required: true,
                                                         message: "This field is required.",
                                                     }],
-                        
+
                                                 })(
                                                     <Input/>
                                                 )}

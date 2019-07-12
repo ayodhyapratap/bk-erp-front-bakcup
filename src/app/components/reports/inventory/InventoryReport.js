@@ -25,7 +25,7 @@ export default class InventoryReport extends React.Component {
             that.setState({
                 billSuplier:data.results,
             })
-            
+
         }
         let errorFn = function () {
             that.setState({
@@ -36,7 +36,12 @@ export default class InventoryReport extends React.Component {
     }
     render() {
         let that =this;
-        const columns = [{
+        const columns = [ {
+            title: 'Date',
+            key: 'date',
+            dataIndex: 'date',
+            render:(value)=><span>{value ? value:''}</span>
+        },{
             title: 'Bill Number',
             key: 'bill_number',
             dataIndex: 'bill_number'
@@ -44,12 +49,7 @@ export default class InventoryReport extends React.Component {
             title: 'Supplier ',
             key: 'name',
             dataIndex: 'supplier_data.name'
-        }, {
-            title: 'Date',
-            key: 'date',
-            dataIndex: 'date',
-            render:(value)=><span>{value ? value:''}</span>
-        }];
+        },];
 
        const pagination={
             position: 'both',
@@ -64,8 +64,8 @@ export default class InventoryReport extends React.Component {
         return <div>
             <h2>Inventory Report</h2>
             <Card>
-                <CustomizedTable loading={this.state.loading} bordered={true} rowKey={(record) => record.id} 
-                expandedRowRender={(record) =>  <ReportInnerTable {...record} {...that.props} />} columns={columns} 
+                <CustomizedTable loading={this.state.loading} bordered={true} rowKey={(record) => record.id}
+                expandedRowRender={(record) =>  <ReportInnerTable {...record} {...that.props} />} columns={columns}
                 dataSource={this.state.billSuplier}
                 pagination={pagination} />
             </Card>
