@@ -1,5 +1,5 @@
 import React from "react";
-import {Card,Tag} from "antd";
+import {Card,Tag, Button} from "antd";
 import {BILL_SUPPLIER} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import moment from "moment";
@@ -34,6 +34,11 @@ export default class InventoryReport extends React.Component {
         };
         getAPI(BILL_SUPPLIER, successFn, errorFn);
     }
+    expandIcon(props){
+        return<Button  onClick={e => props.onExpand(props.record, e)}>
+            view detail
+        </Button>
+    }
     render() {
         let that =this;
         const columns = [ {
@@ -51,7 +56,7 @@ export default class InventoryReport extends React.Component {
             dataIndex: 'supplier_data.name'
         },];
 
-       const pagination={
+        const pagination={
             position: 'both',
             pageSizeOptions: ['10', '20', '30', '40', '50', '100'],
             showSizeChanger: true,
@@ -60,14 +65,17 @@ export default class InventoryReport extends React.Component {
             showTotal: function (total, range) {
                 return <Tag>Showing <b>{range[0]}</b> to <b>{range[1]}</b> of <b>{total}</b> items</Tag>
             }
-       }
+        } 
+        
+        
         return <div>
             <h2>Inventory Report</h2>
             <Card>
                 <CustomizedTable loading={this.state.loading} bordered={true} rowKey={(record) => record.id}
                 expandedRowRender={(record) =>  <ReportInnerTable {...record} {...that.props} />} columns={columns}
                 dataSource={this.state.billSuplier}
-                pagination={pagination} />
+                pagination={pagination} 
+                expandIcon={this.expandIcon}/>
             </Card>
         </div>
     }
