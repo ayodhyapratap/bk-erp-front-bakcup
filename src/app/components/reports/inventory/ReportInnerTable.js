@@ -73,7 +73,15 @@ export default class ReportInnerTable extends React.Component {
             title:'Expiry Date',
             key:'expiry_date',
             dataIndex:'expiry_date'
-        }];
+        },{
+            title:'Unit Cost',
+            key:'unit_cost',
+            dataIndex:'unit_cost',
+        },{
+            title:'Total Cost',
+            key:'total_cost',
+            dataIndex:'total_cost',
+        },];
         
         return <div>
                 <Table loading={this.state.loading} bordered={true} rowKey={(record) => record.id} 
