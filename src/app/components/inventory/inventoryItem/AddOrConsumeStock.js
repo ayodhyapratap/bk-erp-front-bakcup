@@ -159,11 +159,6 @@ class AddOrConsumeStock extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
-                // let img_path;
-                // // if(values.file.response){
-                // //     img_path=values.file.response.image_path
-                // // }
                 let reqData = [];
                 that.state.tableFormValues.forEach(function (item) {
                     let itemObject = {
@@ -334,7 +329,6 @@ class AddOrConsumeStock extends React.Component {
     }
 
     render() {
-        console.log("supplierList", this.state.tableFormValues)
         let that = this;
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
@@ -368,7 +362,7 @@ class AddOrConsumeStock extends React.Component {
             },
             onChange(info) {
                 if (info.file.status !== 'uploading') {
-                    console.log(info.file, info.fileList);
+                    
                 }
                 if (info.file.status === 'done') {
                     message.success(`${info.file.name} file uploaded successfully`);
