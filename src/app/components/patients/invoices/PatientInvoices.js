@@ -1,33 +1,33 @@
 import React from "react";
 import {
-    Button,
-    Card,
-    Divider,
-    Icon,
-    Table,
-    Tag,
-    Row,
-    Col,
-    Statistic,
     Affix,
     Alert,
-    Menu,
+    Button,
+    Card,
+    Col,
+    Divider,
     Dropdown,
+    Icon,
+    Menu,
     Modal,
-    Spin, Tooltip
+    Row,
+    Spin,
+    Statistic,
+    Table,
+    Tag,
+    Tooltip
 } from "antd";
-import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
+import {displayMessage, getAPI, interpolate, putAPI} from "../../../utils/common";
 import {
-    DRUG_CATALOG, INVOICE_PDF_API,
+    DRUG_CATALOG,
+    INVOICE_PDF_API,
     INVOICES_API,
-    PRESCRIPTION_PDF,
-    PRESCRIPTIONS_API,
-    PROCEDURE_CATEGORY, SINGLE_INVOICES_API,
+    PROCEDURE_CATEGORY,
+    SINGLE_INVOICES_API,
     TAXES
 } from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
-import AddInvoice from "./AddInvoice";
 import AddInvoicedynamic from "./AddInvoicedynamic";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {Link, Redirect} from "react-router-dom";
@@ -164,7 +164,7 @@ class PatientInvoices extends React.Component {
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                let reqData = {patient: record.patient,is_cancelled: true};
+                let reqData = {patient: record.patient, is_cancelled: true};
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Invoice cancelled successfully")
                     that.loadInvoices();
@@ -353,16 +353,31 @@ function InvoiceCard(invoice, that) {
                     <Alert message="Cancelled" type="error" showIcon/> : null}
                 <Divider style={{marginBottom: 0}}>INV{invoice.id}</Divider>
                 <Statistic title="Paid / Total "
-                           value={(invoice.payments_data ? invoice.payments_data : 0)}
-                           suffix={"/ " + invoice.total}/>
+                           value={(invoice.payments_data ? invoice.payments_data.toFixed(2) : 0)}
+                           suffix={"/ " + invoice.total.toFixed(2)}/>
             </Col>
             <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
-                <Table
-                    bordered={true}
-                    pagination={false}
-                    columns={columns}
-                    dataSource={[...invoice.inventory, ...invoice.procedure]}
-                    footer={() => invoiceFooter({practice: invoice.practice_data})}/>
+                {invoice.type == "Membership Amount." ?
+                    <Table
+                        bordered={true}
+                        pagination={false}
+                        columns={columns}
+                        dataSource={[{
+                            inventory: true,
+                            name: "Membership",
+                            unit_cost: invoice.total,
+                            unit: 1,
+                            discount_value: 0,
+                            tax_value: 0,
+                            total: invoice.total
+                        }]}
+                        footer={() => invoiceFooter({practice: invoice.practice_data})}/> :
+                    <Table
+                        bordered={true}
+                        pagination={false}
+                        columns={columns}
+                        dataSource={[...invoice.inventory, ...invoice.procedure]}
+                        footer={() => invoiceFooter({practice: invoice.practice_data})}/>}
             </Col>
         </Row>
     </Card>
@@ -391,14 +406,15 @@ const columns = [{
     title: 'Discount',
     dataIndex: 'discount_value',
     key: 'discount_value',
-    render: (item, record) => <span>{record.discount_value}</span>
+    render: (item, record) => <span>{record.discount_value.toFixed(2)}</span>
 }, {
     title: 'Tax',
     dataIndex: 'tax_value',
     key: 'tax_value',
-    render: (item, record) => <span>{record.tax_value}</span>
+    render: (item, record) => <span>{record.tax_value.toFixed(2)}</span>
 }, {
     title: 'Total',
     dataIndex: 'total',
     key: 'total',
+    render: item => item.toFixed(2)
 },];

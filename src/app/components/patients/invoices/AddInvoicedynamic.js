@@ -1,39 +1,33 @@
 import React from "react";
 import {
+    Affix,
     Button,
     Card,
+    Col,
+    DatePicker,
+    Dropdown,
     Form,
     Input,
+    InputNumber,
     List,
+    Menu,
     Row,
-    Col,
+    Select,
+    Spin,
     Table,
     Tabs,
-    InputNumber, Select, DatePicker, Menu, Dropdown, Tag, Affix, Spin
+    Tag
 } from "antd";
-import {displayMessage, interpolate, getAPI, postAPI, putAPI} from "../../../utils/common";
+import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
+import {DRUG, INVENTORY, PRESCRIPTIONS, PROCEDURES} from "../../../constants/hardData";
 import {
-    INVOICE_ITEM_TYPE,
-    PROCEDURES,
-    DRUG,
-    PRESCRIPTIONS,
-    INVENTORY,
-    EQUIPMENT,
-    ADD_STOCK,
-    CONSUME_STOCK
-} from "../../../constants/hardData";
-import {
-    INVENTORY_ITEM_API,
-    BULK_STOCK_ENTRY,
-    TAXES,
-    DRUG_CATALOG,
-    PROCEDURE_CATEGORY,
     CREATE_OR_EDIT_INVOICES,
-    PRACTICESTAFF,
-    UNPAID_PRESCRIPTIONS,
-    SINGLE_INVENTORY_API,
+    INVENTORY_ITEM_API,
+    PROCEDURE_CATEGORY,
+    SEARCH_THROUGH_QR,
     SINGLE_INVOICE_API,
-    SEARCH_THROUGH_QR
+    TAXES,
+    UNPAID_PRESCRIPTIONS
 } from "../../../constants/api";
 import moment from "moment";
 import {loadDoctors} from "../../../utils/clinicUtils";
@@ -576,10 +570,12 @@ class Addinvoicedynamic extends React.Component {
                             </Dropdown>
                             <span><br/>from batch &nbsp;&nbsp;</span>
                             <Dropdown placement="topCenter" overlay={<Menu>
-                                {that.state.itemBatches[record.inventory] && that.state.itemBatches[record.inventory].map(batch =>
-                                    <Menu.Item key="0">
+                                {that.state.itemBatches[record.inventory] && that.state.itemBatches[record.inventory].map((batch, index) =>
+                                    (moment() >= moment(batch.expiry_date) ? <Menu.Item key={index} disabled={true}>
+                                        {batch.batch_number}&nbsp;({batch.quantity}) &nbsp;&nbsp;{batch.expiry_date}
+                                    </Menu.Item> : <Menu.Item key={index}>
                                         <a onClick={() => that.selectBatch(batch, record._id, INVENTORY)}>{batch.batch_number}&nbsp;({batch.quantity}) &nbsp;&nbsp;{batch.expiry_date}</a>
-                                    </Menu.Item>)}
+                                    </Menu.Item>))}
                             </Menu>} trigger={['click']}>
                                 <a className="ant-dropdown-link" href="#">
                                     <b>
@@ -598,36 +594,39 @@ class Addinvoicedynamic extends React.Component {
             key: 'unit',
             width: 100,
             dataIndex: 'unit',
-            render: (item, record) => (record.item_type == INVENTORY ? <Form.Item
-                key={`unit[${record._id}]`}
-                {...formItemLayout}>
-                {getFieldDecorator(`unit[${record._id}]`, {
-                    validateTrigger: ['onChange', 'onBlur'],
-                    initialValue: record.unit || 1,
-                    rules: [{
-                        required: true,
-                        message: "This field is required.",
-                    }],
-                })(
-                    <InputNumber min={1}
-                                 max={(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number] ? that.state.stocks[record.inventory][record.selectedBatch.batch_number] : 0)}
-                                 placeholder="units" size={'small'}
-                                 disabled={!(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number])}/>
-                )}
-            </Form.Item> : <Form.Item
-                key={`unit[${record._id}]`}
-                {...formItemLayout}>
-                {getFieldDecorator(`unit[${record._id}]`, {
-                    initialValue: record.unit || 1,
-                    validateTrigger: ['onChange', 'onBlur'],
-                    rules: [{
-                        required: true,
-                        message: "This field is required.",
-                    }],
-                })(
-                    <InputNumber min={1} max={100} placeholder="unit" size={'small'}/>
-                )}
-            </Form.Item>)
+            render: (item, record) => (record.item_type == INVENTORY ?
+                    <Form.Item
+                        key={`unit[${record._id}]`}
+                        {...formItemLayout}>
+                        {getFieldDecorator(`unit[${record._id}]`, {
+                            validateTrigger: ['onChange', 'onBlur'],
+                            initialValue: record.unit || 1,
+                            rules: [{
+                                required: true,
+                                message: "This field is required.",
+                            }],
+                        })(
+                            <InputNumber min={1}
+                                         max={(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number] ? that.state.stocks[record.inventory][record.selectedBatch.batch_number] : 0)}
+                                         placeholder="units" size={'small'}
+                                         disabled={!(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number])}/>
+                        )}
+                    </Form.Item>
+                    : <Form.Item
+                        key={`unit[${record._id}]`}
+                        {...formItemLayout}>
+                        {getFieldDecorator(`unit[${record._id}]`, {
+                            initialValue: record.unit || 1,
+                            validateTrigger: ['onChange', 'onBlur'],
+                            rules: [{
+                                required: true,
+                                message: "This field is required.",
+                            }],
+                        })(
+                            <InputNumber min={1} max={100} placeholder="unit" size={'small'}/>
+                        )}
+                    </Form.Item>
+            )
         }, {
             title: 'Unit Cost',
             key: 'unit_cost',
@@ -638,7 +637,7 @@ class Addinvoicedynamic extends React.Component {
                 {...formItemLayout}>
                 {getFieldDecorator(`unit_cost[${record._id}]`, {
                     validateTrigger: ['onChange', 'onBlur'],
-                    initialValue: record.unit_cost,
+                    initialValue: record.retail_without_tax,
                     rules: [{
                         required: true,
                         message: "This field is required.",
@@ -676,11 +675,11 @@ class Addinvoicedynamic extends React.Component {
                 })(
                     <Select placeholder="Taxes" size={'small'} mode={"multiple"}>
                         {this.state.taxes_list && this.state.taxes_list.map((tax) => <Select.Option
-                            value={tax.id}>{tax.name}</Select.Option>)}
+                            value={tax.id}>{tax.name}@{tax.tax_value}%</Select.Option>)}
                     </Select>
                 )}
             </Form.Item>
-        },]);
+        }]);
 
         consumeRow = consumeRow.concat([{
             key: '_id',
@@ -692,19 +691,37 @@ class Addinvoicedynamic extends React.Component {
 
         return <div>
             <Spin spinning={this.state.saveLoading} tip="Saving Invoice...">
-                <Card title={this.props.editId ? "Edit Invoice (INV " + this.props.editId + ")" : "Add Invoice"}
-                      extra={<Search
-                          loading={this.state.loadingQr}
-                          value={this.state.qrValue}
-                          onChange={this.setQrValue}
-                          placeholder="Search QR Code"
-                          onSearch={this.addItemThroughQR}
-                          style={{width: 200}}
-                      />}
-                      bodyStyle={{padding: 0}}>
+                <Card
+                    title={this.props.editId ? "Edit Invoice (INV " + this.props.editId + ")" : "Add Invoice"}
+                    extra={<Search
+                        loading={this.state.loadingQr}
+                        value={this.state.qrValue}
+                        onChange={this.setQrValue}
+                        placeholder="Search QR Code"
+                        onSearch={this.addItemThroughQR}
+                        style={{width: 200}}
+                    />}
+                    bodyStyle={{padding: 0}}>
                     <Row gutter={16}>
                         <Col span={7}>
                             <Tabs size="small" type="card">
+                                <TabPane tab={INVENTORY} key={INVENTORY}>
+                                    <List size={"small"}
+                                          itemLayout="horizontal"
+                                          dataSource={this.state.items ? this.state.items[INVENTORY] : []}
+                                          renderItem={item => (
+                                              <List.Item>
+                                                  <List.Item.Meta
+                                                      title={item.name}
+                                                  />
+                                                  <Button type="primary" size="small" shape="circle"
+                                                          onClick={() => this.add({
+                                                              ...item,
+                                                              item_type: INVENTORY
+                                                          })}
+                                                          icon={"arrow-right"}/>
+                                              </List.Item>)}/>
+                                </TabPane>
                                 <TabPane tab={PRESCRIPTIONS} key={PRESCRIPTIONS}>
                                     <List size={"small"}
                                           itemLayout="horizontal"
@@ -714,10 +731,14 @@ class Addinvoicedynamic extends React.Component {
                                                   <List.Item.Meta
                                                       title={item.drugs.map(drug_item => <div>
                                                           <span>{drug_item.name}</span> {drug_item.inventory.maintain_inventory ? null :
-                                                          <Tag color="red" style={{float: 'right', lineHeight: '18px'}}>Not
+                                                          <Tag color="red" style={{
+                                                              float: 'right',
+                                                              lineHeight: '18px'
+                                                          }}>Not
                                                               Sold</Tag>}<br/></div>)}
                                                       description={item.doctor ?
-                                                          <Tag color={item.doctor ? item.doctor.calendar_colour : null}>
+                                                          <Tag
+                                                              color={item.doctor ? item.doctor.calendar_colour : null}>
                                                               <b>{"prescribed by  " + item.doctor.user.first_name} </b>
                                                           </Tag> : null}
                                                   />
@@ -736,24 +757,14 @@ class Addinvoicedynamic extends React.Component {
                                                       title={item.name}
                                                   />
                                                   <Button type="primary" size="small" shape="circle"
-                                                          onClick={() => this.add({...item, item_type: PROCEDURES})}
+                                                          onClick={() => this.add({
+                                                              ...item,
+                                                              item_type: PROCEDURES
+                                                          })}
                                                           icon={"arrow-right"}/>
                                               </List.Item>)}/>
                                 </TabPane>
-                                <TabPane tab={INVENTORY} key={INVENTORY}>
-                                    <List size={"small"}
-                                          itemLayout="horizontal"
-                                          dataSource={this.state.items ? this.state.items[INVENTORY] : []}
-                                          renderItem={item => (
-                                              <List.Item>
-                                                  <List.Item.Meta
-                                                      title={item.name}
-                                                  />
-                                                  <Button type="primary" size="small" shape="circle"
-                                                          onClick={() => this.add({...item, item_type: INVENTORY})}
-                                                          icon={"arrow-right"}/>
-                                              </List.Item>)}/>
-                                </TabPane>
+
                             </Tabs>
                         </Col>
                         <Col span={17}>
@@ -772,7 +783,8 @@ class Addinvoicedynamic extends React.Component {
                                                     allowClear={false}/>
                                         <Form.Item {...formItemLayoutWithOutLabel}
                                                    style={{marginBottom: 0, float: 'right'}}>
-                                            <Button type="primary" htmlType="submit" style={{margin: 5}}>Save
+                                            <Button type="primary" htmlType="submit"
+                                                    style={{margin: 5}}>Save
                                                 Invoice</Button>
                                             {that.props.history ?
                                                 <Button style={{margin: 5, float: 'right'}}

@@ -125,7 +125,7 @@ class AddPaymentForm extends React.Component {
             });
 
             return {
-                totalPayableAmount: payable,
+                totalPayableAmount: payable.toFixed(2),
                 invoicePayments: invoicePayments
             }
         });
@@ -234,11 +234,11 @@ class AddPaymentForm extends React.Component {
                                                 {invoice.inventory.map(proc => proc.inventory_item_data.name + ", ")}
                                             </td>
                                             <td style={{textAlign: 'right'}}>
-                                                <b>{invoice.total - invoice.payments_data}</b></td>
+                                                <b>{(invoice.total - invoice.payments_data).toFixed(2)}</b></td>
                                             <td style={{textAlign: 'right'}}>
                                                 <b>{that.state.invoicePayments[invoice.id]}</b></td>
                                             <td style={{textAlign: 'right'}}>
-                                                <b>{invoice.total - invoice.payments_data - that.state.invoicePayments[invoice.id]}</b>
+                                                <b>{(invoice.total - invoice.payments_data - that.state.invoicePayments[invoice.id]).toFixed(2)}</b>
                                             </td>
                                         </tr>
                                     )}
@@ -302,16 +302,16 @@ class AddPaymentForm extends React.Component {
                                   <table style={{width: '100%'}}>
                                       <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}>Invoice Amount</td>
-                                          <td style={{textAlign: 'right'}}><b>{invoice.total}</b></td>
+                                          <td style={{textAlign: 'right'}}><b>{invoice.total.toFixed(2)}</b></td>
                                       </tr>
                                       <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}>Paid Amount</td>
-                                          <td style={{textAlign: 'right'}}><b>{invoice.payments_data}</b></td>
+                                          <td style={{textAlign: 'right'}}><b>{invoice.payments_data ? invoice.payments_data.toFixed(2) : 0}</b></td>
                                       </tr>
                                       <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}><b>Amount Due</b></td>
                                           <td style={{textAlign: 'right'}}>
-                                              <b>{invoice.total - invoice.payments_data}</b></td>
+                                              <b>{(invoice.total - invoice.payments_data).toFixed(2)}</b></td>
                                       </tr>
                                   </table>
                               </Card>)}/>

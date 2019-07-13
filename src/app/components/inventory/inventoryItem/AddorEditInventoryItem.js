@@ -312,7 +312,7 @@ class AddorEditInventoryItem extends React.Component {
                             (<InputNumber placeholder="Re-Order Level"/>)
                             }
                         </Form.Item>
-                        <Form.Item label="Retail Price" {...formItemLayout}>
+                        <Form.Item label="Net Price" {...formItemLayout}>
                             {getFieldDecorator('retail_with_tax', {
                                 initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.retail_with_tax : null,
                                 rules: [{

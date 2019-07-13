@@ -1,31 +1,8 @@
 import React from "react";
 
-import {
-    Button,
-    Card,
-    Checkbox,
-    Dropdown,
-    Menu,
-    Divider,
-    Icon,
-    Spin,
-    Table,
-    Tag,
-    Row,
-    Alert,
-    Tooltip,
-    Statistic,
-    Col
-} from "antd";
+import {Alert, Button, Card, Col, Divider, Dropdown, Icon, Menu, Row, Spin, Table, Tag, Tooltip} from "antd";
 import {displayMessage, getAPI, interpolate, putAPI} from "../../../utils/common";
-import {
-    PAYMENT_MODES,
-    INVOICES_API,
-    PATIENT_PAYMENTS_API,
-    TAXES,
-    INVOICE_PDF_API,
-    PAYMENT_PDF, SINGLE_INVOICES_API, SINGLE_PAYMENT_API
-} from "../../../constants/api";
+import {PATIENT_PAYMENTS_API, PAYMENT_PDF, SINGLE_PAYMENT_API} from "../../../constants/api";
 import moment from "moment";
 import {Link} from "react-router-dom";
 import {Route, Switch} from "react-router";
@@ -181,8 +158,7 @@ class PatientPayments extends React.Component {
                     </Route>
                 </Switch>
             </div>
-        }
-        else {
+        } else {
             return <div>
                 <Card
                     bodyStyle={{padding: 0}}
@@ -235,14 +211,14 @@ function PaymentCard(payment, that) {
                      style={{float: 'right'}}
                      overlay={<Menu>
                          {/*<Menu.Item key="2" onClick={() => that.editInvoiceData(payment)}*/}
-                                    {/*disabled={(payment.practice != that.props.active_practiceId)}>*/}
-                             {/*<Icon type="edit"/>*/}
-                             {/*Edit*/}
+                         {/*disabled={(payment.practice != that.props.active_practiceId)}>*/}
+                         {/*<Icon type="edit"/>*/}
+                         {/*Edit*/}
                          {/*</Menu.Item>*/}
                          {/*<Menu.Item key="3" onClick={() => that.deletePayment(payment)}*/}
-                                    {/*disabled={(payment.practice != that.props.active_practiceId) || payment.is_cancelled}>*/}
-                             {/*<Icon type="delete"/>*/}
-                             {/*Cancel*/}
+                         {/*disabled={(payment.practice != that.props.active_practiceId) || payment.is_cancelled}>*/}
+                         {/*<Icon type="delete"/>*/}
+                         {/*Cancel*/}
                          {/*</Menu.Item>*/}
                          <Menu.Divider/>
                          <Menu.Item key="4">
@@ -262,10 +238,11 @@ function PaymentCard(payment, that) {
                 <Divider style={{marginBottom: 0}}>RCPT{payment.id}</Divider>
             </Col>
             <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
-                <Table columns={columns}
-                       pagination={false}
-                       footer={() => PaymentFooter({practice: payment.practice_data})}
-                       dataSource={payment.invoices}/>
+
+                    <Table columns={columns}
+                           pagination={false}
+                           footer={() => PaymentFooter({practice: payment.practice_data})}
+                           dataSource={payment.invoices}/>
             </Col>
         </Row>
     </Card>
