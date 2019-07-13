@@ -9,9 +9,9 @@ import {
     Col,
     Table,
     Tabs,
-    InputNumber, Select, DatePicker, AutoComplete, Affix
+    InputNumber, Select, DatePicker, AutoComplete, Affix,Upload,Icon,message
 } from "antd";
-import {displayMessage, getAPI, postAPI, interpolate} from "../../../utils/common";
+import {displayMessage, getAPI, postAPI, interpolate, makeURL} from "../../../utils/common";
 
 import {
     INVENTORY_ITEM_TYPE,
@@ -22,7 +22,7 @@ import {
     CONSUME_STOCK,
     TYPE_OF_CONSUMPTION, INVENTORY
 } from "../../../constants/hardData";
-import {INVENTORY_ITEM_API, BULK_STOCK_ENTRY, SUPPLIER_API, SEARCH_THROUGH_QR} from "../../../constants/api";
+import {INVENTORY_ITEM_API, BULK_STOCK_ENTRY, SUPPLIER_API, SEARCH_THROUGH_QR,FILE_UPLOAD_API} from "../../../constants/api";
 import moment from "moment";
 
 const {Search} = Input;
@@ -160,6 +160,10 @@ class AddOrConsumeStock extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
+                // let img_path;
+                // // if(values.file.response){
+                // //     img_path=values.file.response.image_path
+                // // }
                 let reqData = [];
                 that.state.tableFormValues.forEach(function (item) {
                     let itemObject = {
@@ -169,7 +173,9 @@ class AddOrConsumeStock extends React.Component {
                         batch_number: values.batch[item._id],
                         date:moment(values.date).format('YYYY-MM-DD'),
                         bill_number:values.bill_number,
+                        bill_file:values.file.file.response?values.file.file.response.image_path:null
                     };
+                   
                     if (that.state.classType == ADD_STOCK) {
                         itemObject = {
                             ...itemObject,
@@ -349,6 +355,26 @@ class AddOrConsumeStock extends React.Component {
             wrapperCol: {
                 xs: {span: 24},
                 sm: {span: 20},
+            },
+        };
+        const singleUploadprops = {
+            name: 'image',
+            data: {
+                name: 'hello'
+            },
+            action: makeURL(FILE_UPLOAD_API),
+            headers: {
+                authorization: 'authorization-text',
+            },
+            onChange(info) {
+                if (info.file.status !== 'uploading') {
+                    console.log(info.file, info.fileList);
+                }
+                if (info.file.status === 'done') {
+                    message.success(`${info.file.name} file uploaded successfully`);
+                } else if (info.file.status === 'error') {
+                    message.error(`${info.file.name} file upload failed.`);
+                }
             },
         };
         getFieldDecorator('keys', {initialValue: []});
@@ -640,6 +666,7 @@ class AddOrConsumeStock extends React.Component {
                                                     <Input/>
                                                 )}
                                             </Form.Item>
+                                            
 
                                             {this.state.classType == ADD_STOCK ? <div>
                                                 {this.state.customSupplier ?
@@ -684,6 +711,18 @@ class AddOrConsumeStock extends React.Component {
                                                             <a onClick={() => this.changeSupplierType(true)}>Add
                                                                 New</a>}
                                                     </Form.Item>} </div> : null}
+                                        </Col>
+                                        <Col span={6} offset={2}>
+                                        <Form.Item key={'file'} {...formItemLayout}>
+                                            {getFieldDecorator('file', {})(
+                                                <Upload {...singleUploadprops}>
+                                                    <Button>
+                                                        <Icon type="upload"/> Select File
+                                                    </Button>
+                                                    
+                                                </Upload>
+                                            )}
+                                        </Form.Item>
                                         </Col>
                                         {this.state.classType == ADD_STOCK ?
                                             <Col style={{textAlign: 'center'}} span={8}>

@@ -1,7 +1,7 @@
 import React from "react";
 import {Table} from "antd";
 import {STOCK_ENTRY} from "../../../constants/api";
-import {getAPI} from "../../../utils/common";
+import {getAPI,makeFileURL} from "../../../utils/common";
 
 
 export default class ReportInnerTable extends React.Component {
@@ -69,6 +69,13 @@ export default class ReportInnerTable extends React.Component {
             title:'Type of Consumption',
             key:'type_of_consumption',
             dataIndex:'type_of_consumption'
+        },{
+            title:'Bill File',
+            key:'bill_file',
+            dataIndex:'bill_file',
+            render: (item)=>{
+                return item?<a target="_blank" href={makeFileURL(item)}>Bill</a> : null
+            }
         },{
             title: 'Quantity',
             key: 'quantity',
