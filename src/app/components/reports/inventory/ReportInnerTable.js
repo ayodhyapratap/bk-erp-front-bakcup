@@ -17,7 +17,7 @@ export default class ReportInnerTable extends React.Component {
     componentDidMount() {
         this.loadData();
     }
-    
+
     loadData() {
         let that = this;
         let successFn = function (data) {
@@ -39,24 +39,28 @@ export default class ReportInnerTable extends React.Component {
         if(this.props.bill_number || this.props.supplier){
             getAPI(STOCK_ENTRY,successFn,errorFn,params)
         }
-        
+
         // getAPI(STOCK_ENTRY, successFn, errorFn);
     }
 
     render() {
         let that =this;
-        const columns = [{
-            title: 'Item Type',
-            key: 'item_type',
-            dataIndex: 'inventory_item_data.item_type'
+        const columns = [ {
+            title:'name',
+            key:'name',
+            dataIndex:'inventory_item_data.name'
         }, {
             title: 'Batch',
             key: 'batch_number',
             dataIndex: 'batch_number'
-        }, {
-            title:'name',
-            key:'name',
-            dataIndex:'inventory_item_data.name'
+        },{
+            title:'Expiry Date',
+            key:'expiry_date',
+            dataIndex:'expiry_date'
+        },{
+            title: 'Item Type',
+            key: 'item_type',
+            dataIndex: 'inventory_item_data.item_type'
         },{
             title: 'ADD/CONSUME',
             key: 'item_add_type',
@@ -70,10 +74,6 @@ export default class ReportInnerTable extends React.Component {
             key: 'quantity',
             dataIndex: 'quantity'
         },{
-            title:'Expiry Date',
-            key:'expiry_date',
-            dataIndex:'expiry_date'
-        },{
             title:'Unit Cost',
             key:'unit_cost',
             dataIndex:'unit_cost',
@@ -82,9 +82,10 @@ export default class ReportInnerTable extends React.Component {
             key:'total_cost',
             dataIndex:'total_cost',
         },];
-        
+
         return <div>
-                <Table loading={this.state.loading} bordered={true} rowKey={(record) => record.id} 
+                <Table loading={this.state.loading} bordered={true} rowKey={(record) => record.id}
+                       pagination={false}
                  columns={columns} dataSource={this.state.inventoryList}/>
         </div>
     }

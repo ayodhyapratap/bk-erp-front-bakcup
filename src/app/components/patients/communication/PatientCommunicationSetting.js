@@ -76,6 +76,7 @@ class PatientCommunicationSetting extends React.Component {
     }
 
     handleSubmit = (e) => {
+        console.log("state",this.state)
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
