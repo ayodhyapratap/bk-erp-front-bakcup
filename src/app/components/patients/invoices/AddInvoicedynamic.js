@@ -675,7 +675,7 @@ class Addinvoicedynamic extends React.Component {
                 })(
                     <Select placeholder="Taxes" size={'small'} mode={"multiple"}>
                         {this.state.taxes_list && this.state.taxes_list.map((tax) => <Select.Option
-                            value={tax.id}>{tax.name}</Select.Option>)}
+                            value={tax.id}>{tax.name}@{tax.tax_value}%</Select.Option>)}
                     </Select>
                 )}
             </Form.Item>
@@ -705,6 +705,23 @@ class Addinvoicedynamic extends React.Component {
                     <Row gutter={16}>
                         <Col span={7}>
                             <Tabs size="small" type="card">
+                                <TabPane tab={INVENTORY} key={INVENTORY}>
+                                    <List size={"small"}
+                                          itemLayout="horizontal"
+                                          dataSource={this.state.items ? this.state.items[INVENTORY] : []}
+                                          renderItem={item => (
+                                              <List.Item>
+                                                  <List.Item.Meta
+                                                      title={item.name}
+                                                  />
+                                                  <Button type="primary" size="small" shape="circle"
+                                                          onClick={() => this.add({
+                                                              ...item,
+                                                              item_type: INVENTORY
+                                                          })}
+                                                          icon={"arrow-right"}/>
+                                              </List.Item>)}/>
+                                </TabPane>
                                 <TabPane tab={PRESCRIPTIONS} key={PRESCRIPTIONS}>
                                     <List size={"small"}
                                           itemLayout="horizontal"
@@ -747,23 +764,7 @@ class Addinvoicedynamic extends React.Component {
                                                           icon={"arrow-right"}/>
                                               </List.Item>)}/>
                                 </TabPane>
-                                <TabPane tab={INVENTORY} key={INVENTORY}>
-                                    <List size={"small"}
-                                          itemLayout="horizontal"
-                                          dataSource={this.state.items ? this.state.items[INVENTORY] : []}
-                                          renderItem={item => (
-                                              <List.Item>
-                                                  <List.Item.Meta
-                                                      title={item.name}
-                                                  />
-                                                  <Button type="primary" size="small" shape="circle"
-                                                          onClick={() => this.add({
-                                                              ...item,
-                                                              item_type: INVENTORY
-                                                          })}
-                                                          icon={"arrow-right"}/>
-                                              </List.Item>)}/>
-                                </TabPane>
+
                             </Tabs>
                         </Col>
                         <Col span={17}>
