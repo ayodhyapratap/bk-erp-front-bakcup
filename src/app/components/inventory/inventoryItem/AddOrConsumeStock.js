@@ -454,7 +454,7 @@ class AddOrConsumeStock extends React.Component {
                     })(
                         <Select placeholder="Batch Number"
                                 onChange={(value) => that.changeMaxQuantityforConsume(record._id, value)}>
-                            {record.item_type_stock.item_stock.map(stock =>
+                            {record.item_type_stock && record.item_type_stock.item_stock && record.item_type_stock.item_stock.map(stock =>
                                 <Select.Option value={stock.batch_number}>
                                     #{stock.batch_number} ({stock.quantity})
                                 </Select.Option>)}
