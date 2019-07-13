@@ -206,7 +206,7 @@ class AppBase extends React.Component {
                                                                                            {...this.props}
                                                                                            {...route}
                                                                                            key={that.state.active_practiceId}/>}/>
-                                <Route path="/reports" render={(route) => <ReportsHome {...this.state}
+                                <Route path="/reports/:type" render={(route) => <ReportsHome {...this.state}
                                                                                        {...this.props}
                                                                                        {...route}
                                                                                        key={that.state.active_practiceId}/>}/>

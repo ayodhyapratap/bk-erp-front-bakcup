@@ -1,5 +1,5 @@
 import React from "react";
-import {Select, DatePicker, Layout} from "antd";
+import {DatePicker, Layout, Select} from "antd";
 import moment from "moment";
 
 const {Header} = Layout;
@@ -18,18 +18,18 @@ export default class ReportsHeader extends React.Component {
     }
 
     render() {
-      let that =this;
+        let that = this;
 
-        const reportCategory = [{name: 'Daily Summary', value: '/reports/summary' ,active:'ReportsDailySummary'},
-            {name: 'Income', value: '/reports/income' ,active:'ReportsIncome'},
-            {name: 'Payments', value: '/reports/payments' ,active:'ReportsPayments'},
-            {name: 'Appointment', value: '/reports/appointments' ,active:'ReportsAppointments'},
-            {name: 'Patients', value: '/reports/patients' ,active:'ReportsPatients'},
-            {name: 'Amount Due', value: '/reports/amountdue' ,active:'ReportsAmountDue'},
-            {name: 'Expenses', value: '/reports/expenses' ,active:'ReportsExpenses'},
-            {name: 'Inventory', value: '/reports/inventory' ,active:'ReportsInventory'},
-            {name: 'EMR', value: '/reports/emr' ,active:'ReportsEMR'},
-            {name: 'Inventory Retails', value: '/reports/inventoryretails' ,active:'ReportsInventoryRetail'}];
+        const reportCategory = [{name: 'Daily Summary', value: '/reports/summary', active: 'ReportsDailySummary'},
+            {name: 'Income', value: '/reports/income', active: 'ReportsIncome'},
+            {name: 'Payments', value: '/reports/payments', active: 'ReportsPayments'},
+            {name: 'Appointment', value: '/reports/appointments', active: 'ReportsAppointments'},
+            {name: 'Patients', value: '/reports/patients', active: 'ReportsPatients'},
+            {name: 'Amount Due', value: '/reports/amountdue', active: 'ReportsAmountDue'},
+            {name: 'Expenses', value: '/reports/expenses', active: 'ReportsExpenses'},
+            {name: 'Inventory', value: '/reports/inventory', active: 'ReportsInventory'},
+            {name: 'EMR', value: '/reports/emr', active: 'ReportsEMR'},
+            {name: 'Inventory Retails', value: '/reports/inventoryretails', active: 'ReportsInventoryRetail'}];
         return <Header style={{background: '#fff'}}>
             <ul style={{listStyle: 'none'}}>
                 <li style={{display: 'inline'}}>
@@ -37,13 +37,15 @@ export default class ReportsHeader extends React.Component {
                 </li>
                 <li style={{display: 'inline'}}>
                     <Select style={{minWidth: '200px'}} defaultValue={reportCategory[3].name}
+                            value={this.props.history.location.pathname}
                             onChange={this.changeReport}>
-                        {reportCategory.map((item) => <Select.Option value={item.value} disabled={item.active ||that.props.allowAllPermissions?false:true}>{item.name}</Select.Option>)}
+                        {reportCategory.map((item) => <Select.Option value={item.value}
+                                                                     disabled={item.active || that.props.allowAllPermissions ? false : true}>{item.name}</Select.Option>)}
                     </Select>
                 </li>
                 <li style={{display: 'inline', float: 'right'}}>
                     <RangePicker
-                        onChange={(date, dateString)=> that.props.reportsDateRange(dateString)}
+                        onChange={(date, dateString) => that.props.reportsDateRange(dateString)}
                         defaultValue={[moment(), moment()]}
                         format={dateFormat}
                     />

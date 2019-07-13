@@ -65,7 +65,7 @@ class AppSider extends React.Component {
                     </Link>
                 </Menu.Item>
                 <Menu.Item key="27">
-                    <Link to="/reports">
+                    <Link to="/reports/appointments">
                         <Icon type="bar-chart"/>
                         <span className="nav-text">Reports</span>
                     </Link>
