@@ -10,7 +10,7 @@ export default class InventoryReport extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading:false,
+            loading:true,
             billSuplier:null
         }
         this.loadBillSupplier =this.loadBillSupplier.bind(this);
@@ -24,6 +24,7 @@ export default class InventoryReport extends React.Component {
         let successFn = function (data) {
             that.setState({
                 billSuplier:data.results,
+                loading:false
             })
             
         }

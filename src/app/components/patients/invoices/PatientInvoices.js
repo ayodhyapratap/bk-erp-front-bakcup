@@ -146,11 +146,11 @@ class PatientInvoices extends React.Component {
 
     editInvoiceData = (record) => {
         let that = this;
-        let id = this.props.match.params.id;
+        // let id = this.props.match.params.id;
         this.setState({
             editInvoice: record,
         }, function () {
-            that.props.history.push("/patient/" + id + "/billing/invoices/edit")
+            that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/edit/")
         });
 
 
