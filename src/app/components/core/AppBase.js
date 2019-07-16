@@ -2,13 +2,8 @@ import React from "react";
 import {Route, Switch} from "react-router-dom";
 import AppHeader from "./AppHeader";
 import {Layout, Spin} from "antd";
-import AppFooter from "./AppFooter";
 import AppSider from "./AppSider";
-import {
-    loggedInactivePractice,
-    loggedInUserPractices,
-    setCurrentPractice, loadUserDetails
-} from "../../utils/auth";
+import {loadUserDetails, loggedInactivePractice, loggedInUserPractices, setCurrentPractice} from "../../utils/auth";
 import SettingsDash from "../settings/SettingsDash"
 import Calendar from "../calendar/Calendar";
 import PatientHome from "../patients/PatientHome";
@@ -21,6 +16,7 @@ import PrintPatientForm from "../patients/patient/PrintPatientForm";
 import CreateAppointment from "../calendar/CreateAppointment";
 import BlockCalendar from "../calendar/BlockCalendar";
 import PermissionDenied from "../common/errors/PermissionDenied";
+import BookingHome from "../booking/BookingHome";
 
 class AppBase extends React.Component {
     constructor(props) {
@@ -72,7 +68,7 @@ class AppBase extends React.Component {
                 loadingPermissions: true
             }
         }, function () {
-            loadUserDetails(that.state.active_practiceId, successFn,errorFn);
+            loadUserDetails(that.state.active_practiceId, successFn, errorFn);
         })
         let successFn = function (data) {
             that.setState(function (prevState) {
@@ -91,7 +87,7 @@ class AppBase extends React.Component {
                 // that.clinicData();
             });
         }
-        let errorFn = function(){
+        let errorFn = function () {
             that.setState({
                 loadingPermissions: false
             })
@@ -207,10 +203,13 @@ class AppBase extends React.Component {
                                                                                            {...route}
                                                                                            key={that.state.active_practiceId}/>}/>
                                 <Route path="/reports/:type" render={(route) => <ReportsHome {...this.state}
+                                                                                             {...this.props}
+                                                                                             {...route}
+                                                                                             key={that.state.active_practiceId}/>}/>
+                                <Route path="/booking" render={(route) => <BookingHome {...this.state}
                                                                                        {...this.props}
                                                                                        {...route}
                                                                                        key={that.state.active_practiceId}/>}/>
-
                                 <Route path="/profile" render={(route) => <Profile {...this.state}
                                                                                    {...this.props}
                                                                                    {...route}

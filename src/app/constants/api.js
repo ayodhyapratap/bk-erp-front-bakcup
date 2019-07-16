@@ -190,3 +190,5 @@ export const PAYMENT_PDF = 'payment/%s/get_pdf/';
 export const ROOM_TYPE = 'clinics/%s/room_types/';
 export const BED_PACKAGES = 'clinics/%s/bed_packages/';
 export const MEDICINE_PACKAGES = 'clinics/%s/medicine_packages/';
+export const BOOK_SEAT = 'clinics/%s/seat_booking/';
+export const CHECK_SEAT_AVAILABILITY = 'clinics/%s/seat_availability//'

@@ -332,7 +332,7 @@ class DynamicFieldsForm extends React.Component {
     render() {
         const that = this;
         const formItemLayout = (this.props.formLayout ? this.props.formLayout : {
-            labelCol: {span: 6},
+            labelCol: {span: 8},
             wrapperCol: {span: 14},
         });
         const {getFieldDecorator} = this.props.form;

@@ -1,16 +1,9 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm} from "antd";
-import {
-    SUCCESS_MSG_TYPE,
-    CHECKBOX_FIELD,
-    INPUT_FIELD,
-    RADIO_FIELD,
-    NUMBER_FIELD,
-    SELECT_FIELD
-} from "../../../../constants/dataKeys";
-import {EXPENSE_TYPE, ROOM_TYPE} from "../../../../constants/api";
-import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
+import {Button, Card, Divider, Form, Modal, Popconfirm} from "antd";
+import {INPUT_FIELD, NUMBER_FIELD, SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
+import {ROOM_TYPE} from "../../../../constants/api";
+import {displayMessage, getAPI, interpolate, postAPI} from "../../../../utils/common";
 import CustomizedTable from "../../../common/CustomizedTable";
 
 class RoomTypes extends React.Component {
@@ -23,7 +16,8 @@ class RoomTypes extends React.Component {
             loading: true,
             showDeleted: false,
             deletedLoading: false,
-            deletedRooms: []
+            deletedRooms: [],
+            editObj: {}
         };
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -62,9 +56,12 @@ class RoomTypes extends React.Component {
             }
         };
         if (deleted) {
-            getAPI(interpolate(ROOM_TYPE,[this.props.active_practiceId]), successFn, errorFn, {deleted: true,practice:this.props.active_practiceId});
+            getAPI(interpolate(ROOM_TYPE, [this.props.active_practiceId]), successFn, errorFn, {
+                deleted: true,
+                practice: this.props.active_practiceId
+            });
         } else {
-            getAPI(interpolate(ROOM_TYPE,[this.props.active_practiceId]), successFn, errorFn);
+            getAPI(interpolate(ROOM_TYPE, [this.props.active_practiceId]), successFn, errorFn);
         }
     }
 
@@ -77,11 +74,8 @@ class RoomTypes extends React.Component {
 
     editTax(value) {
         this.setState({
-            editingId: value.id,
-            editingName: value.name,
-            editingValue: value.tax_value,
-            loading: false,
-            visible: true,
+            editObj: value,
+            visible: true
         })
     }
 
@@ -89,7 +83,7 @@ class RoomTypes extends React.Component {
         this.setState({visible: false});
     }
 
-    deleteObject(record,type) {
+    deleteObject(record, type) {
         let that = this;
         let reqData = record;
         reqData.is_active = type;
@@ -101,7 +95,7 @@ class RoomTypes extends React.Component {
         }
         let errorFn = function () {
         };
-        postAPI(interpolate(ROOM_TYPE,[this.props.active_practiceId]), reqData, successFn, errorFn)
+        postAPI(interpolate(ROOM_TYPE, [this.props.active_practiceId]), reqData, successFn, errorFn)
     }
 
     showDeletedExpenses = () => {
@@ -118,21 +112,29 @@ class RoomTypes extends React.Component {
             title: 'Room Type',
             dataIndex: 'name',
             key: 'name',
+        },{
+            title: 'Normal Bed Count',
+            dataIndex: 'normal_seats',
+            key: 'normal_seats',
+        },{
+            title: 'Tatkal Bed Count',
+            dataIndex: 'tatkal_seats',
+            key: 'tatkal_seats',
         }, {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-                record.is_active?<span>
+                record.is_active ? <span>
 
               <a onClick={() => this.editTax(record)}>  Edit</a>
                 <Divider type="vertical"/>
                 <Popconfirm title="Are you sure to delete this?"
-                            onConfirm={() => that.deleteObject(record,false)} okText="Yes" cancelText="No">
+                            onConfirm={() => that.deleteObject(record, false)} okText="Yes" cancelText="No">
                   <a>Delete</a>
               </Popconfirm>
               </span> : <span>
                     <Popconfirm title="Are you sure show this?"
-                                onConfirm={() => that.deleteObject(record,true)} okText="Yes" cancelText="No">
+                                onConfirm={() => that.deleteObject(record, true)} okText="Yes" cancelText="No">
                   <a>Show</a>
               </Popconfirm>
                 </span>
@@ -143,13 +145,39 @@ class RoomTypes extends React.Component {
             key: "name",
             required: true,
             type: INPUT_FIELD
+        }, {
+            label: "Normal Bed Count",
+            key: "normal_seats",
+            required: true,
+            type: NUMBER_FIELD,
+            min: 0
+        }, {
+            label: "Tatkal Bed Count",
+            key: "tatkal_seats",
+            required: true,
+            type: NUMBER_FIELD,
+            min: 0
         },];
         const editfields = [{
-            label: "Expense name",
+            label: "Room Type",
             key: "name",
             required: true,
-            initialValue: this.state.editingName,
+            initialValue: this.state.editObj.name,
             type: INPUT_FIELD
+        }, {
+            label: "Normal Bed Count",
+            key: "normal_seats",
+            required: true,
+            initialValue: this.state.editObj.normal_seats,
+            type: NUMBER_FIELD,
+            min: 0
+        }, {
+            label: "Tatkal Bed Count",
+            required: true,
+            initialValue: this.state.editObj.tatkal_seats,
+            key: "tatkal_seats",
+            type: NUMBER_FIELD,
+            min: 0
         },];
         const formProp = {
             successFn: function (data) {
@@ -162,13 +190,13 @@ class RoomTypes extends React.Component {
             errorFn: function () {
 
             },
-            action: interpolate(ROOM_TYPE,[this.props.active_practiceId]),
+            action: interpolate(ROOM_TYPE, [this.props.active_practiceId]),
             method: "post",
         }
         const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
         const editFormDefaultValues = [{"key": "practice", "value": this.props.active_practiceId}, {
             "key": "id",
-            "value": this.state.editingId
+            "value": this.state.editObj.id
         }];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
@@ -178,19 +206,19 @@ class RoomTypes extends React.Component {
                 <Divider/>
                 <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.rooms}/>
                 {/*{this.state.showDeleted ?*/}
-                    {/*<div>*/}
-                        {/*<CustomizedTable loading={this.state.deletedLoading} columns={columns}*/}
-                                         {/*dataSource={this.state.deletedExpenses}/>*/}
-                    {/*</div> :*/}
-                    {/*<h4><a onClick={() => this.showDeletedExpenses()}>Show Deleted Expenses</a></h4>}*/}
+                {/*<div>*/}
+                {/*<CustomizedTable loading={this.state.deletedLoading} columns={columns}*/}
+                {/*dataSource={this.state.deletedExpenses}/>*/}
+                {/*</div> :*/}
+                {/*<h4><a onClick={() => this.showDeletedExpenses()}>Show Deleted Expenses</a></h4>}*/}
             </Card>
             <Modal
-                title="Basic Modal"
                 visible={this.state.visible}
                 footer={null}
+                onCancel={this.handleCancel}
             >
 
-                <TestFormLayout title="edit Expence" defaultValues={editFormDefaultValues} formProp={formProp}
+                <TestFormLayout title="Edit Room Type" defaultValues={editFormDefaultValues} formProp={formProp}
                                 fields={editfields}/>
                 <Button key="back" onClick={this.handleCancel}>Return</Button>,
 

@@ -114,6 +114,12 @@ class AppSider extends React.Component {
                         </Link>
                     </Menu.Item>
                 </SubMenu>
+                <Menu.Item key="booking">
+                    <Link to="/booking">
+                        <Icon type="box-plot" />
+                        <span className="nav-text">Booking</span>
+                    </Link>
+                </Menu.Item>
                 {this.props.activePracticePermissions.WebAdmin ?
                     <Menu.Item key="web-1">
                         <Link to="/web/videos">

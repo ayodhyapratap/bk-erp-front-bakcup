@@ -148,19 +148,7 @@ class EditPracticeDetail extends React.Component {
                 placeholder:"GSTIN",
                 key: "gstin",
                 type: INPUT_FIELD
-            }, {
-                label: "Normal Bed Count",
-                key: "normal_seats",
-                initialValue: this.state.practiceDetail.normal_seats,
-                type: NUMBER_FIELD,
-                min: 0
-            }, {
-                label: "Tatkal Bed Count",
-                initialValue: this.state.practiceDetail.tatkal_seats,
-                key: "tatkal_seats",
-                type: NUMBER_FIELD,
-                min: 0
-            },];
+            }, ];
             const TestFormLayout = Form.create()(DynamicFieldsForm);
             const formProp = {
                 successFn: function (data) {
