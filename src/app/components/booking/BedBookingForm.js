@@ -1,14 +1,17 @@
 import React from "react";
-import {Card, DatePicker, Form, Select} from "antd";
-import {getAPI, interpolate} from "../../utils/common";
+import {Card, DatePicker, Form, Select, Checkbox,Radio,Col,Button,InputNumber, Row,Popconfirm} from "antd";
+import {getAPI, interpolate,displayMessage} from "../../utils/common";
 import {BED_PACKAGES, CHECK_SEAT_AVAILABILITY} from "../../constants/api";
 import moment from "moment";
-
+import {Booking_Type} from "../../constants/hardData";
+import {WARNING_MSG_TYPE} from "../../constants/dataKeys";
 class BedBookingForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            packages: []
+            packages: [],
+            totalPayableAmount:0,
+            totalPayingAmount: 0,
         }
     }
 
@@ -63,16 +66,57 @@ class BedBookingForm extends React.Component {
         });
     }
 
+
     handleSubmit = (e) => {
+        this.setState({
+            loading: true
+        })
         let that = this;
+        
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-
+                console.log("formvalue",values)
             }
         })
     }
 
+    handleRoomType = (name, value) => {
+        let that = this;
+        this.setState({
+            [name]: value,
+        },function(){
+            that.calculateTotalAmount();
+        });
+
+    }
+    calculateTotalAmount=()=>{
+        let that=this;
+        that.setState(function(prevSate){
+            let payAmount=0;
+            prevSate.packages.forEach(function (item){
+                if (prevSate.bed_package == item.id) {
+                    if(prevSate.type == 'NORMAL'){
+                        payAmount=item.normal_price
+                    }
+                    if(prevSate.type == 'TATKAL'){
+                        payAmount=item.tatkal_price
+                    }
+                }
+            });
+            return{
+                totalPayableAmount:payAmount,
+            }
+        })
+    }
+    setPaymentAmount = (value) => {
+        let that = this;
+        this.setState({
+            totalPayingAmount: value
+        }, function () {
+            that.calculateTotalAmount();
+        })
+    }
     render() {
         let that = this;
         const {getFieldDecorator} = this.props.form;
@@ -82,7 +126,7 @@ class BedBookingForm extends React.Component {
         });
         return <div>
             <Card title={"Book a Seat/Bed"}>
-                <Form onSubmit={that.handleSubmit}>
+                <Form>
                     <Form.Item label="Bed Package" {...formItemLayout}>
                         {getFieldDecorator('bed_package', {
                             rules: [{required: true, message: 'Enter Package!'}],
@@ -108,6 +152,48 @@ class BedBookingForm extends React.Component {
                         (<DatePicker disabled format={'DD-MM-YYYY'}/>)
                         }
                     </Form.Item>
+                    <Form.Item label={"Booking Type"} {...formItemLayout} >
+                        {getFieldDecorator('type', {rules:[{
+                            required:true,message:'this field required'
+                        }]
+                        })(<Radio.Group
+                                onChange={(e) => this.handleRoomType('type', e.target.value)}>
+                                {Booking_Type.map((type) => <Radio
+                                    value={type.value}>{type.value}</Radio>)}
+                            </Radio.Group>
+                        )
+                        }
+                    </Form.Item>
+                    <Row>
+                        <Col span={8} style={{textAlign:"right"}}>
+
+                            <h3>Grand
+                            Total: <b>{this.state.totalPayableAmount}</b></h3>
+                        </Col>
+                    </Row>
+                    
+                        <Form.Item label="Pay Now : " {...formItemLayout}>
+                            {getFieldDecorator('total',{initialValue:this.state.totalPayingAmount?this.state.totalPayingAmount:null})
+                            (
+                                <InputNumber min={0} step={1} max={this.state.totalPayableAmount}
+                                    onChange={this.setPaymentAmount}/>
+                            )
+                        }  
+                        </Form.Item>
+                   
+                    <Col span={8} style={{float:"right"}}>
+                        <Form.Item {...formItemLayout}>
+                            <Popconfirm
+                                title={"Are you sure to take payment of INR " + this.state.totalPayingAmount + "?"}  onConfirm={this.handleSubmit}>
+                                <Button type={'primary'}>submit</Button>
+                            </Popconfirm>
+                            {that.props.history ?
+                                <Button style={{margin: 5}}
+                                        onClick={() => that.props.history.goBack()}>
+                                    Cancel
+                                </Button> : null}
+                        </Form.Item>
+                    </Col>
                 </Form>
             </Card>
         </div>
