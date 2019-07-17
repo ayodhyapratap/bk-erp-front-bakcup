@@ -311,7 +311,7 @@ class PatientVitalSign extends React.Component {
                     bodyStyle={{padding: 0}}
                     title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Vital Sign" : "Patient Vital Sign"}
                     extra={<Button.Group>
-                        <Button type={"primary"} onClick={() => this.props.togglePatientListModal(true)}>
+                        <Button type={"primary"} onClick={() => that.props.togglePatientListModal(true)}>
                             <Icon type="plus"/>Add
                         </Button>
                     </Button.Group>}/>

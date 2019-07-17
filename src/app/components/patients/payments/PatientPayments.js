@@ -116,6 +116,7 @@ class PatientPayments extends React.Component {
     }
 
     render() {
+        console.log("propsssss",this.props)
         let that = this;
         const paymentmodes = {}
         if (this.state.paymentModes) {
@@ -130,10 +131,10 @@ class PatientPayments extends React.Component {
 
                 <Switch>
                     <Route exact path='/patient/:id/billing/payments/add'
-                           render={(route) => <AddPaymentForm {...this.state} {...route}
+                           render={(route) => <AddPaymentForm {...this.state} {...route} {...this.props}
                                                               loadData={this.loadPayments}/>}/>
                     <Route exact path='/patient/:id/billing/payments/edit'
-                           render={(route) => <AddPayment {...this.state} {...route}/>}/>
+                           render={(route) => <AddPayment {...this.state} {...route} {...this.props}/>}/>
                     <Route>
                         <div>
                             <Alert banner showIcon type={"info"}
@@ -164,7 +165,8 @@ class PatientPayments extends React.Component {
                     bodyStyle={{padding: 0}}
                     title={this.state.currentPatient ? this.state.currentPatient.name + " Payments" : "Payments"}
                     extra={<Button.Group>
-                        <Button type={"primary"} onClick={() => that.props.togglePatientListModal(true)}>
+                        {/* onClick={() => this.props.togglePatientListModal(true)} */}
+                       <Button type={"primary"} onClick={() => this.props.togglePatientListModal(true)}>
                             <Icon type="plus"/>Add
                         </Button>
                     </Button.Group>}>
