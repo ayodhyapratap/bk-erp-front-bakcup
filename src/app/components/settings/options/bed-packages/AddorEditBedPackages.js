@@ -7,23 +7,26 @@ import {
     NUMBER_FIELD,
     SELECT_FIELD,
     SINGLE_IMAGE_UPLOAD_FIELD,
-    SUCCESS_MSG_TYPE
+    SUCCESS_MSG_TYPE,
+    MULTI_SELECT_FIELD
 } from "../../../../constants/dataKeys";
 import {TYPES_OF_BED_PACKAGES_ROOM_TYPE} from "../../../../constants/hardData";
 import {displayMessage, getAPI, interpolate} from "../../../../utils/common";
-import {BED_PACKAGES, ROOM_TYPE} from "../../../../constants/api";
+import {BED_PACKAGES, ROOM_TYPE,TAXES} from "../../../../constants/api";
 
 export default class AddorEditBedPackages extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             editPackage: this.props.editPackage ? this.props.editPackage : null,
-            roomTypes: []
+            roomTypes: [],
+            taxes: []
         }
     }
 
     componentDidMount() {
         this.loadRequiredData();
+        this.loadTaxes();
     }
 
     loadRequiredData = () => {
@@ -36,6 +39,18 @@ export default class AddorEditBedPackages extends React.Component {
         let errorFn = function () {
         };
         getAPI(interpolate(ROOM_TYPE, [this.props.active_practiceId]), successFn, errorFn);
+
+    }
+    loadTaxes() {
+        var that = this;
+        let successFn = function (data) {
+            that.setState({
+                taxes: data,
+            })
+        };
+        let errorFn = function () {
+        };
+        getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
     }
 
@@ -81,6 +96,16 @@ export default class AddorEditBedPackages extends React.Component {
             initialValue: this.props.editPackage ? this.props.editPackage.room : null,
             type: SELECT_FIELD,
             options: this.state.roomTypes.map(room => Object.create({label: room.name, value: room.id}))
+        },{
+            label: "Taxes",
+            key: 'taxes',
+            required: true,
+            initialValue: this.props.editPackage ? this.props.editPackage.taxes : [],
+            type: MULTI_SELECT_FIELD,
+            options: this.state.taxes.map(tax => Object.create({
+                label: tax.name + "(" + tax.tax_value + "%)",
+                value: tax.id
+            }))
         }];
         let formProps = {
             method: "post",
