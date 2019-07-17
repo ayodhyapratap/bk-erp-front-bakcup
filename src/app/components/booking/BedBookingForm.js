@@ -4,7 +4,7 @@ import {getAPI, interpolate,displayMessage, postAPI} from "../../utils/common";
 import {BED_PACKAGES, CHECK_SEAT_AVAILABILITY ,BOOK_SEAT ,PATIENT_PROFILE ,SEARCH_PATIENT,PAYMENT_MODES} from "../../constants/api";
 import moment from "moment";
 // import {Booking_Type} from "../../constants/hardData";
-import {WARNING_MSG_TYPE ,SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
+import {WARNING_MSG_TYPE,ERROR_MSG_TYPE ,SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
 
 const {Meta} = Card;
 
@@ -17,7 +17,6 @@ class BedBookingForm extends React.Component {
             totalPayingAmount: 0,
             patientList:[],
             paymentModes:[],
-            searchPatientString: null
 
         }
     }
@@ -40,16 +39,12 @@ class BedBookingForm extends React.Component {
 
     }
     searchPatient = (value) => {
-        console.log("search value",value)
-        this.setState({
-            searchPatientString: value
-        })
         let that = this;
         let successFn = function (data) {
             if (data) {
                 that.setState({
                     patientList: data,
-
+                   
                 })
             }
         };
@@ -219,7 +214,7 @@ class BedBookingForm extends React.Component {
                 <Form>
                     {this.state.patientDetails?<Form.Item  key="id" value={this.state.patientDetails.id} {...formPatients}>
                             <Card bordered={false} style={{background: '#ECECEC'}}
-                            //  extra={<a href="#" onClick={this.handleClick}><Icon type="close-circle"/> </a>}
+                             extra={<a href="#" onClick={this.handleClick}><Icon type="close-circle" style={{ color: 'red' }} /> </a>}
                              >
                                 <Meta
                                     avatar={<Avatar style={{backgroundColor: '#ffff'}}
@@ -227,8 +222,8 @@ class BedBookingForm extends React.Component {
                                     title={this.state.patientDetails.user.first_name}
                                     description={this.state.patientDetails.user.mobile}
                                 />
-                                <Button type="primary" style={{float: 'right'}} onClick={this.handleClick}>Add New
-                                    Patient</Button>
+                                {/* <Button type="primary" style={{float: 'right'}} onClick={this.handleClick}>Add New
+                                    Patient</Button> */}
                             </Card>
                         </Form.Item>
                     :<div>
