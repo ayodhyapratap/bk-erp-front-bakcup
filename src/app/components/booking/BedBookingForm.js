@@ -1,5 +1,5 @@
 import React from "react";
-import {Card, DatePicker, Form, Select, Icon,Radio,Col,Button,InputNumber, Row,Popconfirm, Input ,AutoComplete,List,Avatar} from "antd";
+import {Card, DatePicker, Form, Select, Icon,Radio,Col,Button,InputNumber, Row,Popconfirm,Alert, Input ,AutoComplete,List,Avatar} from "antd";
 import {getAPI, interpolate,displayMessage, postAPI} from "../../utils/common";
 import {BED_PACKAGES, CHECK_SEAT_AVAILABILITY ,BOOK_SEAT ,PATIENT_PROFILE ,SEARCH_PATIENT,PAYMENT_MODES} from "../../constants/api";
 import moment from "moment";
@@ -42,11 +42,12 @@ class BedBookingForm extends React.Component {
         let that = this;
         let successFn = function (data) {
             if (data) {
-                that.setState({
-                    patientList: data,
-
-                })
-            }
+            that.setState({
+                patientList: data,
+                ptr:data,
+               
+            })
+        }
         };
         let errorFn = function () {
         };
@@ -169,12 +170,12 @@ class BedBookingForm extends React.Component {
             prevSate.packages.forEach(function (item){
                 if (prevSate.bed_package == item.id) {
                     if(prevSate.seat_type == 'NORMAL'){
-                        payAmount=item.normal_price + item.tax_value;
-                        total_tax=item.tax_value
+                        payAmount=item.normal_price + item.normal_tax_value;
+                        total_tax=item.normal_tax_value
                     }
                     if(prevSate.seat_type == 'TATKAL'){
-                        payAmount=item.tatkal_price + item.tax_value;
-                        total_tax=item.tax_value
+                        payAmount=item.tatkal_price + item.tatkal_tax_value;
+                        total_tax=item.tatkal_tax_value
                     }
                 }
             });
@@ -212,7 +213,7 @@ class BedBookingForm extends React.Component {
         return <div>
             <Card title={"Book a Seat/Bed"}>
                 <Form>
-                    {this.state.patientDetails?<Form.Item  key="id" value={this.state.patientDetails.id} {...formPatients}>
+                    {this.state.patientDetails?<Form.Item  key="id" value={this.state.patientDetails?this.state.patientDetails.id:''} {...formPatients}>
                             <Card bordered={false} style={{background: '#ECECEC'}}
                              extra={<a href="#" onClick={this.handleClick}><Icon type="close-circle" style={{ color: 'red' }} /> </a>}
                              >
@@ -238,7 +239,7 @@ class BedBookingForm extends React.Component {
                                     filterOption={false}
                                     onSelect={this.handlePatientSelect}>
                                     {this.state.patientList.map((option) => <AutoComplete.Option
-                                        value={option.id.toString()}>
+                                        value={option?option.id.toString():''}>
                                         <List.Item style={{padding: 0}}>
                                             <List.Item.Meta
                                                 avatar={<Avatar
@@ -251,6 +252,8 @@ class BedBookingForm extends React.Component {
                                     </AutoComplete.Option>)}
                                 </AutoComplete>)
                             }
+                            {this.state.ptr ?  <Alert message="Patient Not Found !!" description="Please Search another patient or create new patient."
+                              type="error"/>: null}
                         </Form.Item>
                     </div>}
 
@@ -296,7 +299,7 @@ class BedBookingForm extends React.Component {
                         <Col span={8} style={{textAlign:"right"}}>
 
                             <h3>Grand
-                            Total: <b>{this.state.totalPayableAmount}</b></h3>
+                            Total: <b>{this.state.totalPayableAmount.toFixed()}</b></h3>
                         </Col>
                     </Row>
 
