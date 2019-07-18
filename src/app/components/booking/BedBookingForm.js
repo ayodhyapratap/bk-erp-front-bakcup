@@ -44,7 +44,7 @@ class BedBookingForm extends React.Component {
             if (data) {
                 that.setState({
                     patientList: data,
-                   
+
                 })
             }
         };
@@ -135,16 +135,16 @@ class BedBookingForm extends React.Component {
                 };
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Saved Successfully!!");
-                    
+
                 }
                 let errorFn = function () {
-                    
+
                 }
                 postAPI(interpolate(BOOK_SEAT, [this.props.active_practiceId]), reqData, successFn, errorFn);
             }
         })
 
-        
+
     }
     handleClick = (e) => {
         this.setState({
@@ -253,7 +253,7 @@ class BedBookingForm extends React.Component {
                             }
                         </Form.Item>
                     </div>}
-                   
+
                     <Form.Item label="Bed Package" {...formItemLayout}>
                         {getFieldDecorator('bed_package', {
                             rules: [{required: true, message: 'Enter Package!'}],
@@ -279,7 +279,7 @@ class BedBookingForm extends React.Component {
                         (<DatePicker disabled format={'DD-MM-YYYY'}/>)
                         }
                     </Form.Item>
-                    
+
                     <Form.Item label={"Booking Type"} {...formItemLayout} >
                         {getFieldDecorator('seat_type', {rules:[{
                             required:true,message:'this field required'
@@ -299,14 +299,14 @@ class BedBookingForm extends React.Component {
                             Total: <b>{this.state.totalPayableAmount}</b></h3>
                         </Col>
                     </Row>
-                
+
                     <Form.Item label="Pay Now : " {...formItemLayout}>
                         {getFieldDecorator('pay_value',{initialValue:this.state.totalPayingAmount?this.state.totalPayingAmount:null})
                         (
                             <InputNumber min={0} step={1} max={this.state.totalPayableAmount}
                                 onChange={this.setPaymentAmount}/>
                         )
-                    }  
+                    }
                     </Form.Item>
                     <Form.Item label="Payment Mode" {...formItemLayout}>
                          {getFieldDecorator('payment_mode',{rules:[{ required:true ,message:'this field required' }],
@@ -321,12 +321,12 @@ class BedBookingForm extends React.Component {
                             </Select>)
                         }
                     </Form.Item>
-                   
+
                     <Col span={7} style={{float:"right"}}>
                         <Form.Item>
                             <Popconfirm
                                 title={"Are you sure to take payment of INR " + this.state.totalPayingAmount + "?"}  onConfirm={this.handleSubmit}>
-                                <Button type={'primary'}>submit</Button>
+                                <Button type={'primary'}>Submit</Button>
                             </Popconfirm>
                             {that.props.history ?
                                 <Button style={{margin: 5}}
