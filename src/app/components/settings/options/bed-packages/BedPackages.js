@@ -66,13 +66,17 @@ export default class BedPackages extends React.Component {
             dataIndex: 'no_of_days',
             key: 'no_of_days'
         }, {
-            title: "Price (INR)",
+            title: "Normal Price+tax (INR)",
             dataIndex: 'normal_price',
-            key: 'normal_price'
+            key: 'normal_price',
+            render:(value ,record)=>(<p>{(record.normal_price + record.normal_tax_value).toFixed()}</p>
+
+            ),
         }, {
-            title: "Tatkal Price (INR)",
+            title: "Tatkal Price+tax (INR)",
             dataIndex: 'tatkal_price',
-            key: 'tatkal_price'
+            key: 'tatkal_price',
+            render:(value ,record)=>(<p>{(record.tatkal_price + record.tatkal_tax_value).toFixed()}</p>)
         }, {
             title: 'Action',
             key: 'action',
