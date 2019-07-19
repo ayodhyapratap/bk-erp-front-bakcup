@@ -65,14 +65,16 @@ export default class AddorEditMedicinePackages extends React.Component {
             initialValue: this.props.editPackage ? this.props.editPackage.price : null,
             type: NUMBER_FIELD,
             follow: 'INR'
-        }, {
-            label: "Final Price",
-            key: 'final_price',
-            required: true,
-            initialValue: this.props.editPackage ? this.props.editPackage.final_price : null,
-            type: NUMBER_FIELD,
-            follow: 'INR'
-        }, {
+        }, 
+        // {
+        //     label: "Final Price",
+        //     key: 'final_price',
+        //     required: true,
+        //     initialValue: this.props.editPackage ? this.props.editPackage.final_price : null,
+        //     type: NUMBER_FIELD,
+        //     follow: 'INR'
+        // },
+         {
             label: "Taxes",
             key: 'taxes',
             required: true,

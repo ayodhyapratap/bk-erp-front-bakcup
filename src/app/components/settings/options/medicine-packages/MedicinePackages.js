@@ -69,11 +69,13 @@ export default class MedicinePackages extends React.Component {
             title: "Price (INR)",
             dataIndex: 'price',
             key: 'price'
-        }, {
-            title: "Final Price (INR)",
-            dataIndex: 'final_price',
-            key: 'final_price'
-        }, {
+        }, 
+        // {
+        //     title: "Final Price (INR)",
+        //     dataIndex: 'final_price',
+        //     key: 'final_price'
+        // },
+         {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
