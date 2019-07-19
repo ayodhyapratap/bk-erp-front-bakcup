@@ -56,7 +56,9 @@ class Addinvoicedynamic extends React.Component {
             stocks: {},
             itemBatches: {},
             saveLoading: false,
-            qrValue: ''
+            qrValue: '',
+            searchItem:'',
+
         }
 
     }
@@ -174,13 +176,19 @@ class Addinvoicedynamic extends React.Component {
                     }
                 }
             )
+            
         }
         let errorFn = function () {
         }
-        getAPI(INVENTORY_ITEM_API, successFn, errorFn, {
+        let paramsApi={
             practice: this.props.active_practiceId,
-            maintain_inventory: true
-        });
+            maintain_inventory: true,
+        }
+        if(this.state.searchItem){
+            paramsApi.item_name=this.state.searchItem;
+        }
+       
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn, paramsApi);
     }
 
     loadProcedures() {
@@ -483,8 +491,19 @@ class Addinvoicedynamic extends React.Component {
             qrValue: value
         })
     }
-
+    searchValues = (e)=>{
+        let value=e.target.value;
+        this.setState({
+            searchItem:value,
+        },function(){
+            if (this.state.searchItem) {
+                this.loadInventoryItemList();
+            }
+        })
+       
+    }
     render() {
+        console.log("search",this.state.searchItem)
         let that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const formItemLayout = {
@@ -706,6 +725,9 @@ class Addinvoicedynamic extends React.Component {
                         <Col span={7}>
                             <Tabs size="small" type="card">
                                 <TabPane tab={INVENTORY} key={INVENTORY}>
+                                    <div style={{backgroundColor: '#ddd', padding: 8}}>
+                                        <Input.Search  placeholder={"Search in Inventory "}  onChange={this.searchValues}/>
+                                    </div>
                                     <List size={"small"}
                                           itemLayout="horizontal"
                                           dataSource={this.state.items ? this.state.items[INVENTORY] : []}
