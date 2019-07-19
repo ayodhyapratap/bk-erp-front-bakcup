@@ -1,7 +1,7 @@
 import React from "react";
 import {Card, DatePicker, Form, Select, Icon,Radio,Col,Button,InputNumber, Row,Popconfirm,Alert, Input ,AutoComplete,List,Avatar} from "antd";
 import {getAPI, interpolate,displayMessage, postAPI} from "../../utils/common";
-import {BED_PACKAGES, CHECK_SEAT_AVAILABILITY ,BOOK_SEAT ,PATIENT_PROFILE ,SEARCH_PATIENT,PAYMENT_MODES} from "../../constants/api";
+import {BED_PACKAGES, CHECK_SEAT_AVAILABILITY ,BOOK_SEAT ,PATIENT_PROFILE ,SEARCH_PATIENT,PAYMENT_MODES,MEDICINE_PACKAGES} from "../../constants/api";
 import moment from "moment";
 // import {Booking_Type} from "../../constants/hardData";
 import {WARNING_MSG_TYPE,ERROR_MSG_TYPE ,SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
@@ -17,6 +17,7 @@ class BedBookingForm extends React.Component {
             totalPayingAmount: 0,
             patientList:[],
             paymentModes:[],
+            medicinePackage:[],
 
         }
     }
@@ -24,6 +25,7 @@ class BedBookingForm extends React.Component {
     componentDidMount() {
         this.loadPackages();
         this.loadPaymentModes();
+        this.loadMedicinePackages();
     }
 
     loadPackages = () => {
@@ -37,6 +39,18 @@ class BedBookingForm extends React.Component {
         }
         getAPI(interpolate(BED_PACKAGES, [this.props.active_practiceId]), successFn, errorFn);
 
+    }
+    loadMedicinePackages(){
+        let that =this;
+        let successFn =function(data){
+            that.setState({
+                medicinePackage:data,
+            })
+        }
+        let errorFn = function (){
+
+        }
+        getAPI(interpolate(MEDICINE_PACKAGES ,[this.props.active_practiceId] ) ,successFn,errorFn);
     }
     searchPatient = (value) => {
         let that = this;
@@ -193,9 +207,10 @@ class BedBookingForm extends React.Component {
             that.calculateTotalAmount();
         })
     }
+    handleMedicineSelect =(value)=>{
+        
+    }
     render() {
-        console.log("state",this.state)
-        console.log("props",this.props)
         const Booking_Type = [
             {value: 'TATKAL', is_or_not:this.state.availabilitySeatTatkal && this.state.availabilitySeatTatkal.available?true:false},
             {value: 'NORMAL', is_or_not:this.state.availabilitySeatNormal && this.state.availabilitySeatNormal.available?true:false}
@@ -259,7 +274,7 @@ class BedBookingForm extends React.Component {
 
                     <Form.Item label="Bed Package" {...formItemLayout}>
                         {getFieldDecorator('bed_package', {
-                            rules: [{required: true, message: 'Enter Package!'}],
+                            rules: [{required: true, message: 'this field required!'}],
                         })
                         (<Select onChange={(value) => that.checkBedStatus('bed_package', value)}>
                             {that.state.packages.map(room => <Select.Option
@@ -293,6 +308,15 @@ class BedBookingForm extends React.Component {
                                     value={seat_type.value} disabled={seat_type.is_or_not?false:true}>{seat_type.value}</Radio>)}
                             </Radio.Group>
                         )
+                        }
+                    </Form.Item>
+                    <Form.Item label="Medicine  Package" {...formItemLayout}>
+                        {getFieldDecorator('medicines', {
+                        })
+                        (<Select  mode="multiple" onChange={this.handleMedicineSelect}>
+                            {that.state.medicinePackage.map(item => <Select.Option
+                                value={item.id}>{item.name}</Select.Option>)}
+                        </Select>)
                         }
                     </Form.Item>
                     <Row>

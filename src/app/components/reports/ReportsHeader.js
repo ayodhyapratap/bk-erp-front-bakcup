@@ -29,6 +29,7 @@ export default class ReportsHeader extends React.Component {
             {name: 'Expenses', value: '/reports/expenses', active: 'ReportsExpenses'},
             {name: 'Inventory', value: '/reports/inventory', active: 'ReportsInventory'},
             {name: 'EMR', value: '/reports/emr', active: 'ReportsEMR'},
+            {name: 'Bed Booking', value:'/reports/bed_booking', active:'ReportBedBooking'},
             {name: 'Inventory Retails', value: '/reports/inventoryretails', active: 'ReportsInventoryRetail'}];
         return <Header style={{background: '#fff'}}>
             <ul style={{listStyle: 'none'}}>

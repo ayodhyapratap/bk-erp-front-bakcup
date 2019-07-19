@@ -108,6 +108,7 @@ export const DRUG_TYPE_API = 'clinics/%s/drugtype/';
 export const DRUG_UNIT_API = 'clinics/%s/drugunit/';
 export const PRINT_PREVIEW_RENDER = 'patients/print/';
 export const MEMBERSHIP_API = 'clinics/%s/membership/';
+export const BED_BOOKING_REPORTS ='clinics/%s/seat_booking_report'
 /**
  * Blogs API
  * */
