@@ -24,7 +24,7 @@ export default class WebCamField extends React.Component {
             height: 720,
             facingMode: "user"
         };
-        return <div style={{width:'100%'}}>
+        return <div style={{width:680}}>
             <Webcam audio={false}
                     height={480}
                     width={640}

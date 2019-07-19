@@ -5,6 +5,7 @@ import {BACKEND_BASE_URL} from "../config/connect";
  * */
 export const API_URL = BACKEND_BASE_URL + '/erp-api';
 export const FILE_UPLOAD_API = 'blogImage/';
+export const FILE_UPLOAD_BASE64 = 'blogImage/create_with_base64/';
 
 export const SIGNUP_URL = '';
 export const RESET_PASSWORD = 'users/reset_password/';

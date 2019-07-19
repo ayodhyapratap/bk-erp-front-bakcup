@@ -176,7 +176,7 @@ class Addinvoicedynamic extends React.Component {
                     }
                 }
             )
-            
+
         }
         let errorFn = function () {
         }
@@ -187,7 +187,7 @@ class Addinvoicedynamic extends React.Component {
         if(this.state.searchItem){
             paramsApi.item_name=this.state.searchItem;
         }
-       
+
         getAPI(INVENTORY_ITEM_API, successFn, errorFn, paramsApi);
     }
 
@@ -496,11 +496,9 @@ class Addinvoicedynamic extends React.Component {
         this.setState({
             searchItem:value,
         },function(){
-            if (this.state.searchItem) {
                 this.loadInventoryItemList();
-            }
         })
-       
+
     }
     render() {
         let that = this;

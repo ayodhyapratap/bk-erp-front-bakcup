@@ -1,49 +1,58 @@
 import React from "react";
 import {
     Button,
+    Checkbox,
+    DatePicker,
     Divider,
     Form,
-    TimePicker,
     Icon,
-    DatePicker,
     Input,
     InputNumber,
+    message,
+    Modal,
     Radio,
     Select,
-    Checkbox,
+    Tag,
+    TimePicker,
     Upload,
-    message, Tag, Modal,
 } from "antd";
 import {
     CHECKBOX_FIELD,
-    TIME_PICKER,
-    SINGLE_CHECKBOX_FIELD,
+    CITY_FIELD,
     COLOR_PICKER,
-    TEXT_FIELD,
-    INPUT_FIELD,
+    COUNTRY_FIELD,
     DATE_PICKER,
+    DATE_TIME_PICKER,
+    DIVIDER_FIELD,
+    EMAIL_FIELD,
+    INPUT_FIELD,
+    MAIL_TEMPLATE_FIELD,
+    MULTI_IMAGE_UPLOAD_FIELD,
+    MULTI_SELECT_FIELD,
     NUMBER_FIELD,
+    PASSWORD_FIELD,
+    QUILL_TEXT_FIELD,
     RADIO_FIELD,
     SELECT_FIELD,
-    QUILL_TEXT_FIELD,
+    SINGLE_CHECKBOX_FIELD,
     SINGLE_IMAGE_UPLOAD_FIELD,
-    COUNTRY_FIELD,
+    SMS_FIELD,
     STATE_FIELD,
-    EMAIL_FIELD,
-    MAIL_TEMPLATE_FIELD,
-    CITY_FIELD, PASSWORD_FIELD, MULTI_SELECT_FIELD, MULTI_IMAGE_UPLOAD_FIELD, SMS_FIELD, DATE_TIME_PICKER, DIVIDER_FIELD
+    SUCCESS_MSG_TYPE,
+    TEXT_FIELD,
+    TIME_PICKER
 } from "../../constants/dataKeys";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
-import {getAPI, makeFileURL, makeURL, postAPI, putAPI} from "../../utils/common";
+import {displayMessage, getAPI, makeFileURL, makeURL, postAPI, putAPI} from "../../utils/common";
 import moment from "moment";
 import {SwatchesPicker} from 'react-color';
 // import ReactQuill from 'react-quill';
 // import 'react-quill/dist/quill.snow.css';
-import {EXTRA_DATA, FILE_UPLOAD_API} from "../../constants/api";
+import {EXTRA_DATA, FILE_UPLOAD_API, FILE_UPLOAD_BASE64} from "../../constants/api";
 import WebCamField from "./WebCamField";
 import {Editor} from 'react-draft-wysiwyg';
 import '../../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import {EditorState, convertToRaw, ContentState} from 'draft-js';
+import {ContentState, convertToRaw, EditorState} from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 
@@ -225,8 +234,7 @@ class DynamicFieldsForm extends React.Component {
         };
         if (this.props.formProp.method == "post") {
             postAPI(this.props.formProp.action, data, successFn, errorFn);
-        }
-        else if (this.props.formProp.method == "put") {
+        } else if (this.props.formProp.method == "put") {
             putAPI(this.props.formProp.action, data, successFn, errorFn);
         }
     }
@@ -307,15 +315,22 @@ class DynamicFieldsForm extends React.Component {
         let that = this;
         let reqData = new FormData();
 
-        reqData.append('image', convertDataURIToBinary(image));
+        reqData.append('image', image);
+        reqData.append('name', 'file');
 
         let successFn = function (data) {
-            that.props.form.setFieldsValue({[fieldKey]: data});
+            that.props.form.setFieldsValue({[fieldKey]: {file: {response: data}}});
+            displayMessage(SUCCESS_MSG_TYPE, "Image Captured and processed.");
+            that.setState(function (prevState) {
+                return {
+                    webCamState: {...prevState.webCamState, [fieldKey]: false}
+                }
+            })
         }
         let errorFn = function () {
 
         }
-        postAPI(FILE_UPLOAD_API, reqData, successFn, errorFn, {
+        postAPI(FILE_UPLOAD_BASE64, reqData, successFn, errorFn, {
             'content-type': 'multipart/form-data'
         });
 
@@ -613,6 +628,7 @@ class DynamicFieldsForm extends React.Component {
                                     footer={null}
                                     onCancel={() => that.toggleWebCam(field.key, false)}
                                     visible={!!that.state.webCamState[field.key]}
+                                    width={680}
                                     key={that.state.webCamState[field.key]}>
                                     <WebCamField getScreenShot={(value) => that.getImageandUpload(field.key, value)}/>
                                 </Modal>

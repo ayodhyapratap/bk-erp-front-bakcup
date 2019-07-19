@@ -1,6 +1,6 @@
 import React from "react";
 import {Avatar, Input, Card, Col, Icon, Radio, Row, Button, Spin, Modal, Tag} from "antd";
-import {getAPI, interpolate, postAPI} from "../../utils/common";
+import {getAPI, interpolate, makeFileURL, postAPI} from "../../utils/common";
 import {PATIENT_GROUPS, SEARCH_PATIENT, PATIENTS_LIST} from "../../constants/api";
 import InfiniteFeedLoaderButton from "../common/InfiniteFeedLoaderButton";
 import PatientGroups from "./patientGroups/PatientGroups";
@@ -268,8 +268,8 @@ export default PatientSelection;
 function PatientCard(patient) {
     return <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6}>
         <Card onClick={() => patient.setCurrentPatient(patient)} style={{margin: '5px'}}>
-            <Meta avatar={(patient.image ? <Avatar src={patient.image}/> :
-                <Avatar style={{backgroundColor: '#87d068'}}>
+            <Meta avatar={(patient.image ? <Avatar src={makeFileURL(patient.image)} size={50}/> :
+                <Avatar style={{backgroundColor: '#87d068'}} size={50}>
                     {patient.user.first_name ? patient.user.first_name.charAt(0) :
                         <Icon type="user"/>}
                 </Avatar>)}

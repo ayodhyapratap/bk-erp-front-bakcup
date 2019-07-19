@@ -3,6 +3,7 @@ import {Avatar, Button, Drawer, Icon, Layout, Tooltip, Dropdown, Tag, Switch} fr
 import PatientSelection from "./PatientSelection";
 import {Link} from "react-router-dom";
 import {patientSettingMenu} from "../../utils/clinicUtils";
+import {makeFileURL} from "../../utils/common";
 
 const {Header, Content, Sider} = Layout;
 
@@ -28,7 +29,7 @@ class PatientHeader extends React.Component {
                         </div>
                         <a style={{padding: '8px', fontSize: '20px'}}
                            onClick={() => this.props.togglePatientListModal(true)}>
-                            {(this.props.currentPatient.image ? <Avatar src={this.props.currentPatient.image}/> :
+                            {(this.props.currentPatient.image ? <Avatar src={makeFileURL(this.props.currentPatient.image)}/> :
                                 <Avatar style={{backgroundColor: '#87d068'}}>
                                     {this.props.currentPatient.user.first_name ? this.props.currentPatient.user.first_name.charAt(0) :
                                         <Icon type="user"/>}
