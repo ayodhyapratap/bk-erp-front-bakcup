@@ -1,11 +1,6 @@
 import React from "react";
-<<<<<<< HEAD
 import {Card, DatePicker, Form, Select, Icon,Radio,Col,Button,InputNumber, Row,Popconfirm,Alert, Input ,AutoComplete,List,Avatar, Table} from "antd";
 import {getAPI, interpolate,displayMessage, postAPI} from "../../utils/common";
-=======
-import {Card, DatePicker, Form, Select, Icon,Radio,Col,Button,InputNumber, Row,Popconfirm,Alert, Input ,AutoComplete,List,Avatar} from "antd";
-import {getAPI, interpolate, displayMessage, postAPI, makeFileURL} from "../../utils/common";
->>>>>>> db1546eb29aad3c55d1d3b8e78ff12516db196e9
 import {BED_PACKAGES, CHECK_SEAT_AVAILABILITY ,BOOK_SEAT ,PATIENT_PROFILE ,SEARCH_PATIENT,PAYMENT_MODES,MEDICINE_PACKAGES} from "../../constants/api";
 import moment from "moment";
 // import {Booking_Type} from "../../constants/hardData";
@@ -232,7 +227,6 @@ class BedBookingForm extends React.Component {
             that.calculateTotalAmount();
         })
     }
-<<<<<<< HEAD
     handleMedicineSelect =(e)=>{
         let value=e;
         this.setState({
@@ -240,10 +234,6 @@ class BedBookingForm extends React.Component {
         },function(){
             this.calculateTotalAmount()
         })
-=======
-    handleMedicineSelect =(value)=>{
-
->>>>>>> db1546eb29aad3c55d1d3b8e78ff12516db196e9
     }
     render() {
         const Booking_Type = [
@@ -298,7 +288,6 @@ class BedBookingForm extends React.Component {
         return <div>
             <Card title={"Book a Seat/Bed"}>
                 <Form>
-<<<<<<< HEAD
                     <Row>
                         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                             <div>
@@ -312,41 +301,6 @@ class BedBookingForm extends React.Component {
                                                                 src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
                                                 title={this.state.patientDetails.user.first_name}
                                                 description={this.state.patientDetails.user.mobile}
-=======
-                    {this.state.patientDetails?<Form.Item  key="id" value={this.state.patientDetails?this.state.patientDetails.id:''} {...formPatients}>
-                            <Card bordered={false} style={{background: '#ECECEC'}}
-                             extra={<a href="#" onClick={this.handleClick}><Icon type="close-circle" style={{ color: 'red' }} /> </a>}
-                             >
-                                <Meta
-                                    avatar={<Avatar style={{backgroundColor: '#ffff'}}
-                                                    src={this.state.patientDetails.image ? makeFileURL(this.state.patientDetails.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
-                                    title={this.state.patientDetails.user.first_name}
-                                    description={this.state.patientDetails.user.mobile}
-                                />
-                                {/* <Button type="primary" style={{float: 'right'}} onClick={this.handleClick}>Add New
-                                    Patient</Button> */}
-                            </Card>
-                        </Form.Item>
-                    :<div>
-                        <Form.Item label="Patient" {...formItemLayout}>
-                            {getFieldDecorator('patient',{rules:[{ required:true ,message:'this field required' }],
-                            })
-                            ( <AutoComplete placeholder="Patient Name"
-                                    showSearch
-                                    onSearch={this.searchPatient}
-                                    defaultActiveFirstOption={false}
-                                    showArrow={false}
-                                    filterOption={false}
-                                    onSelect={this.handlePatientSelect}>
-                                    {this.state.patientList.map((option) => <AutoComplete.Option
-                                        value={option?option.id.toString():''}>
-                                        <List.Item style={{padding: 0}}>
-                                            <List.Item.Meta
-                                                avatar={<Avatar
-                                                    src={option.image ? makeFileURL(option.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
-                                                title={option.user.first_name + " (" + option.user.id + ")"}
-                                                description={<small>{option.user.mobile}</small>}
->>>>>>> db1546eb29aad3c55d1d3b8e78ff12516db196e9
                                             />
                                             {/* <Button type="primary" style={{float: 'right'}} onClick={this.handleClick}>Add New
                                                 Patient</Button> */}
