@@ -155,6 +155,7 @@ class BedBookingForm extends React.Component {
                 };
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Saved Successfully!!");
+                    that.props.history.goBack()
 
                 }
                 let errorFn = function () {
