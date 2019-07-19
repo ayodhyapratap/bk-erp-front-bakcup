@@ -88,6 +88,7 @@ export default class BookingHome extends React.Component {
             title:'Total price',
             key:'total_price',
             dataIndex:'total_price',
+            render:(value)=>(<p>{value.toFixed(2)}</p>)
 
         },{
             title:'Payment Status',
