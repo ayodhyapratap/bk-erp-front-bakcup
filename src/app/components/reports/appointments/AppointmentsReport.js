@@ -55,6 +55,7 @@ export default class AppointmentsReport extends React.Component {
     }
 
     render() {
+        console.log("startApp",this.props.startDate)
         const columns = [{
             title: 'Date',
             key: 'date',

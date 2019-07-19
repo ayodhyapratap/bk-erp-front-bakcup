@@ -60,15 +60,13 @@ export default class BedBookingReport extends React.Component {
             title:'Package Name',
             key:'name',
             dataIndex:'bed_package.name'
-        },{
-            title:'No Of Room',
-            key:'room',
-            dataIndex:'bed_package.room'
-        },{
-            title:'Medicine Package',
-            key:'name',
-            data:'medicine.name'
-        },{    
+        },
+        // {
+        //     title:'Medicine Package',
+        //     key:'name',
+        //     data:'medicine.name'
+        // },
+        {    
             title: 'From ',
             key: 'from_date',
             render: (text, record) => (
@@ -90,11 +88,18 @@ export default class BedBookingReport extends React.Component {
             dataIndex:'seat_type'
 
         },{
-            title:'No Of Seat',
+            title:'Seat Number',
             key:'seat_no',
             dataIndex:'seat_no'
 
-        },{
+        },
+        // {
+        //     title:'No Of Room',
+        //     key:'room',
+        //     dataIndex:'bed_package.room'
+        // }
+        
+        {
             title:'Total price',
             key:'total_price',
             dataIndex:'total_price',
