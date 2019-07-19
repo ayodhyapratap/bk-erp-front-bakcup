@@ -503,7 +503,6 @@ class Addinvoicedynamic extends React.Component {
        
     }
     render() {
-        console.log("search",this.state.searchItem)
         let that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const formItemLayout = {
