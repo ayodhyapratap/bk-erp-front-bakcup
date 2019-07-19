@@ -2,7 +2,7 @@ import React from "react";
 import PatientSelection from "../PatientSelection";
 import {Avatar, Button, Card, Col, Divider, Icon, List, Row, Popconfirm} from "antd";
 import {Link, Redirect} from "react-router-dom";
-import {getAPI, postAPI, interpolate, displayMessage} from "../../../utils/common";
+import {getAPI, postAPI, interpolate, displayMessage, makeFileURL} from "../../../utils/common";
 import {MEDICAL_MEMBERSHIP_CANCEL_API, PATIENTS_MEMBERSHIP_API, PATIENT_PROFILE} from "../../../constants/api";
 import PatientNotes from "./PatientNotes";
 import MedicalMembership from "./MedicalMembership";
@@ -131,7 +131,7 @@ class PatientProfile extends React.Component {
                              </Link> : null)}>
                 <Row gutter={16}>
                     <Col span={6} style={{textAlign: 'center'}}>
-                        {(patient.image ? <img src={patient.image} style={{width: '100%'}}/> :
+                        {(patient.image ? <img src={makeFileURL(patient.image)} style={{width: '100%'}}/> :
                             <Avatar size={200} shape="square" style={{backgroundColor: '#87d068'}}>
                                 {patient.user.first_name ? patient.user.first_name :
                                     <Icon type="user"/>}
@@ -149,7 +149,7 @@ class PatientProfile extends React.Component {
                                                                                          onClick={() => this.onClickHandler(true)}>{this.state.MedicalMembership?'Renew':'add'}</a>
                                 </h1>
                                     {this.state.MedicalMembership ? <Card size="small" title={"Membership"}
-                                                                          extra={<Popconfirm title="Are you sure delete this Membership?" 
+                                                                          extra={<Popconfirm title="Are you sure delete this Membership?"
                                                                           onConfirm={() => that.deleteMembership(this.state.MedicalMembership.id)}
                                                                           okText="Yes" cancelText="No">
                                                                              <Button icon={"close"} type={"danger"}

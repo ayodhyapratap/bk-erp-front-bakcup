@@ -1,6 +1,6 @@
 import React from "react";
 import {Card, DatePicker, Form, Select, Icon,Radio,Col,Button,InputNumber, Row,Popconfirm,Alert, Input ,AutoComplete,List,Avatar} from "antd";
-import {getAPI, interpolate,displayMessage, postAPI} from "../../utils/common";
+import {getAPI, interpolate, displayMessage, postAPI, makeFileURL} from "../../utils/common";
 import {BED_PACKAGES, CHECK_SEAT_AVAILABILITY ,BOOK_SEAT ,PATIENT_PROFILE ,SEARCH_PATIENT,PAYMENT_MODES,MEDICINE_PACKAGES} from "../../constants/api";
 import moment from "moment";
 // import {Booking_Type} from "../../constants/hardData";
@@ -59,7 +59,7 @@ class BedBookingForm extends React.Component {
             that.setState({
                 patientList: data,
                 ptr:data,
-               
+
             })
         }
         };
@@ -208,7 +208,7 @@ class BedBookingForm extends React.Component {
         })
     }
     handleMedicineSelect =(value)=>{
-        
+
     }
     render() {
         const Booking_Type = [
@@ -234,7 +234,7 @@ class BedBookingForm extends React.Component {
                              >
                                 <Meta
                                     avatar={<Avatar style={{backgroundColor: '#ffff'}}
-                                                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                                    src={this.state.patientDetails.image ? makeFileURL(this.state.patientDetails.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
                                     title={this.state.patientDetails.user.first_name}
                                     description={this.state.patientDetails.user.mobile}
                                 />
@@ -258,7 +258,7 @@ class BedBookingForm extends React.Component {
                                         <List.Item style={{padding: 0}}>
                                             <List.Item.Meta
                                                 avatar={<Avatar
-                                                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                                    src={option.image ? makeFileURL(option.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
                                                 title={option.user.first_name + " (" + option.user.id + ")"}
                                                 description={<small>{option.user.mobile}</small>}
                                             />

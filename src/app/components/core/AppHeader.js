@@ -1,9 +1,8 @@
 import React from "react";
-import {Avatar, Dropdown, Icon, Select, Layout, Menu, Button, List, AutoComplete} from "antd";
-import {Route, Link, Switch} from 'react-router-dom';
-import {SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
-import {getAPI, interpolate, postAPI, putAPI} from "../../utils/common";
-import {ALL_APPOINTMENT_API, APPOINTMENT_API, PATIENT_PROFILE, SEARCH_PATIENT} from "../../constants/api";
+import {AutoComplete, Avatar, Button, Dropdown, Icon, Layout, List, Menu, Select} from "antd";
+import {Link} from 'react-router-dom';
+import {getAPI, interpolate, makeFileURL} from "../../utils/common";
+import {SEARCH_PATIENT} from "../../constants/api";
 
 const {Header} = Layout;
 
@@ -104,7 +103,8 @@ class AppHeader extends React.Component {
                             <List.Item style={{padding: 0}}>
                                 <List.Item.Meta
                                     avatar={<Avatar
-                                        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+
+                                        src={option.image ? makeFileURL(option.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
                                     title={option.user.first_name + " (" + option.user.id + ")"}
                                     description={<small>{option.user.mobile}</small>}
                                 />

@@ -28,7 +28,7 @@ import {
 
 } from "../../constants/api";
 import {Checkbox, Radio} from "antd/lib/index";
-import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../utils/common";
+import {displayMessage, getAPI, interpolate, makeFileURL, postAPI, putAPI} from "../../utils/common";
 import {Redirect} from "react-router-dom";
 import {DAY_KEYS ,APPOINTMENT_STATUS} from "../../constants/hardData";
 
@@ -71,7 +71,7 @@ export default class CreateAppointmentForm extends React.Component {
         this.searchPatient = this.searchPatient.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.loadAppointment = this.loadAppointment.bind(this);
-        
+
     }
 
     componentDidMount() {
@@ -566,10 +566,10 @@ export default class CreateAppointmentForm extends React.Component {
             appointmentTime = new moment(new Date()).format();
         }
         const fields = [];
-        
+
         return <Card>
             <Spin spinning={this.state.saving}>
-                <Form onSubmit={this.handleSubmit} > 
+                <Form onSubmit={this.handleSubmit} >
                     {this.props.title ? <h2>{this.props.title}</h2> : null}
 
                     <FormItem key="schedule_at" label="Appointment Schedule" {...formItemLayout}>
@@ -600,13 +600,13 @@ export default class CreateAppointmentForm extends React.Component {
                         <span className="ant-form-text">mins</span>
                     </FormItem>
 
-                    
+
                     {that.state.patientDetails?
                         <FormItem key="id" value={this.state.patientDetails.id} {...formPatients}>
                             <Card bordered={false} style={{background: '#ECECEC'}}>
                                 <Meta
                                     avatar={<Avatar style={{backgroundColor: '#ffff'}}
-                                                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                                    src={this.state.patientDetails.image ? makeFileURL(this.state.patientDetails.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
                                     title={this.state.patientDetails.user.first_name}
                                     description={this.state.patientDetails.user.mobile}
 
@@ -635,7 +635,7 @@ export default class CreateAppointmentForm extends React.Component {
                                             <List.Item style={{padding: 0}}>
                                                 <List.Item.Meta
                                                     avatar={<Avatar
-                                                        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                                        src={option.image ? makeFileURL(option.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
                                                     title={option.user.first_name + " (" + option.user.id + ")"}
                                                     description={option.user.mobile}
                                                 />
@@ -717,7 +717,7 @@ export default class CreateAppointmentForm extends React.Component {
                             )}
                         </FormItem>:null
                     }
-                    
+
 
                     <FormItem key="notes" {...formItemLayout} label="Notes">
                         {getFieldDecorator("notes", {initialValue: this.state.appointment ? this.state.appointment.notes : null}, {

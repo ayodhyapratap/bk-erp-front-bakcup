@@ -1,10 +1,20 @@
 import React from "react";
-import {Route} from "react-router";
-import {Button, Card, Form, Icon, Row, Input, Select, DatePicker} from "antd";
-import {PATIENTS_LIST, PATIENT_PROFILE, MEDICAL_HISTORY, PATIENT_GROUPS, MEMBERSHIP_API} from "../../../constants/api";
-import {getAPI, postAPI, interpolate, displayMessage, putAPI} from "../../../utils/common";
+import {Button, Card, DatePicker, Form, Icon, Input, message, Modal, Select, Upload} from "antd";
+import {
+    FILE_UPLOAD_API,
+    FILE_UPLOAD_BASE64,
+    MEDICAL_HISTORY,
+    MEMBERSHIP_API,
+    PATIENT_GROUPS,
+    PATIENT_PROFILE,
+    PATIENTS_LIST
+} from "../../../constants/api";
+import {displayMessage, getAPI, interpolate, makeFileURL, makeURL, postAPI, putAPI} from "../../../utils/common";
 import moment from 'moment';
 import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
+import WebCamField from "../../common/WebCamField";
+import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+
 const {Option} = Select;
 
 class EditPatientDetails extends React.Component {
@@ -15,7 +25,8 @@ class EditPatientDetails extends React.Component {
             redirect: false,
             history: [],
             patientGroup: [],
-            membership: []
+            membership: [],
+            webCamState: {}
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -97,12 +108,13 @@ class EditPatientDetails extends React.Component {
                     dob: moment(values.dob).format("YYYY-MM-DD"),
                     anniversary: moment(values.anniversary).format("YYYY-MM-DD"),
                 };
+                let key = 'image';
+                if (reqData[key] && reqData[key].file && reqData[key].file.response)
+                    reqData[key] = reqData[key].file.response.image_path;
                 delete reqData.first_name;
                 delete reqData.email;
                 delete reqData.referer_code;
                 delete reqData.mobile;
-                // delete reqData.medical_history;
-                // delete reqData.patient_group;
                 that.setState({});
                 let successFn = function (data) {
                     displayMessage("Patient Saved Successfully!!");
@@ -121,6 +133,37 @@ class EditPatientDetails extends React.Component {
                 }
             }
         });
+    }
+    toggleWebCam = (type, value) => {
+        this.setState(function (prevState) {
+            return {
+                webCamState: {...prevState.webCamState, [type]: value}
+            }
+        })
+    }
+    getImageandUpload = (fieldKey, image) => {
+        let that = this;
+        let reqData = new FormData();
+
+        reqData.append('image', image);
+        reqData.append('name', 'file');
+
+        let successFn = function (data) {
+            that.props.form.setFieldsValue({[fieldKey]: {file: {response: data}}});
+            displayMessage(SUCCESS_MSG_TYPE, "Image Captured and processed.");
+            that.setState(function (prevState) {
+                return {
+                    webCamState: {...prevState.webCamState, [fieldKey]: false}
+                }
+            })
+        }
+        let errorFn = function () {
+
+        }
+        postAPI(FILE_UPLOAD_BASE64, reqData, successFn, errorFn, {
+            'content-type': 'multipart/form-data'
+        });
+
     }
 
     render() {
@@ -150,7 +193,26 @@ class EditPatientDetails extends React.Component {
                 membershipOption.push({label: (membershipItem.name), value: membershipItem.id});
             });
         }
-
+        const singleUploadprops = {
+            name: 'image',
+            data: {
+                name: 'hello'
+            },
+            action: makeURL(FILE_UPLOAD_API),
+            headers: {
+                authorization: 'authorization-text',
+            },
+            onChange(info) {
+                if (info.file.status !== 'uploading') {
+                    console.log(info.file, info.fileList);
+                }
+                if (info.file.status === 'done') {
+                    message.success(`${info.file.name} file uploaded successfully`);
+                } else if (info.file.status === 'error') {
+                    message.error(`${info.file.name} file upload failed.`);
+                }
+            },
+        };
         return (
             <Form onSubmit={that.handleSubmit}>
                 <Card title={that.props.currentPatient ? "Edit Profile" : "Add Patient"}
@@ -161,6 +223,32 @@ class EditPatientDetails extends React.Component {
                                   Cancel
                               </Button> : null}
                       </div>}>
+                    <Form.Item key={'image'} {...formItemLayout} label={'Patient Image'}>
+                        {getFieldDecorator('image', {valuePropName: 'image',})(
+                            <Upload {...singleUploadprops}>
+                                <Button>
+                                    <Icon type="upload"/> Select File
+                                </Button>
+                                {this.props.currentPatient && this.props.currentPatient.image ?
+                                    <img
+                                        src={makeFileURL(this.props.currentPatient ? this.props.currentPatient.image : null)}
+                                        style={{maxWidth: '100%'}}/> : null}
+                            </Upload>
+                        )}
+                        <span className="ant-form-text">
+                                    <a onClick={() => that.toggleWebCam('image', Math.random())}>
+                                        Open Webcam
+                                    </a>
+                                </span>
+                        <Modal
+                            footer={null}
+                            onCancel={() => that.toggleWebCam('image', false)}
+                            visible={!!that.state.webCamState['image']}
+                            width={680}
+                            key={that.state.webCamState['image']}>
+                            <WebCamField getScreenShot={(value) => that.getImageandUpload('image', value)}/>
+                        </Modal>
+                    </Form.Item>
                     <Form.Item label="Patient Name" {...formItemLayout}>
                         {getFieldDecorator('first_name', {
                             rules: [{required: true, message: 'Input Patient Name!'}],
@@ -265,7 +353,7 @@ class EditPatientDetails extends React.Component {
                         {getFieldDecorator('email', {
                             initialValue: this.props.currentPatient ? this.props.currentPatient.user.email : null,
                             rules: [{type: 'email', message: 'The input is not valid E-mail!'},
-                            {required: true, message: REQUIRED_FIELD_MESSAGE}],
+                                {required: true, message: REQUIRED_FIELD_MESSAGE}],
 
                         })
                         (<Input placeholder="Patient Email"/>)
