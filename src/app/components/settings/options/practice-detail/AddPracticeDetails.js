@@ -1,17 +1,9 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Button, Card, Form, Icon, Row} from "antd";
-import {
-    CHECKBOX_FIELD,
-    SUCCESS_MSG_TYPE,
-    INPUT_FIELD,
-    EMAIL_FIELD,
-    RADIO_FIELD,
-    SELECT_FIELD,
-    COUNTRY_FIELD, STATE_FIELD, CITY_FIELD, SINGLE_IMAGE_UPLOAD_FIELD, NUMBER_FIELD
-} from "../../../../constants/dataKeys";
+import {Card, Form, Row} from "antd";
+import {EMAIL_FIELD, INPUT_FIELD, SINGLE_IMAGE_UPLOAD_FIELD, SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
 import {ALL_PRACTICE, EXTRA_DATA} from "../../../../constants/api";
-import {getAPI, displayMessage} from "../../../../utils/common";
+import {displayMessage, getAPI} from "../../../../utils/common";
 import {Redirect} from 'react-router-dom'
 
 
@@ -65,84 +57,88 @@ class AddPracticeDetails extends React.Component {
             label: "Practice Logo",
             key: "logo",
             type: SINGLE_IMAGE_UPLOAD_FIELD,
-            allowWebcam:false
+            allowWebcam: false
         }, {
             label: "Practice Name",
             key: "name",
-            placeholder:"Practice Name",
+            placeholder: "Practice Name",
             required: true,
             type: INPUT_FIELD
         }, {
             label: "Practice Tagline",
             key: "tagline",
-            placeholder:"Practice Tagline",
+            placeholder: "Practice Tagline",
             required: true,
             type: INPUT_FIELD
         }, {
             label: "Practice Specialisation",
             key: "specialisation",
-            placeholder:"Practice Specialisation",
+            placeholder: "Practice Specialisation",
             type: INPUT_FIELD,
             // options: specialisationsOptions,
         }, {
             label: "Practice Street Address",
             key: "address",
-            placeholder:"Practice Street Address",
+            placeholder: "Practice Street Address",
             type: INPUT_FIELD
         }, {
             label: "Practice Locality",
             key: "locality",
-            placeholder:"Practice Locality",
+            placeholder: "Practice Locality",
             type: INPUT_FIELD
         }, {
             label: "Practice Country",
             key: "country",
-            placeholder:"Practice Country",
+            placeholder: "Practice Country",
             type: INPUT_FIELD,
         }, {
             label: "Practice State",
             key: "state",
-            placeholder:"Practice State",
+            placeholder: "Practice State",
             type: INPUT_FIELD,
         }, {
             label: "Practice City",
             key: "city",
-            placeholder:"Practice City",
+            placeholder: "Practice City",
             type: INPUT_FIELD,
         }, {
             label: "Practice PINCODE",
             key: "pincode",
-            placeholder:"Practice PINCODE",
+            placeholder: "Practice PINCODE",
             type: INPUT_FIELD
         }, {
             label: "Practice Contact Number",
             key: "contact",
-            placeholder:"Practice Contact Number",
+            placeholder: "Practice Contact Number",
             type: INPUT_FIELD
         }, {
             label: "Practice Email",
             key: "email",
-            placeholder:"Practice Email",
+            placeholder: "Practice Email",
             type: EMAIL_FIELD
         }, {
             label: "Practice Website",
             key: "website",
-            placeholder:"Practice Website",
+            placeholder: "Practice Website",
             type: INPUT_FIELD
-        },
-            //     {
-            //     label: "Timezone",
-            //     key: "timezone",
-            //     type: SELECT_FIELD,
-            //     options: [{label: "GMT +05:30", value: 12}],
-            //     initialValue:12
-            // },
-            {
-                label: "GSTIN",
-                key: "gstin",
-                placeholder:"GSTIN",
-                type: INPUT_FIELD
-            },];
+        }, {
+            label: "GSTIN",
+            key: "gstin",
+            placeholder: "GSTIN",
+            type: INPUT_FIELD
+        }, {
+            label: "Invoice Prefix",
+            placeholder: "DEL/INV/",
+            key: "invoice_prefix",
+            type: INPUT_FIELD,
+            require: true
+        }, {
+            label: "Payment Prefix",
+            placeholder: "DEL/RCPT/",
+            key: "payment_prefix",
+            type: INPUT_FIELD,
+            require: true
+        },];
 
         const formProp = {
             successFn: function (data) {

@@ -303,15 +303,37 @@ function invoiceFooter(presc) {
 }
 
 function InvoiceCard(invoice, that) {
+    let tableObjects = [];
+    if (invoice.reservation) {
+        let medicinesPackages = invoice.reservation_data.medicines.map(item => Object.create({
+            ...item,
+            unit: 1,
+            total: item.final_price,
+            unit_cost: item.price,
+            discount: 0
+        }));
+        let mapper = {
+            "NORMAL": {total: 'final_normal_price', tax: "normal_tax_value", unit_cost: "normal_price"},
+            "TATKAL": {total: 'final_tatkal_price', tax: "tatkal_tax_value", unit_cost: "tatkal_price"}
+        }
+        console.log(mapper[invoice.reservation_data.seat_type].unit_cost);
+        tableObjects = [...tableObjects, {
+            ...invoice.reservation_data.bed_package,
+            unit: 1,
+            total: invoice.reservation_data.bed_package ? invoice.reservation_data.bed_package[mapper[invoice.reservation_data.seat_type].total] : null,
+            tax_value: invoice.reservation_data.bed_package ? invoice.reservation_data.bed_package[mapper[invoice.reservation_data.seat_type].tax] : null,
+            unit_cost: invoice.reservation_data.bed_package ? invoice.reservation_data.bed_package[mapper[invoice.reservation_data.seat_type].unit_cost] : null
+        }, ...medicinesPackages]
+    }
     return <Card
         key={invoice.id}
         style={{marginTop: 10}}
         bodyStyle={{padding: 0}}
         title={<small>{invoice.date ? moment(invoice.date).format('ll') : null}
             {that.state.currentPatient ? null : <span>
-            <Link to={"/patient/" + invoice.patient_data.id + "/billing/invoices"}>
-                &nbsp;&nbsp; {invoice.patient_data.user.first_name} (ID: {invoice.patient_data.id})&nbsp;
-            </Link>, {invoice.patient_data.gender}</span>}
+            <Link to={"/patient/" + (invoice.patient_data ? invoice.patient_data.id : null) + "/billing/invoices"}>
+                &nbsp;&nbsp; {invoice.patient_data ? invoice.patient_data.user.first_name : null} (ID: {invoice.patient_data ? invoice.patient_data.id : null})&nbsp;
+            </Link>, {invoice.patient_data ? invoice.patient_data.gender : null}</span>}
         </small>}
         extra={<Dropdown.Button
             size={"small"}
@@ -319,7 +341,8 @@ function InvoiceCard(invoice, that) {
             overlay={<Menu>
                 <Menu.Item key="1"
                            onClick={() => that.editInvoiceData(invoice)} disabled={!that.props.match.params.id}>
-                    <Link to={"/patient/" + invoice.patient_data.id + "/billing/payments/add"}>
+                    <Link
+                        to={"/patient/" + (invoice.patient_data ? invoice.patient_data.id : null) + "/billing/payments/add"}>
                         <Icon type="dollar"/>
                         &nbsp;
                         Pay
@@ -351,7 +374,7 @@ function InvoiceCard(invoice, that) {
             <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4} style={{padding: 10}}>
                 {invoice.is_cancelled ?
                     <Alert message="Cancelled" type="error" showIcon/> : null}
-                <Divider style={{marginBottom: 0}}>INV{invoice.id}</Divider>
+                <Divider style={{marginBottom: 0}}>{invoice.invoice_id}</Divider>
                 <Statistic title="Paid / Total "
                            value={(invoice.payments_data ? invoice.payments_data.toFixed(2) : 0)}
                            suffix={"/ " + invoice.total.toFixed(2)}/>
@@ -376,7 +399,7 @@ function InvoiceCard(invoice, that) {
                         bordered={true}
                         pagination={false}
                         columns={columns}
-                        dataSource={[...invoice.inventory, ...invoice.procedure]}
+                        dataSource={[...tableObjects, ...invoice.inventory, ...invoice.procedure]}
                         footer={() => invoiceFooter({practice: invoice.practice_data})}/>}
             </Col>
         </Row>
@@ -388,7 +411,7 @@ const columns = [{
     dataIndex: 'drug',
     key: 'drug',
     render: (text, record) => (
-        <span> <b>{record.inventory ? record.name : null}{record.procedure ? record.name : null}</b>
+        <span> <b>{record.name ? record.name : null}</b>
                     <br/> {record.doctor_data ?
                 <Tag color={record.doctor_data ? record.doctor_data.calendar_colour : null}>
                     <b>{"prescribed by  " + record.doctor_data.user.first_name} </b>
@@ -398,6 +421,7 @@ const columns = [{
     title: 'Cost',
     dataIndex: 'unit_cost',
     key: 'unit_cost',
+    render: (item, record) => <span>{record.unit_cost ? record.unit_cost.toFixed(2) : null}</span>
 }, {
     title: 'Unit',
     dataIndex: 'unit',
@@ -406,15 +430,15 @@ const columns = [{
     title: 'Discount',
     dataIndex: 'discount_value',
     key: 'discount_value',
-    render: (item, record) => <span>{record.discount_value.toFixed(2)}</span>
+    render: (item, record) => <span>{record.discount_value ? record.discount_value.toFixed(2) : null}</span>
 }, {
     title: 'Tax',
     dataIndex: 'tax_value',
     key: 'tax_value',
-    render: (item, record) => <span>{record.tax_value.toFixed(2)}</span>
+    render: (item, record) => <span>{record.tax_value ? record.tax_value.toFixed(2) : null}</span>
 }, {
     title: 'Total',
     dataIndex: 'total',
     key: 'total',
-    render: item => item.toFixed(2)
-},];
+    render: item => item ? item.toFixed(2) : null
+}];

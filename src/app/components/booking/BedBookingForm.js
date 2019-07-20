@@ -537,8 +537,6 @@ class BedBookingForm extends React.Component {
                                     </Button> : null}
                             </Form.Item>
                         </Col>
-
-
                     </Row>
                 </Form>
             </Card>

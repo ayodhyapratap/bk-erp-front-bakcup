@@ -109,7 +109,7 @@ export const DRUG_TYPE_API = 'clinics/%s/drugtype/';
 export const DRUG_UNIT_API = 'clinics/%s/drugunit/';
 export const PRINT_PREVIEW_RENDER = 'patients/print/';
 export const MEMBERSHIP_API = 'clinics/%s/membership/';
-export const BED_BOOKING_REPORTS ='clinics/%s/seat_booking_report'
+export const BED_BOOKING_REPORTS ='clinics/seat_booking_report';
 /**
  * Blogs API
  * */
@@ -193,4 +193,4 @@ export const ROOM_TYPE = 'clinics/%s/room_types/';
 export const BED_PACKAGES = 'clinics/%s/bed_packages/';
 export const MEDICINE_PACKAGES = 'clinics/%s/medicine_packages/';
 export const BOOK_SEAT = 'clinics/%s/seat_booking/';
-export const CHECK_SEAT_AVAILABILITY = 'clinics/%s/seat_availability//'
+export const CHECK_SEAT_AVAILABILITY = 'clinics/%s/seat_availability/'

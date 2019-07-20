@@ -189,9 +189,9 @@ export default PatientPayments;
 
 const columns = [{
     title: 'INVOICE',
-    dataIndex: 'invoice',
+    dataIndex: 'invoice_id',
     key: 'invoice',
-    render: invoice => <span>INV{invoice}</span>,
+    render: invoice => <span>{invoice}</span>,
 }, {
     title: 'Amount Paid',
     key: 'pay_amount',
@@ -237,7 +237,7 @@ function PaymentCard(payment, that) {
             <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4} style={{padding: 10}}>
                 {payment.is_cancelled ?
                     <Alert message="Cancelled" type="error" showIcon/> : null}
-                <Divider style={{marginBottom: 0}}>RCPT{payment.id}</Divider>
+                <Divider style={{marginBottom: 0}}>{payment.payment_id}</Divider>
             </Col>
             <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
 
