@@ -1,18 +1,16 @@
 import React from "react";
-import {Redirect} from "react-router-dom";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Form, Card} from "antd";
+import {Card, Form} from "antd";
 import {
     INPUT_FIELD,
+    MULTI_SELECT_FIELD,
     NUMBER_FIELD,
     SELECT_FIELD,
     SINGLE_IMAGE_UPLOAD_FIELD,
-    SUCCESS_MSG_TYPE,
-    MULTI_SELECT_FIELD
+    SUCCESS_MSG_TYPE
 } from "../../../../constants/dataKeys";
-import {TYPES_OF_BED_PACKAGES_ROOM_TYPE} from "../../../../constants/hardData";
 import {displayMessage, getAPI, interpolate} from "../../../../utils/common";
-import {BED_PACKAGES, ROOM_TYPE,TAXES} from "../../../../constants/api";
+import {BED_PACKAGES, ROOM_TYPE, TAXES} from "../../../../constants/api";
 
 export default class AddorEditBedPackages extends React.Component {
     constructor(props) {
@@ -41,6 +39,7 @@ export default class AddorEditBedPackages extends React.Component {
         getAPI(interpolate(ROOM_TYPE, [this.props.active_practiceId]), successFn, errorFn);
 
     }
+
     loadTaxes() {
         var that = this;
         let successFn = function (data) {
@@ -74,14 +73,14 @@ export default class AddorEditBedPackages extends React.Component {
             label: "Normal Price",
             key: 'normal_price',
             required: true,
-            initialValue: this.props.editPackage ?(this.props.editPackage.normal_price + this.props.editPackage.normal_tax_value).toFixed(2): null,
+            initialValue: this.props.editPackage ? (this.props.editPackage.normal_price + this.props.editPackage.normal_tax_value).toFixed(2) : null,
             type: NUMBER_FIELD,
             follow: 'INR',
         }, {
             label: "Tatkal Price",
             key: 'tatkal_price',
             required: true,
-            initialValue: this.props.editPackage ?(this.props.editPackage.tatkal_price + this.props.editPackage.tatkal_tax_value).toFixed(2): null,
+            initialValue: this.props.editPackage ? (this.props.editPackage.tatkal_price + this.props.editPackage.tatkal_tax_value).toFixed(2) : null,
             type: NUMBER_FIELD,
             follow: 'INR'
         }, {
@@ -96,11 +95,11 @@ export default class AddorEditBedPackages extends React.Component {
             initialValue: this.props.editPackage ? this.props.editPackage.room : null,
             type: SELECT_FIELD,
             options: this.state.roomTypes.map(room => Object.create({label: room.name, value: room.id}))
-        },{
+        }, {
             label: "Taxes",
             key: 'taxes',
             required: true,
-            initialValue: this.props.editPackage ? this.props.editPackage.taxes : [],
+            initialValue: this.props.editPackage && this.props.editPackage.taxes ? this.props.editPackage.taxes.map(item => item.id) : [],
             type: MULTI_SELECT_FIELD,
             options: this.state.taxes.map(tax => Object.create({
                 label: tax.name + "(" + tax.tax_value + "%)",

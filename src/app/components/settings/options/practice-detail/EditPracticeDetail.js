@@ -64,7 +64,7 @@ class EditPracticeDetail extends React.Component {
                 key: "logo",
                 type: SINGLE_IMAGE_UPLOAD_FIELD,
                 initialValue: this.state.practiceDetail.logo,
-                allowWebcam : true
+                allowWebcam : false
             }, {
                 label: "Practice Name",
                 key: "name",

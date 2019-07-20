@@ -1,5 +1,5 @@
 import React from "react";
-import {Row, Col, Table, Button, Icon, Input, Tag} from "antd";
+import {Button, Col, Icon, Input, Row, Table, Tag} from "antd";
 import {exportToExcel, exportToPDF} from "../../utils/export";
 import moment from "moment";
 import Highlighter from 'react-highlight-words';
@@ -86,7 +86,7 @@ export default class CustomizedTable extends React.Component {
         ),
         filterIcon: filtered => (<Icon type="search" style={{color: filtered ? '#1890ff' : undefined}}/>),
         onFilter: (value, record) =>
-            record[dataIndex]!=null ? record[dataIndex]
+            record[dataIndex] != null ? record[dataIndex]
                 .toString()
                 .toLowerCase()
                 .includes(value.toLowerCase()) : '',
@@ -123,16 +123,17 @@ export default class CustomizedTable extends React.Component {
             }
         )
         return <div>
-            <Row >
-                <Col>
-                    <Button.Group size="small">
-                        <Button disabled={this.state.loading} type="primary" onClick={this.excelExport}><Icon
-                            type="file-excel"/> Excel</Button>
-                        <Button disabled={this.state.loading} type="primary" onClick={this.pdfExport}><Icon
-                            type="file-pdf"/> PDF</Button>
-                    </Button.Group>
-                </Col>
-            </Row>
+            {this.props.hideReport ? null :
+                <Row>
+                    <Col>
+                        <Button.Group size="small">
+                            <Button disabled={this.state.loading} type="primary" onClick={this.excelExport}><Icon
+                                type="file-excel"/> Excel</Button>
+                            <Button disabled={this.state.loading} type="primary" onClick={this.pdfExport}><Icon
+                                type="file-pdf"/> PDF</Button>
+                        </Button.Group>
+                    </Col>
+                </Row>}
             <Row>
                 <Table pagination={{
                     position: 'both',

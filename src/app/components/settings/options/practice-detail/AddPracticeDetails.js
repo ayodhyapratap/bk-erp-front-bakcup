@@ -64,10 +64,11 @@ class AddPracticeDetails extends React.Component {
         const fields = [{
             label: "Practice Logo",
             key: "logo",
-            type: SINGLE_IMAGE_UPLOAD_FIELD
+            type: SINGLE_IMAGE_UPLOAD_FIELD,
+            allowWebcam:false
         }, {
             label: "Practice Name",
-            key: "Practice Name",
+            key: "name",
             placeholder:"Practice Name",
             required: true,
             type: INPUT_FIELD
@@ -141,16 +142,6 @@ class AddPracticeDetails extends React.Component {
                 key: "gstin",
                 placeholder:"GSTIN",
                 type: INPUT_FIELD
-            }, {
-                label: "Normal Bed Count",
-                key: "normal_seats",
-                type: NUMBER_FIELD,
-                min: 0
-            }, {
-                label: "Tatkal Bed Count",
-                key: "tatkal_seats",
-                type: NUMBER_FIELD,
-                min: 0
             },];
 
         const formProp = {
