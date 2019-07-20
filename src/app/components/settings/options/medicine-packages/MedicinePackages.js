@@ -2,7 +2,7 @@ import React from "react";
 import {Button, Card, Divider, Icon, Popconfirm} from 'antd';
 import {Link, Redirect, Route, Switch} from "react-router-dom";
 import CustomizedTable from "../../../common/CustomizedTable";
-import {getAPI, interpolate, postAPI} from "../../../../utils/common";
+import {getAPI, interpolate, makeFileURL, postAPI} from "../../../../utils/common";
 import {MEDICINE_PACKAGES} from "../../../../constants/api";
 import AddorEditMedicinePackages from "./AddorEditMedicinePackages";
 
@@ -58,6 +58,11 @@ export default class MedicinePackages extends React.Component {
     render() {
         let that = this;
         let columns = [{
+            dataIndex: 'image',
+            key: 'image',
+            render: (value) => value ?
+                <img src={makeFileURL(value)} alt="" style={{maxWidth: 200, maxHeight: 100}}/> : null
+        },{
             title: "Package Name",
             dataIndex: 'name',
             key: 'name'
@@ -66,10 +71,10 @@ export default class MedicinePackages extends React.Component {
             dataIndex: 'no_of_days',
             key: 'no_of_days'
         }, {
-            title: "Price (INR)",
-            dataIndex: 'price',
+            title: "Price (INR) + Tax",
+            dataIndex: 'final_price',
             key: 'price'
-        }, 
+        },
         // {
         //     title: "Final Price (INR)",
         //     dataIndex: 'final_price',

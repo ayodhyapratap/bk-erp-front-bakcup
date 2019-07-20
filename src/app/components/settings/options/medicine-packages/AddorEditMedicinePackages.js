@@ -62,10 +62,10 @@ export default class AddorEditMedicinePackages extends React.Component {
             label: "Price",
             key: 'price',
             required: true,
-            initialValue: this.props.editPackage ? this.props.editPackage.price : null,
+            initialValue: this.props.editPackage ? this.props.editPackage.final_price : null,
             type: NUMBER_FIELD,
             follow: 'INR'
-        }, 
+        },
         // {
         //     label: "Final Price",
         //     key: 'final_price',
@@ -78,7 +78,7 @@ export default class AddorEditMedicinePackages extends React.Component {
             label: "Taxes",
             key: 'taxes',
             required: true,
-            initialValue: this.props.editPackage ? this.props.editPackage.taxes : [],
+            initialValue: this.props.editPackage && this.props.editPackage.taxes ? this.props.editPackage.taxes.map(item => item.id) : [],
             type: MULTI_SELECT_FIELD,
             options: this.state.taxes.map(tax => Object.create({
                 label: tax.name + "(" + tax.tax_value + "%)",

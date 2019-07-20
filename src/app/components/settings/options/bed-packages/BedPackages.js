@@ -3,8 +3,8 @@ import {Button, Card, Divider, Icon, Popconfirm} from 'antd';
 import {Link, Redirect, Route, Switch} from "react-router-dom";
 import CustomizedTable from "../../../common/CustomizedTable";
 import AddorEditBedPackages from "./AddorEditBedPackages";
-import {getAPI, interpolate, postAPI} from "../../../../utils/common";
-import {BED_PACKAGES, INVENTORY_ITEM_API} from "../../../../constants/api";
+import {getAPI, interpolate, makeFileURL, postAPI} from "../../../../utils/common";
+import {BED_PACKAGES} from "../../../../constants/api";
 
 export default class BedPackages extends React.Component {
     constructor(props) {
@@ -58,6 +58,11 @@ export default class BedPackages extends React.Component {
     render() {
         let that = this;
         let columns = [{
+            dataIndex: 'image',
+            key: 'image',
+            render: (value) => value ?
+                <img src={makeFileURL(value)} alt="" style={{maxWidth: 200, maxHeight: 100}}/> : null
+        }, {
             title: "Package Name",
             dataIndex: 'name',
             key: 'name'
@@ -69,14 +74,14 @@ export default class BedPackages extends React.Component {
             title: "Normal Price+tax (INR)",
             dataIndex: 'normal_price',
             key: 'normal_price',
-            render:(value ,record)=>(<p>{(record.normal_price + record.normal_tax_value).toFixed(2)}</p>
+            render: (value, record) => (<p>{(record.normal_price + record.normal_tax_value).toFixed(2)}</p>
 
             ),
         }, {
             title: "Tatkal Price+tax (INR)",
             dataIndex: 'tatkal_price',
             key: 'tatkal_price',
-            render:(value ,record)=>(<p>{(record.tatkal_price + record.tatkal_tax_value).toFixed(2)}</p>)
+            render: (value, record) => (<p>{(record.tatkal_price + record.tatkal_tax_value).toFixed(2)}</p>)
         }, {
             title: 'Action',
             key: 'action',
