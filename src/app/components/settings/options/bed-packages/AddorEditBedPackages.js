@@ -74,14 +74,14 @@ export default class AddorEditBedPackages extends React.Component {
             label: "Normal Price",
             key: 'normal_price',
             required: true,
-            initialValue: this.props.editPackage ?this.props.editPackage.normal_price.toFixed(): null,
+            initialValue: this.props.editPackage ?(this.props.editPackage.normal_price + this.props.editPackage.normal_tax_value).toFixed(2): null,
             type: NUMBER_FIELD,
             follow: 'INR',
         }, {
             label: "Tatkal Price",
             key: 'tatkal_price',
             required: true,
-            initialValue: this.props.editPackage ?this.props.editPackage.tatkal_price.toFixed(): null,
+            initialValue: this.props.editPackage ?(this.props.editPackage.tatkal_price + this.props.editPackage.tatkal_tax_value).toFixed(2): null,
             type: NUMBER_FIELD,
             follow: 'INR'
         }, {

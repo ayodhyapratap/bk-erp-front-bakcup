@@ -1,6 +1,6 @@
 import React from "react";
 import {Card, DatePicker, Form, Select, Icon,Radio,Col,Button,InputNumber, Row,Popconfirm,Alert, Input ,AutoComplete,List,Avatar, Table} from "antd";
-import {getAPI, interpolate,displayMessage, postAPI} from "../../utils/common";
+import {getAPI, interpolate,displayMessage, postAPI,makeFileURL} from "../../utils/common";
 import {BED_PACKAGES, CHECK_SEAT_AVAILABILITY ,BOOK_SEAT ,PATIENT_PROFILE ,SEARCH_PATIENT,PAYMENT_MODES,MEDICINE_PACKAGES} from "../../constants/api";
 import moment from "moment";
 // import {Booking_Type} from "../../constants/hardData";
@@ -99,6 +99,7 @@ class BedBookingForm extends React.Component {
 
     checkBedStatus = (type, value) => {
         let that = this;
+        that.handleRoomType();
         this.setState({
             [type]: value
         }, function () {
@@ -264,7 +265,7 @@ class BedBookingForm extends React.Component {
             title:'Normal Price',
             key:'normal_price',
             dataIndex:'normal_price',
-            // render:(value,record)=>(<p>{record?(record.normal_price).toFixed():null}</p>)
+            // render:(value,record)=>(<p>{value.toFixed()}</p>)
         },{
             title:'Tatkal Price',
             key:'tatkal_price',
@@ -296,9 +297,9 @@ class BedBookingForm extends React.Component {
                                         <Card bordered={false} style={{background: '#ECECEC'}}
                                         extra={<a href="#" onClick={this.handleClick}><Icon type="close-circle" style={{ color: 'red' }} /> </a>}
                                         >
+
                                             <Meta
-                                                avatar={<Avatar style={{backgroundColor: '#ffff'}}
-                                                                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                                avatar={this.state.patientDetails.image? <Avatar style={{backgroundColor: '#ffff'}} src={makeFileURL(this.state.patientDetails.image)}/>:<Icon type="user"/>}
                                                 title={this.state.patientDetails.user.first_name}
                                                 description={this.state.patientDetails.user.mobile}
                                             />
@@ -321,8 +322,7 @@ class BedBookingForm extends React.Component {
                                                     value={option?option.id.toString():''}>
                                                     <List.Item style={{padding: 0}}>
                                                         <List.Item.Meta
-                                                            avatar={<Avatar
-                                                                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                                            avatar={option.image? <Avatar style={{backgroundColor: '#ffff'}} src={makeFileURL(option.image)}/>:<Icon type="user"/>}
                                                             title={option.user.first_name + " (" + option.user.id + ")"}
                                                             description={<small>{option.user.mobile}</small>}
                                                         />
@@ -369,7 +369,7 @@ class BedBookingForm extends React.Component {
                                     })(<Radio.Group
                                             onChange={(e) => this.handleRoomType('seat_type', e.target.value)}>
                                             {Booking_Type.map((seat_type) => <Radio
-                                                value={seat_type.value} disabled={seat_type.is_or_not?false:true}>{seat_type.value}</Radio>)}
+                                                value={seat_type.is_or_not?seat_type.value:''} disabled={seat_type.is_or_not?false:true}>{seat_type.value}</Radio>)}
                                         </Radio.Group>
                                     )
                                     }
