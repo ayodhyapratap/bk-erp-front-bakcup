@@ -45,7 +45,7 @@ class PatientFiles extends React.Component {
 
     componentWillMount() {
         this.loadData();
-        this.loadTags();
+        // this.loadTags();
         this.loadMedicalCertificate();
     }
 
@@ -158,7 +158,7 @@ class PatientFiles extends React.Component {
         }else{
             getAPI(interpolate(ALL_MEDICAL_CERITICATE_API ,[this.props.active_practiceId ,page]), successFn, errorFn);
         }
-        
+
     }
 
     loadMailedFiles=(page = 1)=>{
@@ -371,7 +371,7 @@ class PatientFiles extends React.Component {
             value: this.props.currentPatient ?this.props.currentPatient.id:null
         }, {key: 'practice', value: this.props.active_practiceId}]
 
-        
+
         if (this.props.match.params.id) {
             return <Card title="Files"
                      extra={<Button.Group>
@@ -452,7 +452,7 @@ class PatientFiles extends React.Component {
                                                     }}
                                                     onChange={(e) => that.filesCompleteToggle(item.id, e.target.checked)}
                                                     checked={that.state.selectedFiles[item.id]}/>
-                                                    
+
                                         <ModalImage style={{border: "3px solid red"}}
                                             // small={makeFileURL(this.state.filesData.file_type)}
                                                     large={makeFileURL(item.file_type)}
@@ -646,7 +646,7 @@ class PatientFiles extends React.Component {
             </Modal>
         </Card>
         }
-        
+
     }
 }
 

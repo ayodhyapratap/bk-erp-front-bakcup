@@ -334,10 +334,10 @@ timelineInvoiceCard(item) {
         </h2>
         {item.procedure.map(proc => <Tag>{proc.name}</Tag>)}
         {item.inventory.map(proc => <Tag>{proc.name}</Tag>)}
-        <br/><b>INV{item.id}</b>
-        <br/><b>Invoice Amount: INR{item.total}</b>
-        <br/><b>Paid Amount: INR{item.payments_data}</b>
-        <br/><b>Due Amount: INR{item.total - item.payments_data}</b>
+        <br/><b>{item.invoice_id}</b>
+        <br/><b>Invoice Amount: INR {item.total}</b>
+        <br/><b>Paid Amount: INR {item.payments_data}</b>
+        <br/><b>Due Amount: INR {item.total - item.payments_data}</b>
     </Card>
 }
 
@@ -492,8 +492,8 @@ timelinePaymentCard(item) {
                 </Tooltip>
             </Tag> : null}
         </h2>
-        <b>RCPT{item.id}</b>
-        <br/><b>Amount Paid: INR{item.total}</b>
+        <b>{item.payment_id}</b>
+        <br/><b>Amount Paid: INR {item.total}</b>
     </Card>
 }
 
