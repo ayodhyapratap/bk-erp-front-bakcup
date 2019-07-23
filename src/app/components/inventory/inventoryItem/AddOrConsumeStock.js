@@ -1,28 +1,33 @@
 import React from "react";
 import {
+    Affix,
+    AutoComplete,
     Button,
     Card,
-    Form,
-    Input,
-    List,
-    Row,
     Col,
+    DatePicker,
+    Form,
+    Icon,
+    Input,
+    InputNumber,
+    List,
+    message,
+    Row,
+    Select,
     Table,
     Tabs,
-    InputNumber, Select, DatePicker, AutoComplete, Affix,Upload,Icon,message
+    Upload
 } from "antd";
-import {displayMessage, getAPI, postAPI, interpolate, makeURL} from "../../../utils/common";
+import {displayMessage, getAPI, interpolate, makeURL, postAPI} from "../../../utils/common";
 
+import {ADD_STOCK, CONSUME_STOCK, INVENTORY_ITEM_TYPE, TYPE_OF_CONSUMPTION} from "../../../constants/hardData";
 import {
-    INVENTORY_ITEM_TYPE,
-    DRUG,
-    SUPPLIES,
-    EQUIPMENT,
-    ADD_STOCK,
-    CONSUME_STOCK,
-    TYPE_OF_CONSUMPTION, INVENTORY
-} from "../../../constants/hardData";
-import {INVENTORY_ITEM_API, BULK_STOCK_ENTRY, SUPPLIER_API, SEARCH_THROUGH_QR,FILE_UPLOAD_API} from "../../../constants/api";
+    BULK_STOCK_ENTRY,
+    FILE_UPLOAD_API,
+    INVENTORY_ITEM_API,
+    SEARCH_THROUGH_QR,
+    SUPPLIER_API
+} from "../../../constants/api";
 import moment from "moment";
 
 const {Search} = Input;
@@ -166,11 +171,11 @@ class AddOrConsumeStock extends React.Component {
                         inventory_item: item.id,
                         quantity: values.quantity[item._id],
                         batch_number: values.batch[item._id],
-                        date:moment(values.date).format('YYYY-MM-DD'),
-                        bill_number:values.bill_number,
-                        bill_file:values.file.file.response?values.file.file.response.image_path:null
+                        date: moment(values.date).format('YYYY-MM-DD'),
+                        bill_number: values.bill_number,
+                        bill_file: values.file && values.file.file.response ? values.file.file.response.image_path : null
                     };
-                   
+
                     if (that.state.classType == ADD_STOCK) {
                         itemObject = {
                             ...itemObject,
@@ -178,9 +183,9 @@ class AddOrConsumeStock extends React.Component {
                             unit_cost: values.unit_cost[item._id],
                             total_cost: values.unit_cost[item._id] * values.quantity[item._id],
                         }
-                        if(values.supplier){
+                        if (values.supplier) {
                             itemObject.supplier = values.supplier;
-                        }else if(values.supplier_name){
+                        } else if (values.supplier_name) {
                             itemObject.supplier_name = values.supplier_name;
                         }
                     }
@@ -279,19 +284,19 @@ class AddOrConsumeStock extends React.Component {
                         setFieldsValue({
                             [`quantity[${_id}]`]: quantity + 1
                         })
-                        that.storeValue('quantity',_id,value);
+                        that.storeValue('quantity', _id, value);
                     }
                 }
             })
             if (flag) {
                 that.add(data, randomId);
                 that.storeValue('batch', randomId, qrSplitted[1]);
-                that.storeValue('unit_cost',randomId,qrSplitted[3]);
+                that.storeValue('unit_cost', randomId, qrSplitted[3]);
                 let fieldsToBeSet = {
                     [`batch[${randomId}]`]: qrSplitted[1],
                     [`expiry_date[${randomId}]`]: moment(qrSplitted[2], 'MM/YY')
                 };
-                if(that.state.classType == CONSUME_STOCK)
+                if (that.state.classType == CONSUME_STOCK)
                     fieldsToBeSet[`unit_cost[${randomId}]`] = qrSplitted[3]
                 setFieldsValue(fieldsToBeSet)
             }
@@ -362,7 +367,7 @@ class AddOrConsumeStock extends React.Component {
             },
             onChange(info) {
                 if (info.file.status !== 'uploading') {
-                    
+
                 }
                 if (info.file.status === 'done') {
                     message.success(`${info.file.name} file uploaded successfully`);
@@ -660,7 +665,7 @@ class AddOrConsumeStock extends React.Component {
                                                     <Input/>
                                                 )}
                                             </Form.Item>
-                                            
+
 
                                             {this.state.classType == ADD_STOCK ? <div>
                                                 {this.state.customSupplier ?
@@ -707,16 +712,16 @@ class AddOrConsumeStock extends React.Component {
                                                     </Form.Item>} </div> : null}
                                         </Col>
                                         <Col span={6} offset={2}>
-                                        <Form.Item key={'file'} {...formItemLayout}>
-                                            {getFieldDecorator('file', {})(
-                                                <Upload {...singleUploadprops}>
-                                                    <Button>
-                                                        <Icon type="upload"/> Select File
-                                                    </Button>
-                                                    
-                                                </Upload>
-                                            )}
-                                        </Form.Item>
+                                            <Form.Item key={'file'} {...formItemLayout}>
+                                                {getFieldDecorator('file', {})(
+                                                    <Upload {...singleUploadprops}>
+                                                        <Button>
+                                                            <Icon type="upload"/> Select File
+                                                        </Button>
+
+                                                    </Upload>
+                                                )}
+                                            </Form.Item>
                                         </Col>
                                         {this.state.classType == ADD_STOCK ?
                                             <Col style={{textAlign: 'center'}} span={8}>
