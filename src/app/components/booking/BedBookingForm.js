@@ -193,7 +193,7 @@ class BedBookingForm extends React.Component {
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Saved Successfully!!");
                     that.props.history.goBack()
-                    if(that.props.loadData)
+                    if (that.props.loadData)
                         that.props.loadData();
                 }
                 let errorFn = function () {
@@ -232,24 +232,24 @@ class BedBookingForm extends React.Component {
                 if (prevSate.bed_package == item.id) {
                     if (prevSate.seat_type == 'NORMAL') {
                         payAmount = item.normal_price + item.normal_tax_value;
-                        total_tax = item.normal_tax_value
+                        total_tax += item.normal_tax_value
                         bedPkg = {
                             ...item,
                             type: "BED",
                             price_with_tax: payAmount,
-                            tax: total_tax,
+                            tax: item.normal_tax_value,
                             price: item.normal_price
                         };
                         medicinePkg = [bedPkg];
                     }
                     if (prevSate.seat_type == 'TATKAL') {
                         payAmount = item.tatkal_price + item.tatkal_tax_value;
-                        total_tax = item.tatkal_tax_value
+                        total_tax += item.tatkal_tax_value
                         bedPkg = {
                             ...item,
                             type: "BED",
                             price_with_tax: payAmount,
-                            tax: total_tax,
+                            tax: item.tatkal_tax_value,
                             price: item.tatkal_price
                         };
                         medicinePkg = [bedPkg];
@@ -261,10 +261,11 @@ class BedBookingForm extends React.Component {
                 prevSate.medicineItem.forEach(function (ele) {
                     if (item.id == ele) {
                         total_medicine_price += item.final_price;
+                        total_tax += item.tax_value;
                         medicinePkg = [...medicinePkg, {
                             ...item,
                             type: "MEDICINE",
-                            price_with_tax: total_medicine_price,
+                            price_with_tax: item.final_price,
                             tax: item.tax_value
                         }]
 
