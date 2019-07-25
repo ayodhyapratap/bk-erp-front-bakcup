@@ -1,12 +1,13 @@
 import React from "react";
-import {Card, Tag} from "antd";
-import {BED_BOOKING_REPORTS} from "../../../constants/api";
-import {getAPI} from "../../../utils/common";
+import {Card, Tag,Button,Form,Checkbox,Select,Input} from "antd";
+import {BED_BOOKING_REPORTS,BED_PACKAGES} from "../../../constants/api";
+import {getAPI ,interpolate} from "../../../utils/common";
 import CustomizedTable from "../../common/CustomizedTable";
 import moment from "moment";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
+import {PAYMENT_STATUS,OPD_IPD } from "../../../constants/hardData"
 
-export default class BedBookingReport extends React.Component {
+class BedBookingReport extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -14,12 +15,17 @@ export default class BedBookingReport extends React.Component {
             endDate: this.props.endDate,
             loading: true,
             bedBookingReports: [],
+            packages: [],
+
         };
         this.loadBedBookingReport = this.loadBedBookingReport.bind(this);
+        // this.filterReport =this.filterReport.bind(this);
+        
     }
 
     componentDidMount() {
         this.loadBedBookingReport();
+        this.loadPackages();
     }
 
     componentWillReceiveProps(newProps) {
@@ -33,7 +39,18 @@ export default class BedBookingReport extends React.Component {
             })
 
     }
+    loadPackages = () => {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                packages: data
+            })
+        }
+        let errorFn = function () {
+        }
+        getAPI(interpolate(BED_PACKAGES, [this.props.active_practiceId]), successFn, errorFn);
 
+    }
     loadBedBookingReport = (page = 1) => {
         let that = this;
         this.setState({
@@ -62,15 +79,43 @@ export default class BedBookingReport extends React.Component {
                 loading: false
             })
         };
-        getAPI(BED_BOOKING_REPORTS, successFn, errorFn, {
+        let apiParams={
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             page: page,
             practice: this.props.active_practiceId
+        }
+        if(this.state.payment_status){
+            apiParams.payment_status=this.state.payment_status
+        }
+        if(this.state.type){
+            apiParams.type =this.state.type
+        }
+        if(this.state.bed_packages){
+            
+            apiParams.bed_packages=this.state.bed_packages.join()
+        }
+        getAPI(BED_BOOKING_REPORTS, successFn, errorFn, apiParams);
+    }
+    filterReport(type ,value){
+      this.setState(function(prevState){
+        return {[type]: value}
+      },function(){
+        this.loadBedBookingReport();
+      });
+    }
+    filterBedPackages(type ,value){
+        this.setState(function(prevState){
+            let bed_packages={};
+            return {bed_packages:value}
+        },function(){
+            this.loadBedBookingReport();
         });
     }
-
     render() {
+        console.log("state",this.state)
+        const {getFieldDecorator} =this.props.form;
+        let that=this;
         const columns = [{
             title: 'Package Name',
             key: 'name',
@@ -131,7 +176,33 @@ export default class BedBookingReport extends React.Component {
             }];
         return <div><h2>Seat/Bed Booking Report
         </h2>
-            <Card>
+            <Card bodyStyle={{padding:0}} 
+                extra={<div>
+                    <Form layout="inline">
+                        <Form.Item label="Payment Status">
+                            <Select placeholder="Payment Status" style={{minWidth:150}}  onChange={(value)=> that.filterReport("payment_status",value)}>
+                                {PAYMENT_STATUS.map(option => <Select.Option value={option.value}>{option.label}</Select.Option>)}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item label="Type">
+                            <Select style={{minWidth:150}} onChange={(value) =>this.filterReport("type",value)}>
+                                {OPD_IPD.map(option =><Select.Option value={option.value}>{option.label}</Select.Option> )}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item label="Bed Package">
+                            <Select style={{minWidth:150}} onChange={(value) =>this.filterBedPackages('bed_packages' ,value)} mode="multiple">
+                                {that.state.packages.map(option => <Select.Option value={option.id}>{option.name}</Select.Option>)}
+                            </Select>
+                        </Form.Item>
+
+
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" style={{margin: 5}}>
+                            Submit
+                        </Button>
+                    </Form.Item>
+                    </Form>
+                </div>}>
                 <CustomizedTable pagination={false} loading={this.state.loading} columns={columns} size={'small'}
                                  dataSource={this.state.bedBookingReports}/>
                 <InfiniteFeedLoaderButton
@@ -142,3 +213,4 @@ export default class BedBookingReport extends React.Component {
         </div>
     }
 }
+export default Form.create()(BedBookingReport)

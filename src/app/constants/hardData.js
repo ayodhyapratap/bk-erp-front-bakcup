@@ -207,3 +207,12 @@ export const Booking_Type = [
     {value: 'TATKAL'},
     {value: 'NORMAL'}
 ];
+export const PAYMENT_STATUS = [
+    {label:"Success", value:"SUCCESS"},
+    {label:"Failed" ,value:"FAILED"},
+    {label:"Pending",value:"PENDING"}
+];
+export const OPD_IPD =[
+    {label:"OPD", value:"OPD"},
+    {label:"IPD",value:"IPD"}
+];

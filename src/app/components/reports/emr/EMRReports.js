@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Col, Icon, Radio, Row, Table} from "antd";
+import {Button, Card, Col, Icon, Radio, Row} from "antd";
 import {TREATMENT_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment from "moment"
@@ -80,7 +80,7 @@ export default class EMRReports extends React.Component {
                     {/*<Button><Icon type="printer"/> Print</Button>*/}
                 {/*</Button.Group>*/}
             </h2>
-            <Card>
+            <Card >
                 <Row gutter={16}>
                     <Col span={16}>
                         <CustomizedTable loading={this.state.loading} columns={columns} size={'small'} dataSource={this.state.report}/>
