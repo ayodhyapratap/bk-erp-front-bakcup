@@ -194,13 +194,6 @@ class BedBookingReport extends React.Component {
                                 {that.state.packages.map(option => <Select.Option value={option.id}>{option.name}</Select.Option>)}
                             </Select>
                         </Form.Item>
-
-
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" style={{margin: 5}}>
-                            Submit
-                        </Button>
-                    </Form.Item>
                     </Form>
                 </div>}>
                 <CustomizedTable pagination={false} loading={this.state.loading} columns={columns} size={'small'}
