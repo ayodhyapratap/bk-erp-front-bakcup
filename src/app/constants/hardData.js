@@ -208,7 +208,7 @@ export const Booking_Type = [
     {value: 'NORMAL'}
 ];
 export const PAYMENT_STATUS = [
-    {label:"Success", value:"SUCCESS"},
+    {label:"Success", value:"SUCCESSFUL"},
     {label:"Failed" ,value:"FAILED"},
     {label:"Pending",value:"PENDING"}
 ];

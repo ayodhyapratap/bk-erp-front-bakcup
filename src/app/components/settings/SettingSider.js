@@ -114,9 +114,14 @@ class SettingSider extends React.Component {
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="24">
-                    <Link to="/settings/medicine-packages">
-                    <Icon type="medicine-box" /> Medicine Packages
-                    </Link>
+                        <Link to="/settings/medicine-packages">
+                            <Icon type="medicine-box"/> Medicine Packages
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="25">
+                        <Link to="/settings/diseases">
+                            <Icon type="apartment"/> Disease List
+                        </Link>
                     </Menu.Item>
                 </Menu.ItemGroup>
             </Menu>

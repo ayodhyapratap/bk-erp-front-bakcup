@@ -27,6 +27,7 @@ import RoomTypes from "./options/roomtypes/RoomTypes";
 import LoyaltySettings from "./options/loyalty/LoyaltySettings";
 import LabTracking from "./options/labs/LabTracking";
 import MedicinePackages from "./options/medicine-packages/MedicinePackages";
+import DiseaseList from "./options/disease-list/DiseaseList";
 
 const Content = Layout.Content;
 
@@ -158,6 +159,10 @@ class SettingsDash extends React.Component {
                         <Route exact path="/settings/roomtypes"
                                render={(route) => (this.props.activePracticePermissions.SettingsExpenseTypes || this.props.allowAllPermissions ?
                                        <RoomTypes  {...this.props} /> : <PermissionDenied/>
+                               )}/>
+                        <Route exact path="/settings/diseases"
+                               render={(route) => (this.props.activePracticePermissions.SettingsExpenseTypes || this.props.allowAllPermissions ?
+                                       <DiseaseList  {...this.props} /> : <PermissionDenied/>
                                )}/>
                         <Route path="/settings/bed-packages"
                                render={(route) => <BedPackages {...this.state}

@@ -7,21 +7,27 @@ import {
     Card,
     Col,
     DatePicker,
+    Divider,
     Form,
     Icon,
+    Input,
     InputNumber,
     List,
+    message,
     Popconfirm,
     Radio,
     Row,
     Select,
-    Table
+    Table,
+    Upload
 } from "antd";
-import {displayMessage, getAPI, interpolate, makeFileURL, postAPI} from "../../utils/common";
+import {displayMessage, getAPI, interpolate, makeFileURL, makeURL, postAPI} from "../../utils/common";
 import {
     BED_PACKAGES,
     BOOK_SEAT,
     CHECK_SEAT_AVAILABILITY,
+    DISEASE_LIST,
+    FILE_UPLOAD_API,
     MEDICINE_PACKAGES,
     PATIENT_PROFILE,
     PAYMENT_MODES,
@@ -44,6 +50,7 @@ class BedBookingForm extends React.Component {
             paymentModes: [],
             medicinePackage: [],
             medicineItem: [],
+            diseases: []
             //choosePkg:{},
 
 
@@ -54,6 +61,7 @@ class BedBookingForm extends React.Component {
         this.loadPackages();
         this.loadPaymentModes();
         this.loadMedicinePackages();
+        this.loadDiseases();
     }
 
     loadPackages = () => {
@@ -66,6 +74,18 @@ class BedBookingForm extends React.Component {
         let errorFn = function () {
         }
         getAPI(interpolate(BED_PACKAGES, [this.props.active_practiceId]), successFn, errorFn);
+
+    }
+    loadDiseases = () => {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                diseases: data
+            })
+        }
+        let errorFn = function () {
+        }
+        getAPI(interpolate(DISEASE_LIST, [this.props.active_practiceId]), successFn, errorFn);
 
     }
 
@@ -188,7 +208,9 @@ class BedBookingForm extends React.Component {
                     total_price: this.state.totalPayableAmount,
                     date: moment().format('YYYY-MM-DD'),
                     total_tax: this.state.tax,
-                    patient: this.state.patientDetails.id
+                    patient: this.state.patientDetails.id,
+                    rest_diseases: values.rest_diseases.join(','),
+                    report_upload: values.file && values.file.file.response ? values.file.file.response.image_path : null
                 };
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Saved Successfully!!");
@@ -360,7 +382,26 @@ class BedBookingForm extends React.Component {
                 dataIndex: 'price_with_tax',
                 render: (value, record) => (<p>{value ? (value).toFixed(2) : null}</p>)
             }];
+        const singleUploadprops = {
+            name: 'image',
+            data: {
+                name: 'hello'
+            },
+            action: makeURL(FILE_UPLOAD_API),
+            headers: {
+                authorization: 'authorization-text',
+            },
+            onChange(info) {
+                if (info.file.status !== 'uploading') {
 
+                }
+                if (info.file.status === 'done') {
+                    message.success(`${info.file.name} file uploaded successfully`);
+                } else if (info.file.status === 'error') {
+                    message.error(`${info.file.name} file upload failed.`);
+                }
+            },
+        };
         return <div>
             <Card title={"Book a Seat/Bed"}>
                 <Form>
@@ -468,7 +509,13 @@ class BedBookingForm extends React.Component {
                                 </Form.Item>
 
                                 <Form.Item label="Pay Now : " {...formItemLayout}>
-                                    {getFieldDecorator('pay_value', {initialValue: this.state.totalPayingAmount ? this.state.totalPayingAmount : null})
+                                    {getFieldDecorator('pay_value', {
+                                        rules: [{
+                                            required: true,
+                                            message: 'this field is required'
+                                        }],
+                                        initialValue: this.state.totalPayingAmount ? this.state.totalPayingAmount : null
+                                    })
                                     (
                                         <InputNumber min={0} step={1} max={this.state.totalPayableAmount}
                                                      onChange={this.setPaymentAmount}/>
@@ -507,25 +554,77 @@ class BedBookingForm extends React.Component {
                             </div>
                         </Col>
                         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                            <Divider>Patient Details</Divider>
+                            <Form.Item label="Creatinine Level" {...formItemLayout}>
+                                {getFieldDecorator('creatinine', {
+                                    // rules: [{required: true, message: 'this field required'}],
+                                })
+                                (<Input/>)
+                                }
+                            </Form.Item>
+                            <Form.Item label="Urea Level" {...formItemLayout}>
+                                {getFieldDecorator('urea_level', {
+                                    // rules: [{required: true, message: 'this field required'}],
+                                })
+                                (<Input/>)
+                                }
+                            </Form.Item>
+                            <Form.Item label="Currently on Dialysis?" {...formItemLayout}>
+                                {getFieldDecorator('dialysis', {
+                                    // rules: [{required: true, message: 'this field required'}],
+                                })
+                                (<Select showSearch
+                                         filterOption={(input, option) =>
+                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                         }>
+                                    <Select.Option
+                                        value={true}>YES</Select.Option>
+                                    <Select.Option
+                                        value={false}>NO</Select.Option>
+                                </Select>)
+                                }
+                            </Form.Item>
+                            <Form.Item label="Diseases" {...formItemLayout}>
+                                {getFieldDecorator('other_diseases', {
+                                    // rules: [{required: true, message: 'this field required'}],
+                                })
+                                (<Select showSearch mode={"multiple"}
+                                         filterOption={(input, option) =>
+                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                         }>
+                                    {this.state.diseases.map(item => <Select.Option
+                                        value={item.id}>{item.name}</Select.Option>)}
+                                </Select>)
+                                }
+                            </Form.Item>
+                            <Form.Item label="Other Diseases" {...formItemLayout}>
+                                {getFieldDecorator('rest_diseases', {
+                                    // rules: [{required: true, message: 'this field required'}],
+                                })
+                                (<Select mode={"tags"}>
+
+                                </Select>)
+                                }
+                            </Form.Item>
+                            <Form.Item label="Upload Report" {...formItemLayout}>
+                                {getFieldDecorator('file', {
+                                    // rules: [{required: true, message: 'this field required'}],
+                                })
+                                (<Upload {...singleUploadprops}>
+                                    <Button>
+                                        <Icon type="upload"/> Select File
+                                    </Button>
+
+                                </Upload>)
+                                }
+                            </Form.Item>
                             <Table pagination={false} columns={columns} size={'small'}
                                    dataSource={this.state.choosePkg}/>
 
                         </Col>
-                        <Col span={6}>
+                        <Col span={24}>
                             <h3>Grand Total: <b>{this.state.totalPayableAmount.toFixed(2)}</b></h3>
-                        </Col>
-                        {/* <Col span={6}>
-                                    <Form.Item label="Pay Now : " {...formItemLayout}>
-                                        {getFieldDecorator('pay_value',{initialValue:this.state.totalPayingAmount?this.state.totalPayingAmount:null})
-                                        (
-                                            <InputNumber min={0} step={1} max={this.state.totalPayableAmount}
-                                                onChange={this.setPaymentAmount}/>
-                                        )
-                                    }
-                                    </Form.Item>
-                                </Col>  */}
-                        <Col span={12}>
-                            <Form.Item style={{float: "right"}}>
+                            <Form.Item>
                                 <Popconfirm
                                     title={"Are you sure to take payment of INR " + this.state.totalPayingAmount + "?"}
                                     onConfirm={this.handleSubmit}>
