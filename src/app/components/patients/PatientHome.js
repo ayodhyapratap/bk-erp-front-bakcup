@@ -23,12 +23,13 @@ import PatientLedgers from "./ledgers/PatientLedgers";
 import {Switch} from "react-router-dom";
 import PrescriptionTemplate from "./prescriptions/PrescriptionTemplate";
 import {displayMessage, getAPI, getCommonSettings, interpolate, saveCommonSettings} from "../../utils/common";
-import {PATIENT_PROFILE, PATIENTS_LIST} from "../../constants/api";
+import {PATIENT_PROFILE} from "../../constants/api";
 import {ERROR_MSG_TYPE} from "../../constants/dataKeys";
 import PatientMerge from "./merge/PatientMerge";
 import PatientRequiredNoticeCard from "./PatientRequiredNoticeCard";
 import PatientMedicalCertificate from "./files/PatientMedicalCertificate";
 import PermissionDenied from "../common/errors/PermissionDenied";
+import BookingHome from "./booking/BookingHome";
 
 const {Content} = Layout;
 
@@ -85,8 +86,7 @@ class PatientHome extends React.Component {
             if (patientObj) {
                 urlArray[1] = "patient";
                 urlArray[2] = patientObj.id;
-            }
-            else {
+            } else {
                 urlArray[1] = "patients";
                 urlArray.splice(2, 1);
             }
@@ -320,6 +320,11 @@ class PatientHome extends React.Component {
                                 <Route exact path='/patient/:id/prescriptions/template/add'
                                        render={(route) => <PrescriptionTemplate
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                                <Route path="/patient/:id/booking" render={(route) =>
+                                    <BookingHome {...this.state}
+                                                 {...this.props}
+                                                 {...route}
+                                                 key={this.state.currentPatient ? this.state.currentPatient.id : null}/>}/>
                                 <Route render={(route) =>
                                     (this.state.currentPatient ?
                                         <Redirect
@@ -327,6 +332,7 @@ class PatientHome extends React.Component {
                                         <PatientProfile {...this.state}
                                                         key={this.state.currentPatient}
                                                         setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
+
                             </Switch>
                         </Content>
                     </Layout>

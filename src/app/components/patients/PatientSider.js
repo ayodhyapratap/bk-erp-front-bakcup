@@ -31,6 +31,12 @@ class PatientSider extends React.Component {
                             <Icon type="message"/>Communications
                         </Link>
                     </Menu.Item>
+                    <Menu.Item key="booking"  disabled={!this.props.currentPatient}>
+                        <Link
+                            to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/booking" : "/patients/communications"}>
+                            <Icon type="book"/>Booking
+                        </Link>
+                    </Menu.Item>
                 </Menu.ItemGroup>
                 <Menu.ItemGroup key="g2" title={<Divider style={{margin: '0px'}}>EMR</Divider>}>
                     {/*<SubMenu key="nestedsub1" title={<span>EMR</span>}>*/}

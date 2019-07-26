@@ -16,7 +16,7 @@ import PrintPatientForm from "../patients/patient/PrintPatientForm";
 import CreateAppointment from "../calendar/CreateAppointment";
 import BlockCalendar from "../calendar/BlockCalendar";
 import PermissionDenied from "../common/errors/PermissionDenied";
-import BookingHome from "../booking/BookingHome";
+
 
 class AppBase extends React.Component {
     constructor(props) {
@@ -206,10 +206,7 @@ class AppBase extends React.Component {
                                                                                              {...this.props}
                                                                                              {...route}
                                                                                              key={that.state.active_practiceId}/>}/>
-                                <Route path="/booking" render={(route) => <BookingHome {...this.state}
-                                                                                       {...this.props}
-                                                                                       {...route}
-                                                                                       key={that.state.active_practiceId}/>}/>
+
                                 <Route path="/profile" render={(route) => <Profile {...this.state}
                                                                                    {...this.props}
                                                                                    {...route}
