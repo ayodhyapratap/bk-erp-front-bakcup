@@ -2,7 +2,7 @@ import lockr from 'lockr';
 import axios from 'axios';
 import {AUTH_TOKEN, PASSWORD, ROLE, EMAIL, PRACTICE, GROUP, ERROR_MSG_TYPE} from "../constants/dataKeys";
 import {displayMessage, getAPI, handleErrorResponse, makeURL} from "./common";
-import {LOGIN_URL, USER_DATA} from "../constants/api";
+import {LOGIN_URL, OTP_LOGIN_URL, USER_DATA} from "../constants/api";
 import {CURRENT_PRACTICE} from "../constants/formLabels";
 
 
@@ -104,6 +104,25 @@ export const logInUser = function (data, successFn, errorFn) {
         errorFn();
     })
 };
+export const logInUserWithOtp = function (data, successFn, errorFn) {
+    var reqData = {
+        'phone_no': data.phone_no,
+        'otp': data.otp
+    };
+    axios.post(makeURL(OTP_LOGIN_URL), reqData).then(function (response) {
+        // console.log(response);
+        let data = response.data;
+        lockr.set(ROLE, data.user);
+        lockr.set(AUTH_TOKEN, data.token);
+        lockr.set(PRACTICE, data.practice_list);
+        // lockr.set('PERMISSIONS', data.permissions_list);
+        successFn()
+    }).catch(function (error) {
+        console.log(error);
+        handleErrorResponse(error);
+        errorFn();
+    })
+};
 export const loadUserDetails = function (practice, callBackFn,callBackErrorFn) {
     let successFn = function (data) {
         lockr.set(ROLE, data.user);
@@ -141,4 +160,19 @@ export const checkRole = function (role) {
         return false;
     }
     return roles[role];
+}
+
+
+export const sendLoginOTP = function(url,phone,successFn,errorFn){
+    let reqData = {
+        "phone_no": phone
+    };
+    axios.post(url, reqData).then(function (response) {
+        // console.log(response);
+        successFn(response)
+    }).catch(function (error) {
+        console.log(error);
+        handleErrorResponse(error);
+        errorFn();
+    })
 }

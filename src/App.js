@@ -1,14 +1,9 @@
 import React, {Component} from 'react';
 import {Layout} from "antd";
 import {Route, Switch} from "react-router-dom";
-import {
-    loggedInUser,
-    logInUser,
-    logOutUser,
-} from "./app/utils/auth";
+import {loggedInUser, logInUser, logInUserWithOtp, logOutUser,} from "./app/utils/auth";
 import AppBase from "./app/components/core/AppBase";
 import Auth from "./app/components/auth/Auth";
-import momenttz from 'moment-timezone';
 import ReactGA from 'react-ga';
 
 class App extends Component {
@@ -26,7 +21,7 @@ class App extends Component {
         this.logout = this.logout.bind(this);
     }
 
-    login(data) {
+    login(data, withOtp = true) {
         let that = this;
         let successFn = function () {
             let user = loggedInUser();
@@ -37,7 +32,10 @@ class App extends Component {
         let errorFn = function () {
 
         };
-        logInUser(data, successFn, errorFn);
+        if (withOtp)
+            logInUser(data, successFn, errorFn);
+        else
+            logInUserWithOtp({...data}, successFn, errorFn)
     }
 
     logout() {

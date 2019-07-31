@@ -32,7 +32,6 @@ export default class InfiniteFeedLoaderButton extends React.Component {
     }
 
     render() {
-        console.log("props Pagination",this.props)
         if (this.props.loading) {
             return <Spin spinning={this.props.loading}>
                 <Row style={{minHeight: 200}}/>

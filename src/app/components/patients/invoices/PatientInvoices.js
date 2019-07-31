@@ -316,7 +316,6 @@ function InvoiceCard(invoice, that) {
             "NORMAL": {total: 'final_normal_price', tax: "normal_tax_value", unit_cost: "normal_price"},
             "TATKAL": {total: 'final_tatkal_price', tax: "tatkal_tax_value", unit_cost: "tatkal_price"}
         }
-        console.log(mapper[invoice.reservation_data.seat_type].unit_cost);
         tableObjects = [...tableObjects, {
             ...invoice.reservation_data.bed_package,
             unit: 1,

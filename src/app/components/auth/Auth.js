@@ -1,8 +1,8 @@
 import React from "react";
 import LoginForm from "./forms/LoginForm";
 import LoginWithPhone from "./forms/LogintWithPhone";
-import {Card, Col, Divider, Form, Layout, Row,Button} from "antd";
-import {Link, Route, Switch} from "react-router-dom";
+import {Card, Col, Divider, Form, Layout, Row} from "antd";
+import {Route, Switch} from "react-router-dom";
 import '../../assets/auth.css';
 import AppLogo from '../../assets/img/kidneycarelogo.png';
 import DynamicFieldsForm from "../common/DynamicFieldsForm";
@@ -18,7 +18,7 @@ class Auth extends React.Component {
     render() {
         const LoginFormLayout = Form.create()(LoginForm);
         const PasswordResetForm = Form.create()(DynamicFieldsForm);
-        const LoginWithPhoneLayout =Form.create()(LoginWithPhone);
+        const LoginWithPhoneLayout = Form.create()(LoginWithPhone);
 
         let tokenDefaultValues = [{
             key: 'code',
@@ -86,20 +86,20 @@ class Auth extends React.Component {
                                 <img src={AppLogo} alt="" style={{maxWidth: '70%', minWidth: '50%', padding: '20px'}}/>
                                 <Switch>
 
-                                {/*<Divider/>*/}
+                                    {/*<Divider/>*/}
 
                                     <Route path="/loginwithphone">
-                                          <LoginWithPhoneLayout {...this.props}/>
+                                        <LoginWithPhoneLayout {...this.props} login={this.props.login}/>
                                     </Route>
 
 
-                                 <Route >
-                                       <LoginFormLayout {...this.props} login={this.props.login}/>
-                                 </Route>
+                                    <Route>
+                                        <LoginFormLayout {...this.props} login={this.props.login}/>
+                                    </Route>
 
-                                <Route>
+                                    <Route>
 
-                                </Route>
+                                    </Route>
 
                                 </Switch>
 

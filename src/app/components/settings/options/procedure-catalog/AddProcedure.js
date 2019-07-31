@@ -105,14 +105,16 @@ class AddProcedure extends React.Component {
                     value: tax.id
                 })
             )
-        }, {
-            label: 'MLM Margin Type',
-            type: SELECT_FIELD,
-            initialValue: (this.state.editFields ? this.state.editFields.margin : null),
-            key: 'margin',
-            required: true,
-            options: that.state.productMargin.map(margin => ({label: margin.name, value: margin.id}))
-        }, {
+        },
+        //     {
+        //     label: 'MLM Margin Type',
+        //     type: SELECT_FIELD,
+        //     initialValue: (this.state.editFields ? this.state.editFields.margin : null),
+        //     key: 'margin',
+        //     required: true,
+        //     options: that.state.productMargin.map(margin => ({label: margin.name, value: margin.id}))
+        // },
+            {
             label: "Add Under",
             key: "under",
             type: SELECT_FIELD,

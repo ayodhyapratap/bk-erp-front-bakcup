@@ -6,12 +6,14 @@ import {BACKEND_BASE_URL} from "../config/connect";
 export const API_URL = BACKEND_BASE_URL + '/erp-api';
 export const FILE_UPLOAD_API = 'blogImage/';
 export const FILE_UPLOAD_BASE64 = 'blogImage/create_with_base64/';
-
+export const LOGIN_SEND_OTP = 'staff_login/send_otp/';
+export const LOGIN_RESEND_OTP = 'staff_login/resend_otp/';
 export const SIGNUP_URL = '';
 export const RESET_PASSWORD = 'users/reset_password/';
 export const CHANGE_PASSWORD = 'users/passwordchange/';
 export const RESET_PASSWORD_MAIL = 'users/staff_reset_mail/';
 export const LOGIN_URL = 'users/login/';
+export const OTP_LOGIN_URL = 'staff_login/verify_otp/';
 export const USER_DATA = 'users/user_clone/';
 export const PRACTICESTAFF = 'clinics/%s/practice_staff/';
 export const ENABLE_STAFF_IN_PRACTICE = 'staff/%s/practice_list/'
@@ -165,6 +167,7 @@ export const BULK_STOCK_ENTRY = "stock_entry/bulk/";
 export const SUPPLIER_API = 'stock_entry/practice_supplier';
 export const SEARCH_THROUGH_QR = 'item_type_stock/find_item';
 export const BILL_SUPPLIER = 'stock_entry/bills_suppliers/';
+
 /**
  * MLM API
  * */

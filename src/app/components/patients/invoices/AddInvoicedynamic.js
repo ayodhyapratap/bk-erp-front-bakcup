@@ -358,7 +358,7 @@ class Addinvoicedynamic extends React.Component {
                 that.state.tableFormValues.forEach(function (item) {
                     item.unit = values.unit[item._id];
                     item.taxes = values.taxes[item._id];
-                    item.unit_cost = values.unit_cost[item._id];
+                    // item.unit_cost = values.unit_cost[item._id];
                     item.discount = values.discount[item._id];
                     item.discount_type = '%';
                     switch (item.item_type) {
