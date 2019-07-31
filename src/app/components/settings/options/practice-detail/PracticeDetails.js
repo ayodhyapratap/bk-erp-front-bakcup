@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Divider, Card, Icon, Row, Table, Modal,Col, Avatar} from "antd";
+import {Button, Divider, Card, Icon, Row, Table, Modal,Col, Avatar,Popconfirm} from "antd";
 import {Link} from "react-router-dom";
 import {ALL_PRACTICE, PRACTICE_DELETE} from "../../../../constants/api";
 import {getAPI, interpolate, postAPI, makeFileURL} from "../../../../utils/common";
@@ -91,6 +91,7 @@ class PracticeDetails extends React.Component {
 
     render() {
         let that = this;
+        console.log(that.props.practiceList);
         const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -115,8 +116,10 @@ class PracticeDetails extends React.Component {
                 <span>
                 <Link to={'/settings/clinics/' + record.id + '/edit'}>Edit</Link>
                 <Divider type="vertical"/>
-                    {that.props.practiceList.length > 1
-                        ? <a onClick={() => this.deletePractice(record.id)}>Delete</a> : null}
+                    {that.props.practiceList.length >1
+                        ? <Popconfirm title="Are you sure delete this Practice?"
+                            onConfirm={() => this.deletePractice(record.id)} okText="Yes" cancelText="No">
+                            <a>Delete</a></Popconfirm>:null}
               </span>
             ),
         }];
