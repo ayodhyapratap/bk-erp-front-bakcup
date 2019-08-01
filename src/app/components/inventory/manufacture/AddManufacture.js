@@ -12,6 +12,7 @@ import {
 } from "../../../constants/api";
 import {Route} from "react-router";
 import {Redirect} from "react-router-dom";
+import PermissionDenied from "../../common/errors/PermissionDenied";
 
 
 export default class AddManufacture extends React.Component {
@@ -109,9 +110,9 @@ export default class AddManufacture extends React.Component {
                                            {...route}
                                            fields={fields}/> : <Redirect to={'/inventory/manufacture'}/>)}/>
                 <Route exact path='/inventory/manufacture/add'
-                       render={(route) => <TestFormLayout title="Add Manufacturer" changeRedirect={this.changeRedirect}
-                                                     {...route}
-                                                     formProp={formProp} fields={fields}/>}/>
+                       render={(route) => (that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ?
+                            <TestFormLayout title="Add Manufacturer" changeRedirect={this.changeRedirect}{...route}
+                                formProp={formProp} fields={fields}/>:<PermissionDenied/>)}/>
 
 
             </Card>

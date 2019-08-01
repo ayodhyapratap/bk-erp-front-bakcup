@@ -172,16 +172,17 @@ class AppBase extends React.Component {
                                                                                         key={that.state.active_practiceId}/>}/>
                                     : null}
                                 <Route exact path="/calendar/create-appointment"
-                                       render={(route) =>
+                                       render={(route) =>(this.state.activePracticePermissions.AddAppointment || this.state.allowAllPermissions ?
                                            <CreateAppointment {...this.state}{...this.props} {...route}
-                                                              startTime={this.state.startTime}/>}/>
+                                                startTime={this.state.startTime}/>:<PermissionDenied/>)}/>
+
                                 <Route exact path="/calendar/:appointmentid/edit-appointment"
-                                       render={(route) =>
+                                       render={(route) =>(this.state.activePracticePermissions.EditAppointment || this.state.allowAllPermissions ?
                                            <CreateAppointment {...this.state}{...this.props} {...route}
-                                                              startTime={this.state.startTime}/>}/>
+                                                startTime={this.state.startTime}/>:<PermissionDenied/>)}/>
                                 <Route exact path="/calendar/blockcalendar"
-                                       render={(route) =>
-                                           <BlockCalendar {...this.state} {...this.props} {...route}/>}/>
+                                       render={(route) =>(that.props.activePracticePermissions.BlockCalendar || that.props.allowAllPermissions ?
+                                       <BlockCalendar {...this.state} {...this.props} {...route}/>:<PermissionDenied/>)}/>
                                 <Route path="/calendar"
                                        render={(route) => (that.state.activePracticePermissions.ViewCalendar ?
                                            <Calendar {...that.state}

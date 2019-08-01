@@ -94,6 +94,7 @@ export default class EventPatientPopover extends React.Component {
     }
 
     render() {
+        console.log("propsss",this.props)
         let that = this;
         let appointment = this.state.appointment;
         return <div style={{width: '300px', minHeight: '200px'}}>
@@ -128,13 +129,13 @@ export default class EventPatientPopover extends React.Component {
                             <div>
                                 {appointment.status == SCHEDULE_STATUS ?
                                     <span style={{width: '70px', float: 'right'}}>
-                    <a onClick={() => that.changeAppointmentStatus(appointment.id, SCHEDULE_STATUS, WAITING_STATUS)}> Check In</a></span> : null}
+                    <a onClick={() => that.changeAppointmentStatus(appointment.id, SCHEDULE_STATUS, WAITING_STATUS)} disabled={that.props.activePracticePermissions.ChangeAppointmentStatus}> Check In</a></span> : null}
                                 {appointment.status == WAITING_STATUS ?
                                     <span style={{width: '70px', float: 'right'}}>
-                    <a onClick={() => that.changeAppointmentStatus(appointment.id, WAITING_STATUS, ENGAGED_STATUS)}> Engage</a></span> : null}
+                    <a onClick={() => that.changeAppointmentStatus(appointment.id, WAITING_STATUS, ENGAGED_STATUS)} disabled={that.props.activePracticePermissions.ChangeAppointmentStatus}> Engage</a></span> : null}
                                 {appointment.status == ENGAGED_STATUS ?
                                     <span style={{width: '70px', float: 'right'}}>
-                    <a onClick={() => that.changeAppointmentStatus(appointment.id, ENGAGED_STATUS, CHECKOUT_STATUS)}> Check Out</a></span> : null}
+                    <a onClick={() => that.changeAppointmentStatus(appointment.id, ENGAGED_STATUS, CHECKOUT_STATUS)} disabled={that.props.activePracticePermissions.ChangeAppointmentStatus}> Check Out</a></span> : null}
                                 {appointment.status == CHECKOUT_STATUS ?
                                     <span style={{width: '70px', float: 'right'}}>
                     <small>Checked Out</small></span> : null}
@@ -149,18 +150,20 @@ export default class EventPatientPopover extends React.Component {
                         <Divider style={{margin: 0}}/>
                         <Row style={{textAlign: 'right'}}>
                             <Button.Group size={"small"}>
+                                {that.props.activePracticePermissions.EditAppointment || that.props.allowAllPermissions ?
                                 <Button>
                                     <Link to={"/calendar/" + this.state.appointment.id + "/edit-appointment"}>
                                         <Icon type={"edit"}/> Edit
                                     </Link>
-                                </Button>
+                                </Button>:null}
+                                {that.props.activePracticePermissions.ChangeAppointmentStatus || that.props.allowAllPermissions?
                                 <Popconfirm title="Are you sure delete this?"
                                             onConfirm={() => that.changeAppointmentStatus(appointment.id, appointment.status, CANCELLED_STATUS)}
                                             okText="Yes" cancelText="No">
                                     <Button type={"danger"}>
                                         <Icon type={"cross"}/> Cancel
                                     </Button>
-                                </Popconfirm>
+                                </Popconfirm>:null}
                             </Button.Group>
                         </Row>
                     </div> :

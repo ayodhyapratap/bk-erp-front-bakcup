@@ -215,6 +215,8 @@ class Appointment extends React.Component {
     }
 
     render() {
+        let that=this;
+        console.log("props",this.props)
         const procedures = {}
         if (this.state.procedure_category) {
             this.state.procedure_category.forEach(function (procedure) {
@@ -298,11 +300,11 @@ class Appointment extends React.Component {
                 key: 'action',
                 render: (text, record) => (
                     <span>
-                <a onClick={() => this.editAppointment(record)}>Edit</a>
+                <a onClick={() => this.editAppointment(record)} disabled={!that.props.activePracticePermissions.EditAppointment}>Edit</a>
                 <Divider type="vertical"/>
                 <Popconfirm title="Are you sure delete this item?"
                             onConfirm={() => this.deleteAppointment(record)} okText="Yes" cancelText="No">
-                    <a>Delete</a>
+                    <a disabled={!that.props.activePracticePermissions.EditAppointment}>Delete</a>
                 </Popconfirm>
 
 
@@ -311,20 +313,23 @@ class Appointment extends React.Component {
             }];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         if (this.props.match.params.id) {
-            return <Card extra={<Link to={"/calendar/create-appointment?patient=" + this.props.match.params.id}>
-                <Button type="primary">
-                    <Icon type="plus"/>&nbsp;Add Appointment</Button>
-            </Link>}>
+            return <Card extra={that.props.activePracticePermissions.AddAppointment || that.props.allowAllPermissions?
+                <Link to={"/calendar/create-appointment?patient=" + this.props.match.params.id}>
+                    <Button type="primary">
+                        <Icon type="plus"/>&nbsp;Add Appointment</Button>
+                </Link>:null}>
+
                 <Table loading={this.state.loading} columns={columns} scroll={{x: 1300}}
                        dataSource={this.state.appointments}/>
 
 
             </Card>
         }
-        return <Card extra={<Link to="/calendar/create-appointment">
-            <Button type="primary">
-                <Icon type="plus"/>&nbsp;Add Appointment</Button>
-        </Link>}>
+        return <Card extra={that.props.activePracticePermissions.AddAppointment || that.props.allowAllPermissions?
+                <Link to="/calendar/create-appointment">
+                    <Button type="primary">
+                        <Icon type="plus"/>&nbsp;Add Appointment</Button>
+                </Link>:null}>
             <Table loading={this.state.loading} columns={columns} scroll={{x: 1300}}
                    dataSource={this.state.appointments}/>
 

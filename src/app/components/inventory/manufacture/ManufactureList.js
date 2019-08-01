@@ -6,6 +6,7 @@ import {Route, Switch} from "react-router";
 import AddManufacture from "./AddManufacture";
 import {Link} from "react-router-dom";
 import CustomizedTable from "../../common/CustomizedTable";
+import PermissionDenied from "../../common/errors/PermissionDenied";
 
 export default class ManufactureList extends React.Component {
     constructor(props) {
@@ -70,7 +71,7 @@ export default class ManufactureList extends React.Component {
                     <Divider type="vertical"/>
                     <Popconfirm title="Are you sure delete this item?"
                                 onConfirm={() => that.deleteManufacture(record.id)} okText="Yes" cancelText="No">
-                        <a>Delete</a>
+                        <a disabled={!that.props.activePracticePermissions.DeleteManufacturer}>Delete</a>
                     </Popconfirm>
 
                     
@@ -79,10 +80,10 @@ export default class ManufactureList extends React.Component {
         }];
         return <div><Switch>
             <Route exact path='/inventory/manufacture/add'
-                   render={(route) => <AddManufacture {...this.state} {...route} loadData={that.loadData}/>}/>
+                   render={(route) =>(that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ? <AddManufacture {...this.state} {...route} loadData={that.loadData}/>:<PermissionDenied/>)}/>
             <Route exact path='/inventory/manufacture/edit/:id'
-                   render={(route) => <AddManufacture {...this.state} {...route} loadData={that.loadData}/>}/>
-            <Card title="Manufactures" extra={<Link to={"/inventory/manufacture/add"}> <Button type="primary"><Icon
+                   render={(route) =>(that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ? <AddManufacture {...this.state} {...route} loadData={that.loadData}/>:<PermissionDenied/>)}/>
+            <Card title="Manufactures" extra={<Link to={"/inventory/manufacture/add"}> <Button type="primary" disabled={!that.props.activePracticePermissions.EditManufacturer}><Icon
                 type="plus"/> Add</Button></Link>}>
                 <CustomizedTable loading={this.state.loading} dataSource={this.state.manufactures} columns={manufactureColoumns}/>
             </Card>

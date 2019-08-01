@@ -145,6 +145,7 @@ class PatientHome extends React.Component {
                                 <Route exact path={"/patients/merge"}
                                        render={(route) => (that.props.activePracticePermissions.MergePatients || that.props.allowAllPermissions ?
                                            <PatientMerge {...this.state}/> : <PermissionDenied/>)}/>
+                                           
                                 <Route exact path='/patients/profile'
                                        render={(route) =>
                                            (this.state.currentPatient ?
@@ -159,27 +160,31 @@ class PatientHome extends React.Component {
                                                key={this.state.currentPatient} {...this.props} {...route}/> :
                                            <PermissionDenied/>)}/>
                                 <Route exact path='/patient/:id/profile'
-                                       render={() => <PatientProfile {...this.state}
+                                       render={(route) => (that.props.activePracticePermissions.ViewPatient || that.props.allowAllPermissions ?
+                                            <PatientProfile {...this.state}
                                                                      key={this.state.currentPatient}
-                                                                     setCurrentPatient={this.setCurrentPatient} {...this.props}/>}/>
+                                                                     setCurrentPatient={this.setCurrentPatient} {...this.props} {...route}/>:<PermissionDenied/>)}/>
                                 <Route exact path='/patient/:id/profile/edit'
-                                       render={(route) => (that.props.activePracticePermissions.AddPatient || that.props.allowAllPermissions ?
+                                       render={(route) => (that.props.activePracticePermissions.EditPatient || that.props.allowAllPermissions ?
                                            <EditPatientDetails
                                                key={this.state.currentPatient}{...this.state}{...this.props} {...route}/> :
                                            <PermissionDenied/>)}/>
 
                                 {/*** Patient Appointment Routes*/}
+                                {that.props.activePracticePermissions.PatientAppointments || that.props.allowAllPermissions ?
                                 <Route exact path='/patients/appointments'
                                        render={(route) => (this.state.currentPatient ?
                                            <Redirect
                                                to={"/patient/" + this.state.currentPatient.id + "/appointments"}/> :
-                                           <Appointment key={this.state.currentPatient} {...this.state} {...route}/>)}/>
+                                           <Appointment key={this.state.currentPatient} {...this.state} {...route} {...this.props}/>)}/>
+                                            :<PermissionDenied/>} 
+                                           
                                 <Route exact path='/patient/:id/appointments'
                                        render={(route) => <Appointment
-                                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} {...this.props}/>}/>
                                 <Route exact path='/patients/appointments/:appointmentid'
                                        render={(route) => <Appointment
-                                           key={this.state.currentPatient} {...this.state} {...route}/>}/>
+                                           key={this.state.currentPatient} {...this.state} {...route} {...this.props}/>}/>
                                 {/*      <Route exact path='/patients/appointments/create'
                            render={() => <CreateAppointment {...this.props} />}/>*/}
 
@@ -320,11 +325,11 @@ class PatientHome extends React.Component {
                                 <Route exact path='/patient/:id/prescriptions/template/add'
                                        render={(route) => <PrescriptionTemplate
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
-                                <Route path="/patient/:id/booking" render={(route) =>
+                                <Route path="/patient/:id/booking" render={(route) => (that.props.activePracticePermissions.PatientBookings || that.props.allowAllPermissions ?
                                     <BookingHome {...this.state}
                                                  {...this.props}
                                                  {...route}
-                                                 key={this.state.currentPatient ? this.state.currentPatient.id : null}/>}/>
+                                    key={this.state.currentPatient ? this.state.currentPatient.id : null}/>:<PermissionDenied/>)}/>
                                 <Route render={(route) =>
                                     (this.state.currentPatient ?
                                         <Redirect

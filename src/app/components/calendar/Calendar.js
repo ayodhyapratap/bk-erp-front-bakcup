@@ -628,11 +628,12 @@ class App extends Component {
                                                     format={"DD-MM-YYYY"} style={{margin: 5}} allowClear={false}/>
                                         {this.state.calendarType == 'APPOINTMENTS' ?
                                             <div>
+                                                {that.props.activePracticePermissions.BlockCalendar || that.props.allowAllPermissions ?
                                                 <Button block style={{margin: 5}}>
                                                     <Link to={"/calendar/blockcalendar"}>
                                                         <Icon type="stop"/> Block Calendar
                                                     </Link>
-                                                </Button>
+                                                </Button>:null}
                                                 <Dropdown trigger={'click'} overlay={
                                                     <Menu onClick={this.setFilterType}>
                                                         <Menu.Item key={"DOCTOR"}>

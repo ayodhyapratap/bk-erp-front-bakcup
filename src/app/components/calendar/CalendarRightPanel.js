@@ -149,10 +149,11 @@ export default class CalendarRightPanel extends React.Component {
                     <Icon type="setting"/> Settings <Icon type="down"/>
                 </Button>
             </Dropdown>
+            {that.props.activePracticePermissions.AddWalkinAppointment || that.props.allowAllPermissions ?
             <Link to='/calendar/create-appointment'>
                 <Button block type="primary" style={{margin: 5}}> Walkin
                     Appointment</Button>
-            </Link>
+            </Link>:null}
             <Row gutter={8}>
                 <Col span={6}
                      onClick={() => this.filterTodaysAppointment(this.state.todaysAppointmentFilter == SCHEDULE_STATUS ? 'ALL' : SCHEDULE_STATUS)}
@@ -231,7 +232,7 @@ export default class CalendarRightPanel extends React.Component {
                                 borderLeft: '5px solid' + (apppointment.doctor && that.props.doctors_object && that.props.doctors_object[apppointment.doctor] ? that.props.doctors_object[apppointment.doctor].calendar_colour : 'transparent')
                             }}>
                             <AppointmentCard {...apppointment}
-                                             changeAppointmentStatus={this.changeAppointmentStatus}/>
+                                             changeAppointmentStatus={this.changeAppointmentStatus} {...this.props}/>
                         </div>
                     </List.Item>)
                     }/>
@@ -246,20 +247,20 @@ function AppointmentCard(appointment) {
         <p style={{marginBottom: 0}}>
             <Popover placement="right"
                      content={<EventPatientPopover appointmentId={appointment.id}
-                                                   key={appointment.id}/>}>
+                                                   key={appointment.id} {...appointment}/>}>
             <span
                 style={{width: 'calc(100% - 60px)'}}><b>{moment(appointment.schedule_at).format("LT")}</b>&nbsp;
                 {appointment.patient.user.first_name}</span>
             </Popover>
             {appointment.status == SCHEDULE_STATUS ?
                 <span style={{width: '70px', float: 'right'}}>
-                    <a onClick={() => appointment.changeAppointmentStatus(appointment.id, SCHEDULE_STATUS, WAITING_STATUS)}> Check In</a></span> : null}
+                    <a onClick={() => appointment.changeAppointmentStatus(appointment.id, SCHEDULE_STATUS, WAITING_STATUS)} disabled={!appointment.activePracticePermissions.ChangeAppointmentStatus}> Check In</a></span> : null}
             {appointment.status == WAITING_STATUS ?
                 <span style={{width: '70px', float: 'right'}}>
-                    <a onClick={() => appointment.changeAppointmentStatus(appointment.id, WAITING_STATUS, ENGAGED_STATUS)}> Engage</a></span> : null}
+                    <a onClick={() => appointment.changeAppointmentStatus(appointment.id, WAITING_STATUS, ENGAGED_STATUS)} disabled={!appointment.activePracticePermissions.ChangeAppointmentStatus}> Engage</a></span> : null}
             {appointment.status == ENGAGED_STATUS ?
                 <span style={{width: '70px', float: 'right'}}>
-                    <a onClick={() => appointment.changeAppointmentStatus(appointment.id, ENGAGED_STATUS, CHECKOUT_STATUS)}> Check Out</a></span> : null}
+                    <a onClick={() => appointment.changeAppointmentStatus(appointment.id, ENGAGED_STATUS, CHECKOUT_STATUS)} disabled={!appointment.activePracticePermissions.ChangeAppointmentStatus}> Check Out</a></span> : null}
             {appointment.status == CHECKOUT_STATUS ?
                 <span style={{width: '70px', float: 'right'}}>
                     <small>Checked Out</small></span> : null}

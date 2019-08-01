@@ -6,6 +6,7 @@ import {Route, Switch} from "react-router";
 import AddVendor from "./AddVendor";
 import {Link} from "react-router-dom";
 import CustomizedTable from "../../common/CustomizedTable";
+import PermissionDenied from "../../common/errors/PermissionDenied";
 
 export default class VendorList extends React.Component {
     constructor(props) {
@@ -63,7 +64,7 @@ export default class VendorList extends React.Component {
                     <Divider type="vertical"/>
                     <Popconfirm title="Are you sure delete this item?"
                                 onConfirm={() => that.deleteVendor(record.id)} okText="Yes" cancelText="No">
-                        <a>Delete</a>
+                       <a disabled={!that.props.activePracticePermissions.DeleteVendor}>Delete</a>
                     </Popconfirm>
 
                 </div>
@@ -71,9 +72,9 @@ export default class VendorList extends React.Component {
         }];
         return <div><Switch>
             <Route exact path='/inventory/vendor/add'
-                   render={(route) => <AddVendor {...this.state} {...route} loadData={that.loadData}/>}/>
+                   render={(route) =>(that.props.activePracticePermissions.EditVendor || that.props.allowAllPermissions ? <AddVendor {...this.state} {...route} loadData={that.loadData}/>:<PermissionDenied/>)}/>
             <Route exact path='/inventory/vendor/edit/:id'
-                   render={(route) => <AddVendor {...this.state} {...route} loadData={that.loadData}/>}/>
+                   render={(route) =>(that.props.activePracticePermissions.EditVendor || that.props.allowAllPermissions ? <AddVendor {...this.state} {...route} loadData={that.loadData}/>:<PermissionDenied/>)}/>
             <Card title="Vendors" extra={<Link to={"/inventory/vendor/add"}> <Button type="primary"><Icon
                 type="plus"/> Add</Button></Link>}>
                 <CustomizedTable columns={vendorsColoumns} dataSource={this.state.vendors}/>

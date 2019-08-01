@@ -116,8 +116,7 @@ class PracticeDetails extends React.Component {
                 <span>
                 <Link to={'/settings/clinics/' + record.id + '/edit'}>Edit</Link>
                 <Divider type="vertical"/>
-                    {that.props.practiceList.length >1
-                        ? <Popconfirm title="Are you sure delete this Practice?"
+                    {that.props.practiceList.length>1? <Popconfirm title="Are you sure delete this Practice?"
                             onConfirm={() => this.deletePractice(record.id)} okText="Yes" cancelText="No">
                             <a>Delete</a></Popconfirm>:null}
               </span>
