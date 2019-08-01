@@ -313,7 +313,8 @@ class PracticeDetails extends React.Component {
             title: "Enable Staff",
             dataIndex: "in_practice",
             key: "enable_staff",
-            render: (item, record) => (
+            render: (item, record) => (record.user && record.user.is_superuser ?
+                <Tag color="red">Not Allowed</Tag> :
                 <AntSwitch defaultChecked={!!item} onChange={(e) => that.toggleEnableStaffPractice(record.id, e)}/>)
         }, {
             title: "Last Login",
@@ -324,8 +325,8 @@ class PracticeDetails extends React.Component {
             title: "Action",
             key: "action",
             render: function (text, record) {
-                return (record.user && record.is_superuser ?
-                    <Tag> Not Allowed</Tag> :
+                return (record.user && record.user.is_superuser ?
+                    <Tag color="red">SuperUser</Tag> :
                     <span>
             <Link to={"/settings/clinics-staff/" + record.id + "/edit"}>
               <a>Edit</a>

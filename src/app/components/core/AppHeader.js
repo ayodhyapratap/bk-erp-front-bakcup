@@ -1,5 +1,5 @@
 import React from "react";
-import {AutoComplete, Avatar, Button, Dropdown, Icon, Layout, List, Menu, Select} from "antd";
+import {AutoComplete, Avatar, Button, Dropdown, Icon, Layout, List, Menu, Select, Tag} from "antd";
 import {Link} from 'react-router-dom';
 import {getAPI, interpolate, makeFileURL} from "../../utils/common";
 import {SEARCH_PATIENT} from "../../constants/api";
@@ -145,7 +145,9 @@ class AppHeader extends React.Component {
                 {/*/></Menu.Item>*/}
 
                 <div style={{float: 'right', margin: '0px 20px'}}>
+                    {this.props.user && this.props.user.is_superuser ? <Tag color={"red"}>SuperUser</Tag> : null}
                     <Dropdown overlay={userMenu} placement="bottomRight">
+
                         <Avatar style={{backgroundColor: '#87d068'}} icon="user"/>
                     </Dropdown>
                 </div>
