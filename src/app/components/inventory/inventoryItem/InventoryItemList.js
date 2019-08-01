@@ -8,6 +8,7 @@ import AddOrConsumeStock from "./AddOrConsumeStock"
 import {ADD_STOCK, CONSUME_STOCK, INVENTORY_ITEM_TYPE} from "../../../constants/hardData"
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import moment from "moment";
+import PermissionDenied from "../../common/errors/PermissionDenied";
 
 export default class InventoryItemList extends React.Component {
     constructor(props) {
@@ -127,6 +128,7 @@ export default class InventoryItemList extends React.Component {
     }
 
     render() {
+        console.log('props',this.props);
         const taxesdata = {};
         if (this.state.taxes_list) {
             this.state.taxes_list.forEach(function (tax) {
@@ -265,9 +267,9 @@ export default class InventoryItemList extends React.Component {
             }];
         return <div>
             <Switch>
-                <Route path="/inventory/add"
-                       render={(route) => <AddorEditInventoryItem {...route} {...this.state} {...this.props}
-                                                                  loadData={this.loadData}/>}/>
+                <Route path="/inventory/add" render={(route)=> (that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions ?
+                    <AddorEditInventoryItem {...route} {...this.props} {...this.state} loadData={this.loadData}/>:<PermissionDenied/>)}/>
+
                 {/* <Route path="/inventory/edit-item-type/:id"
                        render={(route) => <AddOrConsumeStock key={ADD_STOCK}
                        type={ADD_STOCK}
@@ -275,25 +277,22 @@ export default class InventoryItemList extends React.Component {
                        {...this.state} {...route} {...this.props}/>}/> */}
 
                 <Route exact path='/inventory/edit/:id'
-                       render={(route) => <AddorEditInventoryItem {...this.state} {...this.props} {...route}
-                                                                  loadData={this.loadData}/>}/>
-                <Route exact path='/inventory/consume-stock'
-                       render={(route) => <AddOrConsumeStock key={CONSUME_STOCK}
-                                                             type={CONSUME_STOCK}
-                                                             loadData={this.loadData}
-                                                             {...this.state} {...route} {...this.props}/>}/>
-                <Route exact path='/inventory/add-stock'
-                       render={(route) => <AddOrConsumeStock key={ADD_STOCK}
-                                                             type={ADD_STOCK}
-                                                             loadData={this.loadData}
-                                                             {...this.state} {...route} {...this.props}/>}/>
+                       render={(route) =>(that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions ?
+                        <AddorEditInventoryItem {...this.state} {...this.props} {...route} loadData={this.loadData}/>:<PermissionDenied/>)}/>
+
+                <Route exact path='/inventory/consume-stock' render={(route) => (that.props.activePracticePermissions.AddInventoryStock || that.props.allowAllPermissions?
+                    <AddOrConsumeStock key={CONSUME_STOCK} type={CONSUME_STOCK} loadData={this.loadData} {...this.state} {...route} {...this.props}/>:<PermissionDenied/>)}/>
+
+                <Route exact path='/inventory/add-stock' render={(route) => (that.props.activePracticePermissions.ConsumeInventoryStock || that.props.allowAllPermissions ?
+                     <AddOrConsumeStock key={ADD_STOCK} type={ADD_STOCK} loadData={this.loadData}{...this.state} {...route} {...this.props}/>:<PermissionDenied/>)}/>
+
                 <Route>
                     <Card title="Inventory List"
                           extra={<Button.Group>
-                              <Link to="/inventory/add"><Button type="primary"><Icon type="plus"/> Add
-                                  Item</Button></Link>
-                              <Link to="/inventory/add-stock"><Button type="primary">Add Stock</Button></Link>
-                              <Link to="/inventory/consume-stock"><Button type="primary">Consume Stock</Button></Link>
+                                <Link to="/inventory/add"><Button type="primary"  disabled={!that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions}><Icon type="plus"/> Add  Item</Button></Link>
+
+                              <Link to="/inventory/add-stock"> <Button disabled={!that.props.activePracticePermissions.AddInventoryStock} type="primary">Add Stock</Button></Link>
+                              <Link to="/inventory/consume-stock"><Button disabled={!that.props.activePracticePermissions.ConsumeInventoryStock} type="primary">Consume Stock</Button></Link>
                           </Button.Group>}>
                         <Row>
                             <Radio.Group name="itemTypeFilter" size="small" defaultValue={"ALL"} buttonStyle="solid"
