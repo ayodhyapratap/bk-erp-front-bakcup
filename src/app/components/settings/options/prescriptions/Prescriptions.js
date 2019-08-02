@@ -91,7 +91,7 @@ class Prescriptions extends React.Component {
             key: 'strength',
             render: (strength, record) => <span>{strength}&nbsp;{record.stength_unit}</span>
         }, {
-            title: ' Drug Instructions',
+            title: 'Medicine Instructions',
             dataIndex: 'instructions',
             key: 'instructions',
         }, {

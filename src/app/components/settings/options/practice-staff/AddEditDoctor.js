@@ -104,18 +104,21 @@ class AddEditDoctor extends React.Component {
                 placeholder:"Registration Number",
                 initialValue: this.state.editStaff ? this.state.editStaff.registration_number : null,
                 type: INPUT_FIELD
-            }, {
-                label: "Role",
-                key: "role",
-                required: true,
-                initialValue: this.state.editStaff ? this.state.editStaff.role : null,
-                type: SELECT_FIELD,
-                options: this.state.roles.map(role => ({label: role.name, value: [role.id]}))
-            }, {
+            },
+            // {
+            //     label: "Role",
+            //     key: "role",
+            //     required: true,
+            //     initialValue: this.state.editStaff ? this.state.editStaff.role : null,
+            //     type: SELECT_FIELD,
+            //     options: this.state.roles.map(role => ({label: role.name, value: [role.id]}))
+            // },
+            {
                 label: "Calendar Colour",
                 key: "calendar_colour",
                 initialValue: this.state.editStaff ? this.state.editStaff.calendar_colour : null,
                 type: COLOR_PICKER,
+                required:true
 
             }, {
                 label: "Schedule SMS",
@@ -172,7 +175,7 @@ class AddEditDoctor extends React.Component {
                 method: "put",
             }
         }
-        const defaultValues = [];
+        const defaultValues = [{key:'role',value:'[3]'}];
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <Row>

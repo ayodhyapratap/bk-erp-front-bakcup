@@ -10,7 +10,7 @@ export const DISEASE_TYPES = [
     {label: 'Cancer Disease', value: 'Cancer Disease'},
     {label: 'Other Disease', value: 'Other Disease'}
 ];
-export const DRUG = "Drug";
+export const DRUG = "Medicine";
 export const EQUIPMENT = "Equipment";
 export const SUPPLIES = "Supplies";
 export const PROCEDURES = "Procedure";
@@ -61,7 +61,7 @@ export const EMR_SUB_TYPE = [
     {title: 'TREATMENT PLAN'},
     {title: 'CASE SHEET'},
     {title: 'MEDICAL LEAVE'},
-    {title: 'VITAL SIGNS'},
+    {title: 'REPORT MANUAL'},
     {title: 'LAB ORDER'},
     // {title: 'LAB ORDER RESULT'},
     {title: 'CLINICAL NOTES'}

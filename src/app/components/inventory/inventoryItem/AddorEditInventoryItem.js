@@ -361,7 +361,7 @@ class AddorEditInventoryItem extends React.Component {
                                     }
                                 </Form.Item>
                                 {this.state.drugType && this.state.drugType == INPUT_FIELD ?
-                                    <Form.Item key={'drug_type_extra'} label={"Drug Type"}  {...formItemLayout}>
+                                    <Form.Item key={'drug_type_extra'} label={"Medicine Type"}  {...formItemLayout}>
                                         {getFieldDecorator("drug_type_extra", {
                                             initialValue: that.state.editInventoryItem ? that.state.editInventoryItem.drug_type_extra : null,
                                             rules: [{
@@ -371,9 +371,9 @@ class AddorEditInventoryItem extends React.Component {
                                         })(
                                             <Input/>
                                         )}
-                                        <a onClick={() => that.setFormParams('drugType', SELECT_FIELD)}>Choose Drug Type</a>
+                                        <a onClick={() => that.setFormParams('drugType', SELECT_FIELD)}>Choose Medicine Type</a>
                                     </Form.Item>
-                                    : <Form.Item key={"drug_type"} {...formItemLayout} label={"Drug Type"}>
+                                    : <Form.Item key={"drug_type"} {...formItemLayout} label={"Medicine Type"}>
                                         {getFieldDecorator("drug_type", {
                                             initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.drug_type : null,
                                             rules: [{
@@ -386,7 +386,7 @@ class AddorEditInventoryItem extends React.Component {
                                                     value={option.id}>{option.name}</Select.Option>)}
                                             </Select>
                                         )}
-                                        <a onClick={() => that.setFormParams('drugType', INPUT_FIELD)}>Add New Drug Type</a>
+                                        <a onClick={() => that.setFormParams('drugType', INPUT_FIELD)}>Add New Medicine Type</a>
                                     </Form.Item>}
                                 <Form.Item label="Strength" {...formItemLayout}>
                                     {getFieldDecorator('strength', {initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.strength : null})

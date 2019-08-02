@@ -408,7 +408,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         let that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const drugTableColumns = [{
-            title: 'Drug Name',
+            title: 'Medicine Name',
             dataIndex: 'name',
             key: 'name',
             render: name => <h2>{name}</h2>
@@ -596,10 +596,10 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 </Col>
                 <Col span={6}>
                     <Tabs type="card">
-                        <TabPane tab="Drugs" key="1">
+                        <TabPane tab="Medicine" key="1">
                             <div style={{backgroundColor: '#ddd', padding: 8}}>
                                 <Input.Search key={"Drugs"}
-                                              placeholder={"Search in Drugs..."}
+                                              placeholder={"Search in Medicine..."}
                                               onChange={e => this.searchValues("Drugs", e.target.value)}
                                 />
                             </div>

@@ -105,11 +105,11 @@ class AddorEditPrescriptionForm extends React.Component {
                             message: REQUIRED_FIELD_MESSAGE
                         }]
                     })(
-                        <Input placeholder={'Drug Name'}/>
+                        <Input placeholder={'Medicine Name'}/>
                     )}
                 </Form.Item>
                 {this.state.drugType && this.state.drugType == INPUT_FIELD ?
-                    <Form.Item key={'drug_type_extra'} label={"Drug Type"}  {...formItemLayout}>
+                    <Form.Item key={'drug_type_extra'} label={"Medicine Type"}  {...formItemLayout}>
                         {getFieldDecorator("drug_type_extra", {
                             initialValue: that.state.editPrescreption ? that.state.editPrescreption.drug_type_extra : null,
                             rules: [{
@@ -119,9 +119,9 @@ class AddorEditPrescriptionForm extends React.Component {
                         })(
                             <Input/>
                         )}
-                        <a onClick={() => that.setFormParams('drugType', SELECT_FIELD)}>Choose Drug Type</a>
+                        <a onClick={() => that.setFormParams('drugType', SELECT_FIELD)}>Choose Medicine Type</a>
                     </Form.Item>
-                    : <Form.Item key={"drug_type"} {...formItemLayout} label={"Drug Type"}>
+                    : <Form.Item key={"drug_type"} {...formItemLayout} label={"Medicine Type"}>
                         {getFieldDecorator("drug_type", {
                             initialValue: this.state.editPrescreption ? this.state.editPrescreption.drug_type : null,
                             rules: [{
@@ -134,7 +134,7 @@ class AddorEditPrescriptionForm extends React.Component {
                                     value={option.id}>{option.name}</Select.Option>)}
                             </Select>
                         )}
-                        <a onClick={() => that.setFormParams('drugType', INPUT_FIELD)}>Add New Drug Type</a>
+                        <a onClick={() => that.setFormParams('drugType', INPUT_FIELD)}>Add New Medicine Type</a>
                     </Form.Item>}
                 <Form.Item key={"strength"}{...formItemLayout}
                            label={"Dosage"}>
@@ -149,7 +149,7 @@ class AddorEditPrescriptionForm extends React.Component {
                     )}
                 </Form.Item>
                 {this.state.drugUnit && this.state.drugUnit == INPUT_FIELD ?
-                    <Form.Item key={'unit_type_extra'} label={"Drug Unit"}  {...formItemLayout}>
+                    <Form.Item key={'unit_type_extra'} label={"Medicine Unit"}  {...formItemLayout}>
                         {getFieldDecorator("unit_type_extra", {
                             initialValue: that.state.editPrescreption ? that.state.editPrescreption.unit_type_extra : null,
                             rules: [{
@@ -159,9 +159,9 @@ class AddorEditPrescriptionForm extends React.Component {
                         })(
                             <Input/>
                         )}
-                        <a onClick={() => that.setFormParams('drugUnit', SELECT_FIELD)}>Choose Drug Unit</a>
+                        <a onClick={() => that.setFormParams('drugUnit', SELECT_FIELD)}>Choose Medicine Unit</a>
                     </Form.Item>
-                    : <Form.Item key={"stength_unit"} {...formItemLayout} label={"Drug Unit"}>
+                    : <Form.Item key={"stength_unit"} {...formItemLayout} label={"Medicine Unit"}>
                         {getFieldDecorator("stength_unit", {
                             initialValue: this.state.editPrescreption ? this.state.editPrescreption.stength_unit : null,
                             rules: [{
@@ -174,7 +174,7 @@ class AddorEditPrescriptionForm extends React.Component {
                                     value={option.id}>{option.name}</Select.Option>)}
                             </Select>
                         )}
-                        <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Drug Unit</a>
+                        <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Medicine Unit</a>
                     </Form.Item>}
                 <Form.Item key={"instructions"} {...formItemLayout} label={"Instructions"}>
                     {getFieldDecorator("instructions", {
@@ -184,9 +184,9 @@ class AddorEditPrescriptionForm extends React.Component {
                     )}
                 </Form.Item>
                 <Form.Item {...formItemLayout} >
-                    <Button onClick={() => this.handleSubmit(false)}>Save Drug</Button>
+                    <Button onClick={() => this.handleSubmit(false)}>Save Medicine</Button>
                     &nbsp;&nbsp;&nbsp;
-                    <Button onClick={() => this.handleSubmit(false)} type={'primary'}>Save & Add to Inventory</Button>
+                    <Button onClick={() => this.handleSubmit(true)} type={'primary'}>Save & Add to Inventory</Button>
                     &nbsp;&nbsp;&nbsp;
                     {that.props.history ?
                         <Button onClick={() => that.props.history.goBack()}>
