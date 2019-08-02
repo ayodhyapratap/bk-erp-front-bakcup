@@ -148,7 +148,7 @@ class PatientCompletedProcedures extends React.Component {
             onOk() {
                 let obj = {
                     id: record.id,
-                    patient: record.patient,
+                    patient: record.patient.id,
                     is_active: false
                 }
 
@@ -313,10 +313,12 @@ class PatientCompletedProcedures extends React.Component {
                                     size={"small"}
                                     style={{float: 'right'}}
                                     overlay={<Menu>
-                                        <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)}
-                                                   disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
-                                            <Icon type="edit"/>
-                                            Edit
+                                        <Menu.Item key="1" disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
+                                            <Link to={"/patient/" + treatment.patient.id + "/emr/workdone/edit"}>
+                                                <Icon type="edit"/>
+                                                &nbsp;
+                                                Edit
+                                            </Link>
                                         </Menu.Item>
                                         <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}
                                                    disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
@@ -325,7 +327,7 @@ class PatientCompletedProcedures extends React.Component {
                                         </Menu.Item>
                                         <Menu.Divider/>
                                         <Menu.Item key="3">
-                                            <Link to={"/patient/" + treatment.patient + "/emr/timeline"}>
+                                            <Link to={"/patient/" + treatment.patient.id + "/emr/timeline"}>
                                                 <Icon type="clock-circle"/>
                                                 &nbsp;
                                                 Patient Timeline

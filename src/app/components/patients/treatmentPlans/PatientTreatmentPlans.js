@@ -121,12 +121,13 @@ class PatientTreatmentPlans extends React.Component {
 
 
     editTreatmentPlanData(record) {
+        console.log("record",record.id);
         this.setState({
             editTreatmentPlan: record,
             loading: false
         });
         let id = record.patient;
-        this.props.history.push("/patient/" + id + "/emr/plans/edit")
+        this.props.history.push("/patient/" + record.id + "/emr/plans/edit")
 
     }
 
@@ -141,7 +142,7 @@ class PatientTreatmentPlans extends React.Component {
             onOk() {
                 let reqData = {
                     id: record.id,
-                    patient: record.patient,
+                    patient: record.patient.id,
                     is_active: false,
                 }
                 let successFn = function (data) {
@@ -350,10 +351,12 @@ class PatientTreatmentPlans extends React.Component {
                                         size={"small"}
                                         style={{float: 'right'}}
                                         overlay={<Menu>
-                                            <Menu.Item key="1" onClick={() => that.editTreatmentPlanData(treatment)}
-                                                       disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
-                                                <Icon type="edit"/>
-                                                Edit
+                                            <Menu.Item key="1" disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
+                                                <Link to={"/patient/" + treatment.patient.id + "/emr/plans/edit"}>
+                                                    <Icon type="edit"/>
+                                                    &nbsp;
+                                                    Edit
+                                                </Link> 
                                             </Menu.Item>
                                             <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}
                                                        disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
