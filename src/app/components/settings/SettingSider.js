@@ -103,26 +103,37 @@ class SettingSider extends React.Component {
                     {/*</Menu.Item>*/}
                 </Menu.ItemGroup>
                 <Menu.ItemGroup key="g2" title={<Divider style={{margin: '0px'}}>Bed & Medicine</Divider>}>
+                {this.props.activePracticePermissions.SettingsRoomTypes ?
                     <Menu.Item key="22">
                         <Link to="/settings/roomtypes">
                             <Icon type="apartment"/> Room Types
                         </Link>
                     </Menu.Item>
+                :null}
+
+                {this.props.activePracticePermissions.SettingsBedPackages ?   
                     <Menu.Item key="23">
                         <Link to="/settings/bed-packages">
                             <Icon type="box-plot"/> Bed Packages
                         </Link>
                     </Menu.Item>
+                :null}
+
+                {this.props.activePracticePermissions.SettingsMedicinePackages ?  
                     <Menu.Item key="24">
                         <Link to="/settings/medicine-packages">
                             <Icon type="medicine-box"/> Medicine Packages
                         </Link>
                     </Menu.Item>
+                :null}
+
+                {this.props.activePracticePermissions.SettingsDiseaseList ?  
                     <Menu.Item key="25">
                         <Link to="/settings/diseases">
                             <Icon type="apartment"/> Disease List
                         </Link>
                     </Menu.Item>
+                :null}
                 </Menu.ItemGroup>
             </Menu>
 

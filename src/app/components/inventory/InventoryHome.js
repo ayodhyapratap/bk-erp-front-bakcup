@@ -27,6 +27,7 @@ export default class InventoryHome extends React.Component {
             <Switch>
                 <Route path="/inventory/vendor" render={(route) =>(that.props.activePracticePermissions.ViewVendor || that.props.allowAllPermissions?
                     <VendorList {...this.props} {...route}/>:<PermissionDenied/>)}/>
+                    
                 <Route path="/inventory/expenses" render={(route) =>(that.props.activePracticePermissions.ViewExpenses || that.props.allowAllPermissions ?
                     <ExpensesList {...this.props} {...route}/>:<PermissionDenied/>)}/>
 

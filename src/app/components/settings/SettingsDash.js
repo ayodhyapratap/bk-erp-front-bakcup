@@ -157,21 +157,21 @@ class SettingsDash extends React.Component {
                                                                    {...this.props}
                                                                    {...route}/>}/>
                         <Route exact path="/settings/roomtypes"
-                               render={(route) => (this.props.activePracticePermissions.SettingsExpenseTypes || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsRoomTypes || this.props.allowAllPermissions ?
                                        <RoomTypes  {...this.props} /> : <PermissionDenied/>
                                )}/>
                         <Route exact path="/settings/diseases"
-                               render={(route) => (this.props.activePracticePermissions.SettingsExpenseTypes || this.props.allowAllPermissions ?
+                               render={(route) => (this.props.activePracticePermissions.SettingsDiseaseList || this.props.allowAllPermissions ?
                                        <DiseaseList  {...this.props} /> : <PermissionDenied/>
                                )}/>
                         <Route path="/settings/bed-packages"
-                               render={(route) => <BedPackages {...this.state}
-                                                               {...this.props}
-                                                               {...route}/>}/>
+                               render={(route) => (this.props.activePracticePermissions.SettingsBedPackages || this.props.allowAllPermissions ?
+                                   <BedPackages {...this.state}  {...this.props}  {...route}/>:<PermissionDenied/>)}/>
+                                   
                         <Route path="/settings/medicine-packages"
-                               render={(route) => <MedicinePackages {...this.state}
-                                                               {...this.props}
-                                                               {...route}/>}/>
+                               render={(route) =>(this.props.activePracticePermissions.SettingsMedicinePackages || this.props.allowAllPermissions ?
+                                   <MedicinePackages {...this.state} {...this.props} {...route}/>:<PermissionDenied/>)}/>
+
                         <Route component={Error404}/>
                     </Switch>
                 </Content>

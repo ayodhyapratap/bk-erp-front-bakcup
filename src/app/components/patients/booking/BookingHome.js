@@ -8,6 +8,7 @@ import {getAPI, interpolate} from "../../../utils/common";
 import CustomizedTable from "../../common/CustomizedTable";
 import moment from "moment";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
+import PermissionDenied from "../../common/errors/PermissionDenied";
 
 const {Content} = Layout;
 
@@ -61,6 +62,7 @@ export default class BookingHome extends React.Component {
     }
 
     render() {
+        let that=this;
         const columns = [{
             title: 'Bed Package',
             key: 'name',
@@ -115,8 +117,8 @@ export default class BookingHome extends React.Component {
             <Layout>
                 <Switch>
                     <Route path={"/patient/:patient/booking/bed-booking"}
-                           render={() => <BedBookingForm {...this.props} bedBooking={true}
-                                                         loadData={this.loadBedBookingReport}/>}/>
+                           render={() =>(that.props.activePracticePermissions.PatientBookings || that.props.allowAllPermissions ?<BedBookingForm {...this.props} bedBooking={true}
+                           loadData={this.loadBedBookingReport}/>:<PermissionDenied/>)}/>
 
                     <Route>
                         <div>

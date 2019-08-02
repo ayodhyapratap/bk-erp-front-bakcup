@@ -75,9 +75,9 @@ export default class VendorList extends React.Component {
                    render={(route) =>(that.props.activePracticePermissions.EditVendor || that.props.allowAllPermissions ? <AddVendor {...this.state} {...route} loadData={that.loadData}/>:<PermissionDenied/>)}/>
             <Route exact path='/inventory/vendor/edit/:id'
                    render={(route) =>(that.props.activePracticePermissions.EditVendor || that.props.allowAllPermissions ? <AddVendor {...this.state} {...route} loadData={that.loadData}/>:<PermissionDenied/>)}/>
-            <Card title="Vendors" extra={<Link to={"/inventory/vendor/add"}> <Button type="primary"><Icon
-                type="plus"/> Add</Button></Link>}>
-                <CustomizedTable columns={vendorsColoumns} dataSource={this.state.vendors}/>
+            <Card title="Vendors" extra={(that.props.activePracticePermissions.EditVendor?<Link to={"/inventory/vendor/add"}> <Button type="primary"><Icon
+                type="plus"/> Add</Button></Link>:null)}>
+                <CustomizedTable columns={vendorsColoumns} dataSource={this.state.vendors}  hideReport={!that.props.activePracticePermissions.ExportVendor}/>
             </Card>
         </Switch>
         </div>

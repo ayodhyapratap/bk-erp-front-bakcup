@@ -7,6 +7,7 @@ import AddExpenses from "./AddExpenses";
 import {Link} from "react-router-dom";
 import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
+import PermissionDenied from "../../common/errors/PermissionDenied";
 
 export default class ExpensesList extends React.Component {
     constructor(props) {
@@ -149,23 +150,25 @@ export default class ExpensesList extends React.Component {
             title: 'Action',
             render: function (record) {
                 return <div>
-                    <Link to={'/inventory/expenses/edit/' + record.id}>Edit</Link>
+                    {that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?
+                    <Link to={'/inventory/expenses/edit/' + record.id}>Edit</Link>:null}
                     <Divider type={"vertical"}/>
+                    {that.props.activePracticePermissions.DeleteExpenses || that.props.allowAllPermissions ?
                     <Popconfirm title="Are you sure to delete this?"
                                 onConfirm={() => that.deleteObject(record, false)} okText="Yes" cancelText="No">
                         <a>Delete</a>
-                    </Popconfirm>
+                    </Popconfirm>:null}
                 </div>
             }
         }]
         return <div>
             <Switch>
                 <Route exact path='/inventory/expenses/add'
-                       render={(route) => <AddExpenses {...this.state} {...route} loadData={this.loadData}/>}/>
+                       render={(route) => (that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?<AddExpenses {...this.state} {...route} loadData={this.loadData}/>:<PermissionDenied/>)}/>
                 <Route exact path='/inventory/expenses/edit/:id'
-                       render={(route) => <AddExpenses {...this.state} {...route} loadData={this.loadData}/>}/>
-                <Card title="Expenses" extra={<Link to={"/inventory/expenses/add"}> <Button type="primary"><Icon
-                    type="plus"/> Add</Button></Link>}>
+                       render={(route) =>  (that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?<AddExpenses {...this.state} {...route} loadData={this.loadData}/>:<PermissionDenied/>)}/>
+                <Card title="Expenses" extra={(that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?<Link to={"/inventory/expenses/add"}> <Button type="primary"><Icon
+                    type="plus"/> Add</Button></Link>:<PermissionDenied/>)}>
                     <Row gutter={16} style={{marginBottom: 10}}>
                         <Col span={2} style={{textAlign: "right"}}>
                             <b> Expense Types</b>
@@ -210,7 +213,7 @@ export default class ExpensesList extends React.Component {
                         </Col>
                     </Row>
                     <CustomizedTable loading={this.state.loading} dataSource={this.state.expenses}
-                                     columns={expenseColoumns}/>
+                                     columns={expenseColoumns} hideReport={!that.props.activePracticePermissions.ExportExpenses}/>
                 </Card>
             </Switch>
         </div>

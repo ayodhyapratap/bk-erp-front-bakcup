@@ -19,18 +19,17 @@ export default class ReportsHeader extends React.Component {
 
     render() {
         let that = this;
-
-        const reportCategory = [{name: 'Daily Summary', value: '/reports/summary', active: 'ReportsDailySummary'},
-            {name: 'Income', value: '/reports/income', active: 'ReportsIncome'},
-            {name: 'Payments', value: '/reports/payments', active: 'ReportsPayments'},
-            {name: 'Appointment', value: '/reports/appointments', active: 'ReportsAppointments'},
-            {name: 'Patients', value: '/reports/patients', active: 'ReportsPatients'},
-            {name: 'Amount Due', value: '/reports/amountdue', active: 'ReportsAmountDue'},
-            {name: 'Expenses', value: '/reports/expenses', active: 'ReportsExpenses'},
-            {name: 'Inventory', value: '/reports/inventory', active: 'ReportsInventory'},
-            {name: 'EMR', value: '/reports/emr', active: 'ReportsEMR'},
-            {name: 'Bed Booking', value:'/reports/bed_booking', active:'ReportBedBooking'},
-            {name: 'Inventory Retails', value: '/reports/inventoryretails', active: 'ReportsInventoryRetail'}];
+        const reportCategory = [{name: 'Daily Summary', value: '/reports/summary', active: that.props.activePracticePermissions.ReportsDailySummary || that.props.allowAllPermissions},
+            {name: 'Income', value: '/reports/income', active: that.props.activePracticePermissions.ReportsIncome || that.props.allowAllPermissions},
+            {name: 'Payments', value: '/reports/payments', active: that.props.activePracticePermissions.ReportsPayments || that.props.allowAllPermissions},
+            {name: 'Appointment', value: '/reports/appointments', active: that.props.activePracticePermissions.ReportsAppointments || that.props.allowAllPermissions},
+            {name: 'Patients', value: '/reports/patients', active: that.props.activePracticePermissions.ReportsPatients || that.props.allowAllPermissions},
+            {name: 'Amount Due', value: '/reports/amountdue', active: that.props.activePracticePermissions.ReportsAmountDue || that.props.allowAllPermissions},
+            {name: 'Expenses', value: '/reports/expenses', active: that.props.activePracticePermissions.ReportsExpenses || that.props.allowAllPermissions},
+            {name: 'Inventory', value: '/reports/inventory', active: that.props.activePracticePermissions.ReportsInventory || that.props.allowAllPermissions},
+            {name: 'EMR', value: '/reports/emr', active: that.props.activePracticePermissions.ReportsEMR || that.props.allowAllPermissions},
+            {name: 'Bed Booking', value:'/reports/bed_booking', active:that.props.activePracticePermissions.ReportBedBooking || that.props.allowAllPermissions},
+            {name: 'Inventory Retails', value: '/reports/inventoryretails', active: that.props.activePracticePermissions.ReportsInventoryRetail || that.props.allowAllPermissions}];
         return <Header style={{background: '#fff'}}>
             <ul style={{listStyle: 'none'}}>
                 <li style={{display: 'inline'}}>
@@ -41,7 +40,7 @@ export default class ReportsHeader extends React.Component {
                             value={this.props.history.location.pathname}
                             onChange={this.changeReport}>
                         {reportCategory.map((item) => <Select.Option value={item.value}
-                                                                     disabled={item.active || that.props.allowAllPermissions ? false : true}>{item.name}</Select.Option>)}
+                                                                     disabled={!item.active}>{item.name}</Select.Option>)}
                     </Select>
                 </li>
                 <li style={{display: 'inline', float: 'right'}}>

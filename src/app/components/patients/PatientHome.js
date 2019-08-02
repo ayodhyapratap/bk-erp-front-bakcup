@@ -145,15 +145,18 @@ class PatientHome extends React.Component {
                                 <Route exact path={"/patients/merge"}
                                        render={(route) => (that.props.activePracticePermissions.MergePatients || that.props.allowAllPermissions ?
                                            <PatientMerge {...this.state}/> : <PermissionDenied/>)}/>
-                                           
-                                <Route exact path='/patients/profile'
-                                       render={(route) =>
-                                           (this.state.currentPatient ?
-                                               <Redirect
-                                                   to={"/patient/" + this.state.currentPatient.id + "/profile"}/> :
-                                               <PatientProfile {...this.state}
-                                                               key={this.state.currentPatient}
-                                                               setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
+
+                                {that.props.activePracticePermissions.WebAdmin || that.allowAllPermissions?    
+                                    <Route exact path='/patients/profile'
+                                        render={(route) =>
+                                            (this.state.currentPatient ?
+                                                <Redirect
+                                                    to={"/patient/" + this.state.currentPatient.id + "/profile"}/> :
+                                                <PatientProfile {...this.state}
+                                                                key={this.state.currentPatient}
+                                                                setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
+                                :null}
+
                                 <Route exact path='/patients/profile/add'
                                        render={(route) => (that.props.activePracticePermissions.AddPatient || that.props.allowAllPermissions ?
                                            <EditPatientDetails
@@ -171,51 +174,63 @@ class PatientHome extends React.Component {
                                            <PermissionDenied/>)}/>
 
                                 {/*** Patient Appointment Routes*/}
-                                {that.props.activePracticePermissions.PatientAppointments || that.props.allowAllPermissions ?
-                                <Route exact path='/patients/appointments'
-                                       render={(route) => (this.state.currentPatient ?
-                                           <Redirect
-                                               to={"/patient/" + this.state.currentPatient.id + "/appointments"}/> :
-                                           <Appointment key={this.state.currentPatient} {...this.state} {...route} {...this.props}/>)}/>
-                                            :<PermissionDenied/>} 
-                                           
+                                {that.props.activePracticePermissions.PatientAppointments || that.allowAllPermissions?  
+                                    <Route exact path='/patients/appointments'
+                                        render={(route) => (this.state.currentPatient ?
+                                            <Redirect
+                                                to={"/patient/" + this.state.currentPatient.id + "/appointments"}/> :
+                                            <Appointment key={this.state.currentPatient} {...this.state} {...route} {...this.props}/>)}/>
+                                :null}
+                                {that.props.activePracticePermissions.PatientAppointments || that.allowAllPermissions?    
                                 <Route exact path='/patient/:id/appointments'
                                        render={(route) => <Appointment
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} {...this.props}/>}/>
+                                :null}
+                                {that.props.activePracticePermissions.PatientAppointments || that.allowAllPermissions?
                                 <Route exact path='/patients/appointments/:appointmentid'
                                        render={(route) => <Appointment
                                            key={this.state.currentPatient} {...this.state} {...route} {...this.props}/>}/>
+                                :null}
                                 {/*      <Route exact path='/patients/appointments/create'
                            render={() => <CreateAppointment {...this.props} />}/>*/}
 
                                 {/*** Patient Communication Routes*/}
-                                <Route exact path='/patients/communications'
-                                       render={() => (this.state.currentPatient ?
-                                           <Redirect
-                                               to={"/patient/" + this.state.currentPatient.id + "/communications"}/> :
-                                           <PatientRequiredNoticeCard
-                                               togglePatientListModal={this.togglePatientListModal}/>)}/>
+                                {that.props.activePracticePermissions.PatientCommunications || that.allowAllPermissions?  
+                                    <Route exact path='/patients/communications'
+                                        render={() => (this.state.currentPatient ?
+                                            <Redirect
+                                                to={"/patient/" + this.state.currentPatient.id + "/communications"}/> :
+                                            <PatientRequiredNoticeCard
+                                                togglePatientListModal={this.togglePatientListModal}/>)}/>
+                                :null}
+                                {that.props.activePracticePermissions.PatientCommunications || that.allowAllPermissions? 
                                 <Route exact path='/patient/:id/communications'
                                        render={(route) => <PatientCommunication
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                                :null}
 
                                 {/*** Patient Vital Sign Routes*/}
-                                <Route exact path='/patients/emr/vitalsigns'
-                                       render={(route) => (this.state.currentPatient ?
-                                           <Redirect
-                                               to={"/patient/" + this.state.currentPatient.id + "/emr/vitalsigns"}/> :
-                                           <PatientVitalSign
-                                               togglePatientListModal={this.togglePatientListModal}
-                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />)}/>
+                                {that.props.activePracticePermissions.PatientVitalSigns || that.allowAllPermissions? 
+                                    <Route exact path='/patients/emr/vitalsigns'
+                                        render={(route) => (this.state.currentPatient ?
+                                            <Redirect
+                                                to={"/patient/" + this.state.currentPatient.id + "/emr/vitalsigns"}/> :
+                                            <PatientVitalSign
+                                                togglePatientListModal={this.togglePatientListModal}
+                                                key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />)}/>
+                                :null}
+                                
                                 <Route path='/patient/:id/emr/vitalsigns'
-                                       render={(route) => <PatientVitalSign
-                                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />}/>
+                                       render={(route) =>(that.props.activePracticePermissions.PatientVitalSigns || that.allowAllPermissions? <PatientVitalSign
+                                       key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />:<PermissionDenied/>)}/>
 
+                                
                                 <Route exact path='/patient/:id/emr/vitalsigns/edit'
-                                       render={(route) => <AddorEditPatientVitalSigns
-                                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
-
+                                       render={(route) => (that.props.activePracticePermissions.PatientVitalSigns || that.allowAllPermissions? <AddorEditPatientVitalSigns
+                                       key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>:<PermissionDenied/>)}/>
+                               
                                 {/*** Patient Clinic Notes Routes*/}
+
                                 <Route path={"/patients/emr/clinicnotes"}
                                        render={(route) =>
                                            <PatientClinicNotes
@@ -227,6 +242,7 @@ class PatientHome extends React.Component {
                                                key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
 
                                 {/*** Patient Completed Procedures Routes*/}
+                                {that.props.activePracticePermissions.PatientCompletedProcedure || that.allowAllPermissions? 
                                 <Route exact path='/patients/emr/workdone'
                                        render={(route) => (this.state.currentPatient ?
                                            <Redirect
@@ -234,26 +250,34 @@ class PatientHome extends React.Component {
                                            <PatientCompletedProcedures
                                                togglePatientListModal={this.togglePatientListModal}
                                                key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>)}/>
+                                :null}
+                                {that.props.activePracticePermissions.PatientCompletedProcedure || that.allowAllPermissions? 
                                 <Route path='/patient/:id/emr/workdone'
                                        render={(route) => <PatientCompletedProcedures
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
-
+                                :null}
                                 {/*** Patient Files Routes*/}
+                                {that.props.activePracticePermissions.PatientFiles || that.allowAllPermissions? 
                                 <Route exact path='/patients/emr/files'
                                        render={(route) => (this.state.currentPatient ?
                                            <Redirect to={"/patient/" + this.state.currentPatient.id + "/emr/files"}/> :
                                            <PatientFiles
                                                togglePatientListModal={this.togglePatientListModal}
                                                key={this.state.currentPatient ? this.state.currentPatient.id : null} {...route} {...this.state}/>)}/>
+                                :null}
+                                {that.props.activePracticePermissions.PatientFiles || that.allowAllPermissions? 
                                 <Route path={"/patient/:id/emr/files"}
                                        render={(route) => <PatientFiles
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...route} {...this.state}/>}/>
+                                :null}
+                                {that.props.activePracticePermissions.PatientFiles || that.allowAllPermissions? 
                                 <Route path={"/patient/:id/emr/create-medicalCertificate"}
                                        render={(route) => <PatientMedicalCertificate
 
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...route} {...this.state}/>}/>
-
+                                :null}
                                 {/*** Patient Prescriptions Routes*/}
+                                {that.props.activePracticePermissions.PatientPrescriptions || that.allowAllPermissions? 
                                 <Route exact path='/patients/emr/prescriptions'
                                        render={(route) => (this.state.currentPatient ?
                                            <Redirect
@@ -261,26 +285,33 @@ class PatientHome extends React.Component {
                                            <PatientPrescriptions
                                                togglePatientListModal={this.togglePatientListModal}
                                                key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />)}/>
+                                :null}
+                                {that.props.activePracticePermissions.PatientPrescriptions || that.allowAllPermissions? 
                                 <Route path='/patient/:id/emr/prescriptions'
                                        render={(route) => <PatientPrescriptions
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />}/>
-
+                                :null}
                                 {/*** Patient Treatment Plan Routes*/}
+                                {that.props.activePracticePermissions.PatientTreatmentPlans || that.allowAllPermissions? 
                                 <Route exact path='/patients/emr/plans'
                                        render={(route) => (this.state.currentPatient ?
                                            <Redirect to={"/patient/" + this.state.currentPatient.id + "/emr/plans"}/> :
                                            <PatientTreatmentPlans
                                                togglePatientListModal={this.togglePatientListModal}
                                                key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />)}/>
+                                :null}
+                                {that.props.activePracticePermissions.PatientTreatmentPlans || that.allowAllPermissions? 
                                 <Route path='/patient/:id/emr/plans'
                                        render={(route) => <PatientTreatmentPlans
                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />}/>
-
+                                :null}
                                 {/*** Patient Timeline Routes*/}
-                                <Route path={"/patient/:id/emr/timeline"} render={(route) => <PatientTimeline
-                                    key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
-
+                               
+                                <Route path={"/patient/:id/emr/timeline"} render={(route) => (that.props.activePracticePermissions.PatientTimeline || that.allowAllPermissions? 
+                                                    <PatientTimeline
+                                                    key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>:<PermissionDenied/>)}/>
                                 {/*** Patient Lab Order Routes*/}
+                                {that.props.activePracticePermissions.PatientLabOrders || that.allowAllPermissions? 
                                 <Route exact path='/patient/emr/labtrackings'
                                        render={(route) => (this.state.currentPatient ?
                                                <Redirect
@@ -288,12 +319,14 @@ class PatientHome extends React.Component {
                                                <PatientLabOrders
                                                    key={this.state.currentPatient} {...this.state} {...route}/>
                                        )}/>
-
+                                :null}
+                               
                                 <Route path='/patient/:id/emr/labtrackings'
-                                       render={(route) => <PatientLabOrders
-                                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />}/>
-
+                                       render={(route) =>(that.props.activePracticePermissions.PatientLabOrders || that.allowAllPermissions?  <PatientLabOrders
+                                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />:<PermissionDenied/>)}/>
+                               
                                 {/*** Patient Invoices Routes*/}
+                                {that.props.activePracticePermissions.PatientInvoices || that.allowAllPermissions? 
                                 <Route exact path='/patients/billing/invoices'
                                        render={(route) => (this.state.currentPatient ?
                                            <Redirect
@@ -301,11 +334,13 @@ class PatientHome extends React.Component {
                                            <PatientInvoices
                                                togglePatientListModal={this.togglePatientListModal}
                                                key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>)}/>
+                                :null}
                                 <Route path='/patient/:id/billing/invoices'
-                                       render={(route) => <PatientInvoices
-                                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                                       render={(route) => (that.props.activePracticePermissions.PatientInvoices || that.allowAllPermissions? <PatientInvoices
+                                       key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>:<PermissionDenied/>)}/>
 
                                 {/*** Patient Payments Routes*/}
+                                {that.props.activePracticePermissions.PatientPayments || that.allowAllPermissions? 
                                 <Route path='/patients/billing/payments'
                                        render={(route) => (this.state.currentPatient ?
                                            <Redirect
@@ -313,23 +348,24 @@ class PatientHome extends React.Component {
                                            <PatientPayments
                                                togglePatientListModal={this.togglePatientListModal}
                                                key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>)}/>
+                                :null}
                                 <Route path='/patient/:id/billing/payments'
-                                       render={(route) => <PatientPayments
-                                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                                       render={(route) =>(that.props.activePracticePermissions.PatientPayments || that.allowAllPermissions?<PatientPayments
+                                       key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>:<PermissionDenied/>)}/>
 
                                 {/*** Patient Ledger Routes*/}
                                 <Route exact path='/patient/:id/billing/ledger'
-                                       render={(route) => <PatientLedgers
-                                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                                       render={(route) =>(that.props.activePracticePermissions.PatientLedger || that.allowAllPermissions? <PatientLedgers
+                                       key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>:<PermissionDenied/>)}/>
 
                                 <Route exact path='/patient/:id/prescriptions/template/add'
-                                       render={(route) => <PrescriptionTemplate
-                                           key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                                       render={(route) =>(that.props.activePracticePermissions.PatientPrescriptions || that.allowAllPermissions? <PrescriptionTemplate
+                                       key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>:<PermissionDenied/>)}/>
+                               
                                 <Route path="/patient/:id/booking" render={(route) => (that.props.activePracticePermissions.PatientBookings || that.props.allowAllPermissions ?
-                                    <BookingHome {...this.state}
-                                                 {...this.props}
-                                                 {...route}
-                                    key={this.state.currentPatient ? this.state.currentPatient.id : null}/>:<PermissionDenied/>)}/>
+                                    <BookingHome {...this.state}{...this.props} {...route} key={this.state.currentPatient ? this.state.currentPatient.id : null}/>:<PermissionDenied/>)}/>
+                               
+                              
                                 <Route render={(route) =>
                                     (this.state.currentPatient ?
                                         <Redirect
@@ -337,6 +373,7 @@ class PatientHome extends React.Component {
                                         <PatientProfile {...this.state}
                                                         key={this.state.currentPatient}
                                                         setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
+                                                        
 
                             </Switch>
                         </Content>

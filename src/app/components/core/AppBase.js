@@ -181,7 +181,7 @@ class AppBase extends React.Component {
                                            <CreateAppointment {...this.state}{...this.props} {...route}
                                                 startTime={this.state.startTime}/>:<PermissionDenied/>)}/>
                                 <Route exact path="/calendar/blockcalendar"
-                                       render={(route) =>(that.props.activePracticePermissions.BlockCalendar || that.props.allowAllPermissions ?
+                                       render={(route) =>(that.state.activePracticePermissions.BlockCalendar || that.state.allowAllPermissions ?
                                        <BlockCalendar {...this.state} {...this.props} {...route}/>:<PermissionDenied/>)}/>
                                 <Route path="/calendar"
                                        render={(route) => (that.state.activePracticePermissions.ViewCalendar ?
@@ -208,10 +208,11 @@ class AppBase extends React.Component {
                                                                                              {...route}
                                                                                              key={that.state.active_practiceId}/>}/>
 
-                                <Route path="/profile" render={(route) => <Profile {...this.state}
-                                                                                   {...this.props}
-                                                                                   {...route}
-                                                                                   key={that.state.active_practiceId}/>}/>
+                                <Route path="/profile" render={(route) =>
+                                            <Profile {...this.state}
+                                                {...this.props}
+                                                {...route}  key={that.state.active_practiceId}/>}/>
+
                                 {this.state.activePracticePermissions.ViewCalendar ?
                                     <Route exact path="/" render={(route) => <Calendar {...this.state}
                                                                                        {...this.props}

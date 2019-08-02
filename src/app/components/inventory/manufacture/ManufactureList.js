@@ -67,12 +67,14 @@ export default class ManufactureList extends React.Component {
             title: 'Action',
             render: function (record) {
                 return <div>
-                    <Link to={'/inventory/manufacture/edit/' + record.id}>Edit</Link>
+                    {that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ?
+                    <Link to={'/inventory/manufacture/edit/' + record.id}>Edit</Link>:null}
                     <Divider type="vertical"/>
+                    {that.props.activePracticePermissions.DeleteManufacturer || that.props.allowAllPermissions ?
                     <Popconfirm title="Are you sure delete this item?"
                                 onConfirm={() => that.deleteManufacture(record.id)} okText="Yes" cancelText="No">
-                        <a disabled={!that.props.activePracticePermissions.DeleteManufacturer}>Delete</a>
-                    </Popconfirm>
+                        <a>Delete</a>
+                    </Popconfirm>:null}
 
                     
                 </div>
@@ -85,7 +87,7 @@ export default class ManufactureList extends React.Component {
                    render={(route) =>(that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ? <AddManufacture {...this.state} {...route} loadData={that.loadData}/>:<PermissionDenied/>)}/>
             <Card title="Manufactures" extra={<Link to={"/inventory/manufacture/add"}> <Button type="primary" disabled={!that.props.activePracticePermissions.EditManufacturer}><Icon
                 type="plus"/> Add</Button></Link>}>
-                <CustomizedTable loading={this.state.loading} dataSource={this.state.manufactures} columns={manufactureColoumns}/>
+                <CustomizedTable loading={this.state.loading} dataSource={this.state.manufactures} columns={manufactureColoumns} hideReport={!that.props.activePracticePermissions.ExportManufacturer}/>
             </Card>
         </Switch>
         </div>
