@@ -4,6 +4,7 @@ import {PATIENTS_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
+import {hideMobile} from "../../../utils/permissionUtils";
 
 export default class PatientsReport extends React.Component {
     constructor(props) {
@@ -52,6 +53,7 @@ export default class PatientsReport extends React.Component {
     }
 
     render() {
+        let that = this;
         const columns = [{
             title: 'Date',
             key: 'date',
@@ -76,6 +78,7 @@ export default class PatientsReport extends React.Component {
             title: 'Patient Number',
             dataIndex: 'patient.user.mobile',
             key: 'patient.user.mobile',
+            render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value)
         },];
 
 

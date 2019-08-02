@@ -2,20 +2,11 @@ import React from "react";
 import {Route} from "react-router";
 
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
-import {Button, Card, Form, Icon, Row} from "antd";
-import {
-    CHECKBOX_FIELD,
-    DATE_PICKER,
-    NUMBER_FIELD,
-    SUCCESS_MSG_TYPE,
-    INPUT_FIELD,
-    RADIO_FIELD,
-    SELECT_FIELD
-} from "../../../constants/dataKeys";
-import {VITAL_SIGNS_API, PATIENT_PROFILE} from "../../../constants/api";
-import {getAPI, interpolate, displayMessage} from "../../../utils/common";
+import {Card, Form, Row} from "antd";
+import {NUMBER_FIELD, SELECT_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {VITAL_SIGNS_API} from "../../../constants/api";
+import {displayMessage, interpolate} from "../../../utils/common";
 import {Redirect} from 'react-router-dom'
-import moment from 'moment';
 
 
 class AddorEditPatientVitalSigns extends React.Component {
@@ -29,13 +20,12 @@ class AddorEditPatientVitalSigns extends React.Component {
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
-        console.log("Working or not");
 
     }
 
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        let redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -47,12 +37,14 @@ class AddorEditPatientVitalSigns extends React.Component {
             key: "pulse",
             // required: true,
             initialValue: this.props.editVitalSign ? this.props.editVitalSign.pulse : null,
-            type: NUMBER_FIELD
+            type: NUMBER_FIELD,
+            follow: 'BPM'
         }, {
             label: "Temperature",
             key: "temperature",
             initialValue: this.props.editVitalSign ? this.props.editVitalSign.temperature : null,
-            type: INPUT_FIELD
+            type: NUMBER_FIELD,
+            follow: 'Fahrenheit'
         }, {
             label: "Temperature Part",
             key: "temperature_part",
@@ -63,10 +55,17 @@ class AddorEditPatientVitalSigns extends React.Component {
                 value: "oral"
             }]
         }, {
-            label: "Blood Pressure",
-            key: "blood_pressure",
-            initialValue: this.props.editVitalSign ? this.props.editVitalSign.blood_pressure : null,
-            type: INPUT_FIELD,
+            label: "Blood Pressure Up",
+            key: "blood_pressure_up",
+            initialValue: this.props.editVitalSign ? this.props.editVitalSign.blood_pressure_up : null,
+            type: NUMBER_FIELD,
+            follow: 'mmhg'
+        }, {
+            label: "Blood Pressure Down",
+            key: "blood_pressure_down",
+            initialValue: this.props.editVitalSign ? this.props.editVitalSign.blood_pressure_down : null,
+            type: NUMBER_FIELD,
+            follow: 'mmhg'
         }, {
             label: "Position",
             key: "position",
@@ -77,12 +76,34 @@ class AddorEditPatientVitalSigns extends React.Component {
             label: "Weight",
             key: "weight",
             initialValue: this.props.editVitalSign ? this.props.editVitalSign.weight : null,
-            type: INPUT_FIELD,
+            type: NUMBER_FIELD,
+            follow: 'kg.'
         }, {
             label: "Resp Rate",
             key: "resp_rate",
             initialValue: this.props.editVitalSign ? this.props.editVitalSign.resp_rate : null,
-            type: INPUT_FIELD,
+            type: NUMBER_FIELD,
+            follow: 'breaths/min'
+        }, {
+            label: "Creatinine Level",
+            key: "creatinine",
+            initialValue: this.props.editVitalSign ? this.props.editVitalSign.creatinine : null,
+            type: NUMBER_FIELD,
+        }, {
+            label: "Haemoglobin Level",
+            key: "haemoglobin",
+            initialValue: this.props.editVitalSign ? this.props.editVitalSign.haemoglobin : null,
+            type: NUMBER_FIELD,
+        }, {
+            label: "Urea Level",
+            key: "urea",
+            initialValue: this.props.editVitalSign ? this.props.editVitalSign.urea : null,
+            type: NUMBER_FIELD,
+        }, {
+            label: "Uric Acid Level",
+            key: "uric_acid",
+            initialValue: this.props.editVitalSign ? this.props.editVitalSign.uric_acid : null,
+            type: NUMBER_FIELD,
         },];
 
 
@@ -126,12 +147,12 @@ class AddorEditPatientVitalSigns extends React.Component {
             <Card>
                 <Route exact path='/patient/:id/emr/vitalsigns/edit'
                        render={() => (this.state.editVitalSign ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit vital sign"
+                           <TestFormLayout defaultValues={defaultValues} title="Edit Report Manual"
                                            changeRedirect={this.changeRedirect} formProp={editformProp}
                                            fields={fields}/> :
                            <Redirect to='/patients/profile'/>)}/>
                 <Route exact path='/patient/:id/emr/vitalsigns/add'
-                       render={() => <TestFormLayout title="Add vital sign"
+                       render={() => <TestFormLayout title="Add Report Manual"
                                                      defaultValues={defaultValues}
                                                      changeRedirect={this.changeRedirect}
                                                      formProp={formProp} fields={fields}/>}/>

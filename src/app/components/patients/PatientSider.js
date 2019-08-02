@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 const Sider = Layout.Sider;
 
 class PatientSider extends React.Component {
-    
+
     render() {
         let that=this;
         return <Sider trigger={null}
@@ -55,7 +55,7 @@ class PatientSider extends React.Component {
                         <Menu.Item key="20">
                             <Link
                                 to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/vitalsigns" : "/patients/emr/vitalsigns"}>
-                                <Icon type="heart"/>Vital Signs</Link>
+                                <Icon type="heart"/>Report Manual</Link>
                         </Menu.Item>
                     :null}
                     {that.props.activePracticePermissions.PatientClinicalNotes || that.props.allowAllPermissions ?

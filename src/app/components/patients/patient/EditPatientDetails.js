@@ -14,6 +14,7 @@ import moment from 'moment';
 import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 import WebCamField from "../../common/WebCamField";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {Link} from "react-router-dom";
 
 const {Option} = Select;
 
@@ -215,7 +216,7 @@ class EditPatientDetails extends React.Component {
         };
         return (
             <Form onSubmit={that.handleSubmit}>
-                <Card title={that.props.currentPatient ? "Edit Profile" : "Add Patient"}
+                <Card title={<span>{that.props.currentPatient ? "Edit Profile" : "Add Patient"}&nbsp;&nbsp;<Link to={"/patients/patientprintform"}>Print Patient Form</Link></span>}
                       extra={<div>
                           <Button style={{margin: 5}} type="primary" htmlType="submit">Submit</Button>
                           {that.props.history ?

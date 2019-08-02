@@ -3,6 +3,7 @@ import {AutoComplete, Avatar, Button, Dropdown, Icon, Layout, List, Menu, Select
 import {Link} from 'react-router-dom';
 import {getAPI, interpolate, makeFileURL} from "../../utils/common";
 import {SEARCH_PATIENT} from "../../constants/api";
+import {hideMobile} from "../../utils/permissionUtils";
 
 const {Header} = Layout;
 
@@ -60,9 +61,6 @@ class AppHeader extends React.Component {
         let that = this;
         const userMenu = (
             <Menu>
-                {/*<Menu.Item>*/}
-                {/*UserName*/}
-                {/*</Menu.Item>*/}
                 <Menu.Item key="profile">
                     <Link to="/profile">Profile</Link>
                 </Menu.Item>
@@ -96,19 +94,16 @@ class AppHeader extends React.Component {
                                   showArrow={false}
                                   value={this.state.searchPatientString}
                                   filterOption={false}
-                        // onChange={this.handleChange}
                                   onSelect={this.handlePatientSelect}>
                         {this.state.patientListData.map((option) => <AutoComplete.Option
                             value={option.id.toString()}>
                             <List.Item style={{padding: 0}}>
                                 <List.Item.Meta
                                     avatar={<Avatar
-
                                         src={option.image ? makeFileURL(option.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
                                     title={option.user.first_name + " (" + option.user.id + ")"}
-                                    description={<small>{option.user.mobile}</small>}
+                                    description={that.props.activePracticePermissions.PatientPhoneNumber ? option.user.mobile : hideMobile(option.user.mobile)}
                                 />
-
                             </List.Item>
                         </AutoComplete.Option>)}
                     </AutoComplete>

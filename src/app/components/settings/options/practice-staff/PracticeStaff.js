@@ -430,7 +430,7 @@ class PracticeDetails extends React.Component {
             title: "Action",
             key: "action",
             render: function (text, record) {
-                return (record.user && record.is_superuser ?
+                return (record.user && record.user.is_superuser ?
                     <Tag> Not Allowed</Tag> :
                     <span>
             <Link to={"/settings/clinics-staff/" + record.id + "/edit"}>

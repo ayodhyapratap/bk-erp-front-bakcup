@@ -1,29 +1,19 @@
 import React from "react";
-import {Route} from "react-router";
-import {} from "react-router-dom";
+import {Link} from "react-router-dom";
 
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
-import {Button, Card, Checkbox, Divider, Form, Icon, Row, Table, Tag, Popconfirm} from "antd";
+import {Button, Card, Checkbox, Divider, Form, Icon, Popconfirm, Table} from "antd";
+import {DOCTORS_ROLE} from "../../../constants/dataKeys";
 import {
-    CHECKBOX_FIELD,
-    DATE_PICKER,
-    NUMBER_FIELD,
-    SUCCESS_MSG_TYPE,
-    INPUT_FIELD,
-    RADIO_FIELD,
-    SELECT_FIELD,
-    DOCTORS_ROLE
-} from "../../../constants/dataKeys";
-import {
-    PATIENTS_LIST,
-    PATIENT_PROFILE,
-    APPOINTMENT_PERPRACTICE_API,
-    PROCEDURE_CATEGORY,
-    PRACTICESTAFF, EMR_TREATMENTNOTES, APPOINTMENT_API, APPOINTMENT_REPORTS, SINGLE_APPOINTMENT_PERPRACTICE_API
+    APPOINTMENT_API,
+    APPOINTMENT_REPORTS,
+    EMR_TREATMENTNOTES,
+    PRACTICESTAFF,
+    PROCEDURE_CATEGORY
 } from "../../../constants/api";
-import {getAPI, interpolate, displayMessage, putAPI, postAPI} from "../../../utils/common";
-import {Redirect, Link} from 'react-router-dom'
+import {getAPI, interpolate, putAPI} from "../../../utils/common";
 import moment from 'moment';
+import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
 
 
 class Appointment extends React.Component {
@@ -54,11 +44,10 @@ class Appointment extends React.Component {
         this.loadTreatmentNotes();
         if (this.props.match.params.appointmentid) {
             this.loadAppointment(this.props.match.params.appointmentid);
-        }
-        else {
+        } else {
             this.loadAllAppointments();
         }
-        
+
     }
 
     loadAppointment(id) {
@@ -73,7 +62,7 @@ class Appointment extends React.Component {
                 loading: false,
 
             });
-            
+
 
         }
 
@@ -144,8 +133,7 @@ class Appointment extends React.Component {
                     that.setState({
                         practice_doctors: doctor,
                     })
-                }
-                else {
+                } else {
                     let doctor = that.state.practice_staff;
                     doctor.push(usersdata);
                     that.setState({
@@ -196,27 +184,27 @@ class Appointment extends React.Component {
     deleteAppointment(record) {
         let that = this;
         that.setState({
-            loading:true
+            loading: true
         })
         let reqData = {'is_active': false, 'status': "Cancelled"}
         let successFn = function (data) {
             that.loadAllAppointments();
             that.setState({
-                loading:false
+                loading: false
             })
 
         }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         }
         putAPI(interpolate(APPOINTMENT_API, [record.id]), reqData, successFn, errorFn);
     }
 
     render() {
-        let that=this;
-        console.log("props",this.props)
+        let that = this;
+        console.log("props", this.props)
         const procedures = {}
         if (this.state.procedure_category) {
             this.state.procedure_category.forEach(function (procedure) {
@@ -253,10 +241,12 @@ class Appointment extends React.Component {
             title: 'Patient Mobile',
             dataIndex: 'patient.user.mobile',
             key: 'patient_mobile',
+            render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value)
         }, {
             title: 'Email',
             dataIndex: 'patient.user.email',
             key: 'email',
+            render: value => that.props.activePracticePermissions.PatientEmailId ? value : hideEmail(value)
         }, {
             title: 'Doctor',
             key: 'doctor',
@@ -300,7 +290,8 @@ class Appointment extends React.Component {
                 key: 'action',
                 render: (text, record) => (
                     <span>
-                <a onClick={() => this.editAppointment(record)} disabled={!that.props.activePracticePermissions.EditAppointment}>Edit</a>
+                <a onClick={() => this.editAppointment(record)}
+                   disabled={!that.props.activePracticePermissions.EditAppointment}>Edit</a>
                 <Divider type="vertical"/>
                 <Popconfirm title="Are you sure delete this item?"
                             onConfirm={() => this.deleteAppointment(record)} okText="Yes" cancelText="No">
@@ -313,11 +304,11 @@ class Appointment extends React.Component {
             }];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         if (this.props.match.params.id) {
-            return <Card extra={that.props.activePracticePermissions.AddAppointment || that.props.allowAllPermissions?
+            return <Card extra={that.props.activePracticePermissions.AddAppointment || that.props.allowAllPermissions ?
                 <Link to={"/calendar/create-appointment?patient=" + this.props.match.params.id}>
                     <Button type="primary">
                         <Icon type="plus"/>&nbsp;Add Appointment</Button>
-                </Link>:null}>
+                </Link> : null}>
 
                 <Table loading={this.state.loading} columns={columns} scroll={{x: 1300}}
                        dataSource={this.state.appointments}/>
@@ -325,11 +316,11 @@ class Appointment extends React.Component {
 
             </Card>
         }
-        return <Card extra={that.props.activePracticePermissions.AddAppointment || that.props.allowAllPermissions?
-                <Link to="/calendar/create-appointment">
-                    <Button type="primary">
-                        <Icon type="plus"/>&nbsp;Add Appointment</Button>
-                </Link>:null}>
+        return <Card extra={that.props.activePracticePermissions.AddAppointment || that.props.allowAllPermissions ?
+            <Link to="/calendar/create-appointment">
+                <Button type="primary">
+                    <Icon type="plus"/>&nbsp;Add Appointment</Button>
+            </Link> : null}>
             <Table loading={this.state.loading} columns={columns} scroll={{x: 1300}}
                    dataSource={this.state.appointments}/>
 
