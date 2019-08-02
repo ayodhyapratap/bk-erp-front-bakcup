@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Layout} from "antd";
+import {Affix, Alert, Layout} from "antd";
 import {Route, Switch} from "react-router-dom";
 import {loggedInUser, logInUser, logInUserWithOtp, logOutUser,} from "./app/utils/auth";
 import AppBase from "./app/components/core/AppBase";
@@ -14,11 +14,16 @@ class App extends Component {
         this.state = {
             user: loggedInUser(),
             redirect: false,
+            production: (window.location.hostname == 'clinic.bkarogyam.com')
         };
         // momenttz.tz.setDefault('Asia/Kolkata');
 
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
+    }
+
+    componentDidMount() {
+        console.log(window.location.hostname);
     }
 
     login(data, withOtp = true) {
@@ -53,6 +58,13 @@ class App extends Component {
     render() {
         ReactGA.pageview(window.location.pathname + window.location.search);
         return <Layout>
+            {this.state.production ? null : <Affix>
+                <Alert
+                    message="Demo Version (Only for testing purposes)"
+                    banner
+                    closable
+                />
+            </Affix>}
             <Switch>
                 <Route exact path="/login" render={() => <Auth {...this.state} login={this.login}/>}/>
                 <Route exact path="/password-reset/:token"

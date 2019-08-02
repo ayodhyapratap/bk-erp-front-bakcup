@@ -1,36 +1,38 @@
 import React from "react";
 import {
+    Alert,
+    AutoComplete,
+    Avatar,
+    Button,
+    Card,
+    DatePicker,
     Form,
     Input,
-    Select,
-    CheckBox,
-    Alert,
-    DatePicker,
-    Button,
     InputNumber,
-    Card,
     List,
-    Avatar,
-    AutoComplete, Spin
+    Select,
+    Spin
 } from 'antd';
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import moment from "moment/moment";
 import {DOCTORS_ROLE, SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
 import {
+    ALL_APPOINTMENT_API,
     APPOINTMENT_API,
     APPOINTMENT_CATEGORIES,
+    BLOCK_CALENDAR,
+    CALENDER_SETTINGS,
+    DOCTOR_VISIT_TIMING_API,
     EMR_TREATMENTNOTES,
-    PRACTICESTAFF, PROCEDURE_CATEGORY,
-    SEARCH_PATIENT,
-    ALL_APPOINTMENT_API,
     PATIENT_PROFILE,
-    APPOINTMENT_PERPRACTICE_API, BLOCK_CALENDAR, CALENDER_SETTINGS, DOCTOR_VISIT_TIMING_API
-
+    PRACTICESTAFF,
+    PROCEDURE_CATEGORY,
+    SEARCH_PATIENT
 } from "../../constants/api";
 import {Checkbox, Radio} from "antd/lib/index";
 import {displayMessage, getAPI, interpolate, makeFileURL, postAPI, putAPI} from "../../utils/common";
-import {Redirect} from "react-router-dom";
-import {DAY_KEYS ,APPOINTMENT_STATUS} from "../../constants/hardData";
+import {APPOINTMENT_STATUS, DAY_KEYS} from "../../constants/hardData";
+import {hideMobile} from "../../utils/permissionUtils";
 
 const {TextArea} = Input;
 const FormItem = Form.Item;
@@ -569,7 +571,7 @@ export default class CreateAppointmentForm extends React.Component {
 
         return <Card>
             <Spin spinning={this.state.saving}>
-                <Form onSubmit={this.handleSubmit} >
+                <Form onSubmit={this.handleSubmit}>
                     {this.props.title ? <h2>{this.props.title}</h2> : null}
 
                     <FormItem key="schedule_at" label="Appointment Schedule" {...formItemLayout}>
@@ -601,22 +603,25 @@ export default class CreateAppointmentForm extends React.Component {
                     </FormItem>
 
 
-                    {that.state.patientDetails?
+                    {that.state.patientDetails ?
                         <FormItem key="id" value={this.state.patientDetails.id} {...formPatients}>
                             <Card bordered={false} style={{background: '#ECECEC'}}>
                                 <Meta
                                     avatar={<Avatar style={{backgroundColor: '#ffff'}}
+                                                    size={150}
                                                     src={this.state.patientDetails.image ? makeFileURL(this.state.patientDetails.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
                                     title={this.state.patientDetails.user.first_name}
-                                    description={this.state.patientDetails.user.mobile}
-
+                                    description={
+                                        <span>{that.props.activePracticePermissions.PatientPhoneNumber ? this.state.patientDetails.user.mobile : hideMobile(this.state.patientDetails.user.mobile)}<br/>
+                                    <Button type="primary" style={{float: 'right'}} onClick={this.handleClick}>Add New
+                                    Patient</Button>
+                                    </span>}
                                 />
 
-                                <Button type="primary" style={{float: 'right'}} onClick={this.handleClick}>Add New
-                                    Patient</Button>
+
                             </Card>
                         </FormItem>
-                        :<div>
+                        : <div>
                             <FormItem key="patient_name" label="Patient Name"  {...formItemLayout}>
                                 {getFieldDecorator("patient_name", {
                                     initialValue: this.state.appointment ? this.state.appointment.patient.user.first_name : null,
@@ -628,7 +633,6 @@ export default class CreateAppointmentForm extends React.Component {
                                                   defaultActiveFirstOption={false}
                                                   showArrow={false}
                                                   filterOption={false}
-                                        // onChange={this.handleChange}
                                                   onSelect={this.handlePatientSelect}>
                                         {this.state.patientListData.map((option) => <AutoComplete.Option
                                             value={option.id.toString()}>
@@ -636,8 +640,8 @@ export default class CreateAppointmentForm extends React.Component {
                                                 <List.Item.Meta
                                                     avatar={<Avatar
                                                         src={option.image ? makeFileURL(option.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
-                                                    title={option.user.first_name + " (" + option.user.id + ")"}
-                                                    description={option.user.mobile}
+                                                    title={option.user.first_name + " (ID:" + option.user.id + ")"}
+                                                    description={that.props.activePracticePermissions.PatientPhoneNumber ? option.user.mobile : hideMobile(option.user.mobile)}
                                                 />
 
                                             </List.Item>
@@ -708,14 +712,14 @@ export default class CreateAppointmentForm extends React.Component {
                     </FormItem> */}
                     {this.state.appointment ?
                         <FormItem key="status" {...formItemLayout} label="Status">
-                            {getFieldDecorator("status", {initialValue:this.state.appointment.status})
+                            {getFieldDecorator("status", {initialValue: this.state.appointment.status})
                             (
                                 <Select placeholder="Status">
                                     {APPOINTMENT_STATUS.map((option) => <Select.Option
                                         value={option.value}>{option.label}</Select.Option>)}
                                 </Select>
                             )}
-                        </FormItem>:null
+                        </FormItem> : null
                     }
 
 

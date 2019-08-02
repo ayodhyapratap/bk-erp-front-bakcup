@@ -1,5 +1,5 @@
 import React from "react";
-import {Breadcrumb, Layout} from "antd";
+import {Layout} from "antd";
 import ReportsHeader from "./ReportsHeader";
 import AmountDueReport from "./amountdue/AmountDueReport";
 import {Route, Switch} from "react-router-dom";
@@ -38,47 +38,60 @@ class ReportsHome extends React.Component {
     }
 
     render() {
-        let that=this;
+        let that = this;
         return <Layout>
             <ReportsHeader reportsDateRange={this.reportsDateRange} {...this.props}/>
             <Content style={{margin: '16px'}}>
                 <Switch>
-                    <Route exact path="/reports/amountdue" render={(route) => (that.props.activePracticePermissions.ReportsAmountDue || that.props.allowAllPermissions ?
-                        <AmountDueReport {...this.state} {...route}/>:<PermissionDenied/>
-                    )} />
+                    <Route exact path="/reports/amountdue"
+                           render={(route) => (that.props.activePracticePermissions.ReportsAmountDue || that.props.allowAllPermissions ?
+                                   <AmountDueReport {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                           )}/>
 
-                    <Route exact path="/reports/emr" render={(route) =>(that.props.activePracticePermissions.ReportsEMR || that.props.allowAllPermissions ?
-                        <EMRReports  {...this.state} {...route}/>:<PermissionDenied/>
-                    )}/>
-                    <Route exact path="/reports/expenses" render={(route) => (that.props.activePracticePermissions.ReportsExpenses || that.props.allowAllPermissions ?
-                        <ExpensesReport  {...this.state} {...route}/>:<PermissionDenied/>
-                    )}/>
-                    <Route exact path="/reports/income" render={(route) =>(that.props.activePracticePermissions.ReportsIncome || that.props.allowAllPermissions ?
-                        <IncomeReport  {...this.state} {...route}/>:<PermissionDenied/>
-                    )}/>
-                    <Route exact path="/reports/inventory" render={(route) => (that.props.activePracticePermissions.ReportsInventory || that.props.allowAllPermissions? 
-                        <InventoryReport {...this.state} {...route}/>:<PermissionDenied/>
-                    )} />
+                    <Route exact path="/reports/emr"
+                           render={(route) => (that.props.activePracticePermissions.ReportsEMR || that.props.allowAllPermissions ?
+                                   <EMRReports  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                           )}/>
+                    <Route exact path="/reports/expenses"
+                           render={(route) => (that.props.activePracticePermissions.ReportsExpenses || that.props.allowAllPermissions ?
+                                   <ExpensesReport  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                           )}/>
+                    <Route exact path="/reports/income"
+                           render={(route) => (that.props.activePracticePermissions.ReportsIncome || that.props.allowAllPermissions ?
+                                   <IncomeReport  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                           )}/>
+                    <Route exact path="/reports/inventory"
+                           render={(route) => (that.props.activePracticePermissions.ReportsInventory || that.props.allowAllPermissions ?
+                                   <InventoryReport {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                           )}/>
 
-                    <Route exact path="/reports/inventoryretails" render ={(route) =>(that.props.activePracticePermissions.ReportsInventoryRetail || that.props.allowAllPermissions ?
-                        <InventoryDetailsReport {...this.state} {...route}/>:<PermissionDenied/>
-                    ) } />
+                    <Route exact path="/reports/inventoryretails"
+                           render={(route) => (that.props.activePracticePermissions.ReportsInventoryRetail || that.props.allowAllPermissions ?
+                                   <InventoryDetailsReport {...this.props} {...this.state} {...route}/> :
+                                   <PermissionDenied/>
+                           )}/>
 
-                    <Route exact path="/reports/patients" render={(route) =>(that.props.activePracticePermissions.ReportsPatients || that.props.allowAllPermissions ?
-                        <PatientsReport  {...this.state} {...route}/>:<PermissionDenied/>
-                    )}/>
-                    <Route exact path="/reports/payments" render={(route) =>(that.props.activePracticePermissions.ReportsPayments || that.props.allowAllPermissions ?
-                        <PaymentsReport  {...this.state} {...route}/>:<PermissionDenied/>
-                    )}/>
-                    <Route exact path="/reports/summary" render={(route) => (that.props.activePracticePermissions.ReportsDailySummary || that.props.allowAllPermissions ?
-                        <DailySummaryReport {...this.state} {...route}/>:<PermissionDenied/>
-                    )} />
-                    <Route exact path="/reports/bed_booking" render={(route) => (that.props.activePracticePermissions.ReportsBedBooking ||that.props.allowAllPermissions?
-                        <BedBookingReport {...this.state } {...route}/>:<PermissionDenied/>
-                    )}/>
-                    <Route render={(route) =>(that.props.activePracticePermissions.ReportsAppointments || that.props.allowAllPermissions ?
-                        <AppointmentsReport  {...this.state} {...route}/>:<PermissionDenied/>
-                    )}/>
+                    <Route exact path="/reports/patients"
+                           render={(route) => (that.props.activePracticePermissions.ReportsPatients || that.props.allowAllPermissions ?
+                                   <PatientsReport  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                           )}/>
+                    <Route exact path="/reports/payments"
+                           render={(route) => (that.props.activePracticePermissions.ReportsPayments || that.props.allowAllPermissions ?
+                                   <PaymentsReport  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                           )}/>
+                    <Route exact path="/reports/summary"
+                           render={(route) => (that.props.activePracticePermissions.ReportsDailySummary || that.props.allowAllPermissions ?
+                                   <DailySummaryReport {...this.props} {...this.state} {...route}/> :
+                                   <PermissionDenied/>
+                           )}/>
+                    <Route exact path="/reports/bed_booking"
+                           render={(route) => (that.props.activePracticePermissions.ReportsBedBooking || that.props.allowAllPermissions ?
+                                   <BedBookingReport {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                           )}/>
+                    <Route
+                        render={(route) => (that.props.activePracticePermissions.ReportsAppointments || that.props.allowAllPermissions ?
+                                <AppointmentsReport  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                        )}/>
                 </Switch>
             </Content>
         </Layout>
