@@ -15,40 +15,41 @@ import {ALL_PRACTICE_STAFF, DRUG_CATALOG, SINGLE_PRACTICE_STAFF_API, STAFF_ROLES
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
 import {Redirect} from 'react-router-dom'
 import {Route} from "react-router";
+import {ROLES} from "../../../../constants/hardData";
 
-class AddStaffDoctor extends React.Component {
+class AddEditStaff extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             redirect: false,
             editStaff: null,
-            roles: [],
+            // roles: [],
 
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.loadEditPracticeStaff = this.loadEditPracticeStaff.bind(this);
-        if (this.props.match.params.doctorid) {
+        if (this.props.match.params.staffid) {
             this.loadEditPracticeStaff();
         }
-        this.staffRoles();
+        // this.staffRoles();
     }
 
-    staffRoles() {
-        let that = this;
-        let successFn = function (data) {
-            that.setState({
-                roles: data,
-            })
-        }
-        let errorFn = function () {
-        }
-        getAPI(STAFF_ROLES, successFn, errorFn)
-    }
+    // staffRoles() {
+    //     let that = this;
+    //     let successFn = function (data) {
+    //         that.setState({
+    //             roles: data,
+    //         })
+    //     }
+    //     let errorFn = function () {
+    //     }
+    //     getAPI(STAFF_ROLES, successFn, errorFn)
+    // }
 
     loadEditPracticeStaff() {
-        let doctorid = this.props.match.params.doctorid;
-        console.log(doctorid)
+        let staffid = this.props.match.params.staffid;
+        console.log(staffid)
         let that = this;
         let successFn = function (data) {
             that.setState({
@@ -59,7 +60,7 @@ class AddStaffDoctor extends React.Component {
             that.setState({
             })
         }
-        getAPI(interpolate(SINGLE_PRACTICE_STAFF_API, [doctorid]), successFn, errorFn)
+        getAPI(interpolate(SINGLE_PRACTICE_STAFF_API, [staffid]), successFn, errorFn)
 
     }
 
@@ -74,10 +75,10 @@ class AddStaffDoctor extends React.Component {
         let that = this;
         const fields = [
             {
-                label: "Doctor/Staff Name",
+                label: "Staff Name",
                 key: "user.first_name",
                 required: true,
-                placeholder:"Doctor/Staff Name",
+                placeholder:"Staff Name",
                 initialValue: this.state.editStaff ? this.state.editStaff.user.first_name : null,
                 type: INPUT_FIELD
             }, {
@@ -96,25 +97,13 @@ class AddStaffDoctor extends React.Component {
                 disabled: !!this.state.editStaff,
                 initialValue: this.state.editStaff ? this.state.editStaff.user.email : null,
                 type: EMAIL_FIELD
-            }, {
-                label: "Registration Number",
-                key: "registration_number",
-                placeholder:"Registration Number",
-                initialValue: this.state.editStaff ? this.state.editStaff.registration_number : null,
-                type: INPUT_FIELD
-            }, {
+            },{
                 label: "Role",
                 key: "role",
                 required: true,
                 initialValue: this.state.editStaff ? this.state.editStaff.role : null,
                 type: SELECT_FIELD,
-                options: this.state.roles.map(role => ({label: role.name, value: [role.id]}))
-            }, {
-                label: "Calendar Colour",
-                key: "calendar_colour",
-                initialValue: this.state.editStaff ? this.state.editStaff.calendar_colour : null,
-                type: COLOR_PICKER,
-
+                options: ROLES.map(role => ({label: role.label, value: [role.value]}))
             }, {
                 label: "Schedule SMS",
                 key: "schedule_sms",
@@ -166,7 +155,7 @@ class AddStaffDoctor extends React.Component {
                 errorFn: function () {
 
                 },
-                action: interpolate(SINGLE_PRACTICE_STAFF_API, [that.props.match.params.doctorid]),
+                action: interpolate(SINGLE_PRACTICE_STAFF_API, [that.props.match.params.staffid]),
                 method: "put",
             }
         }
@@ -175,15 +164,15 @@ class AddStaffDoctor extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <Row>
             <Card>
-                <Route exact path='/settings/clinics-staff/:doctorid/edit'
-                       render={(route) => (this.props.match.params.doctorid ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit Doctor/Staff"
+                <Route exact path='/settings/clinics-staff/staff/:staffid/edit'
+                       render={(route) => (this.props.match.params.staffid ?
+                           <TestFormLayout defaultValues={defaultValues} title="Edit Staff"
                                            changeRedirect={this.changeRedirect} formProp={editformProp}
                                            fields={fields} {...route}/> : <Redirect to={'/settings/clinics-staff'}/>)}/>
 
-                <Route exact path='/settings/clinics-staff/adddoctor'
+                <Route exact path='/settings/clinics-staff/addstaff'
                        render={(route) => <TestFormLayout defaultValues={defaultValues} changeRedirect={this.changeRedirect}
-                                                     title="Add Doctor/Staff " formProp={formProp} fields={fields} {...route}/>}/>
+                                                     title="Add Staff " formProp={formProp} fields={fields} {...route}/>}/>
             </Card>
             {this.state.redirect && <Redirect to='/settings/clinics-staff'/>}
 
@@ -191,4 +180,4 @@ class AddStaffDoctor extends React.Component {
     }
 }
 
-export default AddStaffDoctor;
+export default AddEditStaff;

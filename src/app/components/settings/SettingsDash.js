@@ -3,7 +3,8 @@ import PracticeDetails from "./options/practice-detail/PracticeDetails"
 import {Route, Switch} from 'react-router-dom';
 import {Layout} from "antd";
 import PracticeStaff from "./options/practice-staff/PracticeStaff";
-import AddStaffDoctor from "./options/practice-staff/AddStaffDoctor";
+import AddEditDoctor from "./options/practice-staff/AddEditDoctor";
+import AddEditStaff from "./options/practice-staff/AddEditStaff";
 import AddPracticeDetails from "./options/practice-detail/AddPracticeDetails";
 import CommunicationSettings from "./options/communication-settings/CommunicationSettings";
 import RecentProcedure from "./options/procedure-catalog/RecentProcedure";
@@ -58,14 +59,23 @@ class SettingsDash extends React.Component {
                 }}>
                     <Switch>
 
-                        <Route exact path="/settings/clinics-staff/adddoctor"
-                               render={(route) => (this.props.activePracticePermissions.SettingsPracticeStaff || this.props.allowAllPermissions ?
-                                       <AddStaffDoctor  {...this.props} {...route} /> : <PermissionDenied/>
-                               )}/>
-                        <Route exact path="/settings/clinics-staff/:doctorid/edit"
-                               render={(route) => (this.props.activePracticePermissions.SettingsPracticeStaff || this.props.allowAllPermissions ?
-                                       <AddStaffDoctor  {...this.props} {...route} /> : <PermissionDenied/>
-                               )}/>
+                            <Route exact path="/settings/clinics-staff/adddoctor"
+                                   render={(route) => (this.props.activePracticePermissions.SettingsPracticeStaff || this.props.allowAllPermissions ?
+                                          <AddEditDoctor  {...this.props} {...route} /> : <PermissionDenied/>
+                                   )}/>
+                            <Route exact path="/settings/clinics-staff/:doctorid/edit"
+                                   render={(route) => (this.props.activePracticePermissions.SettingsPracticeStaff || this.props.allowAllPermissions ?
+                                          <AddEditDoctor  {...this.props} {...route} /> : <PermissionDenied/>
+                                   )}/>
+
+                            <Route exact path="/settings/clinics-staff/addstaff"
+                                   render={(route) => (this.props.activePracticePermissions.SettingsPracticeStaff || this.props.allowAllPermissions ?
+                                          <AddEditStaff  {...this.props} {...route} /> : <PermissionDenied/>
+                                   )}/>
+                            <Route exact path="/settings/clinics-staff/staff/:staffid/edit"
+                                   render={(route) => (this.props.activePracticePermissions.SettingsPracticeStaff || this.props.allowAllPermissions ?
+                                          <AddEditStaff  {...this.props} {...route} /> : <PermissionDenied/>
+                                   )}/>
                         <Route path="/settings/clinics-staff"
                                render={(route) => (this.props.activePracticePermissions.SettingsPracticeStaff || this.props.allowAllPermissions ?
                                        <PracticeStaff  {...this.props} {...route} /> : <PermissionDenied/>

@@ -216,3 +216,8 @@ export const OPD_IPD =[
     {label:"OPD", value:"OPD"},
     {label:"IPD",value:"IPD"}
 ];
+
+export const ROLES = [
+    {label:"ADMIN" ,value:'1'},
+    {label:"CLINIC_ADMIN" ,value:'2'}
+];

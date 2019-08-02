@@ -292,7 +292,7 @@ class PracticeDetails extends React.Component {
 
     render() {
         let that = this;
-        const columns = [{
+        const doctorColumns = [{
             title: "Name",
             dataIndex: "user.first_name",
             key: "name",
@@ -343,7 +343,54 @@ class PracticeDetails extends React.Component {
             }
         }];
 
-        const notification_columns = [{
+        const staffColumns = [{
+            title: "Name",
+            dataIndex: "user.first_name",
+            key: "name",
+        }, {
+            title: "Email",
+            dataIndex: "user.email",
+            key: "email",
+            render: (value, record) => (record.user && record.user.is_active ? record.user.email : value)
+        }, {
+            title: "Mobile",
+            dataIndex: "user.mobile",
+            key: "mobile",
+        },{
+            title: "Enable Staff",
+            dataIndex: "in_practice",
+            key: "enable_staff",
+            render: (item, record) => (record.user && record.user.is_superuser ?
+                <Tag color="red">Not Allowed</Tag> :
+                <AntSwitch defaultChecked={!!item} onChange={(e) => that.toggleEnableStaffPractice(record.id, e)}/>)
+        }, {
+            title: "Last Login",
+            key: "user",
+            render: (text, record) => (record.user && record.user.is_active ? (record.user.last_login ? moment(record.user.last_login).fromNow() : '--') :
+                <Tag color="#f50">Activation Pending</Tag>),
+        }, {
+            title: "Action",
+            key: "action",
+            render: function (text, record) {
+                return (record.user && record.user.is_superuser ?
+                    <Tag color="red">SuperUser</Tag> :
+                    <span>
+            <Link to={"/settings/clinics-staff/staff/" + record.id + "/edit"}>
+              <a>Edit</a>
+            </Link>
+                     <Divider type="vertical"/>
+                        <a onClick={() => that.editPermissions(record.id)}
+                           disabled={!record.in_practice}>Permissions</a>
+                    <Divider type="vertical"/>
+                    <Popconfirm title="Are you sure delete this staff?"
+                                onConfirm={() => that.deleteStaff(record.id)} okText="Yes" cancelText="No">
+                         <a>Delete</a>
+                    </Popconfirm>
+            </span>)
+            }
+        }];
+
+        const notification_doctor_columns = [{
             title: "Name",
             dataIndex: "user.first_name",
             key: "name",
@@ -392,6 +439,56 @@ class PracticeDetails extends React.Component {
             </span>)
             }
         }];
+
+        const notification_staff_columns = [{
+            title: "Name",
+            dataIndex: "user.first_name",
+            key: "name",
+        }, {
+            title: "Confirmation SMS",
+            dataIndex: "confirmation_sms",
+            key: "confirmation_sms",
+            render: confirmation_sms => (
+                <span>
+            <Checkbox
+                checked={confirmation_sms}/>
+            </span>),
+        }, {
+            title: "Schedule SMS",
+            dataIndex: "schedule_sms",
+            key: "schedule_sms",
+            render: schedule_sms => (
+                <span>
+            <Checkbox checked={schedule_sms}/>
+            </span>)
+        }, {
+            title: "Confirmation EMAIL",
+            dataIndex: "confirmation_email",
+            key: "confirmation_email",
+            render: confirmation_email => (
+                <span>
+            <Checkbox checked={confirmation_email}/>
+            </span>)
+        }, {
+            title: "Online Appointment SMS",
+            dataIndex: "online_appointment_sms",
+            key: "online_appointment_sms",
+            render: online_appointment_sms => (
+                <Checkbox checked={online_appointment_sms}/>
+            )
+        }, {
+            title: "Action",
+            key: "action",
+            render: function (text, record) {
+                return (record.user && record.is_superuser ?
+                    <Tag> Not Allowed</Tag> :
+                    <span>
+            <Link to={"/settings/clinics-staff/staff/" + record.id + "/edit"}>
+              <a>Edit</a>
+            </Link>
+            </span>)
+            }
+        }];
         return <Row>
             <h2>Practice Staff</h2>
             <Switch>
@@ -401,25 +498,33 @@ class PracticeDetails extends React.Component {
                     <Card>
                         <Tabs defaultActiveKey={this.state.defaultActiveTab} onChange={this.changeTab}>
                             <TabPane tab={<span><Icon type="user-add"/>Manage Staff</span>} key="#staff">
-                                <h2>Doctors <Link to="/settings/clinics-staff/adddoctor">
-                                    <Button type="primary" style={{float: 'right'}}>
-                                        <Icon type="plus"/>&nbsp;Add Doctor/Staff
-                                    </Button>
-                                </Link></h2>
-                                <Table loading={this.state.loading} pagination={false} columns={columns}
+                                <h2>Doctors 
+                                    <Link to="/settings/clinics-staff/adddoctor">
+                                        <Button type="primary" style={{float: 'right'}}>
+                                            <Icon type="plus"/>&nbsp;Add Doctor
+                                        </Button>
+                                    </Link>
+                                    <Link to="/settings/clinics-staff/addstaff">
+                                        <Button type="primary" style={{float: 'right' ,marginRight:'5px'}}>
+                                            <Icon type="plus"/>&nbsp;Add Staff
+                                        </Button>
+                                    </Link>
+                                </h2>
+
+                                <Table loading={this.state.loading} pagination={false} columns={doctorColumns}
                                        dataSource={this.state.practice_doctors}/>
                                 <Divider/>
                                 <h2>Staff </h2>
-                                <Table loading={this.state.loading} pagination={false} columns={columns}
+                                <Table loading={this.state.loading} pagination={false} columns={staffColumns}
                                        dataSource={this.state.practice_staff}/>
                             </TabPane>
                             <TabPane tab={<span><Icon type="team"/>Staff Notification</span>} key="#notification">
                                 <h2>Doctors</h2>
-                                <Table loading={this.state.loading} pagination={false} columns={notification_columns}
+                                <Table loading={this.state.loading} pagination={false} columns={notification_doctor_columns}
                                        dataSource={this.state.practice_doctors}/>
                                 <Divider/>
                                 <h2>Staff</h2>
-                                <Table loading={this.state.loading} pagination={false} columns={notification_columns}
+                                <Table loading={this.state.loading} pagination={false} columns={notification_staff_columns}
                                        dataSource={this.state.practice_staff}/>
                             </TabPane>
                             <TabPane tab={<span><Icon type="schedule"/>Doctors visit Timing</span>} key="#timing">
