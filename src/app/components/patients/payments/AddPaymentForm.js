@@ -1,5 +1,5 @@
 import React from "react";
-import {Row, Col, Card, List, Divider, Statistic, InputNumber, Select, Button, Popconfirm} from 'antd';
+import {Button, Card, Col, Divider, InputNumber, List, Popconfirm, Row, Select} from 'antd';
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
 import {INVOICES_API, PATIENT_PAYMENTS_API, PAYMENT_MODES} from "../../../constants/api";
 import {WARNING_MSG_TYPE} from "../../../constants/dataKeys";
@@ -58,9 +58,10 @@ class AddPaymentForm extends React.Component {
         }
         getAPI(INVOICES_API, successFn, errorFn, {
             page: that.state.loadMoreInvoice || 1,
-            is_cancelled:false,
+            is_cancelled: false,
             is_pending: true,
-            patient: this.props.match.params.id
+            patient: this.props.match.params.id,
+            practice: this.props.active_practiceId
         });
     }
     addInvoiceToPayments = (id) => {
@@ -283,7 +284,7 @@ class AddPaymentForm extends React.Component {
                                     style={{marginBottom: '10px'}}>
                                   <table style={{width: '100%'}}>
                                       <tr>
-                                          <td style={{maxWidth: 'calc(100% - 60px)'}}><h4>INV{invoice.id}</h4></td>
+                                          <td style={{maxWidth: 'calc(100% - 60px)'}}><h4>{invoice.invoice_id}</h4></td>
                                           <td style={{textAlign: 'right'}}><b>{invoice.date}</b></td>
                                       </tr>
                                   </table>
@@ -306,7 +307,8 @@ class AddPaymentForm extends React.Component {
                                       </tr>
                                       <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}>Paid Amount</td>
-                                          <td style={{textAlign: 'right'}}><b>{invoice.payments_data ? invoice.payments_data.toFixed(2) : 0}</b></td>
+                                          <td style={{textAlign: 'right'}}>
+                                              <b>{invoice.payments_data ? invoice.payments_data.toFixed(2) : 0}</b></td>
                                       </tr>
                                       <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}><b>Amount Due</b></td>

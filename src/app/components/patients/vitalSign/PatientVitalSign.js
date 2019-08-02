@@ -1,17 +1,15 @@
 import React from "react";
-import {Avatar, Input, Table, Col, Button, Card, Icon, Divider, Tabs} from "antd";
+import {Button, Card, Divider, Icon, Input, Modal, Table, Tabs} from "antd";
 import {Link, Route, Switch} from "react-router-dom";
-import {PRESCRIPTION_PDF, VITAL_SIGN_PDF, VITAL_SIGNS_API} from "../../../constants/api";
-import {displayMessage, getAPI, interpolate, patchAPI, postAPI, putAPI} from "../../../utils/common";
+import {VITAL_SIGN_PDF, VITAL_SIGNS_API} from "../../../constants/api";
+import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
 import moment from 'moment';
-import PatientRequiredNoticeCard from "../PatientRequiredNoticeCard";
 import CustomizedTable from "../../common/CustomizedTable";
 import AddorEditPatientVitalSigns from "./AddorEditPatientVitalSigns";
-import {AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Area, LineChart, Line} from 'recharts';
+import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis} from 'recharts';
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
-import {Modal} from "antd";
 
 const {Meta} = Card;
 const Search = Input.Search;
@@ -120,11 +118,11 @@ class PatientVitalSign extends React.Component {
             dataIndex: 'created_at',
             key: 'name',
             render: created_at => <span>{moment(created_at).format('LLL')}</span>,
-        },{
+        }, {
             title: 'Temp(F)',
             key: 'temperature',
             render: (text, record) => (
-                <span> {record.temperature},{record.temperature_part}</span>
+                <span> {record.temperature}<br/>,{record.temperature_part}</span>
             )
         }, {
             title: 'Pulse (BPM)',
@@ -138,12 +136,29 @@ class PatientVitalSign extends React.Component {
             title: 'SYS/DIA mmhg',
             key: 'address',
             render: (text, record) => (
-                <span> {record.blood_pressure},{record.position}</span>
+                <span> {record.blood_pressure_up}/{record.blood_pressure_down}<br/>,{record.position}</span>
             )
         }, {
             title: 'WEIGHT kg',
             dataIndex: 'weight',
             key: 'weight',
+        }, {
+            title: "Creatinine Level",
+            key: "creatinine",
+            dataIndex: "creatinine",
+        }, {
+            title: "Haemoglobin Level",
+            key: "haemoglobin",
+            dataIndex: "haemoglobin",
+        }, {
+            title: "Urea Level",
+            key: "urea",
+            dataIndex: "urea",
+
+        }, {
+            title: "Uric Acid Level",
+            key: "uric_acid",
+            dataIndex: "uric_acid",
         }, {
             title: 'Action',
             key: 'action',
@@ -175,7 +190,7 @@ class PatientVitalSign extends React.Component {
                            loadData={this.loadVitalsigns}/>}/>
                 <Route>
                     <Card
-                        title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Vital Sign" : "PatientVitalSign"}
+                        title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Report Manual" : "Patient Report Manual"}
                         extra={<Button.Group>
                             <Link to={"/patient/" + this.props.match.params.id + "/emr/vitalsigns/add"}>
                                 <Button type={"primary"}>
@@ -186,28 +201,31 @@ class PatientVitalSign extends React.Component {
                         <Tabs>
                             <Tabs.TabPane tab={"Charts"} key={1} style={{margin: 'auto'}}>
                                 <Divider>Pulse Chart (bpm)</Divider>
-                                <LineChart width={700} height={200} data={this.state.vitalsign}
+                                <LineChart width={700} height={200} data={this.state.vitalsign.reverse()}
                                            margin={{top: 10, right: 30, left: 0, bottom: 0}}>
-                                    <defs>
-                                        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
-                                            <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
-                                        </linearGradient>
-
-                                    </defs>
+                                    {/*<defs>*/}
+                                    {/*    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">*/}
+                                    {/*        <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>*/}
+                                    {/*        <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>*/}
+                                    {/*    </linearGradient>*/}
+                                    {/*    <Legend verticalAlign="top" height={36}/>*/}
+                                    {/*</defs>*/}
                                     <XAxis dataKey="created_at" tickFormatter={(value) => {
                                         return moment(value).format('LLL')
                                     }} tickCount={that.state.vitalsign.length}/>
-                                    <YAxis/>
+                                    <YAxis
+                                        domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
-                                    <Tooltip/>
+                                    <Tooltip
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
                                     <Line type="monotone" dataKey="pulse" stroke="#8884d8" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>
                                 </LineChart>
                                 <Divider>Temperature (F)</Divider>
-                                <LineChart width={700} height={200} data={this.state.vitalsign}
+                                <LineChart width={700} height={200} data={this.state.vitalsign.reverse()}
                                            margin={{top: 10, right: 30, left: 0, bottom: 0}}>
+                                    <Legend verticalAlign="top" height={36}/>
                                     <defs>
                                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
@@ -217,15 +235,17 @@ class PatientVitalSign extends React.Component {
                                     <XAxis dataKey="created_at" tickFormatter={(value) => {
                                         return moment(value).format('LLL')
                                     }} tickCount={this.state.vitalsign.length}/>
-                                    <YAxis/>
+                                    <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
-                                    <Tooltip/>
+
+                                    <Tooltip
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
                                     <Line type="monotone" dataKey="temperature" stroke="#82ca9d" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>
                                 </LineChart>
                                 <Divider>Blood Pressure (mmhg)</Divider>
-                                <LineChart width={700} height={200} data={this.state.vitalsign}
+                                <LineChart width={700} height={200} data={this.state.vitalsign.reverse()}
                                            margin={{top: 10, right: 30, left: 0, bottom: 0}}>
                                     <defs>
                                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
@@ -236,15 +256,18 @@ class PatientVitalSign extends React.Component {
                                     <XAxis dataKey="created_at" tickFormatter={(value) => {
                                         return moment(value).format('LLL')
                                     }} tickCount={this.state.vitalsign.length}/>
-                                    <YAxis/>
+                                    <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
-                                    <Tooltip/>
-                                    <Line type="monotone" dataKey="blood_pressure" stroke="#ffc658" fillOpacity={1}
+                                    <Tooltip labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                    <Line type="monotone" dataKey="blood_pressure_up" stroke="#ffc658" fillOpacity={1}
+                                          strokeWidth={4}
+                                          fill="url(#colorUv)"/>
+                                    <Line type="monotone" dataKey="blood_pressure_down" stroke="#82ca9d" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>
                                 </LineChart>
                                 <Divider>Weight (kg)</Divider>
-                                <LineChart width={700} height={200} data={this.state.vitalsign}
+                                <LineChart width={700} height={200} data={this.state.vitalsign.reverse()}
                                            margin={{top: 10, right: 30, left: 0, bottom: 0}}>
                                     <defs>
                                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
@@ -259,15 +282,16 @@ class PatientVitalSign extends React.Component {
                                     <XAxis dataKey="created_at" tickFormatter={(value) => {
                                         return moment(value).format('LLL')
                                     }} tickCount={this.state.vitalsign.length}/>
-                                    <YAxis/>
+                                    <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
-                                    <Tooltip/>
+                                    <Tooltip
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
                                     <Line type="monotone" dataKey="weight" stroke="#8884d8" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>
                                 </LineChart>
                                 <Divider>Respiratory Rate (breaths/min)</Divider>
-                                <LineChart width={700} height={200} data={this.state.vitalsign}
+                                <LineChart width={700} height={200} data={this.state.vitalsign.reverse()}
                                            margin={{top: 10, right: 30, left: 0, bottom: 0}}>
                                     <defs>
                                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
@@ -282,10 +306,107 @@ class PatientVitalSign extends React.Component {
                                     <XAxis dataKey="created_at" tickFormatter={(value) => {
                                         return moment(value).format('LLL')
                                     }} tickCount={this.state.vitalsign.length}/>
-                                    <YAxis/>
+                                    <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
-                                    <Tooltip/>
+                                    <Tooltip
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
                                     <Line type="monotone" dataKey="resp_rate" stroke="#82ca9d" fillOpacity={1}
+                                          strokeWidth={4}
+                                          fill="url(#colorUv)"/>
+                                </LineChart>
+                                <Divider>Creatinine Level</Divider>
+                                <LineChart width={700} height={200} data={this.state.vitalsign.reverse()}
+                                           margin={{top: 10, right: 30, left: 0, bottom: 0}}>
+                                    <defs>
+                                        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+                                            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                                        </linearGradient>
+                                        <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+                                            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                                        </linearGradient>
+                                    </defs>
+                                    <XAxis dataKey="created_at" tickFormatter={(value) => {
+                                        return moment(value).format('LLL')
+                                    }} tickCount={this.state.vitalsign.length}/>
+                                    <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
+                                    <CartesianGrid strokeDasharray="3 3"/>
+                                    <Tooltip
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                    <Line type="monotone" dataKey="creatinine" stroke="#82ca9d" fillOpacity={1}
+                                          strokeWidth={4}
+                                          fill="url(#colorUv)"/>
+                                </LineChart>
+                                <Divider>Haemoglobin Level</Divider>
+                                <LineChart width={700} height={200} data={this.state.vitalsign.reverse()}
+                                           margin={{top: 10, right: 30, left: 0, bottom: 0}}>
+                                    <defs>
+                                        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+                                            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                                        </linearGradient>
+                                        <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+                                            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                                        </linearGradient>
+                                    </defs>
+                                    <XAxis dataKey="created_at" tickFormatter={(value) => {
+                                        return moment(value).format('LLL')
+                                    }} tickCount={this.state.vitalsign.length}/>
+                                    <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
+                                    <CartesianGrid strokeDasharray="3 3"/>
+                                    <Tooltip
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                    <Line type="monotone" dataKey="haemoglobin" stroke="#82ca9d" fillOpacity={1}
+                                          strokeWidth={4}
+                                          fill="url(#colorUv)"/>
+                                </LineChart>
+                                <Divider>Urea Level</Divider>
+                                <LineChart width={700} height={200} data={this.state.vitalsign.reverse()}
+                                           margin={{top: 10, right: 30, left: 0, bottom: 0}}>
+                                    <defs>
+                                        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+                                            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                                        </linearGradient>
+                                        <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+                                            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                                        </linearGradient>
+                                    </defs>
+                                    <XAxis dataKey="created_at" tickFormatter={(value) => {
+                                        return moment(value).format('LLL')
+                                    }} tickCount={this.state.vitalsign.length}/>
+                                    <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
+                                    <CartesianGrid strokeDasharray="3 3"/>
+                                    <Tooltip
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                    <Line type="monotone" dataKey="urea" stroke="#82ca9d" fillOpacity={1}
+                                          strokeWidth={4}
+                                          fill="url(#colorUv)"/>
+                                </LineChart>
+                                <Divider>Uric Acid Level</Divider>
+                                <LineChart width={700} height={200} data={this.state.vitalsign.reverse()}
+                                           margin={{top: 10, right: 30, left: 0, bottom: 0}}>
+                                    <defs>
+                                        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+                                            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                                        </linearGradient>
+                                        <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+                                            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                                        </linearGradient>
+                                    </defs>
+                                    <XAxis dataKey="created_at" tickFormatter={(value) => {
+                                        return moment(value).format('LLL')
+                                    }} tickCount={this.state.vitalsign.length}/>
+                                    <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
+                                    <CartesianGrid strokeDasharray="3 3"/>
+                                    <Tooltip
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                    <Line type="monotone" dataKey="uric_acid" stroke="#82ca9d" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>
                                 </LineChart>
@@ -304,12 +425,11 @@ class PatientVitalSign extends React.Component {
                     </Card>
                 </Route>
             </Switch>
-        }
-        else {
+        } else {
             return <div>
                 <Card
                     bodyStyle={{padding: 0}}
-                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Vital Sign" : "Patient Vital Sign"}
+                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Report Manual" : "Patients Report Manual"}
                     extra={<Button.Group>
                         <Button type={"primary"} onClick={() => that.props.togglePatientListModal(true)}>
                             <Icon type="plus"/>Add
@@ -329,8 +449,6 @@ class PatientVitalSign extends React.Component {
                                dataSource={[vitalsign]}/>
                     </Card>
                 </div>)}
-
-
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadInvoices(that.state.next)}
                                           loading={this.state.loading}
                                           hidden={!this.state.next}/>
@@ -341,3 +459,8 @@ class PatientVitalSign extends React.Component {
 }
 
 export default PatientVitalSign;
+
+function CustomizedTooltip(value, name, props) {
+    console.log(value, name, props);
+    return ["formatted value", "formatted name"]
+}

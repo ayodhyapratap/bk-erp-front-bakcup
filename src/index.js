@@ -4,8 +4,9 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {BrowserRouter as Router} from 'react-router-dom';
-import './app/assets/custom.css';
 import './app/assets/theme.less';
+import './app/assets/custom.css';
+
 
 
 ReactDOM.render(<Router><App/></Router>, document.getElementById('root'));
