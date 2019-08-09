@@ -175,7 +175,7 @@ class AddEditDoctor extends React.Component {
                 method: "put",
             }
         }
-        const defaultValues = [{key:'role',value:'[3]'}];
+        const defaultValues = [{key:'role',value:[3]}];
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <Row>
