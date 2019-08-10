@@ -49,8 +49,32 @@ class AppBase extends React.Component {
 
     activeData() {
         let that = this;
+        let successFn = function (data) {
+            that.setState(function (prevState) {
+                let permissions = {};
+                data.practice_permissions.forEach(function (permission) {
+                    permissions[permission.codename] = permission;
+                });
+                data.global_permissions.forEach(function (permission) {
+                    permissions[permission.codename] = permission;
+                });
+                return {
+                    activePracticePermissions: permissions,
+                    loadingPermissions: false,
+                    practiceList: loggedInUserPractices(),
+                }
+            }, function () {
+                // that.clinicData();
+            });
+        }
+        let errorFn = function () {
+            that.setState({
+                loadingPermissions: false
+            })
+        }
+
         that.setState(function (prevState) {
-            let activePracticeObj = null
+            let activePracticeObj = null;
             prevState.practiceList.forEach(function (practiceObj) {
                 if (practiceObj.practice.id == prevState.active_practiceId) {
                     activePracticeObj = practiceObj.practice
@@ -70,28 +94,7 @@ class AppBase extends React.Component {
         }, function () {
             loadUserDetails(that.state.active_practiceId, successFn, errorFn);
         })
-        let successFn = function (data) {
-            that.setState(function (prevState) {
-                let permissions = {};
-                data.practice_permissions.forEach(function (permission) {
-                    permissions[permission.codename] = permission;
-                });
-                data.global_permissions.forEach(function (permission) {
-                    permissions[permission.codename] = permission;
-                });
-                return {
-                    activePracticePermissions: permissions,
-                    loadingPermissions: false
-                }
-            }, function () {
-                // that.clinicData();
-            });
-        }
-        let errorFn = function () {
-            that.setState({
-                loadingPermissions: false
-            })
-        }
+
 
     }
 
@@ -198,7 +201,7 @@ class AppBase extends React.Component {
                                                                                          {...this.props}
                                                                                          {...route}
                                                                                          key={that.state.active_practiceId}
-                                                                                         refreshClinicData={this.clinicData}/>}/>
+                                                                                         refreshClinicData={this.activeData}/>}/>
                                 <Route path="/inventory" render={(route) => <InventoryHome {...this.state}
                                                                                            {...this.props}
                                                                                            {...route}

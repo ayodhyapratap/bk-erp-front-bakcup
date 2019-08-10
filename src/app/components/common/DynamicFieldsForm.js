@@ -203,7 +203,7 @@ class DynamicFieldsForm extends React.Component {
                 if (that.state.formProp.beforeSend) {
                     values = that.state.formProp.beforeSend(values);
                 }
-                console.log("Fields in the form", values);
+                // console.log("Fields in the form", values);
                 that.submitForm(values);
             }
         });
@@ -240,10 +240,12 @@ class DynamicFieldsForm extends React.Component {
     }
 
     colorChange(color, key) {
-        console.log(color, key);
+        let that = this;
         this.setState({
             colorPickerKey: key,
             colorPickerColor: color.hex,
+        }, function () {
+            that.props.form.setFieldsValue({[key]: color.hex})
         });
     }
 
