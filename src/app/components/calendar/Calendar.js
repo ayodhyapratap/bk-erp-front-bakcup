@@ -4,7 +4,7 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import TimeGrid from 'react-big-calendar/lib/TimeGrid'
-import BigCalendar from 'react-big-calendar'
+import {Calendar as BigCalendar, momentLocalizer} from 'react-big-calendar'
 import {
     Modal,
     Row,
@@ -22,7 +22,7 @@ import {
 import {DOCTORS_ROLE, SUCCESS_MSG_TYPE, WARNING_MSG_TYPE,} from "../../constants/dataKeys";
 import "./app.css";
 import {Route, Link, Switch} from "react-router-dom";
-import dates from 'date-arithmetic'
+import * as dates from 'date-arithmetic'
 import {getAPI, putAPI, interpolate, displayMessage} from "../../utils/common";
 import {
     APPOINTMENT_PERPRACTICE_API,
@@ -47,7 +47,7 @@ import {
     WAITING_STATUS
 } from "../../constants/hardData";
 
-const localizer = BigCalendar.momentLocalizer(moment)
+const localizer = momentLocalizer(moment)
 const DragAndDropCalendar = withDragAndDrop(BigCalendar)
 const {Content} = Layout;
 const confirm = Modal.confirm;
@@ -629,11 +629,11 @@ class App extends Component {
                                         {this.state.calendarType == 'APPOINTMENTS' ?
                                             <div>
                                                 {that.props.activePracticePermissions.BlockCalendar || that.props.allowAllPermissions ?
-                                                <Button block style={{margin: 5}}>
-                                                    <Link to={"/calendar/blockcalendar"}>
-                                                        <Icon type="stop"/> Block Calendar
-                                                    </Link>
-                                                </Button>:null}
+                                                    <Button block style={{margin: 5}}>
+                                                        <Link to={"/calendar/blockcalendar"}>
+                                                            <Icon type="stop"/> Block Calendar
+                                                        </Link>
+                                                    </Button> : null}
                                                 <Dropdown trigger={'click'} overlay={
                                                     <Menu onClick={this.setFilterType}>
                                                         <Menu.Item key={"DOCTOR"}>
