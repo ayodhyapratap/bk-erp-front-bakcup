@@ -82,9 +82,9 @@ export default class ManufactureList extends React.Component {
         }];
         return <div><Switch>
             <Route exact path='/inventory/manufacture/add'
-                   render={(route) =>(that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ? <AddManufacture {...this.state} {...route} loadData={that.loadData}/>:<PermissionDenied/>)}/>
+                   render={(route) =>(that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ? <AddManufacture {...this.state} {...route} {...this.props} loadData={that.loadData}/>:<PermissionDenied/>)}/>
             <Route exact path='/inventory/manufacture/edit/:id'
-                   render={(route) =>(that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ? <AddManufacture {...this.state} {...route} loadData={that.loadData}/>:<PermissionDenied/>)}/>
+                   render={(route) =>(that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ? <AddManufacture {...this.state} {...route} {...this.props} loadData={that.loadData}/>:<PermissionDenied/>)}/>
             <Card title="Manufactures" extra={<Link to={"/inventory/manufacture/add"}> <Button type="primary" disabled={!that.props.activePracticePermissions.EditManufacturer}><Icon
                 type="plus"/> Add</Button></Link>}>
                 <CustomizedTable loading={this.state.loading} dataSource={this.state.manufactures} columns={manufactureColoumns} hideReport={!that.props.activePracticePermissions.ExportManufacturer}/>

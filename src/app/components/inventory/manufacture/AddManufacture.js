@@ -55,6 +55,7 @@ export default class AddManufacture extends React.Component {
 
 
     render() {
+        console.log("stste",this.state,"props",this.props)
         let that = this;
         const fields = [{
             label: "Name",
