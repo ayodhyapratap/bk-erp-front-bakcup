@@ -172,7 +172,7 @@ class PatientTimeline extends React.Component {
             label: <span style={{width: '100%'}}>Appointment</span>,
             value: 'appointments'
         }, {
-            label: <span style={{width: '100%'}}>Vital Signs</span>,
+            label: <span style={{width: '100%'}}>Report Manual</span>,
             value: 'vital_signs'
         }, {
             label: <span style={{width: '100%'}}>Clinic Notes</span>,
@@ -406,11 +406,11 @@ timelineVitalSignCard(item) {
         dataIndex: 'created_at',
         key: 'name',
         render: created_at => <span>{moment(created_at).format('hh:mm A')}</span>,
-    }, {
+    },{
         title: 'Temp(F)',
         key: 'temperature',
         render: (text, record) => (
-            <span> {record.temperature},{record.temperature_part}</span>
+            <span> {record.temperature}<br/>,{record.temperature_part}</span>
         )
     }, {
         title: 'Pulse (BPM)',
@@ -424,16 +424,33 @@ timelineVitalSignCard(item) {
         title: 'SYS/DIA mmhg',
         key: 'address',
         render: (text, record) => (
-            <span> {record.pulse},{record.position}</span>
+            <span> {record.blood_pressure_up}/{record.blood_pressure_down}<br/>,{record.position}</span>
         )
     }, {
         title: 'WEIGHT kg',
         dataIndex: 'weight',
         key: 'weight',
+    }, {
+        title: "Creatinine Level",
+        key: "creatinine",
+        dataIndex: "creatinine",
+    }, {
+        title: "Haemoglobin Level",
+        key: "haemoglobin",
+        dataIndex: "haemoglobin",
+    }, {
+        title: "Urea Level",
+        key: "urea",
+        dataIndex: "urea",
+
+    }, {
+        title: "Uric Acid Level",
+        key: "uric_acid",
+        dataIndex: "uric_acid",
     }];
     return <Card hoverable
                  bodyStyle={{backgroundColor: (item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id] ? '#B5EEFF' : 'initial')}}>
-        <h2><Icon type="heart"/> Vital Sign Recorded<Checkbox size="large" style={{float: 'right'}}
+        <h2><Icon type="heart"/> Report Manual Recorded<Checkbox size="large" style={{float: 'right'}}
                                                               checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
                                                               onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
             {item.practice_data ? <Tag style={{float: 'right'}}>

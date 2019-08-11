@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Card, Col, Divider, Icon, Input, Modal, Popconfirm, Radio, Row, Spin, Table, Tag} from "antd";
-import {getAPI, interpolate, putAPI} from "../../../utils/common";
-import {INVENTORY_ITEM_API, SINGLE_INVENTORY_ITEM_API} from "../../../constants/api";
+import {getAPI, interpolate, putAPI ,startLoadingMessage,stopLoadingMessage} from "../../../utils/common";
+import {INVENTORY_ITEM_API, SINGLE_INVENTORY_ITEM_API,INVENTORY_ITEM_EXPORT} from "../../../constants/api";
 import {Link, Route, Switch} from "react-router-dom";
 import AddorEditInventoryItem from "./AddorEditInventoryItem";
 import AddOrConsumeStock from "./AddOrConsumeStock"
@@ -9,6 +9,11 @@ import {ADD_STOCK, CONSUME_STOCK, INVENTORY_ITEM_TYPE} from "../../../constants/
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import moment from "moment";
 import PermissionDenied from "../../common/errors/PermissionDenied";
+import {
+    ERROR_MSG_TYPE,
+    SUCCESS_MSG_TYPE,
+} from "../../../constants/dataKeys";
+import {BACKEND_BASE_URL} from "../../../config/connect";
 
 export default class InventoryItemList extends React.Component {
     constructor(props) {
@@ -27,7 +32,9 @@ export default class InventoryItemList extends React.Component {
         this.showAddOrConsumeModal = this.showAddOrConsumeModal.bind(this);
         this.setActionType = this.setActionType.bind(this);
         this.changeFilter = this.changeFilter.bind(this);
-        this.deleteObject = this.deleteObject.bind(this)
+        this.deleteObject = this.deleteObject.bind(this);
+        this.excelExport = this.excelExport.bind(this);
+        this.pdfExport = this.pdfExport.bind(this);
     }
 
     componentDidMount() {
@@ -66,6 +73,7 @@ export default class InventoryItemList extends React.Component {
         let reqParams = {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
+            page:page
         };
         if (that.state.itemTypeFilter != 'ALL') {
             reqParams.item_type = that.state.itemTypeFilter
@@ -127,6 +135,65 @@ export default class InventoryItemList extends React.Component {
         })
     }
 
+    excelExport() {
+        let that = this;
+        let msg = startLoadingMessage("Generating Report...");
+        let successFn = function (data) {
+            console.log("datattype",data)
+            stopLoadingMessage(msg, SUCCESS_MSG_TYPE, "Report Generated Successfully!!");
+            if (data.report_csv)
+                window.open(BACKEND_BASE_URL + data.report_csv);
+        }
+        let errorFn = function () {
+            stopLoadingMessage(msg, ERROR_MSG_TYPE, "Report Generation Failed!!");
+        }
+        let reqParams = {
+            maintain_inventory: true,
+            practice: this.props.active_practiceId,
+        };
+        if (that.state.itemTypeFilter != 'ALL') {
+            reqParams.item_type = that.state.itemTypeFilter
+        }
+        if (that.state.itemStockFilter != 'ALL') {
+            reqParams.filter_type = that.state.itemStockFilter
+        }
+        if (that.state.filterItemName) {
+            reqParams.item_name = that.state.filterItemName
+        }
+        if (that.state.filterItemCode) {
+            reqParams.code = that.state.filterItemCode
+        }
+        getAPI(INVENTORY_ITEM_EXPORT, successFn, errorFn, reqParams);
+    }
+    pdfExport() {
+        let that = this;
+        let msg = startLoadingMessage("Generating Report...");
+        let successFn = function (data) {
+            stopLoadingMessage(msg, SUCCESS_MSG_TYPE, "Report Generated Successfully!!");
+            if (data.report_pdf)
+                window.open(BACKEND_BASE_URL + data.report_pdf);
+        }
+        let errorFn = function () {
+            stopLoadingMessage(msg, ERROR_MSG_TYPE, "Report Generation Failed!!");
+        }
+        let reqParams = {
+            maintain_inventory: true,
+            practice: this.props.active_practiceId,
+        };
+        if (that.state.itemTypeFilter != 'ALL') {
+            reqParams.item_type = that.state.itemTypeFilter
+        }
+        if (that.state.itemStockFilter != 'ALL') {
+            reqParams.filter_type = that.state.itemStockFilter
+        }
+        if (that.state.filterItemName) {
+            reqParams.item_name = that.state.filterItemName
+        }
+        if (that.state.filterItemCode) {
+            reqParams.code = that.state.filterItemCode
+        }
+        getAPI(INVENTORY_ITEM_EXPORT, successFn, errorFn, reqParams);
+    }
     render() {
         console.log('props',this.props);
         const taxesdata = {};
@@ -160,25 +227,11 @@ export default class InventoryItemList extends React.Component {
             // render: (value,record) => <span>{record.inventory_item.code}</span>
         }, {
             title: 'Inventory Stock',
-            dataIndex: 'item_type_stock',
-            key: 'item_type_stock',
-            export: function (item_type_stock, record) {
-                let totalStock = 0;
-                if (item_type_stock.item_stock)
-                    item_type_stock.item_stock.forEach(function (stock) {
-                        totalStock += (Number.isInteger(stock.quantity) ? stock.quantity : 0)
-                    });
-                return totalStock;
-            },
-            render: function (item_type_stock, record) {
-                let totalStock = 0;
-                if (item_type_stock.item_stock)
-                    item_type_stock.item_stock.forEach(function (stock) {
-                        totalStock += (Number.isInteger(stock.quantity) ? stock.quantity : 0)
-                    });
-                return <span>{totalStock} {totalStock <= record.re_order_level ?
-                    <Tag color="#f50">Low</Tag> : null}</span>;
-            }
+            dataIndex: 'total_quantity',
+            key: 'total_quantity',
+            render:(value, record) => <span>{value} {value <= record.re_order_level ?
+                <Tag color="#f50">Low</Tag> : null}</span>
+               
         }, {
             title: 'Expired Stock',
             dataIndex: 'item_type_stock',
@@ -258,10 +311,11 @@ export default class InventoryItemList extends React.Component {
                         <Divider type="vertical"/>
                         {/* <Link to={"/inventory/edit-item-type/" + item.id}>Edit stock type </Link>
                         <Divider type="vertical"/> */}
+                        {item.total_quantity==0?
                         <Popconfirm title="Are you sure delete this item?"
                                     onConfirm={() => that.deleteObject(item.id)} okText="Yes" cancelText="No">
                             <a>Delete</a>
-                        </Popconfirm>
+                        </Popconfirm>:<Tag color="red">Can Not Delete</Tag>}
                     </div>
                 }
             }];
@@ -311,6 +365,7 @@ export default class InventoryItemList extends React.Component {
                             </Radio.Group>
                         </Row>
                         <Row gutter={16} style={{marginBottom: 10}}>
+                           
                             <Col span={4} style={{textAlign: "right"}}>
                                 <b> Item Name</b>
                             </Col>
@@ -331,6 +386,15 @@ export default class InventoryItemList extends React.Component {
                             </Col>
                             <Col span={8}>
                                 <Button type={"primary"} onClick={this.loadData}> Filter Items</Button>
+                            </Col>
+
+                            <Col span={4}>
+                                <Button.Group size="small">
+                                    <Button disabled={this.state.loading} type="primary" onClick={this.excelExport}><Icon
+                                        type="file-excel"/> Excel</Button>
+                                    <Button disabled={this.state.loading} type="primary" onClick={this.pdfExport}><Icon
+                                        type="file-pdf"/> PDF</Button>
+                                </Button.Group>
                             </Col>
                         </Row>
                         <Row>

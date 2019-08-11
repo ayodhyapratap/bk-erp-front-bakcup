@@ -167,6 +167,7 @@ export const BULK_STOCK_ENTRY = "stock_entry/bulk/";
 export const SUPPLIER_API = 'stock_entry/practice_supplier';
 export const SEARCH_THROUGH_QR = 'item_type_stock/find_item';
 export const BILL_SUPPLIER = 'stock_entry/bills_suppliers/';
+export const INVENTORY_ITEM_EXPORT='inventory_item/export'
 
 /**
  * MLM API
