@@ -22,7 +22,8 @@ class PatientSettingForm extends React.Component {
                 sm: {span: 16},
             },
         };
-
+        const patientDetailsList = PATIENT_DETAILS_LIST.map((patient_details) => <li>
+            <Checkbox value={patient_details.value}>{patient_details.value}</Checkbox></li>)
 
         let PreviewParamsURL = '?preview=true&type=' + this.props.type + '&sub_type=' + this.props.sub_type;
         if (this.state.print_setting) {
@@ -35,16 +36,19 @@ class PatientSettingForm extends React.Component {
         return (<Row gutter={16}>
                 <Col span={12}>
                     <Form {...formItemLayout}>
-                        <h2>Customize Patient Details</h2>
-                        <Form.Item>
+                        {/* <h2>Customize Patient Details</h2> */}
+                        {/* <Form.Item>
                             <Checkbox>Show Patient Details</Checkbox>
                             <ul className="subLists">
                                 {patientDetailsList}
                             </ul>
                         </Form.Item>
                         <Form.Item>
-                            <Checkbox>{EXCLUDE_PATIENT_DOB}</Checkbox>
-                        </Form.Item>
+                            {getFieldDecorator('save_for_all', {})(
+                                <Checkbox>{EXCLUDE_PATIENT_DOB}</Checkbox>
+                            )}
+                            
+                        </Form.Item> */}
                     </Form>
                 </Col>
                 <Col span={12} style={{textAlign: 'center'}}>

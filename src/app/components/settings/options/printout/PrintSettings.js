@@ -30,7 +30,7 @@ class PrintSettings extends React.Component {
             sub_type: this.props.sub_type,
             selectedFormType: 'PAGE',
             print_setting: {},
-            editedPrintSettings: {}
+            editedPrintSettings: {},
         }
         this.loadData = this.loadData.bind(this);
     }
@@ -115,8 +115,30 @@ class PrintSettings extends React.Component {
         }
         getAPI(path, successFn, errorFn);
     }
-
+    onchangeHandle=(type ,value)=>{
+        let that=this;
+        this.setState({
+            [type]:value
+        },function(){
+            if(this.state.is_patient_not){
+               that.setState({
+                    exclude_history:true,
+                    checked:false
+               })
+            }else{
+                that.setState({
+                    exclude_blood_group:false,
+                    exclude_address:false,
+                    exclude_email:false,
+                    exclude_phone:false,
+                    exclude_history:false,
+                    exclude_gender_dob:false
+                })
+            }
+        })
+    }
     render() {
+        console.log(this.state)
         let that = this;
         const formItemLayout = {
             labelCol: {
@@ -164,7 +186,7 @@ class PrintSettings extends React.Component {
 
         };
         const patientDetailsList = PATIENT_DETAILS_LIST.map((patient_details) => <li>
-            <Checkbox>{patient_details.value}</Checkbox></li>)
+            <Checkbox value={patient_details.value}>{patient_details.value}</Checkbox></li>)
         const pageOrientation = PAGE_ORIENTATION.map((pageOrientation) => <Radio
             value={pageOrientation.value}>{pageOrientation.value}</Radio>)
         const printer_type = PRINTER_TYPE.map((printerType) => <Radio
@@ -368,14 +390,52 @@ class PrintSettings extends React.Component {
                                     <div hidden={this.state.selectedFormType != 'PATIENT'}>
                                         <h2>Customize Patient Details</h2>
                                         <Form.Item>
-                                            <Checkbox>Show Patient Details</Checkbox>
+                                            {getFieldDecorator('patient_details', {})(
+                                                <Checkbox onChange={(e)=>this.onchangeHandle('is_patient_not',e.target.checked)}>Show Patient Details</Checkbox>)
+                                            }
+                                           
+                                        </Form.Item>
                                             <ul className="subLists">
-                                                {patientDetailsList}
+                                                <Form.Item>
+                                                    {getFieldDecorator('exclude_history', {})(
+                                                        <Checkbox >Exclude Mediacal History</Checkbox>)
+                                                    }
+                                                
+                                                </Form.Item>
+
+                                                <Form.Item>
+                                                    {getFieldDecorator('exclude_phone', {})(
+                                                        <Checkbox>Exclude Patient Number</Checkbox>)
+                                                    }
+                                                
+                                                </Form.Item>
+                                                <Form.Item>
+                                                    {getFieldDecorator('exclude_email', {})(
+                                                        <Checkbox>Exclude Patient Email Id</Checkbox>)
+                                                    }
+                                                
+                                                </Form.Item>
+
+                                                <Form.Item>
+                                                    {getFieldDecorator('exclude_address', {})(
+                                                        <Checkbox>Exclude address</Checkbox>)
+                                                    }
+                                                
+                                                </Form.Item>
+                                                <Form.Item>
+                                                    {getFieldDecorator('exclude_blood_group', {})(
+                                                        <Checkbox>Exclude Blood Group</Checkbox>)
+                                                    }
+                                                
+                                                </Form.Item>
+                                                <Form.Item>
+                                                    {getFieldDecorator('exclude_gender_dob', {})(
+                                                        <Checkbox>{EXCLUDE_PATIENT_DOB}</Checkbox>
+                                                    )}
+                                                
+                                                </Form.Item>
                                             </ul>
-                                        </Form.Item>
-                                        <Form.Item>
-                                            <Checkbox>{EXCLUDE_PATIENT_DOB}</Checkbox>
-                                        </Form.Item>
+                                       
                                     </div>
                                     <div hidden={this.state.selectedFormType != 'FOOTER'}>
                                         <h2>Footer Setup</h2>
