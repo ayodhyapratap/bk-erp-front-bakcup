@@ -146,7 +146,11 @@ export default class ExpensesList extends React.Component {
             title: 'Amount',
             key: 'amount',
             dataIndex: 'amount'
-        }, {
+        },{
+            title:'Bank Name',
+            key:'bank_name',
+            dataIndex:'bank_name'
+        },{
             title: 'Action',
             render: function (record) {
                 return <div>

@@ -5,6 +5,7 @@ import {
     INPUT_FIELD,
     SELECT_FIELD,
     SUCCESS_MSG_TYPE,
+    TEXT_FIELD,
 } from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
@@ -129,14 +130,7 @@ export default class AddExpenses extends React.Component {
             required: true,
             initialValue: this.state.editData ? this.state.editData.amount : null,
             type: INPUT_FIELD
-        }, {
-            label: "Payment Mode",
-            key: "payment_mode",
-            type: SELECT_FIELD,
-            required: true,
-            initialValue: this.state.editData ? this.state.editData.payment_mode.id : null,
-            options: paymentModesOptions
-        }, {
+        },{
             label: "Vendor",
             key: "vendor",
             type: SELECT_FIELD,
@@ -148,6 +142,25 @@ export default class AddExpenses extends React.Component {
             type: SELECT_FIELD,
             initialValue: this.state.editData ? this.state.editData.expense_type.id : null,
             options: expenseTypesOptions
+        },{
+            label: "Payment Mode",
+            key: "payment_mode",
+            type: SELECT_FIELD,
+            required: true,
+            initialValue: this.state.editData ? this.state.editData.payment_mode.id : null,
+            options: paymentModesOptions
+        },{
+            label:"Bank Name",
+            key:'bank_name',
+            type:INPUT_FIELD,
+            initialValue:this.state.editData?this.state.editData.bank_name:null,
+        },{
+            label:"Remark",
+            key:'remark',
+            type:TEXT_FIELD,
+            minRows:2,
+            maxRows:6,
+            initialValue:this.state.editData?this.state.editData.remark:null,
         },];
 
 
