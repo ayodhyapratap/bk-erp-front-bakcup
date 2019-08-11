@@ -14,9 +14,11 @@ import LandingPageContentList from "./landingPageContent/LandingPageContentList"
 import WebAdminSider from "./WebAdminSider";
 import ManageProductList from "./manageProduct/ManageProductList";
 import ManageTherapyList from "./manageTherapy/ManageTherapyList";
+import Error404 from "../common/errors/Error404";
+
+const Content = Layout.Content;
 
 
-const {Content} = Layout;
 export default class WebAdminHome extends React.Component {
 
     render() {
@@ -47,6 +49,7 @@ export default class WebAdminHome extends React.Component {
                         <Route path="/web/landingpagecontent" render={(route) => <LandingPageContentList/>}/>
                         <Route path="/web/manageproduct" render={(route) => <ManageProductList/>}/>
                         <Route path="/web/managetherapy" render={(route) => <ManageTherapyList/>}/>
+                        <Route component={Error404}/>
                     </Switch>
                 </Content>
             </Layout>

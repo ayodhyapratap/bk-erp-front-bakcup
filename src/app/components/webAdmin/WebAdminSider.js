@@ -1,14 +1,13 @@
-import {Layout} from "antd/lib/index";
 import React from "react";
-import {Divider, Icon, Menu} from "antd";
+import {Divider, Icon, Menu, Layout} from "antd";
 import {Link} from "react-router-dom";
 
 const Sider = Layout.Sider;
 export default class WebAdminSider extends React.Component {
     render() {
-        return <Sider
-            style={{overflow: 'auto', minHeight: '100vh', background: '#fff'}}
-        >
+        return <Sider trigger={null}
+                      collapsible
+                      style={{overflow: 'auto', minHeight: '100vh', background: '#fff'}}>
             <Menu mode="inline" defaultSelectedKeys={['web-1']}>
                 <Menu.ItemGroup key="g1" title={<Divider style={{margin: '0px'}}>Web Settings</Divider>}>
                     <Menu.Item key="web-1">
