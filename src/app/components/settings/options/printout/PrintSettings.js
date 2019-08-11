@@ -119,23 +119,25 @@ class PrintSettings extends React.Component {
         let that=this;
         this.setState({
             [type]:value
-        },function(){
-            if(this.state.is_patient_not){
-               that.setState({
-                    exclude_history:true,
-                    checked:false
-               })
-            }else{
-                that.setState({
-                    exclude_blood_group:false,
-                    exclude_address:false,
-                    exclude_email:false,
-                    exclude_phone:false,
-                    exclude_history:false,
-                    exclude_gender_dob:false
-                })
-            }
-        })
+        }
+        // ,function(){
+        //     if(this.state.is_patient_not){
+        //        that.setState({
+        //             exclude_history:true,
+        //             checked:false
+        //        })
+        //     }else{
+        //         that.setState({
+        //             exclude_blood_group:false,
+        //             exclude_address:false,
+        //             exclude_email:false,
+        //             exclude_phone:false,
+        //             exclude_history:false,
+        //             exclude_gender_dob:false
+        //         })
+        //     }
+        // }
+        )
     }
     render() {
         console.log(this.state)
