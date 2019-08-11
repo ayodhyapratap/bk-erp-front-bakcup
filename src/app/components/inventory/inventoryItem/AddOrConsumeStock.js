@@ -143,7 +143,6 @@ class AddOrConsumeStock extends React.Component {
     }
 
     add = (item, randId = Math.random().toFixed(7)) => {
-        console.log(randId);
         this.setState(function (prevState) {
             return {
                 tableFormValues: [...prevState.tableFormValues, {
@@ -156,7 +155,6 @@ class AddOrConsumeStock extends React.Component {
     };
 
     handleSubmit = (e) => {
-
         if (e.keyCode == 13) {
             return false;
         }
@@ -259,9 +257,23 @@ class AddOrConsumeStock extends React.Component {
         });
     }
     storeValue = (type, id, value) => {
-        this.setState(function (prevState) {
-            return {tempValues: {...prevState.tempValues, [type.toString() + id.toString()]: value}}
-        });
+        let that = this;
+       // this.setState(function (prevState) {
+        //     return {tempValues: {...prevState.tempValues, [type.toString() + id.toString()]: value}}
+        // });
+        if (type == 'batch') {
+            let {setFieldsValue} = that.props.form;
+            that.state.tableFormValues.forEach(function (item) {
+                if (item._id == id) {
+                    if (item.item_type_stock.batch_number) {
+                        item.item_type_stock.batch_number.forEach(function (batch) {
+                            setFieldsValue({[`expiry_date[${id}]`]: batch.expiry_date && moment(batch.expiry_date).isValid() ? moment(batch.expiry_date) : null});
+                        })
+                    }
+                }
+            })
+
+        }
     }
     addItemThroughQR = (value) => {
         let that = this;
@@ -283,7 +295,7 @@ class AddOrConsumeStock extends React.Component {
                         flag = false
                         setFieldsValue({
                             [`quantity[${_id}]`]: quantity + 1
-                        })
+                        });
                         that.storeValue('quantity', _id, value);
                     }
                 }
