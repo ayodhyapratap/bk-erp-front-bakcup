@@ -49,7 +49,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             formTemplateList: [],
             practiceDoctors: [],
             selectedDoctor: {},
-            selectedDate: moment()
+            selectedDate: moment(),
+            searchStrings: {}
         }
         this.loadPrescriptionTemplate = this.loadPrescriptionTemplate.bind(this);
         this.deletePrescriptionTemplate = this.deletePrescriptionTemplate.bind(this);
@@ -132,7 +133,6 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         let errorFn = function () {
 
         };
-        console.log("template", that.state.prescriptionTemplate);
         getAPI(interpolate(PRESCRIPTION_TEMPLATE, [that.props.active_practiceId]), successFn, errorFn)
     }
 
@@ -153,7 +153,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         getAPI(interpolate(LABTEST_API, [that.props.active_practiceId]), successFn, errorFn);
     }
 
-    loadDrugList() {
+    loadDrugList(page = 1) {
         let that = this;
         let successFn = function (data) {
             that.setState(function (prevState) {
@@ -167,10 +167,15 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(INVENTORY_ITEM_API, successFn, errorFn, {
+        let params = {
             practice: this.props.active_practiceId,
             item_type: DRUG,
-        });
+            page: page
+        };
+        if (that.state.searchStrings.Drugs) {
+            params.item_name = that.state.searchStrings.Drugs
+        }
+        getAPI(INVENTORY_ITEM_API, successFn, errorFn, params);
     }
 
 
@@ -378,7 +383,10 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             searchValues[type] = value;
             return {searchStrings: searchValues}
         }, function () {
-            that.filterValues(type);
+            if (type == 'Drugs')
+                that.loadDrugList();
+            else
+                that.filterValues(type);
         });
     }
     filterValues = (type) => {
@@ -424,7 +432,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{message: "This field is required.",}],
                         initialValue: record.dosage,
-                        min:0
+                        min: 0
                     })(
                         <InputNumber size={"small"}/>
                     )}
@@ -456,9 +464,9 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{message: "This field is required.",}],
                         initialValue: record.duration,
-                        min:0
+                        min: 0
                     })(
-                        <InputNumber  size={"small"}/>
+                        <InputNumber size={"small"}/>
                     )}
                 </Form.Item>
                 <Form.Item
@@ -495,7 +503,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                 }],
                                 initialValue: record.instruction
                             })(
-                                <Input.TextArea  placeholder={"Instructions..."} size={"small"}/>
+                                <Input.TextArea placeholder={"Instructions..."} size={"small"}/>
                             )}
 
                         </Form.Item>
