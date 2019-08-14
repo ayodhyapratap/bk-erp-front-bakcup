@@ -11,7 +11,7 @@ import moment from "moment";
 import DynamicFieldsForm from "../common/DynamicFieldsForm";
 import {Form, Card, Row, Col,Popover, List,Button, DatePicker,TimePicker,Input,Select,Divider} from "antd";
 import {APPOINTMENT_PERPRACTICE_API, BLOCK_CALENDAR, PRACTICESTAFF} from "../../constants/api";
-import {displayMessage, getAPI, interpolate} from "../../utils/common";
+import {displayMessage, getAPI, interpolate,postAPI} from "../../utils/common";
 import { loadDoctors } from "../../utils/clinicUtils";
 import {
     CANCELLED_STATUS,
@@ -73,10 +73,34 @@ class BlockCalendar extends React.Component {
             });
     }
 
-   
+    handleSubmit =(e)=>{
+        e.preventDefault();
+        let reqData={}
+        this.props.form.validateFields((err, values) => {
+            console.log(values);
+            
+            if (!err) {
+                reqData = {...values,
+                    practice:this.props.active_practiceId,
+
+                };
+                
+                // reqData.
+            }
+        });
+
+        let successFn =function(data){
+
+        }
+        let errorFn=function(){
+
+        }
+        postAPI(BLOCK_CALENDAR,reqData,successFn,errorFn)
+    }
    
     render(){
-        // console.log("Doctor list",this.state.practiceDoctors)
+        console.log("Doctor list",this.state)
+        console.log(this.props)
         let that = this;
         const {getFieldDecorator} = this.props.form;
  

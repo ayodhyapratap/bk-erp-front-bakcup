@@ -3,8 +3,8 @@ import moment from "moment";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
-import TimeGrid from 'react-big-calendar/lib/TimeGrid'
-import {Calendar as BigCalendar, momentLocalizer} from 'react-big-calendar'
+import TimeGrid from 'react-big-calendar/lib/TimeGrid';
+import {Calendar as BigCalendar, momentLocalizer} from 'react-big-calendar';
 import {
     Modal,
     Row,
@@ -18,7 +18,7 @@ import {
     Icon,
     DatePicker, Checkbox,
     Radio
-} from "antd"
+} from "antd";
 import {DOCTORS_ROLE, SUCCESS_MSG_TYPE, WARNING_MSG_TYPE,} from "../../constants/dataKeys";
 import "./app.css";
 import {Route, Link, Switch} from "react-router-dom";
