@@ -11,7 +11,9 @@ import {
     InputNumber,
     List,
     Select,
-    Spin
+    Spin,
+    Popover,
+    Icon
 } from 'antd';
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import moment from "moment/moment";
@@ -34,6 +36,7 @@ import {Checkbox, Radio} from "antd/lib/index";
 import {displayMessage, getAPI, interpolate, makeFileURL, postAPI, putAPI} from "../../utils/common";
 import {APPOINTMENT_STATUS, DAY_KEYS} from "../../constants/hardData";
 import {hideMobile} from "../../utils/permissionUtils";
+import { red } from "ansi-colors";
 
 const {TextArea} = Input;
 const FormItem = Form.Item;
@@ -541,11 +544,18 @@ export default class CreateAppointmentForm extends React.Component {
     }
     loadAppointmentList(){
         let that=this;
-       
         let successFn = function(data){
-            that.setState({
-                hi:'data1',
-            })
+            // let tempAppoint=[];
+            data.forEach(function (appointment) {
+                let startTime = new moment(appointment.schedule_at).add(appointment.slot, 'minutes');
+                let endTime = new moment(this.state.timeToCheckBlock.schedule_at).add(this.state.timeToCheckBlock.schedule_at.slot, 'minutes');
+                if(startTime !== endTime){
+                   that.setState({
+                       appointmentList:appointment,
+                   })
+                }
+
+            });
         }
         let errorFn =function(){
             that.setState({
@@ -560,7 +570,7 @@ export default class CreateAppointmentForm extends React.Component {
     }
     render() {
         console.log("state",this.state);
-        console.log("props",this.props.match.params.appointmentid);
+        // console.log("props",this.props.match.params.appointmentid);
         
         const that = this;
         const formItemLayout = (this.props.formLayout ? this.props.formLayout : {
@@ -627,12 +637,25 @@ export default class CreateAppointmentForm extends React.Component {
                             <InputNumber min={1} onChange={(value) => this.setBlockedTiming("slot", value)}/>
                         )}
                         <span className="ant-form-text">mins</span>
-                        {this.state.appointment?
-                           <Alert message="Selected time is blocked in this clinic !!" type="warning"
-                           showIcon/>
+                        {this.state.hi?
+                               <Popover
+                                    content={
+                                        <div>
+                                           
+                                            <p> <span style={{width: 'calc(100% - 60px)'}}><b>{moment().format("LT")}</b>&nbsp; nitish sharma</span></p>
+                                            <p> <span style={{width: 'calc(100% - 60px)'}}><b>{moment().format("LT")}</b>&nbsp; nitish sharma</span></p>
+                                            <p> <span style={{width: 'calc(100% - 60px)'}}><b>{moment().format("LT")}</b>&nbsp; nitish sharma</span></p>
+                                            
+                                        </div>
+                                    }>
+                                        <div style={{backgroundColor:"#fffbe6"}}>
+                                            <p style={{color:red ,padding:"7px"}}><Icon type="exclamation-circle" theme="twoTone" twoToneColor="#faad14" />  Selected Time Appointment exist !!</p>
+                                        </div>
+                                    </Popover>
+                                    
                         :null}
                     </FormItem>
-
+                    
 
                     {that.state.patientDetails ?
                         <FormItem key="id" value={this.state.patientDetails.id} {...formPatients}>
