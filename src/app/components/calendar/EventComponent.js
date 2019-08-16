@@ -7,7 +7,8 @@ export default class EventComponent extends React.Component {
         super(props);
     }
 
-    render() {
+    render(){
+        console.log("event",this.props);
         return <Popover placement="right"
                         content={<EventPatientPopover appointmentId={this.props.event.appointment.id}
                                                       key={this.props.event.appointment.id}/>}

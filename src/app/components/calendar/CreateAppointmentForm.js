@@ -27,7 +27,8 @@ import {
     PATIENT_PROFILE,
     PRACTICESTAFF,
     PROCEDURE_CATEGORY,
-    SEARCH_PATIENT
+    SEARCH_PATIENT,
+    APPOINTMENT_PERPRACTICE_API
 } from "../../constants/api";
 import {Checkbox, Radio} from "antd/lib/index";
 import {displayMessage, getAPI, interpolate, makeFileURL, postAPI, putAPI} from "../../utils/common";
@@ -63,7 +64,8 @@ export default class CreateAppointmentForm extends React.Component {
                 schedule_at: moment(),
                 slot: 10,
             },
-            procedureObjectsById: {}
+            procedureObjectsById: {},
+            appointmentList:{},
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -72,7 +74,8 @@ export default class CreateAppointmentForm extends React.Component {
         this.loadTreatmentNotes = this.loadTreatmentNotes.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.loadAppointment = this.loadAppointment.bind(this);
+        // this.loadAppointment = this.loadAppointment.bind(this);
+        this.loadAppointmentList = this.loadAppointmentList.bind(this);
 
     }
 
@@ -82,7 +85,8 @@ export default class CreateAppointmentForm extends React.Component {
         this.loadProcedureCategory();
         this.loadTreatmentNotes();
         this.loadAppointmentCategories();
-        this.loadPracticeTiming()
+        this.loadPracticeTiming();
+        this.loadAppointmentList();
         if (this.props.match.params.appointmentid) {
             this.loadAppointment();
         } else if (this.props.history && this.props.history.location.search) {
@@ -201,6 +205,7 @@ export default class CreateAppointmentForm extends React.Component {
                     timeToCheckBlock: {...prevState.timeToCheckBlock, [type]: value}
                 }
             }, function () {
+                that.loadAppointmentList();
                 that.findBlockedTiming();
                 that.findOutsidePracticeTiming();
                 if (type == 'doctor') {
@@ -316,33 +321,34 @@ export default class CreateAppointmentForm extends React.Component {
         })
     }
 
-    loadAppointment() {
-        let that = this;
-        this.setState({
-            loading: true,
-        })
-        let successFn = function (data) {
-            that.setState({
-                appointment: data,
-                patientDetails: data.patient,
-                timeToCheckBlock: data,
-                loading: false,
-            }, function () {
-                that.findBlockedTiming();
-                that.findOutsideDoctorTiming();
-                that.loadDoctorsTiming();
-            });
+    // loadAppointment() {
+    //     let that = this;
+    //     this.setState({
+    //         loading: true,
+    //     })
+    //     let successFn = function (data) {
+    //         that.setState({
+    //             appointment: data,
+    //             patientDetails: data.patient,
+    //             timeToCheckBlock: data,
+    //             loading: false,
+    //         }, function () {
+    //             that.findBlockedTiming();
+    //             that.findOutsideDoctorTiming();
+    //             that.loadDoctorsTiming();
+    //             that.loadAppointmentList();
+    //         });
 
-        }
+    //     }
 
-        let errorFn = function () {
-            that.setState({
-                loading: false,
-            })
-        }
-        getAPI(interpolate(APPOINTMENT_API, [this.props.match.params.appointmentid]), successFn, errorFn);
+    //     let errorFn = function () {
+    //         that.setState({
+    //             loading: false,
+    //         })
+    //     }
+    //     getAPI(interpolate(APPOINTMENT_API, [this.props.match.params.appointmentid]), successFn, errorFn);
 
-    }
+    // }
 
     loadDoctors() {
         let that = this;
@@ -533,8 +539,29 @@ export default class CreateAppointmentForm extends React.Component {
         })
 
     }
-
+    loadAppointmentList(){
+        let that=this;
+       
+        let successFn = function(data){
+            that.setState({
+                hi:'data1',
+            })
+        }
+        let errorFn =function(){
+            that.setState({
+                hi:'data2',
+            })
+        }
+        let apiParams={
+            start:moment(this.state.timeToCheckBlock.schedule_at).format('YYYY-MM-DD'),
+            doctor:this.state.timeToCheckBlock.doctor,
+        }
+        getAPI(interpolate(APPOINTMENT_PERPRACTICE_API,[this.props.active_practiceId]),errorFn,successFn,apiParams);
+    }
     render() {
+        console.log("state",this.state);
+        console.log("props",this.props.match.params.appointmentid);
+        
         const that = this;
         const formItemLayout = (this.props.formLayout ? this.props.formLayout : {
             labelCol: {span: 6},
@@ -600,6 +627,10 @@ export default class CreateAppointmentForm extends React.Component {
                             <InputNumber min={1} onChange={(value) => this.setBlockedTiming("slot", value)}/>
                         )}
                         <span className="ant-form-text">mins</span>
+                        {this.state.appointment?
+                           <Alert message="Selected time is blocked in this clinic !!" type="warning"
+                           showIcon/>
+                        :null}
                     </FormItem>
 
 

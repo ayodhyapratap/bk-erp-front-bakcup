@@ -345,6 +345,7 @@ class App extends Component {
                         doctor: appointment.doctor,
                         loading: false
                     };
+                    
                     if (doctorsAppointmentCount['ALL']) {
                         doctorsAppointmentCount['ALL'].ALL += 1
                         if (appointment.status == CANCELLED_STATUS) {
@@ -603,6 +604,7 @@ class App extends Component {
     }
 
     render() {
+        console.log(this.state.events,"Ddd")
         let that = this;
         let startTime = null;
         let endTime = null;
