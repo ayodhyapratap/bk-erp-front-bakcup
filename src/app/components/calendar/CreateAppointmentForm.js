@@ -68,7 +68,7 @@ export default class CreateAppointmentForm extends React.Component {
                 slot: 10,
             },
             procedureObjectsById: {},
-            appointmentList:{},
+            // appointmentList:[],
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -545,19 +545,22 @@ export default class CreateAppointmentForm extends React.Component {
     loadAppointmentList(){
         let that=this;
         let successFn = function(data){
-            // let tempAppoint=[];
-            data.forEach(function (appointment) {
-                let startTime = new moment(appointment.schedule_at).add(appointment.slot, 'minutes');
-                let endTime = new moment(this.state.timeToCheckBlock.schedule_at).add(this.state.timeToCheckBlock.schedule_at.slot, 'minutes');
-                if(startTime !== endTime){
-                   that.setState({
-                       appointmentList:appointment,
-                   })
-                }
-
+            console.log("sas",data);
+            that.setState(function(prevState){
+                let tempAppoint=[];
+                data.forEach(function (appointment) {
+                    let startTime = new moment(appointment.schedule_at).add(appointment.slot, 'minutes');
+                    let endTime = new moment(prevState.timeToCheckBlock.schedule_at).add(prevState.timeToCheckBlock.schedule_at.slot, 'minutes');
+                    if(startTime !== endTime){
+                        tempAppoint.push(appointment)
+                    }
+    
+                });
+                return {appointmentList:tempAppoint}
             });
         }
-        let errorFn =function(){
+        let errorFn =function(data){
+            console.log("error",data)
             that.setState({
                 hi:'data2',
             })
@@ -566,7 +569,7 @@ export default class CreateAppointmentForm extends React.Component {
             start:moment(this.state.timeToCheckBlock.schedule_at).format('YYYY-MM-DD'),
             doctor:this.state.timeToCheckBlock.doctor,
         }
-        getAPI(interpolate(APPOINTMENT_PERPRACTICE_API,[this.props.active_practiceId]),errorFn,successFn,apiParams);
+        getAPI(interpolate(APPOINTMENT_PERPRACTICE_API,[this.props.active_practiceId]),successFn,errorFn,apiParams);
     }
     render() {
         console.log("state",this.state);
@@ -637,14 +640,13 @@ export default class CreateAppointmentForm extends React.Component {
                             <InputNumber min={1} onChange={(value) => this.setBlockedTiming("slot", value)}/>
                         )}
                         <span className="ant-form-text">mins</span>
-                        {this.state.hi?
+                        {this.state.appointmentList && this.state.appointmentList.length>0 ?
                                <Popover
                                     content={
                                         <div>
-                                           
-                                            <p> <span style={{width: 'calc(100% - 60px)'}}><b>{moment().format("LT")}</b>&nbsp; nitish sharma</span></p>
-                                            <p> <span style={{width: 'calc(100% - 60px)'}}><b>{moment().format("LT")}</b>&nbsp; nitish sharma</span></p>
-                                            <p> <span style={{width: 'calc(100% - 60px)'}}><b>{moment().format("LT")}</b>&nbsp; nitish sharma</span></p>
+                                           {that.state.appointmentList.map((item) =><p> <span style={{width: 'calc(100% - 60px)'}}><b>{moment(item.schedule_at).format("LT")}</b>&nbsp;{item.patient.user.first_name}</span>
+
+                                            </p>)}
                                             
                                         </div>
                                     }>
