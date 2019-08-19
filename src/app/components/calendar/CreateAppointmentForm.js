@@ -30,7 +30,8 @@ import {
     PRACTICESTAFF,
     PROCEDURE_CATEGORY,
     SEARCH_PATIENT,
-    APPOINTMENT_PERPRACTICE_API
+    APPOINTMENT_PERPRACTICE_API,
+    APPOINTMENT_SCHEDULE
 } from "../../constants/api";
 import {Checkbox, Radio} from "antd/lib/index";
 import {displayMessage, getAPI, interpolate, makeFileURL, postAPI, putAPI} from "../../utils/common";
@@ -545,31 +546,18 @@ export default class CreateAppointmentForm extends React.Component {
     loadAppointmentList(){
         let that=this;
         let successFn = function(data){
-            console.log("sas",data);
-            that.setState(function(prevState){
-                let tempAppoint=[];
-                data.forEach(function (appointment) {
-                    let startTime = new moment(appointment.schedule_at).add(appointment.slot, 'minutes');
-                    let endTime = new moment(prevState.timeToCheckBlock.schedule_at).add(prevState.timeToCheckBlock.schedule_at.slot, 'minutes');
-                    if(startTime !== endTime){
-                        tempAppoint.push(appointment)
-                    }
-    
-                });
-                return {appointmentList:tempAppoint}
-            });
-        }
-        let errorFn =function(data){
-            console.log("error",data)
             that.setState({
-                hi:'data2',
+                appointmentList:data,
             })
         }
+        let errorFn =function(data){
+        }
         let apiParams={
-            start:moment(this.state.timeToCheckBlock.schedule_at).format('YYYY-MM-DD'),
+            start_time:moment(this.state.timeToCheckBlock.schedule_at).format(),
+            end_time:moment(this.state.timeToCheckBlock.schedule_at).add(this.state.timeToCheckBlock.slot, 'minutes').format(),
             doctor:this.state.timeToCheckBlock.doctor,
         }
-        getAPI(interpolate(APPOINTMENT_PERPRACTICE_API,[this.props.active_practiceId]),successFn,errorFn,apiParams);
+        getAPI(interpolate(APPOINTMENT_SCHEDULE,[this.props.active_practiceId]),successFn,errorFn,apiParams);
     }
     render() {
         console.log("state",this.state);
@@ -640,21 +628,18 @@ export default class CreateAppointmentForm extends React.Component {
                             <InputNumber min={1} onChange={(value) => this.setBlockedTiming("slot", value)}/>
                         )}
                         <span className="ant-form-text">mins</span>
-                        {this.state.appointmentList && this.state.appointmentList.length>0 ?
-                               <Popover
-                                    content={
-                                        <div>
-                                           {that.state.appointmentList.map((item) =><p> <span style={{width: 'calc(100% - 60px)'}}><b>{moment(item.schedule_at).format("LT")}</b>&nbsp;{item.patient.user.first_name}</span>
-
-                                            </p>)}
-                                            
-                                        </div>
-                                    }>
-                                        <div style={{backgroundColor:"#fffbe6"}}>
-                                            <p style={{color:red ,padding:"7px"}}><Icon type="exclamation-circle" theme="twoTone" twoToneColor="#faad14" />  Selected Time Appointment exist !!</p>
-                                        </div>
-                                    </Popover>
-                                    
+                        {this.state.appointmentList && this.state.appointmentList.length>0 ?<>
+                                <div span={5} style={{float:"right",marginTop:"-40px"}}>
+                                    <ul style={{listStyle:"none",paddingLeft:'15px',paddingRight: "10px"}}>
+                                    {that.state.appointmentList.map((item) =><li style={{border: '1px solid #bbb', borderRadius: "16px",padding:" 0.01em 16px"}}><span style={{width: 'calc(100% - 60px)'}}><b>{moment(item.schedule_at).format("LT")}</b>&nbsp;{item.patient.user.first_name}</span></li>)}
+                                        
+                                    </ul>
+                                </div>
+                                <div style={{backgroundColor:"#fffbe6"}}>
+                                    <p style={{color:red ,padding:"7px"}}><Icon type="exclamation-circle" theme="twoTone" twoToneColor="#faad14" />  Selected Time Appointment exist !!</p>
+                                </div>
+                            
+                              </>      
                         :null}
                     </FormItem>
                     
@@ -743,6 +728,11 @@ export default class CreateAppointmentForm extends React.Component {
                             <Alert message="Selected time is out of doctor's visit time in this clinic!!"
                                    type="warning"
                                    showIcon/> : null}
+                        {this.state.appointmentList && this.state.appointmentList.length>0 ?<>
+                            <Alert message="Selected time doctor's busy on other patients in  this clinic!!"
+                                   type="warning"
+                                   showIcon/>
+                        </>:null}
                     </FormItem>
                     <FormItem key="category" {...formItemLayout} label="Category">
                         {getFieldDecorator("category", {initialValue: this.state.appointment ? this.state.appointment.category : null}, {

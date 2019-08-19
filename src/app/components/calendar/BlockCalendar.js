@@ -28,7 +28,10 @@ class BlockCalendar extends React.Component {
         super(props);
         this.state = {
             practiceDoctors: [],
-            blockedAppointmentParams: {}
+            blockedAppointmentParams: {
+                block_from:moment(),
+                block_to:moment(),
+            }
         };
     }
     componentDidMount() {
@@ -69,7 +72,8 @@ class BlockCalendar extends React.Component {
         if (this.state.blockedAppointmentParams.block_from && this.state.blockedAppointmentParams.block_to)
             getAPI(interpolate(APPOINTMENT_PERPRACTICE_API, [this.props.active_practiceId]), successFn, errorFn, {
                 start: moment(that.state.blockedAppointmentParams.block_from).format('YYYY-MM-DD'),
-                end: moment(that.state.blockedAppointmentParams.block_to).format('YYYY-MM-DD')
+                end: moment(that.state.blockedAppointmentParams.block_to).format('YYYY-MM-DD'),
+                doctor:that.state.blockedAppointmentParams.doctor,
             });
     }
 
@@ -132,7 +136,7 @@ class BlockCalendar extends React.Component {
 
                             <Form.Item label="Doctor" {...formItemLayout}>
                                 {getFieldDecorator('doctor', {})
-                                (<Select placeholder="Docto List">
+                                (<Select placeholder="Docto List"  onChange={(value) => this.changeParamsForBlockedAppointments("doctor", value)}>
                                     {this.state.practiceDoctors.map((option) => <Select.Option
                                     value={option.id}>{option.user.first_name}</Select.Option>)}
                                 </Select>)
@@ -171,7 +175,7 @@ class BlockCalendar extends React.Component {
                                         borderLeft: '5px solid' + (apppointment.doctor && that.state.practice_doctors && that.state.practice_doctors[apppointment.doctor] ? that.props.doctors_object[apppointment.doctor].calendar_colour : 'transparent')
                                     }}>
                                     <AppointmentCard {...apppointment}
-                                                    changeAppointmentStatus={this.changeAppointmentStatus}/>
+                                                    changeAppointmentStatus={this.changeAppointmentStatus} {...this.props}/>
                                 </div>
                             </List.Item>)
                             }/>
@@ -192,7 +196,7 @@ function AppointmentCard(appointment) {
         <Divider type="vertical" />
             <Popover placement="right"
                      content={<EventPatientPopover appointmentId={appointment.id}
-                                                   key={appointment.id}/>}>
+                                                   key={appointment.id} {...appointment}/>}>
             <span
                 style={{width: 'calc(100% - 60px)'}}><b>{moment(appointment.schedule_at).format("LLL")}</b>&nbsp;
                 {appointment.patient.user.first_name}</span>

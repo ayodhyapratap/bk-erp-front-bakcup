@@ -94,7 +94,6 @@ export default class EventPatientPopover extends React.Component {
     }
 
     render() {
-        console.log("propsss",this.props)
         let that = this;
         let appointment = this.state.appointment;
         return <div style={{width: '300px', minHeight: '200px'}}>

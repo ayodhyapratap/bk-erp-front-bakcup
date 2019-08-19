@@ -65,6 +65,7 @@ export const VITAL_SIGNS_API = 'patients/vital_sign/'; //?patient=patientId&prac
 export const PRESCRIPTIONS_API = 'patients/prescriptions/'; //?id=patientId&practice=practiceId
 export const SINGLE_REATMENTPLANS_API = 'patients/procedure/?id=%s';
 export const BLOCK_CALENDAR = 'appointment/block_calendar/';
+export const APPOINTMENT_SCHEDULE='appointment/?practice=%s';
 
 export const PATIENT_NOTES = 'patients/patient_notes/?patient=%s&practice=%s';
 export const LABPANEL_API = 'clinics/%s/labpanel/';
