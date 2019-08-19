@@ -7,13 +7,16 @@ import {
     MEMBERSHIP_API,
     PATIENT_GROUPS,
     PATIENT_PROFILE,
-    PATIENTS_LIST
+    PATIENTS_LIST,
+    COUNTRY,
+    STATE,
+    CITY,
 } from "../../../constants/api";
 import {displayMessage, getAPI, interpolate, makeFileURL, makeURL, postAPI, putAPI} from "../../../utils/common";
 import moment from 'moment';
 import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 import WebCamField from "../../common/WebCamField";
-import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {SUCCESS_MSG_TYPE ,INPUT_FIELD,SELECT_FIELD} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
 
 const {Option} = Select;
@@ -27,19 +30,77 @@ class EditPatientDetails extends React.Component {
             history: [],
             patientGroup: [],
             membership: [],
-            webCamState: {}
+            webCamState: {},
+            countrylist:[],
+            stateList:[],
+            cityList:[]
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.getCountry = this.getCountry.bind(this);
+        this.getState = this.getState.bind(this);
+        this.getCity = this.getCity.bind(this);
     }
 
     componentDidMount() {
         this.loadMedicalHistory();
         this.getPatientGroup();
         this.getPatientMembership();
+        this.getCountry();
+        if(this.state.country){
+            this.getState();
+        }
+        if(this.state.state){
+            this.getCity();
+        }
+        
     }
 
+    getCountry(){
+        let that=this;
+        let successFn =function(data){
+            that.setState({
+                countrylist:data,
+            })
+        };
+        let errorFun=function(){
+
+        };
+        getAPI(COUNTRY,successFn,errorFun);
+    }
+    getState(){
+        let that=this;
+        let successFn=function(data){
+            that.setState({
+                stateList:data,
+            })
+            
+        };
+        let errorFn=function(){
+
+        };
+        getAPI(STATE,successFn,errorFn,{
+            country:this.state.country?this.state.country:null,
+        });
+
+    }
+    getCity(){
+        let that=this;
+        let successFn=function(data){
+            that.setState({
+                cityList:data,
+            })
+            
+        };
+        let errorFn=function(){
+
+        };
+        getAPI(CITY,successFn,errorFn,{
+            state:this.state.state?this.state.state:null,
+        });
+
+    }
     getPatientMembership() {
         let that = this;
         let successFn = function (data) {
@@ -73,6 +134,11 @@ class EditPatientDetails extends React.Component {
         this.setState({
             redirect: !redirectVar,
         });
+    }
+    setFormParams = (type, value) => {
+        this.setState({
+            [type]: value
+        })
     }
 
     getPatientGroup = () => {
@@ -166,8 +232,25 @@ class EditPatientDetails extends React.Component {
         });
 
     }
+    onChangeValue=(type,value)=>{
+        let that=this;
+        that.setState({
+            [type]:value
+        },function(){
+            if(type =='country'){
+                that.getState();
+            }
+            if(type=='state'){
+                that.getCity();
+            }
+            
+        })
+
+    }
 
     render() {
+console.log("state",this.state)
+console.log("props",this.props);
 
         let that = this;
         const {getFieldDecorator} = this.props.form;
@@ -338,11 +421,83 @@ class EditPatientDetails extends React.Component {
                         }
                     </Form.Item>
 
-                    <Form.Item label="City" {...formItemLayout}>
-                        {getFieldDecorator('city', {initialValue: this.props.currentPatient ? this.props.currentPatient.city : null})
+                    {this.state.country && this.state.country == INPUT_FIELD ?
+                        <Form.Item key={'country_extra'} label={"Country"}  {...formItemLayout}>
+                            {getFieldDecorator("country_extra", {initialValue: this.props.currentPatient ? this.props.currentPatient.country : null,
+                                
+                            })(
+                                <Input/>
+                            )}
+                            <a onClick={() => that.setFormParams('country', SELECT_FIELD)}>Choose
+                                Country</a>
+                        </Form.Item>
+                        : <Form.Item key={"country"} {...formItemLayout} label={"Country"}>
+                            {getFieldDecorator("country", {initialValue: this.props.currentPatient && this.props.currentPatient.country_data ? this.props.currentPatient.country_data.name : null,
+                            })(
+                                <Select onChange={(value) => this.onChangeValue("country", value)}>
+                                    
+                                    {this.state.countrylist.map((option) => <Select.Option
+                                        value={option.id}>{option.name}</Select.Option>)}
+                                </Select>
+                            )}
+                            <a onClick={() => that.setFormParams('country', INPUT_FIELD)}>Add New
+                                Country</a>
+                        </Form.Item>
+                    }
+
+
+ 
+                    {this.state.state && this.state.state == INPUT_FIELD ?
+                        <Form.Item key={'state_extra'} label={"State"}  {...formItemLayout}>
+                            {getFieldDecorator("state_extra",{initialValue: this.props.currentPatient && this.props.currentPatient.state_data ? this.props.currentPatient.state_data.name : null,
+                                
+                            })(
+                                <Input/>
+                            )}
+                            <a onClick={() => that.setFormParams('state', SELECT_FIELD)}>Choose
+                                State</a>
+                        </Form.Item>
+                        : <Form.Item key={"state"} {...formItemLayout} label={"State"}>
+                            {getFieldDecorator("state", {initialValue: this.props.currentPatient ? this.props.currentPatient.state : null,
+                            })(
+                                <Select onChange={(value) => this.onChangeValue("state", value)}>
+                                    {this.state.stateList.map((option) => <Select.Option
+                                        value={option.id}>{option.name}</Select.Option>)}
+                                </Select>
+                            )}
+                            <a onClick={() => that.setFormParams('state', INPUT_FIELD)}>Add New
+                                state</a>
+                        </Form.Item>
+                    }
+                    {this.state.city && this.state.city == INPUT_FIELD ?
+                        <Form.Item key={'city_extra'} label={"City"}  {...formItemLayout}>
+                            {getFieldDecorator("city_extra", {
+                                initialValue: {initialValue: this.props.currentPatient ? this.props.currentPatient.city : null,}
+                            })(
+                                <Input/>
+                            )}
+                            <a onClick={() => that.setFormParams('city', SELECT_FIELD)}>Choose
+                                City</a>
+                        </Form.Item>
+                        : <Form.Item key={"City"} {...formItemLayout} label={"City"}>
+                            {getFieldDecorator("city", {initialValue: this.props.currentPatient ? this.props.currentPatient.city : null,
+                            })(
+                                <Select>
+                                    {this.state.cityList.map((option) => <Select.Option
+                                        value={option.id}>{option.name}</Select.Option>)}
+                                </Select>
+                            )}
+                            <a onClick={() => that.setFormParams('city', INPUT_FIELD)}>Add New
+                                City</a>
+                        </Form.Item>
+                    } 
+
+
+                    {/* <Form.Item label="City" {...formItemLayout}>
+                        {getFieldDecorator('city_extra', {initialValue: this.props.currentPatient ? this.props.currentPatient.city : null})
                         (<Input placeholder="Patient City"/>)
                         }
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item label="Pincode" {...formItemLayout}>
                         {getFieldDecorator('pincode', {initialValue: this.props.currentPatient ? this.props.currentPatient.pincode : null})

@@ -99,6 +99,9 @@ export const SEARCH_PATIENT = 'patients/search/?name=%s';
 
 //extra data
 export const EXTRA_DATA = 'clinics/extra_data';
+export const COUNTRY ='patients/country';
+export const STATE ='patients/state';
+export const CITY ='patients/city';
 /**
  * Reports API
  * */

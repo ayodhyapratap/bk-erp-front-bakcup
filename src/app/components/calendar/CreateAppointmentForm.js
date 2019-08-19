@@ -627,17 +627,24 @@ export default class CreateAppointmentForm extends React.Component {
                         })(
                             <InputNumber min={1} onChange={(value) => this.setBlockedTiming("slot", value)}/>
                         )}
-                        <span className="ant-form-text">mins</span>
+                        <span className="ant-form-text">mins
                         {this.state.appointmentList && this.state.appointmentList.length>0 ?<>
-                                <div span={5} style={{float:"right",marginTop:"-40px"}}>
+                        <div span={5} style={{float:"right"}}>
                                     <ul style={{listStyle:"none",paddingLeft:'15px',paddingRight: "10px"}}>
                                     {that.state.appointmentList.map((item) =><li style={{border: '1px solid #bbb', borderRadius: "16px",padding:" 0.01em 16px"}}><span style={{width: 'calc(100% - 60px)'}}><b>{moment(item.schedule_at).format("LT")}</b>&nbsp;{item.patient.user.first_name}</span></li>)}
                                         
                                     </ul>
                                 </div>
-                                <div style={{backgroundColor:"#fffbe6"}}>
-                                    <p style={{color:red ,padding:"7px"}}><Icon type="exclamation-circle" theme="twoTone" twoToneColor="#faad14" />  Selected Time Appointment exist !!</p>
-                                </div>
+                                </>      
+                        :null}
+                        </span>
+                        {this.state.appointmentList && this.state.appointmentList.length>0 ?<>
+                                
+                                <Alert message="Selected time slot have assigned someone else !! please select another slot." type="warning"
+                                   showIcon/> 
+                                {/* <div style={{backgroundColor:"#fffbe6"}}>
+                                    <p style={{color:red ,padding:"7px"}}><Icon type="exclamation-circle" theme="twoTone" twoToneColor="#faad14" /> </p>
+                                </div> */}
                             
                               </>      
                         :null}
