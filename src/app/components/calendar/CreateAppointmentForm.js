@@ -13,7 +13,8 @@ import {
     Select,
     Spin,
     Popover,
-    Icon
+    Icon,
+    Row,Col,
 } from 'antd';
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import moment from "moment/moment";
@@ -628,15 +629,20 @@ export default class CreateAppointmentForm extends React.Component {
                             <InputNumber min={1} onChange={(value) => this.setBlockedTiming("slot", value)}/>
                         )}
                         <span className="ant-form-text">mins
-                        {this.state.appointmentList && this.state.appointmentList.length>0 ?<>
-                        <div span={5} style={{float:"right"}}>
-                                    <ul style={{listStyle:"none",paddingLeft:'15px',paddingRight: "10px"}}>
-                                    {that.state.appointmentList.map((item) =><li style={{border: '1px solid #bbb', borderRadius: "16px",padding:" 0.01em 16px"}}><span style={{width: 'calc(100% - 60px)'}}><b>{moment(item.schedule_at).format("LT")}</b>&nbsp;{item.patient.user.first_name}</span></li>)}
-                                        
-                                    </ul>
-                                </div>
-                                </>      
-                        :null}
+                        <Row style={{float:"right"}}>
+                            <Col span={24}>
+                                {this.state.appointmentList && this.state.appointmentList.length>0 ?
+                                    <div span={5} style={{float:"right"}}>
+                                        <ul style={{listStyle:"none",display:"inline-flex",paddingLeft:'15px',paddingRight: "10px"}}>
+                                        {that.state.appointmentList.map((item) =><li style={{border: '1px solid #bbb', marginLeft: "13px",padding:" 0.01em 14px"}}><span style={{width: 'calc(100% - 60px)'}}><b>{moment(item.schedule_at).format("LT")}</b>&nbsp;{item.patient.user.first_name}</span></li>)}
+                                            
+                                        </ul>
+                                    </div>
+                                    
+                                :null}
+                            </Col>
+                        </Row>
+                       
                         </span>
                         {this.state.appointmentList && this.state.appointmentList.length>0 ?<>
                                 
