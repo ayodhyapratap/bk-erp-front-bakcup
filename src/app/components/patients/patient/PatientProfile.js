@@ -186,9 +186,9 @@ class PatientProfile extends React.Component {
                         <PatientRow label="Landline No" value={patient.landline_no}/>
                         <PatientRow label="Address" value={patient.address}/>
                         <PatientRow label="Locality" value={patient.locality}/>
-                        <PatientRow label="City" value={patient.city_data.name}/>
-                        <PatientRow label="State" value={patient.state_data.name}/>
-                        <PatientRow label="Country" value={patient.country_data.name}/>
+                        <PatientRow label="City" value={patient.city_data?patient.city_data.name:null}/>
+                        <PatientRow label="State" value={patient.state_data?patient.state_data.name:null}/>
+                        <PatientRow label="Country" value={patient.country_data?patient.country_data.name:null}/>
                         <PatientRow label="Pincode" value={patient.pincode}/>
                     </Col>
                     <Col span={6} style={{borderLeft: '1 px solid #ccc'}}>
