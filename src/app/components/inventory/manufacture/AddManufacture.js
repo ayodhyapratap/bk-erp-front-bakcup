@@ -55,7 +55,8 @@ export default class AddManufacture extends React.Component {
 
 
     render() {
-        console.log("stste",this.state,"props",this.props)
+        console.log('props',this.state);
+        
         let that = this;
         const fields = [{
             label: "Name",
@@ -65,6 +66,7 @@ export default class AddManufacture extends React.Component {
         },{
             label: 'Details',
             key: 'description',
+            initialValue:this.state.editData?this.state.editData.description:null,
             type:TEXT_FIELD
         },
         ];
@@ -104,7 +106,7 @@ export default class AddManufacture extends React.Component {
         const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
         return <Row>
             <Card>
-                <Route exact path='/inventory/manufacture/edit/:id'
+                <Route  path='/inventory/manufacture/edit/:id'
                        render={(route) => (this.props.match.params.id ?
                            <TestFormLayout defaultValues={defaultValues} title="Edit Manufacturer"
                                            changeRedirect={this.changeRedirect} formProp={editformProp}

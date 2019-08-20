@@ -92,7 +92,7 @@ class AppSider extends React.Component {
                     <Menu.Item key="8">
                         <Link to="/inventory/manufacture">
                             <Icon type="database"/>
-                            <span className="nav-text">Manufactures</span>
+                            <span className="nav-text">Manufacturers</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="42">

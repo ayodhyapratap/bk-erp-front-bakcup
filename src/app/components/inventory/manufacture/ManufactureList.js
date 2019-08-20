@@ -1,6 +1,6 @@
 import {Button, Card,Icon,Divider,Popconfirm} from "antd";
 import React from "react";
-import {getAPI,deleteAPI,interpolate} from "../../../utils/common";
+import {getAPI,deleteAPI,interpolate,putAPI} from "../../../utils/common";
 import {MANUFACTURER_API,SINGLE_MANUFACTURER_API} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddManufacture from "./AddManufacture";
@@ -43,17 +43,24 @@ export default class ManufactureList extends React.Component {
 
     deleteManufacture(value) {
         var that = this;
+        let reqDate={...value,
+            'is_active':false
+        }
         let successFn = function (data) {
+            that.setState({
+                loading:false
+            })
             that.loadData();
         };
         let errorFn = function () {
         };
-        deleteAPI(interpolate(SINGLE_MANUFACTURER_API, [value]), successFn, errorFn);
+        putAPI(interpolate(SINGLE_MANUFACTURER_API, [value]), reqDate,successFn, errorFn);
 
     }
 
 
     render() {
+        console.log(this.state)
         let that = this;
         const manufactureColoumns = [{
             title: 'Name',
@@ -83,9 +90,9 @@ export default class ManufactureList extends React.Component {
         return <div><Switch>
             <Route exact path='/inventory/manufacture/add'
                    render={(route) =>(that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ? <AddManufacture {...this.state} {...route} {...this.props} loadData={that.loadData}/>:<PermissionDenied/>)}/>
-            <Route exact path='/inventory/manufacture/edit/:id'
-                   render={(route) =>(that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ? <AddManufacture {...this.state} {...route} {...this.props} loadData={that.loadData}/>:<PermissionDenied/>)}/>
-            <Card title="Manufactures" extra={<Link to={"/inventory/manufacture/add"}> <Button type="primary" disabled={!that.props.activePracticePermissions.EditManufacturer}><Icon
+            <Route  path='/inventory/manufacture/edit/:id'
+                   render={(route) =>(that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ? <AddManufacture {...this.state}  {...this.props} {...route} loadData={that.loadData}/>:<PermissionDenied/>)}/>
+            <Card title="Manufacturers" extra={<Link to={"/inventory/manufacture/add"}> <Button type="primary" disabled={!that.props.activePracticePermissions.EditManufacturer}><Icon
                 type="plus"/> Add</Button></Link>}>
                 <CustomizedTable loading={this.state.loading} dataSource={this.state.manufactures} columns={manufactureColoumns} hideReport={!that.props.activePracticePermissions.ExportManufacturer}/>
             </Card>
