@@ -60,7 +60,7 @@ export default class ManufactureList extends React.Component {
 
 
     render() {
-        console.log(this.state)
+        
         let that = this;
         const manufactureColoumns = [{
             title: 'Name',
