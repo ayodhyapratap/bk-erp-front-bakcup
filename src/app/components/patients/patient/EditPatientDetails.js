@@ -33,7 +33,9 @@ class EditPatientDetails extends React.Component {
             webCamState: {},
             countrylist:[],
             stateList:[],
-            cityList:[]
+            cityList:[],
+            country:this.props.currentPatient && this.props.currentPatient.country_data ?this.props.currentPatient.country:null, 
+            state:this.props.currentPatient && this.props.currentPatient.state_data ?this.props.currentPatient.state:null, 
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -80,9 +82,8 @@ class EditPatientDetails extends React.Component {
         let errorFn=function(){
 
         };
-        getAPI(STATE,successFn,errorFn,{
-            country:this.state.country?this.state.country:null,
-        });
+        getAPI(STATE,successFn,errorFn,{country:this.state.country});
+        
 
     }
     getCity(){
@@ -97,7 +98,7 @@ class EditPatientDetails extends React.Component {
 
         };
         getAPI(CITY,successFn,errorFn,{
-            state:this.state.state?this.state.state:null,
+            state:this.state.state,
         });
 
     }
@@ -254,7 +255,8 @@ class EditPatientDetails extends React.Component {
     }
 
     render() {
-
+        console.log("state",this.state);
+        console.log("props",this.props)
         let that = this;
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = ({
@@ -426,7 +428,7 @@ class EditPatientDetails extends React.Component {
 
                     {this.state.country && this.state.country == INPUT_FIELD ?
                         <Form.Item key={'country_extra'} label={"Country"}  {...formItemLayout}>
-                            {getFieldDecorator("country_extra", {initialValue: this.props.currentPatient && this.props.currentPatient.country_data? this.props.currentPatient.country_data.name : null,
+                            {getFieldDecorator("country_extra", {initialValue: '',
                                 
                             })(
                                 <Input/>
@@ -435,7 +437,7 @@ class EditPatientDetails extends React.Component {
                                 Country</a>
                         </Form.Item>
                         : <Form.Item key={"country"} {...formItemLayout} label={"Country"}>
-                            {getFieldDecorator("country", {initialValue: this.props.currentPatient && this.props.currentPatient.country_data ? this.props.currentPatient.country_data.name : null,
+                            {getFieldDecorator("country", {initialValue: this.props.currentPatient && this.props.currentPatient.country_data ? this.props.currentPatient.country_data.id : '',
                             })(
                                 <Select onChange={(value) => this.onChangeValue("country", value)}>
                                     
@@ -452,7 +454,7 @@ class EditPatientDetails extends React.Component {
  
                     {this.state.country==INPUT_FIELD || this.state.state && this.state.state == INPUT_FIELD ?
                         <Form.Item key={'state_extra'} label={"State"}  {...formItemLayout}>
-                            {getFieldDecorator("state_extra",{initialValue: this.props.currentPatient && this.props.currentPatient.state_data ? this.props.currentPatient.state_data.name : null,
+                            {getFieldDecorator("state_extra",{initialValue: '',
                                 
                             })(
                                 <Input/>
@@ -461,7 +463,7 @@ class EditPatientDetails extends React.Component {
                                 State</a>
                         </Form.Item>
                         : <Form.Item key={"state"} {...formItemLayout} label={"State"}>
-                            {getFieldDecorator("state", {initialValue:this.props.currentPatient && this.props.currentPatient.state_data ? this.props.currentPatient.state_data.name : null,
+                            {getFieldDecorator("state", {initialValue:this.props.currentPatient && this.props.currentPatient.state_data ? this.props.currentPatient.state_data.id : '',
                             })(
                                 <Select onChange={(value) => this.onChangeValue("state", value)}>
                                     {this.state.stateList.map((option) => <Select.Option
@@ -475,7 +477,7 @@ class EditPatientDetails extends React.Component {
                     {this.state.country == INPUT_FIELD || this.state.state == INPUT_FIELD || this.state.city && this.state.city == INPUT_FIELD ?
                         <Form.Item key={'city_extra'} label={"City"}  {...formItemLayout}>
                             {getFieldDecorator("city_extra", {
-                                initialValue:this.props.currentPatient && this.props.currentPatient.city_data ? this.props.currentPatient.city_data.name : null,
+                                initialValue:'',
                             })(
                                 <Input/>
                             )}
@@ -483,7 +485,7 @@ class EditPatientDetails extends React.Component {
                                 City</a>
                         </Form.Item>
                         : <Form.Item key={"City"} {...formItemLayout} label={"City"}>
-                            {getFieldDecorator("city", {initialValue: this.props.currentPatient && this.props.currentPatient.city_data ? this.props.currentPatient.city_data.name : null,
+                            {getFieldDecorator("city", {initialValue: this.props.currentPatient && this.props.currentPatient.city_data ? this.props.currentPatient.city_data.id : '',
                             })(
                                 <Select>
                                     {this.state.cityList.map((option) => <Select.Option
