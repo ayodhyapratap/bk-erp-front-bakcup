@@ -423,8 +423,9 @@ timelineVitalSignCard(item) {
     }, {
         title: 'SYS/DIA mmhg',
         key: 'address',
-        render: (text, record) => (
-            <span> {record.blood_pressure_up}/{record.blood_pressure_down}<br/>,{record.position}</span>
+        render: (text, record) => (<>{record.blood_pressure_up?
+            <span> {record.blood_pressure_up}/{record.blood_pressure_down}<br/>,{record.position}</span>:null}
+            </>
         )
     }, {
         title: 'WEIGHT kg',

@@ -247,10 +247,13 @@ class EditPatientDetails extends React.Component {
         })
 
     }
+    setFormParams = (type, value) => {
+        this.setState({
+            [type]: value
+        })
+    }
 
     render() {
-console.log("state",this.state)
-console.log("props",this.props);
 
         let that = this;
         const {getFieldDecorator} = this.props.form;
