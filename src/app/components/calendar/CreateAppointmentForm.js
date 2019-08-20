@@ -79,7 +79,7 @@ export default class CreateAppointmentForm extends React.Component {
         this.loadTreatmentNotes = this.loadTreatmentNotes.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        // this.loadAppointment = this.loadAppointment.bind(this);
+        this.loadAppointment = this.loadAppointment.bind(this);
         this.loadAppointmentList = this.loadAppointmentList.bind(this);
 
     }
@@ -93,7 +93,7 @@ export default class CreateAppointmentForm extends React.Component {
         this.loadPracticeTiming();
         this.loadAppointmentList();
         if (this.props.match.params.appointmentid) {
-            this.loadAppointment();
+            that.loadAppointment();
         } else if (this.props.history && this.props.history.location.search) {
             let pairValueArray = this.props.history.location.search.substr(1).split('&');
             if (pairValueArray.length) {
@@ -326,34 +326,34 @@ export default class CreateAppointmentForm extends React.Component {
         })
     }
 
-    // loadAppointment() {
-    //     let that = this;
-    //     this.setState({
-    //         loading: true,
-    //     })
-    //     let successFn = function (data) {
-    //         that.setState({
-    //             appointment: data,
-    //             patientDetails: data.patient,
-    //             timeToCheckBlock: data,
-    //             loading: false,
-    //         }, function () {
-    //             that.findBlockedTiming();
-    //             that.findOutsideDoctorTiming();
-    //             that.loadDoctorsTiming();
-    //             that.loadAppointmentList();
-    //         });
+    loadAppointment() {
+        let that = this;
+        this.setState({
+            loading: true,
+        })
+        let successFn = function (data) {
+            that.setState({
+                appointment: data,
+                patientDetails: data.patient,
+                timeToCheckBlock: data,
+                loading: false,
+            }, function () {
+                that.findBlockedTiming();
+                that.findOutsideDoctorTiming();
+                that.loadDoctorsTiming();
+                that.loadAppointmentList();
+            });
 
-    //     }
+        }
 
-    //     let errorFn = function () {
-    //         that.setState({
-    //             loading: false,
-    //         })
-    //     }
-    //     getAPI(interpolate(APPOINTMENT_API, [this.props.match.params.appointmentid]), successFn, errorFn);
+        let errorFn = function () {
+            that.setState({
+                loading: false,
+            })
+        }
+        getAPI(interpolate(APPOINTMENT_API, [this.props.match.params.appointmentid]), successFn, errorFn);
 
-    // }
+    }
 
     loadDoctors() {
         let that = this;
@@ -562,7 +562,7 @@ export default class CreateAppointmentForm extends React.Component {
     }
     render() {
         console.log("state",this.state);
-        // console.log("props",this.props.match.params.appointmentid);
+        console.log("props",this.props.match.params.appointmentid);
         
         const that = this;
         const formItemLayout = (this.props.formLayout ? this.props.formLayout : {
@@ -634,7 +634,9 @@ export default class CreateAppointmentForm extends React.Component {
                                 {this.state.appointmentList && this.state.appointmentList.length>0 ?
                                     <div span={5} style={{float:"right"}}>
                                         <ul style={{listStyle:"none",display:"inline-flex",paddingLeft:'15px',paddingRight: "10px"}}>
-                                        {that.state.appointmentList.map((item) =><li style={{border: '1px solid #bbb', marginLeft: "13px",padding:" 0.01em 14px"}}><span style={{width: 'calc(100% - 60px)'}}><b>{moment(item.schedule_at).format("LT")}</b>&nbsp;{item.patient.user.first_name}</span></li>)}
+                                        {that.state.appointmentList.map((item) =><li style={{border: '1px solid #bbb', marginLeft: "13px",padding:" 0.01em 14px"}}><span style={{width: 'calc(100% - 60px)'}}><b>{moment(item.schedule_at).format("LT")}</b>&nbsp;{item.patient.user.first_name}</span>
+                                        &nbsp;<b>with</b> &nbsp;{item.doctor_data.user.first_name}
+                                        </li>)}
                                             
                                         </ul>
                                     </div>

@@ -8,10 +8,10 @@ export default class EventComponent extends React.Component {
     }
 
     render(){
-        console.log("event",this.props);
+        let that=this;
         return <Popover placement="right"
                         content={<EventPatientPopover appointmentId={this.props.event.appointment.id}
-                                                      key={this.props.event.appointment.id}/>}
+                                                      key={this.props.event.appointment.id} {...that.props}/>}
                         trigger="hover">
             <div style={{color: 'white'}}>
                 <h1 style={{color: 'white'}}><Icon type={'user'}/>{this.props.title}</h1>

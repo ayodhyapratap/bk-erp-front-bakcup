@@ -604,7 +604,6 @@ class App extends Component {
     }
 
     render() {
-        console.log(this.state.events,"Ddd")
         let that = this;
         let startTime = null;
         let endTime = null;
@@ -798,6 +797,7 @@ class App extends Component {
                                                         timeslots={1}
                                                         truncateEvents={false}
                                                         events={this.state.showAppointments ? this.state.filteredEvent : []}
+                                                       
                                                         onEventDrop={this.moveEvent}
                                                         onEventResize={this.resizeEvent}
                                                         resizable
@@ -811,7 +811,7 @@ class App extends Component {
                                                         date={new Date(this.state.selectedDate.format())}
                                                         onRangeChange={this.onRangeChange}
                                                         components={{
-                                                            event: EventComponent,
+                                                            event: function(option){return <EventComponent {...option} {...that.props}/>} ,
                                                             timeSlotWrapper: function (options) {
                                                                 return <TimeSlotWrapper {...options}
                                                                                         key={options.value.toString()}
@@ -855,7 +855,7 @@ class App extends Component {
                                                 date={new Date(this.state.selectedDate.format())}
                                                 onRangeChange={this.onRangeChange}
                                                 components={{
-                                                    event: EventComponent,
+                                                    event: function(option){return <EventComponent {...option} {...that.props}/>},
                                                     timeSlotWrapper: function (options) {
                                                         return <TimeSlotWrapper {...options}
                                                                                 key={options.value.toString()}
