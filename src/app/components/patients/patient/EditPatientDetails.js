@@ -423,7 +423,7 @@ console.log("props",this.props);
 
                     {this.state.country && this.state.country == INPUT_FIELD ?
                         <Form.Item key={'country_extra'} label={"Country"}  {...formItemLayout}>
-                            {getFieldDecorator("country_extra", {initialValue: this.props.currentPatient ? this.props.currentPatient.country : null,
+                            {getFieldDecorator("country_extra", {initialValue: this.props.currentPatient && this.props.currentPatient.country_data? this.props.currentPatient.country_data.name : null,
                                 
                             })(
                                 <Input/>
@@ -447,7 +447,7 @@ console.log("props",this.props);
 
 
  
-                    {this.state.state && this.state.state == INPUT_FIELD ?
+                    {this.state.country==INPUT_FIELD || this.state.state && this.state.state == INPUT_FIELD ?
                         <Form.Item key={'state_extra'} label={"State"}  {...formItemLayout}>
                             {getFieldDecorator("state_extra",{initialValue: this.props.currentPatient && this.props.currentPatient.state_data ? this.props.currentPatient.state_data.name : null,
                                 
@@ -458,7 +458,7 @@ console.log("props",this.props);
                                 State</a>
                         </Form.Item>
                         : <Form.Item key={"state"} {...formItemLayout} label={"State"}>
-                            {getFieldDecorator("state", {initialValue: this.props.currentPatient ? this.props.currentPatient.state : null,
+                            {getFieldDecorator("state", {initialValue:this.props.currentPatient && this.props.currentPatient.state_data ? this.props.currentPatient.state_data.name : null,
                             })(
                                 <Select onChange={(value) => this.onChangeValue("state", value)}>
                                     {this.state.stateList.map((option) => <Select.Option
@@ -469,10 +469,10 @@ console.log("props",this.props);
                                 state</a>
                         </Form.Item>
                     }
-                    {this.state.city && this.state.city == INPUT_FIELD ?
+                    {this.state.country == INPUT_FIELD || this.state.state == INPUT_FIELD || this.state.city && this.state.city == INPUT_FIELD ?
                         <Form.Item key={'city_extra'} label={"City"}  {...formItemLayout}>
                             {getFieldDecorator("city_extra", {
-                                initialValue: {initialValue: this.props.currentPatient ? this.props.currentPatient.city : null,}
+                                initialValue:this.props.currentPatient && this.props.currentPatient.city_data ? this.props.currentPatient.city_data.name : null,
                             })(
                                 <Input/>
                             )}
@@ -480,7 +480,7 @@ console.log("props",this.props);
                                 City</a>
                         </Form.Item>
                         : <Form.Item key={"City"} {...formItemLayout} label={"City"}>
-                            {getFieldDecorator("city", {initialValue: this.props.currentPatient ? this.props.currentPatient.city : null,
+                            {getFieldDecorator("city", {initialValue: this.props.currentPatient && this.props.currentPatient.city_data ? this.props.currentPatient.city_data.name : null,
                             })(
                                 <Select>
                                     {this.state.cityList.map((option) => <Select.Option
