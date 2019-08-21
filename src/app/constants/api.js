@@ -93,6 +93,9 @@ export const SAVE_ALL_PRINT_SETTINGS = 'clinics/%s/all_print_settings/';
 export const PATIENT_COMMUNICATION_HISTORY_API = 'users/sms_status_update/?user=%s';
 export const PRESCRIPTION_TEMPLATE = "clinics/%s/prescription_template/";
 export const UNPAID_PRESCRIPTIONS = "patients/unpaid_prescriptions/?id=%s";
+export const CANCELINVOICE_GENERATE_OTP ="patients/generate_otp/";
+export const CANCELINVOICE_VERIFY_OTP='patients/verify_otp/';
+export const CANCELINVOICE_RESENT_OTP = 'patients/resend_otp/'
 //search and advanced search API
 export const SEARCH_PATIENT = 'patients/search/?name=%s';
 
