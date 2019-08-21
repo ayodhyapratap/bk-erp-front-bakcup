@@ -190,6 +190,8 @@ class AddPaymentForm extends React.Component {
 
     render() {
         let that = this;
+        console.log("state",this.state)
+        console.log("props",this.props)
         return <div>
             <Row gutter={8}>
                 <Col xs={24} sm={24} md={16} lg={16} xl={18} xxl={18}>
@@ -218,31 +220,61 @@ class AddPaymentForm extends React.Component {
                                             <small>DUE AFTER PAYMENT (INR)</small>
                                         </td>
                                     </tr>
-                                    {this.state.addedInvoice.map(invoice =>
-                                        <tr style={{borderBottom: '2px solid #ccc'}}>
+                                    {this.props.editInvoice?<>
+                                        
+                                        {this.props.editInvoice.invoices.map(invoice =>
+                                            <tr style={{borderBottom: '2px solid #ccc'}}>
 
-                                            <td>
-                                                <Button size={'small'} type={'danger'} shape={'circle'} icon={'close'}
-                                                        style={{position: 'absolute', right: '-35px'}}
-                                                        onClick={() => this.removeInvoiceToPayments(invoice.id)}/>
-                                                <h3>INV{invoice.id}</h3>
-                                                {invoice.date}
-                                            </td>
+                                                <td>
+                                                    <Button size={'small'} type={'danger'} shape={'circle'} icon={'close'}
+                                                            style={{position: 'absolute', right: '-35px'}}
+                                                            onClick={() => this.removeInvoiceToPayments(invoice.id)}/>
+                                                    <h3>INV{invoice.id}</h3>
+                                                    {invoice.date}
+                                                </td>
 
-                                            <td>
+                                                <td>
 
-                                                {invoice.procedure.map(proc => proc.procedure_data.name + ", ")}
-                                                {invoice.inventory.map(proc => proc.inventory_item_data.name + ", ")}
-                                            </td>
-                                            <td style={{textAlign: 'right'}}>
-                                                <b>{(invoice.total - invoice.payments_data).toFixed(2)}</b></td>
-                                            <td style={{textAlign: 'right'}}>
-                                                <b>{that.state.invoicePayments[invoice.id]}</b></td>
-                                            <td style={{textAlign: 'right'}}>
-                                                <b>{(invoice.total - invoice.payments_data - that.state.invoicePayments[invoice.id]).toFixed(2)}</b>
-                                            </td>
-                                        </tr>
-                                    )}
+                                                    {invoice.procedure?invoice.procedure.map(proc => proc.procedure_data.name + ", "):null}
+                                                    {invoice.inventory?invoice.inventory.map(proc => proc.inventory_item_data.name + ", "):null}
+                                                </td>
+                                                <td style={{textAlign: 'right'}}>
+                                                    <b>{(invoice.total - invoice.payments_data).toFixed(2)}</b></td>
+                                                <td style={{textAlign: 'right'}}>
+                                                    <b>{that.state.invoicePayments[invoice.id]}</b></td>
+                                                <td style={{textAlign: 'right'}}>
+                                                    <b>{(invoice.pay_amount - that.state.invoicePayments[invoice.id]).toFixed(2)}</b>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    
+                                    </>:null}
+                                        {this.state.addedInvoice.map(invoice =>
+                                            <tr style={{borderBottom: '2px solid #ccc'}}>
+
+                                                <td>
+                                                    <Button size={'small'} type={'danger'} shape={'circle'} icon={'close'}
+                                                            style={{position: 'absolute', right: '-35px'}}
+                                                            onClick={() => this.removeInvoiceToPayments(invoice.id)}/>
+                                                    <h3>INV{invoice.id}</h3>
+                                                    {invoice.date}
+                                                </td>
+
+                                                <td>
+
+                                                    {invoice.procedure.map(proc => proc.procedure_data.name + ", ")}
+                                                    {invoice.inventory.map(proc => proc.inventory_item_data.name + ", ")}
+                                                </td>
+                                                <td style={{textAlign: 'right'}}>
+                                                    <b>{(invoice.total - invoice.payments_data).toFixed(2)}</b></td>
+                                                <td style={{textAlign: 'right'}}>
+                                                    <b>{that.state.invoicePayments[invoice.id]}</b></td>
+                                                <td style={{textAlign: 'right'}}>
+                                                    <b>{(invoice.total - invoice.payments_data - that.state.invoicePayments[invoice.id]).toFixed(2)}</b>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    
                                 </table>
                             </Col>
 

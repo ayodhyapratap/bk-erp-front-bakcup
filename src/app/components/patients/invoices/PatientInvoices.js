@@ -236,7 +236,7 @@ class PatientInvoices extends React.Component {
                 }
                 let successFn = function (data) {
                     that.setState({
-                        cancelIncoiceVisible: false,
+                        editIncoiceVisible: false,
                     });
                    that.editInvoiceData(that.state.editInvoice)
                 };
@@ -557,7 +557,7 @@ function InvoiceCard(invoice, that) {
                     {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
                         Resend Otp ?
                     </a> : null}
-                    <Button size="large" type="primary" htmlType="submit" onClick={that.handleSubmitCancelInvoice}>
+                    <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitCancelInvoice}>
                         Submit
                     </Button>&nbsp;
                     <Button size="small" onClick={that.cancelInvoiceClose}>

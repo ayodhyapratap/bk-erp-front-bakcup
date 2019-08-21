@@ -1,8 +1,8 @@
 import React from "react";
 
-import {Alert, Button, Card, Col, Divider, Dropdown, Icon, Menu, Row, Spin, Table, Tag, Tooltip} from "antd";
-import {displayMessage, getAPI, interpolate, putAPI} from "../../../utils/common";
-import {PATIENT_PAYMENTS_API, PAYMENT_PDF, SINGLE_PAYMENT_API} from "../../../constants/api";
+import {Alert, Button, Card, Col, Divider, Dropdown, Icon, Menu, Row, Spin, Table, Tag, Tooltip,Form,Input} from "antd";
+import {displayMessage, getAPI, interpolate, putAPI,postAPI} from "../../../utils/common";
+import {PATIENT_PAYMENTS_API, PAYMENT_PDF, SINGLE_PAYMENT_API,CANCELINVOICE_VERIFY_OTP,CANCELINVOICE_GENERATE_OTP,CANCELINVOICE_RESENT_OTP} from "../../../constants/api";
 import moment from "moment";
 import {Link} from "react-router-dom";
 import {Route, Switch} from "react-router";
@@ -21,7 +21,9 @@ class PatientPayments extends React.Component {
         this.state = {
             payments: [],
             active_practiceId: this.props.active_practiceId,
-            loading: true
+            loading: true,
+            otpSent:false,
+            editPaymentVisible:false,
         }
 
     }
@@ -71,12 +73,12 @@ class PatientPayments extends React.Component {
     }
 
 
-    editInvoiceData(record) {
+    editPaymentData(record) {
         this.setState({
-            editInvoice: record,
+            editPayment: record,
         });
         let id = this.props.match.params.id
-        this.props.history.push("/patient/" + id + "/billing/invoices/edit")
+        this.props.history.push("/patient/" + id + "/billing/payments/edit")
 
     }
 
@@ -92,31 +94,142 @@ class PatientPayments extends React.Component {
         getAPI(interpolate(PAYMENT_PDF, [id]), successFn, errorFn);
     }
 
-    deletePayment(record) {
+    deletePayment(patient,payment) {
+        console.log(payment);
+        
         let that = this;
-        confirm({
-            title: 'Are you sure to cancel this item?',
-            okText: 'Yes',
-            okType: 'danger',
-            cancelText: 'No',
-            onOk() {
-                let reqData = {patient: record.patient, is_cancelled: true};
+        let reqData = {patient: patient, is_cancelled: true};
+        let successFn = function (data) {
+            displayMessage(SUCCESS_MSG_TYPE, "Payment cancelled successfully")
+            that.loadPayments();
+        }
+        let errorFn = function () {
+        }
+        putAPI(interpolate(SINGLE_PAYMENT_API, [payment]), reqData, successFn, errorFn);
+            
+    }
+
+    editModelOpen = (record) => {
+        let that=this;
+        that.setState({
+            editPaymentVisible: true,
+            editPayment: record,
+        });
+        let reqData={
+            practice: this.props.active_practiceId,
+            type:'Payment'+ ':' + record.payment_id + ' ' + 'Edit'
+        }
+        let successFn = function(data){
+            that.setState({
+                otpSent: true,
+                patientId:record.patient,
+                paymentId:record.payment_id
+            })
+        }
+        let errorFn = function(){
+
+        };
+
+        // postAPI(CANCELINVOICE_GENERATE_OTP, reqData ,successFn, errorFn);
+    };
+    editPaymentClose=()=>{
+        this.setState({
+            editPaymentVisible:false
+        })
+    }
+
+    handleSubmitEditPayment=(e)=>{
+        let that = this;
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                let reqData={...values,
+                    practice: this.props.active_practiceId,
+                }
                 let successFn = function (data) {
-                    displayMessage(SUCCESS_MSG_TYPE, "Payment cancelled successfully")
-                    that.loadPayments();
-                }
+                    that.setState({
+                        editPaymentVisible: false,
+                    });
+                   that.editPaymentData(that.state.editPayment)
+                };
                 let errorFn = function () {
+
+                };
+                postAPI(CANCELINVOICE_VERIFY_OTP,reqData,successFn,errorFn);
+            }
+        });
+    }
+    editPaymentClose=()=>{
+        this.setState({
+            editPaymentVisible:false
+        })
+    }
+
+    cancelModalOpen = (record) => {
+        let that=this;
+        that.setState({
+            cancelPaymentVisible: true,
+        });
+        let reqData={
+            practice: this.props.active_practiceId,
+            type:'Payment'+ ':' + record.payment_id + ' ' + ' Cancellation'
+        }
+        let successFn = function(data){
+            that.setState({
+                otpSent: true,
+                patientId:record.patient,
+                paymentId:record.id
+            })
+        }
+        let errorFn = function(){
+
+        };
+        
+        postAPI(CANCELINVOICE_GENERATE_OTP, reqData ,successFn, errorFn);
+    };
+    
+
+    handleSubmitCancelPayment=(e)=>{
+        let that = this;
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                let reqData={...values,
+                    practice: this.props.active_practiceId,
                 }
-                putAPI(interpolate(SINGLE_PAYMENT_API, [record.id]), reqData, successFn, errorFn);
-            },
-            onCancel() {
-                console.log('Cancel');
-            },
+                let successFn = function (data) {
+                    that.setState({
+                        cancelPaymentVisible: false,
+                    });
+                   that.deletePayment(that.state.patientId,that.state.paymentId)
+                };
+                let errorFn = function () {
+
+                };
+                postAPI(CANCELINVOICE_VERIFY_OTP,reqData,successFn,errorFn);
+            }
         });
     }
 
+    sendOTP(){
+        let that=this;
+        let successFn=function(data){
+
+        }
+        let errorFn=function(){
+
+        }
+        getAPI(CANCELINVOICE_RESENT_OTP,successFn,errorFn);
+    }
+    
+    cancelPaymentClose=()=>{
+        this.setState({
+            cancelPaymentVisible:false
+        })
+    }
     render() {
-        console.log("propsssss",this.props)
+        console.log("state",this.state);
+        
         let that = this;
         const paymentmodes = {}
         if (this.state.paymentModes) {
@@ -134,7 +247,7 @@ class PatientPayments extends React.Component {
                            render={(route) => <AddPaymentForm {...this.state} {...route} {...this.props}
                                                               loadData={this.loadPayments}/>}/>
                     <Route exact path='/patient/:id/billing/payments/edit'
-                           render={(route) => <AddPayment {...this.state} {...route} {...this.props}/>}/>
+                           render={(route) => <AddPaymentForm {...this.state} {...route} {...this.props} loadData={this.loadPayments}/>}/>
                     <Route>
                         <div>
                             <Alert banner showIcon type={"info"}
@@ -185,7 +298,7 @@ class PatientPayments extends React.Component {
     }
 }
 
-export default PatientPayments;
+export default Form.create()(PatientPayments);
 
 const columns = [{
     title: 'INVOICE',
@@ -199,6 +312,7 @@ const columns = [{
 }];
 
 function PaymentCard(payment, that) {
+    const { getFieldDecorator } = that.props.form;
     return <Card style={{marginTop: 10}}
                  bodyStyle={{padding: 0}}
                  title={(payment.patient_data && !that.props.currentPatient ?
@@ -212,16 +326,16 @@ function PaymentCard(payment, that) {
                      size={"small"}
                      style={{float: 'right'}}
                      overlay={<Menu>
-                         {/*<Menu.Item key="2" onClick={() => that.editInvoiceData(payment)}*/}
-                         {/*disabled={(payment.practice != that.props.active_practiceId)}>*/}
-                         {/*<Icon type="edit"/>*/}
-                         {/*Edit*/}
-                         {/*</Menu.Item>*/}
-                         {/*<Menu.Item key="3" onClick={() => that.deletePayment(payment)}*/}
-                         {/*disabled={(payment.practice != that.props.active_practiceId) || payment.is_cancelled}>*/}
-                         {/*<Icon type="delete"/>*/}
-                         {/*Cancel*/}
-                         {/*</Menu.Item>*/}
+                         <Menu.Item key="2" onClick={() => that.editModelOpen(payment)}
+                         disabled={(payment.practice != that.props.active_practiceId)}>
+                         <Icon type="edit"/>
+                         Edit
+                         </Menu.Item>
+                         <Menu.Item key="3" onClick={() => that.cancelModalOpen(payment)}
+                         disabled={(payment.practice != that.props.active_practiceId) || payment.is_cancelled}>
+                         <Icon type="delete"/>
+                         Cancel
+                         </Menu.Item>
                          <Menu.Divider/>
                          <Menu.Item key="4">
                              <Link to={"/patient/" + payment.patient + "/emr/timeline"}>
@@ -247,6 +361,68 @@ function PaymentCard(payment, that) {
                            dataSource={payment.invoices}/>
             </Col>
         </Row>
+
+        <Modal
+          visible={that.state.editPaymentVisible}
+          title="Edit Payment"
+          footer={null}
+          onOk={that.handleSubmitEditPayment}
+          onCancel={that.editPaymentClose}
+        >
+            <Form>
+                <Form.Item>
+                    {getFieldDecorator('otp', {
+                        rules: [{ required: true, message: 'Please input Otp!' }],
+                    })(
+                        <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                        placeholder="Otp"
+                        />,
+                    )}
+                </Form.Item>
+                <Form.Item>
+                    {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
+                        Resend Otp ?
+                    </a> : null}
+                    <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitEditPayment}>
+                        Submit
+                    </Button>&nbsp;
+                    <Button size="small" onClick={that.editPaymentClose}>
+                        Close
+                    </Button>
+                </Form.Item>
+           </Form>
+        </Modal>
+
+        <Modal
+          visible={that.state.cancelPaymentVisible}
+          title="Cancel Payment"
+          footer={null}
+          onOk={that.handleSubmitCancelPayment}
+          onCancel={that.cancelPaymentClose}
+        >
+            <Form>
+                <Form.Item>
+                    {getFieldDecorator('otp', {
+                        rules: [{ required: true, message: 'Please input Otp!' }],
+                    })(
+                        <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                        placeholder="Otp"
+                        />,
+                    )}
+                </Form.Item>
+                <Form.Item>
+                    {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
+                        Resend Otp ?
+                    </a> : null}
+                    <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitCancelPayment}>
+                        Submit
+                    </Button>&nbsp;
+                    <Button size="small" onClick={that.cancelPaymentClose}>
+                        Close
+                    </Button>
+                </Form.Item>
+           </Form>
+        </Modal>
     </Card>
 }
 
