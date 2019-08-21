@@ -15,16 +15,20 @@ import {
     Statistic,
     Table,
     Tag,
-    Tooltip
+    Tooltip,
+    Form,Input
 } from "antd";
-import {displayMessage, getAPI, interpolate, putAPI} from "../../../utils/common";
+import {displayMessage, getAPI, interpolate, putAPI,postAPI} from "../../../utils/common";
 import {
     DRUG_CATALOG,
     INVOICE_PDF_API,
     INVOICES_API,
     PROCEDURE_CATEGORY,
     SINGLE_INVOICES_API,
-    TAXES
+    TAXES,
+    CANCELINVOICE_GENERATE_OTP,
+    CANCELINVOICE_VERIFY_OTP,
+    CANCELINVOICE_RESENT_OTP
 } from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
@@ -47,7 +51,10 @@ class PatientInvoices extends React.Component {
             procedure_category: null,
             taxes_list: null,
             editInvoice: null,
-            loading: true
+            loading: true,
+            cancelIncoiceVisible:false,
+            otpSent:false,
+            editIncoiceVisible:false,
         }
         this.loadInvoices = this.loadInvoices.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
@@ -156,28 +163,28 @@ class PatientInvoices extends React.Component {
 
     }
 
-    deleteInvoice(record) {
-        let that = this;
-        confirm({
-            title: 'Are you sure to cancel this item?',
-            okText: 'Yes',
-            okType: 'danger',
-            cancelText: 'No',
-            onOk() {
-                let reqData = {patient: record.patient, is_cancelled: true};
-                let successFn = function (data) {
-                    displayMessage(SUCCESS_MSG_TYPE, "Invoice cancelled successfully")
-                    that.loadInvoices();
-                }
-                let errorFn = function () {
-                }
-                putAPI(interpolate(SINGLE_INVOICES_API, [record.id]), reqData, successFn, errorFn);
-            },
-            onCancel() {
-                console.log('Cancel');
-            },
-        });
-    }
+    // deleteInvoice(record) {
+    //     let that = this;
+    //     confirm({
+    //         title: 'Are you sure to cancel this item?',
+    //         okText: 'Yes',
+    //         okType: 'danger',
+    //         cancelText: 'No',
+    //         onOk() {
+    //             let reqData = {patient: record.patient, is_cancelled: true};
+    //             let successFn = function (data) {
+    //                 displayMessage(SUCCESS_MSG_TYPE, "Invoice cancelled successfully")
+    //                 that.loadInvoices();
+    //             }
+    //             let errorFn = function () {
+    //             }
+    //             putAPI(interpolate(SINGLE_INVOICES_API, [record.id]), reqData, successFn, errorFn);
+    //         },
+    //         onCancel() {
+    //             console.log('Cancel');
+    //         },
+    //     });
+    // }
 
     loadPDF = (id) => {
         let that = this;
@@ -189,6 +196,131 @@ class PatientInvoices extends React.Component {
 
         }
         getAPI(interpolate(INVOICE_PDF_API, [id]), successFn, errorFn);
+    }
+
+    editModelOpen = (record) => {
+        let that=this;
+        that.setState({
+            editIncoiceVisible: true,
+            editInvoice: record,
+        });
+        let reqData={
+            practice: this.props.active_practiceId,
+            type:'Invoice'+ ':' + record.invoice_id + ' ' + 'Edit'
+        }
+        let successFn = function(data){
+            that.setState({
+                otpSent: true,
+                patientId:record.patient,
+                invoiceId:record.id
+            })
+        }
+        let errorFn = function(){
+
+        };
+        postAPI(CANCELINVOICE_GENERATE_OTP, reqData ,successFn, errorFn);
+    };
+    editInvoiceClose=()=>{
+        this.setState({
+            editIncoiceVisible:false
+        })
+    }
+
+    handleSubmitEditInvoice=(e)=>{
+        let that = this;
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                let reqData={...values,
+                    practice: this.props.active_practiceId,
+                }
+                let successFn = function (data) {
+                    that.setState({
+                        cancelIncoiceVisible: false,
+                    });
+                   that.editInvoiceData(that.state.editInvoice)
+                };
+                let errorFn = function () {
+
+                };
+                postAPI(CANCELINVOICE_VERIFY_OTP,reqData,successFn,errorFn);
+            }
+        });
+    }
+    
+    cancelModalOpen = (record) => {
+        let that=this;
+        that.setState({
+            cancelIncoiceVisible: true,
+        });
+        let reqData={
+            practice: this.props.active_practiceId,
+            type:'Invoice'+ ':' + record.invoice_id + ' ' + ' Cancellation'
+        }
+        let successFn = function(data){
+            that.setState({
+                otpSent: true,
+                patientId:record.patient,
+                invoiceId:record.id
+            })
+        }
+        let errorFn = function(){
+
+        };
+        postAPI(CANCELINVOICE_GENERATE_OTP, reqData ,successFn, errorFn);
+    };
+    
+
+    sendOTP(){
+       let that=this;
+       let successFn=function(data){
+
+       }
+       let errorFn=function(){
+
+       }
+       getAPI(CANCELINVOICE_RESENT_OTP,successFn,errorFn);
+    }
+
+    cancelInvoiceClose=()=>{
+        this.setState({
+            cancelIncoiceVisible:false
+        })
+    }
+    handleSubmitCancelInvoice=(e)=>{
+        let that = this;
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                let reqData={...values,
+                    practice: this.props.active_practiceId,
+                }
+                let successFn = function (data) {
+                    that.setState({
+                        cancelIncoiceVisible: false,
+                    });
+                   that.deleteInvoice(that.state.patientId,that.state.invoiceId)
+                };
+                let errorFn = function () {
+
+                };
+                postAPI(CANCELINVOICE_VERIFY_OTP,reqData,successFn,errorFn);
+            }
+        });
+    }
+
+
+
+    deleteInvoice(patient,invoice) {
+        let that = this;
+        let reqData = {patient: patient, is_cancelled: true};
+        let successFn = function (data) {
+            displayMessage(SUCCESS_MSG_TYPE, "Invoice cancelled successfully")
+            that.loadInvoices();
+        }
+        let errorFn = function () {
+        }
+        putAPI(interpolate(SINGLE_INVOICES_API, [invoice]), reqData, successFn, errorFn);
     }
 
     render() {
@@ -284,7 +416,7 @@ class PatientInvoices extends React.Component {
     }
 }
 
-export default PatientInvoices;
+export default Form.create()(PatientInvoices);
 
 function invoiceFooter(presc) {
     if (presc) {
@@ -304,6 +436,7 @@ function invoiceFooter(presc) {
 
 function InvoiceCard(invoice, that) {
     let tableObjects = [];
+    const { getFieldDecorator } = that.props.form;
     if (invoice.reservation) {
         let medicinesPackages = invoice.reservation_data.medicines.map(item => Object.create({
             ...item,
@@ -338,8 +471,8 @@ function InvoiceCard(invoice, that) {
             size={"small"}
             style={{float: 'right'}}
             overlay={<Menu>
-                <Menu.Item key="1"
-                           onClick={() => that.editInvoiceData(invoice)} disabled={!that.props.match.params.id}>
+                <Menu.Item key="1">
+                           {/* onClick={() => that.editInvoiceData(invoice)} disabled={!that.props.match.params.id}> */}
                     <Link
                         to={"/patient/" + (invoice.patient_data ? invoice.patient_data.id : null) + "/billing/payments/add"}>
                         <Icon type="dollar"/>
@@ -348,12 +481,12 @@ function InvoiceCard(invoice, that) {
                     </Link>
                 </Menu.Item>
                 <Menu.Divider/>
-                <Menu.Item key="2" onClick={() => that.editInvoiceData(invoice)}
+                <Menu.Item key="2" onClick={() => that.editModelOpen(invoice)}
                            disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>
                     <Icon type="edit"/>
                     Edit
                 </Menu.Item>
-                <Menu.Item key="3" onClick={() => that.deleteInvoice(invoice)}
+                <Menu.Item key="3"  onClick={()=>that.cancelModalOpen(invoice)}
                            disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>
                     <Icon type="delete"/>
                     Cancel
@@ -402,6 +535,69 @@ function InvoiceCard(invoice, that) {
                         footer={() => invoiceFooter({practice: invoice.practice_data})}/>}
             </Col>
         </Row>
+
+        <Modal
+          visible={that.state.cancelIncoiceVisible}
+          title="Cancel Invoice"
+          footer={null}
+          onOk={that.handleSubmitCancelInvoice}
+          onCancel={that.cancelInvoiceClose}
+        >
+            <Form>
+                <Form.Item>
+                    {getFieldDecorator('otp', {
+                        rules: [{ required: true, message: 'Please input Otp!' }],
+                    })(
+                        <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                        placeholder="Otp"
+                        />,
+                    )}
+                </Form.Item>
+                <Form.Item>
+                    {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
+                        Resend Otp ?
+                    </a> : null}
+                    <Button size="large" type="primary" htmlType="submit" onClick={that.handleSubmitCancelInvoice}>
+                        Submit
+                    </Button>&nbsp;
+                    <Button size="small" onClick={that.cancelInvoiceClose}>
+                        Close
+                    </Button>
+                </Form.Item>
+           </Form>
+        </Modal>
+
+
+        <Modal
+          visible={that.state.editIncoiceVisible}
+          title="Edit Invoice"
+          footer={null}
+          onOk={that.handleSubmitEditInvoice}
+          onCancel={that.editInvoiceClose}
+        >
+            <Form>
+                <Form.Item>
+                    {getFieldDecorator('otp', {
+                        rules: [{ required: true, message: 'Please input Otp!' }],
+                    })(
+                        <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                        placeholder="Otp"
+                        />,
+                    )}
+                </Form.Item>
+                <Form.Item>
+                    {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
+                        Resend Otp ?
+                    </a> : null}
+                    <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitEditInvoice}>
+                        Submit
+                    </Button>&nbsp;
+                    <Button size="small" onClick={that.cancelInvoiceClose}>
+                        Close
+                    </Button>
+                </Form.Item>
+           </Form>
+        </Modal>
     </Card>
 }
 
