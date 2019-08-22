@@ -11,7 +11,8 @@ class AddPaymentForm extends React.Component {
             invoicesList: [],
             invoiceLoading: true,
             addedInvoiceId: {},
-            addedInvoice: [],
+            addedInvoice:[],
+            addedInvoice:this.props.editPayment && this.props.editPayment.invoices?this.props.editPayment.invoices.map(invoice =>invoice.invoice_data): [],
             paymentModes: [],
             totalPayableAmount: 0,
             invoicePayments: {},
@@ -222,7 +223,7 @@ class AddPaymentForm extends React.Component {
                                     </tr>
                                     {this.props.editPayment?<>
                                         
-                                        {this.props.editPayment.invoices.map(invoice =>
+                                        {this.props.editPayment.invoices?this.props.editPayment.invoices.map(invoice =>
                                             <tr style={{borderBottom: '2px solid #ccc'}}>
 
                                                 <td>
@@ -248,7 +249,7 @@ class AddPaymentForm extends React.Component {
                                                     <b>{(invoice.invoice_data.total - invoice.invoice_data.payments_data - that.state.invoicePayments[invoice.invoice_data.id]).toFixed(2)}</b>
                                                 </td>
                                             </tr>
-                                        )}
+                                        ):null}
                                     
                                     </>:null}
                                         {this.state.addedInvoice.map(invoice =>
@@ -328,12 +329,25 @@ class AddPaymentForm extends React.Component {
                                   <table style={{width: '100%'}}>
                                       {invoice.procedure.map(proc => <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}>{proc.procedure_data.name}</td>
-                                          <td style={{textAlign: 'right'}}><b>{proc.unit * proc.unit_cost}</b></td>
+                                          <td style={{textAlign: 'right'}}><b>{(proc.unit * proc.unit_cost).toFixed(2)}</b></td>
                                       </tr>)}
                                       {invoice.inventory.map(proc => <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}>{proc.inventory_item_data.name}</td>
-                                          <td style={{textAlign: 'right'}}><b>{proc.unit * proc.unit_cost}</b></td>
+                                          <td style={{textAlign: 'right'}}><b>{(proc.unit * proc.unit_cost).toFixed(2)}</b></td>
                                       </tr>)}
+                                      {invoice.reservation?
+                                      <tr>
+                                        <td style={{maxWidth: 'calc(100% - 60px)'}}>{invoice.type}</td>
+                                        <td style={{textAlign: 'right'}}><b>{invoice.reservation_data.bed_package_price?invoice.reservation_data.bed_package_price.toFixed(2):null}</b></td>
+                                      </tr>:null}
+
+                                        {invoice.reservation_data && invoice.reservation_data.medicines?<>
+                                            {invoice.reservation_data.medicines.map(item =><tr>
+                                                <td style={{maxWidth: 'calc(100% - 60px)'}}>{item.name}</td>
+                                                <td style={{textAlign: 'right'}}><b>{item.final_price.toFixed(2)}</b></td>
+                                            </tr>)}
+                                         </>
+                                      :null}
                                   </table>
                                   <Divider style={{margin: 0}}/>
                                   <table style={{width: '100%'}}>
