@@ -56,6 +56,7 @@ class PatientInvoices extends React.Component {
             cancelIncoiceVisible: false,
             otpSent: false,
             editIncoiceVisible: false,
+            returnIncoiceVisible:false,
         }
         this.loadInvoices = this.loadInvoices.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
@@ -163,7 +164,7 @@ class PatientInvoices extends React.Component {
 
 
     }
-    returnModelOpen = (record) => {
+    returnInvoiceData = (record) => {
         let that = this;
         // let id = this.props.match.params.id;
         this.setState({
@@ -173,28 +174,60 @@ class PatientInvoices extends React.Component {
         });
 
     }
-    // deleteInvoice(record) {
-    //     let that = this;
-    //     confirm({
-    //         title: 'Are you sure to cancel this item?',
-    //         okText: 'Yes',
-    //         okType: 'danger',
-    //         cancelText: 'No',
-    //         onOk() {
-    //             let reqData = {patient: record.patient, is_cancelled: true};
-    //             let successFn = function (data) {
-    //                 displayMessage(SUCCESS_MSG_TYPE, "Invoice cancelled successfully")
-    //                 that.loadInvoices();
-    //             }
-    //             let errorFn = function () {
-    //             }
-    //             putAPI(interpolate(SINGLE_INVOICES_API, [record.id]), reqData, successFn, errorFn);
-    //         },
-    //         onCancel() {
-    //             console.log('Cancel');
-    //         },
-    //     });
-    // }
+    returnModelOpen(record){
+        console.log("return",record)
+        let that = this;
+        that.setState({
+            returnIncoiceVisible: true,
+            editInvoice: record,
+        });
+        let reqData = {
+            practice: this.props.active_practiceId,
+            type: 'Invoice' + ':' + record.invoice_id + ' ' + 'Return'
+        }
+        let successFn = function (data) {
+            that.setState({
+                otpSent: true,
+                patientId: record.patient,
+                invoiceId: record.id
+            })
+        }
+        let errorFn = function () {
+
+        };
+        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+    }
+
+    returnInvoiceClose = () => {
+        this.setState({
+            returnIncoiceVisible: false
+        })
+    }
+
+    handleSubmitReturnInvoice = (e) => {
+        let that = this;
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                let reqData = {
+                    ...values,
+                    practice: this.props.active_practiceId,
+                }
+                let successFn = function (data) {
+                    that.setState({
+                        returnIncoiceVisible: false,
+                    });
+                    that.returnInvoiceData(that.state.editInvoice)
+                };
+                let errorFn = function () {
+
+                };
+                postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
+            }
+        });
+    }
+
+   
 
     loadPDF = (id) => {
         let that = this;
@@ -228,7 +261,7 @@ class PatientInvoices extends React.Component {
         let errorFn = function () {
 
         };
-        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+        // postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
     };
     editInvoiceClose = () => {
         this.setState({
@@ -278,7 +311,7 @@ class PatientInvoices extends React.Component {
         let errorFn = function () {
 
         };
-        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+        // postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
     };
 
 
@@ -507,7 +540,7 @@ function InvoiceCard(invoice, that) {
                 </Menu.Item>
                 <Menu.Item key="5" onClick={() => that.returnModelOpen(invoice)}
                            disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>
-                    <Icon type="edit"/>
+                    <Icon type="redo"/>
                     Return
                 </Menu.Item>
                 <Menu.Item key="3" onClick={() => that.cancelModalOpen(invoice)}
@@ -616,7 +649,38 @@ function InvoiceCard(invoice, that) {
                     <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitEditInvoice}>
                         Submit
                     </Button>&nbsp;
-                    <Button size="small" onClick={that.cancelInvoiceClose}>
+                    <Button size="small" onClick={that.editInvoiceClose}>
+                        Close
+                    </Button>
+                </Form.Item>
+            </Form>
+        </Modal>
+
+        <Modal
+            visible={that.state.returnIncoiceVisible}
+            title="Return Invoice"
+            footer={null}
+            onOk={that.handleSubmitReturnInvoice}
+            onCancel={that.returnInvoiceClose}
+        >
+            <Form>
+                <Form.Item>
+                    {getFieldDecorator('otp', {
+                        rules: [{required: true, message: 'Please input Otp!'}],
+                    })(
+                        <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                               placeholder="Otp"
+                        />,
+                    )}
+                </Form.Item>
+                <Form.Item>
+                    {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
+                        Resend Otp ?
+                    </a> : null}
+                    <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitReturnInvoice}>
+                        Submit
+                    </Button>&nbsp;
+                    <Button size="small" onClick={that.returnInvoiceClose}>
                         Close
                     </Button>
                 </Form.Item>
