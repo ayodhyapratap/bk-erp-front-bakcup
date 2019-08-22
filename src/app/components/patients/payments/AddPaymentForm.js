@@ -220,30 +220,32 @@ class AddPaymentForm extends React.Component {
                                             <small>DUE AFTER PAYMENT (INR)</small>
                                         </td>
                                     </tr>
-                                    {this.props.editInvoice?<>
+                                    {this.props.editPayment?<>
                                         
-                                        {this.props.editInvoice.invoices.map(invoice =>
+                                        {this.props.editPayment.invoices.map(invoice =>
                                             <tr style={{borderBottom: '2px solid #ccc'}}>
 
                                                 <td>
                                                     <Button size={'small'} type={'danger'} shape={'circle'} icon={'close'}
                                                             style={{position: 'absolute', right: '-35px'}}
-                                                            onClick={() => this.removeInvoiceToPayments(invoice.id)}/>
-                                                    <h3>INV{invoice.id}</h3>
-                                                    {invoice.date}
+                                                            onClick={() => this.removeInvoiceToPayments(invoice.invoice_data.id)}/>
+                                                    <h3>{invoice.invoice_data.invoice_id}</h3>
+                                                    {invoice.invoice_data.date}
                                                 </td>
 
                                                 <td>
 
-                                                    {invoice.procedure?invoice.procedure.map(proc => proc.procedure_data.name + ", "):null}
-                                                    {invoice.inventory?invoice.inventory.map(proc => proc.inventory_item_data.name + ", "):null}
+                                                    {invoice.invoice_data.procedure.map(proc => proc.procedure_data.name + ", ")}
+                                                    {invoice.invoice_data.inventory.map(proc => proc.inventory_item_data.name + ", ")}
+                                                    {invoice.invoice_data.reservation?invoice.type + ",":null}
+                                                    {invoice.invoice_data.reservation_data && invoice.invoice_data.reservation_data.medicines?invoice.invoice_data.reservation_data.medicines.map(item =>item.name + ','):null}
                                                 </td>
                                                 <td style={{textAlign: 'right'}}>
-                                                    <b>{(invoice.total - invoice.payments_data).toFixed(2)}</b></td>
+                                                    <b>{(invoice.invoice_data.total - invoice.invoice_data.payments_data).toFixed(2)}</b></td>
                                                 <td style={{textAlign: 'right'}}>
-                                                    <b>{that.state.invoicePayments[invoice.id]}</b></td>
+                                                    <b>{that.state.invoicePayments[invoice.invoice_data.id]}</b></td>
                                                 <td style={{textAlign: 'right'}}>
-                                                    <b>{(invoice.pay_amount - that.state.invoicePayments[invoice.id]).toFixed(2)}</b>
+                                                    <b>{(invoice.invoice_data.total - invoice.invoice_data.payments_data - that.state.invoicePayments[invoice.invoice_data.id]).toFixed(2)}</b>
                                                 </td>
                                             </tr>
                                         )}
@@ -256,7 +258,7 @@ class AddPaymentForm extends React.Component {
                                                     <Button size={'small'} type={'danger'} shape={'circle'} icon={'close'}
                                                             style={{position: 'absolute', right: '-35px'}}
                                                             onClick={() => this.removeInvoiceToPayments(invoice.id)}/>
-                                                    <h3>INV{invoice.id}</h3>
+                                                    <h3>{invoice.invoice_id}</h3>
                                                     {invoice.date}
                                                 </td>
 
@@ -264,6 +266,8 @@ class AddPaymentForm extends React.Component {
 
                                                     {invoice.procedure.map(proc => proc.procedure_data.name + ", ")}
                                                     {invoice.inventory.map(proc => proc.inventory_item_data.name + ", ")}
+                                                    {invoice.reservation?invoice.type + ",":null}
+                                                    {invoice.reservation_data && invoice.reservation_data.medicines?invoice.reservation_data.medicines.map(item =>item.name + ','):null}
                                                 </td>
                                                 <td style={{textAlign: 'right'}}>
                                                     <b>{(invoice.total - invoice.payments_data).toFixed(2)}</b></td>

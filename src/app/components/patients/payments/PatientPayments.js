@@ -326,7 +326,7 @@ function PaymentCard(payment, that) {
                      size={"small"}
                      style={{float: 'right'}}
                      overlay={<Menu>
-                         <Menu.Item key="2" onClick={() => that.editModelOpen(payment)}
+                         <Menu.Item key="2" onClick={() => that.editPaymentData(payment)}
                          disabled={(payment.practice != that.props.active_practiceId)}>
                          <Icon type="edit"/>
                          Edit
