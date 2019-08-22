@@ -4,7 +4,7 @@ import {Alert, Button, Card, Col, Divider, Dropdown, Icon, Menu, Row, Spin, Tabl
 import {displayMessage, getAPI, interpolate, putAPI,postAPI} from "../../../utils/common";
 import {PATIENT_PAYMENTS_API, PAYMENT_PDF, SINGLE_PAYMENT_API,CANCELINVOICE_VERIFY_OTP,CANCELINVOICE_GENERATE_OTP,CANCELINVOICE_RESENT_OTP} from "../../../constants/api";
 import moment from "moment";
-import {Link} from "react-router-dom";
+import {Link,Redirect} from "react-router-dom";
 import {Route, Switch} from "react-router";
 import AddPayment from "./AddPayment";
 import AddPaymentForm from "./AddPaymentForm";
@@ -77,8 +77,8 @@ class PatientPayments extends React.Component {
         this.setState({
             editPayment: record,
         });
-        let id = this.props.match.params.id
-        this.props.history.push("/patient/" + id + "/billing/payments/edit")
+        // let id = this.props.match.params.id
+        this.props.history.push("/patient/" + record.patient + "/billing/payments/edit")
 
     }
 
@@ -228,8 +228,6 @@ class PatientPayments extends React.Component {
         })
     }
     render() {
-        console.log("state",this.state);
-        
         let that = this;
         const paymentmodes = {}
         if (this.state.paymentModes) {
@@ -247,7 +245,8 @@ class PatientPayments extends React.Component {
                            render={(route) => <AddPaymentForm {...this.state} {...route} {...this.props}
                                                               loadData={this.loadPayments}/>}/>
                     <Route exact path='/patient/:id/billing/payments/edit'
-                           render={(route) => <AddPaymentForm {...this.state} {...route} {...this.props} loadData={this.loadPayments}/>}/>
+                           render={(route) => <AddPaymentForm {...this.state} {...route} {...this.props} loadData={this.loadPayments}/>
+                        }/>
                     <Route>
                         <div>
                             <Alert banner showIcon type={"info"}
