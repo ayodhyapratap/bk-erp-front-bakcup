@@ -126,6 +126,7 @@ class PatientHome extends React.Component {
         return <Content>
             <Spin spinning={this.state.loading} size={"large"}>
                 <PatientHeader {...this.state} {...this.props} togglePatientListModal={this.togglePatientListModal}
+                               key={this.state.currentPatient}
                                setCurrentPatient={this.setCurrentPatient}
                                toggleShowAllClinic={this.toggleShowAllClinic}/>
 
