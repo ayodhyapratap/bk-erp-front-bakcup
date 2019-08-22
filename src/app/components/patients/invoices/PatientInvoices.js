@@ -16,9 +16,9 @@ import {
     Table,
     Tag,
     Tooltip,
-    Form,Input
+    Form, Input
 } from "antd";
-import {displayMessage, getAPI, interpolate, putAPI,postAPI} from "../../../utils/common";
+import {displayMessage, getAPI, interpolate, putAPI, postAPI} from "../../../utils/common";
 import {
     DRUG_CATALOG,
     INVOICE_PDF_API,
@@ -37,6 +37,7 @@ import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {Link, Redirect} from "react-router-dom";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import ReturnInvoice from "./ReturnInvoice";
 
 const confirm = Modal.confirm;
 
@@ -52,9 +53,9 @@ class PatientInvoices extends React.Component {
             taxes_list: null,
             editInvoice: null,
             loading: true,
-            cancelIncoiceVisible:false,
-            otpSent:false,
-            editIncoiceVisible:false,
+            cancelIncoiceVisible: false,
+            otpSent: false,
+            editIncoiceVisible: false,
         }
         this.loadInvoices = this.loadInvoices.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
@@ -162,7 +163,16 @@ class PatientInvoices extends React.Component {
 
 
     }
+    returnModelOpen = (record) => {
+        let that = this;
+        // let id = this.props.match.params.id;
+        this.setState({
+            editInvoice: record,
+        }, function () {
+            that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/return/")
+        });
 
+    }
     // deleteInvoice(record) {
     //     let that = this;
     //     confirm({
@@ -199,119 +209,120 @@ class PatientInvoices extends React.Component {
     }
 
     editModelOpen = (record) => {
-        let that=this;
+        let that = this;
         that.setState({
             editIncoiceVisible: true,
             editInvoice: record,
         });
-        let reqData={
+        let reqData = {
             practice: this.props.active_practiceId,
-            type:'Invoice'+ ':' + record.invoice_id + ' ' + 'Edit'
+            type: 'Invoice' + ':' + record.invoice_id + ' ' + 'Edit'
         }
-        let successFn = function(data){
+        let successFn = function (data) {
             that.setState({
                 otpSent: true,
-                patientId:record.patient,
-                invoiceId:record.id
+                patientId: record.patient,
+                invoiceId: record.id
             })
         }
-        let errorFn = function(){
+        let errorFn = function () {
 
         };
-        postAPI(CANCELINVOICE_GENERATE_OTP, reqData ,successFn, errorFn);
+        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
     };
-    editInvoiceClose=()=>{
+    editInvoiceClose = () => {
         this.setState({
-            editIncoiceVisible:false
+            editIncoiceVisible: false
         })
     }
 
-    handleSubmitEditInvoice=(e)=>{
+    handleSubmitEditInvoice = (e) => {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqData={...values,
+                let reqData = {
+                    ...values,
                     practice: this.props.active_practiceId,
                 }
                 let successFn = function (data) {
                     that.setState({
                         editIncoiceVisible: false,
                     });
-                   that.editInvoiceData(that.state.editInvoice)
+                    that.editInvoiceData(that.state.editInvoice)
                 };
                 let errorFn = function () {
 
                 };
-                postAPI(CANCELINVOICE_VERIFY_OTP,reqData,successFn,errorFn);
+                postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
             }
         });
     }
-    
+
     cancelModalOpen = (record) => {
-        let that=this;
+        let that = this;
         that.setState({
             cancelIncoiceVisible: true,
         });
-        let reqData={
+        let reqData = {
             practice: this.props.active_practiceId,
-            type:'Invoice'+ ':' + record.invoice_id + ' ' + ' Cancellation'
+            type: 'Invoice' + ':' + record.invoice_id + ' ' + ' Cancellation'
         }
-        let successFn = function(data){
+        let successFn = function (data) {
             that.setState({
                 otpSent: true,
-                patientId:record.patient,
-                invoiceId:record.id
+                patientId: record.patient,
+                invoiceId: record.id
             })
         }
-        let errorFn = function(){
+        let errorFn = function () {
 
         };
-        postAPI(CANCELINVOICE_GENERATE_OTP, reqData ,successFn, errorFn);
+        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
     };
-    
 
-    sendOTP(){
-       let that=this;
-       let successFn=function(data){
 
-       }
-       let errorFn=function(){
+    sendOTP() {
+        let that = this;
+        let successFn = function (data) {
 
-       }
-       getAPI(CANCELINVOICE_RESENT_OTP,successFn,errorFn);
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(CANCELINVOICE_RESENT_OTP, successFn, errorFn);
     }
 
-    cancelInvoiceClose=()=>{
+    cancelInvoiceClose = () => {
         this.setState({
-            cancelIncoiceVisible:false
+            cancelIncoiceVisible: false
         })
     }
-    handleSubmitCancelInvoice=(e)=>{
+    handleSubmitCancelInvoice = (e) => {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqData={...values,
+                let reqData = {
+                    ...values,
                     practice: this.props.active_practiceId,
                 }
                 let successFn = function (data) {
                     that.setState({
                         cancelIncoiceVisible: false,
                     });
-                   that.deleteInvoice(that.state.patientId,that.state.invoiceId)
+                    that.deleteInvoice(that.state.patientId, that.state.invoiceId)
                 };
                 let errorFn = function () {
 
                 };
-                postAPI(CANCELINVOICE_VERIFY_OTP,reqData,successFn,errorFn);
+                postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
             }
         });
     }
 
 
-
-    deleteInvoice(patient,invoice) {
+    deleteInvoice(patient, invoice) {
         let that = this;
         let reqData = {patient: patient, is_cancelled: true};
         let successFn = function (data) {
@@ -358,6 +369,14 @@ class PatientInvoices extends React.Component {
                                    <AddInvoicedynamic {...this.state} {...route}
                                                       editId={this.state.editInvoice.id}
                                                       loadData={this.loadInvoices}/> :
+                                   <Redirect to={"/patient/" + this.props.match.params.id + "/billing/invoices"}/>
+                           )}/>
+                    <Route exact path='/patient/:id/billing/invoices/return'
+                           render={(route) => (
+                               this.state.editInvoice ?
+                                   <ReturnInvoice {...this.state} {...route}
+                                                  editId={this.state.editInvoice.id}
+                                                  loadData={this.loadInvoices}/> :
                                    <Redirect to={"/patient/" + this.props.match.params.id + "/billing/invoices"}/>
                            )}/>
                     <Route>
@@ -436,7 +455,7 @@ function invoiceFooter(presc) {
 
 function InvoiceCard(invoice, that) {
     let tableObjects = [];
-    const { getFieldDecorator } = that.props.form;
+    const {getFieldDecorator} = that.props.form;
     if (invoice.reservation) {
         let medicinesPackages = invoice.reservation_data.medicines.map(item => Object.create({
             ...item,
@@ -472,7 +491,7 @@ function InvoiceCard(invoice, that) {
             style={{float: 'right'}}
             overlay={<Menu>
                 <Menu.Item key="1">
-                           {/* onClick={() => that.editInvoiceData(invoice)} disabled={!that.props.match.params.id}> */}
+                    {/* onClick={() => that.editInvoiceData(invoice)} disabled={!that.props.match.params.id}> */}
                     <Link
                         to={"/patient/" + (invoice.patient_data ? invoice.patient_data.id : null) + "/billing/payments/add"}>
                         <Icon type="dollar"/>
@@ -486,7 +505,12 @@ function InvoiceCard(invoice, that) {
                     <Icon type="edit"/>
                     Edit
                 </Menu.Item>
-                <Menu.Item key="3"  onClick={()=>that.cancelModalOpen(invoice)}
+                <Menu.Item key="5" onClick={() => that.returnModelOpen(invoice)}
+                           disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>
+                    <Icon type="edit"/>
+                    Return
+                </Menu.Item>
+                <Menu.Item key="3" onClick={() => that.cancelModalOpen(invoice)}
                            disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>
                     <Icon type="delete"/>
                     Cancel
@@ -537,19 +561,19 @@ function InvoiceCard(invoice, that) {
         </Row>
 
         <Modal
-          visible={that.state.cancelIncoiceVisible}
-          title="Cancel Invoice"
-          footer={null}
-          onOk={that.handleSubmitCancelInvoice}
-          onCancel={that.cancelInvoiceClose}
+            visible={that.state.cancelIncoiceVisible}
+            title="Cancel Invoice"
+            footer={null}
+            onOk={that.handleSubmitCancelInvoice}
+            onCancel={that.cancelInvoiceClose}
         >
             <Form>
                 <Form.Item>
                     {getFieldDecorator('otp', {
-                        rules: [{ required: true, message: 'Please input Otp!' }],
+                        rules: [{required: true, message: 'Please input Otp!'}],
                     })(
-                        <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                        placeholder="Otp"
+                        <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                               placeholder="Otp"
                         />,
                     )}
                 </Form.Item>
@@ -564,24 +588,24 @@ function InvoiceCard(invoice, that) {
                         Close
                     </Button>
                 </Form.Item>
-           </Form>
+            </Form>
         </Modal>
 
 
         <Modal
-          visible={that.state.editIncoiceVisible}
-          title="Edit Invoice"
-          footer={null}
-          onOk={that.handleSubmitEditInvoice}
-          onCancel={that.editInvoiceClose}
+            visible={that.state.editIncoiceVisible}
+            title="Edit Invoice"
+            footer={null}
+            onOk={that.handleSubmitEditInvoice}
+            onCancel={that.editInvoiceClose}
         >
             <Form>
                 <Form.Item>
                     {getFieldDecorator('otp', {
-                        rules: [{ required: true, message: 'Please input Otp!' }],
+                        rules: [{required: true, message: 'Please input Otp!'}],
                     })(
-                        <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                        placeholder="Otp"
+                        <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                               placeholder="Otp"
                         />,
                     )}
                 </Form.Item>
@@ -596,7 +620,7 @@ function InvoiceCard(invoice, that) {
                         Close
                     </Button>
                 </Form.Item>
-           </Form>
+            </Form>
         </Modal>
     </Card>
 }
