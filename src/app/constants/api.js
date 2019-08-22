@@ -98,7 +98,7 @@ export const CANCELINVOICE_VERIFY_OTP='patients/verify_otp/';
 export const CANCELINVOICE_RESENT_OTP = 'patients/resend_otp/'
 //search and advanced search API
 export const SEARCH_PATIENT = 'patients/search/?name=%s';
-
+export const PATIENT_PENDING_AMOUNT = 'patients/%s/pending_amount/';
 
 //extra data
 export const EXTRA_DATA = 'clinics/extra_data';

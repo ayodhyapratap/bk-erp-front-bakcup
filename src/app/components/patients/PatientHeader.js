@@ -1,9 +1,10 @@
 import React from "react";
-import {Avatar, Button, Drawer, Icon, Layout, Tooltip, Dropdown, Tag, Switch} from "antd";
+import {Avatar, Button, Drawer, Icon, Layout, Tooltip, Dropdown, Tag, Switch, Statistic, Popover, List} from "antd";
 import PatientSelection from "./PatientSelection";
 import {Link} from "react-router-dom";
 import {patientSettingMenu} from "../../utils/clinicUtils";
-import {makeFileURL} from "../../utils/common";
+import {getAPI, interpolate, makeFileURL} from "../../utils/common";
+import {PATIENT_PENDING_AMOUNT} from "../../constants/api";
 
 const {Header, Content, Sider} = Layout;
 
@@ -11,6 +12,32 @@ const {Header, Content, Sider} = Layout;
 class PatientHeader extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            pendingAmount: null
+        }
+    }
+
+    componentDidMount() {
+        this.loadPatientPendingAmount();
+    }
+
+    loadPatientPendingAmount = () => {
+        let that = this;
+        if (this.props.currentPatient && this.props.currentPatient.id) {
+            let successFn = function (data) {
+                that.setState({
+                    pendingAmount: data
+                })
+            }
+            let errorFn = function () {
+
+            }
+            getAPI(interpolate(PATIENT_PENDING_AMOUNT, [this.props.currentPatient.id]), successFn, errorFn);
+        } else {
+            this.setState({
+                pendingAmount: null
+            })
+        }
     }
 
     render() {
@@ -27,9 +54,11 @@ class PatientHeader extends React.Component {
                                 </Button>
                             </Tooltip>
                         </div>
+
                         <a style={{padding: '8px', fontSize: '20px'}}
                            onClick={() => this.props.togglePatientListModal(true)}>
-                            {(this.props.currentPatient.image ? <Avatar src={makeFileURL(this.props.currentPatient.image)}/> :
+                            {(this.props.currentPatient.image ?
+                                <Avatar src={makeFileURL(this.props.currentPatient.image)}/> :
                                 <Avatar style={{backgroundColor: '#87d068'}}>
                                     {this.props.currentPatient.user.first_name ? this.props.currentPatient.user.first_name.charAt(0) :
                                         <Icon type="user"/>}
@@ -47,6 +76,26 @@ class PatientHeader extends React.Component {
                             checkedChildren={"All Clinics"}
                             unCheckedChildren={"Current Clinic"}
                         />
+                        {this.state.pendingAmount ?
+                            <Popover placement="rightTop" content={<List size="small" dataSource={this.state.pendingAmount.practice_data}
+                                                    renderItem={item => <List.Item><List.Item.Meta title={item.name}
+                                                                                                   description={"Rs. " + item.total}/></List.Item>}/>}
+                                     title="Pending Payments">
+                                <div style={{
+                                    display: 'inline',
+                                    float: 'left',
+                                    maxWidth: 200,
+                                    position: 'absolute',
+                                    margin: '0px 15px'
+                                }}>
+                                    <Statistic title="Total Pending Amount" value={this.state.pendingAmount.grand_total}
+                                               valueStyle={{
+                                                   color: this.state.pendingAmount.grand_total > 0 ? '#cf1322' : 'initial',
+                                                   fontWeight: 500
+                                               }}
+                                               precision={2}/>
+                                </div>
+                            </Popover> : null}
                     </div> :
                     <a style={{padding: '8px', fontSize: '20px'}}
                        onClick={() => this.props.togglePatientListModal(true)}>
