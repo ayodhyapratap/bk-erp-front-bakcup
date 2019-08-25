@@ -84,6 +84,7 @@ class AddReturnInvoice extends React.Component {
             let tableValues = [];
             invoice.procedure.forEach(function (proc) {
                 tableValues.push({
+                    ...proc.procedure_data,
                     ...proc,
                     selectedDoctor: proc.doctor_data,
                     selectedDate: moment(proc.date).isValid() ? moment(proc.date) : null,
@@ -112,11 +113,12 @@ class AddReturnInvoice extends React.Component {
                     });
                 }
                 tableValues.push({
+                    ...proc.inventory_item_data,
                     ...proc,
                     selectedDoctor: proc.doctor_data,
                     _id: Math.random().toFixed(7),
                     item_type: INVENTORY,
-                    
+
                 });
             });
 
@@ -338,73 +340,76 @@ class AddReturnInvoice extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            
+
             if (!err) {
                 that.setState({
                     saveLoading: true
                 });
                 let reqData = {
-                    bank:'',
-                    number:'',
+                    bank: '',
+                    number: '',
                     practice: that.props.active_practiceId,
-                    return_mode:null,
-                    invoice:this.props.editInvoice.id,
+                    return_mode: null,
+                    invoice: this.props.editInvoice.id,
                     procedure: [],
                     inventory: [],
                     patient: that.props.match.params.id,
-                    staff:this.props.editInvoice.staff_data?this.props.editInvoice.staff_data.id:null,
+                    staff: this.props.editInvoice.staff_data ? this.props.editInvoice.staff_data.id : null,
                     prescription: that.state.selectedPrescriptions,
                     date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
-                
+
                 };
                 that.state.tableFormValues.forEach(function (item) {
                     item.unit = values.unit[item._id];
                     var id = item.id;
-                    delete (item.id)
+                    delete (item.id);
                     // item.taxes = values.taxes[item._id];
                     // item.unit_cost = values.unit_cost[item._id];
                     // item.discount = values.discount[item._id];
                     // item.discount_type = '%';
-                    switch (item.item_type) {
-                        case PROCEDURES:
-                            reqData.procedure.push({...item,
-                                // "name": item.name,
-                                "unit": item.unit,
-                                // "procedure": item.procedure,
-                                // "default_notes": null,
-                                // "is_active": true,
-                                // "margin": item.margin,
-                                // "taxes": item.taxes,
-                                // "unit_cost": item.unit_cost,
-                                // "discount": item.discount,
-                                // "discount_type": "%",
-                                // "offers": 1,
-                                procedure_inv: id,
-                                // "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
-                                // id:item.id
-                            });
-                            break;
-                        case INVENTORY:
-                            reqData.inventory.push({...item,
-                                // "inventory": item.inventory,
-                                // "name": item.name,
-                                "unit": item.unit,
-                                // "taxes": item.taxes,
-                                // "unit_cost": item.unit_cost,
-                                // "discount": item.discount,
-                                // "discount_type": "%",
-                                // "offers": null,
-                                inventory_inv: id,
-                                // "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
-                                // "instruction": item.instruction,
-                                // "is_active": true,
-                                // batch_number: item.selectedBatch ? item.selectedBatch.batch_number : null,
-                                // id: item.id 
-                            });
-                            break;
-                        default:
-                            return null;
-                    }
+                    if (item.unit)
+                        switch (item.item_type) {
+                            case PROCEDURES:
+                                reqData.procedure.push({
+                                    ...item,
+                                    // "name": item.name,
+                                    "unit": item.unit,
+                                    // "procedure": item.procedure,
+                                    // "default_notes": null,
+                                    // "is_active": true,
+                                    // "margin": item.margin,
+                                    // "taxes": item.taxes,
+                                    // "unit_cost": item.unit_cost,
+                                    // "discount": item.discount,
+                                    // "discount_type": "%",
+                                    // "offers": 1,
+                                    procedure_inv: id,
+                                    // "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
+                                    // id:item.id
+                                });
+                                break;
+                            case INVENTORY:
+                                reqData.inventory.push({
+                                    ...item,
+                                    // "inventory": item.inventory,
+                                    // "name": item.name,
+                                    "unit": item.unit,
+                                    // "taxes": item.taxes,
+                                    // "unit_cost": item.unit_cost,
+                                    // "discount": item.discount,
+                                    // "discount_type": "%",
+                                    // "offers": null,
+                                    inventory_inv: id,
+                                    // "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
+                                    // "instruction": item.instruction,
+                                    // "is_active": true,
+                                    // batch_number: item.selectedBatch ? item.selectedBatch.batch_number : null,
+                                    // id: item.id
+                                });
+                                break;
+                            default:
+                                return null;
+                        }
                 });
                 let successFn = function (data) {
                     that.setState({
@@ -420,7 +425,7 @@ class AddReturnInvoice extends React.Component {
                         saveLoading: false
                     });
                 }
-                postAPI(INVOICE_RETURN_API,reqData,successFn,errorFn);
+                postAPI(INVOICE_RETURN_API, reqData, successFn, errorFn);
 
             }
         });

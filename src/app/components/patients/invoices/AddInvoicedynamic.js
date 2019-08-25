@@ -85,6 +85,7 @@ class Addinvoicedynamic extends React.Component {
             let tableValues = [];
             invoice.procedure.forEach(function (proc) {
                 tableValues.push({
+                    ...proc.procedure_data,
                     ...proc,
                     selectedDoctor: proc.doctor_data,
                     selectedDate: moment(proc.date).isValid() ? moment(proc.date) : null,
@@ -113,6 +114,7 @@ class Addinvoicedynamic extends React.Component {
                     });
                 }
                 tableValues.push({
+                    ...proc.inventory_item_data,
                     ...proc,
                     selectedDoctor: proc.doctor_data,
                     _id: Math.random().toFixed(7),
@@ -374,7 +376,7 @@ class Addinvoicedynamic extends React.Component {
                                 "unit_cost": item.unit_cost,
                                 "discount": item.discount,
                                 "discount_type": "%",
-                                "offers": 1,
+                                "offers": null,
                                 "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
                                 id: that.props.editId ? item.id : undefined
                             });
@@ -744,7 +746,7 @@ class Addinvoicedynamic extends React.Component {
                 {...formItemLayout}>
                 {getFieldDecorator(`total_unit_cost[${record._id}]`, {
                     validateTrigger: ['onChange', 'onBlur'],
-                    initialValue: record.retail_with_tax,
+                    initialValue: record.item_type == INVENTORY ? record.retail_with_tax : record.cost_with_tax,
                     rules: [{
                         required: true,
                         message: "This field is required.",

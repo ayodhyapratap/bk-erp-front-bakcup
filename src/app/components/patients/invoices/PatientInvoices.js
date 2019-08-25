@@ -164,7 +164,15 @@ class PatientInvoices extends React.Component {
 
 
     }
-   
+   returnInvoiceData = (record) => {
+        let that = this;
+        // let id = this.props.match.params.id;
+        this.setState({
+            editInvoice: record,
+        }, function () {
+            that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/return/")
+        });
+    }
 
     returnModelOpen(record) {
 
@@ -387,7 +395,7 @@ class PatientInvoices extends React.Component {
             return <div>
                 <Switch>
                     <Route  path='/patient/:id/billing/invoices/add'
-                           render={(route) => <AddInvoicedynamic {...this.state} {...this.props} {...route}
+                           render={(route) => <AddInvoicedynamic {...this.state}  {...route}
                                                                  loadData={this.loadInvoices}/>}/>
                     <Route  path='/patient/:id/billing/invoices/edit'
                            render={(route) => (
