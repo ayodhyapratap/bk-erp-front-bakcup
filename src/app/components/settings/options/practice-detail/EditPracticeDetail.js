@@ -154,15 +154,21 @@ class EditPracticeDetail extends React.Component {
                 placeholder:"DEL/INV/",
                 key: "invoice_prefix",
                 type: INPUT_FIELD,
-                require:true
+                required:true
             },{
                 label: "Payment Prefix",
                 initialValue: this.state.practiceDetail.payment_prefix,
                 placeholder:"DEL/RCPT/",
                 key: "payment_prefix",
                 type: INPUT_FIELD,
-                require:true
-            }, ];
+                required:true
+            },{
+                label: "Return Prefix",
+                placeholder: "DEL/RET/",
+                key: "return_prefix",
+                type: INPUT_FIELD,
+                required: true
+            }];
             const TestFormLayout = Form.create()(DynamicFieldsForm);
             const formProp = {
                 successFn: function (data) {

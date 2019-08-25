@@ -131,20 +131,20 @@ class AddPracticeDetails extends React.Component {
             placeholder: "DEL/INV/",
             key: "invoice_prefix",
             type: INPUT_FIELD,
-            require: true
+            required: true
         }, {
             label: "Payment Prefix",
             placeholder: "DEL/RCPT/",
             key: "payment_prefix",
             type: INPUT_FIELD,
-            require: true
+            required: true
         },
         {
             label: "Return Prefix",
             placeholder: "DEL/RET/",
             key: "return_prefix",
             type: INPUT_FIELD,
-            require: true
+            required: true
         }];
 
         const formProp = {
