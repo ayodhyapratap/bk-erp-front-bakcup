@@ -138,7 +138,14 @@ class AddPracticeDetails extends React.Component {
             key: "payment_prefix",
             type: INPUT_FIELD,
             require: true
-        },];
+        },
+        {
+            label: "Return Prefix",
+            placeholder: "DEL/RET/",
+            key: "return_prefix",
+            type: INPUT_FIELD,
+            require: true
+        }];
 
         const formProp = {
             successFn: function (data) {

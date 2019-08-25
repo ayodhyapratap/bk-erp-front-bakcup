@@ -27,7 +27,8 @@ import {
     SEARCH_THROUGH_QR,
     SINGLE_INVOICE_API,
     TAXES,
-    UNPAID_PRESCRIPTIONS
+    UNPAID_PRESCRIPTIONS,
+    INVOICE_RETURN_API
 } from "../../../constants/api";
 import moment from "moment";
 import {loadDoctors} from "../../../utils/clinicUtils";
@@ -42,7 +43,7 @@ let tableFormFields = {
     batch: null
 };
 
-class ReturnInvoice extends React.Component {
+class AddReturnInvoice extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -116,7 +117,8 @@ class ReturnInvoice extends React.Component {
                     ...proc,
                     selectedDoctor: proc.doctor_data,
                     _id: Math.random().toFixed(7),
-                    item_type: INVENTORY
+                    item_type: INVENTORY,
+                    
                 });
             });
 
@@ -338,29 +340,31 @@ class ReturnInvoice extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
+            console.log("formValue",values);
+            
             if (!err) {
                 that.setState({
                     saveLoading: true
                 });
                 let reqData = {
+                    bank:'',
+                    number:'',
+                    date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
                     practice: that.props.active_practiceId,
-                    patient: that.props.match.params.id,
-                    unit: null,
-                    cost: null,
-                    discount: null,
-                    taxes: 0,
-                    total: null,
+                    return_mode:null,
+                    invoice:this.props.editInvoice.id,
                     procedure: [],
                     inventory: [],
-                    prescription: that.state.selectedPrescriptions,
-                    date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
+                    patient: that.props.match.params.id,
+                    staff:this.props.editInvoice.staff_data?this.props.editInvoice.staff_data.id:null,
+                    
                 };
                 that.state.tableFormValues.forEach(function (item) {
                     item.unit = values.unit[item._id];
-                    item.taxes = values.taxes[item._id];
+                    // item.taxes = values.taxes[item._id];
                     // item.unit_cost = values.unit_cost[item._id];
-                    item.discount = values.discount[item._id];
-                    item.discount_type = '%';
+                    // item.discount = values.discount[item._id];
+                    // item.discount_type = '%';
                     switch (item.item_type) {
                         case PROCEDURES:
                             reqData.procedure.push({
@@ -376,7 +380,7 @@ class ReturnInvoice extends React.Component {
                                 "discount_type": "%",
                                 "offers": 1,
                                 "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
-                                id: that.props.editId ? item.id : undefined
+                                id:item.id
                             });
                             break;
                         case INVENTORY:
@@ -393,7 +397,7 @@ class ReturnInvoice extends React.Component {
                                 "instruction": item.instruction,
                                 "is_active": true,
                                 batch_number: item.selectedBatch ? item.selectedBatch.batch_number : null,
-                                id: that.props.editId ? item.id : undefined
+                                id: item.id 
                             });
                             break;
                         default:
@@ -414,11 +418,12 @@ class ReturnInvoice extends React.Component {
                         saveLoading: false
                     });
                 }
-                if (that.props.editId) {
-                    putAPI(interpolate(SINGLE_INVOICE_API, [that.props.editId]), reqData, successFn, errorFn);
-                } else {
-                    postAPI(CREATE_OR_EDIT_INVOICES, reqData, successFn, errorFn);
-                }
+                postAPI(INVOICE_RETURN_API,reqData,successFn,errorFn);
+                // if (that.props.editId) {
+                //     putAPI(interpolate(SINGLE_INVOICE_API, [that.props.editId]), reqData, successFn, errorFn);
+                // } else {
+                //     postAPI(CREATE_OR_EDIT_INVOICES, reqData, successFn, errorFn);
+                // }
 
             }
         });
@@ -536,6 +541,10 @@ class ReturnInvoice extends React.Component {
     }
 
     render() {
+        // console.log("props",this.props);
+        // console.log("state",this.state);
+        
+        
         let that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const formItemLayout = {
@@ -652,14 +661,15 @@ class ReturnInvoice extends React.Component {
                         {...formItemLayout}>
                         {getFieldDecorator(`unit[${record._id}]`, {
                             validateTrigger: ['onChange', 'onBlur'],
-                            initialValue: record.unit || 1,
+                            initialValue: 0,
                             rules: [{
                                 required: true,
                                 message: "This field is required.",
                             }],
                         })(
                             <InputNumber min={1}
-                                         max={(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number] ? that.state.stocks[record.inventory][record.selectedBatch.batch_number] : 0)}
+                                         max={(record.unit)}
+                                         min={0}
                                          placeholder="units" size={'small'}
                                          disabled={!(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number])}/>
                         )}
@@ -738,25 +748,26 @@ class ReturnInvoice extends React.Component {
             </Form.Item>
         }, {
             title: 'Total Unit Cost',
-            key: 'total_unit_cost',
+            key: 'total',
             width: 100,
-            dataIndex: 'total_unit_cost',
-            render: (item, record) => <Form.Item
-                key={`total_unit_cost[${record._id}]`}
-                {...formItemLayout}>
-                {getFieldDecorator(`total_unit_cost[${record._id}]`, {
-                    validateTrigger: ['onChange', 'onBlur'],
-                    initialValue: record.retail_with_tax,
-                    rules: [{
-                        required: true,
-                        message: "This field is required.",
-                    }],
-                })(
-                    <InputNumber min={0} placeholder="Unit Cost" size={'small'}
-                                 onChange={() => that.changeNetPrice(record._id)}/>
-                )}
-            </Form.Item>
+            dataIndex: 'total',
+            // render: (item, record) => <Form.Item
+            //     key={`total_unit_cost[${record._id}]`}
+            //     {...formItemLayout}>
+            //     {getFieldDecorator(`total_unit_cost[${record._id}]`, {
+            //         validateTrigger: ['onChange', 'onBlur'],
+            //         initialValue: record.retail_with_tax,
+            //         rules: [{
+            //             required: true,
+            //             message: "This field is required.",
+            //         }],
+            //     })(
+            //         <InputNumber min={0} placeholder="Unit Cost" size={'small'}
+            //                      onChange={() => that.changeNetPrice(record._id)}/>
+            //     )}
+            // </Form.Item>
             // render:(item,record)=> `unit_cost[${record._id}]`
+            render: (item, record) => item ? item.toFixed(2) : null
         },]);
 
         return <div>
@@ -803,4 +814,4 @@ class ReturnInvoice extends React.Component {
     }
 }
 
-export default Form.create()(ReturnInvoice);
+export default Form.create()(AddReturnInvoice);

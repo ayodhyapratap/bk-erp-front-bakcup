@@ -142,6 +142,17 @@ class PatientSider extends React.Component {
                             </Link>
                         </Menu.Item>
                     :null}
+
+                    {that.props.activePracticePermissions.PatientReturns || that.props.allowAllPermissions ?
+                        <Menu.Item key="31">
+                            <Link
+                                to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/invoices/return" : "/patients/billing/invoices/return"}>
+                                <Icon type="book"/>Return
+                            </Link>
+                        </Menu.Item>
+                    :null}
+
+                    
                 </Menu.ItemGroup>
             </Menu>
         </Sider>

@@ -19,6 +19,7 @@ import PatientTreatmentPlans from "./treatmentPlans/PatientTreatmentPlans";
 import PatientLabOrders from "./labOrders/PatientLabOrders";
 import PatientInvoices from "./invoices/PatientInvoices";
 import PatientPayments from "./payments/PatientPayments";
+import PatientInvoicesReturn from "./invoices/ReturnInvoices";
 import PatientLedgers from "./ledgers/PatientLedgers";
 import {Switch} from "react-router-dom";
 import PrescriptionTemplate from "./prescriptions/PrescriptionTemplate";
@@ -336,9 +337,27 @@ class PatientHome extends React.Component {
                                                togglePatientListModal={this.togglePatientListModal}
                                                key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>)}/>
                                 :null}
-                                <Route path='/patient/:id/billing/invoices'
+                                <Route exact path='/patient/:id/billing/invoices'
                                        render={(route) => (that.props.activePracticePermissions.PatientInvoices || that.allowAllPermissions? <PatientInvoices
                                        key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>:<PermissionDenied/>)}/>
+
+
+                                
+                                {that.props.activePracticePermissions.PatientReturns || that.allowAllPermissions?
+                                <Route  path='/patients/billing/invoices/return'
+                                       render={(route) => (this.state.currentPatient ?
+                                           <Redirect
+                                               to={"/patient/" + this.state.currentPatient.id + "/billing/invoices/return"}/> :
+                                           <PatientInvoicesReturn
+                                               togglePatientListModal={this.togglePatientListModal}
+                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>)}/>
+                                :null}
+
+
+                                <Route  path='/patient/:id/billing/invoices/return'
+                                       render={(route) => (that.props.activePracticePermissions.PatientReturns || that.allowAllPermissions? <PatientInvoicesReturn
+                                       key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>:<PermissionDenied/>)}/>
+                                
 
                                 {/*** Patient Payments Routes*/}
                                 {that.props.activePracticePermissions.PatientPayments || that.allowAllPermissions? 

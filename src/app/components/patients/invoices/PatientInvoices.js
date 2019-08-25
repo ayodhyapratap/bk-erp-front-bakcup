@@ -28,7 +28,7 @@ import {
     TAXES,
     CANCELINVOICE_GENERATE_OTP,
     CANCELINVOICE_VERIFY_OTP,
-    CANCELINVOICE_RESENT_OTP
+    CANCELINVOICE_RESENT_OTP,
 } from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
@@ -37,7 +37,7 @@ import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {Link, Redirect} from "react-router-dom";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
-import ReturnInvoice from "./ReturnInvoice";
+import AddReturnInvoice from "./AddReturnInvoice";
 
 const confirm = Modal.confirm;
 
@@ -164,13 +164,13 @@ class PatientInvoices extends React.Component {
 
 
     }
-    returnInvoiceData = (record) => {
+    returnModelOpen = (record) => {
         let that = this;
         // let id = this.props.match.params.id;
         this.setState({
             editInvoice: record,
         }, function () {
-            that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/return/")
+            that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/return/add")
         });
 
     }
@@ -393,10 +393,10 @@ class PatientInvoices extends React.Component {
         if (this.props.match.params.id) {
             return <div>
                 <Switch>
-                    <Route exact path='/patient/:id/billing/invoices/add'
+                    <Route  path='/patient/:id/billing/invoices/add'
                            render={(route) => <AddInvoicedynamic {...this.state} {...this.props} {...route}
                                                                  loadData={this.loadInvoices}/>}/>
-                    <Route exact path='/patient/:id/billing/invoices/edit'
+                    <Route  path='/patient/:id/billing/invoices/edit'
                            render={(route) => (
                                this.state.editInvoice ?
                                    <AddInvoicedynamic {...this.state} {...route}
@@ -404,10 +404,10 @@ class PatientInvoices extends React.Component {
                                                       loadData={this.loadInvoices}/> :
                                    <Redirect to={"/patient/" + this.props.match.params.id + "/billing/invoices"}/>
                            )}/>
-                    <Route exact path='/patient/:id/billing/invoices/return'
+                    <Route  path='/patient/:id/billing/invoices/return/add'
                            render={(route) => (
                                this.state.editInvoice ?
-                                   <ReturnInvoice {...this.state} {...route}
+                                   <AddReturnInvoice {...this.state} {...route}
                                                   editId={this.state.editInvoice.id}
                                                   loadData={this.loadInvoices}/> :
                                    <Redirect to={"/patient/" + this.props.match.params.id + "/billing/invoices"}/>
@@ -538,11 +538,11 @@ function InvoiceCard(invoice, that) {
                     <Icon type="edit"/>
                     Edit
                 </Menu.Item>
-                {/*<Menu.Item key="5" onClick={() => that.returnModelOpen(invoice)}*/}
-                {/*           disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>*/}
-                {/*    <Icon type="redo"/>*/}
-                {/*    Return*/}
-                {/*</Menu.Item>*/}
+                <Menu.Item key="5" onClick={() => that.returnModelOpen(invoice)}
+                          disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>
+                   <Icon type="redo"/>
+                   Return
+                </Menu.Item>
                 <Menu.Item key="3" onClick={() => that.cancelModalOpen(invoice)}
                            disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>
                     <Icon type="delete"/>
