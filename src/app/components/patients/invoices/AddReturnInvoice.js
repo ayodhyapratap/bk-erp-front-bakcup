@@ -21,11 +21,9 @@ import {
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {DRUG, INVENTORY, PRESCRIPTIONS, PROCEDURES} from "../../../constants/hardData";
 import {
-    CREATE_OR_EDIT_INVOICES,
     INVENTORY_ITEM_API,
     PROCEDURE_CATEGORY,
     SEARCH_THROUGH_QR,
-    SINGLE_INVOICE_API,
     TAXES,
     UNPAID_PRESCRIPTIONS,
     INVOICE_RETURN_API
@@ -349,7 +347,6 @@ class AddReturnInvoice extends React.Component {
                 let reqData = {
                     bank:'',
                     number:'',
-                    date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
                     practice: that.props.active_practiceId,
                     return_mode:null,
                     invoice:this.props.editInvoice.id,
@@ -357,7 +354,8 @@ class AddReturnInvoice extends React.Component {
                     inventory: [],
                     patient: that.props.match.params.id,
                     staff:this.props.editInvoice.staff_data?this.props.editInvoice.staff_data.id:null,
-                    
+                    prescription: that.state.selectedPrescriptions,
+                    date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
                 };
                 that.state.tableFormValues.forEach(function (item) {
                     item.unit = values.unit[item._id];
@@ -379,6 +377,7 @@ class AddReturnInvoice extends React.Component {
                                 "discount": item.discount,
                                 "discount_type": "%",
                                 "offers": 1,
+                                procedure_inv: item.id,
                                 "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
                                 id:item.id
                             });
@@ -393,6 +392,7 @@ class AddReturnInvoice extends React.Component {
                                 "discount": item.discount,
                                 "discount_type": "%",
                                 "offers": null,
+                                inventory_inv: item.id,
                                 "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
                                 "instruction": item.instruction,
                                 "is_active": true,
@@ -419,11 +419,6 @@ class AddReturnInvoice extends React.Component {
                     });
                 }
                 postAPI(INVOICE_RETURN_API,reqData,successFn,errorFn);
-                // if (that.props.editId) {
-                //     putAPI(interpolate(SINGLE_INVOICE_API, [that.props.editId]), reqData, successFn, errorFn);
-                // } else {
-                //     postAPI(CREATE_OR_EDIT_INVOICES, reqData, successFn, errorFn);
-                // }
 
             }
         });
@@ -469,16 +464,7 @@ class AddReturnInvoice extends React.Component {
                 })
             }
             that.setState(function (prevState) {
-                // if (prevState.items && prevState.items[INVENTORY]) {
-                //     prevState.items[INVENTORY].forEach(function (inventItem) {
-                //         console.log(item.inventory_item)
-                //         if (inventItem.id == item.inventory_item) {
-                //             console.log(inventItem);
-                //             that.add({...inventItem, item_type: INVENTORY});
-                //
-                //         }
-                //     })
-                // }
+
                 return {
                     loadingQr: false,
                     qrValue: ''
@@ -739,7 +725,7 @@ class AddReturnInvoice extends React.Component {
                 })(
                     <Select placeholder="Taxes" size={'small'} mode={"multiple"}
                             disabled={true}
-                            style={{width:150}}
+                            style={{width: 150}}
                             onChange={() => that.changeNetPrice(record._id)}>
                         {this.state.taxes_list && this.state.taxes_list.map((tax) => <Select.Option
                             value={tax.id}>{tax.name}@{tax.tax_value}%</Select.Option>)}
