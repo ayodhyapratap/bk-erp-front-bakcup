@@ -96,6 +96,7 @@ export const UNPAID_PRESCRIPTIONS = "patients/unpaid_prescriptions/?id=%s";
 export const CANCELINVOICE_GENERATE_OTP ="patients/generate_otp/";
 export const CANCELINVOICE_VERIFY_OTP='patients/verify_otp/';
 export const CANCELINVOICE_RESENT_OTP = 'patients/resend_otp/'
+export const INVOICE_RETURN_API = 'return/';
 //search and advanced search API
 export const SEARCH_PATIENT = 'patients/search/?name=%s';
 export const PATIENT_PENDING_AMOUNT = 'patients/%s/pending_amount/';
