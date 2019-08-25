@@ -56,7 +56,7 @@ class PatientInvoices extends React.Component {
             cancelIncoiceVisible: false,
             otpSent: false,
             editIncoiceVisible: false,
-            returnIncoiceVisible:false,
+            returnIncoiceVisible: false,
         }
         this.loadInvoices = this.loadInvoices.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
@@ -174,9 +174,11 @@ class PatientInvoices extends React.Component {
         });
 
     }
-    returnModelOpen(record){
-        console.log("return",record)
+
+    returnModelOpen(record) {
+
         let that = this;
+         that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/return/")
         that.setState({
             returnIncoiceVisible: true,
             editInvoice: record,
@@ -195,7 +197,7 @@ class PatientInvoices extends React.Component {
         let errorFn = function () {
 
         };
-        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+       // postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
     }
 
     returnInvoiceClose = () => {
@@ -227,7 +229,6 @@ class PatientInvoices extends React.Component {
         });
     }
 
-   
 
     loadPDF = (id) => {
         let that = this;
@@ -296,6 +297,7 @@ class PatientInvoices extends React.Component {
         let that = this;
         that.setState({
             cancelIncoiceVisible: true,
+            editInvoice: record
         });
         let reqData = {
             practice: this.props.active_practiceId,
@@ -311,7 +313,7 @@ class PatientInvoices extends React.Component {
         let errorFn = function () {
 
         };
-        // postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
     };
 
 
@@ -594,7 +596,7 @@ function InvoiceCard(invoice, that) {
         </Row>
 
         <Modal
-            visible={that.state.cancelIncoiceVisible}
+            visible={(that.state.cancelIncoiceVisible && that.state.editInvoice && that.state.editInvoice.id == invoice.id)}
             title="Cancel Invoice"
             footer={null}
             onOk={that.handleSubmitCancelInvoice}
@@ -626,7 +628,7 @@ function InvoiceCard(invoice, that) {
 
 
         <Modal
-            visible={that.state.editIncoiceVisible}
+            visible={(that.state.editIncoiceVisible && that.state.editInvoice && that.state.editInvoice.id == invoice.id)}
             title="Edit Invoice"
             footer={null}
             onOk={that.handleSubmitEditInvoice}
@@ -657,7 +659,7 @@ function InvoiceCard(invoice, that) {
         </Modal>
 
         <Modal
-            visible={that.state.returnIncoiceVisible}
+            visible={(that.state.returnIncoiceVisible && that.state.editInvoice && that.state.editInvoice.id == invoice.id)}
             title="Return Invoice"
             footer={null}
             onOk={that.handleSubmitReturnInvoice}
