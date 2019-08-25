@@ -16,7 +16,8 @@ import {
     Menu,
     Icon,
     Button,
-    Dropdown
+    Dropdown,
+    Input,
 } from "antd";
 import {displayMessage, getAPI, interpolate, putAPI, postAPI} from "../../../utils/common";
 import {
@@ -24,7 +25,11 @@ import {
     DRUG_CATALOG,
     PROCEDURE_CATEGORY,
     TAXES,
-    RETURN_INVOICE_PDF_API
+    RETURN_INVOICE_PDF_API,
+    SINGLE_RETURN_API,
+    CANCELINVOICE_GENERATE_OTP,
+    CANCELINVOICE_RESENT_OTP,
+    CANCELINVOICE_VERIFY_OTP
 } from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
@@ -44,6 +49,7 @@ class ReturnInvoices extends React.Component {
             procedure_category: null,
             taxes_list: null,
             loading: true,
+            cancelReturnIncoiceVisible:false,
         }
         this.loadReturnInvoices = this.loadReturnInvoices.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
@@ -152,18 +158,82 @@ class ReturnInvoices extends React.Component {
         }
         getAPI(interpolate(RETURN_INVOICE_PDF_API, [id]), successFn, errorFn);
     }
-    cancelReturnInvoice(){}
-    // deleteInvoice(patient, invoice) {
-    //     let that = this;
-    //     let reqData = {patient: patient, is_cancelled: true};
-    //     let successFn = function (data) {
-    //         displayMessage(SUCCESS_MSG_TYPE, "Invoice cancelled successfully")
-    //         that.loadInvoices();
-    //     }
-    //     let errorFn = function () {
-    //     }
-    //     putAPI(interpolate(SINGLE_INVOICES_API, [invoice]), reqData, successFn, errorFn);
-    // }
+
+
+    cancelModalOpen = (record) => {
+        let that = this;
+        that.setState({
+            cancelReturnIncoiceVisible: true,
+            editReturnInvoice: record
+        });
+        let reqData = {
+            practice: this.props.active_practiceId,
+            type: 'Return Invoice' + ':' + record.return_id + ' ' + ' Cancellation'
+        }
+        let successFn = function (data) {
+            that.setState({
+                otpSent: true,
+                patientId: record.patient,
+                returnInvoiceId: record.id
+            })
+        }
+        let errorFn = function () {
+
+        };
+        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+    };
+
+
+    sendOTP() {
+        let that = this;
+        let successFn = function (data) {
+
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(CANCELINVOICE_RESENT_OTP, successFn, errorFn);
+    }
+
+    cancelReturnInvoiceClose = () => {
+        this.setState({
+            cancelReturnIncoiceVisible: false
+        })
+    }
+    handleSubmitCancelReturnInvoice = (e) => {
+        let that = this;
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                let reqData = {
+                    ...values,
+                    practice: this.props.active_practiceId,
+                }
+                let successFn = function (data) {
+                    that.setState({
+                        cancelReturnIncoiceVisible: false,
+                    });
+                    that.deleteReturnInvoice(that.state.patientId, that.state.returnInvoiceId)
+                };
+                let errorFn = function () {
+
+                };
+                postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
+            }
+        });
+    }
+    // deleteReturnInvoice(patient ,returnInvoiceId)
+    deleteReturnInvoice(patient ,returnInvoiceId) {
+        let that = this;
+        let reqData = {patient: patient, is_cancelled: true};
+        let successFn = function (data) {
+            displayMessage(SUCCESS_MSG_TYPE, "Return Invoice cancelled successfully")
+            that.loadReturnInvoices();
+        }
+        let errorFn = function () {
+        }
+        putAPI(interpolate(SINGLE_RETURN_API, [returnInvoiceId]), reqData, successFn, errorFn);
+     }
 
     render() {
         let that = this;
@@ -284,7 +354,8 @@ function InvoiceCard(invoice, that) {
             size={"small"}
             style={{float: 'right'}}
             overlay={<Menu>
-                <Menu.Item key="1" onClick={() => that.cancelReturnInvoice(invoice)}
+                {/* <Menu.Item key="1" onClick={() => that.deleteReturnInvoice(invoice)} */}
+                <Menu.Item key="1" onClick={() =>that.cancelModalOpen(invoice)}
                            disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>
                     <Icon type="delete"/>
                     Cancel
@@ -298,7 +369,7 @@ function InvoiceCard(invoice, that) {
                 {invoice.is_cancelled ?
                     <Alert message="Cancelled" type="error" showIcon/> : null}
                 <Divider style={{marginBottom: 0}}>{invoice.return_id}</Divider>
-                <Statistic title="Return"
+                <Statistic style={{textAlign:"center"}} title="Return"
                            value={(invoice.return_value.toFixed(2))}/>
             </Col>
             <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
@@ -311,6 +382,37 @@ function InvoiceCard(invoice, that) {
                         footer={() => invoiceFooter({...invoice})}/>
             </Col>
         </Row>
+
+        <Modal
+            visible={(that.state.cancelReturnIncoiceVisible && that.state.editReturnInvoice && that.state.editReturnInvoice.id == invoice.id)}
+            title="Cancel Return Invoice"
+            footer={null}
+            onOk={that.handleSubmitCancelReturnInvoice}
+            onCancel={that.cancelReturnInvoiceClose}>
+            <Form>
+                <Form.Item>
+                    {getFieldDecorator('otp', {
+                        rules: [{required: true, message: 'Please input Otp!'}],
+                    })(
+                        <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                               placeholder="Otp"
+                        />,
+                    )}
+                </Form.Item>
+                <Form.Item>
+                    {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
+                        Resend Otp ?
+                    </a> : null}
+                    <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitCancelReturnInvoice}>
+                        Submit
+                    </Button>&nbsp;
+                    <Button size="small" onClick={that.cancelReturnInvoiceClose}>
+                        Close
+                    </Button>
+                </Form.Item>
+            </Form>
+        </Modal>
+
 
        
     </Card>

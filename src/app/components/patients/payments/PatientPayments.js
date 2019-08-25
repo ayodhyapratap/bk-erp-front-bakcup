@@ -95,7 +95,6 @@ class PatientPayments extends React.Component {
     }
 
     deletePayment(patient,payment) {
-        console.log(payment);
         
         let that = this;
         let reqData = {patient: patient, is_cancelled: true};
@@ -130,7 +129,7 @@ class PatientPayments extends React.Component {
 
         };
 
-        // postAPI(CANCELINVOICE_GENERATE_OTP, reqData ,successFn, errorFn);
+        postAPI(CANCELINVOICE_GENERATE_OTP, reqData ,successFn, errorFn);
     };
     editPaymentClose=()=>{
         this.setState({
@@ -169,6 +168,7 @@ class PatientPayments extends React.Component {
         let that=this;
         that.setState({
             cancelPaymentVisible: true,
+            editPayment: record,
         });
         let reqData={
             practice: this.props.active_practiceId,
@@ -185,7 +185,7 @@ class PatientPayments extends React.Component {
 
         };
         
-        postAPI(CANCELINVOICE_GENERATE_OTP, reqData ,successFn, errorFn);
+        // postAPI(CANCELINVOICE_GENERATE_OTP, reqData ,successFn, errorFn);
     };
     
 
@@ -362,7 +362,7 @@ function PaymentCard(payment, that) {
         </Row>
 
         <Modal
-          visible={that.state.editPaymentVisible}
+          visible={(that.state.editPaymentVisible && that.state.editPayment && that.state.editPayment.id == payment.id)}
           title="Edit Payment"
           footer={null}
           onOk={that.handleSubmitEditPayment}
@@ -393,7 +393,7 @@ function PaymentCard(payment, that) {
         </Modal>
 
         <Modal
-          visible={that.state.cancelPaymentVisible}
+          visible={(that.state.cancelPaymentVisible && that.state.editPayment && that.state.editPayment.id == payment.id)}
           title="Cancel Payment"
           footer={null}
           onOk={that.handleSubmitCancelPayment}
