@@ -337,24 +337,24 @@ class PatientHome extends React.Component {
                                                togglePatientListModal={this.togglePatientListModal}
                                                key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>)}/>
                                 :null}
-                                <Route exact path='/patient/:id/billing/invoices'
+                                <Route  path='/patient/:id/billing/invoices'
                                        render={(route) => (that.props.activePracticePermissions.PatientInvoices || that.allowAllPermissions? <PatientInvoices
                                        key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>:<PermissionDenied/>)}/>
 
 
                                 
                                 {that.props.activePracticePermissions.PatientReturns || that.allowAllPermissions?
-                                <Route  path='/patients/billing/invoices/return'
+                                <Route exact path='/patients/billing/return/invoices'
                                        render={(route) => (this.state.currentPatient ?
                                            <Redirect
-                                               to={"/patient/" + this.state.currentPatient.id + "/billing/invoices/return"}/> :
+                                               to={"/patient/" + this.state.currentPatient.id + "/billing/return/invoices"}/> :
                                            <PatientInvoicesReturn
                                                togglePatientListModal={this.togglePatientListModal}
                                                key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>)}/>
                                 :null}
 
 
-                                <Route  path='/patient/:id/billing/invoices/return'
+                                <Route exact path='/patient/:id/billing/return/invoices'
                                        render={(route) => (that.props.activePracticePermissions.PatientReturns || that.allowAllPermissions? <PatientInvoicesReturn
                                        key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>:<PermissionDenied/>)}/>
                                 

@@ -338,7 +338,6 @@ class AddReturnInvoice extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            console.log("formValue",values);
             
             if (!err) {
                 that.setState({
@@ -356,48 +355,51 @@ class AddReturnInvoice extends React.Component {
                     staff:this.props.editInvoice.staff_data?this.props.editInvoice.staff_data.id:null,
                     prescription: that.state.selectedPrescriptions,
                     date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
+                
                 };
                 that.state.tableFormValues.forEach(function (item) {
                     item.unit = values.unit[item._id];
+                    var id = item.id;
+                    delete (item.id)
                     // item.taxes = values.taxes[item._id];
                     // item.unit_cost = values.unit_cost[item._id];
                     // item.discount = values.discount[item._id];
                     // item.discount_type = '%';
                     switch (item.item_type) {
                         case PROCEDURES:
-                            reqData.procedure.push({
-                                "name": item.name,
+                            reqData.procedure.push({...item,
+                                // "name": item.name,
                                 "unit": item.unit,
-                                "procedure": item.procedure,
-                                "default_notes": null,
-                                "is_active": true,
-                                "margin": item.margin,
-                                "taxes": item.taxes,
-                                "unit_cost": item.unit_cost,
-                                "discount": item.discount,
-                                "discount_type": "%",
-                                "offers": 1,
-                                procedure_inv: item.id,
-                                "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
-                                id:item.id
+                                // "procedure": item.procedure,
+                                // "default_notes": null,
+                                // "is_active": true,
+                                // "margin": item.margin,
+                                // "taxes": item.taxes,
+                                // "unit_cost": item.unit_cost,
+                                // "discount": item.discount,
+                                // "discount_type": "%",
+                                // "offers": 1,
+                                procedure_inv: id,
+                                // "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
+                                // id:item.id
                             });
                             break;
                         case INVENTORY:
-                            reqData.inventory.push({
-                                "inventory": item.inventory,
-                                "name": item.name,
+                            reqData.inventory.push({...item,
+                                // "inventory": item.inventory,
+                                // "name": item.name,
                                 "unit": item.unit,
-                                "taxes": item.taxes,
-                                "unit_cost": item.unit_cost,
-                                "discount": item.discount,
-                                "discount_type": "%",
-                                "offers": null,
-                                inventory_inv: item.id,
-                                "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
-                                "instruction": item.instruction,
-                                "is_active": true,
-                                batch_number: item.selectedBatch ? item.selectedBatch.batch_number : null,
-                                id: item.id 
+                                // "taxes": item.taxes,
+                                // "unit_cost": item.unit_cost,
+                                // "discount": item.discount,
+                                // "discount_type": "%",
+                                // "offers": null,
+                                inventory_inv: id,
+                                // "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
+                                // "instruction": item.instruction,
+                                // "is_active": true,
+                                // batch_number: item.selectedBatch ? item.selectedBatch.batch_number : null,
+                                // id: item.id 
                             });
                             break;
                         default:
@@ -527,10 +529,6 @@ class AddReturnInvoice extends React.Component {
     }
 
     render() {
-        // console.log("props",this.props);
-        // console.log("state",this.state);
-        
-        
         let that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const formItemLayout = {

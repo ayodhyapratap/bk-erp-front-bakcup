@@ -164,21 +164,11 @@ class PatientInvoices extends React.Component {
 
 
     }
-    returnModelOpen = (record) => {
-        let that = this;
-        // let id = this.props.match.params.id;
-        this.setState({
-            editInvoice: record,
-        }, function () {
-            that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/return/add")
-        });
-
-    }
+   
 
     returnModelOpen(record) {
 
         let that = this;
-         that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/return/")
         that.setState({
             returnIncoiceVisible: true,
             editInvoice: record,
@@ -197,7 +187,7 @@ class PatientInvoices extends React.Component {
         let errorFn = function () {
 
         };
-       // postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+       postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
     }
 
     returnInvoiceClose = () => {
@@ -262,8 +252,9 @@ class PatientInvoices extends React.Component {
         let errorFn = function () {
 
         };
-        // postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
     };
+
     editInvoiceClose = () => {
         this.setState({
             editIncoiceVisible: false
@@ -400,15 +391,15 @@ class PatientInvoices extends React.Component {
                                                                  loadData={this.loadInvoices}/>}/>
                     <Route  path='/patient/:id/billing/invoices/edit'
                            render={(route) => (
-                               this.state.editInvoice ?
+                               this.state.editInvoice?
                                    <AddInvoicedynamic {...this.state} {...route}
                                                       editId={this.state.editInvoice.id}
                                                       loadData={this.loadInvoices}/> :
                                    <Redirect to={"/patient/" + this.props.match.params.id + "/billing/invoices"}/>
                            )}/>
-                    <Route  path='/patient/:id/billing/invoices/return/add'
+                    <Route path='/patient/:id/billing/invoices/return'
                            render={(route) => (
-                               this.state.editInvoice ?
+                               this.state.editInvoice?
                                    <AddReturnInvoice {...this.state} {...route}
                                                   editId={this.state.editInvoice.id}
                                                   loadData={this.loadInvoices}/> :

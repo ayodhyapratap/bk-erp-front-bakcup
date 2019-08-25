@@ -69,6 +69,7 @@ export const EMR_SUB_TYPE = [
 export const BILLING_SUB_TYPE = [
     {title: 'INVOICE'},
     {title: 'RECEIPTS'},
+    {title: 'RETURN'}
 ];
 
 export const CUSTOMIZE_PAPER_TYPE = [

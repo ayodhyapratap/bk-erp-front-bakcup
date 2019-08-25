@@ -165,6 +165,7 @@ class EditPracticeDetail extends React.Component {
             },{
                 label: "Return Prefix",
                 placeholder: "DEL/RET/",
+                initialValue:this.state.practiceDetail.return_prefix,
                 key: "return_prefix",
                 type: INPUT_FIELD,
                 required: true
