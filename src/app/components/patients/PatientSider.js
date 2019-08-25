@@ -147,7 +147,7 @@ class PatientSider extends React.Component {
                         <Menu.Item key="31">
                             <Link
                                 to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/return/invoices" : "/patients/billing/return/invoices"}>
-                                <Icon type="book"/>Invoices Return
+                                <Icon type="redo"/>Invoices Return
                             </Link>
                         </Menu.Item>
                     :null}

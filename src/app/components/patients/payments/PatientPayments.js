@@ -357,7 +357,7 @@ function PaymentCard(payment, that) {
                     <Table columns={columns}
                            pagination={false}
                            footer={() => PaymentFooter({practice: payment.practice_data})}
-                           dataSource={payment.invoices}/>
+                           dataSource={payment.invoices} rowKey={payment.id}/>
             </Col>
         </Row>
 
