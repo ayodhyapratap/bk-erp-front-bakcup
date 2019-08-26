@@ -6,6 +6,9 @@ import {getAPI, interpolate, postAPI} from "../../../../utils/common";
 import EditProcedure from "./EditProcedure";
 import PermissionDenied from "../../../common/errors/PermissionDenied";
 import CustomizedTable from "../../../common/CustomizedTable";
+import AddProcedure from "./AddProcedure";
+import AddorEditProcedure from "./AddorEditProcedure";
+import {Redirect} from "react-router";
 
 
 const {Column, ColumnGroup} = Table;
@@ -79,7 +82,7 @@ class RecentProcedure extends React.Component {
             key: "name",
         }, {
             title: "Procedure Unit Cost",
-            dataIndex: "cost",
+            dataIndex: "cost_with_tax",
             key: "cost"
         }, {
             title: "MLM Margin",
@@ -120,32 +123,34 @@ class RecentProcedure extends React.Component {
                 </span>)
         }];
         return <Switch>
+            <Route path="/settings/procedures/addprocedure"
+                   render={(route) => (this.props.activePracticePermissions.SettingsProcedureCatalog || this.props.allowAllPermissions ?
+                           <AddorEditProcedure  {...this.props} {...route} loadData={this.loadProcedures}/> :
+                           <PermissionDenied/>
+                   )}/>
             <Route exact path="/settings/procedures/:id/editprocedure"
                    render={(route) => (that.props.activePracticePermissions.SettingsProcedureCatalog || that.props.allowAllPermissions ?
-                           <EditProcedure  {...that.props} {...that.state} {...route}
-                                           loadProcedures={that.loadProcedures}/> : <PermissionDenied/>
+                           (that.state.editingProcedureData ?
+                               <AddorEditProcedure  {...this.state} {...this.props} {...route}
+                                                    loadData={this.loadProcedures}/> :
+                               <Redirect to={"/settings/procedures"}/>) : <PermissionDenied/>
                    )}/>
-            <Row>
-                <h2>Procedures Catalog
-                    <Link to="/settings/procedures/addprocedure">
-                        <Button type="primary" style={{float: 'right'}}>
-                            <Icon type="plus"/>&nbsp;Add Procedure
-                        </Button>
-                    </Link>
-                </h2>
-                <Card>
-                    {/*<Tabs defaultActiveKey="procedurecatalog">*/}
-                    {/*<TabPane tab={<span><Icon type="android"/>Procedure Catalog</span>} key="procedurecatalog">*/}
-                    <CustomizedTable columns={columns} loading={this.state.loading}
-                                     dataSource={this.state.procedure_category}/>
+            <Route>
+                <Row>
+                    <h2>Procedures Catalog
+                        <Link to="/settings/procedures/addprocedure">
+                            <Button type="primary" style={{float: 'right'}}>
+                                <Icon type="plus"/>&nbsp;Add Procedure
+                            </Button>
+                        </Link>
+                    </h2>
+                    <Card>
+                        <CustomizedTable columns={columns} loading={this.state.loading}
+                                         dataSource={this.state.procedure_category}/>
 
-
-                    {/*</TabPane>*/}
-
-                    {/*</Tabs>*/}
-
-                </Card>
-            </Row>
+                    </Card>
+                </Row>
+            </Route>
         </Switch>
     }
 }
