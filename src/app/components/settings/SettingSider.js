@@ -50,6 +50,14 @@ class SettingSider extends React.Component {
                             <Icon type="trophy"/>Loyalty
                         </Link>
                     </Menu.Item> : null}
+                    <Menu.Item key="32">
+                        <Link to="/settings/agent-roles">
+                            <Icon type="wallet"/>
+                            <span className="nav-text">Agent Roles</span>
+                        </Link>
+                    </Menu.Item>
+                   
+
                     {this.props.activePracticePermissions.SettingsMLMSettings ? <Menu.Item key="30">
                         <Link to="/settings/mlm">
                             <Icon type="wallet"/>

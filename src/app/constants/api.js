@@ -187,6 +187,7 @@ export const PRODUCT_LEVEL = "product_level";
 export const PRODUCT_MARGIN = "product_margin/";
 export const SINGLE_PRODUCT_MARGIN = "product_margin/%s/";
 export const GENERATE_MLM_COMMISSON = 'product_margin/generate_mlm/';
+export const AGENT_ROLES ='agents/agent_roles/';
 
 
 /**
