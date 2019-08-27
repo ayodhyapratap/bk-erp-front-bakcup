@@ -656,8 +656,7 @@ class AddReturnInvoice extends React.Component {
                                 message: "This field is required.",
                             }],
                         })(
-                            <InputNumber min={1}
-                                         max={(record.unit)}
+                            <InputNumber max={(record.unit)}
                                          min={0}
                                          placeholder="units" size={'small'}
                                          disabled={!(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number])}/>
@@ -674,7 +673,7 @@ class AddReturnInvoice extends React.Component {
                                 message: "This field is required.",
                             }],
                         })(
-                            <InputNumber min={1} max={100} placeholder="unit" size={'small'}/>
+                            <InputNumber min={0} max={record.unit} placeholder="unit" size={'small'}/>
                         )}
                     </Form.Item>
             )
@@ -683,21 +682,6 @@ class AddReturnInvoice extends React.Component {
             key: 'unit_cost',
             width: 100,
             dataIndex: 'unit_cost',
-
-            // render: (item, record) => <Form.Item
-            //     key={`unit_cost[${record._id}]`}
-            //     {...formItemLayout}>
-            //     {getFieldDecorator(`unit_cost[${record._id}]`, {
-            //         validateTrigger: ['onChange', 'onBlur'],
-            //         initialValue: record.retail_without_tax,
-            //         rules: [{
-            //             required: true,
-            //             message: "This field is required.",
-            //         }],
-            //     })(
-            //         <InputNumber min={0} placeholder="Unit Cost" size={'small'}/>
-            //     )}
-            // </Form.Item>
             render: (item, record) => item ? item.toFixed(2) : null
         }, {
             title: 'discount %',
@@ -740,22 +724,6 @@ class AddReturnInvoice extends React.Component {
             key: 'total',
             width: 100,
             dataIndex: 'total',
-            // render: (item, record) => <Form.Item
-            //     key={`total_unit_cost[${record._id}]`}
-            //     {...formItemLayout}>
-            //     {getFieldDecorator(`total_unit_cost[${record._id}]`, {
-            //         validateTrigger: ['onChange', 'onBlur'],
-            //         initialValue: record.retail_with_tax,
-            //         rules: [{
-            //             required: true,
-            //             message: "This field is required.",
-            //         }],
-            //     })(
-            //         <InputNumber min={0} placeholder="Unit Cost" size={'small'}
-            //                      onChange={() => that.changeNetPrice(record._id)}/>
-            //     )}
-            // </Form.Item>
-            // render:(item,record)=> `unit_cost[${record._id}]`
             render: (item, record) => item ? item.toFixed(2) : null
         },]);
 
@@ -771,7 +739,6 @@ class AddReturnInvoice extends React.Component {
                                        bordered={true}
                                        dataSource={this.state.tableFormValues}
                                        columns={consumeRow}/>
-                                {/*<List>{formItems}</List>*/}
                                 <Affix offsetBottom={0}>
                                     <Card>
                                         <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
