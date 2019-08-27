@@ -118,7 +118,7 @@ class PatientPayments extends React.Component {
     }
 
     deletePayment(patient, payment) {
-
+        console.log("Canceled",payment)
         let that = this;
         let reqData = {patient: patient, is_cancelled: true};
         let successFn = function (data) {
@@ -127,6 +127,7 @@ class PatientPayments extends React.Component {
         }
         let errorFn = function () {
         }
+        console.log("reqdata",reqData)
         putAPI(interpolate(SINGLE_PAYMENT_API, [payment]), reqData, successFn, errorFn);
 
     }
@@ -204,7 +205,7 @@ class PatientPayments extends React.Component {
 
         };
 
-        // postAPI(CANCELINVOICE_GENERATE_OTP, reqData ,successFn, errorFn);
+        postAPI(CANCELINVOICE_GENERATE_OTP, reqData ,successFn, errorFn);
     };
 
 
@@ -347,7 +348,7 @@ function PaymentCard(payment, that) {
                      size={"small"}
                      style={{float: 'right'}}
                      overlay={<Menu>
-                         <Menu.Item key="2" onClick={() => that.editPaymentData(payment)}
+                         <Menu.Item key="2" onClick={() => that.editModelOpen(payment)}
                                     disabled={(payment.practice != that.props.active_practiceId)}>
                              <Icon type="edit"/>
                              Edit

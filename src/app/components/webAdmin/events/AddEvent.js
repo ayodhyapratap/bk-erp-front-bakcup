@@ -116,7 +116,7 @@ export default class AddEvent extends React.Component {
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
-        const formProp = {
+        let formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.props.loadData();

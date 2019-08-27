@@ -16,7 +16,8 @@ import {
     Spin,
     Table,
     Tabs,
-    Tag
+    Tag,
+    Checkbox
 } from "antd";
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {DRUG, INVENTORY, PRESCRIPTIONS, PROCEDURES} from "../../../constants/hardData";
@@ -57,6 +58,7 @@ class AddReturnInvoice extends React.Component {
             saveLoading: false,
             qrValue: '',
             searchItem: '',
+            return_with_tax:false
 
         }
 
@@ -357,6 +359,7 @@ class AddReturnInvoice extends React.Component {
                     staff: this.props.editInvoice.staff_data ? this.props.editInvoice.staff_data.id : null,
                     prescription: that.state.selectedPrescriptions,
                     date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
+                    return_with_tax:this.state.return_with_tax?true:'',
 
                 };
                 that.state.tableFormValues.forEach(function (item) {
@@ -425,6 +428,7 @@ class AddReturnInvoice extends React.Component {
                         saveLoading: false
                     });
                 }
+                
                 postAPI(INVOICE_RETURN_API, reqData, successFn, errorFn);
 
             }
@@ -531,6 +535,13 @@ class AddReturnInvoice extends React.Component {
             }
         }, 1000);
 
+    }
+
+    onChangeHandle=(e)=>{
+        let that=this;
+        this.setState({
+            return_with_tax:e.target.checked
+        })
     }
 
     render() {
@@ -741,23 +752,37 @@ class AddReturnInvoice extends React.Component {
                                        columns={consumeRow}/>
                                 <Affix offsetBottom={0}>
                                     <Card>
-                                        <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
-                                        <DatePicker value={this.state.selectedDate}
+                                        <Row gutter={16}>
+                                            <Col span={12}>
+                                                <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
+                                                <DatePicker value={this.state.selectedDate}
                                                     disabled
                                                     onChange={(value) => this.selectedDefaultDate(value)}
                                                     format={"DD-MM-YYYY"}
                                                     allowClear={false}/>
-                                        <Form.Item {...formItemLayoutWithOutLabel}
-                                                   style={{marginBottom: 0, float: 'right'}}>
-                                            <Button type="primary" htmlType="submit"
-                                                    style={{margin: 5}}>Save
-                                                Invoice</Button>
-                                            {that.props.history ?
-                                                <Button style={{margin: 5, float: 'right'}}
-                                                        onClick={() => that.props.history.goBack()}>
-                                                    Cancel
-                                                </Button> : null}
-                                        </Form.Item>
+                                                <br/>
+                                                <br/>
+                                                <Checkbox onChange={this.onChangeHandle}  defaultChecked={this.state.return_with_tax}>
+                                                    Return With Tax
+                                                </Checkbox>
+                                            </Col>
+                                            <Col span={12}>
+                                                <Form.Item {...formItemLayoutWithOutLabel}
+                                                        style={{marginBottom: 0, float: 'right'}}>
+                                                    <Button type="primary" htmlType="submit"
+                                                            style={{margin: 5}}>Save
+                                                        Invoice</Button>
+                                                    {that.props.history ?
+                                                        <Button style={{margin: 5, float: 'right'}}
+                                                                onClick={() => that.props.history.goBack()}>
+                                                            Cancel
+                                                        </Button> : null}
+                                                </Form.Item>
+
+                                            </Col>
+                                        </Row>
+                                        
+                                       
                                     </Card>
                                 </Affix>
                             </Form>
