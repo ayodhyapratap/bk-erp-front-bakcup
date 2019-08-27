@@ -11,8 +11,7 @@ class AddPaymentForm extends React.Component {
             invoicesList: [],
             invoiceLoading: true,
             addedInvoiceId: {},
-            addedInvoice:[],
-            addedInvoice:this.props.editPayment && this.props.editPayment.invoices?this.props.editPayment.invoices.map(invoice =>invoice.invoice_data): [],
+            addedInvoice: [],
             paymentModes: [],
             totalPayableAmount: 0,
             invoicePayments: {},
@@ -22,6 +21,27 @@ class AddPaymentForm extends React.Component {
     }
 
     componentWillMount() {
+        let that = this;
+        if (this.props.editPayment && this.props.editPayment.invoices) {
+            let addedInvoicesId = {};
+            let addedInvoice = [];
+            let totalPayingAmount = 0;
+            this.props.editPayment.invoices.forEach(function (inv) {
+                addedInvoicesId[inv.invoice] = true;
+                addedInvoice.push({...inv, ...inv.invoice_data});
+                totalPayingAmount += inv.pay_amount + inv.pay_amount_wallet
+            })
+            this.setState({
+                addedInvoiceId: addedInvoicesId,
+                addedInvoice: addedInvoice,
+                // totalPayingAmount : totalPayingAmount
+            },function(){
+                    that.calculateInvoicePayments();
+                    that.setPaymentAmount(totalPayingAmount);
+            })
+
+
+        }
         this.loadInvoices();
         this.loadPaymentModes();
     }
@@ -29,7 +49,6 @@ class AddPaymentForm extends React.Component {
     loadPaymentModes = () => {
         var that = this;
         let successFn = function (data) {
-            console.log("get table");
             that.setState({
                 paymentModes: data,
                 selectedPaymentMode: data.length ? data[0].id : null
@@ -45,10 +64,14 @@ class AddPaymentForm extends React.Component {
             invoiceLoading: true
         });
         let successFn = function (data) {
-            that.setState({
-                invoicesList: data.results,
-                invoiceLoading: false,
-                loadMoreInvoice: data.next
+            that.setState(function (prevState) {
+                return {
+                    invoicesList: [...data.results, ...prevState.addedInvoice],
+                    invoiceLoading: false,
+                    loadMoreInvoice: data.next
+                }
+            }, function () {
+                that.calculateInvoicePayments();
             })
         }
         let errorFn = function () {
@@ -115,10 +138,11 @@ class AddPaymentForm extends React.Component {
                 // invoice.procedure.forEach(function (proc) {
                 //     payable += proc.unit * proc.total
                 // });
-                payable += invoice.total - invoice.payments_data;
-                if (totalPayingAmount >= invoice.total - invoice.payments_data) {
-                    totalPayingAmount -= invoice.total - invoice.payments_data;
-                    invoicePayments[invoice.id] = invoice.total - invoice.payments_data;
+                let invoicePayableAmount = invoice.total - invoice.payments_data + invoice.pay_amount + invoice.pay_amount_wallet
+                payable += invoicePayableAmount;
+                if (totalPayingAmount >= invoicePayableAmount) {
+                    totalPayingAmount -= invoicePayableAmount;
+                    invoicePayments[invoice.id] = invoicePayableAmount;
                 } else {
                     invoicePayments[invoice.id] = totalPayingAmount;
                     totalPayingAmount = 0;
@@ -186,13 +210,14 @@ class AddPaymentForm extends React.Component {
                 loading: false
             });
         }
+        if(this.props.editPayment){
+            reqData.id = this.props.editPayment.id
+        }
         postAPI(PATIENT_PAYMENTS_API, reqData, successFn, errorFn)
     }
 
     render() {
         let that = this;
-        console.log("state",this.state)
-        console.log("props",this.props)
         return <div>
             <Row gutter={8}>
                 <Col xs={24} sm={24} md={16} lg={16} xl={18} xxl={18}>
@@ -221,68 +246,65 @@ class AddPaymentForm extends React.Component {
                                             <small>DUE AFTER PAYMENT (INR)</small>
                                         </td>
                                     </tr>
-                                    {this.props.editPayment?<>
-                                        
-                                        {this.props.editPayment.invoices?this.props.editPayment.invoices.map(invoice =>
-                                            <tr style={{borderBottom: '2px solid #ccc'}}>
+                                    {/*{this.props.editPayment ? <>*/}
 
-                                                <td>
-                                                    <Button size={'small'} type={'danger'} shape={'circle'} icon={'close'}
-                                                            style={{position: 'absolute', right: '-35px'}}
-                                                            onClick={() => this.removeInvoiceToPayments(invoice.invoice_data.id)}/>
-                                                    <h3>{invoice.invoice_data.invoice_id}</h3>
-                                                    {invoice.invoice_data.date}
-                                                </td>
+                                    {/*    {this.props.editPayment.invoices ? this.props.editPayment.invoices.map(invoice =>*/}
+                                    {/*        <tr style={{borderBottom: '2px solid #ccc'}}>*/}
 
-                                                <td>
+                                    {/*            <td>*/}
+                                    {/*                <Button size={'small'} type={'danger'} shape={'circle'}*/}
+                                    {/*                        icon={'close'}*/}
+                                    {/*                        style={{position: 'absolute', right: '-35px'}}*/}
+                                    {/*                        onClick={() => this.removeInvoiceToPayments(invoice.invoice_data.id)}/>*/}
+                                    {/*                <h3>{invoice.invoice_data.invoice_id}</h3>*/}
+                                    {/*                {invoice.invoice_data.date}*/}
+                                    {/*            </td>*/}
 
-                                                    {invoice.invoice_data.procedure.map(proc => proc.procedure_data.name + ", ")}
-                                                    {invoice.invoice_data.inventory.map(proc => proc.inventory_item_data.name + ", ")}
-                                                    {invoice.invoice_data.reservation?invoice.type + ",":null}
-                                                    {invoice.invoice_data.reservation_data && invoice.invoice_data.reservation_data.medicines?invoice.invoice_data.reservation_data.medicines.map(item =>item.name + ','):null}
-                                                </td>
-                                                <td style={{textAlign: 'right'}}>
-                                                    <b>{(invoice.invoice_data.total - invoice.invoice_data.payments_data).toFixed(2)}</b></td>
-                                                <td style={{textAlign: 'right'}}>
-                                                    <b>{that.state.invoicePayments[invoice.invoice_data.id]}</b></td>
-                                                <td style={{textAlign: 'right'}}>
-                                                    <b>{(invoice.invoice_data.total - invoice.invoice_data.payments_data - that.state.invoicePayments[invoice.invoice_data.id]).toFixed(2)}</b>
-                                                </td>
-                                            </tr>
-                                        ):null}
-                                    
-                                    </>:null}
-                                        {this.state.addedInvoice.map(invoice =>
-                                            <tr style={{borderBottom: '2px solid #ccc'}}>
+                                    {/*            <td>*/}
 
-                                                <td>
-                                                    <Button size={'small'} type={'danger'} shape={'circle'} icon={'close'}
-                                                            style={{position: 'absolute', right: '-35px'}}
-                                                            onClick={() => this.removeInvoiceToPayments(invoice.id)}/>
-                                                    <h3>{invoice.invoice_id}</h3>
-                                                    {invoice.date}
-                                                </td>
+                                    {/*                {invoice.invoice_data.procedure.map(proc => proc.procedure_data.name + ", ")}*/}
+                                    {/*                {invoice.invoice_data.inventory.map(proc => proc.inventory_item_data.name + ", ")}*/}
+                                    {/*                {invoice.invoice_data.reservation ? invoice.type + "," : null}*/}
+                                    {/*                {invoice.invoice_data.reservation_data && invoice.invoice_data.reservation_data.medicines ? invoice.invoice_data.reservation_data.medicines.map(item => item.name + ',') : null}*/}
+                                    {/*            </td>*/}
+                                    {/*            <td style={{textAlign: 'right'}}>*/}
+                                    {/*                <b>{(invoice.invoice_data.total - invoice.invoice_data.payments_data).toFixed(2)}</b>*/}
+                                    {/*            </td>*/}
+                                    {/*            <td style={{textAlign: 'right'}}>*/}
+                                    {/*                <b>{that.state.invoicePayments[invoice.invoice_data.id]}</b></td>*/}
+                                    {/*            <td style={{textAlign: 'right'}}>*/}
+                                    {/*                <b>{(invoice.invoice_data.total - invoice.invoice_data.payments_data - that.state.invoicePayments[invoice.invoice_data.id]).toFixed(2)}</b>*/}
+                                    {/*            </td>*/}
+                                    {/*        </tr>*/}
+                                    {/*    ) : null}*/}
 
-                                                <td>
-
-                                                    {invoice.procedure.map(proc => proc.procedure_data.name + ", ")}
-                                                    {invoice.inventory.map(proc => proc.inventory_item_data.name + ", ")}
-                                                    {invoice.reservation?invoice.type + ",":null}
-                                                    {invoice.reservation_data && invoice.reservation_data.medicines?invoice.reservation_data.medicines.map(item =>item.name + ','):null}
-                                                </td>
-                                                <td style={{textAlign: 'right'}}>
-                                                    <b>{(invoice.total - invoice.payments_data).toFixed(2)}</b></td>
-                                                <td style={{textAlign: 'right'}}>
-                                                    <b>{that.state.invoicePayments[invoice.id]}</b></td>
-                                                <td style={{textAlign: 'right'}}>
-                                                    <b>{(invoice.total - invoice.payments_data - that.state.invoicePayments[invoice.id]).toFixed(2)}</b>
-                                                </td>
-                                            </tr>
-                                        )}
-                                    
+                                    {/*</> : null}*/}
+                                    {this.state.addedInvoice.map(invoice =>
+                                        <tr style={{borderBottom: '2px solid #ccc'}}>
+                                            <td>
+                                                <Button size={'small'} type={'danger'} shape={'circle'} icon={'close'}
+                                                        style={{position: 'absolute', right: '-35px'}}
+                                                        onClick={() => this.removeInvoiceToPayments(invoice.id)}/>
+                                                <h3>{invoice.invoice_id}</h3>
+                                                {invoice.date}
+                                            </td>
+                                            <td>
+                                                {invoice.procedure.map(proc => proc.procedure_data.name + ", ")}
+                                                {invoice.inventory.map(proc => proc.inventory_item_data.name + ", ")}
+                                                {invoice.reservation ? invoice.type + "," : null}
+                                                {invoice.reservation_data && invoice.reservation_data.medicines ? invoice.reservation_data.medicines.map(item => item.name + ',') : null}
+                                            </td>
+                                            <td style={{textAlign: 'right'}}>
+                                                <b>{(invoice.total - invoice.payments_data + invoice.pay_amount + invoice.pay_amount_wallet).toFixed(2)}</b></td>
+                                            <td style={{textAlign: 'right'}}>
+                                                <b>{that.state.invoicePayments[invoice.id]}</b></td>
+                                            <td style={{textAlign: 'right'}}>
+                                                <b>{(invoice.total - invoice.payments_data + invoice.pay_amount + invoice.pay_amount_wallet - that.state.invoicePayments[invoice.id]).toFixed(2)}</b>
+                                            </td>
+                                        </tr>
+                                    )}
                                 </table>
                             </Col>
-
                         </Row>
                         <Row style={{borderBottom: '2px dashed #ccc', marginTop: '20px'}}>
                             <Col span={6}><h3>Total Payable :</h3></Col>
@@ -292,7 +314,7 @@ class AddPaymentForm extends React.Component {
                             <Col span={6}><h3>Pay Now:</h3></Col>
                             <Col span={6}>
                                 <InputNumber min={0} step={1} max={this.state.totalPayableAmount}
-                                             value={this.state.totalPayingAmount} onChange={this.setPaymentAmount}/>
+                                            value={this.state.totalPayingAmount} onChange={this.setPaymentAmount}/>
                             </Col>
                             <Col span={6}>
                                 <Select style={{width: '100%'}} value={this.state.selectedPaymentMode}
@@ -329,25 +351,29 @@ class AddPaymentForm extends React.Component {
                                   <table style={{width: '100%'}}>
                                       {invoice.procedure.map(proc => <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}>{proc.procedure_data.name}</td>
-                                          <td style={{textAlign: 'right'}}><b>{(proc.unit * proc.unit_cost).toFixed(2)}</b></td>
+                                          <td style={{textAlign: 'right'}}>
+                                              <b>{(proc.unit * proc.unit_cost).toFixed(2)}</b></td>
                                       </tr>)}
                                       {invoice.inventory.map(proc => <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}>{proc.inventory_item_data.name}</td>
-                                          <td style={{textAlign: 'right'}}><b>{(proc.unit * proc.unit_cost).toFixed(2)}</b></td>
+                                          <td style={{textAlign: 'right'}}>
+                                              <b>{(proc.unit * proc.unit_cost).toFixed(2)}</b></td>
                                       </tr>)}
-                                      {invoice.reservation?
-                                      <tr>
-                                        <td style={{maxWidth: 'calc(100% - 60px)'}}>{invoice.type}</td>
-                                        <td style={{textAlign: 'right'}}><b>{invoice.reservation_data.bed_package_price?invoice.reservation_data.bed_package_price.toFixed(2):null}</b></td>
-                                      </tr>:null}
+                                      {invoice.reservation ?
+                                          <tr>
+                                              <td style={{maxWidth: 'calc(100% - 60px)'}}>{invoice.type}</td>
+                                              <td style={{textAlign: 'right'}}>
+                                                  <b>{invoice.reservation_data.bed_package_price ? invoice.reservation_data.bed_package_price.toFixed(2) : null}</b>
+                                              </td>
+                                          </tr> : null}
 
-                                        {invoice.reservation_data && invoice.reservation_data.medicines?<>
-                                            {invoice.reservation_data.medicines.map(item =><tr>
-                                                <td style={{maxWidth: 'calc(100% - 60px)'}}>{item.name}</td>
-                                                <td style={{textAlign: 'right'}}><b>{item.final_price.toFixed(2)}</b></td>
-                                            </tr>)}
-                                         </>
-                                      :null}
+                                      {invoice.reservation_data && invoice.reservation_data.medicines ? <>
+                                              {invoice.reservation_data.medicines.map(item => <tr>
+                                                  <td style={{maxWidth: 'calc(100% - 60px)'}}>{item.name}</td>
+                                                  <td style={{textAlign: 'right'}}><b>{item.final_price.toFixed(2)}</b></td>
+                                              </tr>)}
+                                          </>
+                                          : null}
                                   </table>
                                   <Divider style={{margin: 0}}/>
                                   <table style={{width: '100%'}}>
