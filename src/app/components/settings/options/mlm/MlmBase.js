@@ -3,7 +3,7 @@ import {Button, Card, Icon, Table, Tabs, Row} from "antd";
 import {getAPI, interpolate, postAPI, patchAPI, deleteAPI, putAPI} from "../../../../utils/common";
 import MLMGenerate from "./MLMGenerate"
 import {Link, Route, Switch} from "react-router-dom";
-import {PRODUCT_MARGIN, ROLE_COMMISION, SINGLE_PRODUCT_MARGIN, STAFF_ROLES} from "../../../../constants/api";
+import {PRODUCT_MARGIN, ROLE_COMMISION, SINGLE_PRODUCT_MARGIN, AGENT_ROLES} from "../../../../constants/api";
 
 const TabPane = Tabs.TabPane;
 
@@ -58,7 +58,7 @@ export default class MlmBase extends React.Component {
                 loading: false
             })
         }
-        getAPI(STAFF_ROLES, successFn, errorFn);
+        getAPI(AGENT_ROLES, successFn, errorFn);
     }
 
     loadProductMargin() {

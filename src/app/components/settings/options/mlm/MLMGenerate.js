@@ -3,7 +3,7 @@ import {
 } from 'antd';
 import React from "react";
 import {
-    STAFF_ROLES,
+    AGENT_ROLES,
     GENERATE_MLM_COMMISSON,
     SINGLE_PRODUCT_MARGIN
 } from "../../../../constants/api"
@@ -66,7 +66,8 @@ class MLMGenerate extends React.Component {
             })
 
         }
-        getAPI(STAFF_ROLES, successFn, errorFn);
+        
+        getAPI(AGENT_ROLES, successFn, errorFn);
     }
 
     // loadProductlevels() {
