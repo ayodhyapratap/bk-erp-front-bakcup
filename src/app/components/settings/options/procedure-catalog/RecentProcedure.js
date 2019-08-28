@@ -53,7 +53,10 @@ class RecentProcedure extends React.Component {
 
     deleteObject(record) {
         let that = this;
-        let reqData = record;
+        let reqData = {
+            id: record.id,
+            is_active: false
+        };
         reqData.is_active = false;
         let successFn = function (data) {
             that.loadProcedures();

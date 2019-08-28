@@ -193,7 +193,7 @@ class AddorEditProcedure extends React.Component {
                     </Form.Item>
                     <Form.Item key={"margin"} {...formItemLayout} label={"MLM Margin"}>
                         {getFieldDecorator("margin", {
-                            initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.margin : null,
+                            initialValue: this.state.editingProcedureData && this.state.editingProcedureData.margin ? this.state.editingProcedureData.margin.id : null,
                         })(
                             <Select>
                                 {this.state.productMargin.map((option) => <Select.Option

@@ -206,27 +206,27 @@ class PatientSelection extends React.Component {
                             {group.patient_count}
                         </Tag>
                     </Radio.Button>)}
-                    {/*<p><br/></p>*/}
+                    <p><br/></p>
                     <p><b>Smart Groups</b></p>
                     <Radio.Button
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_a"}
                         value={"smart_a"}>
-                        All Male Customers
+                        All Male
                     </Radio.Button>
                     <Radio.Button
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_b"}
                         value={"smart_b"}>
-                        All Female Customers
+                        All Female
                     </Radio.Button>
                     <Radio.Button
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_c"}
                         value={"smart_c"}>
-                        Female Customers Over 30
+                        Female Over 30
                     </Radio.Button>
                     <Radio.Button
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_d"}
                         value={"smart_d"}>
-                        Female Customers Under 30
+                        Female Under 30
                     </Radio.Button>
                     <p><br/></p>
                 </Radio.Group>

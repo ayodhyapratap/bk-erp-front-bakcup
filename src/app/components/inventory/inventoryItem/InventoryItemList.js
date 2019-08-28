@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Card, Col, Divider, Icon, Input, Modal, Popconfirm, Radio, Row, Spin, Table, Tag} from "antd";
-import {getAPI, interpolate, putAPI ,startLoadingMessage,stopLoadingMessage} from "../../../utils/common";
-import {INVENTORY_ITEM_API, SINGLE_INVENTORY_ITEM_API,INVENTORY_ITEM_EXPORT} from "../../../constants/api";
+import {getAPI, interpolate, putAPI, startLoadingMessage, stopLoadingMessage} from "../../../utils/common";
+import {INVENTORY_ITEM_API, SINGLE_INVENTORY_ITEM_API, INVENTORY_ITEM_EXPORT} from "../../../constants/api";
 import {Link, Route, Switch} from "react-router-dom";
 import AddorEditInventoryItem from "./AddorEditInventoryItem";
 import AddOrConsumeStock from "./AddOrConsumeStock"
@@ -21,7 +21,6 @@ export default class InventoryItemList extends React.Component {
         this.state = {
             inventoryItems: [], //All List
             inventoryItemList: [], // Filtered List
-            // active_practiceId: this.props.active_practiceId,
             stockModalVisibility: false,
             itemTypeFilter: "ALL",
             itemStockFilter: "ALL",
@@ -73,7 +72,7 @@ export default class InventoryItemList extends React.Component {
         let reqParams = {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
-            page:page
+            page: page
         };
         if (that.state.itemTypeFilter != 'ALL') {
             reqParams.item_type = that.state.itemTypeFilter
@@ -139,7 +138,7 @@ export default class InventoryItemList extends React.Component {
         let that = this;
         let msg = startLoadingMessage("Generating Report...");
         let successFn = function (data) {
-            console.log("datattype",data)
+            console.log("datattype", data)
             stopLoadingMessage(msg, SUCCESS_MSG_TYPE, "Report Generated Successfully!!");
             if (data.report_csv)
                 window.open(BACKEND_BASE_URL + data.report_csv);
@@ -165,6 +164,7 @@ export default class InventoryItemList extends React.Component {
         }
         getAPI(INVENTORY_ITEM_EXPORT, successFn, errorFn, reqParams);
     }
+
     pdfExport() {
         let that = this;
         let msg = startLoadingMessage("Generating Report...");
@@ -194,8 +194,8 @@ export default class InventoryItemList extends React.Component {
         }
         getAPI(INVENTORY_ITEM_EXPORT, successFn, errorFn, reqParams);
     }
+
     render() {
-        console.log('props',this.props);
         const taxesdata = {};
         if (this.state.taxes_list) {
             this.state.taxes_list.forEach(function (tax) {
@@ -229,9 +229,9 @@ export default class InventoryItemList extends React.Component {
             title: 'Inventory Stock',
             dataIndex: 'total_quantity',
             key: 'total_quantity',
-            render:(value, record) => <span>{value} {value <= record.re_order_level ?
+            render: (value, record) => <span>{value} {value <= record.re_order_level ?
                 <Tag color="#f50">Low</Tag> : null}</span>
-               
+
         }, {
             title: 'Expired Stock',
             dataIndex: 'item_type_stock',
@@ -273,7 +273,7 @@ export default class InventoryItemList extends React.Component {
                     </Tag>
                 )}
                 </span>
-        },  {
+        }, {
             title: "MLM Margin",
             dataIndex: "margin_data",
             key: "margin",
@@ -299,37 +299,28 @@ export default class InventoryItemList extends React.Component {
             render: (text, record) => (
                 <span> {record.manufacturer_data ? record.manufacturer_data.name : ''}</span>
             )
-        },
-            //     {
-            //     title:'Action',
-            //     render:(item)=>{
-            //         return <div>
-            //           <a onClick={()=>this.setActionType(ADD_STOCK,item.id)}>Add </a>
-            //             <Divider type="vertical"/>
-            //             <a onClick={()=>this.setActionType(CONSUME_STOCK,item.id)}>Consume</a>
-            //         </div>
-            //     }
-            // },
-            {
-                title: 'Actions',
-                render: (item) => {
-                    return <div>
-                        <Link to={"/inventory/edit/" + item.id}>Edit</Link>
-                        <Divider type="vertical"/>
-                        {/* <Link to={"/inventory/edit-item-type/" + item.id}>Edit stock type </Link>
+        }, {
+            title: 'Actions',
+            render: (item) => {
+                return <div>
+                    <Link to={"/inventory/edit/" + item.id}>Edit</Link>
+                    <Divider type="vertical"/>
+                    {/* <Link to={"/inventory/edit-item-type/" + item.id}>Edit stock type </Link>
                         <Divider type="vertical"/> */}
-                        {item.total_quantity==0?
+                    {item.total_quantity == 0 ?
                         <Popconfirm title="Are you sure delete this item?"
                                     onConfirm={() => that.deleteObject(item.id)} okText="Yes" cancelText="No">
                             <a>Delete</a>
-                        </Popconfirm>:<Tag color="red">Can Not Delete</Tag>}
-                    </div>
-                }
-            }];
+                        </Popconfirm> : <Tag color="red">Can Not Delete</Tag>}
+                </div>
+            }
+        }];
         return <div>
             <Switch>
-                <Route path="/inventory/add" render={(route)=> (that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions ?
-                    <AddorEditInventoryItem {...route} {...this.props} {...this.state} loadData={this.loadData}/>:<PermissionDenied/>)}/>
+                <Route path="/inventory/add"
+                       render={(route) => (that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions ?
+                           <AddorEditInventoryItem {...route} {...this.props} {...this.state}
+                                                   loadData={this.loadData}/> : <PermissionDenied/>)}/>
 
                 {/* <Route path="/inventory/edit-item-type/:id"
                        render={(route) => <AddOrConsumeStock key={ADD_STOCK}
@@ -338,22 +329,35 @@ export default class InventoryItemList extends React.Component {
                        {...this.state} {...route} {...this.props}/>}/> */}
 
                 <Route exact path='/inventory/edit/:id'
-                       render={(route) =>(that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions ?
-                        <AddorEditInventoryItem {...this.state} {...this.props} {...route} loadData={this.loadData}/>:<PermissionDenied/>)}/>
+                       render={(route) => (that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions ?
+                           <AddorEditInventoryItem {...this.state} {...this.props} {...route}
+                                                   loadData={this.loadData}/> : <PermissionDenied/>)}/>
 
-                <Route exact path='/inventory/consume-stock' render={(route) => (that.props.activePracticePermissions.AddInventoryStock || that.props.allowAllPermissions?
-                    <AddOrConsumeStock key={CONSUME_STOCK} type={CONSUME_STOCK} loadData={this.loadData} {...this.state} {...route} {...this.props}/>:<PermissionDenied/>)}/>
+                <Route exact path='/inventory/consume-stock'
+                       render={(route) => (that.props.activePracticePermissions.AddInventoryStock || that.props.allowAllPermissions ?
+                           <AddOrConsumeStock key={CONSUME_STOCK} type={CONSUME_STOCK}
+                                              loadData={this.loadData} {...this.state} {...route} {...this.props}/> :
+                           <PermissionDenied/>)}/>
 
-                <Route exact path='/inventory/add-stock' render={(route) => (that.props.activePracticePermissions.ConsumeInventoryStock || that.props.allowAllPermissions ?
-                     <AddOrConsumeStock key={ADD_STOCK} type={ADD_STOCK} loadData={this.loadData}{...this.state} {...route} {...this.props}/>:<PermissionDenied/>)}/>
+                <Route exact path='/inventory/add-stock'
+                       render={(route) => (that.props.activePracticePermissions.ConsumeInventoryStock || that.props.allowAllPermissions ?
+                           <AddOrConsumeStock key={ADD_STOCK} type={ADD_STOCK}
+                                              loadData={this.loadData}{...this.state} {...route} {...this.props}/> :
+                           <PermissionDenied/>)}/>
 
                 <Route>
                     <Card title="Inventory List"
                           extra={<Button.Group>
-                                <Link to="/inventory/add"><Button type="primary"  disabled={!that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions}><Icon type="plus"/> Add  Item</Button></Link>
+                              <Link to="/inventory/add"><Button type="primary"
+                                                                disabled={!that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions}><Icon
+                                  type="plus"/> Add Item</Button></Link>
 
-                              <Link to="/inventory/add-stock"> <Button disabled={!that.props.activePracticePermissions.AddInventoryStock} type="primary">Add Stock</Button></Link>
-                              <Link to="/inventory/consume-stock"><Button disabled={!that.props.activePracticePermissions.ConsumeInventoryStock} type="primary">Consume Stock</Button></Link>
+                              <Link to="/inventory/add-stock"> <Button
+                                  disabled={!that.props.activePracticePermissions.AddInventoryStock} type="primary">Add
+                                  Stock</Button></Link>
+                              <Link to="/inventory/consume-stock"><Button
+                                  disabled={!that.props.activePracticePermissions.ConsumeInventoryStock} type="primary">Consume
+                                  Stock</Button></Link>
                           </Button.Group>}>
                         <Row>
                             <Radio.Group name="itemTypeFilter" size="small" defaultValue={"ALL"} buttonStyle="solid"
@@ -372,7 +376,7 @@ export default class InventoryItemList extends React.Component {
                             </Radio.Group>
                         </Row>
                         <Row gutter={16} style={{marginBottom: 10}}>
-                           
+
                             <Col span={4} style={{textAlign: "right"}}>
                                 <b> Item Name</b>
                             </Col>
@@ -397,7 +401,8 @@ export default class InventoryItemList extends React.Component {
 
                             <Col span={4}>
                                 <Button.Group size="small">
-                                    <Button disabled={this.state.loading} type="primary" onClick={this.excelExport}><Icon
+                                    <Button disabled={this.state.loading} type="primary"
+                                            onClick={this.excelExport}><Icon
                                         type="file-excel"/> Excel</Button>
                                     <Button disabled={this.state.loading} type="primary" onClick={this.pdfExport}><Icon
                                         type="file-pdf"/> PDF</Button>
