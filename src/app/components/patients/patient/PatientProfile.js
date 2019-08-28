@@ -8,6 +8,7 @@ import PatientNotes from "./PatientNotes";
 import MedicalMembership from "./MedicalMembership";
 import {SUCCESS_MSG_TYPE, ERROR_MSG_TYPE} from "../../../constants/dataKeys";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
+import AddOrEditAgent from "./AddOrEditAgent";
 
 class PatientProfile extends React.Component {
     constructor(props) {
@@ -117,6 +118,9 @@ class PatientProfile extends React.Component {
         postAPI(interpolate(MEDICAL_MEMBERSHIP_CANCEL_API, [that.props.currentPatient.id]), reqData, successFn, errorFn);
     }
 
+    addAgent=()=>{
+
+    }
     render() {
         let that = this;
         if (this.props.currentPatient) {
@@ -169,6 +173,15 @@ class PatientProfile extends React.Component {
                                 </div>
                             }
                         </Col>
+
+                        <div>
+                            <Divider><h3>Agent <a href={"#"} onClick={()=> this.addAgent(false)} >Add</a></h3></Divider>
+                            <AddOrEditAgent {...this.props} {...this.state} patientId={patient.id} />
+
+
+
+                        </div>
+                        <Col/>
                     </Col>
 
                     <Col span={12}>
