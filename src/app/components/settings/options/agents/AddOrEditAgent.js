@@ -252,7 +252,6 @@ class AddOrEditAgent extends React.Component {
                                                     description={that.props.activePracticePermissions.PatientPhoneNumber ? option.user.mobile : hideMobile(option.user.mobile)}
 
                                                 />
-
                                             </List.Item>
                                         </AutoComplete.Option>)}
                                     </AutoComplete>
@@ -278,17 +277,17 @@ class AddOrEditAgent extends React.Component {
 
                         </div>}
 
-                    <FormItem key="category" {...formItemLayout} label="Role Type">
+                    <FormItem key="role" {...formItemLayout} label="Role Type">
                         {getFieldDecorator("role", {initialValue: that.props.editAgentData && that.props.editAgentData.role ? that.props.editAgentData.role : null}, {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
-                            <Select placeholder="roles">
+                            <Select>
                                 {this.state.agentRoles.map((option) => <Select.Option
                                     value={option.id}>{option.name}</Select.Option>)}
                             </Select>
                         )}
                     </FormItem>
-                    <FormItem label={"Documnet Upload"} {...formItemLayout}>
+                    <FormItem label={"Document Upload"} {...formItemLayout}>
                         {getFieldDecorator("aadhar_upload",
                         )(
                             <Upload {...singleUploadprops}>

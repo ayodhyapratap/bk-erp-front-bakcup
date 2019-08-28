@@ -4,7 +4,7 @@ import PatientSelection from "./PatientSelection";
 import {Link} from "react-router-dom";
 import {patientSettingMenu} from "../../utils/clinicUtils";
 import {getAPI, interpolate, makeFileURL} from "../../utils/common";
-import {PATIENT_PENDING_AMOUNT} from "../../constants/api";
+import {AGENT_WALLET, PATIENT_PENDING_AMOUNT} from "../../constants/api";
 
 const {Header, Content, Sider} = Layout;
 
@@ -13,12 +13,14 @@ class PatientHeader extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            pendingAmount: null
+            pendingAmount: null,
+            walletAmount: null
         }
     }
 
     componentDidMount() {
         this.loadPatientPendingAmount();
+        this.loadPatientWallet();
     }
 
     loadPatientPendingAmount = () => {
@@ -33,6 +35,24 @@ class PatientHeader extends React.Component {
 
             }
             getAPI(interpolate(PATIENT_PENDING_AMOUNT, [this.props.currentPatient.id]), successFn, errorFn);
+        } else {
+            this.setState({
+                pendingAmount: null
+            })
+        }
+    }
+    loadPatientWallet = () => {
+        let that = this;
+        if (this.props.currentPatient && this.props.currentPatient.id) {
+            let successFn = function (data) {
+                that.setState({
+                    walletAmount: data
+                })
+            }
+            let errorFn = function () {
+
+            }
+            getAPI(interpolate(AGENT_WALLET, [this.props.currentPatient.id]), successFn, errorFn);
         } else {
             this.setState({
                 pendingAmount: null
@@ -77,7 +97,8 @@ class PatientHeader extends React.Component {
                             unCheckedChildren={"Current Clinic"}
                         />
                         {this.state.pendingAmount ?
-                            <Popover placement="rightTop" content={<List size="small" dataSource={this.state.pendingAmount.practice_data}
+                            <Popover placement="rightTop"
+                                     content={<List size="small" dataSource={this.state.pendingAmount.practice_data}
                                                     renderItem={item => <List.Item><List.Item.Meta title={item.name}
                                                                                                    description={"Rs. " + item.total}/></List.Item>}/>}
                                      title="Pending Payments">
@@ -94,6 +115,26 @@ class PatientHeader extends React.Component {
                                                    fontWeight: 500
                                                }}
                                                precision={2}/>
+                                </div>
+                            </Popover> : null}
+                        {this.state.walletAmount && this.state.walletAmount.length ?
+                            <Popover placement="rightTop"
+                                     title="Wallet Amount"
+                                     content={<p>
+                                         Refundable : {this.state.walletAmount[0].refundable_amount} <br/>
+                                         Non-Refundable : {this.state.walletAmount[0].non_refundable}
+                                     </p>}>
+                                <div style={{
+                                    display: 'inline',
+                                    float: 'left',
+                                    maxWidth: 400,
+                                    position: 'absolute',
+                                    paddingLeft: 200,
+                                    margin: '12px 15px'
+                                }}>
+                                    <Statistic tile={"wallet"}
+                                               value={this.state.walletAmount[0].refundable_amount + this.state.walletAmount[0].non_refundable}
+                                               prefix={<Icon type="wallet"/>}/>
                                 </div>
                             </Popover> : null}
                     </div> :

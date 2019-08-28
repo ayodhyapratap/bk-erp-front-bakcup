@@ -159,14 +159,14 @@ class PatientProfile extends React.Component {
                         <Col>
                             <Divider/>
 
-                            {this.state.add ? <div><h1 style={{fontSize:'18px'}}>MedicalMembership <a href="#"
+                            {this.state.add ? <div><h1 style={{fontSize:'18px'}}>Medical Membership <a href="#"
                                                                             onClick={() => this.onClickHandler(false)}>Cancel</a>
                                 </h1>
                                     <MedicalMembership {...this.props} {...this.state} patientId={patient.id}
                                                        loadMedicalMembership={that.loadMedicalMembership}
                                                        formChange={that.formChange} loadProfile={that.loadProfile}/></div>
-                                : <div style={{padding: '0px'}}><h1 style={{fontSize:'18px' ,textAlign:'center'}}>MedicalMembership <a href="#"
-                                                                                         onClick={() => this.onClickHandler(true)}>{this.state.MedicalMembership?'Renew':'add'}</a>
+                                : <div style={{padding: '0px'}}><h1 style={{fontSize:'18px' ,textAlign:'center'}}>Medical Membership <a href="#"
+                                                                                         onClick={() => this.onClickHandler(true)}>{this.state.MedicalMembership?'Renew':'Add'}</a>
                                 </h1>
                                     {this.state.MedicalMembership ? <Card size="small" title={"Membership"}
                                                                           extra={<Popconfirm title="Are you sure delete this Membership?"

@@ -107,7 +107,7 @@ class ExpensesTypes extends React.Component {
     render() {
         let that = this;
         const columns = [{
-            title: 'Expense Name',
+            title: 'Expense Type',
             dataIndex: 'name',
             key: 'name',
         }, {
@@ -131,14 +131,14 @@ class ExpensesTypes extends React.Component {
             ),
         }];
         const fields = [{
-            label: "Expense name",
+            label: "Expense Type",
             key: "name",
-            placeholder: 'Expense Name',
+            placeholder: 'Expense Type',
             required: true,
             type: INPUT_FIELD
         },];
         const editfields = [{
-            label: "Expense name",
+            label: "Expense Type",
             key: "name",
             required: true,
             initialValue: this.state.editingName,
@@ -148,8 +148,6 @@ class ExpensesTypes extends React.Component {
             successFn: function (data) {
                 that.handleCancel();
                 that.loadData();
-                console.log(data);
-                console.log("sucess");
                 displayMessage(SUCCESS_MSG_TYPE, "success")
             },
             errorFn: function () {
@@ -165,7 +163,7 @@ class ExpensesTypes extends React.Component {
         }];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
-            <h2>Expenses Types</h2>
+            <h2>Expense Types</h2>
             <Card>
                 <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
                 <Divider/>
@@ -175,16 +173,16 @@ class ExpensesTypes extends React.Component {
                         <CustomizedTable loading={this.state.deletedLoading} columns={columns}
                                          dataSource={this.state.deletedExpenses}/>
                     </div> :
-                    <h4><a onClick={() => this.showDeletedExpenses()}>Show Deleted Expenses</a></h4>}
+                    <h4><a onClick={() => this.showDeletedExpenses()}>Show Deleted Expense Types</a></h4>}
             </Card>
             <Modal
-                title="Edit Expence"
+                title="Edit Expense Type"
                 visible={this.state.visible}
                 footer={null}
                 onCancel={this.handleCancel}>
                 <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp}
                                 fields={editfields}/>
-                <Button key="back" onClick={this.handleCancel}>Return</Button>,
+                <Button key="back" onClick={this.handleCancel}>Return</Button>
             </Modal>
         </div>
     }
