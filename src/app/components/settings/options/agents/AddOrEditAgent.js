@@ -107,7 +107,6 @@ class AddOrEditAgent extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            console.log("form",values);
             if (!err) {
                 that.setState({
                     saving: true
@@ -142,7 +141,6 @@ class AddOrEditAgent extends React.Component {
                     });
                 };
 
-                console.log("formvalue",reqData);
                 if(this.state.userDetails) {
                     putAPI(interpolate(PATIENT_PROFILE, [this.state.userDetails.id]), reqData, successFn, errorFn);
                 }else {
@@ -176,8 +174,6 @@ class AddOrEditAgent extends React.Component {
 
 
     render() {
-        console.log("stae",this.state);
-        console.log("props",this.props);
         const that = this;
         const formItemLayout = (this.props.formLayout ? this.props.formLayout : {
             labelCol: {span: 6},

@@ -38,14 +38,14 @@ class SettingSider extends React.Component {
 
                      <Menu.Item key="32">
                         <Link to="/settings/agents">
-                            <Icon type="wallet"/>
+                            <Icon type="usergroup-add"/>
                             <span className="nav-text">Agents</span>
                         </Link>
                     </Menu.Item>
 
                      <Menu.Item key="33">
                         <Link to="/settings/agent-roles">
-                            <Icon type="wallet"/>
+                            <Icon type="apartment"/>
                             <span className="nav-text">Agent Roles</span>
                         </Link>
                     </Menu.Item>

@@ -28,11 +28,12 @@ class AgentRoles extends React.Component {
         this.loadData();
     }
 
-    loadData() {
+    loadData(page=1) {
         var that = this;
         let successFn = function (data) {
             that.setState({
                 data: data.results,
+                total:data.count,
                 loading:false
             })
         };
@@ -42,7 +43,8 @@ class AgentRoles extends React.Component {
             })
         };
         let apiParams={
-            is_agent:true
+            is_agent:true,
+            page
         }
         getAPI(interpolate(PATIENTS_LIST, [this.props.active_practiceId]), successFn, errorFn,apiParams);
     }

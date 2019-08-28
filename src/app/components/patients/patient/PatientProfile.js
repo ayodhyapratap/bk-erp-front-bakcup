@@ -139,7 +139,7 @@ class PatientProfile extends React.Component {
                 return <Card loading={this.state.loading}/>;
             return <Card loading={this.state.loading} title="Patient Profile"
                          extra={(that.props.activePracticePermissions.EditPatient ?<>
-                             <Button type={"primary"} onClick={this.addAgent}><Icon type={"edit"}/>&nbsp;Add Agent</Button>&nbsp;&nbsp;
+                             <Button type={"primary"} onClick={this.addAgent}><Icon type={"usergroup-add"}/>&nbsp;Add Agent</Button>&nbsp;&nbsp;
                              <Link to={"/patient/" + this.state.currentPatient.id + "/profile/edit"}>
                                  <Button type="primary">
                                      <Icon type="edit"/>&nbsp;Edit Patient Profile</Button>
