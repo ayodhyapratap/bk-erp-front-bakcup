@@ -35,6 +35,20 @@ class SettingSider extends React.Component {
                             <Icon type="team"/>Practice Staff
                         </Link>
                     </Menu.Item> : null}
+
+                     <Menu.Item key="32">
+                        <Link to="/settings/agents">
+                            <Icon type="wallet"/>
+                            <span className="nav-text">Agents</span>
+                        </Link>
+                    </Menu.Item>
+
+                     <Menu.Item key="33">
+                        <Link to="/settings/agent-roles">
+                            <Icon type="wallet"/>
+                            <span className="nav-text">Agent Roles</span>
+                        </Link>
+                    </Menu.Item>
                     {this.props.activePracticePermissions.SettingsProcedureCatalog ? <Menu.Item key="8">
                         <Link to="/settings/procedures">
                             <Icon type="folder-open"/>Procedure
@@ -50,12 +64,7 @@ class SettingSider extends React.Component {
                             <Icon type="trophy"/>Loyalty
                         </Link>
                     </Menu.Item> : null}
-                    <Menu.Item key="32">
-                        <Link to="/settings/agent-roles">
-                            <Icon type="wallet"/>
-                            <span className="nav-text">Agent Roles</span>
-                        </Link>
-                    </Menu.Item>
+
                    
 
                     {this.props.activePracticePermissions.SettingsMLMSettings ? <Menu.Item key="30">

@@ -29,7 +29,8 @@ import LoyaltySettings from "./options/loyalty/LoyaltySettings";
 import LabTracking from "./options/labs/LabTracking";
 import MedicinePackages from "./options/medicine-packages/MedicinePackages";
 import DiseaseList from "./options/disease-list/DiseaseList";
-import AgentRolesList from "./options/agent/AgentRoles";
+import AgentRolesList from "./options/agent-roles/AgentRoles";
+import AgentsList from "./options/agents/AgentList";
 
 const Content = Layout.Content;
 
@@ -139,12 +140,15 @@ class SettingsDash extends React.Component {
                                render={(route) => (this.props.activePracticePermissions.SettingsMedicalHistory || this.props.allowAllPermissions ?
                                        <MedicalHistory  {...this.props} /> : <PermissionDenied/>
                                )}/>
+                        <Route path="/settings/agents"
+                               render={(route) =>
+                                        <AgentsList {...this.state} {...this.props} {...route} key={this.state.active_practiceId} />}/>
 
                         <Route path="/settings/agent-roles"
                              render={(route) =>
                                    <AgentRolesList {...this.state} {...this.props} {...route} key={this.state.active_practiceId}/>
                             }
-                        
+
                         />
                         <Route path="/settings/mlm"
                                render={(route) => (this.props.activePracticePermissions.SettingsMLMSettings || this.props.allowAllPermissions ?

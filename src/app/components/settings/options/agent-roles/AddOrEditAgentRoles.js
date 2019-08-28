@@ -39,7 +39,7 @@ export default class AddOrEditAgentRoles extends React.Component {
                 displayMessage(SUCCESS_MSG_TYPE, "Roles Saved Successfully");
                 if (that.props.loadData)
                     that.props.loadData();
-                that.props.history.push('/settings/agent-roles');
+                that.props.history.push('/settings/agent-roles-roles');
             }, errorFn: function () {
 
             }
@@ -75,14 +75,14 @@ export default class AddOrEditAgentRoles extends React.Component {
                 <Route exact path="/settings/agent-roles/:id/edit"
                     render={(route) => (this.props.match.params.id ?
                             <AgentRolesForm title={"Edit Agent Roles"} fields={fields} formProp={formProp} defaultValues={defaultValues} {...this.props} {...route} changeRedirect={this.changeRedirect}/>:
-                            <Redirect to={"/settings/agent-roles"} />
+                            <Redirect to={"/settings/agent-roles-roles"} />
                         )}/>
 
                 <Route exact path='/settings/agent-roles/add'
                        render={(route) => <AgentRolesForm defaultValues={defaultValues} title="Add Agent Roles" changeRedirect={this.changeRedirect}
                        formProp={formProp} fields={fields}/>}/>
             </Card>
-            {this.state.redirect && <Redirect to={'/settings/agent-roles'}/>}
+            {this.state.redirect && <Redirect to={'/settings/agent-roles-roles'}/>}
         </div>
     }
 }
