@@ -179,7 +179,10 @@ export default class MlmBase extends React.Component {
                                     {this.state.productMargin.map(marginType =>
                                         <TabPane tab={marginType.name} key={marginType.id}>
                                             <Row>
-                                                <Button.Group>
+                                                <br/>
+                                                <h2>
+                                                    {marginType.name}
+                                                <Button.Group style={{float:'right'}}>
                                                     <Button type="primary"
                                                             onClick={() => this.editObject(marginType.id, datasource[marginType.id])}><Icon
                                                         type="edit"/> Edit</Button>
@@ -187,8 +190,10 @@ export default class MlmBase extends React.Component {
                                                             onClick={() => that.deleteObject(marginType)}><Icon
                                                         type="delete"/> Delete</Button>
                                                 </Button.Group>
+                                                    </h2>
                                             </Row>
                                             <Table loading={this.state.loading} pagination={false}
+                                                   style={{marginTop:10}}
                                                    dataSource={datasource[marginType.id]}
                                                    rowKey="role"
                                                    columns={columns[marginType.id]}

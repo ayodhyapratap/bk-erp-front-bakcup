@@ -191,6 +191,16 @@ class AddorEditProcedure extends React.Component {
                     <Form.Item label="Procedure Retail Price" {...formItemLayout}>
                         <span className="ant-form-text"><b>{that.state.retail_price}</b>&nbsp;INR</span>
                     </Form.Item>
+                    <Form.Item key={"margin"} {...formItemLayout} label={"MLM Margin"}>
+                        {getFieldDecorator("margin", {
+                            initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.margin : null,
+                        })(
+                            <Select>
+                                {this.state.productMargin.map((option) => <Select.Option
+                                    value={option.id}>{option.name}</Select.Option>)}
+                            </Select>
+                        )}
+                    </Form.Item>
                     <Form.Item key={"under"} {...formItemLayout} label={"Add Under"}>
                         {getFieldDecorator("under", {
                             initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.under : null,

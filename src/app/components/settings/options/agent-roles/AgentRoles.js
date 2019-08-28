@@ -141,11 +141,9 @@ class AgentRoles extends React.Component {
                 title={"Edit Agent Roles"}
                 visible={this.state.visible}
                 footer={null}
-                onCancel={this.handleCancel}
-            >
-                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields}/>
-                <Button key="back" onClick={this.handleCancel}>Return</Button>,
-
+                onCancel={this.handleCancel}>
+                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields} />
+                <Button key="back" onClick={this.handleCancel}>Return</Button>
             </Modal>
         </Card>
     }

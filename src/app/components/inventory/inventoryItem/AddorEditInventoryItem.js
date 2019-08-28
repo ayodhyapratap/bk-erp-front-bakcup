@@ -10,7 +10,7 @@ import {
     INVENTORY_ITEM_API,
     INVENTORY_API,
     DRUG_TYPE_API,
-    DRUG_UNIT_API
+    DRUG_UNIT_API, PRODUCT_MARGIN
 } from "../../../constants/api";
 import {INVENTORY_ITEM_TYPE, DRUG, SUPPLIES, EQUIPMENT} from "../../../constants/hardData";
 import {getAPI, putAPI, postAPI, displayMessage, interpolate} from "../../../utils/common";
@@ -33,7 +33,8 @@ class AddorEditInventoryItem extends React.Component {
             type: this.props.editInventoryItem ? this.props.editInventoryItem : null,
             drugUnitList: [],
             drugTypeList: [],
-            retail_price: 0
+            retail_price: 0,
+            productMargin: []
         };
         this.changeRedirect = this.changeRedirect.bind(this);
     }
@@ -62,6 +63,20 @@ class AddorEditInventoryItem extends React.Component {
         }
         this.loadDrugType();
         this.loadDrugUnit();
+        this.loadProductMargin();
+    }
+
+    loadProductMargin() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                productMargin: data
+            })
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
 
     loadTaxes() {
@@ -336,7 +351,16 @@ class AddorEditInventoryItem extends React.Component {
                             <span className="ant-form-text"><b>{that.state.retail_price}</b>&nbsp;INR</span>
                         </Form.Item>
 
-
+                        <Form.Item key={"margin"} {...formItemLayout} label={"MLM Margin"}>
+                            {getFieldDecorator("margin", {
+                                initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.margin : null,
+                            })(
+                                <Select>
+                                    {this.state.productMargin.map((option) => <Select.Option
+                                        value={option.id}>{option.name}</Select.Option>)}
+                                </Select>
+                            )}
+                        </Form.Item>
                         <Form.Item label="Item Type" {...formItemLayout}>
                             {getFieldDecorator('item_type', {
                                 initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.item_type : null,
@@ -371,7 +395,8 @@ class AddorEditInventoryItem extends React.Component {
                                         })(
                                             <Input/>
                                         )}
-                                        <a onClick={() => that.setFormParams('drugType', SELECT_FIELD)}>Choose Medicine Type</a>
+                                        <a onClick={() => that.setFormParams('drugType', SELECT_FIELD)}>Choose Medicine
+                                            Type</a>
                                     </Form.Item>
                                     : <Form.Item key={"drug_type"} {...formItemLayout} label={"Medicine Type"}>
                                         {getFieldDecorator("drug_type", {
@@ -386,7 +411,8 @@ class AddorEditInventoryItem extends React.Component {
                                                     value={option.id}>{option.name}</Select.Option>)}
                                             </Select>
                                         )}
-                                        <a onClick={() => that.setFormParams('drugType', INPUT_FIELD)}>Add New Medicine Type</a>
+                                        <a onClick={() => that.setFormParams('drugType', INPUT_FIELD)}>Add New Medicine
+                                            Type</a>
                                     </Form.Item>}
                                 <Form.Item label="Strength" {...formItemLayout}>
                                     {getFieldDecorator('strength', {initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.strength : null})

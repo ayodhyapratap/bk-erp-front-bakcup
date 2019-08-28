@@ -104,10 +104,10 @@ export const SEARCH_PATIENT = 'patients/search/?name=%s';
 export const PATIENT_PENDING_AMOUNT = 'patients/%s/pending_amount/';
 
 //extra data
-export const EXTRA_DATA = 'clinics/extra_data';
-export const COUNTRY ='patients/country';
-export const STATE ='patients/state';
-export const CITY ='patients/city';
+export const EXTRA_DATA = 'clinics/extra_data/';
+export const COUNTRY ='patients/country/';
+export const STATE ='patients/state/';
+export const CITY ='patients/city/';
 /**
  * Reports API
  * */

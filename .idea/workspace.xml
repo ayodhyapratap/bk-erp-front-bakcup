@@ -3,18 +3,34 @@
   <component name="ChangeListManager">
     <list default="true" id="e0d95b06-98dc-422f-a0a7-bc1abaef37b0" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/patients/invoices/PatientInvoices.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/patients/invoices/PatientInvoices.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/patients/invoices/ReturnInvoice.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/patients/invoices/ReturnInvoice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/patients/patient/PatientProfile.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/patients/patient/PatientProfile.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/config/connect.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/connect.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/constants/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/constants/api.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="Pluto MySQL" type="feb32156:DbDataSourceImpl" />
+      </path>
+    </expand>
+    <select />
   </component>
   <component name="FavoritesManager">
     <favorites_list name="bk-erp-front" />
@@ -31,12 +47,13 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/src/app/components/reports/patients/PatientsReport.js" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/app/components/patients/clinicNotes/AddClinicNotes.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/app/components/reports/patients/PatientsReport.js" root0="SKIP_INSPECTION" />
   </component>
   <component name="ProjectId" id="1PdH0vYXvSJpCFq5E5DG3f8rwZm" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="DatabaseDriversLRU" value="mysql" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js.linters.configure.manually.selectedeslint" value="true" />
@@ -60,17 +77,17 @@
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/app/components/patients/completedProcedures" />
+      <recent name="$PROJECT_DIR$/src/app/assets/img" />
+      <recent name="$PROJECT_DIR$/public" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/app/utils" />
       <recent name="$PROJECT_DIR$/src/app/components/patients/patientGroups" />
       <recent name="$PROJECT_DIR$/src/app/components/settings/options/bed-packages" />
       <recent name="$PROJECT_DIR$/public" />
       <recent name="$PROJECT_DIR$/src/app/components/settings/options/mailPDF" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/app/components/patients/completedProcedures" />
-      <recent name="$PROJECT_DIR$/src/app/assets/img" />
-      <recent name="$PROJECT_DIR$/public" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -87,6 +104,21 @@
   </component>
   <component name="RunManager">
     <configuration name="App.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" nameIsGenerated="true" path-to-js-file="App.js" working-dir="$PROJECT_DIR$/src" />
+  </component>
+  <component name="ServiceViewManager">
+    <option name="allServicesViewState">
+      <serviceView>
+        <treeState>
+          <expand>
+            <path>
+              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@173acf1f" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+            </path>
+          </expand>
+          <select />
+        </treeState>
+      </serviceView>
+    </option>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -165,6 +197,9 @@
       <workItem from="1566455110380" duration="4645000" />
       <workItem from="1566560200744" duration="577000" />
       <workItem from="1566664030697" duration="2757000" />
+      <workItem from="1566815336656" duration="11301000" />
+      <workItem from="1566985484719" duration="954000" />
+      <workItem from="1566986844771" duration="637000" />
     </task>
     <servers />
   </component>

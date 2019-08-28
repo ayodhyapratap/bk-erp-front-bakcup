@@ -5,11 +5,12 @@ import {
     SUCCESS_MSG_TYPE,
     INPUT_FIELD,
 } from "../../../../constants/dataKeys";
-import {AGENT_ROLES, PATIENT_PROFILE, PATIENTS_LIST } from "../../../../constants/api"
+import {AGENT_ROLES, PATIENT_PROFILE, PATIENTS_LIST} from "../../../../constants/api"
 import {Link, Route, Switch} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, postAPI, putAPI} from "../../../../utils/common";
 import AddOrEditAgent from "./AddOrEditAgent";
 import CustomizedTable from "../../../common/CustomizedTable";
+import InfiniteFeedLoaderButton from "../../../common/InfiniteFeedLoaderButton";
 
 class AgentRoles extends React.Component {
     constructor(props) {
@@ -18,7 +19,7 @@ class AgentRoles extends React.Component {
             redirect: false,
             visible: false,
             data: null,
-            loading:true
+            loading: true
         }
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -28,25 +29,29 @@ class AgentRoles extends React.Component {
         this.loadData();
     }
 
-    loadData(page=1) {
+    loadData(page = 1) {
         var that = this;
+        this.setState({
+            loading:true
+        })
         let successFn = function (data) {
             that.setState({
                 data: data.results,
-                total:data.count,
-                loading:false
+                total: data.count,
+                nextPage : data.next,
+                loading: false
             })
         };
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         };
-        let apiParams={
-            is_agent:true,
+        let apiParams = {
+            agent: true,
             page
         }
-        getAPI(interpolate(PATIENTS_LIST, [this.props.active_practiceId]), successFn, errorFn,apiParams);
+        getAPI(interpolate(PATIENTS_LIST, [this.props.active_practiceId]), successFn, errorFn, apiParams);
     }
 
     changeRedirect() {
@@ -55,6 +60,7 @@ class AgentRoles extends React.Component {
             redirect: !redirectVar,
         });
     }
+
     handleCancel = () => {
         this.setState({visible: false});
     }
@@ -65,16 +71,16 @@ class AgentRoles extends React.Component {
             loading: false
         });
 
-        this.props.history.push('/settings/agents/'+record.id+'/edit')
+        this.props.history.push('/settings/agents/' + record.id + '/edit')
 
     }
 
     deleteObject(record) {
         let that = this;
-        let reqData = {'id':record.id, is_agent :false}
+        let reqData = {'id': record.id, is_agent: false}
         let successFn = function (data) {
             that.setState({
-                loading:false,
+                loading: false,
             })
             that.loadData();
         }
@@ -89,19 +95,19 @@ class AgentRoles extends React.Component {
             title: 'Name',
             dataIndex: 'user.first_name',
             key: 'name',
-        },{
-            title:'Email',
-            dataIndex:'user.email',
-            key:'email'
         }, {
-            title:'Mobile',
-            dataIndex:'user.mobile',
-            key:'mobile'
-        },{
-            title:'Role',
-            dataIndex:'role_data.name',
-            key:'role_data',
-        },{
+            title: 'Email',
+            dataIndex: 'user.email',
+            key: 'email'
+        }, {
+            title: 'Mobile',
+            dataIndex: 'user.mobile',
+            key: 'mobile'
+        }, {
+            title: 'Role',
+            dataIndex: 'role_data.name',
+            key: 'role_data',
+        }, {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
@@ -116,25 +122,25 @@ class AgentRoles extends React.Component {
             ),
         }];
 
-        return<Switch>
-                <Route exact path={"/settings/agents/add"}
-                       render={(route) => <AddOrEditAgent  {...this.props} title={"create Agent"}/>}/>
+        return <Switch>
+            <Route exact path={"/settings/agents/add"}
+                   render={(route) => <AddOrEditAgent  {...this.props} title={"Create Agent"}
+                                                       loadData={this.loadData}/>}/>
 
-                <Route exact path={"/settings/agents/:id/edit"}
-                       render={(route) => <AddOrEditAgent  {...this.props} {...this.state} title={"Edit Agent"}/>}/>
-                <Route>
-                       <Card title={<h4>Agents <Link to={"/settings/agents/add"}>
-                                <Button style={{float: 'right'}}  type={"primary"}><Icon type={"plus"}/>
-                                Add</Button></Link></h4>}>
+            <Route exact path={"/settings/agents/:id/edit"}
+                   render={(route) => <AddOrEditAgent  {...this.props} {...this.state} title={"Edit Agent"}
+                                                       loadData={this.loadData}/>}/>
+            <Route>
+                <Card title={<h4>Agents <Link to={"/settings/agents/add"}>
+                    <Button style={{float: 'right'}} type={"primary"}><Icon type={"plus"}/>
+                        Add</Button></Link></h4>}>
 
-                         <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.data}/>
-                        </Card>
-                </Route>
+                    <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.data} pagination={false}/>
+                    <InfiniteFeedLoaderButton loading={this.state.loading} loaderFunction={()=>that.loadData(that.state.nextPage)} hidden={!this.state.nextPage}/>
+                </Card>
+            </Route>
 
-            </Switch>
-
-
-
+        </Switch>
 
 
     }

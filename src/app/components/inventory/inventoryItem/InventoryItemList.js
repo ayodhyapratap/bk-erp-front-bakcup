@@ -273,6 +273,13 @@ export default class InventoryItemList extends React.Component {
                     </Tag>
                 )}
                 </span>
+        },  {
+            title: "MLM Margin",
+            dataIndex: "margin_data",
+            key: "margin",
+            render: (margin) => (
+                <span>{margin ? margin.name : null}
+                </span>)
         }, {
             title: 'Item type',
             dataIndex: 'item_type',

@@ -13,7 +13,7 @@ import {
     Spin, message,
 } from 'antd';
 import {REQUIRED_FIELD_MESSAGE} from "../../../../constants/messages";
-import { SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
+import {SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
 import {
     PATIENTS_LIST,
     SEARCH_PATIENT,
@@ -21,6 +21,7 @@ import {
 } from "../../../../constants/api"
 import {displayMessage, getAPI, interpolate, makeFileURL, makeURL, postAPI, putAPI} from "../../../../utils/common";
 import {hideMobile} from "../../../../utils/permissionUtils";
+
 const FormItem = Form.Item;
 const {Meta} = Card;
 
@@ -29,16 +30,16 @@ class AddOrEditAgent extends React.Component {
         super(props);
         this.state = {
             redirect: false,
-            saving:false,
-            userListData:[],
-            agentRoles:[],
+            saving: false,
+            userListData: [],
+            agentRoles: [],
 
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
         this.getPatient = this.getPatient.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
-        this.loadAgentRoles =this.loadAgentRoles.bind(this);
+        this.loadAgentRoles = this.loadAgentRoles.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -54,7 +55,6 @@ class AddOrEditAgent extends React.Component {
         let successFn = function (data) {
             that.setState({
                 userListData: data.results,
-
             })
         };
         let errorFn = function () {
@@ -63,22 +63,22 @@ class AddOrEditAgent extends React.Component {
         getAPI(PATIENTS_LIST, successFn, errorFn);
     }
 
-     loadAgentRoles(){
-        let that=this;
-        let successFn =function (data){
+    loadAgentRoles() {
+        let that = this;
+        let successFn = function (data) {
             that.setState({
-                agentRoles:data,
-                loading:false
+                agentRoles: data,
+                loading: false
             })
         };
-        let errorFn = function(){
+        let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
         };
-        getAPI(AGENT_ROLES,successFn,errorFn);
+        getAPI(AGENT_ROLES, successFn, errorFn);
 
-     }
+    }
 
     changeRedirect() {
         var redirectVar = this.state.redirect;
@@ -112,13 +112,14 @@ class AddOrEditAgent extends React.Component {
                     saving: true
                 });
 
-                let reqData={user:{},
-                    role:values.role,
-                    is_agent:true,
-                    aadhar_upload:values.aadhar_upload && values.aadhar_upload.file && values.aadhar_upload.file.response?values.aadhar_upload.file.response.image_path:null
+                let reqData = {
+                    user: {},
+                    role: values.role,
+                    is_agent: true,
+                    aadhar_upload: values.aadhar_upload && values.aadhar_upload.file && values.aadhar_upload.file.response ? values.aadhar_upload.file.response.image_path : null
 
                 };
-                if(!this.state.userDetails){
+                if (!this.state.userDetails) {
 
                     reqData.user.first_name = values.first_name;
                     reqData.user.email = values.email;
@@ -128,6 +129,8 @@ class AddOrEditAgent extends React.Component {
                     that.setState({
                         saving: false
                     });
+                     if (that.props.loadData)
+                        that.props.loadData();
                     if (that.props.history)
                         that.props.history.goBack();
 
@@ -141,10 +144,12 @@ class AddOrEditAgent extends React.Component {
                     });
                 };
 
-                if(this.state.userDetails) {
+                if (this.state.userDetails) {
                     putAPI(interpolate(PATIENT_PROFILE, [this.state.userDetails.id]), reqData, successFn, errorFn);
-                }else {
-                    postAPI(interpolate(PATIENTS_LIST,[this.props.active_practiceId]),reqData,successFn ,errorFn);
+                } else if (this.props.editAgentData) {
+                    putAPI(interpolate(PATIENT_PROFILE, [this.props.editAgentData.id]), reqData, successFn, errorFn);
+                } else {
+                    postAPI(interpolate(PATIENTS_LIST, [this.props.active_practiceId]), reqData, successFn, errorFn);
                 }
             }
         });
@@ -218,8 +223,7 @@ class AddOrEditAgent extends React.Component {
                                     title={this.state.userDetails.user.first_name}
                                     description={
                                         <span>{that.props.activePracticePermissions.PatientPhoneNumber ? this.state.userDetails.user.mobile : hideMobile(this.state.userDetails.user.mobile)}<br/>
-                                    <Button type="primary" style={{float: 'right'}} onClick={this.handleClick}>Add New
-                                    Patient</Button>
+                                    <Button type="primary" style={{float: 'right'}} onClick={this.handleClick}>Select Different</Button>
                                     </span>}
                                 />
 
@@ -229,7 +233,7 @@ class AddOrEditAgent extends React.Component {
                         : <div>
                             <FormItem key="patient_name" label="Agent Name"  {...formItemLayout}>
                                 {getFieldDecorator("first_name", {
-                                    initialValue:that.props.editAgentData?that.props.editAgentData.user.first_name:''
+                                    initialValue: that.props.editAgentData ? that.props.editAgentData.user.first_name : ''
                                 })(
                                     <AutoComplete placeholder="Agent Name"
                                                   showSearch
@@ -256,7 +260,7 @@ class AddOrEditAgent extends React.Component {
                             </FormItem>
                             <FormItem key="patient_mobile" label="Mobile Number"   {...formItemLayout}>
                                 {getFieldDecorator("mobile", {
-                                    initialValue:that.props.editAgentData? that.props.editAgentData.user.mobile : null,
+                                    initialValue: that.props.editAgentData ? that.props.editAgentData.user.mobile : null,
                                     rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                 })(
                                     <Input placeholder="Mobile Number"/>
@@ -264,7 +268,7 @@ class AddOrEditAgent extends React.Component {
                             </FormItem>
                             <FormItem key="patient_email" label="Email Address"  {...formItemLayout}>
                                 {getFieldDecorator("email", {
-                                    initialValue: that.props.editAgentData? that.props.editAgentData.user.email : null,
+                                    initialValue: that.props.editAgentData ? that.props.editAgentData.user.email : null,
                                     rules: [{type: 'email', message: 'The input is not valid E-mail!'},
                                         {required: true, message: REQUIRED_FIELD_MESSAGE}],
                                 })(
@@ -275,7 +279,7 @@ class AddOrEditAgent extends React.Component {
                         </div>}
 
                     <FormItem key="category" {...formItemLayout} label="Role Type">
-                        {getFieldDecorator("role", {initialValue: that.props.editAgentData && that.props.editAgentData.role? that.props.editAgentData.role : null}, {
+                        {getFieldDecorator("role", {initialValue: that.props.editAgentData && that.props.editAgentData.role ? that.props.editAgentData.role : null}, {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
                             <Select placeholder="roles">
@@ -289,7 +293,7 @@ class AddOrEditAgent extends React.Component {
                         )(
                             <Upload {...singleUploadprops}>
                                 <Button>
-                                  <Icon type="upload" /> Click to Upload
+                                    <Icon type="upload"/> Click to Upload
                                 </Button>
                             </Upload>
                         )}
@@ -311,4 +315,5 @@ class AddOrEditAgent extends React.Component {
         </Card>
     }
 }
+
 export default Form.create()(AddOrEditAgent)
