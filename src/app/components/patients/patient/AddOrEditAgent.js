@@ -34,12 +34,11 @@ export default class AddOrEditAgent extends React.Component{
                 loading:false
             })
         };
-        if(that.state.currentPatient){
-            getAPI(interpolate(AGENT_ROLES ,[that.props.active_practiceId]),successFn,errorFn);
-        }
+        getAPI(AGENT_ROLES,successFn,errorFn);
 
     }
     render(){
+        console.log("history",this.props)
         let that = this;
         const fields = [{
             label: "Role Type",

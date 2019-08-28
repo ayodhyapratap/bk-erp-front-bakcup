@@ -1,6 +1,6 @@
 import React from "react";
 import PatientSelection from "../PatientSelection";
-import {Avatar, Button, Card, Col, Divider, Icon, List, Row, Popconfirm} from "antd";
+import {Avatar, Button, Card, Col, Divider, Icon, List, Row, Popconfirm,Modal} from "antd";
 import {Link, Redirect} from "react-router-dom";
 import {getAPI, postAPI, interpolate, displayMessage, makeFileURL} from "../../../utils/common";
 import {MEDICAL_MEMBERSHIP_CANCEL_API, PATIENTS_MEMBERSHIP_API, PATIENT_PROFILE} from "../../../constants/api";
@@ -20,7 +20,8 @@ class PatientProfile extends React.Component {
             loading: true,
             add: '',
             MedicalMembership: null,
-            hide: false
+            hide: false,
+            agentModalVisible:false,
         };
         this.loadProfile = this.loadProfile.bind(this);
         this.loadMedicalMembership = this.loadMedicalMembership.bind(this);
@@ -119,20 +120,35 @@ class PatientProfile extends React.Component {
     }
 
     addAgent=()=>{
-
+        let that=this;
+         that.setState({
+              agentModalVisible: true,
+         });
+    }
+    addAgentModalClosed=()=>{
+        this.setState({
+            agentModalVisible:false
+        })
     }
     render() {
+        console.log("state",this.state);
         let that = this;
         if (this.props.currentPatient) {
             let patient = this.state.patientProfile;
             if (!patient)
                 return <Card loading={this.state.loading}/>;
             return <Card loading={this.state.loading} title="Patient Profile"
-                         extra={(that.props.activePracticePermissions.EditPatient ?
+                         extra={(that.props.activePracticePermissions.EditPatient ?<>
+                             <Button type={"primary"} onClick={this.addAgent}><Icon type={"edit"}/>&nbsp;Add Agent</Button>&nbsp;&nbsp;
                              <Link to={"/patient/" + this.state.currentPatient.id + "/profile/edit"}>
                                  <Button type="primary">
                                      <Icon type="edit"/>&nbsp;Edit Patient Profile</Button>
-                             </Link> : null)}>
+                             </Link>
+
+                         </>: null)}
+
+
+                                >
                 <Row gutter={16}>
                     <Col span={6} style={{textAlign: 'center'}}>
                         {(patient.image ? <img src={makeFileURL(patient.image)} style={{width: '100%'}}/> :
@@ -174,19 +190,16 @@ class PatientProfile extends React.Component {
                             }
                         </Col>
 
-                        <div>
-                            <Divider><h3>Agent <a href={"#"} onClick={()=> this.addAgent(false)} >Add</a></h3></Divider>
-                            <AddOrEditAgent {...this.props} {...this.state} patientId={patient.id} />
 
 
-
-                        </div>
                         <Col/>
                     </Col>
 
                     <Col span={12}>
                         <PatientRow label="Patient Name" value={patient.user.first_name}/>
                         <PatientRow label="Patient ID" value={patient.id}/>
+                        {patient && patient.role?
+                        <PatientRow label={"Agent Roles"} value={patient.role_data.name} />:null}
                         <PatientRow label="Gender" value={patient.gender}/>
                         <PatientRow label="Date of Birth" value={patient.dob}/>
                         <Divider>Contact Details</Divider>
@@ -219,6 +232,15 @@ class PatientProfile extends React.Component {
                         <List dataSource={patient.medical_membership}
                               renderItem={(item) => <List.Item>{item}</List.Item>}/> */}
                     </Col>
+
+                    <Modal
+                          title="Add Agent"
+                          visible={this.state.agentModalVisible}
+                          onOk={null}
+                          footer={null}
+                          onCancel={this.addAgentModalClosed}>
+                        <AddOrEditAgent patientId={patient.id} {...this.state}/>
+                    </Modal>
                 </Row>
 
             </Card>;
