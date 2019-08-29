@@ -16,21 +16,28 @@ class MLMGenerate extends React.Component {
         super(props);
         this.state = {
             redirect: false,
-            level_count: 1,
+            level_count: 3,
             margin: null,
             editRecord: (this.props.editRecord ? this.props.editRecord : null),
             editId: (this.props.editId ? this.props.editId : null),
-            loading:true
+            loading:true,
+            editRecordMargins:{}
         }
         this.changeRedirect= this.changeRedirect.bind(this);
     }
 
     componentDidMount() {
-        this.loadMlmData();
         this.loadRoles();
         if (this.state.editRecord && this.state.editId) {
+            let editRecordMargins = {}
+            this.state.editRecord.forEach(function(record){
+                editRecordMargins[record.roleId] = record;
+            });
+            this.setState({
+                editRecordMargins
+            })
             this.loadMlmData();
-            this.setLevelCount(this.state.editRecord.length)
+
         }
         // this.loadProductlevels();
     }
@@ -41,6 +48,8 @@ class MLMGenerate extends React.Component {
             that.setState({
                 margin: data,
                 loading:false
+            },function () {
+                that.setLevelCount(data.level_count)
             })
         }
         let errorFn = function () {
@@ -103,14 +112,16 @@ class MLMGenerate extends React.Component {
                     reqData[values.margin_name][i].push({[j]: values[i][j]})
                 }
             }
-            reqData[values.margin_name].details = {level_count: that.state.level_count}
+            reqData[values.margin_name].details = {level_count: that.state.level_count};
+            if(that.state.editId){
+                reqData.id = that.state.editId
+            }
             if (!err) {
-                console.log(reqData);
                 that.setState({changePassLoading: true, redirect:true});
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, data.message);
-                    that.props.loadMlmData();
-                    that.props.history.push('/mlm');
+                    that.props.loadData();
+                    that.props.history.goBack();
                 };
                 let errorFn = function () {
                 };
@@ -167,7 +178,7 @@ class MLMGenerate extends React.Component {
         }];
         if (this.state.level_count)
             for (let i = 1; i <= this.state.level_count; i++) {
-                let record = {}
+                let record = {};
                 columns.push({
                     title: 'Level ' + i,
                     dataIndex: 'Level ' + i,
@@ -179,7 +190,7 @@ class MLMGenerate extends React.Component {
                         key={`${i}[${record.id}]`}>
                         {getFieldDecorator(`${i}[${record.id}]`, {
                             validateTrigger: ['onChange', 'onBlur'],
-                            initialValue: (this.state.editRecord && (record = this.state.editRecord[record.id]) ? record[i] : null)
+                            initialValue: (this.state.editRecordMargins && this.state.editRecordMargins[record.id] ? this.state.editRecordMargins[record.id][i] : null)
                         })(
                             <InputNumber min={0} placeholder="Percent Commission"/>
                         )}
@@ -211,7 +222,7 @@ class MLMGenerate extends React.Component {
                     >
                         {getFieldDecorator(`level_count`, {
                             validateTrigger: ['onChange', 'onBlur'],
-                            initialValue: (this.state.editRecord ? this.state.editRecord.length : null)
+                            initialValue: this.state.level_count
                         })(
                             <InputNumber min={1} max={5} placeholder="Level Count" onChange={this.setLevelCount}/>
                         )}
