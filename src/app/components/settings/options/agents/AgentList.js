@@ -253,11 +253,11 @@ class AgentRoles extends React.Component {
                     <Row>
                         <Col style={{float:"right"}}>
                             <Form layout="inline" onSubmit={this.handleSubmit}>
-                                 <Form.Item key="role"  label="Agent Roles" >
+                                 <Form.Item key="role"  label="Agent Role" >
                                     {getFieldDecorator("role", {initialValue:this.state.agentRoles?this.state.agentRoles.id:''},
 
                                     )(
-                                         <Select placeholder="agent roles" style={{minWidth:150}}>
+                                         <Select placeholder="Agent Role" style={{minWidth:150}} allowClear={true}>
                                                 {this.state.agentRoles.map((option) => <Select.Option
                                                     value={option.id}>{option.name}</Select.Option>)}
                                          </Select>
@@ -268,7 +268,7 @@ class AgentRoles extends React.Component {
                                 <Form.Item key="approved"  label="Status" >
                                     {getFieldDecorator("approved", {initialValue:this.state.approved?this.state.approved:''},
                                     )(
-                                       <Select Placeholder="status" style={{minWidth:150}}>
+                                       <Select placeholder="status" style={{minWidth:150}} >
                                             {status.map(item => <Select.Option
                                                 value={item.value}>
                                                 {item.label}
