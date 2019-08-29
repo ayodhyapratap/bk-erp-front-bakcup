@@ -288,7 +288,7 @@ class AddOrEditAgent extends React.Component {
                         )}
                     </FormItem>
                     <FormItem label={"Document Upload"} {...formItemLayout}>
-                        {getFieldDecorator("aadhar_upload",
+                        {getFieldDecorator("aadhar_upload",{rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],}
                         )(
                             <Upload {...singleUploadprops}>
                                 <Button>

@@ -35,20 +35,22 @@ class SettingSider extends React.Component {
                             <Icon type="team"/>Practice Staff
                         </Link>
                     </Menu.Item> : null}
-
-                     <Menu.Item key="32">
+                    {this.props.activePracticePermissions.SettingsAgents || this.props.allowAllPermissions?
+                    <Menu.Item key="32">
                         <Link to="/settings/agents">
                             <Icon type="usergroup-add"/>
                             <span className="nav-text">Agents</span>
                         </Link>
-                    </Menu.Item>
-
-                     <Menu.Item key="33">
+                    </Menu.Item>:null}
+                    
+                    {this.props.activePracticePermissions.SettingsAgentRoles || this.props.allowAllPermissions?
+                    <Menu.Item key="33">
                         <Link to="/settings/agent-roles">
                             <Icon type="apartment"/>
                             <span className="nav-text">Agent Roles</span>
                         </Link>
-                    </Menu.Item>
+                    </Menu.Item>:null}
+
                     {this.props.activePracticePermissions.SettingsProcedureCatalog ? <Menu.Item key="8">
                         <Link to="/settings/procedures">
                             <Icon type="folder-open"/>Procedure

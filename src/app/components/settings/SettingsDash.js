@@ -141,12 +141,12 @@ class SettingsDash extends React.Component {
                                        <MedicalHistory  {...this.props} /> : <PermissionDenied/>
                                )}/>
                         <Route path="/settings/agents"
-                               render={(route) =>
-                                        <AgentsList {...this.state} {...this.props} {...route} key={this.state.active_practiceId} />}/>
+                               render={(route) =>(this.props.activePracticePermissions.SettingsAgents || this.props.allowAllPermissions ?
+                               <AgentsList {...this.state} {...this.props} {...route} key={this.state.active_practiceId} />:<PermissionDenied/>)}/>
 
                         <Route path="/settings/agent-roles"
-                             render={(route) =>
-                                   <AgentRolesList {...this.state} {...this.props} {...route} key={this.state.active_practiceId}/>
+                             render={(route) =>(this.props.activePracticePermissions.SettingsAgentRoles || this.props.allowAllPermissions ?
+                                   <AgentRolesList {...this.state} {...this.props} {...route} key={this.state.active_practiceId}/>:<PermissionDenied/>)
                             }
 
                         />
