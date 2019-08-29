@@ -38,7 +38,6 @@ export default class AddOrEditAgent extends React.Component{
 
     }
     render(){
-        console.log("history",this.props)
         let that = this;
         const fields = [{
             label: "Role Type",
@@ -49,6 +48,7 @@ export default class AddOrEditAgent extends React.Component{
             label:"Document Upload",
             key:'aadhar_upload',
             type:SINGLE_IMAGE_UPLOAD_FIELD,
+            required:true
         }];
             const formProp = {
                 successFn: function (data) {
