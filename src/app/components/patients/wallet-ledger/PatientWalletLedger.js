@@ -1,8 +1,8 @@
 import React from "react";
 import CustomizedTable from "../../common/CustomizedTable";
 import {getAPI, interpolate} from "../../../utils/common";
-import {WALLET_LEDGER} from "../../../constants/api";
-import {Card} from "antd";
+import {AGENT_WALLET, WALLET_LEDGER} from "../../../constants/api";
+import {Card, Col, Icon, Row, Statistic} from "antd";
 import moment from "moment";
 
 export default class PatientWalletLedger extends React.Component {
@@ -10,14 +10,35 @@ export default class PatientWalletLedger extends React.Component {
         super(props);
         this.state = {
             ledger: [],
-            loading: false
+            loading: false,
+            walletAmount: null
         }
     }
 
     componentDidMount() {
         this.loadData();
+        this.loadPatientWallet();
     }
 
+    loadPatientWallet = () => {
+        let that = this;
+        if (this.props.currentPatient && this.props.currentPatient.id) {
+            let successFn = function (data) {
+                if (data.length)
+                    that.setState({
+                        walletAmount: data[0]
+                    })
+            }
+            let errorFn = function () {
+
+            }
+            getAPI(interpolate(AGENT_WALLET, [this.props.currentPatient.id]), successFn, errorFn);
+        } else {
+            this.setState({
+                pendingAmount: null
+            })
+        }
+    }
     loadData = () => {
         let that = this;
         this.setState({
@@ -51,18 +72,26 @@ export default class PatientWalletLedger extends React.Component {
             title: 'Amount Type',
             dataIndex: 'amount_type',
             key: 'amount_type'
-        },, {
+        }, , {
             title: 'Cr/Dr',
             dataIndex: 'ledger_type',
             key: 'ledger_type'
-        } ,{
+        }, {
             title: 'Amount',
             dataIndex: 'amount',
             key: 'amount'
         }]
         return <div>
-            <h2>Wallet Ledger</h2>
-            <Card>
+            <Card title={"Wallet Ledger"}>
+                {this.state.walletAmount ?
+                    <Row style={{textAlign: 'center',marginBottom:10}}>
+                        <Col span={12}>
+                            <Statistic title={"Refundable Amount"} prefix={<Icon type={"wallet"}/>} value={this.state.walletAmount.refundable_amount}/>
+                        </Col>
+                        <Col span={12}>
+                            <Statistic title={"Non Refundable Amount"} prefix={<Icon type={"wallet"}/>} value={this.state.walletAmount.non_refundable}/>
+                        </Col>
+                    </Row> : null}
                 <CustomizedTable dataSource={this.state.ledger} loading={this.state.loading} columns={columns}/>
             </Card>
         </div>
