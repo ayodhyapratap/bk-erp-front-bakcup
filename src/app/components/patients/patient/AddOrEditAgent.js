@@ -2,7 +2,7 @@ import React from "react";
 import {Divider,Form} from "antd";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {AGENT_ROLES, PATIENT_PROFILE} from "../../../constants/api"
-import {SUCCESS_MSG_TYPE, SELECT_FIELD ,SINGLE_IMAGE_UPLOAD_FIELD} from "../../../constants/dataKeys";
+import {SUCCESS_MSG_TYPE, SELECT_FIELD, SINGLE_IMAGE_UPLOAD_FIELD, INPUT_FIELD} from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 
 export default class AddOrEditAgent extends React.Component{

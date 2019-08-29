@@ -114,11 +114,15 @@ class AddOrEditAgent extends React.Component {
 
                 let reqData = {
                     user: {},
+                    referal:values.referal,
                     role: values.role,
                     is_agent: true,
                     aadhar_upload: values.aadhar_upload && values.aadhar_upload.file && values.aadhar_upload.file.response ? values.aadhar_upload.file.response.image_path : null
 
                 };
+                if(this.props.editAgentData){
+                    delete  reqData.referal;
+                }
                 if (!this.state.userDetails) {
 
                     reqData.user.first_name = values.first_name;
@@ -231,7 +235,7 @@ class AddOrEditAgent extends React.Component {
                             </Card>
                         </FormItem>
                         : <div>
-                            <FormItem key="patient_name" label="Agent Name"  {...formItemLayout}>
+                            <FormItem key="name" label="Agent Name"  {...formItemLayout}>
                                 {getFieldDecorator("first_name", {
                                     initialValue: that.props.editAgentData ? that.props.editAgentData.user.first_name : ''
                                 })(
@@ -257,7 +261,7 @@ class AddOrEditAgent extends React.Component {
                                     </AutoComplete>
                                 )}
                             </FormItem>
-                            <FormItem key="patient_mobile" label="Mobile Number"   {...formItemLayout}>
+                            <FormItem key="mobile" label="Mobile Number"   {...formItemLayout}>
                                 {getFieldDecorator("mobile", {
                                     initialValue: that.props.editAgentData ? that.props.editAgentData.user.mobile : null,
                                     rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
@@ -265,13 +269,22 @@ class AddOrEditAgent extends React.Component {
                                     <Input placeholder="Mobile Number"/>
                                 )}
                             </FormItem>
-                            <FormItem key="patient_email" label="Email Address"  {...formItemLayout}>
+                            <FormItem key="email" label="Email Address"  {...formItemLayout}>
                                 {getFieldDecorator("email", {
                                     initialValue: that.props.editAgentData ? that.props.editAgentData.user.email : null,
                                     rules: [{type: 'email', message: 'The input is not valid E-mail!'},
                                         {required: true, message: REQUIRED_FIELD_MESSAGE}],
                                 })(
                                     <Input placeholder="Email Address"/>
+                                )}
+                            </FormItem>
+
+                             <FormItem key="referal" label="Referer Code"  {...formItemLayout}>
+                                {getFieldDecorator("referal", {
+                                    initialValue: that.props.editAgentData ? that.props.editAgentData.user.referer : null,
+
+                                })(
+                                    <Input placeholder="Referer Code"/>
                                 )}
                             </FormItem>
 
@@ -288,13 +301,17 @@ class AddOrEditAgent extends React.Component {
                         )}
                     </FormItem>
                     <FormItem label={"Document Upload"} {...formItemLayout}>
-                        {getFieldDecorator("aadhar_upload", {initialValue:''}, {
-                            rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
+                        {getFieldDecorator("aadhar_upload", {rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
+                            valuePropName: "aadhar_upload",
+
                         })(
                             <Upload {...singleUploadprops}>
                                 <Button>
                                     <Icon type="upload"/> Click to Upload
                                 </Button>
+                                {that.props.editAgentData && that.props.editAgentData.aadhar_upload?
+                                            <img src={makeFileURL(that.props.editAgentData.aadhar_upload)}
+                                                 style={{maxWidth: '100%'}}/> : null}
                             </Upload>
                         )}
 
