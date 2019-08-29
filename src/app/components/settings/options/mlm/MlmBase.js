@@ -19,9 +19,14 @@ export default class MlmBase extends React.Component {
         this.loadMlmData = this.loadMlmData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
         this.loadRoles = this.loadRoles.bind(this);
+        this.loadData = this.loadData.bind(this);
     }
 
     componentDidMount() {
+        this.loadData();
+    }
+
+    loadData() {
         this.loadMlmData();
         this.loadRoles();
         this.loadProductMargin();
@@ -88,7 +93,7 @@ export default class MlmBase extends React.Component {
         let reqData = {...record, is_active: false};
         reqData.is_active = false;
         let successFn = function (data) {
-            that.loadProductMargin();
+            that.loadData();
         }
         let errorFn = function () {
         }
@@ -136,7 +141,7 @@ export default class MlmBase extends React.Component {
 
             if (that.state.staffRoles) {
                 that.state.staffRoles.forEach(function (role) {
-                    let roledata = {"role": role.name};
+                    let roledata = {"role": role.name, roleId: role.id};
                     if (productMargin.level_count) {
                         for (let level = 1; level <= productMargin.level_count; level++) {
                             if (that.state.mlmItems) {
@@ -159,11 +164,12 @@ export default class MlmBase extends React.Component {
             <Switch>
                 <Route exact path="/settings/mlm/generate"
                        render={(route) => <MLMGenerate {...route}
-                                                       loadData={this.loadMlmData} {...this.state}/>}/>
+                                                       loadData={this.loadData}/>}/>
                 {this.state.editId && this.state.editRecord ?
                     <Route exact path="/settings/mlm/edit"
                            render={(route) => <MLMGenerate {...route}
-                                                           loadData={this.loadMlmData} {...this.state}/>}/> : null}
+                                                           key={this.state.editId}
+                                                           loadData={this.loadData} {...this.state}/>}/> : null}
                 <Route>
                     <div>
                         <h2>MLM Commissions
@@ -182,18 +188,18 @@ export default class MlmBase extends React.Component {
                                                 <br/>
                                                 <h2>
                                                     {marginType.name}
-                                                <Button.Group style={{float:'right'}}>
-                                                    <Button type="primary"
-                                                            onClick={() => this.editObject(marginType.id, datasource[marginType.id])}><Icon
-                                                        type="edit"/> Edit</Button>
-                                                    <Button type="danger"
-                                                            onClick={() => that.deleteObject(marginType)}><Icon
-                                                        type="delete"/> Delete</Button>
-                                                </Button.Group>
-                                                    </h2>
+                                                    <Button.Group style={{float: 'right'}}>
+                                                        <Button type="primary"
+                                                                onClick={() => this.editObject(marginType.id, datasource[marginType.id])}><Icon
+                                                            type="edit"/> Edit</Button>
+                                                        <Button type="danger"
+                                                                onClick={() => that.deleteObject(marginType)}><Icon
+                                                            type="delete"/> Delete</Button>
+                                                    </Button.Group>
+                                                </h2>
                                             </Row>
                                             <Table loading={this.state.loading} pagination={false}
-                                                   style={{marginTop:10}}
+                                                   style={{marginTop: 10}}
                                                    dataSource={datasource[marginType.id]}
                                                    rowKey="role"
                                                    columns={columns[marginType.id]}
