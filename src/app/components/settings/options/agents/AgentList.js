@@ -130,6 +130,7 @@ class AgentRoles extends React.Component {
             title: 'Name',
             dataIndex: 'user.first_name',
             key: 'name',
+            render: (value, record) => <Link to={"/patient/" + record.id + "/profile"}>{value}</Link>
         }, {
             title: 'Email',
             dataIndex: 'user.email',

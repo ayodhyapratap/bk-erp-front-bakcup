@@ -150,8 +150,14 @@ class PatientSider extends React.Component {
                             </Link>
                         </Menu.Item>
                         : null}
-
-
+                        {that.props.activePracticePermissions.PatientLedger || that.props.allowAllPermissions ?
+                        <Menu.Item key="32" disabled={!this.props.currentPatient}>
+                            <Link
+                                to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/wallet" : "/patients/profile"}>
+                                <Icon type="wallet"/>Wallet Ledger
+                            </Link>
+                        </Menu.Item>
+                        : null}
                 </Menu.ItemGroup>
             </Menu>
         </Sider>
