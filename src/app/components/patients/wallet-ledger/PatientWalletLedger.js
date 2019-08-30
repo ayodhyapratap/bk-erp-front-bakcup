@@ -2,9 +2,10 @@ import React from "react";
 import CustomizedTable from "../../common/CustomizedTable";
 import {getAPI, interpolate} from "../../../utils/common";
 import {AGENT_WALLET, WALLET_LEDGER} from "../../../constants/api";
-import {Card, Col, Icon, Row, Statistic} from "antd";
+import {Card, Col, Icon, Row, Statistic, Typography} from "antd";
 import moment from "moment";
 
+const {Text} = Typography;
 export default class PatientWalletLedger extends React.Component {
     constructor(props) {
         super(props);
@@ -67,29 +68,37 @@ export default class PatientWalletLedger extends React.Component {
         }, {
             title: 'Ledger Comment',
             dataIndex: 'comments',
-            key: 'comments'
-        }, {
-            title: 'Amount Type',
-            dataIndex: 'amount_type',
-            key: 'amount_type'
-        }, , {
+            key: 'comments',
+            render: (value, record) => record.is_cancelled ? <Text delete>{value}</Text> : value
+        },
+        //     {
+        //     title: 'Amount Type',
+        //     dataIndex: 'amount_type',
+        //     key: 'amount_type',
+        //     render: (value, record) => record.is_cancelled ? <Text delete>{value}</Text> : value
+        // },
+            {
             title: 'Cr/Dr',
             dataIndex: 'ledger_type',
-            key: 'ledger_type'
+            key: 'ledger_type',
+            render: (value, record) => record.is_cancelled ? <Text delete>{value}</Text> : value
         }, {
             title: 'Amount',
             dataIndex: 'amount',
-            key: 'amount'
+            key: 'amount',
+            render: (value, record) => record.is_cancelled ? <Text delete>{value}</Text> : value
         }]
         return <div>
             <Card title={"Wallet Ledger"}>
                 {this.state.walletAmount ?
-                    <Row style={{textAlign: 'center',marginBottom:10}}>
-                        <Col span={12}>
-                            <Statistic title={"Refundable Amount"} prefix={<Icon type={"wallet"}/>} value={this.state.walletAmount.refundable_amount}/>
-                        </Col>
-                        <Col span={12}>
-                            <Statistic title={"Non Refundable Amount"} prefix={<Icon type={"wallet"}/>} value={this.state.walletAmount.non_refundable}/>
+                    <Row style={{textAlign: 'center', marginBottom: 10}}>
+                        {/*<Col span={12}>*/}
+                        {/*    <Statistic title={"Refundable Amount"} prefix={<Icon type={"wallet"}/>}*/}
+                        {/*               value={this.state.walletAmount.refundable_amount}/>*/}
+                        {/*</Col>*/}
+                        <Col span={24}>
+                            <Statistic title={"Non Refundable Amount"} prefix={<Icon type={"wallet"}/>}
+                                       value={this.state.walletAmount.non_refundable}/>
                         </Col>
                     </Row> : null}
                 <CustomizedTable dataSource={this.state.ledger} loading={this.state.loading} columns={columns}/>

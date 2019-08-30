@@ -150,7 +150,7 @@ class PatientSider extends React.Component {
                             </Link>
                         </Menu.Item>
                         : null}
-                        {that.props.activePracticePermissions.PatientLedger || that.props.allowAllPermissions ?
+                    {this.props.currentPatient && this.props.currentPatient.is_agent && (that.props.activePracticePermissions.PatientLedger || that.props.allowAllPermissions) ?
                         <Menu.Item key="32" disabled={!this.props.currentPatient}>
                             <Link
                                 to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/wallet" : "/patients/profile"}>

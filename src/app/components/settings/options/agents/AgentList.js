@@ -193,6 +193,11 @@ class AgentRoles extends React.Component {
             dataIndex: 'user.mobile',
             key: 'mobile'
         }, {
+            title: 'Referrer',
+            dataIndex: 'user.referer_data.referer.first_name',
+            key: 'referrer',
+            render : (value,record) => (value && record.user.referer_data.patient ? <Link to={"/patient/" + record.user.referer_data.patient + "/profile"}>{value}</Link>:'--')
+        }, {
             title: 'Role',
             dataIndex: 'role_data.name',
             key: 'role_data',
@@ -204,7 +209,7 @@ class AgentRoles extends React.Component {
             title: 'Document',
             dataIndex: 'aadhar_upload',
             key: 'aadhar_upload',
-            render: (value) => (value ? <a target="_blank" href={makeFileURL(value)}>Open Document</a> : null)
+            render: (value) => (value ? <a target="_blank" href={makeFileURL(value)}>Open Document</a> : '--')
         }, {
             title: 'Status',
             dataIndex: 'is_approved',

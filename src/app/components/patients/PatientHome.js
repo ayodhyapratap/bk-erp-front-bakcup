@@ -409,8 +409,8 @@ class PatientHome extends React.Component {
                                            <BookingHome {...this.state}{...this.props} {...route}
                                                         key={this.state.currentPatient ? this.state.currentPatient.id : null}/> :
                                            <PermissionDenied/>)}/>
-                                {this.state.currentPatient ?
-                                    <Route path="/patient/:id/billing/wallet"
+                                {this.state.currentPatient && this.state.currentPatient.is_agent ?
+                                    <Route exact path="/patient/:id/billing/wallet"
                                            render={(route) => (that.props.activePracticePermissions.PatientBookings || that.props.allowAllPermissions ?
                                                <PatientWalletLedger {...this.state} {...this.props} {...route}
                                                                     key={this.state.currentPatient ? this.state.currentPatient.id : null}/> :

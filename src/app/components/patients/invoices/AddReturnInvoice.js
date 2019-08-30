@@ -662,10 +662,6 @@ class AddReturnInvoice extends React.Component {
                         {getFieldDecorator(`unit[${record._id}]`, {
                             validateTrigger: ['onChange', 'onBlur'],
                             initialValue: 0,
-                            rules: [{
-                                required: true,
-                                message: "This field is required.",
-                            }],
                         })(
                             <InputNumber max={(record.unit)}
                                          min={0}
@@ -677,12 +673,8 @@ class AddReturnInvoice extends React.Component {
                         key={`unit[${record._id}]`}
                         {...formItemLayout}>
                         {getFieldDecorator(`unit[${record._id}]`, {
-                            initialValue: record.unit || 1,
+                            initialValue: 0,
                             validateTrigger: ['onChange', 'onBlur'],
-                            rules: [{
-                                required: true,
-                                message: "This field is required.",
-                            }],
                         })(
                             <InputNumber min={0} max={record.unit} placeholder="unit" size={'small'}/>
                         )}

@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Card, Col, Divider, InputNumber, List, Popconfirm, Row, Select} from 'antd';
-import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
-import {INVOICES_API, PATIENT_PAYMENTS_API, PAYMENT_MODES} from "../../../constants/api";
+import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
+import {INVOICES_API, PATIENT_PAYMENTS_API, PAYMENT_MODES, SINGLE_PAYMENT_API} from "../../../constants/api";
 import {WARNING_MSG_TYPE} from "../../../constants/dataKeys";
 
 class AddPaymentForm extends React.Component {
@@ -35,9 +35,9 @@ class AddPaymentForm extends React.Component {
                 addedInvoiceId: addedInvoicesId,
                 addedInvoice: addedInvoice,
                 // totalPayingAmount : totalPayingAmount
-            },function(){
-                    that.calculateInvoicePayments();
-                    that.setPaymentAmount(totalPayingAmount);
+            }, function () {
+                that.calculateInvoicePayments();
+                that.setPaymentAmount(totalPayingAmount);
             })
 
 
@@ -138,7 +138,11 @@ class AddPaymentForm extends React.Component {
                 // invoice.procedure.forEach(function (proc) {
                 //     payable += proc.unit * proc.total
                 // });
-                let invoicePayableAmount = invoice.total - invoice.payments_data + invoice.pay_amount + invoice.pay_amount_wallet
+                let invoicePayableAmount = invoice.total - invoice.payments_data;
+                if (invoice.pay_amount)
+                    invoicePayableAmount += invoice.pay_amount;
+                if (invoice.pay_amount_wallet)
+                    invoicePayableAmount += invoice.pay_amount_wallet;
                 payable += invoicePayableAmount;
                 if (totalPayingAmount >= invoicePayableAmount) {
                     totalPayingAmount -= invoicePayableAmount;
@@ -210,10 +214,13 @@ class AddPaymentForm extends React.Component {
                 loading: false
             });
         }
-        if(this.props.editPayment){
-            reqData.id = this.props.editPayment.id
+        if (this.props.editPayment) {
+            reqData.id = this.props.editPayment.id;
+            putAPI(interpolate(SINGLE_PAYMENT_API,[reqData.id]), reqData, successFn, errorFn)
+        }else{
+           postAPI(PATIENT_PAYMENTS_API, reqData, successFn, errorFn)
         }
-        postAPI(PATIENT_PAYMENTS_API, reqData, successFn, errorFn)
+
     }
 
     render() {
@@ -295,11 +302,12 @@ class AddPaymentForm extends React.Component {
                                                 {invoice.reservation_data && invoice.reservation_data.medicines ? invoice.reservation_data.medicines.map(item => item.name + ',') : null}
                                             </td>
                                             <td style={{textAlign: 'right'}}>
-                                                <b>{(invoice.total - invoice.payments_data + invoice.pay_amount + invoice.pay_amount_wallet).toFixed(2)}</b></td>
+                                                <b>{(invoice.total - invoice.payments_data + (invoice.pay_amount || 0) + (invoice.pay_amount_wallet || 0)).toFixed(2)}</b>
+                                            </td>
                                             <td style={{textAlign: 'right'}}>
                                                 <b>{that.state.invoicePayments[invoice.id]}</b></td>
                                             <td style={{textAlign: 'right'}}>
-                                                <b>{(invoice.total - invoice.payments_data + invoice.pay_amount + invoice.pay_amount_wallet - that.state.invoicePayments[invoice.id]).toFixed(2)}</b>
+                                                <b>{(invoice.total - invoice.payments_data + (invoice.pay_amount || 0) + (invoice.pay_amount_wallet || 0) - that.state.invoicePayments[invoice.id]).toFixed(2)}</b>
                                             </td>
                                         </tr>
                                     )}
@@ -314,7 +322,7 @@ class AddPaymentForm extends React.Component {
                             <Col span={6}><h3>Pay Now:</h3></Col>
                             <Col span={6}>
                                 <InputNumber min={0} step={1} max={this.state.totalPayableAmount}
-                                            value={this.state.totalPayingAmount} onChange={this.setPaymentAmount}/>
+                                             value={this.state.totalPayingAmount} onChange={this.setPaymentAmount}/>
                             </Col>
                             <Col span={6}>
                                 <Select style={{width: '100%'}} value={this.state.selectedPaymentMode}

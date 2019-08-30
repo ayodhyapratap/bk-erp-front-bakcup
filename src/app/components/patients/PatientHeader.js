@@ -121,7 +121,7 @@ class PatientHeader extends React.Component {
                             <Popover placement="rightTop"
                                      title="Wallet Amount"
                                      content={<p>
-                                         Refundable : {this.state.walletAmount[0].refundable_amount} <br/>
+                                         {/*Refundable : {this.state.walletAmount[0].refundable_amount} <br/>*/}
                                          Non-Refundable : {this.state.walletAmount[0].non_refundable}
                                      </p>}>
                                 <div style={{
