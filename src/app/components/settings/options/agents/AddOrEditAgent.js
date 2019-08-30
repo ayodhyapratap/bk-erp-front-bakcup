@@ -124,10 +124,11 @@ class AddOrEditAgent extends React.Component {
                     delete  reqData.referal;
                 }
                 if (!this.state.userDetails) {
-
                     reqData.user.first_name = values.first_name;
                     reqData.user.email = values.email;
                     reqData.user.mobile = values.mobile;
+                }else{
+                    reqData.user = this.state.userDetails.user;
                 }
                 let successFn = function (data) {
                     that.setState({
@@ -314,8 +315,6 @@ class AddOrEditAgent extends React.Component {
                                                  style={{maxWidth: '100%'}}/> : null}
                             </Upload>
                         )}
-
-
                     </FormItem>
 
                     <FormItem {...formItemLayout}>
