@@ -6,7 +6,7 @@ import {Link, Route, Switch} from "react-router-dom";
 import {PRODUCT_MARGIN, ROLE_COMMISION, SINGLE_PRODUCT_MARGIN, AGENT_ROLES} from "../../../../constants/api";
 
 const TabPane = Tabs.TabPane;
-
+const {Panel} = Collapse;
 export default class MlmBase extends React.Component {
     constructor(props) {
         super(props);
@@ -180,6 +180,7 @@ export default class MlmBase extends React.Component {
                             </Link>
                         </h2>
                         <Card>
+<<<<<<< HEAD
                             {this.state.productMargin ?
                                 <Tabs type="card">
                                     {this.state.productMargin.map(marginType =>
@@ -208,6 +209,53 @@ export default class MlmBase extends React.Component {
                                                    bordered/>
                                         </TabPane>)}
                                 </Tabs> : <h4>No MLM Data</h4>}
+=======
+                            {/*{this.state.productMargin ?*/}
+                            {/*    <Tabs type="card">*/}
+                            {/*        {this.state.productMargin.map(marginType =>*/}
+                            {/*            <TabPane tab={marginType.name} key={marginType.id}>*/}
+                            {/*                <Row>*/}
+                            {/*                    <br/>*/}
+                            {/*                    <h2>*/}
+                            {/*                        {marginType.name}*/}
+                            {/*                        <Button.Group style={{float: 'right'}}>*/}
+                            {/*                            <Button type="primary"*/}
+                            {/*                                    onClick={() => this.editObject(marginType.id, datasource[marginType.id])}><Icon*/}
+                            {/*                                type="edit"/> Edit</Button>*/}
+                            {/*                            <Button type="danger"*/}
+                            {/*                                    onClick={() => that.deleteObject(marginType)}><Icon*/}
+                            {/*                                type="delete"/> Delete</Button>*/}
+                            {/*                        </Button.Group>*/}
+                            {/*                    </h2>*/}
+                            {/*                </Row>*/}
+                            {/*                <Table loading={this.state.loading} pagination={false}*/}
+                            {/*                       style={{marginTop: 10}}*/}
+                            {/*                       dataSource={datasource[marginType.id]}*/}
+                            {/*                       rowKey="role"*/}
+                            {/*                       columns={columns[marginType.id]}*/}
+                            {/*                       bordered/>*/}
+                            {/*            </TabPane>)}*/}
+                            {/*    </Tabs> : <h4>No MLM Data</h4>}*/}
+                            {this.state.productMargin ? <Collapse defaultActiveKey={['0']} accordion>
+                                {this.state.productMargin.map((marginType, index) =>
+                                    <Panel header={marginType.name} key={index}
+                                           extra={[<Button.Group size={"small"}>
+                                               <Button type="primary"
+                                                       onClick={() => this.editObject(marginType.id, datasource[marginType.id])}><Icon
+                                                   type="edit"/> Edit</Button>
+                                               <Button type="danger"
+                                                       onClick={() => that.deleteObject(marginType)}><Icon
+                                                   type="delete"/> Delete</Button>
+                                           </Button.Group>]}>
+                                        <Table loading={this.state.loading} pagination={false}
+                                               style={{marginTop: 10}}
+                                               dataSource={datasource[marginType.id]}
+                                               rowKey="role"
+                                               columns={columns[marginType.id]}
+                                               bordered/>
+                                    </Panel>)}
+                            </Collapse> : <h4>No MLM Data</h4>}
+>>>>>>> db8556e682428563b694d67fba414121cf8bb3cb
 
                         </Card>
                     </div>
