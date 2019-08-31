@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Icon, Table, Tabs, Row} from "antd";
+import {Button, Card, Icon, Table, Tabs, Row, Popconfirm} from "antd";
 import {getAPI, interpolate, postAPI, patchAPI, deleteAPI, putAPI} from "../../../../utils/common";
 import MLMGenerate from "./MLMGenerate"
 import {Link, Route, Switch} from "react-router-dom";
@@ -192,9 +192,11 @@ export default class MlmBase extends React.Component {
                                                         <Button type="primary"
                                                                 onClick={() => this.editObject(marginType.id, datasource[marginType.id])}><Icon
                                                             type="edit"/> Edit</Button>
-                                                        <Button type="danger"
-                                                                onClick={() => that.deleteObject(marginType)}><Icon
-                                                            type="delete"/> Delete</Button>
+                                                        <Popconfirm title="Are you sure delete this item?"
+                                                                    onConfirm={() => that.deleteObject(marginType)} okText="Yes" cancelText="No">
+                                                            <Button type="danger"><Icon type="delete"/> Delete</Button>
+                                                        </Popconfirm>
+
                                                     </Button.Group>
                                                 </h2>
                                             </Row>
