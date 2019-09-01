@@ -1,15 +1,16 @@
 import React from "react";
-import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm, Tag, Select,Col} from "antd";
+import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm, Tag, Select, Col} from "antd";
 import {
     SUCCESS_MSG_TYPE,
     INPUT_FIELD, WARNING_MSG_TYPE,
 } from "../../../../constants/dataKeys";
-import {AGENT_ROLES, PATIENT_PROFILE, PATIENTS_LIST} from "../../../../constants/api"
+import {AGENT_ROLES, ALL_PRACTICE, PATIENT_PROFILE, PATIENTS_LIST} from "../../../../constants/api"
 import {Link, Route, Switch} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, postAPI, putAPI, makeFileURL} from "../../../../utils/common";
 import AddOrEditAgent from "./AddOrEditAgent";
 import CustomizedTable from "../../../common/CustomizedTable";
 import InfiniteFeedLoaderButton from "../../../common/InfiniteFeedLoaderButton";
+
 // import Col from "antd/es/grid/col";
 
 class AgentRoles extends React.Component {
@@ -20,18 +21,20 @@ class AgentRoles extends React.Component {
             visible: false,
             data: null,
             loading: true,
-            agentRoles:[],
+            agentRoles: [],
+            practiceList: []
 
-        }
+        };
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
-        this.loadAgentRoles =this.loadAgentRoles.bind(this);
+        this.loadAgentRoles = this.loadAgentRoles.bind(this);
     }
 
     componentDidMount() {
         this.loadData();
         this.loadAgentRoles();
     }
+
     loadAgentRoles() {
         let that = this;
         let successFn = function (data) {
@@ -48,6 +51,7 @@ class AgentRoles extends React.Component {
         getAPI(AGENT_ROLES, successFn, errorFn);
 
     }
+
     loadData(page = 1) {
         var that = this;
         this.setState({
@@ -70,18 +74,14 @@ class AgentRoles extends React.Component {
             agent: true,
             page
         }
-        if(that.state.role)
-            apiParams.role = that.state.role
-        if(that.state.approved =='true') {
-            apiParams.approved = true;
+        if (that.state.role)
+            apiParams.role = that.state.role;
+        if (that.state.approved != null) {
+            apiParams.approved = !!that.state.approved;
         }
-        if(this.state.approved =='false'){
-            apiParams.approved=false;
-        }
+        apiParams.practice = this.props.active_practiceId;
 
-
-
-        getAPI(interpolate(PATIENTS_LIST, [this.props.active_practiceId]), successFn, errorFn, apiParams);
+        getAPI(PATIENTS_LIST, successFn, errorFn, apiParams);
     }
 
     changeRedirect() {
@@ -166,17 +166,16 @@ class AgentRoles extends React.Component {
 
             if (!err) {
                 that.setState({
-                    role:values.role,
-                    approved:values.approved,
-
-                },function(){
+                    role: values.role,
+                    approved: values.approved,
+                }, function () {
                     that.loadData();
                 })
             }
         })
     }
+
     render() {
-        console.log("State",this.state);
         let that = this;
         const {getFieldDecorator} = this.props.form;
         const columns = [{
@@ -196,7 +195,8 @@ class AgentRoles extends React.Component {
             title: 'Referrer',
             dataIndex: 'user.referer_data.referer.first_name',
             key: 'referrer',
-            render : (value,record) => (value && record.user.referer_data.patient ? <Link to={"/patient/" + record.user.referer_data.patient + "/profile"}>{value}</Link>:'--')
+            render: (value, record) => (value && record.user.referer_data.patient ?
+                <Link to={"/patient/" + record.user.referer_data.patient + "/profile"}>{value}</Link> : '--')
         }, {
             title: 'Role',
             dataIndex: 'role_data.name',
@@ -238,11 +238,11 @@ class AgentRoles extends React.Component {
               </span>
             ),
         }];
-        const status=[
-            {label:'Approved' ,value:'true'},
-            {label:'Pending' , value:'false'},
-            {label:'All' ,value:null}
-            ];
+        const status = [
+            {label: 'Approved', value: true},
+            {label: 'Pending', value: false},
+            {label: 'All', value: null}
+        ];
         return <Switch>
             <Route exact path={"/settings/agents/add"}
                    render={(route) => <AddOrEditAgent  {...this.props} title={"Create Agent"}
@@ -256,24 +256,22 @@ class AgentRoles extends React.Component {
                     <Button style={{float: 'right'}} type={"primary"}><Icon type={"plus"}/>
                         Add</Button></Link></h4>}>
                     <Row>
-                        <Col style={{float:"right"}}>
+                        <Col style={{float: "right"}}>
                             <Form layout="inline" onSubmit={this.handleSubmit}>
-                                 <Form.Item key="role"  label="Agent Role" >
-                                    {getFieldDecorator("role", {initialValue:this.state.agentRoles?this.state.agentRoles.id:''},
-
+                                <Form.Item key="role" label="Agent Role">
+                                    {getFieldDecorator("role", {initialValue: this.state.agentRoles ? this.state.agentRoles.id : ''},
                                     )(
-                                         <Select placeholder="Agent Role" style={{minWidth:150}} allowClear={true}>
-                                                {this.state.agentRoles.map((option) => <Select.Option
-                                                    value={option.id}>{option.name}</Select.Option>)}
-                                         </Select>
-
+                                        <Select placeholder="Agent Role" style={{minWidth: 150}} allowClear={true}>
+                                            {this.state.agentRoles.map((option) => <Select.Option
+                                                value={option.id}>{option.name}</Select.Option>)}
+                                        </Select>
                                     )}
                                 </Form.Item>
 
-                                <Form.Item key="approved"  label="Status" >
-                                    {getFieldDecorator("approved", {initialValue:this.state.approved?this.state.approved:''},
+                                <Form.Item key="approved" label="Status">
+                                    {getFieldDecorator("approved", {initialValue: this.state.approved ? this.state.approved : ''},
                                     )(
-                                       <Select placeholder="status" style={{minWidth:150}} >
+                                        <Select placeholder="status" style={{minWidth: 150}}>
                                             {status.map(item => <Select.Option
                                                 value={item.value}>
                                                 {item.label}
