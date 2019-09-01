@@ -106,7 +106,7 @@ class LoginWithPhone extends React.Component {
                 <Divider>OR</Divider>
                 <h4>
                     <Link to={"/"}> <Button size="large" type="primary" htmlType="submit"
-                                            className="login-form-button">Log in with username </Button>
+                                            className="login-form-button">Log in with password </Button>
 
                     </Link>
                 </h4>

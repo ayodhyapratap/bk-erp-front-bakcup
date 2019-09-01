@@ -1,6 +1,6 @@
 import React from "react";
 import PatientSelection from "../PatientSelection";
-import {Avatar, Button, Card, Col, Divider, Icon, List, Row, Popconfirm,Modal} from "antd";
+import {Avatar, Button, Card, Col, Divider, Icon, List, Row, Popconfirm, Modal, Statistic} from "antd";
 import {Link, Redirect} from "react-router-dom";
 import {getAPI, postAPI, interpolate, displayMessage, makeFileURL} from "../../../utils/common";
 import {MEDICAL_MEMBERSHIP_CANCEL_API, PATIENTS_MEMBERSHIP_API, PATIENT_PROFILE} from "../../../constants/api";
@@ -21,7 +21,7 @@ class PatientProfile extends React.Component {
             add: '',
             MedicalMembership: null,
             hide: false,
-            agentModalVisible:false,
+            agentModalVisible: false,
         };
         this.loadProfile = this.loadProfile.bind(this);
         this.loadMedicalMembership = this.loadMedicalMembership.bind(this);
@@ -119,17 +119,18 @@ class PatientProfile extends React.Component {
         postAPI(interpolate(MEDICAL_MEMBERSHIP_CANCEL_API, [that.props.currentPatient.id]), reqData, successFn, errorFn);
     }
 
-    addAgent=()=>{
-        let that=this;
-         that.setState({
-              agentModalVisible: true,
-         });
+    addAgent = () => {
+        let that = this;
+        that.setState({
+            agentModalVisible: true,
+        });
     }
-    addAgentModalClosed=()=>{
+    addAgentModalClosed = () => {
         this.setState({
-            agentModalVisible:false
+            agentModalVisible: false
         })
     }
+
     render() {
         let that = this;
         if (this.props.currentPatient) {
@@ -138,18 +139,18 @@ class PatientProfile extends React.Component {
                 return <Card loading={this.state.loading}/>;
             return <Card loading={this.state.loading} title="Patient Profile"
                          extra={<>
-                            {/*{that.props.activePracticePermissions.SettingsAgents ?*/}
-                            {/*    <Button type={"primary"} onClick={this.addAgent}><Icon type={"usergroup-add"}/>&nbsp;Add Agent</Button>:null} &nbsp;&nbsp;*/}
-                            {that.props.activePracticePermissions.EditPatient ?
-                             <Link to={"/patient/" + this.state.currentPatient.id + "/profile/edit"}>
-                                 <Button type="primary">
-                                     <Icon type="edit"/>&nbsp;Edit Patient Profile</Button>
-                             </Link>:null}
+                             {/*{that.props.activePracticePermissions.SettingsAgents ?*/}
+                             {/*    <Button type={"primary"} onClick={this.addAgent}><Icon type={"usergroup-add"}/>&nbsp;Add Agent</Button>:null} &nbsp;&nbsp;*/}
+                             {that.props.activePracticePermissions.EditPatient ?
+                                 <Link to={"/patient/" + this.state.currentPatient.id + "/profile/edit"}>
+                                     <Button type="primary">
+                                         <Icon type="edit"/>&nbsp;Edit Patient Profile</Button>
+                                 </Link> : null}
 
                          </>}
 
 
-                                >
+            >
                 <Row gutter={16}>
                     <Col span={6} style={{textAlign: 'center'}}>
                         {(patient.image ? <img src={makeFileURL(patient.image)} style={{width: '100%'}}/> :
@@ -157,27 +158,32 @@ class PatientProfile extends React.Component {
                                 {patient.user.first_name ? patient.user.first_name :
                                     <Icon type="user"/>}
                             </Avatar>)}
+
+                        {patient.is_agent && patient.is_approved ? <Statistic title={"Referral Code"}
+                                                                              value={patient.user.referer_code}/> : null}
                         <Col>
                             <Divider/>
 
-                            {this.state.add ? <div><h1 style={{fontSize:'18px'}}>Medical Membership <a href="#"
-                                                                            onClick={() => this.onClickHandler(false)}>Cancel</a>
+                            {this.state.add ? <div><h1 style={{fontSize: '18px'}}>Medical Membership <a href="#"
+                                                                                                        onClick={() => this.onClickHandler(false)}>Cancel</a>
                                 </h1>
                                     <MedicalMembership {...this.props} {...this.state} patientId={patient.id}
                                                        loadMedicalMembership={that.loadMedicalMembership}
                                                        formChange={that.formChange} loadProfile={that.loadProfile}/></div>
-                                : <div style={{padding: '0px'}}><h1 style={{fontSize:'18px' ,textAlign:'center'}}>Medical Membership <a href="#"
-                                                                                         onClick={() => this.onClickHandler(true)}>{this.state.MedicalMembership?'Renew':'Add'}</a>
+                                : <div style={{padding: '0px'}}><h1
+                                    style={{fontSize: '18px', textAlign: 'center'}}>Medical Membership <a href="#"
+                                                                                                          onClick={() => this.onClickHandler(true)}>{this.state.MedicalMembership ? 'Renew' : 'Add'}</a>
                                 </h1>
                                     {this.state.MedicalMembership ? <Card size="small" title={"Membership"}
-                                                                          extra={<Popconfirm title="Are you sure delete this Membership?"
-                                                                          onConfirm={() => that.deleteMembership(this.state.MedicalMembership.id)}
-                                                                          okText="Yes" cancelText="No">
-                                                                             <Button icon={"close"} type={"danger"}
-                                                                                         shape="circle"
-                                                                                         size="small"/>
-                                                                          </Popconfirm>} style={{textAlign:"center"}}>
-                                            <div style={{textAlign:"left"}}>
+                                                                          extra={<Popconfirm
+                                                                              title="Are you sure delete this Membership?"
+                                                                              onConfirm={() => that.deleteMembership(this.state.MedicalMembership.id)}
+                                                                              okText="Yes" cancelText="No">
+                                                                              <Button icon={"close"} type={"danger"}
+                                                                                      shape="circle"
+                                                                                      size="small"/>
+                                                                          </Popconfirm>} style={{textAlign: "center"}}>
+                                            <div style={{textAlign: "left"}}>
                                                 <p><strong>Membership Code : </strong>
                                                     <span>{this.state.MedicalMembership.membership_code}</span></p>
                                                 <p><strong>Start Date : </strong>
@@ -190,17 +196,13 @@ class PatientProfile extends React.Component {
                                 </div>
                             }
                         </Col>
-
-
-
-                        <Col/>
                     </Col>
 
                     <Col span={12}>
                         <PatientRow label="Patient Name" value={patient.user.first_name}/>
                         <PatientRow label="Patient ID" value={patient.id}/>
-                        {patient && patient.role?
-                        <PatientRow label={"Agent Roles"} value={patient.role_data.name} />:null}
+                        {patient && patient.role ?
+                            <PatientRow label={"Agent Roles"} value={patient.role_data.name}/> : null}
                         <PatientRow label="Gender" value={patient.gender}/>
                         <PatientRow label="Date of Birth" value={patient.dob}/>
                         <Divider>Contact Details</Divider>
@@ -213,9 +215,9 @@ class PatientProfile extends React.Component {
                         <PatientRow label="Landline No" value={patient.landline_no}/>
                         <PatientRow label="Address" value={patient.address}/>
                         <PatientRow label="Locality" value={patient.locality}/>
-                        <PatientRow label="City" value={patient.city_data?patient.city_data.name:null}/>
-                        <PatientRow label="State" value={patient.state_data?patient.state_data.name:null}/>
-                        <PatientRow label="Country" value={patient.country_data?patient.country_data.name:null}/>
+                        <PatientRow label="City" value={patient.city_data ? patient.city_data.name : null}/>
+                        <PatientRow label="State" value={patient.state_data ? patient.state_data.name : null}/>
+                        <PatientRow label="Country" value={patient.country_data ? patient.country_data.name : null}/>
                         <PatientRow label="Pincode" value={patient.pincode}/>
                     </Col>
                     <Col span={6} style={{borderLeft: '1 px solid #ccc'}}>
@@ -235,11 +237,11 @@ class PatientProfile extends React.Component {
                     </Col>
 
                     <Modal
-                          title="Add Agent"
-                          visible={this.state.agentModalVisible}
-                          onOk={null}
-                          footer={null}
-                          onCancel={this.addAgentModalClosed}>
+                        title="Add Agent"
+                        visible={this.state.agentModalVisible}
+                        onOk={null}
+                        footer={null}
+                        onCancel={this.addAgentModalClosed}>
                         <AddOrEditAgent patientId={patient.id} {...this.state}/>
                     </Modal>
                 </Row>
