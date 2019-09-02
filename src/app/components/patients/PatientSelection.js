@@ -171,11 +171,11 @@ class PatientSelection extends React.Component {
         return <Row>
             <Col span={5}
                  style={{
-                     height: 'calc(100vh - 55px)',
+                     height: 'calc(100% - 55px)',
                      overflow: 'auto',
                      padding: '10px',
                      // backgroundColor: '#e3e5e6',
-                     borderRight: '1px solid #ccc'
+                     // borderRight: '1px solid #ccc'
                  }}>
                 <Radio.Group buttonStyle="solid" defaultValue={this.state.selectedPatientGroup}
                              onChange={this.changeSelectedPatientGroup}>
@@ -231,14 +231,12 @@ class PatientSelection extends React.Component {
                     <p><br/></p>
                 </Radio.Group>
             </Col>
-            <Col span={19} style={{overflow: 'scroll'}}>
+            <Col span={19} style={{overflow: 'scroll', borderLeft: '1px solid #ccc'}}>
                 <Search placeholder="input search text"
                         onChange={value => this.searchPatient(value)}
                         enterButton/>
                 <Spin spinning={this.state.loading}>
                     <Row>
-
-
                         {this.state.patientListData.length ?
                             this.state.patientListData.map((patient) => <PatientCard {...patient}
                                                                                      key={patient.id}
@@ -267,7 +265,7 @@ export default PatientSelection;
 
 function PatientCard(patient) {
     return <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6}>
-        <Card onClick={() => patient.setCurrentPatient(patient)} style={{margin: '5px'}}>
+        <Card onClick={() => patient.setCurrentPatient(patient)} style={{margin: '5px', height: 120}}>
             <Meta avatar={(patient.image ? <Avatar src={makeFileURL(patient.image)} size={50}/> :
                 <Avatar style={{backgroundColor: '#87d068'}} size={50}>
                     {patient.user.first_name ? patient.user.first_name.charAt(0) :

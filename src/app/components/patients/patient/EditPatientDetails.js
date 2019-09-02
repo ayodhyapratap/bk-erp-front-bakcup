@@ -12,7 +12,16 @@ import {
     STATE,
     CITY,
 } from "../../../constants/api";
-import {displayMessage, getAPI, interpolate, makeFileURL, makeURL, postAPI, putAPI} from "../../../utils/common";
+import {
+    displayMessage,
+    getAPI,
+    interpolate,
+    makeFileURL,
+    makeURL,
+    postAPI,
+    putAPI,
+    removeEmpty
+} from "../../../utils/common";
 import moment from 'moment';
 import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 import WebCamField from "../../common/WebCamField";
@@ -172,9 +181,8 @@ class EditPatientDetails extends React.Component {
                     medical_history: values.medical_history,
                     patient_group: values.patient_group,
                     user: {
-                        first_name: values.first_name ? values.first_name : null,
+                        first_name: values.first_name ? values.first_name : '',
                         mobile: values.mobile,
-                        referer_code: values.referer_code ? values.referer_code : null,
                         email: values.email
                     },
                     dob: moment(values.dob).format("YYYY-MM-DD"),
@@ -198,6 +206,7 @@ class EditPatientDetails extends React.Component {
                 let errorFn = function () {
                     that.setState({})
                 }
+                reqData = removeEmpty(reqData);
                 if (that.props.currentPatient) {
                     putAPI(interpolate(PATIENT_PROFILE, [that.props.currentPatient.id]), reqData, successFn, errorFn);
                 } else {
@@ -259,8 +268,6 @@ class EditPatientDetails extends React.Component {
     }
 
     render() {
-        console.log("state", this.state);
-        console.log("props", this.props)
         let that = this;
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = ({
@@ -346,20 +353,20 @@ class EditPatientDetails extends React.Component {
                     <Form.Item label="Patient Name" {...formItemLayout}>
                         {getFieldDecorator('first_name', {
                             rules: [{required: true, message: 'Input Patient Name!'}],
-                            initialValue: this.props.currentPatient ? this.props.currentPatient.user.first_name : null
+                            initialValue: this.props.currentPatient ? this.props.currentPatient.user.first_name : ''
                         })
                         (<Input placeholder="Patient Name"/>)
                         }
                     </Form.Item>
                     {this.props.currentPatient ? null :
                         <Form.Item label="Referral Code" {...formItemLayout}>
-                            {getFieldDecorator('referal', {initialValue: this.props.currentPatient ? this.props.currentPatient.user.referer_code : null})
+                            {getFieldDecorator('referal', {initialValue: this.props.currentPatient ? this.props.currentPatient.user.referer_code : ''})
                             (<Input placeholder="Referral Code"/>)
                             }
                         </Form.Item>
                     }
                     <Form.Item label="Aadhar ID" {...formItemLayout}>
-                        {getFieldDecorator('aadhar_id', {initialValue: this.props.currentPatient ? this.props.currentPatient.aadhar_id : null})
+                        {getFieldDecorator('aadhar_id', {initialValue: this.props.currentPatient ? this.props.currentPatient.aadhar_id : ''})
                         (<Input placeholder="Patient Aadhar Number"/>)
                         }
                     </Form.Item>
@@ -387,13 +394,13 @@ class EditPatientDetails extends React.Component {
                     </Form.Item>
 
                     <Form.Item label="Blood Group" {...formItemLayout}>
-                        {getFieldDecorator('blood_group', {initialValue: this.props.currentPatient ? this.props.currentPatient.blood_group : null})
+                        {getFieldDecorator('blood_group', {initialValue: this.props.currentPatient ? this.props.currentPatient.blood_group : ''})
                         (<Input placeholder="Patient Blood Group"/>)
                         }
                     </Form.Item>
 
                     <Form.Item label="Family Relation" {...formItemLayout}>
-                        {getFieldDecorator('family_relation', {initialValue: this.props.currentPatient ? this.props.currentPatient.family_relation : null})
+                        {getFieldDecorator('family_relation', {initialValue: this.props.currentPatient ? this.props.currentPatient.family_relation : ''})
                         (<Input placeholder="Patient Family Relation"/>)
                         }
                     </Form.Item>
@@ -408,25 +415,25 @@ class EditPatientDetails extends React.Component {
                     </Form.Item>
 
                     <Form.Item label="Mobile (Secondary)" {...formItemLayout}>
-                        {getFieldDecorator('secondary_mobile_no', {initialValue: this.props.currentPatient ? this.props.currentPatient.secondary_mobile_no : null})
+                        {getFieldDecorator('secondary_mobile_no', {initialValue: this.props.currentPatient ? this.props.currentPatient.secondary_mobile_no : ''})
                         (<Input placeholder="Patient Mobile Number (Secondary)"/>)
                         }
                     </Form.Item>
 
                     <Form.Item label="Landline" {...formItemLayout}>
-                        {getFieldDecorator('landline_no', {initialValue: this.props.currentPatient ? this.props.currentPatient.landline_no : null})
+                        {getFieldDecorator('landline_no', {initialValue: this.props.currentPatient ? this.props.currentPatient.landline_no : ''})
                         (<Input placeholder="Patient Landline Number"/>)
                         }
                     </Form.Item>
 
                     <Form.Item label="Address" {...formItemLayout}>
-                        {getFieldDecorator('address', {initialValue: this.props.currentPatient ? this.props.currentPatient.address : null})
+                        {getFieldDecorator('address', {initialValue: this.props.currentPatient ? this.props.currentPatient.address : ''})
                         (<Input placeholder="Patient Address"/>)
                         }
                     </Form.Item>
 
                     <Form.Item label="Locality" {...formItemLayout}>
-                        {getFieldDecorator('locality', {initialValue: this.props.currentPatient ? this.props.currentPatient.locality : null})
+                        {getFieldDecorator('locality', {initialValue: this.props.currentPatient ? this.props.currentPatient.locality : ''})
                         (<Input placeholder="Patient Locality"/>)
                         }
                     </Form.Item>
@@ -514,7 +521,7 @@ class EditPatientDetails extends React.Component {
                     </Form.Item> */}
 
                     <Form.Item label="Pincode" {...formItemLayout}>
-                        {getFieldDecorator('pincode', {initialValue: this.props.currentPatient ? this.props.currentPatient.pincode : null})
+                        {getFieldDecorator('pincode', {initialValue: this.props.currentPatient ? this.props.currentPatient.pincode : ''})
                         (<Input placeholder="Patient PINCODE"/>)
                         }
                     </Form.Item>
@@ -522,7 +529,6 @@ class EditPatientDetails extends React.Component {
                     <Form.Item label="Email" {...formItemLayout}>
                         {getFieldDecorator('email', {
                             initialValue: this.props.currentPatient ? this.props.currentPatient.user.email : null,
-
                         })
                         (<Input placeholder="Patient Email"/>)
                         }

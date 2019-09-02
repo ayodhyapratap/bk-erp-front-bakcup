@@ -165,7 +165,7 @@ class PatientHeader extends React.Component {
                 maskClosable={false}
                 visible={this.props.listModalVisible}
                 style={{
-                    height: 'calc(100% - 55px)',
+                    height: 'calc(100%)',
                     overflow: 'auto',
                     paddingBottom: 53,
                 }}>
