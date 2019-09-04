@@ -175,7 +175,6 @@ class PatientInvoices extends React.Component {
     }
 
     returnModelOpen(record) {
-
         let that = this;
         that.setState({
             returnIncoiceVisible: true,

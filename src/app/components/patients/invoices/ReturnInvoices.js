@@ -369,8 +369,9 @@ function InvoiceCard(invoice, that) {
                 {invoice.is_cancelled ?
                     <Alert message="Cancelled" type="error" showIcon/> : null}
                 <Divider style={{marginBottom: 0}}>{invoice.return_id}</Divider>
-                <Statistic style={{textAlign:"center"}} title="Return"
-                           value={(invoice.return_value.toFixed(2))}/>
+                <Statistic title="Cash / Return "
+                           value={(invoice.cash_return ? invoice.cash_return.toFixed(2) : 0)}
+                           suffix={"/ " + (invoice.return_value ? invoice.return_value.toFixed(2):0)}/>
             </Col>
             <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
                

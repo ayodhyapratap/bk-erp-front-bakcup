@@ -772,8 +772,7 @@ class AddReturnInvoice extends React.Component {
                                                 <Form.Item {...formItemLayoutWithOutLabel}
                                                         style={{marginBottom: 0, float: 'right'}}>
                                                     <Button type="primary" htmlType="submit"
-                                                            style={{margin: 5}}>Save
-                                                        Invoice</Button>
+                                                            style={{margin: 5}}>Save Return Invoice</Button>
                                                     {that.props.history ?
                                                         <Button style={{margin: 5, float: 'right'}}
                                                                 onClick={() => that.props.history.goBack()}>
