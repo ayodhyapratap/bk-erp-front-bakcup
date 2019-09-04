@@ -9,7 +9,7 @@ import ExpensesReport from "./expenses/ExpensesReport";
 import IncomeReport from "./income/IncomeReport";
 import InventoryReport from "./inventory/InventoryReport";
 import InventoryDetailsReport from "./inventorydetails/InventoryDetailsReport";
-import PatientsReport from "./patients/PatientsReport";
+import PatientsReportHome from "./patients/PatientsReportHome";
 import PaymentsReport from "./payments/PaymentsReport";
 import DailySummaryReport from "./summary/DailySummaryReport";
 import BedBookingReport from "./booking/BedBookingReport";
@@ -73,7 +73,7 @@ class ReportsHome extends React.Component {
 
                     <Route exact path="/reports/patients"
                            render={(route) => (that.props.activePracticePermissions.ReportsPatients || that.props.allowAllPermissions ?
-                                   <PatientsReport  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                                   <PatientsReportHome  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
                            )}/>
                     <Route exact path="/reports/payments"
                            render={(route) => (that.props.activePracticePermissions.ReportsPayments || that.props.allowAllPermissions ?
