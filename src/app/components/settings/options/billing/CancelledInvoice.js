@@ -40,6 +40,11 @@ class CancelledInvoice extends React.Component {
             type: SINGLE_CHECKBOX_FIELD,
             follow:<b>Hide Cancelled Invoice</b>,
             initialValue: this.state.practiceDetail ? this.state.practiceDetail.hide_cancelled_invoice : false,
+        },{
+            key: "hide_cancelled_return",
+            type: SINGLE_CHECKBOX_FIELD,
+            follow:<b>Hide Cancelled Return Invoice</b>,
+            initialValue: this.state.practiceDetail ? this.state.practiceDetail.hide_cancelled_return : false,
         }, {
             key: "hide_cancelled_payment",
             type: SINGLE_CHECKBOX_FIELD,

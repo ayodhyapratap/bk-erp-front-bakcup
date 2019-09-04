@@ -107,6 +107,7 @@ class AddOrEditAgent extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
+            console.log("FormDtate",values)
             if (!err) {
                 that.setState({
                     saving: true
@@ -117,12 +118,14 @@ class AddOrEditAgent extends React.Component {
                     referal: values.referal,
                     role: values.role,
                     is_agent: true,
-                    aadhar_upload: values.aadhar_upload && values.aadhar_upload.file && values.aadhar_upload.file.response ? values.aadhar_upload.file.response.image_path : null,
+                    aadhar_upload: values.aadhar_upload && values.aadhar_upload.file && values.aadhar_upload.file.response ? values.aadhar_upload.file.response.image_path : values.aadhar_upload,
                     is_approved: true,
                     practice: this.props.active_practiceId
                 };
                 if (this.props.editAgentData) {
                     delete reqData.referal;
+
+
                 }
                 if (!this.state.userDetails) {
                     reqData.user.first_name = values.first_name;
@@ -185,6 +188,8 @@ class AddOrEditAgent extends React.Component {
 
 
     render() {
+        console.log("state",this.state);
+        console.log("props",this.props);
         const that = this;
         const formItemLayout = (this.props.formLayout ? this.props.formLayout : {
             labelCol: {span: 6},
@@ -243,6 +248,7 @@ class AddOrEditAgent extends React.Component {
                                 })(
                                     <AutoComplete placeholder="Agent Name"
                                                   showSearch
+                                                  disabled={that.props.editAgentData?true:false}
                                                   onSearch={this.searchPatient}
                                                   defaultActiveFirstOption={false}
                                                   showArrow={false}
@@ -268,7 +274,7 @@ class AddOrEditAgent extends React.Component {
                                     initialValue: that.props.editAgentData ? that.props.editAgentData.user.mobile : null,
                                     rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                 })(
-                                    <Input placeholder="Mobile Number"/>
+                                    <Input placeholder="Mobile Number" disabled={that.props.editAgentData?true:false}/>
                                 )}
                             </FormItem>
                             <FormItem key="email" label="Email Address"  {...formItemLayout}>
@@ -277,7 +283,7 @@ class AddOrEditAgent extends React.Component {
                                     rules: [{type: 'email', message: 'The input is not valid E-mail!'},
                                         {required: true, message: REQUIRED_FIELD_MESSAGE}],
                                 })(
-                                    <Input placeholder="Email Address"/>
+                                    <Input placeholder="Email Address" disabled={that.props.editAgentData?true:false}/>
                                 )}
                             </FormItem>
                             {this.state.editAgentData ? null :
@@ -286,7 +292,7 @@ class AddOrEditAgent extends React.Component {
                                         initialValue: that.props.editAgentData ? that.props.editAgentData.user.referer : null,
 
                                     })(
-                                        <Input placeholder="Referer Code"/>
+                                        <Input placeholder="Referer Code" disabled={that.props.editAgentData?true:false}/>
                                     )}
                                 </FormItem>}
 
@@ -303,7 +309,7 @@ class AddOrEditAgent extends React.Component {
                         )}
                     </FormItem>
                     <FormItem label={"Document Upload"} {...formItemLayout}>
-                        {getFieldDecorator("aadhar_upload", {
+                        {getFieldDecorator("aadhar_upload",{initialValue: that.props.editAgentData && that.props.editAgentData.aadhar_upload ? that.props.editAgentData.aadhar_upload : null,
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                             valuePropName: "aadhar_upload",
 

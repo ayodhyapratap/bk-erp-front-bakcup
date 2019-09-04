@@ -100,6 +100,7 @@ class MLMGenerate extends React.Component {
         e.preventDefault();
         let that = this;
         this.props.form.validateFieldsAndScroll((err, values) => {
+            console.log("form" ,values);
             let reqData = {};
             // that.state.productLevels.forEach(function (level) {
             //     reqData[level.name] = {...values[level.name]}
