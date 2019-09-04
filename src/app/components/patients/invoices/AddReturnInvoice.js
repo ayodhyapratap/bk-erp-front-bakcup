@@ -342,7 +342,6 @@ class AddReturnInvoice extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-
             if (!err) {
                 that.setState({
                     saveLoading: true
@@ -360,6 +359,7 @@ class AddReturnInvoice extends React.Component {
                     prescription: that.state.selectedPrescriptions,
                     date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
                     return_with_tax:this.state.return_with_tax?true:'',
+                    cash_return:values.cash_return,
 
                 };
                 that.state.tableFormValues.forEach(function (item) {
@@ -560,6 +560,7 @@ class AddReturnInvoice extends React.Component {
                 xl: {span: 24},
             },
         };
+
         const formItemLayoutWithOutLabel = {
             labelCol: {
                 xs: {span: 24},
@@ -737,7 +738,7 @@ class AddReturnInvoice extends React.Component {
                     bodyStyle={{padding: 0}}>
                     <Row gutter={16}>
                         <Col span={24}>
-                            <Form onSubmit={this.handleSubmit}>
+                            <Form onSubmit={this.handleSubmit} layout="inline">
                                 <Table pagination={false}
                                        bordered={true}
                                        dataSource={this.state.tableFormValues}
@@ -745,7 +746,7 @@ class AddReturnInvoice extends React.Component {
                                 <Affix offsetBottom={0}>
                                     <Card>
                                         <Row gutter={16}>
-                                            <Col span={12}>
+                                            <Col span={4}>
                                                 <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
                                                 <DatePicker value={this.state.selectedDate}
                                                     disabled
@@ -758,7 +759,16 @@ class AddReturnInvoice extends React.Component {
                                                     Return With Tax
                                                 </Checkbox>
                                             </Col>
-                                            <Col span={12}>
+                                            <Col span={10}>
+                                                <Form.Item  label={"Returned Cash "}>
+                                                    {getFieldDecorator('cash_return',
+                                                    )
+                                                    (<InputNumber min={0} placeholder={"Cash Returned"}/>)
+                                                    }
+
+                                                </Form.Item>
+                                            </Col>
+                                            <Col span={10}>
                                                 <Form.Item {...formItemLayoutWithOutLabel}
                                                         style={{marginBottom: 0, float: 'right'}}>
                                                     <Button type="primary" htmlType="submit"
