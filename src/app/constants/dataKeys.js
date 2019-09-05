@@ -78,3 +78,19 @@ export const DAILY_APPOINTMENT_COUNT='dailyappointmentcount';
 export const APPOINTMENT_FOR_EACH_DOCTOR='appointmentforeachdoctor';
 export const MONTHLY_APPOINTMENT_COUNT='monthlyappointmentcount';
 export const APPOINTMENT_FOR_EACH_PATIENT_GROUP='appointmentforeachpatientgroup';
+
+
+/*Amount Due Reports*/
+export const TOTAL_AMOUNT_DUE='all';
+export const AGEING_AMOUNT_DUE='a';
+export const AMOUNT_DUE_PER_DOCTOR='b';
+export const AMOUNT_DUE_PER_PROCEDURE='c';
+export const UNSETTLED_INVOICE='d';
+
+
+/*EMR Reports*/
+export const ALL_TREATMENTS='all';
+export const DAILY_TREATMENT_COUNT='a';
+export const TREATMENTS_FOR_EACH_DOCTOR='b';
+export const MONTHLY_TREATMENT_COUNT='c';
+export const TREATMENT_FOR_EACH_CATEGORY='d';
