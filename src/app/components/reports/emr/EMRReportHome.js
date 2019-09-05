@@ -4,19 +4,51 @@ import {TREATMENT_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
+import {EMR_RELATED_REPORT} from "../../../constants/hardData";
+import TreatmentForEachDoctor from "./TreatmentForEachDoctor";
+import {
+    ALL_TREATMENTS,
+    DAILY_TREATMENT_COUNT,
+    MONTHLY_TREATMENT_COUNT, TREATMENT_FOR_EACH_CATEGORY,
+    TREATMENTS_FOR_EACH_DOCTOR
+} from "../../../constants/dataKeys";
+import DailyTreatmentsCount from "./DailyTreatmentsCount";
+import AllTreatmentPerformed from "./AllTreatmentPerformed";
+import MonthlyTreatmentCount from "./MonthlyTreatmentCount";
+import TreatmentForEachCategory from "./TreatmentForEachCategory";
 
-export default class EMRReports extends React.Component {
+export default class EMRReportHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            report: [],
-            loading:true
+            startDate: this.props.startDate,
+            endDate: this.props.endDate,
+            type:'all',
+            loading:true,
         }
-        this.report = this.report.bind(this);
-        this.report();
+        this.loadAllTreatment = this.loadAllTreatment.bind(this);
+    }
+    componentDidMount() {
+        if (this.state.type==ALL_TREATMENTS){
+            this.loadAllTreatment();
+        }
+
     }
 
-    report() {
+    componentWillReceiveProps(newProps) {
+        let that = this;
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
+            this.setState({
+                startDate: newProps.startDate,
+                endDate: newProps.endDate
+            }, function () {
+                if (this.state.type==ALL_TREATMENTS){
+                    this.loadAllTreatment();
+                }
+            })
+    }
+
+    loadAllTreatment() {
         let that = this;
         let successFn = function (data) {
             console.log(data);
@@ -32,46 +64,14 @@ export default class EMRReports extends React.Component {
         };
         getAPI(interpolate(TREATMENT_REPORTS, [this.props.active_practiceId, "start=" + this.props.startDate + "&end=" + this.props.endDate]), successFn, errorFn);
     }
-
+    onChangeHandle =(type,value)=>{
+        let that=this;
+        this.setState({
+            [type]:value.target.value,
+        })
+    }
 
     render() {
-        const columns = [{
-            title: 'Date',
-            key: 'date',
-            render: (text, record) => (
-                <span>
-                {moment(record.created_at).format('LL')}
-                  </span>
-            ),
-        }, {
-            title: 'Scheduled At	',
-            key: 'time',
-            render: (text, record) => (
-                <span>
-                  {moment(record.created_at).format('HH:mm')}
-
-                  </span>
-            ),
-        }, {
-            title: '	Performed on',
-            dataIndex: 'age',
-            key: 'age',
-        }, {
-            title: 'Name',
-            dataIndex: 'age',
-            key: 'age',
-        }, {
-            title: 'Performed by',
-            dataIndex: 'age',
-            key: 'age',
-        },];
-
-
-        const relatedReport = [
-            {name: 'Daily Treatments Count', value: 'b'},
-            {name: 'Treatments For Each Doctor', value: 'c'},
-            {name: 'Monthly Treatments Count', value: 'd'},
-            {name: 'Treatments For Each Category', value: 'e'},];
 
         return <div>
             <h2>Expenses Report
@@ -83,18 +83,22 @@ export default class EMRReports extends React.Component {
             <Card >
                 <Row gutter={16}>
                     <Col span={16}>
-                        <CustomizedTable loading={this.state.loading} columns={columns} size={'small'} dataSource={this.state.report}/>
+                        {this.state.type==ALL_TREATMENTS?<AllTreatmentPerformed/>:null}
+                        {this.state.type==DAILY_TREATMENT_COUNT ?<DailyTreatmentsCount/>:null}
+                        {this.state.type==TREATMENTS_FOR_EACH_DOCTOR?<TreatmentForEachDoctor/>:null}
+                        {this.state.type==MONTHLY_TREATMENT_COUNT?<MonthlyTreatmentCount/>:null}
+                        {this.state.type==TREATMENT_FOR_EACH_CATEGORY?<TreatmentForEachCategory/>:null}
                     </Col>
                     <Col span={8}>
-                        <Radio.Group buttonStyle="solid" defaultValue="all">
+                        <Radio.Group buttonStyle="solid" defaultValue={ALL_TREATMENTS} onChange={(value)=>this.onChangeHandle('type',value)}>
                             <h2>Appointments</h2>
                             <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value="all">
+                                          value={ALL_TREATMENTS}>
                                 All Treatments Performed
                             </Radio.Button>
                             <p><br/></p>
                             <h2>Related Reports</h2>
-                            {relatedReport.map((item) => <Radio.Button
+                            {EMR_RELATED_REPORT.map((item) => <Radio.Button
                                 style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
                                 value={item.value}>
                                 {item.name}

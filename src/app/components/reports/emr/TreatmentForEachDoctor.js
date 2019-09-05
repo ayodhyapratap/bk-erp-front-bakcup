@@ -1,7 +1,7 @@
 import React from "react";
 
 
-export default class MonthlyTreatmentCount extends React.Component {
+export default class TreatmentForEachDoctor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -14,7 +14,7 @@ export default class MonthlyTreatmentCount extends React.Component {
 
     render(){
         return <div>
-            <h2>Monthly Treatment Count</h2>
+            <h2>Treatment For Each Doctor</h2>
         </div>
     }
 }
