@@ -78,13 +78,13 @@ export default class DailyNewPatientReports extends React.Component {
             key:'count',
             dataIndex:'count',
         }];
-        const CustomizedAxisTick = ()=>({
+        const CustomizedAxisTick = (x,y,value)=>({
             render () {
-                const {x, y, stroke, payload} = this.props;
+                // const {x, y, stroke, payload} = this.props;
 
                 return (
                     <g transform={`translate(${x},${y})`}>
-                        <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">{payload.day}-{moment(payload.month).format('MMM')}</text>
+                        <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">{value}</text>
                     </g>
                 );
             }
@@ -95,7 +95,9 @@ export default class DailyNewPatientReports extends React.Component {
             <LineChart width={1000} height={300} data={this.state.report}
                        margin={{top: 5, right: 30, left: 20, bottom: 55}}>
 
-                <XAxis dataKey="date" tick={<CustomizedAxisTick/>}
+                <XAxis dataKey="date" tickFormatter={(value) => {
+                    return moment(value).format('DD MMM')
+                }}
                        label= {{value:"Data Range", offset:0, margin:{top:10}, position:"insideBottom"}} />
                 {/*</XAxis>*/}
 

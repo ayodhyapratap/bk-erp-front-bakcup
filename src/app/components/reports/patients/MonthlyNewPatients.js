@@ -53,8 +53,8 @@ export default class MonthlyNewPatients extends React.Component {
 
         }
         if(this.state.startDate){
-            apiParams.start=this.state.startDate.format('YYYY-MM-DD');
-            apiParams.end= this.state.endDate.format('YYYY-MM-DD');
+            apiParams.from_date=this.state.startDate.format('YYYY-MM-DD');
+            apiParams.to_date= this.state.endDate.format('YYYY-MM-DD');
         }
         if(this.props.type){
             apiParams.type=this.props.type;
@@ -78,13 +78,13 @@ export default class MonthlyNewPatients extends React.Component {
             key:'count',
             dataIndex:'count'
         }];
-        const CustomizedAxisTick = ()=>({
+        const CustomizedAxisTick = (x, y, value)=>({
             render () {
-                const {x, y, stroke, payload} = this.props;
+                // const {x, y, stroke, payload} = this.props;
 
                 return (
                     <g transform={`translate(${x},${y})`}>
-                        <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">{payload.day}-{moment(payload.month).format('MMM')}</text>
+                        <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">{moment(value).format('MMM')}</text>
                     </g>
                 );
             }
@@ -98,7 +98,9 @@ export default class MonthlyNewPatients extends React.Component {
                            margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
 
-                <XAxis dataKey="date" tick={<CustomizedAxisTick/>} />
+                <XAxis dataKey="date" tickFormatter={(value) => {
+                    return moment(value).format('MMM YYYY')
+                }} />
                 <YAxis />
                 <Tooltip />
                 {/*<Legend />*/}
