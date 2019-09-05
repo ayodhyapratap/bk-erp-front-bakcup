@@ -3,6 +3,7 @@ import {hideMobile} from "../../../utils/permissionUtils";
 import {getAPI, interpolate} from "../../../utils/common";
 import {PATIENTS_REPORTS} from "../../../constants/api";
 import {Table} from "antd";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class NewPatientReports extends React.Component {
     constructor(props) {
@@ -32,15 +33,26 @@ export default class NewPatientReports extends React.Component {
                 }
             })
     }
-    loadNewPatient() {
+    loadNewPatient(page=1) {
         let that = this;
 
         let successFn = function (data) {
-            that.setState({
-                report: data.results,
-                total:data.count,
-                loading: false
-            });
+            that.setState(function (prevState) {
+                if (data.current == 1) {
+                    return {
+                        report: [...data.results],
+                        next: data.next,
+                        total:data.count,
+                        loading: false
+                    }
+                }
+                return {
+                    report: [...prevState.report, ...data.results],
+                    next: data.next,
+                    total:data.count,
+                    loading: false
+                }
+            })
         };
         let errorFn = function () {
             that.setState({
@@ -48,6 +60,7 @@ export default class NewPatientReports extends React.Component {
             })
         };
         let apiParams={
+            page: page,
             type:that.props.type?that.props.type:'DETAILED',
         }
         if(this.state.startDate){
@@ -96,7 +109,9 @@ export default class NewPatientReports extends React.Component {
                 pagination={false}
                 dataSource={that.props.report?that.props.report:this.state.report}/>
 
-
+            <InfiniteFeedLoaderButton loaderFunction={() => this.loadNewPatient(that.state.next)}
+                                      loading={this.state.loading}
+                                      hidden={!this.state.next}/>
         </div>
     }
 }
