@@ -1,10 +1,10 @@
 import React from "react";
 import {Layout} from "antd";
 import ReportsHeader from "./ReportsHeader";
-import AmountDueReport from "./amountdue/AmountDueReport";
+import AmountDueReportHome from "./amountdue/AmountDueReportHome";
 import {Route, Switch} from "react-router-dom";
 import AppointmentsReportHome from "./appointments/AppointmentsReportHome";
-import EMRReports from "./emr/EMRReports";
+import EMRReportHome from "./emr/EMRReportHome";
 import ExpensesReport from "./expenses/ExpensesReport";
 import IncomeReport from "./income/IncomeReport";
 import InventoryReport from "./inventory/InventoryReport";
@@ -45,12 +45,12 @@ class ReportsHome extends React.Component {
                 <Switch>
                     <Route exact path="/reports/amountdue"
                            render={(route) => (that.props.activePracticePermissions.ReportsAmountDue || that.props.allowAllPermissions ?
-                                   <AmountDueReport {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                                   <AmountDueReportHome {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
                            )}/>
 
                     <Route exact path="/reports/emr"
                            render={(route) => (that.props.activePracticePermissions.ReportsEMR || that.props.allowAllPermissions ?
-                                   <EMRReports  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                                   <EMRReportHome  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
                            )}/>
                     <Route exact path="/reports/expenses"
                            render={(route) => (that.props.activePracticePermissions.ReportsExpenses || that.props.allowAllPermissions ?
