@@ -56,3 +56,25 @@ export const MAIL_TEMPLATE_FIELD = 'mail_field';
  **/
 export const DOCTORS_ROLE = '3';
 export const CALENDAR_SETTINGS = 'calendar_settings';
+
+/***Reports***/
+
+/*Patient Reports*/
+export const NEW_PATIENTS='DETAILED';
+export const DAILY_NEW_PATIENTS='DAILY';
+export const EXPIRING_MEMBERSHIP='EXPIRED';
+export const PATIENTS_FIRST_APPOINTMENT='patientsfirstappointment';
+export const MONTHLY_NEW_PATIENTS='MONTHLY';
+export const NEW_MEMBERSHIP='NEW';
+
+/*Appointment Reports*/
+export const ALL_APPOINTMENT='all';
+export const APPOINTMENT_FOR_EACH_CATEGORY='appointmentbycategory' ;
+export const CANCELLATION_NUMBERS='cancellationofnumber';
+export const AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE='averagewaitingengagedtimedaywise';
+export const AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE='averagewaitingengagedtimemonthwise';
+export const REASONS_FOR_CANCELLATIONS='reasonsforcancellations';
+export const DAILY_APPOINTMENT_COUNT='dailyappointmentcount';
+export const APPOINTMENT_FOR_EACH_DOCTOR='appointmentforeachdoctor';
+export const MONTHLY_APPOINTMENT_COUNT='monthlyappointmentcount';
+export const APPOINTMENT_FOR_EACH_PATIENT_GROUP='appointmentforeachpatientgroup';

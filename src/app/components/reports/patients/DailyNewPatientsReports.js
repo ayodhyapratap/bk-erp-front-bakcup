@@ -1,8 +1,9 @@
 import React from "react";
+import {Statistic ,Divider,Table} from "antd"
 import {PATIENTS_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import moment from "moment"
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Label,Legend} from 'recharts';
+import moment from "moment";
 
 export default class DailyNewPatientReports extends React.Component {
     constructor(props) {
@@ -14,8 +15,10 @@ export default class DailyNewPatientReports extends React.Component {
             loading: true,
 
         }
-        this.report = this.report.bind(this);
-        this.report();
+        this.loadDailyNewPatients = this.loadDailyNewPatients.bind(this);
+    }
+    componentDidMount() {
+        this.loadDailyNewPatients();
     }
 
     componentWillReceiveProps(newProps) {
@@ -25,11 +28,11 @@ export default class DailyNewPatientReports extends React.Component {
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
             }, function () {
-                that.report();
+                that.loadDailyNewPatients();
             })
     }
 
-    report() {
+    loadDailyNewPatients() {
         let that = this;
         that.setState({
             loading: true
@@ -37,6 +40,7 @@ export default class DailyNewPatientReports extends React.Component {
         let successFn = function (data) {
             that.setState({
                 report: data.data,
+                total:data.total,
                 loading: false
             });
         };
@@ -49,42 +53,64 @@ export default class DailyNewPatientReports extends React.Component {
 
         }
         if(this.state.startDate){
-            apiParams.start=this.state.startDate.format('YYYY-MM-DD');
-            apiParams.end= this.state.endDate.format('YYYY-MM-DD');
+            apiParams.from_date=this.state.startDate.format('YYYY-MM-DD');
+            apiParams.to_date= this.state.endDate.format('YYYY-MM-DD');
         }
-        if(this.props.filterReport){
-            apiParams.filterReport=this.props.filterReport;
+        if(this.props.type){
+            apiParams.type=this.props.type;
         }
         getAPI(interpolate(PATIENTS_REPORTS, [this.props.active_practiceId]), successFn, errorFn,apiParams);
     }
     render() {
         let that=this;
+        let i = 1;
+        const columns = [{
+            title: 'S. No',
+            key: 'sno',
+            render: (item, record) => <span> {i++}</span>,
+            width: 50
+        },{
+            title: 'Date',
+            key: 'date',
+            render:((item, record) => <span>{moment(record.date).format('ll')}</span>)
+        },{
+            title:'Patients',
+            key:'count',
+            dataIndex:'count',
+        }];
+        const CustomizedAxisTick = ()=>({
+            render () {
+                const {x, y, stroke, payload} = this.props;
 
-        const data = [
-            {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
-            {name: 'Page B', uv: 3000, pv: 1398, amt: 2210},
-            {name: 'Page C', uv: 2000, pv: 9800, amt: 2290},
-            {name: 'Page D', uv: 2780, pv: 3908, amt: 2000},
-            {name: 'Page E', uv: 1890, pv: 4800, amt: 2181},
-            {name: 'Page F', uv: 2390, pv: 3800, amt: 2500},
-            {name: 'Page G', uv: 3490, pv: 4300, amt: 2100},
-            {name: 'Page F', uv: 2390, pv: 3800, amt: 2500},
-            {name: 'Page G', uv: 3490, pv: 4300, amt: 2100},
-        ];
+                return (
+                    <g transform={`translate(${x},${y})`}>
+                        <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">{payload.day}-{moment(payload.month).format('MMM')}</text>
+                    </g>
+                );
+            }
+        });
+
         return <div>
             <h2>Daily New Patients Report</h2>
-            <LineChart width={1000} height={300} data={data}
-                       margin={{top: 5, right: 30, left: 20, bottom: 5}}>
-                <XAxis dataKey="name">
-                    <Label value="Data Range" offset={0} margin={{top:10}} position="insideBottom" />
-                </XAxis>
+            <LineChart width={1000} height={300} data={this.state.report}
+                       margin={{top: 5, right: 30, left: 20, bottom: 55}}>
+
+                <XAxis dataKey="date" tick={<CustomizedAxisTick/>}
+                       label= {{value:"Data Range", offset:0, margin:{top:10}, position:"insideBottom"}} />
+                {/*</XAxis>*/}
+
                 <YAxis label={{ value: 'Total Patients', angle: -90, position: 'insideLeft' }} />
 
                 <CartesianGrid strokeDasharray="3 3"/>
                 <Tooltip/>
-                <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeWidth={4}/>
+                <Line type="monotone" dataKey="count" stroke="#8884d8" strokeWidth={4}/>
             </LineChart>
 
+            <Divider><Statistic title="Total Patients" value={this.state.total} /></Divider>
+            <Table
+                loading={this.state.loading}
+                columns={columns}
+                dataSource={this.state.report}/>
         </div>
     }
 }

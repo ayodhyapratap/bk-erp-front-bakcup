@@ -1,9 +1,8 @@
 import React from "react";
-import {PATIENTS_REPORTS} from "../../../constants/api";
+import {FIRST_APPOINTMENT_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import moment from "moment"
-import CustomizedTable from "../../common/CustomizedTable";
-import {hideMobile} from "../../../utils/permissionUtils";
+import moment from "moment";
+import {Table} from "antd";
 
 export default class PatientsFirstAppointment extends React.Component {
     constructor(props) {
@@ -15,7 +14,11 @@ export default class PatientsFirstAppointment extends React.Component {
             loading: true,
 
         }
-        this.report = this.report.bind(this);
+        this.loadFirstAppointment = this.loadFirstAppointment.bind(this);
+    }
+
+    componentDidMount() {
+        this.loadFirstAppointment();
     }
 
     componentWillReceiveProps(newProps) {
@@ -25,19 +28,18 @@ export default class PatientsFirstAppointment extends React.Component {
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
             }, function () {
-                that.report();
+                that.loadFirstAppointment();
             })
     }
 
-    report() {
+    loadFirstAppointment() {
         let that = this;
         that.setState({
             loading: true
         })
         let successFn = function (data) {
             that.setState({
-                report: data.data,
-                total:data.total,
+                report: data,
                 loading: false
             });
         };
@@ -50,50 +52,44 @@ export default class PatientsFirstAppointment extends React.Component {
 
         }
         if(this.state.startDate){
-            apiParams.start=this.state.startDate.format('YYYY-MM-DD');
-            apiParams.end= this.state.endDate.format('YYYY-MM-DD');
+            apiParams.from_date=this.state.startDate.format('YYYY-MM-DD');
+            apiParams.to_date= this.state.endDate.format('YYYY-MM-DD');
         }
-        if(this.props.filterReport){
-            apiParams.filterReport=this.props.filterReport;
-        }
-        getAPI(interpolate(PATIENTS_REPORTS, [this.props.active_practiceId]), successFn, errorFn,apiParams);
+
+        getAPI(interpolate(FIRST_APPOINTMENT_REPORTS, [this.props.active_practiceId]), successFn, errorFn,apiParams);
     }
     render() {
         let that=this;
+        let i = 1;
         const columns = [{
+            title: 'S. No',
+            key: 'sno',
+            render: (item, record) => <span> {i++}</span>,
+            width: 50
+        },{
             title: 'Date',
-            key: 'date',
+            key: 'appointment_time',
             render: (text, record) => (
                 <span>
-                {moment(record.created_at).format('LL')}
+                {moment(record.appointment_time).format('LL')}
                   </span>
             ),
         }, {
-            title: 'Scheduled At',
-            key: 'time',
-            render: (text, record) => (
-                <span>
-                  {moment(record.created_at).format('HH:mm')}
-                  </span>
-            ),
-        }, {
-            title: 'Name',
-            dataIndex: 'patient.user.first_name',
-            key: 'patient.user.first_name',
-        }, {
-            title: 'Patient Number',
-            dataIndex: 'patient.user.mobile',
-            key: 'patient.user.mobile',
-            render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value)
-        },];
+            title: 'Patient Name',
+            dataIndex: 'patient_name',
+            key: 'patient_name',
+        },{
+            title:'Patient Number',
+            key:'id',
+            dataIndex:'patient_id'
+        }];
 
         return <div>
             <h2>Patients First AppointmentReport (Total:{this.state.total})</h2>
-            <CustomizedTable
+            <Table
                 loading={this.state.loading}
                 columns={columns}
-                size={'small'}
-                pagination={true}
+                pagination={false}
                 dataSource={this.state.report}/>
 
 

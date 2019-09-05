@@ -111,10 +111,16 @@ export const CITY ='patients/city/';
 /**
  * Reports API
  * */
+
+/** *Patient Reports* **/
+export const PATIENTS_REPORTS='patients/new_patients';
+export const MEMBERSHIP_REPORTS='patients/membership_report';
+export const FIRST_APPOINTMENT_REPORTS='patients/first_appointment';
+
 export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/'
 export const EXPENSE_REPORT = 'clinics/%s/expense_report/'
 export const INVOICE_REPORTS = 'clinics/%s/invoice_report/'
-export const PATIENTS_REPORTS = 'clinics/%s/patients_report/'
+// export const PATIENTS_REPORTS = 'clinics/%s/patients_report/'
 export const PAYMENTS_REPORTS = 'clinics/%s/payments_report/'
 export const TREATMENT_REPORTS = 'clinics/%s/treatment_report/'
 export const DRUG_TYPE_API = 'clinics/%s/drugtype/';

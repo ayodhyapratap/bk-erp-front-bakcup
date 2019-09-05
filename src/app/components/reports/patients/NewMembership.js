@@ -1,8 +1,7 @@
 import React from "react";
-import {PATIENTS_REPORTS} from "../../../constants/api";
+import {Table} from "antd";
+import {MEMBERSHIP_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import moment from "moment"
-import CustomizedTable from "../../common/CustomizedTable";
 import {hideMobile} from "../../../utils/permissionUtils";
 
 export default class NewMembership extends React.Component {
@@ -15,7 +14,10 @@ export default class NewMembership extends React.Component {
             loading: true,
 
         }
-        this.report = this.report.bind(this);
+        this.loadNewMembership = this.loadNewMembership.bind(this);
+    }
+    componentDidMount() {
+        this.loadNewMembership();
     }
 
     componentWillReceiveProps(newProps) {
@@ -25,19 +27,18 @@ export default class NewMembership extends React.Component {
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
             }, function () {
-                that.report();
+                that.loadNewMembership();
             })
     }
 
-    report() {
+    loadNewMembership() {
         let that = this;
         that.setState({
             loading: true
         })
         let successFn = function (data) {
             that.setState({
-                report: data.data,
-                total:data.total,
+                report: data,
                 loading: false
             });
         };
@@ -50,50 +51,60 @@ export default class NewMembership extends React.Component {
 
         }
         if(this.state.startDate){
-            apiParams.start=this.state.startDate.format('YYYY-MM-DD');
-            apiParams.end= this.state.endDate.format('YYYY-MM-DD');
+            apiParams.from_date=this.state.startDate.format('YYYY-MM-DD');
+            apiParams.to_date= this.state.endDate.format('YYYY-MM-DD');
         }
-        if(this.props.filterReport){
-            apiParams.filterReport=this.props.filterReport;
+        if(this.props.type){
+            apiParams.type=this.props.type;
         }
-        getAPI(interpolate(PATIENTS_REPORTS, [this.props.active_practiceId]), successFn, errorFn,apiParams);
+        getAPI(interpolate(MEMBERSHIP_REPORTS, [this.props.active_practiceId]), successFn, errorFn,apiParams);
     }
     render() {
         let that=this;
+        let i = 1;
         const columns = [{
-            title: 'Date',
-            key: 'date',
-            render: (text, record) => (
-                <span>
-                {moment(record.created_at).format('LL')}
-                  </span>
-            ),
-        }, {
-            title: 'Scheduled At',
-            key: 'time',
-            render: (text, record) => (
-                <span>
-                  {moment(record.created_at).format('HH:mm')}
-                  </span>
-            ),
-        }, {
+            title: 'S. No',
+            key: 'sno',
+            render: (item, record) => <span> {i++}</span>,
+            width: 50
+        },{
             title: 'Name',
             dataIndex: 'patient.user.first_name',
             key: 'patient.user.first_name',
         }, {
-            title: 'Patient Number',
+            title: 'Mobile Number',
             dataIndex: 'patient.user.mobile',
             key: 'patient.user.mobile',
             render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value)
-        },];
+        },{
+            title: 'Email',
+            dataIndex: 'patient.user.email',
+            key: 'patient.user.email',
+        },{
+            title:'Membership Type',
+            key:'membership_type',
+            dataIndex:'medical_membership.name'
+        },{
+            title:'Start Date',
+            key:'start_date',
+            dataIndex:'medical_from'
+
+        },{
+            title:'Valid Till',
+            key:'valid_till',
+            dataIndex:'medical_to'
+        },{
+            title:'Balance',
+            key:'balance',
+            dataIndex:''
+        }];
 
         return <div>
-            <h2>New Membership (Total:{this.state.total})</h2>
-            <CustomizedTable
+            <h2>New Membership </h2>
+            <Table
                 loading={this.state.loading}
                 columns={columns}
-                size={'small'}
-                pagination={true}
+                pagination={false}
                 dataSource={this.state.report}/>
 
 

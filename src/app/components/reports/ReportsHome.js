@@ -3,7 +3,7 @@ import {Layout} from "antd";
 import ReportsHeader from "./ReportsHeader";
 import AmountDueReport from "./amountdue/AmountDueReport";
 import {Route, Switch} from "react-router-dom";
-import AppointmentsReport from "./appointments/AppointmentsReport";
+import AppointmentsReportHome from "./appointments/AppointmentsReportHome";
 import EMRReports from "./emr/EMRReports";
 import ExpensesReport from "./expenses/ExpensesReport";
 import IncomeReport from "./income/IncomeReport";
@@ -90,7 +90,7 @@ class ReportsHome extends React.Component {
                            )}/>
                     <Route
                         render={(route) => (that.props.activePracticePermissions.ReportsAppointments || that.props.allowAllPermissions ?
-                                <AppointmentsReport  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                                <AppointmentsReportHome  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
                         )}/>
                 </Switch>
             </Content>

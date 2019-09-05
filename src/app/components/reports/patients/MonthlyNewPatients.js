@@ -1,9 +1,9 @@
 import React from "react";
+import {Divider, Statistic, Table} from "antd";
 import {PATIENTS_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import moment from "moment"
-import CustomizedTable from "../../common/CustomizedTable";
-import {hideMobile} from "../../../utils/permissionUtils";
+import moment, {relativeTimeThreshold} from "moment"
+import {ComposedChart, Line, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend}  from 'recharts';
 
 export default class MonthlyNewPatients extends React.Component {
     constructor(props) {
@@ -15,7 +15,10 @@ export default class MonthlyNewPatients extends React.Component {
             loading: true,
 
         }
-        this.report = this.report.bind(this);
+        this.loadMonthlyPatients = this.loadMonthlyPatients.bind(this);
+    }
+    componentDidMount() {
+        this.loadMonthlyPatients();
     }
 
     componentWillReceiveProps(newProps) {
@@ -25,18 +28,18 @@ export default class MonthlyNewPatients extends React.Component {
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
             }, function () {
-                that.report();
+                that.loadMonthlyPatients();
             })
     }
 
-    report() {
+    loadMonthlyPatients() {
         let that = this;
         that.setState({
             loading: true
         })
         let successFn = function (data) {
             that.setState({
-                report: data.data,
+                report:data.data,
                 total:data.total,
                 loading: false
             });
@@ -53,47 +56,60 @@ export default class MonthlyNewPatients extends React.Component {
             apiParams.start=this.state.startDate.format('YYYY-MM-DD');
             apiParams.end= this.state.endDate.format('YYYY-MM-DD');
         }
-        if(this.props.filterReport){
-            apiParams.filterReport=this.props.filterReport;
+        if(this.props.type){
+            apiParams.type=this.props.type;
         }
         getAPI(interpolate(PATIENTS_REPORTS, [this.props.active_practiceId]), successFn, errorFn,apiParams);
     }
     render() {
         let that=this;
+        let i = 1;
         const columns = [{
-            title: 'Date',
-            key: 'date',
-            render: (text, record) => (
-                <span>
-                {moment(record.created_at).format('LL')}
-                  </span>
-            ),
-        }, {
-            title: 'Scheduled At',
-            key: 'time',
-            render: (text, record) => (
-                <span>
-                  {moment(record.created_at).format('HH:mm')}
-                  </span>
-            ),
-        }, {
-            title: 'Name',
-            dataIndex: 'patient.user.first_name',
-            key: 'patient.user.first_name',
-        }, {
-            title: 'Patient Number',
-            dataIndex: 'patient.user.mobile',
-            key: 'patient.user.mobile',
-            render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value)
-        },];
+            title: 'S. No',
+            key: 'sno',
+            render: (item, record) => <span> {i++}</span>,
+            width: 50
+        },{
+            title: "Month",
+            key:'month',
+            render:((item, record) => <span>{moment(record.month).format('MMM')} &nbsp;{moment(record.year).format('YYYY')}</span>)
+        },{
+            title:'Patients',
+            key:'count',
+            dataIndex:'count'
+        }];
+        const CustomizedAxisTick = ()=>({
+            render () {
+                const {x, y, stroke, payload} = this.props;
 
+                return (
+                    <g transform={`translate(${x},${y})`}>
+                        <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">{payload.day}-{moment(payload.month).format('MMM')}</text>
+                    </g>
+                );
+            }
+        });
+        const renderCustomBarLabel = ({ payload, x, y, width, height, value }) => {
+            return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value}</text>;
+        };
         return <div>
             <h2>Monthly New Patients Report (Total:{this.state.total})</h2>
-            <CustomizedTable
+            <ComposedChart width={1000} height={400} data={this.state.report}
+                           margin={{top: 20, right: 20, bottom: 20, left: 20}}>
+
+
+                <XAxis dataKey="date" tick={<CustomizedAxisTick/>} />
+                <YAxis />
+                <Tooltip />
+                {/*<Legend />*/}
+                <Bar dataKey='count' barSize={20} fill='#413ea0' label={renderCustomBarLabel}/>
+            </ComposedChart>
+
+            <Divider><Statistic title="Total Patients" value={this.state.total} /></Divider>
+            <Table
                 loading={this.state.loading}
                 columns={columns}
-                size={'small'}
-                pagination={true}
+                pagination={false}
                 dataSource={this.state.report}/>
 
 

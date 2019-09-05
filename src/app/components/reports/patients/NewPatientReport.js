@@ -1,23 +1,25 @@
 import React from "react";
-import {PATIENTS_REPORTS} from "../../../constants/api";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import moment from "moment"
-import CustomizedTable from "../../common/CustomizedTable";
 import {hideMobile} from "../../../utils/permissionUtils";
+import {getAPI, interpolate} from "../../../utils/common";
+import {PATIENTS_REPORTS} from "../../../constants/api";
+import {Table} from "antd";
 
 export default class NewPatientReports extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            report:[],
 
         }
-        this.report = this.report.bind(this);
+        this.loadNewPatient = this.loadNewPatient.bind(this);
     }
-
+    componentDidMount() {
+        if (this.props.type=='DETAILED'){
+            this.loadNewPatient();
+        }
+    }
     componentWillReceiveProps(newProps) {
         let that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
@@ -25,19 +27,18 @@ export default class NewPatientReports extends React.Component {
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
             }, function () {
-                that.report();
+                if (that.props.type=='DETAILED'){
+                    this.loadNewPatient();
+                }
             })
     }
-
-    report() {
+    loadNewPatient() {
         let that = this;
-        that.setState({
-            loading: true
-        })
+
         let successFn = function (data) {
             that.setState({
-                report: data.data,
-                total:data.total,
+                report: data.results,
+                total:data.count,
                 loading: false
             });
         };
@@ -47,54 +48,53 @@ export default class NewPatientReports extends React.Component {
             })
         };
         let apiParams={
-
+            type:that.props.type?that.props.type:'DETAILED',
         }
         if(this.state.startDate){
-            apiParams.start=this.state.startDate.format('YYYY-MM-DD');
-            apiParams.end= this.state.endDate.format('YYYY-MM-DD');
+            apiParams.from_date=this.state.startDate.format('YYYY-MM-DD');
+            apiParams.to_date= this.state.endDate.format('YYYY-MM-DD');
         }
-        if(this.props.filterReport){
-            apiParams.filterReport=this.props.filterReport;
-        }
+
         getAPI(interpolate(PATIENTS_REPORTS, [this.props.active_practiceId]), successFn, errorFn,apiParams);
     }
     render() {
         let that=this;
+        let i = 1;
         const columns = [{
-            title: 'Date',
-            key: 'date',
-            render: (text, record) => (
-                <span>
-                {moment(record.created_at).format('LL')}
-                  </span>
-            ),
-        }, {
-            title: 'Scheduled At',
-            key: 'time',
-            render: (text, record) => (
-                <span>
-                  {moment(record.created_at).format('HH:mm')}
-                  </span>
-            ),
-        }, {
-            title: 'Name',
-            dataIndex: 'patient.user.first_name',
-            key: 'patient.user.first_name',
+            title: 'S. No',
+            key: 'sno',
+            render: (item, record) => <span> {i++}</span>,
+            width: 50
+        },{
+            title: 'Patient Name',
+            dataIndex: 'user.first_name',
+            key: 'first_name',
+        },{
+            title:'Patient Number',
+            dataIndex:'id',
+            key:'id'
         }, {
             title: 'Patient Number',
-            dataIndex: 'patient.user.mobile',
-            key: 'patient.user.mobile',
+            dataIndex: 'user.mobile',
+            key: 'mobile',
             render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value)
-        },];
+        },{
+            title:'Email',
+            key:'email',
+            dataIndex:'user.email',
+        }, {
+            title: 'Gender',
+            key: 'gender',
+            dataIndex: 'gender',
+        }];
 
         return <div>
-            <h2>New Patients Report (Total:{this.state.total})</h2>
-            <CustomizedTable
-                loading={this.state.loading}
+            <h2>New Patients Report (Total:{that.props.total?that.props.total:this.state.total})</h2>
+            <Table
+                loading={that.props.loading?that.props.loading:this.state.loading}
                 columns={columns}
-                size={'small'}
-                pagination={true}
-                dataSource={this.state.report}/>
+                pagination={false}
+                dataSource={that.props.report?that.props.report:this.state.report}/>
 
 
         </div>

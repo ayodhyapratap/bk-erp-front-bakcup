@@ -1,3 +1,8 @@
+import {APPOINTMENT_FOR_EACH_CATEGORY ,CANCELLATION_NUMBERS,AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE,AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE,
+    REASONS_FOR_CANCELLATIONS,DAILY_APPOINTMENT_COUNT,APPOINTMENT_FOR_EACH_DOCTOR, MONTHLY_APPOINTMENT_COUNT,APPOINTMENT_FOR_EACH_PATIENT_GROUP,
+    NEW_PATIENTS,DAILY_NEW_PATIENTS,PATIENTS_FIRST_APPOINTMENT,MONTHLY_NEW_PATIENTS,NEW_MEMBERSHIP,EXPIRING_MEMBERSHIP} from "../constants/dataKeys";
+
+
 export const PAYMENT_TYPES = [
     {label: 'cash', value: 'cash'},
     {label: 'cheque', value: 'cheque'},
@@ -222,3 +227,23 @@ export const ROLES = [
     {label:"ADMIN" ,value:'1'},
     {label:"CLINIC_ADMIN" ,value:'2'}
 ];
+/*Patient Reports*/
+export const PATIENTS_RELATED_REPORT= [
+    {name: 'Daily New Patients', value: DAILY_NEW_PATIENTS},
+    {name: 'Expiring Membership', value: EXPIRING_MEMBERSHIP},
+    {name: 'Patients First Appointment', value: PATIENTS_FIRST_APPOINTMENT},
+    {name: 'Monthly New Patients', value: MONTHLY_NEW_PATIENTS},
+    {name: 'New Membership', value: NEW_MEMBERSHIP},
+];
+
+/*Appointment Reports*/
+export const APPOINTMENT_RELATED_REPORT = [
+    {name: 'Appointments For Each Category', value: APPOINTMENT_FOR_EACH_CATEGORY},
+    {name: 'Cancellation Numbers', value: CANCELLATION_NUMBERS},
+    {name: 'Average Waiting/engaged Time Day Wise', value: AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE},
+    {name: 'Average Waiting/engaged Time Month Wise', value: AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE},
+    {name: 'Reasons For Cancellations', value: REASONS_FOR_CANCELLATIONS},
+    {name: 'Daily Appointment Count', value: DAILY_APPOINTMENT_COUNT},
+    {name: 'Appointments For Each Doctor', value: APPOINTMENT_FOR_EACH_DOCTOR},
+    {name: 'Monthly Appointment Count', value: MONTHLY_APPOINTMENT_COUNT},
+    {name: 'Appointment For Each Patient Group', value: APPOINTMENT_FOR_EACH_PATIENT_GROUP}];
