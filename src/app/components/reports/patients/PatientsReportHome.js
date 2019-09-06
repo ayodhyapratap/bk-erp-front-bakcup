@@ -34,6 +34,7 @@ export default class PatientsReportHome extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
+
         let that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
             this.setState({

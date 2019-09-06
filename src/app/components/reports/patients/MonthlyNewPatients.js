@@ -104,7 +104,7 @@ export default class MonthlyNewPatients extends React.Component {
                 <YAxis />
                 <Tooltip />
                 {/*<Legend />*/}
-                <Bar dataKey='count' barSize={20} fill='#413ea0' label={renderCustomBarLabel}/>
+                <Bar dataKey='count' barSize={35} fill='#413ea0' label={renderCustomBarLabel}/>
             </ComposedChart>
 
             <Divider><Statistic title="Total Patients" value={this.state.total} /></Divider>

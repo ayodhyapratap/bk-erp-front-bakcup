@@ -46,12 +46,7 @@ export default class NewPatientReports extends React.Component {
                         loading: false
                     }
                 }
-                return {
-                    report: [...prevState.report, ...data.results],
-                    next: data.next,
-                    total:data.count,
-                    loading: false
-                }
+
             })
         };
         let errorFn = function () {
@@ -88,31 +83,44 @@ export default class NewPatientReports extends React.Component {
             key:'id'
         }, {
             title: 'Patient Number',
-            dataIndex: 'user.mobile',
             key: 'mobile',
             render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value)
         },{
             title:'Email',
             key:'email',
-            dataIndex:'user.email',
             render:(value)=>that.props.activePracticePermissions.PatientEmailId ? value : hideEmail(value)
         }, {
             title: 'Gender',
             key: 'gender',
             dataIndex: 'gender',
         }];
-
         return <div>
-            <h2>New Patients Report (Total:{that.props.total?that.props.total:this.state.total})</h2>
-            <Table
-                loading={that.props.loading?that.props.loading:this.state.loading}
-                columns={columns}
-                pagination={false}
-                dataSource={that.props.report?that.props.report:this.state.report}/>
 
-            <InfiniteFeedLoaderButton loaderFunction={() => this.loadNewPatient(that.state.next)}
-                                      loading={this.state.loading}
-                                      hidden={!this.state.next}/>
+            {this.state.report?<>
+                <h2>New Patients Report (Total:{this.state.total})</h2>
+                <Table
+                    loading={this.state.loading}
+                    columns={columns}
+                    pagination={false}
+                    dataSource={this.state.report}/>
+
+                <InfiniteFeedLoaderButton loaderFunction={() => this.loadNewPatient(that.state.next)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.next}/>
+
+            </>:<>
+                <h2>New Patients Report (Total:{that.props.total})</h2>
+                <Table
+                    loading={that.props.loading}
+                    columns={columns}
+                    pagination={false}
+                    dataSource={that.props.report}/>
+
+                <InfiniteFeedLoaderButton loaderFunction={() => that.props.loadNewPatient(that.props.next)}
+                                          loading={that.props.loading}
+                                          hidden={!that.props.next}/>
+                </>}
+
         </div>
     }
 }
