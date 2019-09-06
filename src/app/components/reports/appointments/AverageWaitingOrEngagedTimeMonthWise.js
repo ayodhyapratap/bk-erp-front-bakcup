@@ -1,20 +1,24 @@
 import React from "react";
-import {APPOINTMENT_REPORTS} from "../../../constants/api";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
+import {Table} from "antd";
+import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
+import {getAPI} from "../../../utils/common";
 import moment from "moment"
-import CustomizedTable from "../../common/CustomizedTable";
+
 
 export default class AverageWaitingOrEngagedTimeMonthWise extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            appointmentReports: [],
+            appointmentMonthWait: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: true
         }
-        this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
-        this.loadAppointmentReport();
+        this.loadAppointmentMonthWait = this.loadAppointmentMonthWait.bind(this);
+
+    }
+    componentDidMount() {
+        this.loadAppointmentMonthWait();
     }
 
     componentWillReceiveProps(newProps) {
@@ -24,104 +28,71 @@ export default class AverageWaitingOrEngagedTimeMonthWise extends React.Componen
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
             },function(){
-                that.loadAppointmentReport();
+                that.loadAppointmentMonthWait();
             })
 
     }
 
-    loadAppointmentReport = () => {
+    loadAppointmentMonthWait = () => {
         let that = this;
-        this.setState({
-            loading:true
-        })
         let successFn = function (data) {
-            console.log(data);
             that.setState({
-                appointmentReports: data.data,
+                appointmentMonthWait: data,
                 loading: false
             });
-            console.log(that.state.appointmentReports);
         };
         let errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        getAPI(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId]), successFn, errorFn, {
+        let apiParams={
+            type:that.props.type,
+            practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
-            end: this.state.endDate.format('YYYY-MM-DD')
-        });
-    }
+            end: this.state.endDate.format('YYYY-MM-DD'),
+        };
+
+        getAPI(PATIENT_APPOINTMENTS_REPORTS,  successFn, errorFn, apiParams);
+    };
 
     render() {
-        console.log("startApp",this.props.startDate)
+        let i=1;
         const columns = [{
-            title: 'Date',
+            title: 'S. No',
+            key: 'sno',
+            render: (item, record) => <span> {i++}</span>,
+            width: 50
+        },{
+            title: 'Appointment Time Month',
             key: 'date',
             render: (text, record) => (
                 <span>
-                {moment(record.schedule_at).format('LL')}
+                {moment(record.date).format('DD MMM YYYY')}
                   </span>
             ),
         }, {
-            title: 'Scheduled At	',
-            key: 'time',
+            title: 'Avg. waiting Time(hh:mm:ss)',
+            key: 'wait',
             render: (text, record) => (
                 <span>
-                  {moment(record.schedule_at).format('HH:mm')}
-
-                  </span>
+                  {record.wait?moment(record.wait).format('HH:mm:ss'):''}
+                </span>
             ),
         }, {
-            title: 'Check-in At',
-            dataIndex: 'waiting',
-            key: 'waiting',
+            title: 'Avg. engaged Time(hh:mm:ss)',
+            key: 'engage',
             render: (text, record) => (
                 <span>
-                {record.waiting ? moment(record.waiting).format('lll') : ''}
-                  </span>
+                  {record.engage?moment(record.engage).format('HH:mm:ss'):''}
+                </span>
             ),
         }, {
-            title: 'Waited For (hh:mm:ss)',
-            dataIndex: 'age',
-            key: 'age',
-            render: (age, record) => (<span>
-                {record.engaged ? moment(record.engaged).from(moment(record.waiting))
-                    : ''}
+            title: 'Avg. stay Time (hh:mm:ss)',
+            key: 'stay',
+            render: (stay, record) => (<span>
+                {record.stay ? moment(record.stay).format('hh:mm:ss'): ''}
             </span>)
-        }, {
-            title: 'Engaged At',
-            dataIndex: 'engaged',
-            key: 'engaged',
-            render: (text, record) => (
-                <span>
-                {record.engaged ? moment(record.engaged).format('lll') : ''}
-                  </span>
-            ),
-        }, {
-            title: 'Checkout At',
-            dataIndex: 'checkout',
-            key: 'checkout',
-            render: (text, record) => (
-                <span>
-                {record.checkout ? moment(record.checkout).format('lll') : ''}
-                  </span>
-            ),
-        }, {
-            title: 'Patient',
-            dataIndex: 'patient',
-            key: 'patient_name',
-            render: (item, record) => <span>{item.user.first_name}</span>
-        }, {
-            title: 'Doctor',
-            dataIndex: 'doctor',
-            key: 'address',
-            render: (text, record) => <span>{record.doctor_data ? record.doctor_data.user.first_name : null}</span>
-        }, {
-            title: 'Category',
-            dataIndex: 'category',
-            key: 'address',
-            render: (text, record) => <span>{record.category_data ? record.category_data.name : null}</span>
         }];
 
 
@@ -135,8 +106,8 @@ export default class AverageWaitingOrEngagedTimeMonthWise extends React.Componen
                 {/*<Button><Icon type="printer"/> Print</Button>*/}
                 {/*</Button.Group>*/}
             </h2>
-            <CustomizedTable loading={this.state.loading} columns={columns} size={'small'}
-                             dataSource={this.state.appointmentReports}/>
+            <Table loading={this.state.loading} columns={columns} pagination={false}
+                             dataSource={this.state.appointmentMonthWait}/>
 
         </div>
     }

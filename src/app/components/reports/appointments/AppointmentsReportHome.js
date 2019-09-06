@@ -1,9 +1,20 @@
 import React from "react";
 import {Button, Card, Col, Icon, Radio, Row, Table} from "antd";
 import {APPOINTMENT_REPORTS} from "../../../constants/api";
-import {ALL_APPOINTMENT,APPOINTMENT_FOR_EACH_CATEGORY ,CANCELLATION_NUMBERS,AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE,AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE,
-    REASONS_FOR_CANCELLATIONS,DAILY_APPOINTMENT_COUNT,APPOINTMENT_FOR_EACH_DOCTOR, MONTHLY_APPOINTMENT_COUNT,APPOINTMENT_FOR_EACH_PATIENT_GROUP}
-from "../../../constants/dataKeys";
+import {
+    ALL_APPOINTMENT,
+    APPOINTMENT_FOR_EACH_CATEGORY,
+    CANCELLATION_NUMBERS,
+    AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE,
+    AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE,
+    REASONS_FOR_CANCELLATIONS,
+    DAILY_APPOINTMENT_COUNT,
+    APPOINTMENT_FOR_EACH_DOCTOR,
+    MONTHLY_APPOINTMENT_COUNT,
+    APPOINTMENT_FOR_EACH_PATIENT_GROUP,
+    NEW_PATIENTS
+}
+    from "../../../constants/dataKeys";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {APPOINTMENT_RELATED_REPORT} from "../../../constants/hardData";
 import moment from "moment"
@@ -27,12 +38,17 @@ export default class AppointmentsReportHome extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: true,
-            filterReport:'all',
+            type:'all',
         }
         this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
-        this.loadAppointmentReport();
-    }
 
+    }
+    componentDidMount() {
+        if (this.state.type == ALL_APPOINTMENT){
+            this.loadAppointmentReport();
+        }
+
+    }
     componentWillReceiveProps(newProps) {
         let that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
@@ -40,7 +56,10 @@ export default class AppointmentsReportHome extends React.Component {
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
             },function(){
-                that.loadAppointmentReport();
+                if (this.state.type==ALL_APPOINTMENT){
+                    that.loadAppointmentReport();
+                }
+
             })
 
     }
@@ -54,9 +73,10 @@ export default class AppointmentsReportHome extends React.Component {
             console.log(data);
             that.setState({
                 appointmentReports: data.data,
+                total:data.total,
                 loading: false
             });
-            console.log(that.state.appointmentReports);
+
         };
         let errorFn = function () {
             that.setState({
@@ -73,16 +93,10 @@ export default class AppointmentsReportHome extends React.Component {
         let that=this;
         this.setState({
             [type]:value.target.value,
-        },function () {
-            that.loadAppointmentReport();
-        })
+        });
     }
 
     render() {
-        let that=this;
-
-
-
         return <div>
             <h2>Appointments Report
                 {/*<Button.Group style={{float: 'right'}}>*/}
@@ -93,23 +107,23 @@ export default class AppointmentsReportHome extends React.Component {
             <Card>
                 <Row gutter={16}>
                     <Col span={18}>
-                       {this.state.filterReport == ALL_APPOINTMENT ?< AllAppointments {...this.props} filterReport={this.state.filterReport}/>:null}
-                       {this.state.filterReport == APPOINTMENT_FOR_EACH_CATEGORY?<AppointmentByCategory {...this.props} filterReport={this.state.filterReport}/>:null}
-                       {this.state.filterReport == APPOINTMENT_FOR_EACH_DOCTOR?<AppointmentForEachDoctor {...this.props} filterReport={this.state.filterReport}/>:null}
-                       {this.state.filterReport == APPOINTMENT_FOR_EACH_PATIENT_GROUP?<AppointmentForEachPatientGroup {...this.props} filterReport={this.state.filterReport}/>:null}
-                       {this.state.filterReport == AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE?<AverageWaitingOrEngagedTimeDayWise {...this.props} filterReport={this.state.filterReport}/>:null}
-                       {this.state.filterReport == AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE?<AverageWaitingOrEngagedTimeMonthWise {...this.props} filterReport={this.state.filterReport}/>:null}
-                       {this.state.filterReport == CANCELLATION_NUMBERS?<CancellationsNumbers {...this.props} filterReport={this.state.filterReport}/>:null}
-                       {this.state.filterReport == DAILY_APPOINTMENT_COUNT?<DailyAppointmentCount {...this.props} filterReport={this.state.filterReport}/>:null}
-                       {this.state.filterReport == MONTHLY_APPOINTMENT_COUNT?<MonthlyAppointmentCount {...this.props} filterReport={this.state.filterReport}/>:null}
-                       {this.state.filterReport==REASONS_FOR_CANCELLATIONS?<ReasonsForCancellations {...this.props} filterReport={this.state.filterReport}/>:null}
+                       {this.state.type == ALL_APPOINTMENT ?< AllAppointments {...this.props} {...this.state}/>:null}
+                       {this.state.type == APPOINTMENT_FOR_EACH_CATEGORY?<AppointmentByCategory {...this.props} type={this.state.type}/>:null}
+                       {this.state.type == APPOINTMENT_FOR_EACH_DOCTOR?<AppointmentForEachDoctor {...this.props} type={this.state.type}/>:null}
+                       {this.state.type == APPOINTMENT_FOR_EACH_PATIENT_GROUP?<AppointmentForEachPatientGroup {...this.props} type={this.state.type}/>:null}
+                       {this.state.type == AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE?<AverageWaitingOrEngagedTimeDayWise {...this.props} type={this.state.type}/>:null}
+                       {this.state.type == AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE?<AverageWaitingOrEngagedTimeMonthWise {...this.props} type={this.state.type}/>:null}
+                       {this.state.type == CANCELLATION_NUMBERS?<CancellationsNumbers {...this.props} type={this.state.type}/>:null}
+                       {this.state.type == DAILY_APPOINTMENT_COUNT?<DailyAppointmentCount {...this.props} type={this.state.type}/>:null}
+                       {this.state.type == MONTHLY_APPOINTMENT_COUNT?<MonthlyAppointmentCount {...this.props} type={this.state.type}/>:null}
+                       {/*{this.state.type==REASONS_FOR_CANCELLATIONS?<ReasonsForCancellations {...this.props} type={this.state.type}/>:null}*/}
 
                     </Col>
                     <Col span={6}>
-                        <Radio.Group buttonStyle="solid" defaultValue="all"  onChange={(value)=>this.onChangeHandle('filterReport',value)}>
+                        <Radio.Group buttonStyle="solid" defaultValue={ALL_APPOINTMENT}  onChange={(value)=>this.onChangeHandle('type',value)}>
                             <h2>Appointments</h2>
                             <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value="all">
+                                          value={ALL_APPOINTMENT}>
                                 All Appointemnts
                             </Radio.Button>
                             <p><br/></p>

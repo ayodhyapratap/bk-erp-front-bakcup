@@ -1,8 +1,18 @@
 import React from "react";
 import {Button, Card, Col, Icon, Radio, Row, Table} from "antd";
 import {APPOINTMENT_REPORTS} from "../../../constants/api";
-import {APPOINTMENT_FOR_EACH_CATEGORY ,CANCELLATION_NUMBERS,AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE,AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE,
-    REASONS_FOR_CANCELLATIONS,DAILY_APPOINTMENT_COUNT,APPOINTMENT_FOR_EACH_DOCTOR, MONTHLY_APPOINTMENT_COUNT,APPOINTMENT_FOR_EACH_PATIENT_GROUP}
+import {
+    APPOINTMENT_FOR_EACH_CATEGORY,
+    CANCELLATION_NUMBERS,
+    AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE,
+    AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE,
+    REASONS_FOR_CANCELLATIONS,
+    DAILY_APPOINTMENT_COUNT,
+    APPOINTMENT_FOR_EACH_DOCTOR,
+    MONTHLY_APPOINTMENT_COUNT,
+    APPOINTMENT_FOR_EACH_PATIENT_GROUP,
+    NEW_PATIENTS
+}
     from "../../../constants/dataKeys";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {APPOINTMENT_RELATED_REPORT} from "../../../constants/hardData";
@@ -16,10 +26,13 @@ export default class AppointmentsReportHome extends React.Component {
             appointmentReports: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true
         }
         this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
-        this.loadAppointmentReport();
+    }
+    componentDidMount() {
+        if (this.state.type=='all'){
+            this.loadAppointmentReport();
+        }
     }
 
     componentWillReceiveProps(newProps) {
@@ -29,23 +42,22 @@ export default class AppointmentsReportHome extends React.Component {
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
             },function(){
-                that.loadAppointmentReport();
+                if (this.state.type=='all'){
+                    that.loadAppointmentReport();
+                }
+
             })
 
     }
 
     loadAppointmentReport = () => {
         let that = this;
-        this.setState({
-            loading:true
-        })
         let successFn = function (data) {
-            console.log(data);
             that.setState({
                 appointmentReports: data.data,
+                total:data.total,
                 loading: false
             });
-            console.log(that.state.appointmentReports);
         };
         let errorFn = function () {
             that.setState({
@@ -59,13 +71,19 @@ export default class AppointmentsReportHome extends React.Component {
     }
 
     render() {
-        console.log("startApp",this.props.startDate)
+        let that=this;
+        let i=1;
         const columns = [{
+            title: 'S. No',
+            key: 'sno',
+            render: (item, record) => <span> {i++}</span>,
+            width: 50
+        },{
             title: 'Date',
             key: 'date',
             render: (text, record) => (
                 <span>
-                {moment(record.schedule_at).format('LL')}
+                {moment(record.schedule_at).format('DD MMM YYYY')}
                   </span>
             ),
         }, {
@@ -134,14 +152,16 @@ export default class AppointmentsReportHome extends React.Component {
 
 
         return <div>
-            <h2>All Appointments Report
+            <h2>All Appointments Report (Total:{that.props.total?that.props.total:this.state.total})
                 {/*<Button.Group style={{float: 'right'}}>*/}
                 {/*<Button><Icon type="mail"/> Mail</Button>*/}
                 {/*<Button><Icon type="printer"/> Print</Button>*/}
                 {/*</Button.Group>*/}
             </h2>
-            <CustomizedTable loading={this.state.loading} columns={columns} size={'small'}
-                             dataSource={this.state.appointmentReports}/>
+
+
+            <Table loading={that.props.loading?that.props.loading:this.state.loading} columns={columns} pagination={false}
+                             dataSource={that.props.appointmentReports?that.props.appointmentReports:this.state.appointmentReports}/>
 
         </div>
     }
