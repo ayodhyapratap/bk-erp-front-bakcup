@@ -23,7 +23,7 @@ export default class AppointmentByCategory extends React.Component {
 
     componentWillReceiveProps(newProps) {
         let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.categories!=newProps.categories ||this.props.doctors!=newProps.doctors)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
@@ -56,6 +56,12 @@ export default class AppointmentByCategory extends React.Component {
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
         };
+        if(this.props.categories){
+            apiParams.categories=this.props.categories.toString();
+        }
+        if(this.props.doctors){
+            apiParams.doctors=this.props.doctors.toString();
+        }
 
         getAPI(PATIENT_APPOINTMENTS_REPORTS,  successFn, errorFn, apiParams);
     };
