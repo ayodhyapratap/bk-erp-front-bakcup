@@ -4,7 +4,7 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import TimeGrid from 'react-big-calendar/lib/TimeGrid';
-import {Calendar as BigCalendar, momentLocalizer} from 'react-big-calendar';
+import {Calendar as BigCalendar, momentLocalizer, Navigate} from 'react-big-calendar';
 import {
     Modal,
     Row,
@@ -907,10 +907,10 @@ MyWeek.range = date => {
 
 MyWeek.navigate = (date, action) => {
     switch (action) {
-        case BigCalendar.Navigate.PREVIOUS:
+        case Navigate.PREVIOUS:
             return dates.add(date, -3, 'day')
 
-        case BigCalendar.Navigate.NEXT:
+        case Navigate.NEXT:
             return dates.add(date, 3, 'day')
 
         default:
