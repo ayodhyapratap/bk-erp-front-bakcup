@@ -51,6 +51,7 @@ export default class ExpiringMembership extends React.Component {
         let apiParams={
 
         }
+
         if(this.state.startDate){
             apiParams.from_date=this.state.startDate.format('YYYY-MM-DD');
             apiParams.to_date= this.state.endDate.format('YYYY-MM-DD');

@@ -1,6 +1,6 @@
 import React from "react";
-import {Button, Card, Col, Icon, Radio, Row, Table, Divider} from "antd";
-import {PATIENTS_REPORTS} from "../../../constants/api";
+import {Button, Card, Col, Icon, Radio, Row, Table, Divider,Select} from "antd";
+import {PATIENTS_REPORTS ,PATIENT_GROUPS,OFFERS} from "../../../constants/api";
 import {
     NEW_PATIENTS,
     DAILY_NEW_PATIENTS,
@@ -30,22 +30,30 @@ export default class PatientsReportHome extends React.Component {
             type: 'DETAILED',
             loading: true,
             advancedOptionShow: true,
-            sidePanelColSpan: 4
+            sidePanelColSpan: 4,
+            patientGroup:[],
+            patient_groups:'',
+            offerOption:[],
         }
         this.loadNewPatient = this.loadNewPatient.bind(this);
+        this.loadPatientGroup = this.loadPatientGroup.bind(this);
+        this.loadOffer = this.loadOffer.bind(this);
     }
 
     componentDidMount() {
         if (this.state.type == NEW_PATIENTS) {
             this.loadNewPatient();
         }
+        this.loadPatientGroup();
+        this.loadOffer();
 
     }
 
     componentWillReceiveProps(newProps) {
 
         let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.state.patient_groups !=newProps.patient_groups
+            ||this.state.blood_group !=newProps.blood_group || this.state.offer !=newProps.offer)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
@@ -55,7 +63,30 @@ export default class PatientsReportHome extends React.Component {
                 }
             })
     }
+    loadPatientGroup(){
+        let that=this;
+        let successFn =function (data) {
+            that.setState({
+                patientGroup:data,
+            });
+        };
+        let errorFn=function () {
 
+        }
+        getAPI(interpolate(PATIENT_GROUPS,[this.props.active_practiceId]),successFn ,errorFn)
+    }
+    loadOffer(){
+        let that=this;
+        let successFun=function (data) {
+            that.setState({
+                offerOption:data,
+            })
+        };
+        let errorFn =function () {
+
+        }
+        getAPI(interpolate(OFFERS ,[this.props.active_practiceId]),successFun,errorFn);
+    }
     loadNewPatient() {
         let that = this;
 
@@ -74,6 +105,10 @@ export default class PatientsReportHome extends React.Component {
         let apiParams = {
             type: this.state.type,
         }
+
+        if(this.state.patient_groups){
+            apiParams.groups=this.state.patient_groups;
+        }
         if (this.state.startDate) {
             apiParams.from_date = this.state.startDate.format('YYYY-MM-DD');
             apiParams.to_date = this.state.endDate.format('YYYY-MM-DD');
@@ -88,18 +123,22 @@ export default class PatientsReportHome extends React.Component {
             [type]: value.target.value,
         })
     }
-    // advancedOption(value){
-    //     console.log(value)
-    //     this.setState({
-    //         advancedOptionShow:value,
-    //     })
-    // }
+    advancedOption(value){
+        this.setState({
+            advancedOptionShow:value,
+        })
+    }
     changeSidePanelSize = (sidePanel) => {
         this.setState({
             sidePanelColSpan: sidePanel ? 0 : 4
         })
     }
-
+    handleChangeOption = (type,value) => {
+        let that = this;
+        this.setState({
+            [type]: value,
+        })
+    }
     render() {
         return <div>
             <h2>Patients Report <Button type="primary" shape="round"
@@ -145,22 +184,44 @@ export default class PatientsReportHome extends React.Component {
                             </Radio.Button>)}
                         </Radio.Group>
 
-                        {/*<br/>*/}
-                        {/*<br/>*/}
-                        {/*{this.state.advancedOptionShow?<>*/}
-                        {/*    <a href={'#'} onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options</a>*/}
-                        {/*    <Col>*/}
-                        {/*        <Select*/}
-                        {/*            mode="multiple"*/}
-                        {/*            style={{ width: '100%' }}*/}
-                        {/*            placeholder="Please select"*/}
-                        {/*            defaultValue={['a10', 'c12']}*/}
-                        {/*            onChange={handleChange}*/}
-                        {/*        >*/}
-                        {/*            {children}*/}
-                        {/*        </Select>*/}
-                        {/*    </Col>*/}
-                        {/*</>:<a href={'#'} onClick={(value)=>this.advancedOption(true)}>Show Advanced Options</a>}*/}
+                        <br/>
+                        <br/>
+                        {this.state.advancedOptionShow?<>
+                            <a href={'#'} onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options</a>
+                            <Col> <br/>
+                                <h4>Patient Groups</h4>
+                                <Select style={{minWidth: '200px'}} mode="multiple"
+                                        onChange={(value)=>this.handleChangeOption('patient_groups',value)}>
+                                    {this.state.patientGroup.map((item) => <Select.Option value={item.id}>
+                                        {item.name}</Select.Option>)}
+                                </Select>
+
+                                <br/>
+                                <h4>Blood Groups</h4>
+                                <Select style={{minWidth: '200px'}}
+                                        onChange={(value)=>this.handleChangeOption('offer',value)}>
+                                    {this.state.offerOption.map((item) => <Select.Option value={item.code}>
+                                        {item.code}</Select.Option>)}
+                                </Select>
+
+                                {/*<br/>*/}
+                                {/*<h4>Referre</h4>*/}
+                                {/*<Select style={{minWidth: '200px'}} mode="multiple"*/}
+                                {/*        onChange={(value)=>this.handleChangeOption('blood_group',value)}>*/}
+                                {/*    {this.state.bloodGroup.map((item) => <Select.Option value={item.id}>*/}
+                                {/*        {item.name}</Select.Option>)}*/}
+                                {/*</Select>*/}
+
+
+                                {/*<br/>*/}
+                                {/*<h4>Offer Applied</h4>*/}
+                                {/*<Select style={{minWidth: '200px'}}*/}
+                                {/*        onChange={(value)=>this.handleChangeOption('referrer',value)}>*/}
+                                {/*    {this.state.referrerOption.map((item) => <Select.Option value={item.id}>*/}
+                                {/*        {item.name}</Select.Option>)}*/}
+                                {/*</Select>*/}
+                            </Col>
+                        </>:<a href={'#'} onClick={(value)=>this.advancedOption(true)}>Show Advanced Options</a>}
                     </Col>
 
                 </Row>

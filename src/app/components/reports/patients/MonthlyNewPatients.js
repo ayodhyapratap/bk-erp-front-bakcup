@@ -23,7 +23,8 @@ export default class MonthlyNewPatients extends React.Component {
 
     componentWillReceiveProps(newProps) {
         let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.patient_groups !=newProps.patient_groups
+            ||this.props.blood_group !=newProps.blood_group || this.props.offer !=newProps.offer)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
@@ -51,6 +52,9 @@ export default class MonthlyNewPatients extends React.Component {
         };
         let apiParams={
 
+        }
+        if (this.props.patient_groups){
+            apiParams.groups=this.props.patient_groups.toString();
         }
         if(this.state.startDate){
             apiParams.from_date=this.state.startDate.format('YYYY-MM-DD');
