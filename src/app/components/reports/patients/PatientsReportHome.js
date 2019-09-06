@@ -68,7 +68,7 @@ export default class PatientsReportHome extends React.Component {
             apiParams.to_date= this.state.endDate.format('YYYY-MM-DD');
         }
 
-        getAPI(interpolate(PATIENTS_REPORTS, [this.props.active_practiceId]), successFn, errorFn,apiParams);
+        getAPI(PATIENTS_REPORTS, successFn, errorFn,apiParams);
     }
 
     onChangeHandle =(type,value)=>{

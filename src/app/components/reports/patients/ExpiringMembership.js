@@ -2,7 +2,7 @@ import React from "react";
 import {Table} from "antd";
 import {MEMBERSHIP_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import {hideMobile} from "../../../utils/permissionUtils";
+import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
 
 export default class ExpiringMembership extends React.Component {
     constructor(props) {
@@ -58,7 +58,7 @@ export default class ExpiringMembership extends React.Component {
         if(this.props.type){
             apiParams.type=this.props.type;
         }
-        getAPI(interpolate(MEMBERSHIP_REPORTS, [this.props.active_practiceId]), successFn, errorFn,apiParams);
+        getAPI(MEMBERSHIP_REPORTS,  successFn, errorFn,apiParams);
     }
     render() {
         let that=this;
@@ -76,11 +76,12 @@ export default class ExpiringMembership extends React.Component {
             title: 'Mobile Number',
             dataIndex: 'patient.user.mobile',
             key: 'patient.user.mobile',
-            render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value)
+            render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value),
         },{
             title: 'Email',
             dataIndex: 'patient.user.email',
             key: 'patient.user.email',
+            render:(value)=>that.props.activePracticePermissions.PatientEmailId ? value : hideEmail(value),
         },{
             title:'Gender',
             key:'gender',

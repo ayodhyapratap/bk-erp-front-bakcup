@@ -56,7 +56,7 @@ export default class PatientsFirstAppointment extends React.Component {
             apiParams.to_date= this.state.endDate.format('YYYY-MM-DD');
         }
 
-        getAPI(interpolate(FIRST_APPOINTMENT_REPORTS, [this.props.active_practiceId]), successFn, errorFn,apiParams);
+        getAPI(FIRST_APPOINTMENT_REPORTS, successFn, errorFn,apiParams);
     }
     render() {
         let that=this;

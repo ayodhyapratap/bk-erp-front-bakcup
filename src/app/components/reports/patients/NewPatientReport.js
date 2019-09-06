@@ -1,5 +1,5 @@
 import React from "react";
-import {hideMobile} from "../../../utils/permissionUtils";
+import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
 import {getAPI, interpolate} from "../../../utils/common";
 import {PATIENTS_REPORTS} from "../../../constants/api";
 import {Table} from "antd";
@@ -68,7 +68,7 @@ export default class NewPatientReports extends React.Component {
             apiParams.to_date= this.state.endDate.format('YYYY-MM-DD');
         }
 
-        getAPI(interpolate(PATIENTS_REPORTS, [this.props.active_practiceId]), successFn, errorFn,apiParams);
+        getAPI(PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }
     render() {
         let that=this;
@@ -95,6 +95,7 @@ export default class NewPatientReports extends React.Component {
             title:'Email',
             key:'email',
             dataIndex:'user.email',
+            render:(value)=>that.props.activePracticePermissions.PatientEmailId ? value : hideEmail(value)
         }, {
             title: 'Gender',
             key: 'gender',

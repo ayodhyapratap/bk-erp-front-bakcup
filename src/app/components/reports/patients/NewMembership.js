@@ -2,7 +2,7 @@ import React from "react";
 import {Table} from "antd";
 import {MEMBERSHIP_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import {hideMobile} from "../../../utils/permissionUtils";
+import {hideMobile ,hideEmail} from "../../../utils/permissionUtils";
 
 export default class NewMembership extends React.Component {
     constructor(props) {
@@ -57,7 +57,7 @@ export default class NewMembership extends React.Component {
         if(this.props.type){
             apiParams.type=this.props.type;
         }
-        getAPI(interpolate(MEMBERSHIP_REPORTS, [this.props.active_practiceId]), successFn, errorFn,apiParams);
+        getAPI(MEMBERSHIP_REPORTS,  successFn, errorFn,apiParams);
     }
     render() {
         let that=this;
@@ -80,6 +80,7 @@ export default class NewMembership extends React.Component {
             title: 'Email',
             dataIndex: 'patient.user.email',
             key: 'patient.user.email',
+            render:(value)=>that.props.activePracticePermissions.PatientEmailId ? value : hideEmail(value)
         },{
             title:'Membership Type',
             key:'membership_type',
@@ -93,10 +94,6 @@ export default class NewMembership extends React.Component {
             title:'Valid Till',
             key:'valid_till',
             dataIndex:'medical_to'
-        },{
-            title:'Balance',
-            key:'balance',
-            dataIndex:''
         }];
 
         return <div>

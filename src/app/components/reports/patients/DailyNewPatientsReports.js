@@ -59,7 +59,7 @@ export default class DailyNewPatientReports extends React.Component {
         if(this.props.type){
             apiParams.type=this.props.type;
         }
-        getAPI(interpolate(PATIENTS_REPORTS, [this.props.active_practiceId]), successFn, errorFn,apiParams);
+        getAPI(PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }
     render() {
         let that=this;
