@@ -69,15 +69,15 @@ export const NEW_MEMBERSHIP='NEW';
 
 /*Appointment Reports*/
 export const ALL_APPOINTMENT='all';
-export const APPOINTMENT_FOR_EACH_CATEGORY='appointmentbycategory' ;
-export const CANCELLATION_NUMBERS='cancellationofnumber';
-export const AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE='averagewaitingengagedtimedaywise';
-export const AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE='averagewaitingengagedtimemonthwise';
+export const APPOINTMENT_FOR_EACH_CATEGORY='CATEGORY' ;
+export const CANCELLATION_NUMBERS='CANCEL_NUMBERS';
+export const AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE='DAILY_WAIT';
+export const AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE='MONTHLY_WAIT';
 export const REASONS_FOR_CANCELLATIONS='reasonsforcancellations';
-export const DAILY_APPOINTMENT_COUNT='dailyappointmentcount';
-export const APPOINTMENT_FOR_EACH_DOCTOR='appointmentforeachdoctor';
-export const MONTHLY_APPOINTMENT_COUNT='monthlyappointmentcount';
-export const APPOINTMENT_FOR_EACH_PATIENT_GROUP='appointmentforeachpatientgroup';
+export const DAILY_APPOINTMENT_COUNT='DAILY';
+export const APPOINTMENT_FOR_EACH_DOCTOR='DOCTOR';
+export const MONTHLY_APPOINTMENT_COUNT='MONTHLY';
+export const APPOINTMENT_FOR_EACH_PATIENT_GROUP='PATIENT_GROUPS';
 
 
 /*Amount Due Reports*/

@@ -245,7 +245,7 @@ export const APPOINTMENT_RELATED_REPORT = [
     {name: 'Cancellation Numbers', value: CANCELLATION_NUMBERS},
     {name: 'Average Waiting/engaged Time Day Wise', value: AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE},
     {name: 'Average Waiting/engaged Time Month Wise', value: AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE},
-    {name: 'Reasons For Cancellations', value: REASONS_FOR_CANCELLATIONS},
+    // {name: 'Reasons For Cancellations', value: REASONS_FOR_CANCELLATIONS},
     {name: 'Daily Appointment Count', value: DAILY_APPOINTMENT_COUNT},
     {name: 'Appointments For Each Doctor', value: APPOINTMENT_FOR_EACH_DOCTOR},
     {name: 'Monthly Appointment Count', value: MONTHLY_APPOINTMENT_COUNT},
