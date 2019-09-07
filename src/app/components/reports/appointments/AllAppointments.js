@@ -209,7 +209,7 @@ export default class AllAppointments extends React.Component {
             <h2>All Appointments Report</h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
-                    <Statistic title="Total" value={this.state.total} />
+                    <Statistic title="Total Appointments" value={this.state.total} />
                     <br/>
                 </Col>
             </Row>

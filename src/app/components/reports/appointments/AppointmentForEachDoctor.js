@@ -135,6 +135,9 @@ export default class AppointmentForEachPatientDoctor extends React.Component {
                 </g>
             );
         };
+        var totalAppointment = this.state.appointmentEachDoctor.reduce(function(prev, cur) {
+            return prev + cur.count;
+        }, 0);
         return <div>
             <h2>Appointment For Each Patient Doctor
                 {/*<Button.Group style={{float: 'right'}}>*/}
@@ -165,7 +168,7 @@ export default class AppointmentForEachPatientDoctor extends React.Component {
                     </PieChart>
                 </Col>
             </Row>
-            <Divider><Statistic title="Total" value={this.state.total} /></Divider>
+            <Divider><Statistic title="Total" value={totalAppointment} /></Divider>
             <Table loading={this.state.loading} columns={columns} pagination={false} dataSource={this.state.appointmentEachDoctor}/>
 
 

@@ -48,7 +48,6 @@ export default class AppointmentsReportHome extends React.Component {
 
 
         };
-
         this.loadAppointmentCategory = this.loadAppointmentCategory.bind(this);
         loadDoctors(this);
 
@@ -161,7 +160,7 @@ export default class AppointmentsReportHome extends React.Component {
                         <br/>
                         <br/>
                         {this.state.advancedOptionShow?<>
-                            <a href={'#'} onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options</a>
+                            <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
                             <Col> <br/>
                                 <h4>Doctors</h4>
                                 <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
@@ -189,7 +188,7 @@ export default class AppointmentsReportHome extends React.Component {
                                 <br/>
                                 <Checkbox  onChange={(e)=>this.onChangeCheckbox(e)}> Exclude Cancelled</Checkbox>
                             </Col>
-                        </>:<a href={'#'} onClick={(value)=>this.advancedOption(true)}>Show Advanced Options</a>}
+                        </>:<Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
 
                     </Col>
                 </Row>
