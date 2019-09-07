@@ -120,6 +120,9 @@ export const FIRST_APPOINTMENT_REPORTS='patients/first_appointment';
 /** Appointment Reports**/
 export const PATIENT_APPOINTMENTS_REPORTS='appointment/appointment_report';
 
+/** EMR Reports**/
+export const EMR_REPORTS='clinics/%s/emr_report';
+
 export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/';
 export const EXPENSE_REPORT = 'clinics/%s/expense_report/';
 export const INVOICE_REPORTS = 'clinics/%s/invoice_report/';
