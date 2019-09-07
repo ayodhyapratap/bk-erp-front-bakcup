@@ -68,7 +68,7 @@ export const MONTHLY_NEW_PATIENTS='MONTHLY';
 export const NEW_MEMBERSHIP='NEW';
 
 /*Appointment Reports*/
-export const ALL_APPOINTMENT='all';
+export const ALL_APPOINTMENT='ALL';
 export const APPOINTMENT_FOR_EACH_CATEGORY='CATEGORY' ;
 export const CANCELLATION_NUMBERS='CANCEL_NUMBERS';
 export const AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE='DAILY_WAIT';
@@ -81,7 +81,7 @@ export const APPOINTMENT_FOR_EACH_PATIENT_GROUP='PATIENT_GROUPS';
 
 
 /*Amount Due Reports*/
-export const TOTAL_AMOUNT_DUE='all';
+export const TOTAL_AMOUNT_DUE='ALL';
 export const AGEING_AMOUNT_DUE='a';
 export const AMOUNT_DUE_PER_DOCTOR='b';
 export const AMOUNT_DUE_PER_PROCEDURE='c';
@@ -89,8 +89,8 @@ export const UNSETTLED_INVOICE='d';
 
 
 /*EMR Reports*/
-export const ALL_TREATMENTS='all';
-export const DAILY_TREATMENT_COUNT='a';
-export const TREATMENTS_FOR_EACH_DOCTOR='b';
-export const MONTHLY_TREATMENT_COUNT='c';
-export const TREATMENT_FOR_EACH_CATEGORY='d';
+export const ALL_TREATMENTS='ALL';
+export const DAILY_TREATMENT_COUNT='DAILY';
+export const TREATMENTS_FOR_EACH_DOCTOR='DOCTOR';
+export const MONTHLY_TREATMENT_COUNT='MONTHLY';
+export const TREATMENT_FOR_EACH_CATEGORY='CATEGORY';

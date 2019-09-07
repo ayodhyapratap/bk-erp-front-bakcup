@@ -4,6 +4,7 @@ import {APPOINTMENT_FOR_EACH_CATEGORY ,CANCELLATION_NUMBERS,AVERAGE_WAITING_ENGA
     AGEING_AMOUNT_DUE,AMOUNT_DUE_PER_DOCTOR,AMOUNT_DUE_PER_PROCEDURE,UNSETTLED_INVOICE,DAILY_TREATMENT_COUNT,TREATMENTS_FOR_EACH_DOCTOR,
     MONTHLY_TREATMENT_COUNT,TREATMENT_FOR_EACH_CATEGORY
 } from "../constants/dataKeys";
+import {INVENTORY_ITEM_EXPORT} from "./api";
 
 
 export const PAYMENT_TYPES = [
@@ -265,4 +266,15 @@ export const  AMOUNT_DUE_RELATED_REPORT=[
     {name:'Amount Due Per Doctor', value:AMOUNT_DUE_PER_DOCTOR},
     {name:'Amount Due Per Procedure' ,value:AMOUNT_DUE_PER_PROCEDURE},
     {name:'Unsettled Invoice',value:UNSETTLED_INVOICE},
+];
+
+export const BLOOD_GROUPS=[
+    {name:"all" ,value:'all'},
+    {name:"A+", value:'A+'},
+    {name:"A-", value:'A-'},
+    {name: "B+", value:'B+'},
+    {name:"B-", value:'B-'},
+    {name:"AB+", value:'AB+'},
+    {name:"O+" ,value:'O+'},
+    {name:"O-" ,value:'O-'},
 ];
