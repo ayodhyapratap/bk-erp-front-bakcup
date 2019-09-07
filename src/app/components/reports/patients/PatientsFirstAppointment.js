@@ -88,7 +88,7 @@ export default class PatientsFirstAppointment extends React.Component {
             <h2>Patients First AppointmentReport</h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
-                    <Statistic title="Total" value={this.state.report.length} />
+                    <Statistic title="Total Patients" value={this.state.report.length} />
                     <br/>
                 </Col>
             </Row>

@@ -151,7 +151,7 @@ export default class PatientsReportHome extends React.Component {
                         <br/>
                         {this.state.type == NEW_PATIENTS || this.state.type == DAILY_NEW_PATIENTS ||this.state.type == MONTHLY_NEW_PATIENTS ?<>
                             {this.state.advancedOptionShow?<>
-                                <a href={'#'} onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options</a>
+                                <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
                                 <Col> <br/>
                                     <h4>Patient Groups</h4>
                                     <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Patient Groups"
@@ -185,7 +185,7 @@ export default class PatientsReportHome extends React.Component {
                                     {/*        {item.name}</Select.Option>)}*/}
                                     {/*</Select>*/}
                                 </Col>
-                            </>:<a href={'#'} onClick={(value)=>this.advancedOption(true)}>Show Advanced Options</a>}
+                            </>: <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
                             </>:null}
                     </Col>
 
