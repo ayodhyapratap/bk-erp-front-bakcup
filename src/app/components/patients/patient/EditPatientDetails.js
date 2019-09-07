@@ -27,6 +27,7 @@ import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 import WebCamField from "../../common/WebCamField";
 import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
+import {BLOOD_GROUPS} from "../../../constants/hardData";
 
 const {Option} = Select;
 
@@ -393,9 +394,18 @@ class EditPatientDetails extends React.Component {
                         }
                     </Form.Item>
 
+                    {/*<Form.Item label="Blood Group" {...formItemLayout}>*/}
+                    {/*    {getFieldDecorator('blood_group', {initialValue: this.props.currentPatient ? this.props.currentPatient.blood_group : ''})*/}
+                    {/*    (<Input placeholder="Patient Blood Group"/>)*/}
+                    {/*    }*/}
+                    {/*</Form.Item>*/}
+
                     <Form.Item label="Blood Group" {...formItemLayout}>
-                        {getFieldDecorator('blood_group', {initialValue: this.props.currentPatient ? this.props.currentPatient.blood_group : ''})
-                        (<Input placeholder="Patient Blood Group"/>)
+                        {getFieldDecorator("blood_group", {initialValue: this.props.currentPatient ? this.props.currentPatient.blood_group : []})
+                        (<Select placeholder="Blood Group" >
+                            {BLOOD_GROUPS.map((option) => <Select.Option
+                                value={option.value}>{option.name}</Select.Option>)}
+                        </Select>)
                         }
                     </Form.Item>
 
