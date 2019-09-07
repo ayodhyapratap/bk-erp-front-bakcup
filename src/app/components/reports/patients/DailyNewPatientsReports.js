@@ -74,7 +74,7 @@ export default class DailyNewPatientReports extends React.Component {
             render: (item, record) => <span> {i++}</span>,
             width: 50
         },{
-            title: 'Date',
+            title: 'Day',
             key: 'date',
             render:((item, record) => <span>{moment(record.date).format('ll')}</span>)
         },{

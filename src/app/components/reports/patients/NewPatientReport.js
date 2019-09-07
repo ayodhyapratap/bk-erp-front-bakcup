@@ -2,7 +2,7 @@ import React from "react";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
 import {getAPI, interpolate} from "../../../utils/common";
 import {PATIENTS_REPORTS} from "../../../constants/api";
-import {Table} from "antd";
+import {Col, Row, Statistic, Table} from "antd";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class NewPatientReports extends React.Component {
@@ -24,7 +24,7 @@ export default class NewPatientReports extends React.Component {
     componentWillReceiveProps(newProps) {
         let that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.patient_groups !=newProps.patient_groups
-            ||this.props.blood_group !=newProps.blood_group || this.props.offer !=newProps.offer)
+            ||this.props.blood_group !=newProps.blood_group || this.props.blood_group !=newProps.blood_group)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
@@ -58,7 +58,7 @@ export default class NewPatientReports extends React.Component {
         let apiParams={
             page: page,
             type:that.props.type?that.props.type:'DETAILED',
-            offer:that.props.offer,
+            blood_group:that.props.blood_group,
         };
         if (this.props.patient_groups){
             apiParams.groups=this.props.patient_groups.toString();
@@ -73,7 +73,6 @@ export default class NewPatientReports extends React.Component {
         getAPI(PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }
     render() {
-        console.log("props",this.props)
         let that=this;
         let i = 1;
         const columns = [{
@@ -90,12 +89,14 @@ export default class NewPatientReports extends React.Component {
             dataIndex:'id',
             key:'id'
         }, {
-            title: 'Patient Number',
-            key: 'mobile',
+            title: 'Mobile Number',
+            key: 'user.mobile',
+            dataIndex:'user.mobile',
             render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value)
         },{
             title:'Email',
-            key:'email',
+            key:'user.email',
+            dataIndex:'user.email',
             render:(value)=>that.props.activePracticePermissions.PatientEmailId ? value : hideEmail(value)
         }, {
             title: 'Gender',
@@ -103,31 +104,23 @@ export default class NewPatientReports extends React.Component {
             dataIndex: 'gender',
         }];
         return <div>
+            <h2>New Patients Report</h2>
+            <Row>
+                <Col span={12} offset={6} style={{textAlign:"center"}}>
+                    <Statistic title="Total" value={this.state.report.length} />
+                    <br/>
+                </Col>
+            </Row>
 
-            {this.state.report?<>
-                <h2>New Patients Report (Total:{this.state.total})</h2>
-                <Table
-                    loading={this.state.loading}
-                    columns={columns}
-                    pagination={false}
-                    dataSource={this.state.report}/>
+            <Table
+                loading={this.state.loading}
+                columns={columns}
+                pagination={false}
+                dataSource={this.state.report}/>
 
-                <InfiniteFeedLoaderButton loaderFunction={() => this.loadNewPatient(that.state.next)}
-                                          loading={this.state.loading}
-                                          hidden={!this.state.next}/>
-
-            </>:<>
-                <h2>New Patients Report (Total:{that.props.total})</h2>
-                <Table
-                    loading={that.props.loading}
-                    columns={columns}
-                    pagination={false}
-                    dataSource={that.props.report}/>
-
-                <InfiniteFeedLoaderButton loaderFunction={() => that.props.loadNewPatient(that.props.next)}
-                                          loading={that.props.loading}
-                                          hidden={!that.props.next}/>
-                </>}
+            <InfiniteFeedLoaderButton loaderFunction={() => this.loadNewPatient(that.state.next)}
+                                      loading={this.state.loading}
+                                      hidden={!this.state.next}/>
 
         </div>
     }

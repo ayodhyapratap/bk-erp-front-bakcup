@@ -97,7 +97,8 @@ export default class MonthlyNewPatients extends React.Component {
             return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value}</text>;
         };
         return <div>
-            <h2>Monthly New Patients Report (Total:{this.state.total})</h2>
+            <h2>Monthly New Patients Report</h2>
+
             <ComposedChart width={1000} height={400} data={this.state.report}
                            margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 

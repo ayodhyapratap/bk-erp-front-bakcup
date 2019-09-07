@@ -76,15 +76,26 @@ export default class ExpiringMembership extends React.Component {
         }, {
             title: 'Mobile Number',
             key: 'patient.user.mobile',
+            dataIndex:'patient.user.mobile',
             render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value),
         },{
             title: 'Email',
             key: 'patient.user.email',
+            dataIndex:'patient.user.email',
             render:(value)=>that.props.activePracticePermissions.PatientEmailId ? value : hideEmail(value),
         },{
             title:'Gender',
             key:'gender',
             dataIndex:'patient.gender'
+        },{
+            title:'Start Date',
+            key:'start_date',
+            dataIndex:'medical_from'
+
+        },{
+            title:'Valid Till',
+            key:'valid_till',
+            dataIndex:'medical_to'
         }];
 
         return <div>

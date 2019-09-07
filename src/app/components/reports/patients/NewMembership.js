@@ -74,10 +74,12 @@ export default class NewMembership extends React.Component {
         }, {
             title: 'Mobile Number',
             key: 'patient.user.mobile',
+            dataIndex:'patient.user.mobile',
             render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value)
         },{
             title: 'Email',
             key: 'patient.user.email',
+            dataIndex:'patient.user.email',
             render:(value)=>that.props.activePracticePermissions.PatientEmailId ? value : hideEmail(value)
         },{
             title:'Membership Type',

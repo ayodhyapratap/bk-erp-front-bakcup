@@ -2,7 +2,7 @@ import React from "react";
 import {FIRST_APPOINTMENT_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment from "moment";
-import {Table} from "antd";
+import {Col, Row, Statistic, Table} from "antd";
 
 export default class PatientsFirstAppointment extends React.Component {
     constructor(props) {
@@ -85,7 +85,14 @@ export default class PatientsFirstAppointment extends React.Component {
         }];
 
         return <div>
-            <h2>Patients First AppointmentReport (Total:{this.state.total})</h2>
+            <h2>Patients First AppointmentReport</h2>
+            <Row>
+                <Col span={12} offset={6} style={{textAlign:"center"}}>
+                    <Statistic title="Total" value={this.state.report.length} />
+                    <br/>
+                </Col>
+            </Row>
+
             <Table
                 loading={this.state.loading}
                 columns={columns}

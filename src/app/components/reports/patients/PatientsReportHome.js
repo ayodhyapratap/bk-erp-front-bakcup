@@ -9,7 +9,7 @@ import {
     NEW_MEMBERSHIP,
     EXPIRING_MEMBERSHIP
 } from "../../../constants/dataKeys";
-import {PATIENTS_RELATED_REPORT} from "../../../constants/hardData";
+import {BLOOD_GROUPS, PATIENTS_RELATED_REPORT} from "../../../constants/hardData";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
@@ -35,17 +35,13 @@ export default class PatientsReportHome extends React.Component {
             patient_groups:'',
             offerOption:[],
         }
-        this.loadNewPatient = this.loadNewPatient.bind(this);
         this.loadPatientGroup = this.loadPatientGroup.bind(this);
-        this.loadOffer = this.loadOffer.bind(this);
+        // this.loadOffer = this.loadOffer.bind(this);
     }
 
     componentDidMount() {
-        if (this.state.type == NEW_PATIENTS) {
-            this.loadNewPatient();
-        }
         this.loadPatientGroup();
-        this.loadOffer();
+        // this.loadOffer();
 
     }
 
@@ -53,15 +49,11 @@ export default class PatientsReportHome extends React.Component {
 
         let that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.state.patient_groups !=newProps.patient_groups
-            ||this.state.blood_group !=newProps.blood_group || this.state.offer !=newProps.offer)
+            ||this.state.blood_group !=newProps.blood_group || this.state.blood_group !=newProps.blood_group)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
-            }, function () {
-                if (this.state.type == NEW_PATIENTS) {
-                    this.loadNewPatient();
-                }
-            })
+            });
     }
     loadPatientGroup(){
         let that=this;
@@ -75,47 +67,18 @@ export default class PatientsReportHome extends React.Component {
         }
         getAPI(interpolate(PATIENT_GROUPS,[this.props.active_practiceId]),successFn ,errorFn)
     }
-    loadOffer(){
-        let that=this;
-        let successFun=function (data) {
-            that.setState({
-                offerOption:data,
-            })
-        };
-        let errorFn =function () {
-
-        }
-        getAPI(interpolate(OFFERS ,[this.props.active_practiceId]),successFun,errorFn);
-    }
-    loadNewPatient() {
-        let that = this;
-
-        let successFn = function (data) {
-            that.setState({
-                report: data.results,
-                total: data.count,
-                loading: false
-            });
-        };
-        let errorFn = function () {
-            that.setState({
-                loading: false
-            })
-        };
-        let apiParams = {
-            type: this.state.type,
-        }
-
-        if(this.state.patient_groups){
-            apiParams.groups=this.state.patient_groups;
-        }
-        if (this.state.startDate) {
-            apiParams.from_date = this.state.startDate.format('YYYY-MM-DD');
-            apiParams.to_date = this.state.endDate.format('YYYY-MM-DD');
-        }
-
-        getAPI(PATIENTS_REPORTS, successFn, errorFn, apiParams);
-    }
+    // loadOffer(){
+    //     let that=this;
+    //     let successFun=function (data) {
+    //         that.setState({
+    //             offerOption:data,
+    //         })
+    //     };
+    //     let errorFn =function () {
+    //
+    //     }
+    //     getAPI(interpolate(OFFERS ,[this.props.active_practiceId]),successFun,errorFn);
+    // }
 
     onChangeHandle = (type, value) => {
         let that = this;
@@ -167,7 +130,7 @@ export default class PatientsReportHome extends React.Component {
                     </Col>
 
 
-                    <Col span={this.state.sidePanelColSpan} >
+                    <Col span={this.state.sidePanelColSpan}>
                         <Radio.Group buttonStyle="solid" defaultValue={NEW_PATIENTS}
                                      onChange={(value) => this.onChangeHandle('type', value)}>
                             <h2>Patients</h2>
@@ -186,42 +149,44 @@ export default class PatientsReportHome extends React.Component {
 
                         <br/>
                         <br/>
-                        {this.state.advancedOptionShow?<>
-                            <a href={'#'} onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options</a>
-                            <Col> <br/>
-                                <h4>Patient Groups</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple"
-                                        onChange={(value)=>this.handleChangeOption('patient_groups',value)}>
-                                    {this.state.patientGroup.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
-                                </Select>
+                        {this.state.type == NEW_PATIENTS || this.state.type == DAILY_NEW_PATIENTS ||this.state.type == MONTHLY_NEW_PATIENTS ?<>
+                            {this.state.advancedOptionShow?<>
+                                <a href={'#'} onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options</a>
+                                <Col> <br/>
+                                    <h4>Patient Groups</h4>
+                                    <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Patient Groups"
+                                            onChange={(value)=>this.handleChangeOption('patient_groups',value)}>
+                                        {this.state.patientGroup.map((item) => <Select.Option value={item.id}>
+                                            {item.name}</Select.Option>)}
+                                    </Select>
 
-                                <br/>
-                                <h4>Blood Groups</h4>
-                                <Select style={{minWidth: '200px'}}
-                                        onChange={(value)=>this.handleChangeOption('offer',value)}>
-                                    {this.state.offerOption.map((item) => <Select.Option value={item.code}>
-                                        {item.code}</Select.Option>)}
-                                </Select>
+                                    <br/>
+                                    <h4>Blood Groups</h4>
+                                    <Select style={{minWidth: '200px'}} placeholder="Select Blood Group"
+                                            onChange={(value)=>this.handleChangeOption('blood_group',value)}>
+                                        {BLOOD_GROUPS.map((item) => <Select.Option value={item.value}>
+                                            {item.name}</Select.Option>)}
+                                    </Select>
 
-                                {/*<br/>*/}
-                                {/*<h4>Referre</h4>*/}
-                                {/*<Select style={{minWidth: '200px'}} mode="multiple"*/}
-                                {/*        onChange={(value)=>this.handleChangeOption('blood_group',value)}>*/}
-                                {/*    {this.state.bloodGroup.map((item) => <Select.Option value={item.id}>*/}
-                                {/*        {item.name}</Select.Option>)}*/}
-                                {/*</Select>*/}
+                                    {/*<br/>*/}
+                                    {/*<h4>Referre</h4>*/}
+                                    {/*<Select style={{minWidth: '200px'}} mode="multiple"*/}
+                                    {/*        onChange={(value)=>this.handleChangeOption('blood_group',value)}>*/}
+                                    {/*    {this.state.bloodGroup.map((item) => <Select.Option value={item.id}>*/}
+                                    {/*        {item.name}</Select.Option>)}*/}
+                                    {/*</Select>*/}
 
 
-                                {/*<br/>*/}
-                                {/*<h4>Offer Applied</h4>*/}
-                                {/*<Select style={{minWidth: '200px'}}*/}
-                                {/*        onChange={(value)=>this.handleChangeOption('referrer',value)}>*/}
-                                {/*    {this.state.referrerOption.map((item) => <Select.Option value={item.id}>*/}
-                                {/*        {item.name}</Select.Option>)}*/}
-                                {/*</Select>*/}
-                            </Col>
-                        </>:<a href={'#'} onClick={(value)=>this.advancedOption(true)}>Show Advanced Options</a>}
+                                    {/*<br/>*/}
+                                    {/*<h4>Offer Applied</h4>*/}
+                                    {/*<Select style={{minWidth: '200px'}}*/}
+                                    {/*        onChange={(value)=>this.handleChangeOption('referrer',value)}>*/}
+                                    {/*    {this.state.referrerOption.map((item) => <Select.Option value={item.id}>*/}
+                                    {/*        {item.name}</Select.Option>)}*/}
+                                    {/*</Select>*/}
+                                </Col>
+                            </>:<a href={'#'} onClick={(value)=>this.advancedOption(true)}>Show Advanced Options</a>}
+                            </>:null}
                     </Col>
 
                 </Row>
