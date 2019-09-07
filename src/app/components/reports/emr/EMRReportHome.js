@@ -1,9 +1,5 @@
 import React from "react";
-import {Button, Card, Col, Icon, Radio, Row} from "antd";
-import {TREATMENT_REPORTS} from "../../../constants/api";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import moment from "moment"
-import CustomizedTable from "../../common/CustomizedTable";
+import {Button, Card, Checkbox, Col, Icon, Radio, Row, Select} from "antd";
 import {EMR_RELATED_REPORT} from "../../../constants/hardData";
 import TreatmentForEachDoctor from "./TreatmentForEachDoctor";
 import {
@@ -16,6 +12,8 @@ import DailyTreatmentsCount from "./DailyTreatmentsCount";
 import AllTreatmentPerformed from "./AllTreatmentPerformed";
 import MonthlyTreatmentCount from "./MonthlyTreatmentCount";
 import TreatmentForEachCategory from "./TreatmentForEachCategory";
+import {loadDoctors} from "../../../utils/clinicUtils";
+import TotalAmountDue from "../amountdue/TotalAmountDue";
 
 export default class EMRReportHome extends React.Component {
     constructor(props) {
@@ -23,73 +21,73 @@ export default class EMRReportHome extends React.Component {
         this.state = {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            type:'all',
+            type:'ALL',
             loading:true,
-        }
-        this.loadAllTreatment = this.loadAllTreatment.bind(this);
-    }
-    componentDidMount() {
-        if (this.state.type==ALL_TREATMENTS){
-            this.loadAllTreatment();
-        }
-
-    }
-
-    componentWillReceiveProps(newProps) {
-        let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
-            this.setState({
-                startDate: newProps.startDate,
-                endDate: newProps.endDate
-            }, function () {
-                if (this.state.type==ALL_TREATMENTS){
-                    this.loadAllTreatment();
-                }
-            })
-    }
-
-    loadAllTreatment() {
-        let that = this;
-        let successFn = function (data) {
-            console.log(data);
-            that.setState({
-                report: data.data,
-                loading:false
-            });
+            sidePanelColSpan:4,
+            advancedOptionShow: true,
+            practiceDoctors:[],
         };
-        let errorFn = function () {
-            that.setState({
-                loading:false
-            })
-        };
-        getAPI(interpolate(TREATMENT_REPORTS, [this.props.active_practiceId, "start=" + this.props.startDate + "&end=" + this.props.endDate]), successFn, errorFn);
+        loadDoctors(this);
+
     }
+
+
     onChangeHandle =(type,value)=>{
         let that=this;
         this.setState({
             [type]:value.target.value,
         })
-    }
+    };
 
+    advancedOption(value){
+        this.setState({
+            advancedOptionShow:value,
+        })
+    }
+    changeSidePanelSize = (sidePanel) => {
+        this.setState({
+            sidePanelColSpan: sidePanel ? 0 : 4
+        })
+    };
+    handleChangeOption = (type,value) => {
+        let that = this;
+        this.setState({
+            [type]: value,
+        })
+    };
+    onChangeCheckbox=(e)=>{
+        this.setState({
+            is_complete: !this.state.is_complete,
+        });
+    };
     render() {
 
         return <div>
-            <h2>Expenses Report
-                {/*<Button.Group style={{float: 'right'}}>*/}
-                    {/*<Button><Icon type="mail"/> Mail</Button>*/}
-                    {/*<Button><Icon type="printer"/> Print</Button>*/}
-                {/*</Button.Group>*/}
+            {/*<h2>*/}
+            {/*    /!*<Button.Group style={{float: 'right'}}>*!/*/}
+            {/*        /!*<Button><Icon type="mail"/> Mail</Button>*!/*/}
+            {/*        /!*<Button><Icon type="printer"/> Print</Button>*!/*/}
+            {/*    /!*</Button.Group>*!/*/}
+            {/*</h2>*/}
+            <h2>Expenses Report <Button type="primary" shape="round"
+                                          icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
+                                          style={{float: "right"}}
+                                          onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
             </h2>
-            <Card >
+            <Card>
                 <Row gutter={16}>
-                    <Col span={16}>
-                        {this.state.type==ALL_TREATMENTS?<AllTreatmentPerformed/>:null}
-                        {this.state.type==DAILY_TREATMENT_COUNT ?<DailyTreatmentsCount/>:null}
-                        {this.state.type==TREATMENTS_FOR_EACH_DOCTOR?<TreatmentForEachDoctor/>:null}
-                        {this.state.type==MONTHLY_TREATMENT_COUNT?<MonthlyTreatmentCount/>:null}
-                        {this.state.type==TREATMENT_FOR_EACH_CATEGORY?<TreatmentForEachCategory/>:null}
+                    <Col span={(24 - this.state.sidePanelColSpan)}>
+                        {this.state.type==ALL_TREATMENTS?<AllTreatmentPerformed {...this.state} {...this.props}/>:null}
+
+                        {this.state.type==DAILY_TREATMENT_COUNT ?<DailyTreatmentsCount {...this.state} {...this.props}/>:null}
+
+                        {this.state.type==TREATMENTS_FOR_EACH_DOCTOR?<TreatmentForEachDoctor {...this.state} {...this.props}/>:null}
+
+                        {this.state.type==MONTHLY_TREATMENT_COUNT?<MonthlyTreatmentCount {...this.state} {...this.props}/>:null}
+
+                        {this.state.type==TREATMENT_FOR_EACH_CATEGORY?<TreatmentForEachCategory {...this.state} {...this.props}/>:null}
                     </Col>
-                    <Col span={8}>
+                    <Col span={this.state.sidePanelColSpan}>
                         <Radio.Group buttonStyle="solid" defaultValue={ALL_TREATMENTS} onChange={(value)=>this.onChangeHandle('type',value)}>
                             <h2>Appointments</h2>
                             <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
@@ -104,6 +102,24 @@ export default class EMRReportHome extends React.Component {
                                 {item.name}
                             </Radio.Button>)}
                         </Radio.Group>
+
+                        <br/>
+                        <br/>
+                        {this.state.advancedOptionShow?<>
+                            <a href={'#'} onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options</a>
+                            <Col> <br/>
+                                <h4>Doctors</h4>
+                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
+                                        onChange={(value)=>this.handleChangeOption('doctors',value)}>
+                                    {this.state.practiceDoctors.map((item) => <Select.Option value={item.id}>
+                                        {item.user.first_name}</Select.Option>)}
+                                </Select>
+
+                                <br/>
+                                <br/>
+                                <Checkbox  onChange={(e)=>this.onChangeCheckbox(e)}> Only Completed</Checkbox>
+                            </Col>
+                        </>:<a href={'#'} onClick={(value)=>this.advancedOption(true)}>Show Advanced Options</a>}
                     </Col>
                 </Row>
             </Card>
