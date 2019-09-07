@@ -1,5 +1,5 @@
 import React from "react";
-import {APPOINTMENT_REPORTS} from "../../../constants/api";
+import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
@@ -19,7 +19,8 @@ export default class ReasonsForCancellations extends React.Component {
 
     componentWillReceiveProps(newProps) {
         let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.categories!=newProps.categories
+            ||this.props.doctors!=newProps.doctors ||this.props.exclude_cancelled!=newProps.exclude_cancelled)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
@@ -47,10 +48,24 @@ export default class ReasonsForCancellations extends React.Component {
                 loading: false
             })
         };
-        getAPI(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId]), successFn, errorFn, {
+        let apiParams={
+            type:that.props.type,
+            practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
-            end: this.state.endDate.format('YYYY-MM-DD')
-        });
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            exclude_cancelled:this.props.exclude_cancelled?true:false,
+        };
+        // if (this.props.exclude_cancelled){
+        //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
+        // }
+        if(this.props.categories){
+            apiParams.categories=this.props.categories.toString();
+        }
+        if(this.props.doctors){
+            apiParams.doctors=this.props.doctors.toString();
+        }
+
+        getAPI(PATIENT_APPOINTMENTS_REPORTS,  successFn, errorFn, apiParams);
     }
 
     render() {

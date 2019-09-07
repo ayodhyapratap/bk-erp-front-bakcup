@@ -1,51 +1,36 @@
 import React from "react";
-import {Button, Card, Col, Icon, Radio, Row, Table} from "antd";
+import {Col, Divider, Row, Statistic, Table} from "antd";
 import {APPOINTMENT_REPORTS} from "../../../constants/api";
-import {
-    APPOINTMENT_FOR_EACH_CATEGORY,
-    CANCELLATION_NUMBERS,
-    AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE,
-    AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE,
-    REASONS_FOR_CANCELLATIONS,
-    DAILY_APPOINTMENT_COUNT,
-    APPOINTMENT_FOR_EACH_DOCTOR,
-    MONTHLY_APPOINTMENT_COUNT,
-    APPOINTMENT_FOR_EACH_PATIENT_GROUP,
-    NEW_PATIENTS
-}
-    from "../../../constants/dataKeys";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import {APPOINTMENT_RELATED_REPORT} from "../../../constants/hardData";
+import {Cell, Pie, PieChart, Sector} from "recharts";
 import moment from "moment"
-import CustomizedTable from "../../common/CustomizedTable";
 
-export default class AppointmentsReportHome extends React.Component {
+export default class AllAppointments extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            appointmentReports: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
+            loading: true,
+            appointmentCategory:[],
+            activeIndex:0,
         }
         this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
     }
+
     componentDidMount() {
-        if (this.state.type=='all'){
-            this.loadAppointmentReport();
-        }
+        this.loadAppointmentReport();
     }
 
     componentWillReceiveProps(newProps) {
         let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.categories !=newProps.categories)
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.categories!=newProps.categories
+            ||this.props.doctors!=newProps.doctors ||this.props.exclude_cancelled!=newProps.exclude_cancelled)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
             },function(){
-                if (this.state.type=='all'){
-                    that.loadAppointmentReport();
-                }
-
+                that.loadAppointmentReport();
             })
 
     }
@@ -65,21 +50,29 @@ export default class AppointmentsReportHome extends React.Component {
             })
         };
         let apiParams={
+            type:that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
+            exclude_cancelled:this.props.exclude_cancelled?true:false,
         };
-        if (this.props.categories){
+        // if (this.props.exclude_cancelled){
+        //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
+        // }
+        if(this.props.categories){
             apiParams.categories=this.props.categories.toString();
         }
-
-        if (this.props.exclude_cancelled){
-            apiParams.exclude_cancelled=this.props.exclude_cancelled;
+        if(this.props.doctors){
+            apiParams.doctors=this.props.doctors.toString();
         }
-        getAPI(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId]), successFn, errorFn, apiParams);
+        getAPI(interpolate(APPOINTMENT_REPORTS, [that.props.active_practiceId]), successFn, errorFn, apiParams);
     };
-
+    onPieEnter=(data, index)=>{
+        this.setState({
+            activeIndex: index,
+        });
+    };
     render() {
-        let that=this;
+    let that=this;
         let i=1;
         const columns = [{
             title: 'S. No',
@@ -143,6 +136,10 @@ export default class AppointmentsReportHome extends React.Component {
             dataIndex: 'patient',
             key: 'patient_name',
             render: (item, record) => <span>{item.user.first_name}</span>
+        },{
+            title:'Current Status',
+            key:'status',
+            dataIndex:'status',
         }, {
             title: 'Doctor',
             dataIndex: 'doctor',
@@ -155,21 +152,75 @@ export default class AppointmentsReportHome extends React.Component {
             render: (text, record) => <span>{record.category_data ? record.category_data.name : null}</span>
         }];
 
+        const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+        const renderActiveShape = (props) => {
+            const RADIAN = Math.PI / 180;
+            const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
+                fill, payload, percent, value } = props;
+            const sin = Math.sin(-RADIAN * midAngle);
+            const cos = Math.cos(-RADIAN * midAngle);
+            const sx = cx + (outerRadius + 10) * cos;
+            const sy = cy + (outerRadius + 10) * sin;
+            const mx = cx + (outerRadius + 30) * cos;
+            const my = cy + (outerRadius + 30) * sin;
+            const ex = mx + (cos >= 0 ? 1 : -1) * 22;
+            const ey = my;
+            const textAnchor = cos >= 0 ? 'start' : 'end';
 
+            return (
+                <g>
+                    <Sector
+                        cx={cx}
+                        cy={cy}
+                        innerRadius={innerRadius}
+                        outerRadius={outerRadius}
+                        startAngle={startAngle}
+                        endAngle={endAngle}
+                        fill={fill}
+                    />
+                    <Sector
+                        cx={cx}
+                        cy={cy}
+                        startAngle={startAngle}
+                        endAngle={endAngle}
+                        innerRadius={outerRadius + 6}
+                        outerRadius={outerRadius + 10}
+                        fill={fill}
+                    />
+                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
+                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
+                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.category+','+ payload.count}</text>
+                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
+                        {`(Rate ${(percent * 100).toFixed(2)}%)`}
+                    </text>
+                </g>
+            );
+        };
 
 
 
         return <div>
-            <h2>All Appointments Report (Total:{that.props.total?that.props.total:this.state.total})
-                {/*<Button.Group style={{float: 'right'}}>*/}
-                {/*<Button><Icon type="mail"/> Mail</Button>*/}
-                {/*<Button><Icon type="printer"/> Print</Button>*/}
-                {/*</Button.Group>*/}
-            </h2>
+            {/*<h2>All Appointments Report (Total:{that.props.total?that.props.total:this.state.total})*/}
+            {/*    /!*<Button.Group style={{float: 'right'}}>*!/*/}
+            {/*    /!*<Button><Icon type="mail"/> Mail</Button>*!/*/}
+            {/*    /!*<Button><Icon type="printer"/> Print</Button>*!/*/}
+            {/*    /!*</Button.Group>*!/*/}
+            {/*</h2>*/}
+            <h2>All Appointments Report</h2>
+            <Row>
+                <Col span={12} offset={6} style={{textAlign:"center"}}>
+                    <Statistic title="Total" value={this.state.total} />
+                    <br/>
+                </Col>
+            </Row>
+
+            <Table
+                loading={this.state.loading}
+                columns={columns}
+                pagination={false}
+                dataSource={this.state.appointmentReports}/>
 
 
-            <Table loading={that.props.loading?that.props.loading:this.state.loading} columns={columns} pagination={false}
-                             dataSource={that.props.appointmentReports?that.props.appointmentReports:this.state.appointmentReports}/>
 
         </div>
     }

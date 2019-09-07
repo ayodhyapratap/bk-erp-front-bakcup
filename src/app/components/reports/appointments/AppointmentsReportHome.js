@@ -35,42 +35,35 @@ export default class AppointmentsReportHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            sidePanelColSpan: 4,
             appointmentReports: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: true,
-            type:'all',
+            type:'ALL',
             advancedOptionShow: true,
             appointmentCategory:[],
             categories:'',
             practiceDoctors:[],
 
 
-        }
-        this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
+        };
+
         this.loadAppointmentCategory = this.loadAppointmentCategory.bind(this);
         loadDoctors(this);
 
     }
     componentDidMount() {
-        if (this.state.type == ALL_APPOINTMENT){
-            this.loadAppointmentReport();
-
-        }
         this.loadAppointmentCategory();
 
     }
     componentWillReceiveProps(newProps) {
         let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate || this.props.categories !=newProps.categories )
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.categories!=newProps.categories
+            ||this.props.doctors!=newProps.doctors ||this.props.exclude_cancelled!=newProps.exclude_cancelled)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
-            },function(){
-                if (this.state.type==ALL_APPOINTMENT){
-                    that.loadAppointmentReport();
-                }
-
             })
 
     }
@@ -88,33 +81,6 @@ export default class AppointmentsReportHome extends React.Component {
         getAPI(interpolate(APPOINTMENT_CATEGORIES,[this.props.active_practiceId]),successFn ,errorFn);
     };
 
-    loadAppointmentReport = () => {
-        let that = this;
-        this.setState({
-            loading:true
-        })
-        let successFn = function (data) {
-            that.setState({
-                appointmentReports: data.data,
-                total:data.total,
-                loading: false
-            });
-
-        };
-        let errorFn = function () {
-            that.setState({
-                loading: false
-            })
-        };
-        let apiParams={
-            start: this.state.startDate.format('YYYY-MM-DD'),
-            end: this.state.endDate.format('YYYY-MM-DD')
-        };
-        if (this.state.exclude_cancelled){
-            apiParams.exclude_cancelled=this.state.exclude_cancelled;
-        }
-        getAPI(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId]), successFn, errorFn, apiParams);
-    };
 
     onChangeHandle =(type,value)=>{
         let that=this;
@@ -138,34 +104,44 @@ export default class AppointmentsReportHome extends React.Component {
             exclude_cancelled: !this.state.exclude_cancelled,
         });
     };
+
+    changeSidePanelSize = (sidePanel) => {
+        this.setState({
+            sidePanelColSpan: sidePanel ? 0 : 4
+        })
+    }
     render() {
-        console.log("stae",this.state)
         return <div>
-            <h2>Appointments Report
-                {/*<Button.Group style={{float: 'right'}}>*/}
-                {/*<Button><Icon type="mail"/> Mail</Button>*/}
-                {/*<Button><Icon type="printer"/> Print</Button>*/}
-                {/*</Button.Group>*/}
+            <h2>Appointments Report <Button type="primary" shape="round"
+                                        icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
+                                        style={{float: "right"}}
+                                        onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
             </h2>
+            {/*<h2>Appointments Report*/}
+            {/*    /!*<Button.Group style={{float: 'right'}}>*!/*/}
+            {/*    /!*<Button><Icon type="mail"/> Mail</Button>*!/*/}
+            {/*    /!*<Button><Icon type="printer"/> Print</Button>*!/*/}
+            {/*    /!*</Button.Group>*!/*/}
+            {/*</h2>*/}
             <Card>
                 <Row gutter={16}>
-                    <Col span={18}>
-                       {this.state.type == ALL_APPOINTMENT ?
-                           < AllAppointments {...this.state}/>:null}
+                    <Col span={(24 - this.state.sidePanelColSpan)}>
+                       {this.state.type == ALL_APPOINTMENT?
+                           <AllAppointments type={ALL_APPOINTMENT} {...this.state} {...this.props}/>:null}
                        {this.state.type == APPOINTMENT_FOR_EACH_CATEGORY?
                            <AppointmentByCategory {...this.state} />:null}
 
-                       {this.state.type == APPOINTMENT_FOR_EACH_DOCTOR?<AppointmentForEachDoctor {...this.props} type={this.state.type}/>:null}
-                       {this.state.type == APPOINTMENT_FOR_EACH_PATIENT_GROUP?<AppointmentForEachPatientGroup {...this.props} type={this.state.type}/>:null}
-                       {this.state.type == AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE?<AverageWaitingOrEngagedTimeDayWise {...this.props} type={this.state.type}/>:null}
-                       {this.state.type == AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE?<AverageWaitingOrEngagedTimeMonthWise {...this.props} type={this.state.type}/>:null}
-                       {this.state.type == CANCELLATION_NUMBERS?<CancellationsNumbers {...this.props} type={this.state.type}/>:null}
-                       {this.state.type == DAILY_APPOINTMENT_COUNT?<DailyAppointmentCount {...this.props} type={this.state.type}/>:null}
-                       {this.state.type == MONTHLY_APPOINTMENT_COUNT?<MonthlyAppointmentCount {...this.props} type={this.state.type}/>:null}
+                       {this.state.type == APPOINTMENT_FOR_EACH_DOCTOR?<AppointmentForEachDoctor {...this.state} {...this.props}/>:null}
+                       {this.state.type == APPOINTMENT_FOR_EACH_PATIENT_GROUP?<AppointmentForEachPatientGroup {...this.state} {...this.props}/>:null}
+                       {this.state.type == AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE?<AverageWaitingOrEngagedTimeDayWise {...this.state} {...this.props}/>:null}
+                       {this.state.type == AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE?<AverageWaitingOrEngagedTimeMonthWise {...this.state} {...this.props}/>:null}
+                       {this.state.type == CANCELLATION_NUMBERS?<CancellationsNumbers {...this.state} {...this.props}/>:null}
+                       {this.state.type == DAILY_APPOINTMENT_COUNT?<DailyAppointmentCount {...this.state} {...this.props}/>:null}
+                       {this.state.type == MONTHLY_APPOINTMENT_COUNT?<MonthlyAppointmentCount {...this.state} {...this.props}/>:null}
                        {/*{this.state.type==REASONS_FOR_CANCELLATIONS?<ReasonsForCancellations {...this.props} type={this.state.type}/>:null}*/}
 
                     </Col>
-                    <Col span={6}>
+                    <Col span={this.state.sidePanelColSpan}>
                         <Radio.Group buttonStyle="solid" defaultValue={ALL_APPOINTMENT}  onChange={(value)=>this.onChangeHandle('type',value)}>
                             <h2>Appointments</h2>
                             <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
@@ -188,7 +164,7 @@ export default class AppointmentsReportHome extends React.Component {
                             <a href={'#'} onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options</a>
                             <Col> <br/>
                                 <h4>Doctors</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple"
+                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
                                         onChange={(value)=>this.handleChangeOption('doctors',value)}>
                                     {this.state.practiceDoctors.map((item) => <Select.Option value={item.id}>
                                         {item.user.first_name}</Select.Option>)}
@@ -197,7 +173,7 @@ export default class AppointmentsReportHome extends React.Component {
                                 <br/>
                                 <br/>
                                 <h4>Appointment Categories</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple"
+                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Category"
                                         onChange={(value)=>this.handleChangeOption('categories',value)}>
                                     {this.state.appointmentCategory.map((item) => <Select.Option value={item.id}>
                                         {item.name}</Select.Option>)}
@@ -211,7 +187,7 @@ export default class AppointmentsReportHome extends React.Component {
 
                                 <br/>
                                 <br/>
-                                <Checkbox  onChange={(e)=>this.onChangeCheckbox(e)}>Checkbox</Checkbox>
+                                <Checkbox  onChange={(e)=>this.onChangeCheckbox(e)}> Exclude Cancelled</Checkbox>
                             </Col>
                         </>:<a href={'#'} onClick={(value)=>this.advancedOption(true)}>Show Advanced Options</a>}
 

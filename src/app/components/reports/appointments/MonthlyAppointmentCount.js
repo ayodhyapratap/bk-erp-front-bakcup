@@ -22,7 +22,8 @@ export default class MonthlyAppointmentCount extends React.Component {
 
     componentWillReceiveProps(newProps) {
         let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
+           if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.categories!=newProps.categories
+                    ||this.props.doctors!=newProps.doctors ||this.props.exclude_cancelled!=newProps.exclude_cancelled)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
@@ -48,12 +49,22 @@ export default class MonthlyAppointmentCount extends React.Component {
                 loading: false
             })
         };
-        let apiParams={
-            type:that.props.type,
-            practice:that.props.active_practiceId,
-            start: this.state.startDate.format('YYYY-MM-DD'),
-            end: this.state.endDate.format('YYYY-MM-DD'),
+         let apiParams={
+                type:that.props.type,
+                practice:that.props.active_practiceId,
+                start: this.state.startDate.format('YYYY-MM-DD'),
+                end: this.state.endDate.format('YYYY-MM-DD'),
+                exclude_cancelled:this.props.exclude_cancelled?true:false,
         };
+        // if (this.props.exclude_cancelled){
+        //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
+        // }
+        if(this.props.categories){
+            apiParams.categories=this.props.categories.toString();
+        }
+        if(this.props.doctors){
+            apiParams.doctors=this.props.doctors.toString();
+        }
 
         getAPI(PATIENT_APPOINTMENTS_REPORTS,  successFn, errorFn, apiParams);
     };
@@ -83,7 +94,7 @@ export default class MonthlyAppointmentCount extends React.Component {
             return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value}</text>;
         };
         return <div>
-            <h2>Monthly Appointment Count (Total:{this.state.total})
+            <h2>Monthly Appointment Count
                 {/*<Button.Group style={{float: 'right'}}>*/}
                 {/*<Button><Icon type="mail"/> Mail</Button>*/}
                 {/*<Button><Icon type="printer"/> Print</Button>*/}
