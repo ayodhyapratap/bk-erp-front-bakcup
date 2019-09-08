@@ -1,7 +1,7 @@
 import React from "react";
 import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import moment from "moment"
+import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
 
 export default class ReasonsForCancellations extends React.Component {
@@ -145,10 +145,6 @@ export default class ReasonsForCancellations extends React.Component {
 
         return <div>
             <h2>Reasons For Cancellations
-                {/*<Button.Group style={{float: 'right'}}>*/}
-                {/*<Button><Icon type="mail"/> Mail</Button>*/}
-                {/*<Button><Icon type="printer"/> Print</Button>*/}
-                {/*</Button.Group>*/}
             </h2>
             <CustomizedTable loading={this.state.loading} columns={columns} size={'small'}
                              dataSource={this.state.appointmentReports}/>

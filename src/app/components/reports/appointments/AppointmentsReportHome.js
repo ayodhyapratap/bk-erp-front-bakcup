@@ -116,12 +116,6 @@ export default class AppointmentsReportHome extends React.Component {
                                         style={{float: "right"}}
                                         onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
             </h2>
-            {/*<h2>Appointments Report*/}
-            {/*    /!*<Button.Group style={{float: 'right'}}>*!/*/}
-            {/*    /!*<Button><Icon type="mail"/> Mail</Button>*!/*/}
-            {/*    /!*<Button><Icon type="printer"/> Print</Button>*!/*/}
-            {/*    /!*</Button.Group>*!/*/}
-            {/*</h2>*/}
             <Card>
                 <Row gutter={16}>
                     <Col span={(24 - this.state.sidePanelColSpan)}>

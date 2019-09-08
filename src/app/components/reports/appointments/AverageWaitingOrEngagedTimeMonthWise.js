@@ -3,6 +3,7 @@ import {Table} from "antd";
 import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import moment from "moment"
+import CustomizedTable from "../../common/CustomizedTable";
 
 
 export default class AverageWaitingOrEngagedTimeMonthWise extends React.Component {
@@ -112,12 +113,8 @@ export default class AverageWaitingOrEngagedTimeMonthWise extends React.Componen
 
         return <div>
             <h2>Average Waiting/engaged Time Month Wise
-                {/*<Button.Group style={{float: 'right'}}>*/}
-                {/*<Button><Icon type="mail"/> Mail</Button>*/}
-                {/*<Button><Icon type="printer"/> Print</Button>*/}
-                {/*</Button.Group>*/}
             </h2>
-            <Table loading={this.state.loading} columns={columns} pagination={false}
+            <CustomizedTable loading={this.state.loading} columns={columns}
                              dataSource={this.state.appointmentMonthWait}/>
 
         </div>

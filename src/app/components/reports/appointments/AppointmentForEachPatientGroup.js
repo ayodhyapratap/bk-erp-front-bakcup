@@ -1,8 +1,9 @@
 import React from "react";
-import {Divider, Statistic, Table,Row,Col} from "antd";
+import {Divider, Statistic, Table, Row, Col, Spin, Empty} from "antd";
 import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import {PieChart, Tooltip, Pie, Sector, Cell} from 'recharts';
+import CustomizedTable from "../../common/CustomizedTable";
 
 
 export default class AppointmentForEachPatientGroup extends React.Component {
@@ -138,37 +139,36 @@ export default class AppointmentForEachPatientGroup extends React.Component {
 
         return <div>
             <h2>Appointment For Each Patient Group
-                {/*<Button.Group style={{float: 'right'}}>*/}
-                {/*<Button><Icon type="mail"/> Mail</Button>*/}
-                {/*<Button><Icon type="printer"/> Print</Button>*/}
-                {/*</Button.Group>*/}
             </h2>
             <Row>
                 <Col span={12} offset={6}>
-                    <PieChart width={800} height={400} >
-                        <Pie
-                            activeIndex={this.state.activeIndex}
-                            activeShape={renderActiveShape}
-                            data={this.state.appointmentGroup}
-                            cx={300}
-                            dataKey="count"
-                            cy={200}
-                            innerRadius={60}
-                            outerRadius={80}
-                            fill="#8884d8"
-                            onMouseEnter={this.onPieEnter}>
-                            {
-                                this.state.appointmentGroup.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
-                            }
-                        </Pie>
+                    <Spin size="large" spinning={this.state.loading}>
+                        {this.state.appointmentGroup.length>0?
+                        <PieChart width={800} height={400} >
+                            <Pie
+                                activeIndex={this.state.activeIndex}
+                                activeShape={renderActiveShape}
+                                data={this.state.appointmentGroup}
+                                cx={300}
+                                dataKey="count"
+                                cy={200}
+                                innerRadius={60}
+                                outerRadius={80}
+                                fill="#8884d8"
+                                onMouseEnter={this.onPieEnter}>
+                                {
+                                    this.state.appointmentGroup.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                }
+                            </Pie>
                         {/*<Tooltip/>*/}
-                    </PieChart>
+                        </PieChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+                    </Spin>
                 </Col>
             </Row>
 
 
             <Divider><Statistic title="Total" value={this.state.total} /></Divider>
-            <Table loading={this.state.loading} columns={columns} pagination={false} dataSource={this.state.appointmentGroup}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.appointmentGroup}/>
 
         </div>
     }

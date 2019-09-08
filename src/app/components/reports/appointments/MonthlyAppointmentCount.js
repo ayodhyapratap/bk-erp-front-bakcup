@@ -1,9 +1,10 @@
 import React from "react";
-import {Table,Divider,Statistic} from "antd";
+import {Table,Divider,Statistic,Spin,Empty} from "antd";
 import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import moment from "moment";
 import {ComposedChart, Line, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend}  from 'recharts';
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class MonthlyAppointmentCount extends React.Component {
     constructor(props) {
@@ -38,7 +39,7 @@ export default class MonthlyAppointmentCount extends React.Component {
 
         let successFn = function (data) {
             that.setState({
-                appointmentMonthly: data.data,
+                appointmentMonthly: data.data.reverse(),
                 total:data.total,
                 loading: false
             });
@@ -56,9 +57,6 @@ export default class MonthlyAppointmentCount extends React.Component {
                 end: this.state.endDate.format('YYYY-MM-DD'),
                 exclude_cancelled:this.props.exclude_cancelled?true:false,
         };
-        // if (this.props.exclude_cancelled){
-        //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
-        // }
         if(this.props.categories){
             apiParams.categories=this.props.categories.toString();
         }
@@ -95,27 +93,25 @@ export default class MonthlyAppointmentCount extends React.Component {
         };
         return <div>
             <h2>Monthly Appointment Count
-                {/*<Button.Group style={{float: 'right'}}>*/}
-                {/*<Button><Icon type="mail"/> Mail</Button>*/}
-                {/*<Button><Icon type="printer"/> Print</Button>*/}
-                {/*</Button.Group>*/}
             </h2>
+             <Spin size="large" spinning={this.state.loading}>
+                 {this.state.appointmentMonthly.length>0?
+                 <ComposedChart width={1000} height={400} data={this.state.appointmentMonthly}
+                               margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
-             <ComposedChart width={1000} height={400} data={this.state.appointmentMonthly}
-                           margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
-
-                <XAxis dataKey="date" tickFormatter={(value) => {
-                    return moment(value).format('MMM YY')
-                }} />
-                <YAxis />
-                <Tooltip />
-                {/*<Legend />*/}
-                <Bar dataKey='count' barSize={35} fill='#0059b3' stroke="#0059b3" label={renderCustomBarLabel}/>
-            </ComposedChart>
+                    <XAxis dataKey="date" tickFormatter={(value) => {
+                        return moment(value).format('MMM YY')
+                    }} />
+                    <YAxis />
+                    <Tooltip />
+                    {/*<Legend />*/}
+                    <Bar dataKey='count' barSize={35} fill='#0059b3' stroke="#0059b3" label={renderCustomBarLabel}/>
+                </ComposedChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+              </Spin>
 
             <Divider><Statistic title="Total" value={this.state.total} /></Divider>
-            <Table loading={this.state.loading} columns={columns} pagination={false} dataSource={this.state.appointmentMonthly}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.appointmentMonthly}/>
 
         </div>
     }

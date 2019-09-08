@@ -1,9 +1,10 @@
 import React from "react";
-import {Divider, Statistic, Table} from "antd";
+import {Col, Divider, Empty, Spin, Statistic, Table} from "antd";
 import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import moment from "moment";
-import {Bar, CartesianGrid, ComposedChart, Line, LineChart, Tooltip, XAxis, YAxis} from "recharts";
+import {Bar, CartesianGrid, ComposedChart, Line, LineChart, PieChart, Tooltip, XAxis, YAxis} from "recharts";
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class DailyAppointmentCount extends React.Component {
     constructor(props) {
@@ -38,7 +39,7 @@ export default class DailyAppointmentCount extends React.Component {
 
         let successFn = function (data) {
             that.setState({
-                appointmentDaily: data.data,
+                appointmentDaily: data.data.reverse(),
                 total:data.total,
                 loading: false
             });
@@ -103,30 +104,28 @@ export default class DailyAppointmentCount extends React.Component {
 
         return <div>
             <h2>Daily Appointment Count
-                {/*<Button.Group style={{float: 'right'}}>*/}
-                {/*<Button><Icon type="mail"/> Mail</Button>*/}
-                {/*<Button><Icon type="printer"/> Print</Button>*/}
-                {/*</Button.Group>*/}
             </h2>
+            <Spin size="large" spinning={this.state.loading}>
+                {this.state.appointmentDaily.length>0?
+                <LineChart width={1000} height={300} data={this.state.appointmentDaily}
+                           margin={{top: 5, right: 30, left: 20, bottom: 55}}>
 
-            <LineChart width={1000} height={300} data={this.state.appointmentDaily}
-                       margin={{top: 5, right: 30, left: 20, bottom: 55}}>
+                    <XAxis dataKey="date" tickFormatter={(value) => {
+                        return moment(value).format('DD MMM')
+                    }}
+                           label= {{value:"Data Range", offset:0, margin:{top:10}, position:"insideBottom"}} />
+                    {/*</XAxis>*/}
 
-                <XAxis dataKey="date" tickFormatter={(value) => {
-                    return moment(value).format('DD MMM')
-                }}
-                       label= {{value:"Data Range", offset:0, margin:{top:10}, position:"insideBottom"}} />
-                {/*</XAxis>*/}
+                    <YAxis label={{ value: 'Appointments', angle: -90, position: 'insideLeft' }} />
 
-                <YAxis label={{ value: 'Appointments', angle: -90, position: 'insideLeft' }} />
-
-                <CartesianGrid strokeDasharray="3 3"/>
-                <Tooltip/>
-                <Line type="monotone" dataKey="count" stroke="#1DA57A" strokeWidth={4} label={<CustomizedLabel />}/>
-            </LineChart>
+                    <CartesianGrid strokeDasharray="3 3"/>
+                    <Tooltip/>
+                    <Line type="monotone" dataKey="count" stroke="#1DA57A" strokeWidth={4} label={<CustomizedLabel />}/>
+                </LineChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+            </Spin>
 
             <Divider><Statistic title="Total" value={this.state.total} /></Divider>
-            <Table loading={this.state.loading} columns={columns} pagination={false} dataSource={this.state.appointmentDaily}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.appointmentDaily}/>
 
         </div>
     }
