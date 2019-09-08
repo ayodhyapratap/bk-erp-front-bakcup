@@ -70,7 +70,9 @@ export default class NewPatientReports extends React.Component {
         const columns = [{
             title: 'S. No',
             key: 'sno',
+            dataIndex:'sno',
             render: (item, record) => <span> {i++}</span>,
+            export:(item,record,index)=>index+1,
             width: 50
         },{
             title: 'Patient Name',
@@ -84,12 +86,14 @@ export default class NewPatientReports extends React.Component {
             title: 'Mobile Number',
             key: 'user.mobile',
             dataIndex:'user.mobile',
-            render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value)
+            render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value),
+            exports:(value)=>(value),
         },{
             title:'Email',
             key:'user.email',
             dataIndex:'user.email',
-            render:(value)=>that.props.activePracticePermissions.PatientEmailId ? value : hideEmail(value)
+            render:(value)=>that.props.activePracticePermissions.PatientEmailId ? value : hideEmail(value),
+            exports:(value)=>(value),
         }, {
             title: 'Gender',
             key: 'gender',

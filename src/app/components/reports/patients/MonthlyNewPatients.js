@@ -72,12 +72,15 @@ export default class MonthlyNewPatients extends React.Component {
         const columns = [{
             title: 'S. No',
             key: 'sno',
+            dataIndex:'sno',
             render: (item, record) => <span> {i++}</span>,
+            export:(item,record,index)=>index+1,
             width: 50
         },{
             title: "Month",
             key:'month',
-            render:((item, record) => <span>{moment(record.month).format('MMM')} &nbsp;{moment(record.year).format('YYYY')}</span>)
+            render:((item, record) => <span>{moment(record.month).format('MMM')} &nbsp;{moment(record.year).format('YYYY')}</span>),
+            export:(item,record)=> (moment(record.month).format('MMM YYYY')),
         },{
             title:'Patients',
             key:'count',

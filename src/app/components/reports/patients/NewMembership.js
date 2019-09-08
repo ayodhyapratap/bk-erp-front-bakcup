@@ -66,26 +66,32 @@ export default class NewMembership extends React.Component {
         const columns = [{
             title: 'S. No',
             key: 'sno',
+            dataIndex:'sno',
             render: (item, record) => <span> {i++}</span>,
+            export:(item,record,index)=>index+1,
             width: 50
         },{
             title: 'Name',
             dataIndex: 'patient.user.first_name',
             key: 'patient.user.first_name',
+            export:(item,record)=>(record.patient.user.first_name),
         }, {
             title: 'Mobile Number',
             key: 'patient.user.mobile',
             dataIndex:'patient.user.mobile',
-            render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value)
+            render: (value) => that.props.activePracticePermissions.PatientPhoneNumber ? value : hideMobile(value),
+            export:(item ,record)=>(record.patient.user.mobile),
         },{
             title: 'Email',
             key: 'patient.user.email',
             dataIndex:'patient.user.email',
-            render:(value)=>that.props.activePracticePermissions.PatientEmailId ? value : hideEmail(value)
+            render:(value)=>that.props.activePracticePermissions.PatientEmailId ? value : hideEmail(value),
+            export:(item ,record)=>(record.patient.user.email),
         },{
             title:'Membership Type',
             key:'membership_type',
-            dataIndex:'medical_membership.name'
+            dataIndex:'medical_membership.name',
+            export:(item ,record)=>(record.medical_membership.name),
         },{
             title:'Start Date',
             key:'start_date',

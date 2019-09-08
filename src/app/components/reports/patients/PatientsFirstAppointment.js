@@ -65,7 +65,9 @@ export default class PatientsFirstAppointment extends React.Component {
         const columns = [{
             title: 'S. No',
             key: 'sno',
+            dataIndex:'sno',
             render: (item, record) => <span> {i++}</span>,
+            export:(item,record,index)=>index+1,
             width: 50
         },{
             title: 'Date',
@@ -75,6 +77,7 @@ export default class PatientsFirstAppointment extends React.Component {
                 {moment(record.appointment_time).format('LL')}
                   </span>
             ),
+            export:(item,record)=> (moment(record.appointment_time).format('LL')),
         }, {
             title: 'Patient Name',
             dataIndex: 'patient_name',
