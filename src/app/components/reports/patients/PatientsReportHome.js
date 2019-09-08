@@ -11,9 +11,6 @@ import {
 } from "../../../constants/dataKeys";
 import {BLOOD_GROUPS, PATIENTS_RELATED_REPORT} from "../../../constants/hardData";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import moment from "moment"
-import CustomizedTable from "../../common/CustomizedTable";
-import {hideMobile} from "../../../utils/permissionUtils";
 import DailyNewPatientReports from "./DailyNewPatientsReports";
 import ExpiringMembership from "./ExpiringMembership";
 import MonthlyNewPatients from "./MonthlyNewPatients";
