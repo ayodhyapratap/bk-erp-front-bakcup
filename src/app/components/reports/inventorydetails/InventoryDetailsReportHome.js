@@ -3,7 +3,6 @@ import {Button, Card, Col, Icon, Radio, Row, Select, Checkbox} from "antd";
 import {MANUFACTURER_API ,SUPPLIER_API,PRODUCTS_API} from "../../../constants/api";
 import {ALL} from "../../../constants/dataKeys";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import ProfitLossReport from "./ProfitLossReport";
 import { loadDoctors } from "../../../utils/clinicUtils";
 
 
@@ -122,10 +121,10 @@ export default class InventoryDetailsReportHome extends React.Component {
             {/*</h2>*/}
             <Card>
                 <Row gutter={16}>
-                    <Col span={(24 - this.state.sidePanelColSpan)}>
-                        <ProfitLossReport  {...this.state} {...this.props}/>
+                    {/*<Col span={(24 - this.state.sidePanelColSpan)}>*/}
+                    {/*    <ProfitLossReport  {...this.state} {...this.props}/>*/}
 
-                    </Col>
+                    {/*</Col>*/}
                     <Col span={this.state.sidePanelColSpan}>
                         <Radio.Group buttonStyle="solid" defaultValue={ALL}>
                             <h2>Inventory Retails</h2>
