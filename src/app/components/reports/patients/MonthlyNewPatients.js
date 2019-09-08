@@ -1,9 +1,10 @@
 import React from "react";
-import {Divider, Statistic, Table} from "antd";
+import {Divider, Statistic, Spin,Empty} from "antd";
 import {PATIENTS_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment, {relativeTimeThreshold} from "moment"
 import {ComposedChart, Line, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend}  from 'recharts';
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class MonthlyNewPatients extends React.Component {
     constructor(props) {
@@ -40,7 +41,7 @@ export default class MonthlyNewPatients extends React.Component {
         })
         let successFn = function (data) {
             that.setState({
-                report:data.data,
+                report:data.data.reverse(),
                 total:data.total,
                 loading: false
             });
@@ -98,25 +99,26 @@ export default class MonthlyNewPatients extends React.Component {
         };
         return <div>
             <h2>Monthly New Patients Report</h2>
+            <Spin size="large" spinning={this.state.loading}>
+                {this.state.report.length>0?
+                <ComposedChart width={1000} height={400} data={this.state.report}
+                               margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
-            <ComposedChart width={1000} height={400} data={this.state.report}
-                           margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
-
-                <XAxis dataKey="date" tickFormatter={(value) => {
-                    return moment(value).format('MMM YYYY')
-                }} />
-                <YAxis />
-                <Tooltip />
-                {/*<Legend />*/}
-                <Bar dataKey='count' barSize={35} fill='#413ea0' label={renderCustomBarLabel}/>
-            </ComposedChart>
+                    <XAxis dataKey="date" tickFormatter={(value) => {
+                        return moment(value).format('MMM YYYY')
+                    }} />
+                    <YAxis />
+                    <Tooltip />
+                    {/*<Legend />*/}
+                    <Bar dataKey='count' barSize={35} fill='#413ea0' label={renderCustomBarLabel}/>
+                </ComposedChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+            </Spin>
 
             <Divider><Statistic title="Total Patients" value={this.state.total} /></Divider>
-            <Table
+            <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                pagination={false}
                 dataSource={this.state.report}/>
 
 

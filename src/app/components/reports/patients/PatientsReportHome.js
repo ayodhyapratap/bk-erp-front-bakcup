@@ -42,16 +42,7 @@ export default class PatientsReportHome extends React.Component {
 
     }
 
-    componentWillReceiveProps(newProps) {
 
-        let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.state.patient_groups !=newProps.patient_groups
-            ||this.state.blood_group !=newProps.blood_group || this.state.blood_group !=newProps.blood_group)
-            this.setState({
-                startDate: newProps.startDate,
-                endDate: newProps.endDate
-            });
-    }
     loadPatientGroup(){
         let that=this;
         let successFn =function (data) {
@@ -165,22 +156,6 @@ export default class PatientsReportHome extends React.Component {
                                             {item.name}</Select.Option>)}
                                     </Select>
 
-                                    {/*<br/>*/}
-                                    {/*<h4>Referre</h4>*/}
-                                    {/*<Select style={{minWidth: '200px'}} mode="multiple"*/}
-                                    {/*        onChange={(value)=>this.handleChangeOption('blood_group',value)}>*/}
-                                    {/*    {this.state.bloodGroup.map((item) => <Select.Option value={item.id}>*/}
-                                    {/*        {item.name}</Select.Option>)}*/}
-                                    {/*</Select>*/}
-
-
-                                    {/*<br/>*/}
-                                    {/*<h4>Offer Applied</h4>*/}
-                                    {/*<Select style={{minWidth: '200px'}}*/}
-                                    {/*        onChange={(value)=>this.handleChangeOption('referrer',value)}>*/}
-                                    {/*    {this.state.referrerOption.map((item) => <Select.Option value={item.id}>*/}
-                                    {/*        {item.name}</Select.Option>)}*/}
-                                    {/*</Select>*/}
                                 </Col>
                             </>: <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
                             </>:null}

@@ -3,6 +3,7 @@ import {Table} from "antd";
 import {MEMBERSHIP_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {hideMobile ,hideEmail} from "../../../utils/permissionUtils";
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class NewMembership extends React.Component {
     constructor(props) {
@@ -98,10 +99,9 @@ export default class NewMembership extends React.Component {
 
         return <div>
             <h2>New Membership </h2>
-            <Table
+            <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                pagination={false}
                 dataSource={this.state.report}/>
 
 

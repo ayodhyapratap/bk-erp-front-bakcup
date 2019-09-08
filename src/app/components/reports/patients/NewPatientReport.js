@@ -4,6 +4,7 @@ import {getAPI, interpolate} from "../../../utils/common";
 import {PATIENTS_REPORTS} from "../../../constants/api";
 import {Col, Row, Statistic, Table} from "antd";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class NewPatientReports extends React.Component {
     constructor(props) {
@@ -34,21 +35,13 @@ export default class NewPatientReports extends React.Component {
                 }
             })
     }
-    loadNewPatient(page=1) {
+    loadNewPatient() {
         let that = this;
 
         let successFn = function (data) {
-            that.setState(function (prevState) {
-                if (data.current == 1) {
-                    return {
-                        report: [...data.results],
-                        next: data.next,
-                        total:data.count,
-                        loading: false
-                    }
-                }
-
-            })
+           that.setState({
+               report:data,
+           })
         };
         let errorFn = function () {
             that.setState({
@@ -56,7 +49,6 @@ export default class NewPatientReports extends React.Component {
             })
         };
         let apiParams={
-            page: page,
             type:that.props.type?that.props.type:'DETAILED',
             blood_group:that.props.blood_group,
         };
@@ -112,15 +104,14 @@ export default class NewPatientReports extends React.Component {
                 </Col>
             </Row>
 
-            <Table
+            <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                pagination={false}
                 dataSource={this.state.report}/>
 
-            <InfiniteFeedLoaderButton loaderFunction={() => this.loadNewPatient(that.state.next)}
-                                      loading={this.state.loading}
-                                      hidden={!this.state.next}/>
+            {/*<InfiniteFeedLoaderButton loaderFunction={() => this.loadNewPatient(that.state.next)}*/}
+            {/*                          loading={this.state.loading}*/}
+            {/*                          hidden={!this.state.next}/>*/}
 
         </div>
     }

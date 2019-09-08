@@ -3,6 +3,7 @@ import {FIRST_APPOINTMENT_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment from "moment";
 import {Col, Row, Statistic, Table} from "antd";
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class PatientsFirstAppointment extends React.Component {
     constructor(props) {
@@ -93,10 +94,9 @@ export default class PatientsFirstAppointment extends React.Component {
                 </Col>
             </Row>
 
-            <Table
+            <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                pagination={false}
                 dataSource={this.state.report}/>
 
 
