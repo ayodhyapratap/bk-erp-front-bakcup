@@ -35,7 +35,7 @@ import {
     DOCTOR_VISIT_TIMING_API, ENABLE_STAFF_IN_PRACTICE, ALL_PERMISSIONS
 } from "../../../../constants/api"
 import {Link, Route, Switch} from "react-router-dom";
-import {deleteAPI, displayMessage, getAPI, interpolate, patchAPI, postAPI} from "../../../../utils/common";
+import {deleteAPI, displayMessage, getAPI, interpolate, patchAPI, postAPI, putAPI} from "../../../../utils/common";
 import {getAllPermissions, loggedInUserPractices} from "../../../../utils/auth";
 import moment from "moment";
 import DoctorTiming from "./DoctorTiming";
@@ -164,13 +164,16 @@ class PracticeDetails extends React.Component {
 
     deleteStaff(value) {
         var that = this;
+        let reqData={
+            is_active:false,
+        }
         let successFn = function (data) {
+
             that.loadData();
-            console.log("Deleted");
         };
         let errorFn = function () {
         };
-        deleteAPI(interpolate(SINGLE_PRACTICE_STAFF_API, [value]), successFn, errorFn);
+        putAPI(interpolate(SINGLE_PRACTICE_STAFF_API, [value]), reqData, successFn, errorFn);
     }
 
     staffRoles() {

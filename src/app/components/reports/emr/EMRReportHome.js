@@ -89,7 +89,7 @@ export default class EMRReportHome extends React.Component {
                     </Col>
                     <Col span={this.state.sidePanelColSpan}>
                         <Radio.Group buttonStyle="solid" defaultValue={ALL_TREATMENTS} onChange={(value)=>this.onChangeHandle('type',value)}>
-                            <h2>Appointments</h2>
+                            <h2>Treatments</h2>
                             <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
                                           value={ALL_TREATMENTS}>
                                 All Treatments Performed
