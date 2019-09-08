@@ -38,7 +38,7 @@ export default class MonthlyTreatmentCount extends React.Component {
 
         let successFn = function (data) {
             that.setState({
-                treatmentMonthly: data.data.reverse(),
+                treatmentMonthly: data.data,
                 total:data.total,
                 loading: false
             });
@@ -66,16 +66,20 @@ export default class MonthlyTreatmentCount extends React.Component {
         const columns = [{
             title: 'S. No',
             key: 'sno',
+            dataIndex:'date',
             render: (item, record) => <span> {i++}</span>,
+            export:(item,record,index)=>index+1,
             width: 50
         },{
             title: 'Month',
             key: 'date',
+            dataIndex:'date',
             render: (text, record) => (
                 <span>
                 {moment(record.date).format('MMMM YYYY')}
                   </span>
             ),
+            export:(item,record)=>{moment(record.date).format('ll')},
         },{
             title:'Total Treatments',
             key:'count',
@@ -94,7 +98,7 @@ export default class MonthlyTreatmentCount extends React.Component {
             </h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.treatmentMonthly.length>0?
-                <ComposedChart width={1000} height={400} data={this.state.treatmentMonthly}
+                <ComposedChart width={1000} height={400} data={this.state.treatmentMonthly.reverse()}
                                margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
 

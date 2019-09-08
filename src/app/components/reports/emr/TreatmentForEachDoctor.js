@@ -4,6 +4,7 @@ import {getAPI, interpolate} from "../../../utils/common";
 import {Col, Divider, Empty, Row, Spin, Statistic, Table} from "antd";
 import {Pie, PieChart, Sector,Cell} from "recharts";
 import CustomizedTable from "../../common/CustomizedTable";
+import moment from "moment";
 
 export default class TreatmentForEachDoctor extends React.Component {
     constructor(props) {
@@ -71,7 +72,9 @@ export default class TreatmentForEachDoctor extends React.Component {
         const columns = [{
             title: 'S. No',
             key: 'sno',
+            dataIndex:'sno',
             render: (item, record) => <span> {i++}</span>,
+            export:(item,record,index)=>index+1,
             width: 50
         },{
             title: 'Doctor',
@@ -133,10 +136,6 @@ export default class TreatmentForEachDoctor extends React.Component {
         }, 0);
         return <div>
             <h2>Treatments For Each Patient Doctor
-                {/*<Button.Group style={{float: 'right'}}>*/}
-                {/*<Button><Icon type="mail"/> Mail</Button>*/}
-                {/*<Button><Icon type="printer"/> Print</Button>*/}
-                {/*</Button.Group>*/}
             </h2>
 
             <Row>
@@ -147,7 +146,7 @@ export default class TreatmentForEachDoctor extends React.Component {
                             <Pie
                                 activeIndex={this.state.activeIndex}
                                 activeShape={renderActiveShape}
-                                data={this.state.treatmentEachDoctor}
+                                data={this.state.treatmentEachDoctor.reverse()}
                                 cx={300}
                                 dataKey="count"
                                 cy={200}

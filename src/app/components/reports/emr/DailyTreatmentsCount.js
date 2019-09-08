@@ -40,7 +40,7 @@ export default class DailyTreatmentsCount extends React.Component {
         })
         let successFn = function (data) {
             that.setState({
-                report: data.data.reverse(),
+                report: data.data,
                 total:data.total,
                 loading: false
             });
@@ -67,12 +67,16 @@ export default class DailyTreatmentsCount extends React.Component {
         const columns = [{
             title: 'S. No',
             key: 'sno',
+            dataIndex:'abcd',
             render: (item, record) => <span> {i++}</span>,
+            export:(item,record,index)=>index+1,
             width: 50
         },{
             title: 'Day',
             key: 'date',
-            render:((item, record) => <span>{moment(record.date).format('ll')}</span>)
+            dataIndex:'date',
+            render:((item, record) => <span>{moment(record.date).format('ll')}</span>),
+            export:(item,record)=>(moment(record.date).format('ll')),
         },{
             title:'Total Treatments',
             key:'count',
@@ -94,7 +98,7 @@ export default class DailyTreatmentsCount extends React.Component {
             <h2>Daily Treatments Count</h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.report.length>0?
-                <LineChart width={1000} height={300} data={this.state.report}
+                <LineChart width={1000} height={300} data={this.state.report.reverse()}
                            margin={{top: 5, right: 30, left: 20, bottom: 55}}>
 
                     <XAxis dataKey="date" tickFormatter={(value) => {

@@ -67,6 +67,7 @@ export default class AllTreatmentPerformed extends React.Component {
             title: 'S. No',
             key: 'sno',
             render: (item, record) => <span> {i++}</span>,
+            export:(item,record)=>{i++},
             width: 50
         },{
             title: 'Performed On',
@@ -76,6 +77,7 @@ export default class AllTreatmentPerformed extends React.Component {
                 {moment(record.schedule_at).format('DD MMM YYYY')}
                   </span>
             ),
+            export:(item,record)=>(moment(record.schedule_at).format('DD MMM YYYY')),
         },{
             title: 'Name',
             dataIndex: 'procedure_name',
@@ -85,8 +87,6 @@ export default class AllTreatmentPerformed extends React.Component {
             key:'doctor',
             dataIndex:'doctor',
         }];
-
-
 
 
         return <div>
