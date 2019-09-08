@@ -73,38 +73,48 @@ export default class AverageWaitingOrEngagedTimeDayWise extends React.Component 
         const columns = [{
             title: 'S. No',
             key: 'sno',
+            dataIndex:'sno',
             render: (item, record) => <span> {i++}</span>,
+            export:(item,record,index)=>index+1,
             width: 50
         },{
             title: 'Appointment Time Day',
             key: 'date',
+            dataIndex:'date',
             render: (text, record) => (
                 <span>
                 {moment(record.date).format('DD MMM YYYY')}
                   </span>
             ),
+            export:(item,record)=> (moment(record.date).format('DD MMM YYYY')),
         }, {
             title: 'Avg. waiting Time(hh:mm:ss)',
             key: 'wait',
+            dataIndex:'wait',
             render: (text, record) => (
                 <span>
                   {record.wait?moment(record.wait).format('HH:mm:ss'):''}
                 </span>
             ),
+            export:(item,record)=> (record.wait?moment(record.wait).format('HH:mm:ss'):''),
         }, {
             title: 'Avg. engaged Time(hh:mm:ss)',
             key: 'engage',
+            dataIndex:'engage',
             render: (text, record) => (
                 <span>
                   {record.engage?moment(record.engage).format('HH:mm:ss'):''}
                 </span>
             ),
+            export:(item,record)=> (record.engage?moment(record.engage).format('HH:mm:ss'):''),
         }, {
             title: 'Avg. stay Time (hh:mm:ss)',
             key: 'stay',
+            dataIndex:'stay',
             render: (stay, record) => (<span>
                 {record.stay ? moment(record.stay).format('hh:mm:ss'): ''}
-            </span>)
+            </span>),
+            export:(item,record)=> (record.stay ? moment(record.stay).format('hh:mm:ss'): ''),
         }];
 
 

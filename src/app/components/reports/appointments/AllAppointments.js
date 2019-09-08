@@ -78,25 +78,34 @@ export default class AllAppointments extends React.Component {
         const columns = [{
             title: 'S. No',
             key: 'sno',
+            dataIndex:'sno',
             render: (item, record) => <span> {i++}</span>,
+            export:(item,record,index)=>index+1,
             width: 50
         },{
             title: 'Date',
             key: 'date',
+            dataIndex:'date',
             render: (text, record) => (
                 <span>
                 {moment(record.schedule_at).format('DD MMM YYYY')}
                   </span>
             ),
+            export:(item,record)=>(moment(record.schedule_at).format('ll')),
         }, {
             title: 'Scheduled At	',
             key: 'time',
+            dataIndex:'time',
             render: (text, record) => (
                 <span>
                   {moment(record.schedule_at).format('HH:mm')}
 
                   </span>
             ),
+            export: (item, record) => (
+                moment(record.schedule_at).format('HH:mm')
+            ),
+
         }, {
             title: 'Check-in At',
             dataIndex: 'waiting',
@@ -106,6 +115,8 @@ export default class AllAppointments extends React.Component {
                 {record.waiting ? moment(record.waiting).format('lll') : ''}
                   </span>
             ),
+            export:(item,record)=>(moment(record.schedule_at).format('HH:mm')),
+
         }, {
             title: 'Waited For (hh:mm:ss)',
             dataIndex: 'age',
@@ -113,7 +124,9 @@ export default class AllAppointments extends React.Component {
             render: (age, record) => (<span>
                 {record.engaged ? moment(record.engaged).from(moment(record.waiting))
                     : ''}
-            </span>)
+            </span>),
+            export:(item,record)=>(record.engaged ? moment(record.engaged).from(moment(record.waiting))
+                : ''),
         }, {
             title: 'Engaged At',
             dataIndex: 'engaged',
@@ -123,6 +136,7 @@ export default class AllAppointments extends React.Component {
                 {record.engaged ? moment(record.engaged).format('lll') : ''}
                   </span>
             ),
+            export:(item,record)=>(record.engaged ? moment(record.engaged).format('lll') : ''),
         }, {
             title: 'Checkout At',
             dataIndex: 'checkout',
@@ -132,11 +146,13 @@ export default class AllAppointments extends React.Component {
                 {record.checkout ? moment(record.checkout).format('lll') : ''}
                   </span>
             ),
+            export:(item,record)=>(record.checkout ? moment(record.checkout).format('lll') : ''),
         }, {
             title: 'Patient',
             dataIndex: 'patient',
             key: 'patient_name',
-            render: (item, record) => <span>{item.user.first_name}</span>
+            render: (item, record) => <span>{item.user.first_name}</span>,
+            export:(item,record)=>(item.user.first_name),
         },{
             title:'Current Status',
             key:'status',
@@ -145,12 +161,14 @@ export default class AllAppointments extends React.Component {
             title: 'Doctor',
             dataIndex: 'doctor',
             key: 'address',
-            render: (text, record) => <span>{record.doctor_data ? record.doctor_data.user.first_name : null}</span>
+            render: (text, record) => <span>{record.doctor_data ? record.doctor_data.user.first_name : null}</span>,
+            export:(item,record)=>(record.doctor_data ? record.doctor_data.user.first_name : null),
         }, {
             title: 'Category',
             dataIndex: 'category',
             key: 'address',
-            render: (text, record) => <span>{record.category_data ? record.category_data.name : null}</span>
+            render: (text, record) => <span>{record.category_data ? record.category_data.name : null}</span>,
+            export:(item,record)=>(record.category_data ? record.category_data.name : null),
         }];
 
         return <div>

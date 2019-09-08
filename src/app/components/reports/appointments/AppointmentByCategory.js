@@ -82,7 +82,9 @@ export default class AppointmentByCategory extends React.Component {
         const columns = [{
             title: 'S. No',
             key: 'sno',
+            dataIndex:'sno',
             render: (item, record) => <span> {i++}</span>,
+            export:(item,record,index)=>index+1,
             width: 50
         },{
            title: 'Appointment Category',
@@ -154,7 +156,7 @@ export default class AppointmentByCategory extends React.Component {
                                 <Pie
                                     activeIndex={this.state.activeIndex}
                                     activeShape={renderActiveShape}
-                                    data={this.state.appointmentCategory}
+                                    data={this.state.appointmentCategory.reverse()}
                                     cx={300}
                                     dataKey="count"
                                     cy={200}

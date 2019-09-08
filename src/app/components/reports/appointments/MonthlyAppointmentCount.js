@@ -72,16 +72,20 @@ export default class MonthlyAppointmentCount extends React.Component {
         const columns = [{
             title: 'S. No',
             key: 'sno',
+            dataIndex:'sno',
             render: (item, record) => <span> {i++}</span>,
+            export:(item,record,index)=>index+1,
             width: 50
         },{
             title: 'Month',
             key: 'date',
+            dataIndex:'date',
             render: (text, record) => (
                 <span>
                 {moment(record.date).format('MMMM YYYY')}
                   </span>
             ),
+            export:(item,record)=> (moment(record.date).format('DD MMM YYYY')),
         },{
             title:'Total Appointments',
             key:'count',
