@@ -25,11 +25,11 @@ export default class CustomizedTable extends React.Component {
         let that = this;
         let excelColumns = that.state.columns.map(item => ({title: item.title, dataKey: item.title}));
         let dataArrayForExcel = [];
-        that.state.dataSource.forEach(function (dataRow) {
+        that.state.dataSource.forEach(function (dataRow,index) {
             let dataObjectToPush = {};
             that.state.columns.forEach(function (column) {
                 if (column.export) {
-                    dataObjectToPush[column.title] = column.export(dataRow[column.dataIndex], dataRow);
+                    dataObjectToPush[column.title] = column.export(dataRow[column.dataIndex], dataRow,index);
                 } else {
                     dataObjectToPush[column.title] = dataRow[column.dataIndex];
                 }
