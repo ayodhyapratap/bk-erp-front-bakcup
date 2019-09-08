@@ -94,3 +94,6 @@ export const DAILY_TREATMENT_COUNT='DAILY';
 export const TREATMENTS_FOR_EACH_DOCTOR='DOCTOR';
 export const MONTHLY_TREATMENT_COUNT='MONTHLY';
 export const TREATMENT_FOR_EACH_CATEGORY='CATEGORY';
+
+/*Inventory Retails*/
+export const ALL='ALL';
