@@ -146,7 +146,7 @@ class AddEditDoctor extends React.Component {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 console.log("all data", data);
                 that.setState({
-                    redirect: false
+                    redirect: true
 
                 });
                 that.props.loadData();

@@ -3,9 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="e0d95b06-98dc-422f-a0a7-bc1abaef37b0" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/patients/patient/PatientProfile.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/patients/patient/PatientProfile.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/reports/ReportsHome.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/reports/ReportsHome.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/reports/inventorydetails/InventoryDetailsReportHome.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/reports/inventorydetails/InventoryDetailsReportHome.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/settings/options/practice-staff/AddEditDoctor.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/settings/options/practice-staff/AddEditDoctor.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/settings/options/practice-staff/AddEditStaff.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/settings/options/practice-staff/AddEditStaff.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/config/connect.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/connect.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/constants/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/constants/api.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -47,8 +49,8 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/app/components/reports/patients/PatientsReportHome.js" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/app/components/patients/clinicNotes/AddClinicNotes.js" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/app/components/reports/patients/PatientsReport.js" root0="SKIP_INSPECTION" />
   </component>
   <component name="ProjectId" id="1PdH0vYXvSJpCFq5E5DG3f8rwZm" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -75,6 +77,7 @@
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="yarn" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -103,7 +106,9 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="App.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" nameIsGenerated="true" path-to-js-file="App.js" working-dir="$PROJECT_DIR$/src" />
+    <configuration name="App.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="App.js" working-dir="$PROJECT_DIR$/src">
+      <method v="2" />
+    </configuration>
   </component>
   <component name="ServiceViewManager">
     <option name="allServicesViewState">
@@ -200,6 +205,9 @@
       <workItem from="1566815336656" duration="11301000" />
       <workItem from="1566985484719" duration="954000" />
       <workItem from="1566986844771" duration="637000" />
+      <workItem from="1567829973378" duration="30081000" />
+      <workItem from="1567916656377" duration="1160000" />
+      <workItem from="1567919717845" duration="12533000" />
     </task>
     <servers />
   </component>
@@ -224,7 +232,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/app/components/patients/patient/EditPatientDetails.js</url>
-          <line>154</line>
+          <line>155</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
