@@ -8,13 +8,13 @@ import EMRReportHome from "./emr/EMRReportHome";
 import ExpensesReport from "./expenses/ExpensesReport";
 import IncomeReport from "./income/IncomeReport";
 import InventoryReport from "./inventory/InventoryReport";
-import InventoryDetailsReport from "./inventorydetails/InventoryDetailsReport";
 import PatientsReportHome from "./patients/PatientsReportHome";
 import PaymentsReport from "./payments/PaymentsReport";
 import DailySummaryReport from "./summary/DailySummaryReport";
 import BedBookingReport from "./booking/BedBookingReport";
 import moment from 'moment';
 import PermissionDenied from "../common/errors/PermissionDenied";
+import InventoryDetailsReportHome from "./inventorydetails/InventoryDetailsReportHome";
 
 const {Content} = Layout;
 
@@ -67,7 +67,7 @@ class ReportsHome extends React.Component {
 
                     <Route exact path="/reports/inventoryretails"
                            render={(route) => (that.props.activePracticePermissions.ReportsInventoryRetail || that.props.allowAllPermissions ?
-                                   <InventoryDetailsReport {...this.props} {...this.state} {...route}/> :
+                                   <InventoryDetailsReportHome {...this.props} {...this.state} {...route}/> :
                                    <PermissionDenied/>
                            )}/>
 
