@@ -1,9 +1,10 @@
 import React from "react";
-import {Statistic ,Divider,Table} from "antd"
+import {Statistic, Divider, Table, Empty, Spin} from "antd"
 import {EMR_REPORTS, } from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Label,Legend} from 'recharts';
+import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Label, Legend, ComposedChart} from 'recharts';
 import moment from "moment";
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class DailyTreatmentsCount extends React.Component {
     constructor(props) {
@@ -39,7 +40,7 @@ export default class DailyTreatmentsCount extends React.Component {
         })
         let successFn = function (data) {
             that.setState({
-                report: data.data,
+                report: data.data.reverse(),
                 total:data.total,
                 loading: false
             });
@@ -91,27 +92,29 @@ export default class DailyTreatmentsCount extends React.Component {
 
         return <div>
             <h2>Daily Treatments Count</h2>
-            <LineChart width={1000} height={300} data={this.state.report}
-                       margin={{top: 5, right: 30, left: 20, bottom: 55}}>
+            <Spin size="large" spinning={this.state.loading}>
+                {this.state.report.length>0?
+                <LineChart width={1000} height={300} data={this.state.report}
+                           margin={{top: 5, right: 30, left: 20, bottom: 55}}>
 
-                <XAxis dataKey="date" tickFormatter={(value) => {
-                    return moment(value).format('DD MMM')
-                }}
-                       label= {{value:"Data Range", offset:0, margin:{top:10}, position:"insideBottom"}} />
-                {/*</XAxis>*/}
+                    <XAxis dataKey="date" tickFormatter={(value) => {
+                        return moment(value).format('DD MMM')
+                    }}
+                           label= {{value:"Data Range", offset:0, margin:{top:10}, position:"insideBottom"}} />
+                    {/*</XAxis>*/}
 
-                <YAxis label={{ value: 'Total Treatments', angle: -90, position: 'insideLeft' }} />
+                    <YAxis label={{ value: 'Total Treatments', angle: -90, position: 'insideLeft' }} />
 
-                <CartesianGrid strokeDasharray="3 3"/>
-                <Tooltip/>
-                <Line type="monotone" dataKey="count" stroke="#8884d8" strokeWidth={4}/>
-            </LineChart>
+                    <CartesianGrid strokeDasharray="3 3"/>
+                    <Tooltip/>
+                    <Line type="monotone" dataKey="count" stroke="#8884d8" strokeWidth={4}/>
+                </LineChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+            </Spin>
 
             <Divider><Statistic title="Total Patients" value={this.state.total} /></Divider>
-            <Table
+            <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                pagination={false}
                 dataSource={this.state.report}/>
         </div>
     }

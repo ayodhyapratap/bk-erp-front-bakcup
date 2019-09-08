@@ -4,6 +4,7 @@ import {EMR_REPORTS} from "../../../constants/api";
 import {getAPI,  interpolate} from "../../../utils/common";
 import moment from "moment"
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class AllTreatmentPerformed extends React.Component {
     constructor(props) {
@@ -33,25 +34,13 @@ export default class AllTreatmentPerformed extends React.Component {
 
     }
 
-    loadTreatmentsReport = (page=1) => {
+    loadTreatmentsReport = () => {
         let that = this;
         let successFn = function (data) {
-            that.setState(function (prevState) {
-                if (data.current == 1) {
-                    return {
-                        treatmentPerformed: [...data.results],
-                        next: data.next,
-                        total:data.count,
-                        loading: false
-                    }
-                }
-                return {
-                    treatmentPerformed: [...prevState.treatmentPerformed, ...data.results],
-                    next: data.next,
-                    loading: false
-                }
-
-            })
+           that.setState({
+               treatmentPerformed:data,
+               loading: false,
+           })
         };
 
         let errorFn = function () {
@@ -60,7 +49,6 @@ export default class AllTreatmentPerformed extends React.Component {
             })
         };
         let apiParams={
-            page:page,
             type:that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -102,12 +90,6 @@ export default class AllTreatmentPerformed extends React.Component {
 
 
         return <div>
-            {/*<h2>All Appointments Report (Total:{that.props.total?that.props.total:this.state.total})*/}
-            {/*    /!*<Button.Group style={{float: 'right'}}>*!/*/}
-            {/*    /!*<Button><Icon type="mail"/> Mail</Button>*!/*/}
-            {/*    /!*<Button><Icon type="printer"/> Print</Button>*!/*/}
-            {/*    /!*</Button.Group>*!/*/}
-            {/*</h2>*/}
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
                     <Statistic title="Total Treatments" value={this.state.total} />
@@ -115,14 +97,13 @@ export default class AllTreatmentPerformed extends React.Component {
                 </Col>
             </Row>
 
-            <Table
+            <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                pagination={false}
                 dataSource={this.state.treatmentPerformed}/>
-            <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentsReport(that.state.next)}
-                                      loading={this.state.loading}
-                                      hidden={!this.state.next}/>
+            {/*<InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentsReport(that.state.next)}*/}
+            {/*                          loading={this.state.loading}*/}
+            {/*                          hidden={!this.state.next}/>*/}
 
         </div>
     }

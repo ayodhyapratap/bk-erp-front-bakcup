@@ -1,9 +1,10 @@
 import React from "react";
-import {Table,Divider,Statistic} from "antd";
+import {Table, Divider, Statistic, Empty, Spin} from "antd";
 import {EMR_REPORTS} from "../../../constants/api";
 import {getAPI, interpolate} from "../../../utils/common";
 import moment from "moment";
-import {ComposedChart, Line, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend}  from 'recharts';
+import {ComposedChart, Line, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart} from 'recharts';
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class MonthlyTreatmentCount extends React.Component {
     constructor(props) {
@@ -37,7 +38,7 @@ export default class MonthlyTreatmentCount extends React.Component {
 
         let successFn = function (data) {
             that.setState({
-                treatmentMonthly: data.data,
+                treatmentMonthly: data.data.reverse(),
                 total:data.total,
                 loading: false
             });
@@ -91,22 +92,24 @@ export default class MonthlyTreatmentCount extends React.Component {
                 {/*<Button><Icon type="printer"/> Print</Button>*/}
                 {/*</Button.Group>*/}
             </h2>
+            <Spin size="large" spinning={this.state.loading}>
+                {this.state.treatmentMonthly.length>0?
+                <ComposedChart width={1000} height={400} data={this.state.treatmentMonthly}
+                               margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
-            <ComposedChart width={1000} height={400} data={this.state.treatmentMonthly}
-                           margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
-
-                <XAxis dataKey="date" tickFormatter={(value) => {
-                    return moment(value).format('MMM YY')
-                }} />
-                <YAxis />
-                <Tooltip />
-                {/*<Legend />*/}
-                <Bar dataKey='count' barSize={35} fill='#0059b3' stroke="#0059b3" label={renderCustomBarLabel}/>
-            </ComposedChart>
+                    <XAxis dataKey="date" tickFormatter={(value) => {
+                        return moment(value).format('MMM YY')
+                    }} />
+                    <YAxis />
+                    <Tooltip />
+                    {/*<Legend />*/}
+                    <Bar dataKey='count' barSize={35} fill='#0059b3' stroke="#0059b3" label={renderCustomBarLabel}/>
+                </ComposedChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+            </Spin>
 
             <Divider><Statistic title="Total" value={this.state.total} /></Divider>
-            <Table loading={this.state.loading} columns={columns} pagination={false} dataSource={this.state.treatmentMonthly}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.treatmentMonthly}/>
 
         </div>
     }

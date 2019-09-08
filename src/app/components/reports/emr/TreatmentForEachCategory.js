@@ -1,8 +1,9 @@
 import React from "react";
-import {Col, Divider, Row, Statistic, Table} from "antd";
+import {Col, Divider, Empty, Row, Spin, Statistic, Table} from "antd";
 import {EMR_REPORTS, PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import {Cell, Pie, PieChart, Sector} from "recharts";
+import {Cell, ComposedChart, Pie, PieChart, Sector} from "recharts";
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class TreatmentForEachCategory extends React.Component {
     constructor(props) {
@@ -142,27 +143,30 @@ export default class TreatmentForEachCategory extends React.Component {
 
             <Row>
                 <Col span={12} offset={6}>
-                    <PieChart width={800} height={400} >
-                        <Pie
-                            activeIndex={this.state.activeIndex}
-                            activeShape={renderActiveShape}
-                            data={this.state.treatmentCategory}
-                            cx={300}
-                            dataKey="count"
-                            cy={200}
-                            innerRadius={60}
-                            outerRadius={80}
-                            fill="#8884d8"
-                            onMouseEnter={this.onPieEnter}>
-                            {
-                                this.state.treatmentCategory.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
-                            }
-                        </Pie>
-                        {/*<Tooltip/>*/}
-                    </PieChart>
+                    <Spin size="large" spinning={this.state.loading}>
+                        {this.state.treatmentCategory.length>0?
+                        <PieChart width={800} height={400} >
+                            <Pie
+                                activeIndex={this.state.activeIndex}
+                                activeShape={renderActiveShape}
+                                data={this.state.treatmentCategory}
+                                cx={300}
+                                dataKey="count"
+                                cy={200}
+                                innerRadius={60}
+                                outerRadius={80}
+                                fill="#8884d8"
+                                onMouseEnter={this.onPieEnter}>
+                                {
+                                    this.state.treatmentCategory.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                }
+                            </Pie>
+                            {/*<Tooltip/>*/}
+                        </PieChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+                    </Spin>
                 </Col>
             </Row>
-            <Table loading={this.state.loading} columns={columns} pagination={false} dataSource={this.state.treatmentCategory}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.treatmentCategory}/>
 
         </div>
     }

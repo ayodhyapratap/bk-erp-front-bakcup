@@ -63,13 +63,7 @@ export default class EMRReportHome extends React.Component {
     render() {
 
         return <div>
-            {/*<h2>*/}
-            {/*    /!*<Button.Group style={{float: 'right'}}>*!/*/}
-            {/*        /!*<Button><Icon type="mail"/> Mail</Button>*!/*/}
-            {/*        /!*<Button><Icon type="printer"/> Print</Button>*!/*/}
-            {/*    /!*</Button.Group>*!/*/}
-            {/*</h2>*/}
-            <h2>Expenses Report <Button type="primary" shape="round"
+            <h2>EMR Report <Button type="primary" shape="round"
                                           icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
                                           style={{float: "right"}}
                                           onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
