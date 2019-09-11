@@ -156,7 +156,7 @@ export default class AppointmentByCategory extends React.Component {
                                 <Pie
                                     activeIndex={this.state.activeIndex}
                                     activeShape={renderActiveShape}
-                                    data={this.state.appointmentCategory.reverse()}
+                                    data={this.state.appointmentCategory}
                                     cx={300}
                                     dataKey="count"
                                     cy={200}
