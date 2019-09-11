@@ -96,6 +96,7 @@ export default class ExpensesList extends React.Component {
 
         }
         getAPI(EXPENSES_API, successFn, errorFn, {
+            practice:that.props.active_practiceId,
             payment_mode: that.state.selectedPaymentMode,
             expense_type: that.state.selectedExpenseType,
             start: that.state.selectedStartDate.format(),
