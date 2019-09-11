@@ -23,6 +23,7 @@ export const SET_USER_PERMISSION = 'user_permissions/';
 export const SET_SPECIFIC_USER_PERMISSION = 'user_permissions/%s/';
 export const ALL_PRACTICE = 'clinics/';
 export const ALL_PERMISSIONS = 'users/all_permissions/';
+export const UPDATE_BULK_PERMISSIONS = 'user_permissions/bulk/';
 export const PRACTICE = 'clinics/%s/';
 export const PRACTICE_DELETE = 'clinics/%s/delete_clinic/';
 export const TAXES = 'clinics/%s/taxes/';

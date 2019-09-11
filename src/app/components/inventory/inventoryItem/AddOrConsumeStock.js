@@ -186,6 +186,8 @@ class AddOrConsumeStock extends React.Component {
                         } else if (values.supplier_name) {
                             itemObject.supplier_name = values.supplier_name;
                         }
+                    }else if (that.state.classType == CONSUME_STOCK) {
+                        itemObject.type_of_consumption = values.type_of_consumption;
                     }
                     reqData.push(itemObject);
                 });
@@ -574,6 +576,7 @@ class AddOrConsumeStock extends React.Component {
                                             {getFieldDecorator(`type_of_consumption`, {
                                                 validateTrigger: ['onChange', 'onBlur'],
                                                 rules: [{
+                                                    required:true,
                                                     message: "This field is required.",
                                                 }],
                                             })(
