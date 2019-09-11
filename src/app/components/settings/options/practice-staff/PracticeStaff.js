@@ -13,7 +13,7 @@ import {
     Table,
     Modal,
     Popconfirm,
-    Switch as AntSwitch
+    Switch as AntSwitch, Spin
 } from "antd";
 import {
     CHECKBOX_FIELD,
@@ -32,7 +32,7 @@ import {
     USER_PRACTICE_PERMISSIONS,
     SET_USER_PERMISSION,
     SET_SPECIFIC_USER_PERMISSION,
-    DOCTOR_VISIT_TIMING_API, ENABLE_STAFF_IN_PRACTICE, ALL_PERMISSIONS
+    DOCTOR_VISIT_TIMING_API, ENABLE_STAFF_IN_PRACTICE, ALL_PERMISSIONS, UPDATE_BULK_PERMISSIONS
 } from "../../../../constants/api"
 import {Link, Route, Switch} from "react-router-dom";
 import {deleteAPI, displayMessage, getAPI, interpolate, patchAPI, postAPI, putAPI} from "../../../../utils/common";
@@ -43,6 +43,7 @@ import {DAY_KEYS} from "../../../../constants/hardData";
 
 const {Column, ColumnGroup} = Table;
 const TabPane = Tabs.TabPane;
+const {confirm} = Modal;
 
 class PracticeDetails extends React.Component {
     constructor(props) {
@@ -58,7 +59,8 @@ class PracticeDetails extends React.Component {
             allGlobalPermissions: [],
             loading: true,
             defaultActiveTab: this.props.location.hash,
-            doctorsTiming: {}
+            doctorsTiming: {},
+            bulkEditLoading: false
         }
         this.setPermission = this.setPermission.bind(this);
         this.staffRoles();
@@ -164,8 +166,8 @@ class PracticeDetails extends React.Component {
 
     deleteStaff(value) {
         var that = this;
-        let reqData={
-            is_active:false,
+        let reqData = {
+            is_active: false,
         }
         let successFn = function (data) {
 
@@ -292,6 +294,65 @@ class PracticeDetails extends React.Component {
             is_active: !!e
         }, successFn, errorFn)
     }
+    toggleAllPermissions = (type, value) => {
+        let that = this;
+        let permissionsArray = [];
+
+        if (type == 'LOCAL') {
+            that.state.allPermissions.forEach(function (permission) {
+                let permObject = {
+                    "name": permission.name,
+                    "codename": permission.codename,
+                    "is_active": !!value,
+                    "practice": that.props.active_practiceId,
+                    "staff": that.state.currentUser
+                };
+                if (that.state.editPermissions[permission.codename]) {
+                    permObject.id = that.state.editPermissions[permission.codename].id;
+                }
+                permissionsArray.push(permObject);
+            });
+        }
+        if (type == 'GLOBAL') {
+            that.state.allGlobalPermissions.forEach(function (permission) {
+                let permObject = {
+                    "name": permission.name,
+                    "codename": permission.codename,
+                    "is_active": !!value,
+                    "practice": that.props.active_practiceId,
+                    "staff": that.state.currentUser
+                };
+                if (that.state.editPermissions[permission.codename]) {
+                    permObject.id = that.state.editPermissions[permission.codename].id;
+                }
+                permissionsArray.push(permObject);
+            });
+        }
+        let successFn = function (data) {
+            that.editPermissions(that.state.currentUser);
+            that.setState({
+                bulkEditLoading: false
+            });
+        }
+        let errorFn = function () {
+            that.setState({
+                bulkEditLoading: false
+            });
+        }
+        confirm({
+            title: 'Are you sure to select all permissions for this user?',
+            onOk() {
+                that.setState({
+                    bulkEditLoading: type
+                });
+                postAPI(UPDATE_BULK_PERMISSIONS, {permissions: permissionsArray}, successFn, errorFn);
+            },
+            onCancel() {
+                return false;
+            },
+        })
+
+    }
 
     render() {
         let that = this;
@@ -359,7 +420,7 @@ class PracticeDetails extends React.Component {
             title: "Mobile",
             dataIndex: "user.mobile",
             key: "mobile",
-        },{
+        }, {
             title: "Enable Staff",
             dataIndex: "in_practice",
             key: "enable_staff",
@@ -501,14 +562,14 @@ class PracticeDetails extends React.Component {
                     <Card>
                         <Tabs defaultActiveKey={this.state.defaultActiveTab} onChange={this.changeTab}>
                             <TabPane tab={<span><Icon type="user-add"/>Manage Staff</span>} key="#staff">
-                                <h2>Doctors 
+                                <h2>Doctors
                                     <Link to="/settings/clinics-staff/adddoctor">
                                         <Button type="primary" style={{float: 'right'}}>
                                             <Icon type="plus"/>&nbsp;Add Doctor
                                         </Button>
                                     </Link>
                                     <Link to="/settings/clinics-staff/addstaff">
-                                        <Button type="primary" style={{float: 'right' ,marginRight:'5px'}}>
+                                        <Button type="primary" style={{float: 'right', marginRight: '5px'}}>
                                             <Icon type="plus"/>&nbsp;Add Staff
                                         </Button>
                                     </Link>
@@ -523,11 +584,13 @@ class PracticeDetails extends React.Component {
                             </TabPane>
                             <TabPane tab={<span><Icon type="team"/>Staff Notification</span>} key="#notification">
                                 <h2>Doctors</h2>
-                                <Table loading={this.state.loading} pagination={false} columns={notification_doctor_columns}
+                                <Table loading={this.state.loading} pagination={false}
+                                       columns={notification_doctor_columns}
                                        dataSource={this.state.practice_doctors}/>
                                 <Divider/>
                                 <h2>Staff</h2>
-                                <Table loading={this.state.loading} pagination={false} columns={notification_staff_columns}
+                                <Table loading={this.state.loading} pagination={false}
+                                       columns={notification_staff_columns}
                                        dataSource={this.state.practice_staff}/>
                             </TabPane>
                             <TabPane tab={<span><Icon type="schedule"/>Doctors visit Timing</span>} key="#timing">
@@ -555,17 +618,41 @@ class PracticeDetails extends React.Component {
                                visible={this.state.permissionEditModal}
                                onCancel={() => this.editPermissions()}
                                footer={null}>
-                            {that.state.allPermissions.map(item => <Checkbox value={item.codename}
-                                                                             checked={that.state.editPermissions[item.codename]}
-                                                                             disabled={that.state.editPermissions[item.codename] && that.state.editPermissions[item.codename].loading}
-                                                                             onClick={(e) => this.setPermission(item.codename, item.name, e, true)}
-                                                                             style={{display: 'list-item'}}>{item.id} {item.name}</Checkbox>)}
+                            <Spin spinning={this.state.bulkEditLoading == 'LOCAL'}>
+                                <Row>
+                                    <h3>
+                                        <Checkbox
+                                            checked={that.state.allPermissions.length && that.state.allPermissions.reduce((a, b) => a && b && that.state.editPermissions[a.codename] && that.state.editPermissions[b.codename])}
+                                            onClick={(e) => this.toggleAllPermissions('LOCAL', e.target.checked)}>Select
+                                            All
+                                            Permissions</Checkbox>
+                                    </h3>
+                                </Row>
+                                {that.state.allPermissions.map(item => <Row>
+                                    <Checkbox value={item.codename}
+                                              checked={that.state.editPermissions[item.codename]}
+                                              disabled={that.state.editPermissions[item.codename] && that.state.editPermissions[item.codename].loading}
+                                              onClick={(e) => this.setPermission(item.codename, item.name, e, true)}>{item.id} {item.name}</Checkbox>
+                                </Row>)}
+                            </Spin>
                             <Divider>Global Permissions</Divider>
-                            {that.state.allGlobalPermissions.map(item => <Checkbox value={item.codename}
-                                                                                   checked={that.state.editPermissions[item.codename]}
-                                                                                   disabled={that.state.editPermissions[item.codename] && that.state.editPermissions[item.codename].loading}
-                                                                                   onClick={(e) => this.setPermission(item.codename, item.name, e, false)}
-                                                                                   style={{display: 'list-item'}}>{item.id} {item.name}</Checkbox>)}
+                            <Spin spinning={this.state.bulkEditLoading == 'GLOBAL'}>
+                                <Row>
+                                    <h3>
+                                        <Checkbox
+                                            checked={that.state.allGlobalPermissions.length && that.state.allGlobalPermissions.reduce((a, b) => a && b && that.state.editPermissions[a.codename] && that.state.editPermissions[b.codename])}
+                                            onClick={(e) => this.toggleAllPermissions('GLOBAL', e.target.checked)}>Select
+                                            All
+                                            Permissions</Checkbox>
+                                    </h3>
+                                </Row>
+                                {that.state.allGlobalPermissions.map(item => <Row>
+                                    <Checkbox value={item.codename}
+                                              checked={that.state.editPermissions[item.codename]}
+                                              disabled={that.state.editPermissions[item.codename] && that.state.editPermissions[item.codename].loading}
+                                              onClick={(e) => this.setPermission(item.codename, item.name, e, false)}
+                                              style={{display: 'list-item'}}>{item.id} {item.name}</Checkbox></Row>)}
+                            </Spin>
                         </Modal>
                     </Card>
                 </Route>
