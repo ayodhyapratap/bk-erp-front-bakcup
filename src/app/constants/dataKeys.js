@@ -97,3 +97,15 @@ export const TREATMENT_FOR_EACH_CATEGORY='CATEGORY';
 
 /*Inventory Retails*/
 export const ALL='ALL';
+
+/*Expenses Reports*/
+export const ALL_EXPENSES ='ALL';
+export const DAILY_EXPENSES ='DAILY';
+export const MONTHLY_EXPENSES ='MONTHLY';
+export const EXPENSES_EACH_TYPE='EXPENSE_TYPE';
+
+/*Inventory Reports*/
+export const ALL_INVENTORY='ALL';
+export const DAILY_INVENTORY='DAILY';
+export const MONTHLY_INVENTORY='MONTHLY';
+export const TOP_INVENTORY='TOP';

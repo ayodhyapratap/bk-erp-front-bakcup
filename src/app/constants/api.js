@@ -123,8 +123,13 @@ export const PATIENT_APPOINTMENTS_REPORTS='appointment/appointment_report';
 /** EMR Reports**/
 export const EMR_REPORTS='clinics/%s/emr_report';
 
-/** Inventory Retails**/
+/** Inventory Retails Reports**/
 export const PRODUCTS_API='inventory_item/products/';
+
+/** Expense Reports ***/
+export const EXPENSE_REPORT_API='expenses';
+/** Inventory Reports***/
+export const INVENTORY_REPORT_API='inventory_item/inventory_report'
 
 export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/';
 export const EXPENSE_REPORT = 'clinics/%s/expense_report/';
