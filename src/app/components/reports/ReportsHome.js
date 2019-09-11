@@ -5,9 +5,9 @@ import AmountDueReportHome from "./amountdue/AmountDueReportHome";
 import {Route, Switch} from "react-router-dom";
 import AppointmentsReportHome from "./appointments/AppointmentsReportHome";
 import EMRReportHome from "./emr/EMRReportHome";
-import ExpensesReport from "./expenses/ExpensesReport";
+import ExpensesReportHome from "./expenses/ExpensesReportHome";
 import IncomeReport from "./income/IncomeReport";
-import InventoryReport from "./inventory/InventoryReport";
+import InventoryReportHome from "./inventory/InventoryReportHome";
 import PatientsReportHome from "./patients/PatientsReportHome";
 import PaymentsReport from "./payments/PaymentsReport";
 import DailySummaryReport from "./summary/DailySummaryReport";
@@ -54,7 +54,7 @@ class ReportsHome extends React.Component {
                            )}/>
                     <Route exact path="/reports/expenses"
                            render={(route) => (that.props.activePracticePermissions.ReportsExpenses || that.props.allowAllPermissions ?
-                                   <ExpensesReport  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                                   <ExpensesReportHome  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
                            )}/>
                     <Route exact path="/reports/income"
                            render={(route) => (that.props.activePracticePermissions.ReportsIncome || that.props.allowAllPermissions ?
@@ -62,7 +62,7 @@ class ReportsHome extends React.Component {
                            )}/>
                     <Route exact path="/reports/inventory"
                            render={(route) => (that.props.activePracticePermissions.ReportsInventory || that.props.allowAllPermissions ?
-                                   <InventoryReport {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                                   <InventoryReportHome {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
                            )}/>
 
                     <Route exact path="/reports/inventoryretails"
