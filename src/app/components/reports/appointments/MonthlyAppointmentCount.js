@@ -100,7 +100,7 @@ export default class MonthlyAppointmentCount extends React.Component {
             </h2>
              <Spin size="large" spinning={this.state.loading}>
                  {this.state.appointmentMonthly.length>0?
-                 <ComposedChart width={1000} height={400} data={this.state.appointmentMonthly}
+                 <ComposedChart width={1000} height={400} data={this.state.appointmentMonthly.reverse()}
                                margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
 
