@@ -111,7 +111,7 @@ class InventoryReport extends React.Component {
             if (!err) {
                 that.setState({
                     bill_number:values.bill_number,
-                    supplier:values.supplier,
+                    supplier:values.supplier.toString(),
                     inventory:values.inventory,
                     invoice:values.invoice
                 },function(){
