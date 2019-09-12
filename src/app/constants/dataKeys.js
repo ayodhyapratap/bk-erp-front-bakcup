@@ -109,3 +109,9 @@ export const ALL_INVENTORY='ALL';
 export const DAILY_INVENTORY='DAILY';
 export const MONTHLY_INVENTORY='MONTHLY';
 export const TOP_INVENTORY='TOP';
+
+/** Bed Booking Reports**/
+export const DAILY_BOOKING_COUNT='DAILY';
+export const MONTHLY_BOOKING_COUNT='MONTHLY';
+export const MEDICINE_USAGE_COUNT='MEDICINE_COUNT';
+export const BED_BOOKING_PACKAGE_COUNT='BED_PACKAGE_COUNT';
