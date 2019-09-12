@@ -81,7 +81,7 @@ export default class DailySummaryReport extends React.Component {
             end: this.state.endDate.format('YYYY-MM-DD')
         };
         if (this.state.doctors) {
-            apiParams.type = this.state.doctors.toString();
+            apiParams.staff = this.state.doctors.toString();
         }
 
         getAPI(INVOICES_API, successFn, errorFn,apiParams);
