@@ -9,11 +9,12 @@ import {
     Row,
     Spin,
     Statistic,
-    Table, Tag
+    Table, Tag, Select
 } from "antd";
 import {getAPI} from "../../../utils/common";
 import {INVOICES_API} from "../../../constants/api";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
+import {loadDoctors} from "../../../utils/clinicUtils";
 
 export default class DailySummaryReport extends React.Component {
     constructor(props){
@@ -23,9 +24,11 @@ export default class DailySummaryReport extends React.Component {
             endDate: this.props.endDate,
             loading: true,
             dailySummary:[],
+            practiceDoctors:[],
 
         }
         this.loadDailySummary = this.loadDailySummary.bind(this);
+        loadDoctors(this);
     }
     componentDidMount() {
         this.loadDailySummary();
@@ -87,7 +90,14 @@ export default class DailySummaryReport extends React.Component {
 
         return <div><h2>Daily Summary Report
         </h2>
-            <Card>
+            <Card  extra={<>
+                <spa>Doctors : </spa>
+                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
+                        onChange={(value)=>this.handleChangeOption('doctors',value)}>
+                    {this.state.practiceDoctors.map((item) => <Select.Option value={item.id}>
+                        {item.user.first_name}</Select.Option>)}
+                </Select></>
+            }>
                 {this.state.dailySummary.map(invoice => InvoiceCard(invoice, that))}
                 <Spin spinning={this.state.loading}>
                     <Row/>

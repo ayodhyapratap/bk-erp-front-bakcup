@@ -86,13 +86,18 @@ export default class AllTreatmentPerformed extends React.Component {
             title:'Performed by',
             key:'doctor',
             dataIndex:'doctor',
+        },{
+            title:'Total Treatments',
+            key:'quantity',
+            dataIndex:'quantity',
         }];
-
-
+        var totalTreatments = this.state.treatmentPerformed.reduce(function(prev, cur) {
+                 return prev + cur.quantity;
+             }, 0);
         return <div>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
-                    <Statistic title="Total Treatments" value={this.state.total} />
+                    <Statistic title="Total Treatments" value={totalTreatments} />
                     <br/>
                 </Col>
             </Row>
@@ -101,9 +106,6 @@ export default class AllTreatmentPerformed extends React.Component {
                 loading={this.state.loading}
                 columns={columns}
                 dataSource={this.state.treatmentPerformed}/>
-            {/*<InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentsReport(that.state.next)}*/}
-            {/*                          loading={this.state.loading}*/}
-            {/*                          hidden={!this.state.next}/>*/}
 
         </div>
     }
