@@ -2,7 +2,7 @@ import React from "react";
 import {Avatar, Button, Drawer, Icon, Layout, Tooltip, Dropdown, Tag, Switch, Statistic, Popover, List} from "antd";
 import PatientSelection from "./PatientSelection";
 import {Link} from "react-router-dom";
-import {patientSettingMenu} from "../../utils/clinicUtils";
+import {hashCode, intToRGB, patientSettingMenu} from "../../utils/clinicUtils";
 import {getAPI, interpolate, makeFileURL} from "../../utils/common";
 import {AGENT_WALLET, PATIENT_PENDING_AMOUNT} from "../../constants/api";
 
@@ -83,40 +83,52 @@ class PatientHeader extends React.Component {
                                     {this.props.currentPatient.user.first_name ? this.props.currentPatient.user.first_name.charAt(0) :
                                         <Icon type="user"/>}
                                 </Avatar>)}
-                            &nbsp;&nbsp;{that.props.currentPatient.user.first_name}
+                            &nbsp;&nbsp;{that.props.currentPatient.user.first_name.length < 16 ? that.props.currentPatient.user.first_name : that.props.currentPatient.user.first_name.slice(0, 12) + '...'}
+                            <small><i><b> [ID: {that.props.currentPatient.id}]</b></i></small>
+
                         </a>
                         &nbsp;&nbsp;&nbsp;&nbsp;
-                        <Tooltip placement="top" title={"Medical History"}>
-                            {that.props.currentPatient.medical_history_data ? that.props.currentPatient.medical_history_data.map(item =>
-                                <Tag>{item.name}</Tag>) : null}
-                        </Tooltip>
+                        <Popover placement="topLeft" title={"Medical History"}
+                                 content={<div style={{width:250}}>{that.props.currentPatient.medical_history_data ? that.props.currentPatient.medical_history_data.map((item, index) =>
+                                     <Tag color={'#' + intToRGB(hashCode(item.name))}>{item.name}</Tag>) : null}</div>}>
+
+                            {that.props.currentPatient.medical_history_data ? that.props.currentPatient.medical_history_data.map((item, index) =>
+                                index > 1 ? index == 2 &&
+                                    <Tag>+{that.props.currentPatient.medical_history_data.length - 2}</Tag> :
+                                    <Tag color={'#' + intToRGB(hashCode(item.name))}>{item.name}</Tag>) : null}
+
+                        </Popover>
                         <Switch
+                            style={{marginLeft: 20}}
                             checked={this.props.showAllClinic}
                             onChange={(value) => this.props.toggleShowAllClinic(value)}
                             checkedChildren={"All Clinics"}
                             unCheckedChildren={"Current Clinic"}
                         />
                         {this.state.pendingAmount ?
-                            <Popover placement="rightTop"
-                                     content={<List size="small" dataSource={this.state.pendingAmount.practice_data}
-                                                    renderItem={item => <List.Item><List.Item.Meta title={item.name}
-                                                                                                   description={"Rs. " + item.total}/></List.Item>}/>}
-                                     title="Pending Payments">
-                                <div style={{
-                                    display: 'inline',
-                                    float: 'left',
-                                    maxWidth: 200,
-                                    position: 'absolute',
-                                    margin: '0px 15px'
-                                }}>
+
+                            <div style={{
+                                display: 'inline',
+                                float: 'left',
+                                maxWidth: 200,
+                                position: 'absolute',
+                                margin: '0px 15px',
+                                zIndex: 5
+                            }}>
+                                <Popover placement="rightTop"
+                                         content={<List size="small" dataSource={this.state.pendingAmount.practice_data}
+                                                        renderItem={item => <List.Item><List.Item.Meta title={item.name}
+                                                                                                       description={"Rs. " + item.total}/></List.Item>}/>}
+                                         title="Pending Payments">
                                     <Statistic title="Total Pending Amount" value={this.state.pendingAmount.grand_total}
                                                valueStyle={{
                                                    color: this.state.pendingAmount.grand_total > 0 ? '#cf1322' : 'initial',
                                                    fontWeight: 500
                                                }}
                                                precision={2}/>
-                                </div>
-                            </Popover> : null}
+                                </Popover>
+                            </div>
+                            : null}
                         {this.state.walletAmount && this.state.walletAmount.length ?
                             <Popover placement="rightTop"
                                      title="Wallet Amount"

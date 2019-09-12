@@ -147,37 +147,41 @@ export default class ExpensesList extends React.Component {
             title: 'Amount',
             key: 'amount',
             dataIndex: 'amount'
-        },{
-            title:'Bank Name',
-            key:'bank_name',
-            dataIndex:'bank_name'
-        },{
-            title:'Remark',
-            key:'remark',
-            dataIndex:'remark'
-        },{
+        }, {
+            title: 'Bank Name',
+            key: 'bank_name',
+            dataIndex: 'bank_name'
+        }, {
+            title: 'Remark',
+            key: 'remark',
+            dataIndex: 'remark'
+        }, {
             title: 'Action',
             render: function (record) {
                 return <div>
                     {that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?
-                    <Link to={'/inventory/expenses/edit/' + record.id}>Edit</Link>:null}
+                        <Link to={'/inventory/expenses/edit/' + record.id}>Edit</Link> : null}
                     <Divider type={"vertical"}/>
                     {that.props.activePracticePermissions.DeleteExpenses || that.props.allowAllPermissions ?
-                    <Popconfirm title="Are you sure to delete this?"
-                                onConfirm={() => that.deleteObject(record, false)} okText="Yes" cancelText="No">
-                        <a>Delete</a>
-                    </Popconfirm>:null}
+                        <Popconfirm title="Are you sure to delete this?"
+                                    onConfirm={() => that.deleteObject(record, false)} okText="Yes" cancelText="No">
+                            <a>Delete</a>
+                        </Popconfirm> : null}
                 </div>
             }
         }]
         return <div>
             <Switch>
                 <Route exact path='/inventory/expenses/add'
-                       render={(route) => (that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?<AddExpenses {...this.state} {...route} loadData={this.loadData}/>:<PermissionDenied/>)}/>
+                       render={(route) => (that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?
+                           <AddExpenses {...this.state} {...route} loadData={this.loadData}/> : <PermissionDenied/>)}/>
                 <Route exact path='/inventory/expenses/edit/:id'
-                       render={(route) =>  (that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?<AddExpenses {...this.state} {...route} loadData={this.loadData}/>:<PermissionDenied/>)}/>
-                <Card title="Expenses" extra={(that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?<Link to={"/inventory/expenses/add"}> <Button type="primary"><Icon
-                    type="plus"/> Add</Button></Link>:<PermissionDenied/>)}>
+                       render={(route) => (that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?
+                           <AddExpenses {...this.state} {...route} loadData={this.loadData}/> : <PermissionDenied/>)}/>
+                <Card title="Expenses"
+                      extra={(that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?
+                          <Link to={"/inventory/expenses/add"}> <Button type="primary"><Icon
+                              type="plus"/> Add</Button></Link> : <PermissionDenied/>)}>
                     <Row gutter={16} style={{marginBottom: 10}}>
                         <Col span={2} style={{textAlign: "right"}}>
                             <b> Expense Types</b>
@@ -222,7 +226,8 @@ export default class ExpensesList extends React.Component {
                         </Col>
                     </Row>
                     <CustomizedTable loading={this.state.loading} dataSource={this.state.expenses}
-                                     columns={expenseColoumns} hideReport={!that.props.activePracticePermissions.ExportExpenses}/>
+                                     columns={expenseColoumns}
+                                     hideReport={!that.props.activePracticePermissions.ExportExpenses}/>
                 </Card>
             </Switch>
         </div>
