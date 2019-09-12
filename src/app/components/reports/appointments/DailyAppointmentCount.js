@@ -85,10 +85,10 @@ export default class DailyAppointmentCount extends React.Component {
             dataIndex:'date',
             render: (text, record) => (
                 <span>
-                {moment(record.date).format('DD MMM YYYY')}
+                {moment(record.date).format('DD MMM ')}
                   </span>
             ),
-            export:(item,record)=> (moment(record.date).format('DD MMM YYYY')),
+            export:(item,record)=> (moment(record.date).format('DD MMM ')),
         },{
             title:'Total Appointments',
             key:'count',
