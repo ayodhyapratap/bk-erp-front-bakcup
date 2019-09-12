@@ -11,7 +11,7 @@ import InventoryReportHome from "./inventory/InventoryReportHome";
 import PatientsReportHome from "./patients/PatientsReportHome";
 import PaymentsReport from "./payments/PaymentsReport";
 import DailySummaryReport from "./summary/DailySummaryReport";
-import BedBookingReport from "./booking/BedBookingReport";
+import BedBookingHome from "./booking/BedBookingHome";
 import moment from 'moment';
 import PermissionDenied from "../common/errors/PermissionDenied";
 import InventoryDetailsReportHome from "./inventorydetails/InventoryDetailsReportHome";
@@ -86,7 +86,7 @@ class ReportsHome extends React.Component {
                            )}/>
                     <Route exact path="/reports/bed_booking"
                            render={(route) => (that.props.activePracticePermissions.ReportsBedBooking || that.props.allowAllPermissions ?
-                                   <BedBookingReport {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                                   <BedBookingHome {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
                            )}/>
                     <Route
                         render={(route) => (that.props.activePracticePermissions.ReportsAppointments || that.props.allowAllPermissions ?
