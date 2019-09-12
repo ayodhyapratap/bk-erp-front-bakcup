@@ -63,7 +63,6 @@ export default class DailyInventory extends React.Component {
         getAPI(INVENTORY_REPORT_API , successFn, errorFn, apiParams);
     }
     render() {
-        console.log("state",this.state);
         let that=this;
         let i = 1;
         const columns = [{
