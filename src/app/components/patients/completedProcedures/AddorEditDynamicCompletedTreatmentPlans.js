@@ -171,16 +171,18 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
 
                 let successFn = function (data) {
                     displayMessage("Inventory updated successfully");
-                    let url = '/patient/' + that.props.match.params.id + '/emr/plans';
+                    if (that.props.loadData)
+                        that.props.loadData();
+                    let url = '/patient/' + that.props.match.params.id + '/emr/workdone';
                     that.props.history.push(url);
-                }
+                };
                 let errorFn = function () {
 
-                }
+                };
                 postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
             }
         });
-    }
+    };
     searchValues = (value) => {
         let that = this;
         this.setState(function (prevState) {
@@ -242,7 +244,7 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
             key: 'name',
             render: (name, record) => <span>
                 <b>{name}</b><br/>
-                {this.state.addNotes[record._id] ?
+                {this.state.addNotes[record._id] || this.props.editId?
                     <Form.Item
                         key={`default_notes[${record._id}]`}
                         {...formItemLayout}>
@@ -271,7 +273,7 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
                         required: true,
                         message: "This field is required.",
                     }],
-                    initialValue: 1
+                    initialValue: record.quantity,
                 })(
                     <InputNumber min={0} placeholder="Quantity" size={'small'}
                                  onChange={() => this.calculateItem(record._id)}/>

@@ -224,11 +224,11 @@ class PatientCompletedProcedures extends React.Component {
             return <div>
                 <Switch>
                     <Route exact path='/patient/:id/emr/workdone/add'
-                           render={(route) => <AddorEditDynamicCompletedTreatmentPlans {...this.state} {...route}/>}/>
+                           render={(route) => <AddorEditDynamicCompletedTreatmentPlans {...this.state} {...route} loadData={this.loadTreatmentPlans}/>}/>
                     <Route exact path='/patient/:id/emr/workdone/edit'
                            render={(route) => (this.state.editTreatmentPlan ?
                                <AddorEditDynamicCompletedTreatmentPlans {...this.state} {...route}
-                                                                        editId={this.state.editTreatmentPlan.id}/> :
+                                                                        editId={this.state.editTreatmentPlan.id} loadData={this.loadTreatmentPlans}/> :
                                <Redirect to={"/patient/" + this.props.match.params.id + "/emr/workdone"}/>)}/>
                     <Route>
 
