@@ -80,9 +80,20 @@ export default class DailySummaryReport extends React.Component {
             // start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD')
         };
+        if (this.state.doctors) {
+            apiParams.type = this.state.doctors.toString();
+        }
+
         getAPI(INVOICES_API, successFn, errorFn,apiParams);
     }
 
+    filterReport(type, value) {
+        this.setState(function (prevState) {
+            return {[type]: value}
+        }, function () {
+            this.loadDailySummary();
+        });
+    }
 
 
     render() {
@@ -93,7 +104,7 @@ export default class DailySummaryReport extends React.Component {
             <Card  extra={<>
                 <spa>Doctors : </spa>
                 <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
-                        onChange={(value)=>this.handleChangeOption('doctors',value)}>
+                        onChange={(value)=>this.filterReport('doctors',value)}>
                     {this.state.practiceDoctors.map((item) => <Select.Option value={item.id}>
                         {item.user.first_name}</Select.Option>)}
                 </Select></>
