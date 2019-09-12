@@ -1,13 +1,12 @@
 import React from "react";
-import {Card, Form, Select, Tag} from "antd";
+import {Tag} from "antd";
 import {BED_BOOKING_REPORTS, BED_PACKAGES} from "../../../constants/api";
-import {getAPI, interpolate} from "../../../utils/common";
+import {getAPI} from "../../../utils/common";
 import CustomizedTable from "../../common/CustomizedTable";
 import moment from "moment";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
-import {OPD_IPD, PAYMENT_STATUS} from "../../../constants/hardData"
 
-class BedBookingReport extends React.Component {
+export default class BedBookingReport extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -19,18 +18,16 @@ class BedBookingReport extends React.Component {
 
         };
         this.loadBedBookingReport = this.loadBedBookingReport.bind(this);
-        // this.filterReport =this.filterReport.bind(this);
-
     }
 
     componentDidMount() {
         this.loadBedBookingReport();
-        this.loadPackages();
     }
 
     componentWillReceiveProps(newProps) {
         let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.bed_packages!=newProps.bed_packages ||this.props.payment_status!=newProps.payment_status
+            ||this.props.type!=newProps.type)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
@@ -40,25 +37,12 @@ class BedBookingReport extends React.Component {
 
     }
 
-    loadPackages = () => {
-        let that = this;
-        let successFn = function (data) {
-            that.setState({
-                packages: data
-            })
-        }
-        let errorFn = function () {
-        }
-        getAPI(interpolate(BED_PACKAGES, [this.props.active_practiceId]), successFn, errorFn);
-
-    }
     loadBedBookingReport = (page = 1) => {
         let that = this;
         this.setState({
             loading: true
         })
         let successFn = function (data) {
-            console.log(data);
             if (data.current == 1)
                 that.setState({
                     bedBookingReports: data.results,
@@ -86,39 +70,28 @@ class BedBookingReport extends React.Component {
             page: page,
             practice: this.props.active_practiceId
         }
-        if (this.state.payment_status) {
-            apiParams.payment_status = this.state.payment_status
+        if (this.props.payment_status) {
+            apiParams.payment_status = this.props.payment_status
         }
-        if (this.state.type) {
-            apiParams.type = this.state.type
+        if (this.props.type) {
+            apiParams.type = this.props.type
         }
-        if (this.state.bed_packages) {
-            apiParams.bed_packages = this.state.bed_packages.join(',');
+        if (this.props.bed_packages) {
+            apiParams.bed_packages = this.props.bed_packages.join(',');
         }
         getAPI(BED_BOOKING_REPORTS, successFn, errorFn, apiParams);
-    }
-
-    filterReport(type, value) {
-        this.setState(function (prevState) {
-            return {[type]: value}
-        }, function () {
-            this.loadBedBookingReport();
-        });
-    }
-
-    filterBedPackages(type, value) {
-        this.setState(function (prevState) {
-            return {bed_packages: value}
-        }, function () {
-            this.loadBedBookingReport();
-        });
-    }
+    };
 
     render() {
-        console.log("state", this.state)
-        const {getFieldDecorator} = this.props.form;
         let that = this;
+        let i=1;
         const columns = [{
+            title: 'S. No',
+            key: 'sno',
+            render: (item, record) => <span> {i++}</span>,
+            export:(item,record)=>{i++},
+            width: 50
+        },{
             title: 'Package Name',
             key: 'name',
             dataIndex: 'bed_package.name'
@@ -178,42 +151,12 @@ class BedBookingReport extends React.Component {
             }];
         return <div><h2>Seat/Bed Booking Report
         </h2>
-            <Card
-                  extra={<div>
-                      <Form layout="inline">
-                          <Form.Item label="Payment Status">
-                              <Select placeholder="Payment Status" style={{minWidth: 150}}
-                                      onChange={(value) => that.filterReport("payment_status", value.join(','))}
-                                      mode={"multiple"}>
-                                  {PAYMENT_STATUS.map(option => <Select.Option
-                                      value={option.value}>{option.label}</Select.Option>)}
-                              </Select>
-                          </Form.Item>
-                          <Form.Item label="Type">
-                              <Select style={{minWidth: 150}} onChange={(value) => this.filterReport("type", value)}>
-                                  {OPD_IPD.map(option => <Select.Option
-                                      value={option.value}>{option.label}</Select.Option>)}
-                              </Select>
-                          </Form.Item>
-                          <Form.Item label="Bed Package">
-                              <Select style={{minWidth: 150}}
-                                      onChange={(value) => this.filterBedPackages('bed_packages', value)}
-                                      mode="multiple">
-                                  {that.state.packages.map(option => <Select.Option
-                                      value={option.id}>{option.name}</Select.Option>)}
-                              </Select>
-                          </Form.Item>
-                      </Form>
-                  </div>}>
-                <CustomizedTable pagination={false} loading={this.state.loading} columns={columns} size={'small'}
-                                 dataSource={this.state.bedBookingReports}/>
-                <InfiniteFeedLoaderButton
-                    loaderFunction={() => this.loadBedBookingReport(this.state.nextReport)}
-                    loading={this.state.loading}
-                    hidden={!this.state.nextReport}/>
-            </Card>
+            <CustomizedTable pagination={false} loading={this.state.loading} columns={columns} size={'small'}
+                             dataSource={this.state.bedBookingReports}/>
+            <InfiniteFeedLoaderButton
+                loaderFunction={() => this.loadBedBookingReport(this.state.nextReport)}
+                loading={this.state.loading}
+                hidden={!this.state.nextReport}/>
         </div>
     }
 }
-
-export default Form.create()(BedBookingReport)
