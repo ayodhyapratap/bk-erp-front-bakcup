@@ -2,7 +2,7 @@ import {Card, Form, Row} from "antd";
 import React from "react";
 import {
     DATE_PICKER,
-    INPUT_FIELD,
+    INPUT_FIELD, NUMBER_FIELD,
     SELECT_FIELD,
     SUCCESS_MSG_TYPE,
     TEXT_FIELD,
@@ -51,7 +51,7 @@ export default class AddExpenses extends React.Component {
             that.setState({
                 paymentModes: data,
             })
-            console.log("payment mode",that.state.paymentModes);
+            console.log("payment mode", that.state.paymentModes);
         };
         let errorFn = function () {
         };
@@ -123,14 +123,16 @@ export default class AddExpenses extends React.Component {
             key: "expense_date",
             required: true,
             initialValue: this.state.editData ? this.state.editData.expense_date : moment(),
-            type: DATE_PICKER
-        },{
+            type: DATE_PICKER,
+            format: "YYYY-MM-DD"
+        }, {
             label: "Amount",
             key: "amount",
             required: true,
             initialValue: this.state.editData ? this.state.editData.amount : null,
-            type: INPUT_FIELD
-        },{
+            type: NUMBER_FIELD,
+            follow:"INR"
+        }, {
             label: "Vendor",
             key: "vendor",
             type: SELECT_FIELD,
@@ -142,25 +144,25 @@ export default class AddExpenses extends React.Component {
             type: SELECT_FIELD,
             initialValue: this.state.editData ? this.state.editData.expense_type.id : null,
             options: expenseTypesOptions
-        },{
+        }, {
             label: "Payment Mode",
             key: "payment_mode",
             type: SELECT_FIELD,
             required: true,
             initialValue: this.state.editData ? this.state.editData.payment_mode.id : null,
             options: paymentModesOptions
-        },{
-            label:"Bank Name",
-            key:'bank_name',
-            type:INPUT_FIELD,
-            initialValue:this.state.editData?this.state.editData.bank_name:null,
-        },{
-            label:"Remark",
-            key:'remark',
-            type:TEXT_FIELD,
-            minRows:2,
-            maxRows:6,
-            initialValue:this.state.editData?this.state.editData.remark:null,
+        }, {
+            label: "Bank Name",
+            key: 'bank_name',
+            type: INPUT_FIELD,
+            initialValue: this.state.editData ? this.state.editData.bank_name : null,
+        }, {
+            label: "Remark",
+            key: 'remark',
+            type: TEXT_FIELD,
+            minRows: 2,
+            maxRows: 6,
+            initialValue: this.state.editData ? this.state.editData.remark : null,
         },];
 
 
@@ -206,7 +208,8 @@ export default class AddExpenses extends React.Component {
                                            fields={fields}/> : <Redirect to={'/inventory/expenses'}/>)}/>
                 <Route exact path='/inventory/expenses/add'
                        render={() => <TestFormLayout title="Add Expenses" changeRedirect={this.changeRedirect}
-                                                     formProp={formProp} fields={fields}/>}/>
+                                                     formProp={formProp} fields={fields}
+                                                     defaultValues={defaultValues}/>}/>
             </Card>
             {this.state.redirect && <Redirect to={'/inventory/expenses'}/>}
         </Row>

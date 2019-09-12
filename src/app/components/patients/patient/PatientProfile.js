@@ -1,6 +1,6 @@
 import React from "react";
 import PatientSelection from "../PatientSelection";
-import {Avatar, Button, Card, Col, Divider, Icon, List, Row, Popconfirm, Modal, Statistic} from "antd";
+import {Avatar, Button, Card, Col, Divider, Icon, List, Row, Popconfirm, Modal, Statistic, Tag} from "antd";
 import {Link, Redirect} from "react-router-dom";
 import {getAPI, postAPI, interpolate, displayMessage, makeFileURL} from "../../../utils/common";
 import {MEDICAL_MEMBERSHIP_CANCEL_API, PATIENTS_MEMBERSHIP_API, PATIENT_PROFILE} from "../../../constants/api";
@@ -9,6 +9,7 @@ import MedicalMembership from "./MedicalMembership";
 import {SUCCESS_MSG_TYPE, ERROR_MSG_TYPE} from "../../../constants/dataKeys";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
 import AddOrEditAgent from "./AddOrEditAgent";
+import {hashCode, intToRGB} from "../../../utils/clinicUtils";
 
 class PatientProfile extends React.Component {
     constructor(props) {
@@ -223,10 +224,12 @@ class PatientProfile extends React.Component {
                     <Col span={6} style={{borderLeft: '1 px solid #ccc'}}>
                         <PatientNotes {...this.props} patientId={patient.id}/>
                         <Divider>Medical History</Divider>
-                        {patient.medical_history_data &&
-                        <List size="small" loading={this.state.loading} dataSource={patient.medical_history_data}
-                              renderItem={(item) =>
-                                  <List.Item>{item.name}</List.Item>}/>}
+                        {patient.medical_history_data ?
+                            patient.medical_history_data.map((item, index) =>
+                                <Tag color={'#'+intToRGB(hashCode(item.name))}>{item.name}</Tag>) : null}
+                        {/*<List size="small" loading={this.state.loading} dataSource={patient.medical_history_data}*/}
+                        {/*      renderItem={(item) =>*/}
+                        {/*          <List.Item>{item.name}</List.Item>}/>}*/}
 
                         <Divider>Groups</Divider>
                         <List dataSource={patient.patient_group_data}
@@ -256,7 +259,7 @@ export default PatientProfile;
 
 function PatientRow(props) {
     return <Row gutter={16} style={{marginBottom: '5px'}}>
-        <Col span={12} style={{textAlign: 'right'}}>{props.label}:</Col>
-        <Col span={12}><strong>{props.value}</strong></Col>
+        <Col span={8} style={{textAlign: 'right'}}>{props.label}:</Col>
+        <Col span={16}><strong>{props.value}</strong></Col>
     </Row>
 }
