@@ -77,7 +77,6 @@ export default class AddorEditMedicinePackages extends React.Component {
          {
             label: "Taxes",
             key: 'taxes',
-            required: true,
             initialValue: this.props.editPackage && this.props.editPackage.taxes ? this.props.editPackage.taxes.map(item => item.id) : [],
             type: MULTI_SELECT_FIELD,
             options: this.state.taxes.map(tax => Object.create({
