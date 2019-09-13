@@ -130,7 +130,11 @@ export const PRODUCTS_API='inventory_item/products/';
 /** Expense Reports ***/
 export const EXPENSE_REPORT_API='expenses';
 /** Inventory Reports***/
-export const INVENTORY_REPORT_API='inventory_item/inventory_report'
+export const INVENTORY_REPORT_API='inventory_item/inventory_report';
+
+/** MLM Reports**/
+export const MLM_Reports='patients/mlm_report';
+export const MLM_Agent_Wallet='patients/agent_wallet_balance';
 
 export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/';
 export const EXPENSE_REPORT = 'clinics/%s/expense_report/';

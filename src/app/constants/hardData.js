@@ -30,7 +30,12 @@ import {
     TOP_INVENTORY,
     DAILY_BOOKING_COUNT,
     MONTHLY_BOOKING_COUNT,
-    MEDICINE_USAGE_COUNT, BED_BOOKING_PACKAGE_COUNT
+    MEDICINE_USAGE_COUNT,
+    BED_BOOKING_PACKAGE_COUNT,
+    MARGIN_TYPE_WISE,
+    PRODUCT_WISE,
+    TRANSFERED_AMOUNT,
+    WALLET_BALANCE_AMOUNT
 } from "../constants/dataKeys";
 
 
@@ -330,4 +335,11 @@ export const BED_BOOKING_RELATED_REPORT=[
     {name:'Monthly Booking Count',value: MONTHLY_BOOKING_COUNT},
     {name:'Medicine Usage Count',value:MEDICINE_USAGE_COUNT},
     {name:'Bed Booking Package Count',value:BED_BOOKING_PACKAGE_COUNT},
-    ];
+];
+
+export const MLM_RELATED_REPORT=[
+    {name:'Margin Type wise', value:MARGIN_TYPE_WISE},
+    {name:'Product Wise', value:PRODUCT_WISE},
+    {name:'Transferred Amount', value:TRANSFERED_AMOUNT},
+    {name:'Wallet Balance Amount', value:WALLET_BALANCE_AMOUNT},
+];
