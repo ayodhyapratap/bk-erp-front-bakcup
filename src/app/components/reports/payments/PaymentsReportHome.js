@@ -1,13 +1,13 @@
 import React from "react";
 import {Button, Card, Checkbox, Col, Radio, Row, Select} from "antd";
-import {EXPENSE_TYPE, PATIENT_GROUPS, PAYMENT_MODES, VENDOR_API} from "../../../constants/api";
+import {EXPENSE_TYPE, PATIENT_GROUPS, PAYMENT_MODES, TAXES, VENDOR_API} from "../../../constants/api";
 import {getAPI, interpolate} from "../../../utils/common";
 import {PAYMENT_RELATED_REPORT, SCHEDULE_OF_PAYMENT, TYPE_OF_CONSUMPTION} from "../../../constants/hardData";
 import {ALL_EXPENSES} from "../../../constants/dataKeys";
 import AllPayments from "./AllPayments";
 import {loadDoctors} from "../../../utils/clinicUtils";
 
-export default class PaymentsReport extends React.Component {
+export default class PaymentsReportHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -18,15 +18,18 @@ export default class PaymentsReport extends React.Component {
             practiceDoctors: [],
             patientGroup: [],
             vendorOption: [],
+            taxes_list:[],
         };
         loadDoctors(this);
         this.loadPatientGroup = this.loadPatientGroup.bind(this);
         this.loadPaymentMode = this.loadPaymentMode.bind(this);
+        this.loadTaxes = this.loadTaxes.bind(this);
     }
 
     componentDidMount() {
         this.loadPatientGroup();
         this.loadPaymentMode();
+        this.loadTaxes();
     }
 
     loadPatientGroup() {
@@ -53,6 +56,18 @@ export default class PaymentsReport extends React.Component {
 
         };
         getAPI(interpolate(PAYMENT_MODES, [this.props.active_practiceId]), successFun, errorFn);
+    }
+    loadTaxes() {
+        var that = this;
+        let successFn = function (data) {
+            that.setState({
+                taxes_list: data,
+            })
+        };
+        let errorFn = function () {
+        };
+        getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
+
     }
 
     onChangeHandle = (type, value) => {
@@ -156,6 +171,14 @@ export default class PaymentsReport extends React.Component {
                                         onChange={(value) => this.handleChangeOption('payment_mode', value)}>
                                     {this.state.paymentModeOption.map((item) => <Select.Option value={item.id}>
                                         {item.mode}</Select.Option>)}
+                                </Select>
+                                <br/>
+                                <br/>
+                                <h4>Taxes</h4>
+                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Taxes"
+                                        onChange={(value) => this.handleChangeOption('taxes', value)}>
+                                    {this.state.taxes_list.map((item) => <Select.Option value={item.id}>
+                                        {item.name}</Select.Option>)}
                                 </Select>
                                 <br/>
                                 <br/>
