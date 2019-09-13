@@ -9,7 +9,7 @@ import ExpensesReportHome from "./expenses/ExpensesReportHome";
 import IncomeReport from "./income/IncomeReport";
 import InventoryReportHome from "./inventory/InventoryReportHome";
 import PatientsReportHome from "./patients/PatientsReportHome";
-import PaymentsReport from "./payments/PaymentsReport";
+import PaymentsReportHome from "./payments/PaymentsReportHome";
 import DailySummaryReport from "./summary/DailySummaryReport";
 import BedBookingHome from "./booking/BedBookingHome";
 import moment from 'moment';
@@ -78,7 +78,7 @@ class ReportsHome extends React.Component {
                            )}/>
                     <Route exact path="/reports/payments"
                            render={(route) => (that.props.activePracticePermissions.ReportsPayments || that.props.allowAllPermissions ?
-                                   <PaymentsReport  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                                   <PaymentsReportHome  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
                            )}/>
                     <Route exact path="/reports/summary"
                            render={(route) => (that.props.activePracticePermissions.ReportsDailySummary || that.props.allowAllPermissions ?

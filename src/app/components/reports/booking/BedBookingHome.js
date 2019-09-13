@@ -2,7 +2,7 @@ import React from "react";
 import {Button, Card, Col, Icon, Radio, Row, Select} from "antd";
 import {BED_BOOKING_RELATED_REPORT, OPD_IPD, PAYMENT_STATUS} from "../../../constants/hardData";
 import {
-    ALL,
+    ALL, ALL_INVENTORY,
     BED_BOOKING_PACKAGE_COUNT,
     DAILY_BOOKING_COUNT,
     MEDICINE_USAGE_COUNT,
@@ -122,16 +122,18 @@ export default class BedBookingHome extends React.Component {
                                 <br/>
                                 <br/>
                                 <h4>Type</h4>
-                                <Select style={{minWidth: '200px'}} placeholder="Select type"
+                                <Select style={{minWidth: '200px'}} placeholder="Select type" defaultValue={ALL}
                                         onChange={(value)=>this.handleChangeOption('type',value)}>
+                                    <Select.Option value={''}>{ALL}</Select.Option>
                                     {OPD_IPD.map(option => <Select.Option
                                         value={option.value}>{option.label}</Select.Option>)}
                                 </Select>
                                 <br/>
                                 <br/>
                                 <h4>Payment Status</h4>
-                                <Select style={{minWidth: '200px'}} placeholder="Select Payment Status"
+                                <Select style={{minWidth: '200px'}} placeholder="Select Payment Status" defaultValue={ALL}
                                         onChange={(value)=>this.handleChangeOption('payment_status',value)}>
+                                    <Select.Option value={''}>{ALL}</Select.Option>
                                     {PAYMENT_STATUS.map(option => <Select.Option
                                         value={option.value}>{option.label}</Select.Option>)}
                                 </Select>
