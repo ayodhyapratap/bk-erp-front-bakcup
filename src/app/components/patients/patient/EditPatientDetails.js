@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, DatePicker, Form, Icon, Input, message, Modal, Select, Upload} from "antd";
+import {Button, Card, Checkbox, DatePicker, Form, Icon, Input, message, Modal, Select, Upload} from "antd";
 import {
     FILE_UPLOAD_API,
     FILE_UPLOAD_BASE64,
@@ -179,6 +179,7 @@ class EditPatientDetails extends React.Component {
             if (!err) {
                 let reqData = {
                     ...values,
+                    on_dialysis:false,
                     medical_history: values.medical_history,
                     patient_group: values.patient_group,
                     user: {
@@ -267,7 +268,11 @@ class EditPatientDetails extends React.Component {
             [type]: value
         })
     }
-
+    onChangeCheckbox=(e)=>{
+        this.setState({
+            on_dialysis: !this.state.on_dialysis,
+        });
+    };
     render() {
         let that = this;
         const {getFieldDecorator} = this.props.form;
@@ -399,9 +404,8 @@ class EditPatientDetails extends React.Component {
                     {/*    (<Input placeholder="Patient Blood Group"/>)*/}
                     {/*    }*/}
                     {/*</Form.Item>*/}
-
                     <Form.Item label="Blood Group" {...formItemLayout}>
-                        {getFieldDecorator("blood_group", {initialValue: this.props.currentPatient ? this.props.currentPatient.blood_group : []})
+                        {getFieldDecorator("blood_group", {initialValue: this.props.currentPatient ? this.props.currentPatient.blood_group : ''})
                         (<Select placeholder="Blood Group" >
                             {BLOOD_GROUPS.map((option) => <Select.Option
                                 value={option.value}>{option.name}</Select.Option>)}
@@ -559,6 +563,12 @@ class EditPatientDetails extends React.Component {
                             {patientGroupOption.map((option) => <Select.Option
                                 value={option.value}>{option.label}</Select.Option>)}
                         </Select>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="On Dialysis" {...formItemLayout}>
+                        {getFieldDecorator('on_dialysis', {initialValue: this.props.currentPatient ? this.props.currentPatient.on_dialysis : false})
+                            (<Checkbox onChange={(e) => this.onChangeCheckbox(e)} style={{paddingTop:'4px'}}/>)
                         }
                     </Form.Item>
                     <Form.Item>
