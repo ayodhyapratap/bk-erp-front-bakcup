@@ -1,7 +1,19 @@
 import React from "react";
 import {Button, Card, Checkbox, Col, Icon, Radio, Row, Select} from "antd";
-import {EMR_RELATED_REPORT} from "../../../constants/hardData";
-import CustomizedTable from "../../common/CustomizedTable";
+import {MLM_RELATED_REPORT} from "../../../constants/hardData";
+import {
+    ALL,
+    MARGIN_TYPE_WISE,
+    PRODUCT_WISE,
+    TRANSFERED_AMOUNT,
+    WALLET_BALANCE_AMOUNT
+} from "../../../constants/dataKeys";
+import MarginTypewiseReport from "./MarginTypewiseReport";
+import {getAPI} from "../../../utils/common";
+import {PATIENTS_LIST} from "../../../constants/api";
+import TransferredAmountReport from "./TransferredAmountReport";
+import WalletBalanceAmountReport from "./WalletBalanceAmountReport";
+import ProductWiseReport from "./ProductWiseReport";
 
 export default class MlmReportHome extends React.Component {
     constructor(props) {
@@ -10,11 +22,30 @@ export default class MlmReportHome extends React.Component {
             type:'ALL',
             sidePanelColSpan:4,
             advancedOptionShow: true,
-            report:[],
+            agentsOption:[],
         };
+        this.loadAgents = this.loadAgents.bind(this);
+    }
+    componentDidMount() {
+        this.loadAgents();
     }
 
-
+    loadAgents() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                agentsOption: data.results,
+            })
+        };
+        let errorFn = function () {
+        };
+        let apiParams = {
+            agent: true,
+            practice: this.props.active_practiceId,
+            type:this.props.type,
+        };
+        getAPI(PATIENTS_LIST, successFn, errorFn, apiParams);
+    }
     onChangeHandle =(type,value)=>{
         let that=this;
         this.setState({
@@ -38,13 +69,7 @@ export default class MlmReportHome extends React.Component {
             [type]: value,
         })
     };
-    onChangeCheckbox=(e)=>{
-        this.setState({
-            is_complete: !this.state.is_complete,
-        });
-    };
     render() {
-    const columns=[{}];
         return <div>
             <h2>MLM Report <Button type="primary" shape="round"
                                    icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
@@ -54,26 +79,33 @@ export default class MlmReportHome extends React.Component {
             <Card>
                 <Row gutter={16}>
                     <Col span={(24 - this.state.sidePanelColSpan)}>
-                        <CustomizedTable
-                            loading={this.state.loading}
-                            columns={columns}
-                            dataSource={this.state.report}/>
+                        {this.state.type ==MARGIN_TYPE_WISE?
+                            <MarginTypewiseReport {...this.props} {...this.state}/>:null}
+
+                        {this.state.type ==TRANSFERED_AMOUNT?
+                            <TransferredAmountReport {...this.props} {...this.state}/>:null}
+
+                        {this.state.type ==PRODUCT_WISE?
+                            <ProductWiseReport {...this.props} {...this.state}/>:null}
+
+                        {this.state.type == WALLET_BALANCE_AMOUNT?
+                            <WalletBalanceAmountReport {...this.props} {...this.state}/>:null}
                     </Col>
 
                     <Col span={this.state.sidePanelColSpan}>
-                        <Radio.Group buttonStyle="solid" defaultValue='aa' onChange={(value)=>this.onChangeHandle('type',value)}>
-                            <h2>Treatments</h2>
+                        <Radio.Group buttonStyle="solid" defaultValue={ALL} onChange={(value)=>this.onChangeHandle('type',value)}>
+                            <h2>MLM</h2>
                             <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value='aa'>
+                                          value={ALL}>
                                 All MLM
                             </Radio.Button>
                             <p><br/></p>
                             <h2>Related Reports</h2>
-                            {/*{EMR_RELATED_REPORT.map((item) => <Radio.Button*/}
-                            {/*    style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}*/}
-                            {/*    value={item.value}>*/}
-                            {/*    {item.name}*/}
-                            {/*</Radio.Button>)}*/}
+                            {MLM_RELATED_REPORT.map((item) => <Radio.Button
+                                style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                value={item.value}>
+                                {item.name}
+                            </Radio.Button>)}
                         </Radio.Group>
 
                         <br/>
@@ -81,16 +113,14 @@ export default class MlmReportHome extends React.Component {
                         {this.state.advancedOptionShow?<>
                             <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
                             <Col> <br/>
-                                {/*<h4>Doctors</h4>*/}
-                                {/*<Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"*/}
-                                {/*        onChange={(value)=>this.handleChangeOption('doctors',value)}>*/}
-                                {/*    {this.state.practiceDoctors.map((item) => <Select.Option value={item.id}>*/}
-                                {/*        {item.user.first_name}</Select.Option>)}*/}
-                                {/*</Select>*/}
+                                <h4>Agents</h4>
+                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Agents" showSearch optionFilterProp="children"
+                                        onChange={(value)=>this.handleChangeOption('agents',value)} >
+                                    {this.state.agentsOption.map((item) => <Select.Option value={item.id}>
+                                        {item.user.first_name}</Select.Option>)}
+                                </Select>
 
-                                <br/>
-                                <br/>
-                                <Checkbox  onChange={(e)=>this.onChangeCheckbox(e)}> Only Completed</Checkbox>
+
                             </Col>
                         </>: <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
                     </Col>
