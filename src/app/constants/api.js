@@ -135,6 +135,9 @@ export const INVENTORY_REPORT_API='inventory_item/inventory_report';
 /** MLM Reports**/
 export const MLM_Reports='patients/mlm_report';
 export const MLM_Agent_Wallet='patients/agent_wallet_balance';
+/** Payment Reports**/
+export const PAYMENT_REPORTS='xyz';
+
 
 export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/';
 export const EXPENSE_REPORT = 'clinics/%s/expense_report/';

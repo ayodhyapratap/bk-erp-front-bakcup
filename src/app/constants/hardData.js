@@ -329,17 +329,38 @@ export const PRODUCT_ITEM=[
     {label: EQUIPMENT, value: EQUIPMENT},
     {label: SUPPLIES, value: SUPPLIES},
 ];
-
+/*Bed Booking Reports*/
 export const BED_BOOKING_RELATED_REPORT=[
     {name:'Daily Booking Count',value:DAILY_BOOKING_COUNT},
     {name:'Monthly Booking Count',value: MONTHLY_BOOKING_COUNT},
     {name:'Medicine Usage Count',value:MEDICINE_USAGE_COUNT},
     {name:'Bed Booking Package Count',value:BED_BOOKING_PACKAGE_COUNT},
 ];
-
+/*MLM reports*/
 export const MLM_RELATED_REPORT=[
     {name:'Margin Type wise', value:MARGIN_TYPE_WISE},
     {name:'Product Wise', value:PRODUCT_WISE},
-    {name:'Transferred Amount', value:TRANSFERED_AMOUNT},
     {name:'Wallet Balance Amount', value:WALLET_BALANCE_AMOUNT},
+];
+
+/*Payments Reports*/
+export const PAYMENT_RELATED_REPORT = [
+    {name: 'Refund Payments', value: 'b'},
+    {name: 'Payment Received From Each Patient Group', value: 'c'},
+    {name: 'Patients With Unsettled Advance, As Of Today', value: 'd'},
+    {name: 'Modes Of Payment', value: 'e'},
+    {name: 'Payment Received Per Day', value: 'f'},
+    {name: 'Payment Received Per Doctor', value: 'g'},
+    {name: 'Payment Received Per Month', value: 'h'},
+    {name: 'Payment Settlement', value: 'i'},
+    {name: 'Payment Settlement Per Doctor', value: 'j'},
+    {name: 'Credit Notes', value: 'k'},
+    {name: 'Credit Amount Per Doctor', value: 'l'},
+];
+
+export const SCHEDULE_OF_PAYMENT = [
+    {label: "all payments", value: "SALES"},
+    {label: "Only advance payments", value: "SERVICES"},
+    {label: "Payment for services", value: "DAMAGED"},
+    {label: "Payment for products", value: "RETURNED"},
 ];
