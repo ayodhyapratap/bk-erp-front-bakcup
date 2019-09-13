@@ -58,7 +58,7 @@ export default class TransferredAmountReport extends React.Component {
             practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            type:this.props.type,
+            type:'TRANSFER',
         };
         if(this.props.agents){
             apiParams.agents=this.props.agents.toString();

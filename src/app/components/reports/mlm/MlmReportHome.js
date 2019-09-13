@@ -2,7 +2,7 @@ import React from "react";
 import {Button, Card, Checkbox, Col, Icon, Radio, Row, Select} from "antd";
 import {MLM_RELATED_REPORT} from "../../../constants/hardData";
 import {
-    ALL,
+    ALL, ALL_TREATMENTS,
     MARGIN_TYPE_WISE,
     PRODUCT_WISE,
     TRANSFERED_AMOUNT,
@@ -14,6 +14,7 @@ import {PATIENTS_LIST} from "../../../constants/api";
 import TransferredAmountReport from "./TransferredAmountReport";
 import WalletBalanceAmountReport from "./WalletBalanceAmountReport";
 import ProductWiseReport from "./ProductWiseReport";
+import AllTreatmentPerformed from "../emr/AllTreatmentPerformed";
 
 export default class MlmReportHome extends React.Component {
     constructor(props) {
@@ -79,11 +80,14 @@ export default class MlmReportHome extends React.Component {
             <Card>
                 <Row gutter={16}>
                     <Col span={(24 - this.state.sidePanelColSpan)}>
+                        {this.state.type==ALL?
+                            <TransferredAmountReport {...this.state} {...this.props}/>:null}
+
                         {this.state.type ==MARGIN_TYPE_WISE?
                             <MarginTypewiseReport {...this.props} {...this.state}/>:null}
 
-                        {this.state.type ==TRANSFERED_AMOUNT?
-                            <TransferredAmountReport {...this.props} {...this.state}/>:null}
+                        {/*{this.state.type ==TRANSFERED_AMOUNT?*/}
+                        {/*    <TransferredAmountReport {...this.props} {...this.state}/>:null}*/}
 
                         {this.state.type ==PRODUCT_WISE?
                             <ProductWiseReport {...this.props} {...this.state}/>:null}
