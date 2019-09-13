@@ -10,7 +10,8 @@ export default class TopInventory extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            report: [],
+            reportItem_wise: [],
+            reportTotal:[],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: true,
@@ -40,7 +41,8 @@ export default class TopInventory extends React.Component {
         })
         let successFn = function (data) {
             that.setState({
-                report: data,
+                reportItem_wise: data.item_wise,
+                reportTotal:data.total,
                 loading: false
             });
         };
@@ -97,8 +99,8 @@ export default class TopInventory extends React.Component {
         return <div>
             <h2>Top Inventory</h2>
             <Spin size="large" spinning={this.state.loading}>
-                {/*{this.state.report.length>0?*/}
-                    <ComposedChart width={1000} height={400} data={this.state.report.total}
+                {this.state.reportTotal.length>0?
+                    <ComposedChart width={1000} height={400} data={this.state.reportTotal}
                                    margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
 
@@ -108,13 +110,13 @@ export default class TopInventory extends React.Component {
                         {/*<Legend />*/}
                         <Bar dataKey='consume' barSize={35} fill='#0059b3' stroke="#0059b3" label={renderCustomBarLabel}/>
                     </ComposedChart>
-                {/*:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}*/}
+                :<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
             </Spin>
 
             <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                dataSource={this.state.report.item_wise}/>
+                dataSource={this.state.reportItem_wise}/>
         </div>
     }
 }
