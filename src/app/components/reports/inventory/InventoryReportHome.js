@@ -2,6 +2,7 @@ import React from "react";
 import {Button, Card, Col, Icon, Radio, Row, Table, Checkbox,Select} from "antd";
 import {PRODUCTS_API} from "../../../constants/api";
 import {
+    ALL,
     ALL_INVENTORY, DAILY_INVENTORY, MONTHLY_INVENTORY, TOP_INVENTORY
 } from "../../../constants/dataKeys";
 import {
@@ -113,9 +114,9 @@ export default class InventoryReportHome extends React.Component {
                                 <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
                                 <Col> <br/>
                                     <h4>Product</h4>
-                                    <Select style={{minWidth: '200px'}} defaultValue={ALL_INVENTORY}
+                                    <Select style={{minWidth: '200px'}} defaultValue={ALL}
                                             onChange={(value)=>this.handleChangeOption('product_item',value)}>
-                                        <Select.Option value={''}>{ALL_INVENTORY}</Select.Option>
+                                        <Select.Option value={''}>{ALL}</Select.Option>
                                         {this.state.productItems.map((item) => <Select.Option value={item.id}>
                                             {item.name}</Select.Option>)}
                                     </Select>
