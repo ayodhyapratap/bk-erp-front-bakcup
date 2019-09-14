@@ -50,13 +50,9 @@ export default class PatientsFirstAppointment extends React.Component {
             })
         };
         let apiParams={
-
+            from_date: this.props.startDate.format('YYYY-MM-DD'),
+            to_date: this.props.endDate.format('YYYY-MM-DD'),
         }
-        if(this.state.startDate){
-            apiParams.from_date=this.state.startDate.format('YYYY-MM-DD');
-            apiParams.to_date= this.state.endDate.format('YYYY-MM-DD');
-        }
-
         getAPI(FIRST_APPOINTMENT_REPORTS, successFn, errorFn,apiParams);
     }
     render() {

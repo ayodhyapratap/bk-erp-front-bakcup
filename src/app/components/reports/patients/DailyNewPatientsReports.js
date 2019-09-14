@@ -52,21 +52,17 @@ export default class DailyNewPatientReports extends React.Component {
             })
         };
         let apiParams={
-
+            from_date: this.props.startDate.format('YYYY-MM-DD'),
+            to_date: this.props.endDate.format('YYYY-MM-DD'),
+            type:this.props.type,
         }
         if (this.props.patient_groups){
             apiParams.groups=this.props.patient_groups.toString();
         }
-        if(this.state.startDate){
-            apiParams.from_date=this.state.startDate.format('YYYY-MM-DD');
-            apiParams.to_date= this.state.endDate.format('YYYY-MM-DD');
-        }
-        if(this.props.type){
-            apiParams.type=this.props.type;
-        }
         getAPI(PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }
     render() {
+        console.log("props",this.props)
         let that=this;
         let i = 1;
         const columns = [{

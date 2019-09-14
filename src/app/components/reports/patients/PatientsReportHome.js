@@ -22,27 +22,18 @@ export default class PatientsReportHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            startDate: this.props.startDate,
-            endDate: this.props.endDate,
             type: 'DETAILED',
-            loading: true,
             advancedOptionShow: true,
             sidePanelColSpan: 4,
             patientGroup:[],
-            patient_groups:'',
             offerOption:[],
         }
         this.loadPatientGroup = this.loadPatientGroup.bind(this);
-        // this.loadOffer = this.loadOffer.bind(this);
     }
 
     componentDidMount() {
         this.loadPatientGroup();
-        // this.loadOffer();
-
     }
-
-
     loadPatientGroup(){
         let that=this;
         let successFn =function (data) {
@@ -102,18 +93,19 @@ export default class PatientsReportHome extends React.Component {
                     <Col span={(24 - this.state.sidePanelColSpan)}>
 
                         {this.state.type == NEW_PATIENTS ?
-                            <NewPatientReports {...this.props} type={NEW_PATIENTS} {...this.state}/> : null}
+                            <NewPatientReports {...this.props}  {...this.state}/> : null}
 
-                        {this.state.type == DAILY_NEW_PATIENTS ? <DailyNewPatientReports {...this.state}/> : null}
+                        {this.state.type == DAILY_NEW_PATIENTS ?
+                            <DailyNewPatientReports {...this.props} {...this.state}/> : null}
 
                         {this.state.type == EXPIRING_MEMBERSHIP ?
-                            <ExpiringMembership {...this.props} type={this.state.type}/> : null}
+                            <ExpiringMembership {...this.props} {...this.state} /> : null}
                         {this.state.type == PATIENTS_FIRST_APPOINTMENT ?
-                            <PatientsFirstAppointment {...this.props} type={this.state.type}/> : null}
+                            <PatientsFirstAppointment {...this.props} {...this.state}/> : null}
                         {this.state.type == MONTHLY_NEW_PATIENTS ?
-                            <MonthlyNewPatients  {...this.props} type={this.state.type}/> : null}
+                            <MonthlyNewPatients  {...this.props} {...this.state}/> : null}
                         {this.state.type == NEW_MEMBERSHIP ?
-                            <NewMembership  {...this.props} type={this.state.type}/> : null}
+                            <NewMembership  {...this.props} {...this.state}/> : null}
 
                     </Col>
 
