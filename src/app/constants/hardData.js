@@ -339,7 +339,7 @@ export const BED_BOOKING_RELATED_REPORT=[
 /*MLM reports*/
 export const MLM_RELATED_REPORT=[
     {name:'Margin Type wise', value:MARGIN_TYPE_WISE},
-    {name:'Product Wise', value:PRODUCT_WISE},
+    // {name:'Product Wise', value:PRODUCT_WISE},
     {name:'Wallet Balance Amount', value:WALLET_BALANCE_AMOUNT},
 ];
 
