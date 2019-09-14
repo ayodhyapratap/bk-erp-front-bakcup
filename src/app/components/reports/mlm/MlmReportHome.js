@@ -89,8 +89,8 @@ export default class MlmReportHome extends React.Component {
                         {/*{this.state.type ==TRANSFERED_AMOUNT?*/}
                         {/*    <TransferredAmountReport {...this.props} {...this.state}/>:null}*/}
 
-                        {this.state.type ==PRODUCT_WISE?
-                            <ProductWiseReport {...this.props} {...this.state}/>:null}
+                        {/*{this.state.type ==PRODUCT_WISE?*/}
+                        {/*    <ProductWiseReport {...this.props} {...this.state}/>:null}*/}
 
                         {this.state.type == WALLET_BALANCE_AMOUNT?
                             <WalletBalanceAmountReport {...this.props} {...this.state}/>:null}

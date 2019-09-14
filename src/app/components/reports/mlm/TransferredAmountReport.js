@@ -181,8 +181,6 @@ export default class TransferredAmountReport extends React.Component {
             return prev + cur.total;
         }, 0);
         return <div>
-            <h2>MLM Report</h2>
-
             <Row>
                 <Col span={12} offset={6}>
                     <Spin  size="large" spinning={this.state.loading}>

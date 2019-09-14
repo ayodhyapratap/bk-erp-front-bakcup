@@ -183,7 +183,7 @@ export default class MarginTypewiseReport extends React.Component {
             );
         };
         return <div>
-            <h2>MLM Report </h2>
+            <h2>Margin Type wise </h2>
             <Row>
                 <Col span={12} offset={6}>
                     <Spin size="large" spinning={this.state.loading}>

@@ -112,8 +112,7 @@ export default class WalletBalanceAmountReport extends React.Component {
             return prev + cur.non_refundable;
         }, 0);
         return <div>
-            <h2>MLM Report
-            </h2>
+            <h2>Wallet Balance Amount</h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
                     <Row gutter={16}>
