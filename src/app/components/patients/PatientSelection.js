@@ -232,7 +232,7 @@ class PatientSelection extends React.Component {
                 </Radio.Group>
             </Col>
             <Col span={19} style={{overflow: 'scroll', borderLeft: '1px solid #ccc'}}>
-                <Search placeholder="input search text"
+                <Search placeholder="Search Patient By Name / ID / Mobile No / Aadhar No"
                         onChange={value => this.searchPatient(value)}
                         enterButton/>
                 <Spin spinning={this.state.loading}>
