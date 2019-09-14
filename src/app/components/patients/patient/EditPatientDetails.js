@@ -319,7 +319,6 @@ class EditPatientDetails extends React.Component {
                 }
             },
         };
-        console.log("this.props",this.props)
         return (
             <Form onSubmit={that.handleSubmit}>
                 <Card title={<span>{that.props.currentPatient ? "Edit Profile" : "Add Patient"}&nbsp;&nbsp;<Link

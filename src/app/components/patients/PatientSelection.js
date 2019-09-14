@@ -120,7 +120,7 @@ class PatientSelection extends React.Component {
         }
         let patientGroup = this.state.selectedPatientGroup;
         if (patientGroup != 'all') {
-            if (patientGroup == 'smart_a' || patientGroup == 'smart_b' || patientGroup == 'smart_c' || patientGroup == 'smart_d') {
+            if (patientGroup == 'smart_a' || patientGroup == 'smart_b' || patientGroup == 'smart_c' || patientGroup == 'smart_d'|| patientGroup == 'smart_e'|| patientGroup == 'smart_f') {
                 switch (patientGroup) {
                     case 'smart_a':
                         params.gender = 'male';
@@ -131,12 +131,22 @@ class PatientSelection extends React.Component {
                     case 'smart_c':
                         params.gender = 'female';
                         params.age = 30;
-                        params.type = 'lt';
+                        params.type = 'gt';
                         break;
                     case 'smart_d':
                         params.gender = 'female';
                         params.age = 30;
+                        params.type = 'lt';
+                        break;
+                    case 'smart_e':
+                        params.gender = 'male';
+                        params.age = 30;
                         params.type = 'gt';
+                        break;
+                    case 'smart_f':
+                        params.gender = 'male';
+                        params.age = 30;
+                        params.type = 'lt';
                         break;
                 }
             } else {
@@ -219,9 +229,19 @@ class PatientSelection extends React.Component {
                         All Female
                     </Radio.Button>
                     <Radio.Button
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_e"}
+                        value={"smart_e"}>
+                        Male Over 30
+                    </Radio.Button>
+                    <Radio.Button
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_c"}
                         value={"smart_c"}>
                         Female Over 30
+                    </Radio.Button>
+                    <Radio.Button
+                        style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_f"}
+                        value={"smart_f"}>
+                        Male Under 30
                     </Radio.Button>
                     <Radio.Button
                         style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_d"}
