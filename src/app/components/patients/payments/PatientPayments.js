@@ -15,7 +15,7 @@ import {
     Tag,
     Tooltip,
     Form,
-    Input
+    Input, Statistic
 } from "antd";
 import {displayMessage, getAPI, interpolate, putAPI, postAPI} from "../../../utils/common";
 import {
@@ -29,7 +29,6 @@ import {
 import moment from "moment";
 import {Link, Redirect} from "react-router-dom";
 import {Route, Switch} from "react-router";
-import AddPayment from "./AddPayment";
 import AddPaymentForm from "./AddPaymentForm";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {BACKEND_BASE_URL} from "../../../config/connect";
@@ -118,7 +117,7 @@ class PatientPayments extends React.Component {
     }
 
     deletePayment(patient, payment) {
-        console.log("Canceled",payment)
+        console.log("Canceled", payment)
         let that = this;
         let reqData = {patient: patient, is_cancelled: true};
         let successFn = function (data) {
@@ -127,7 +126,7 @@ class PatientPayments extends React.Component {
         }
         let errorFn = function () {
         }
-        console.log("reqdata",reqData)
+        console.log("reqdata", reqData)
         putAPI(interpolate(SINGLE_PAYMENT_API, [payment]), reqData, successFn, errorFn);
 
     }
@@ -205,7 +204,7 @@ class PatientPayments extends React.Component {
 
         };
 
-        postAPI(CANCELINVOICE_GENERATE_OTP, reqData ,successFn, errorFn);
+        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
     };
 
 
@@ -335,6 +334,13 @@ const columns = [{
 
 function PaymentCard(payment, that) {
     const {getFieldDecorator} = that.props.form;
+    let advancePay = [];
+    if(payment.is_advance){
+        advancePay.push({
+            invoice_id:"Advance Payment",
+            pay_amount : payment.advance_value
+        })
+    }
     return <Card style={{marginTop: 10}}
                  bodyStyle={{padding: 0}}
                  title={(payment.patient_data && !that.props.currentPatient ?
@@ -374,13 +380,14 @@ function PaymentCard(payment, that) {
                 {payment.is_cancelled ?
                     <Alert message="Cancelled" type="error" showIcon/> : null}
                 <Divider style={{marginBottom: 0}}>{payment.payment_id}</Divider>
+
             </Col>
             <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
 
                 <Table columns={columns}
                        pagination={false}
                        footer={() => PaymentFooter({practice: payment.practice_data})}
-                       dataSource={payment.invoices} rowKey={payment.id}/>
+                       dataSource={[...payment.invoices,...advancePay]} rowKey={payment.id}/>
             </Col>
         </Row>
 

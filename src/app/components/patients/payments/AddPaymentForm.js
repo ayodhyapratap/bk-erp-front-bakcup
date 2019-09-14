@@ -1,7 +1,13 @@
 import React from "react";
 import {Button, Card, Col, Divider, InputNumber, List, Popconfirm, Row, Select} from 'antd';
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
-import {INVOICES_API, PATIENT_PAYMENTS_API, PAYMENT_MODES, SINGLE_PAYMENT_API} from "../../../constants/api";
+import {
+    AVAILABLE_ADVANCE,
+    INVOICES_API,
+    PATIENT_PAYMENTS_API,
+    PAYMENT_MODES,
+    SINGLE_PAYMENT_API
+} from "../../../constants/api";
 import {WARNING_MSG_TYPE} from "../../../constants/dataKeys";
 
 class AddPaymentForm extends React.Component {
@@ -16,7 +22,9 @@ class AddPaymentForm extends React.Component {
             totalPayableAmount: 0,
             invoicePayments: {},
             totalPayingAmount: 0,
-            selectedPaymentMode: null
+            totalPayingFromAdvanceAmount: 0,
+            selectedPaymentMode: null,
+            availableAdvance: null
         }
     }
 
@@ -44,8 +52,23 @@ class AddPaymentForm extends React.Component {
         }
         this.loadInvoices();
         this.loadPaymentModes();
+        this.loadAvailableAdvance();
     }
 
+    loadAvailableAdvance = () => {
+        let that = this;
+        let sucessFn = function (data) {
+            that.setState({
+                availableAdvance: data
+            });
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(interpolate(AVAILABLE_ADVANCE, [that.props.match.params.id]), sucessFn, errorFn, {
+            practice_id: this.props.active_practiceId
+        })
+    }
     loadPaymentModes = () => {
         var that = this;
         let successFn = function (data) {
@@ -129,7 +152,7 @@ class AddPaymentForm extends React.Component {
     calculateInvoicePayments = () => {
         this.setState(function (prevState) {
             let payable = 0;
-            let totalPayingAmount = prevState.totalPayingAmount;
+            let totalPayingAmount = prevState.totalPayingAmount + prevState.totalPayingFromAdvanceAmount;
             let invoicePayments = {};
             prevState.addedInvoice.forEach(function (invoice) {
                 // invoice.inventory.forEach(function (invent) {
@@ -168,6 +191,14 @@ class AddPaymentForm extends React.Component {
             that.calculateInvoicePayments();
         })
     }
+    setPaymentFromAdvanceAmount = (value) => {
+        let that = this;
+        this.setState({
+            totalPayingFromAdvanceAmount: value
+        }, function () {
+            that.calculateInvoicePayments();
+        })
+    }
     changeSelectedPaymentMode = (e) => {
         this.setState({
             selectedPaymentMode: e
@@ -186,21 +217,62 @@ class AddPaymentForm extends React.Component {
             "invoices": [],
             "bank": "",
             "number": 0,
-            "is_advance": false,
+
             "is_active": true,
             "is_cancelled": false,
             "practice": that.props.active_practiceId,
             "patient": that.props.match.params.id,
-            "payment_mode": that.state.selectedPaymentMode
+            "payment_mode": that.state.selectedPaymentMode,
+            advance_value: 0,
+            "is_advance": false,
+        }
+        if (that.state.totalPayingAmount - that.state.totalPayableAmount > 1) {
+            reqData.advance_value = that.state.totalPayingAmount - that.state.totalPayableAmount;
+            reqData.is_advance = true;
         }
         let invoices = Object.keys(that.state.invoicePayments);
-        invoices.forEach(function (invoiceId) {
+        let invoicePayments = {...that.state.invoicePayments};
+        let totalAmountPayingFromAdvance = that.state.totalPayingFromAdvanceAmount;
+        let consumedInvoices = 0;
+        if (totalAmountPayingFromAdvance) {
+            that.state.availableAdvance.data.forEach(function (availableAdvancePayments) {
+                let maxConsumeAmount = totalAmountPayingFromAdvance;
+                if (availableAdvancePayments.advance_value < maxConsumeAmount) {
+                    maxConsumeAmount = availableAdvancePayments.advance_value;
+                }
+                while (totalAmountPayingFromAdvance && invoices.length > consumedInvoices) {
+                    if (invoicePayments[invoices[consumedInvoices]] && maxConsumeAmount > invoicePayments[invoices[consumedInvoices]]) {
+                        availableAdvancePayments.advance_value -= invoicePayments[invoices[consumedInvoices]];
+                        availableAdvancePayments.invoices.push({
+                            "pay_amount": invoicePayments[invoices[consumedInvoices]],
+                            "is_active": true,
+                            "invoice": invoices[consumedInvoices],
+                        });
+                        consumedInvoices++;
+                        totalAmountPayingFromAdvance -= invoicePayments[invoices[consumedInvoices]];
+                        invoicePayments[invoices[consumedInvoices]] -= invoicePayments[invoices[consumedInvoices]];
+                    } else if (invoicePayments[invoices[consumedInvoices]]) {
+                        availableAdvancePayments.invoices.push({
+                            "pay_amount": maxConsumeAmount,
+                            "is_active": true,
+                            "invoice": invoices[consumedInvoices],
+                        });
+
+                        invoicePayments[invoices[consumedInvoices]] -= maxConsumeAmount;
+                        totalAmountPayingFromAdvance -= maxConsumeAmount;
+                        availableAdvancePayments.advance_value -= maxConsumeAmount;
+                    }
+                }
+                reqData.invoices.push(availableAdvancePayments);
+            });
+        }
+        for (; invoices.length > consumedInvoices; consumedInvoices++) {
             reqData.invoices.push({
-                "pay_amount": that.state.invoicePayments[invoiceId],
+                "pay_amount": invoicePayments[invoices[consumedInvoices]],
                 "is_active": true,
-                "invoice": invoiceId
-            })
-        })
+                "invoice": invoices[consumedInvoices],
+            });
+        }
         let successFn = function (data) {
             that.setState({
                 loading: false
@@ -216,9 +288,9 @@ class AddPaymentForm extends React.Component {
         }
         if (this.props.editPayment) {
             reqData.id = this.props.editPayment.id;
-            putAPI(interpolate(SINGLE_PAYMENT_API,[reqData.id]), reqData, successFn, errorFn)
-        }else{
-           postAPI(PATIENT_PAYMENTS_API, reqData, successFn, errorFn)
+            putAPI(interpolate(SINGLE_PAYMENT_API, [reqData.id]), reqData, successFn, errorFn)
+        } else {
+            postAPI(PATIENT_PAYMENTS_API, reqData, successFn, errorFn)
         }
 
     }
@@ -253,39 +325,6 @@ class AddPaymentForm extends React.Component {
                                             <small>DUE AFTER PAYMENT (INR)</small>
                                         </td>
                                     </tr>
-                                    {/*{this.props.editPayment ? <>*/}
-
-                                    {/*    {this.props.editPayment.invoices ? this.props.editPayment.invoices.map(invoice =>*/}
-                                    {/*        <tr style={{borderBottom: '2px solid #ccc'}}>*/}
-
-                                    {/*            <td>*/}
-                                    {/*                <Button size={'small'} type={'danger'} shape={'circle'}*/}
-                                    {/*                        icon={'close'}*/}
-                                    {/*                        style={{position: 'absolute', right: '-35px'}}*/}
-                                    {/*                        onClick={() => this.removeInvoiceToPayments(invoice.invoice_data.id)}/>*/}
-                                    {/*                <h3>{invoice.invoice_data.invoice_id}</h3>*/}
-                                    {/*                {invoice.invoice_data.date}*/}
-                                    {/*            </td>*/}
-
-                                    {/*            <td>*/}
-
-                                    {/*                {invoice.invoice_data.procedure.map(proc => proc.procedure_data.name + ", ")}*/}
-                                    {/*                {invoice.invoice_data.inventory.map(proc => proc.inventory_item_data.name + ", ")}*/}
-                                    {/*                {invoice.invoice_data.reservation ? invoice.type + "," : null}*/}
-                                    {/*                {invoice.invoice_data.reservation_data && invoice.invoice_data.reservation_data.medicines ? invoice.invoice_data.reservation_data.medicines.map(item => item.name + ',') : null}*/}
-                                    {/*            </td>*/}
-                                    {/*            <td style={{textAlign: 'right'}}>*/}
-                                    {/*                <b>{(invoice.invoice_data.total - invoice.invoice_data.payments_data).toFixed(2)}</b>*/}
-                                    {/*            </td>*/}
-                                    {/*            <td style={{textAlign: 'right'}}>*/}
-                                    {/*                <b>{that.state.invoicePayments[invoice.invoice_data.id]}</b></td>*/}
-                                    {/*            <td style={{textAlign: 'right'}}>*/}
-                                    {/*                <b>{(invoice.invoice_data.total - invoice.invoice_data.payments_data - that.state.invoicePayments[invoice.invoice_data.id]).toFixed(2)}</b>*/}
-                                    {/*            </td>*/}
-                                    {/*        </tr>*/}
-                                    {/*    ) : null}*/}
-
-                                    {/*</> : null}*/}
                                     {this.state.addedInvoice.map(invoice =>
                                         <tr style={{borderBottom: '2px solid #ccc'}}>
                                             <td>
@@ -319,10 +358,31 @@ class AddPaymentForm extends React.Component {
                             <Col span={6}><h2>{this.state.totalPayableAmount}</h2></Col>
                         </Row>
                         <Row gutter={16} style={{marginTop: '20px'}}>
-                            <Col span={6}><h3>Pay Now:</h3></Col>
-                            <Col span={6}>
-                                <InputNumber min={0} step={1} max={this.state.totalPayableAmount}
-                                             value={this.state.totalPayingAmount} onChange={this.setPaymentAmount}/>
+                            <Col span={12}>
+                                <Row>
+                                    <Col span={12}>
+                                        <h3>Amount From Advance :<br/>
+                                            <small>Available: {this.state.availableAdvance ? this.state.availableAdvance.max_allowed : 0} INR</small>
+                                        </h3>
+                                    </Col>
+                                    <Col span={12}>
+                                        <InputNumber min={0} step={1}
+                                                     max={this.state.availableAdvance ? this.state.availableAdvance.max_allowed : 0}
+                                                     disabled={!this.state.availableAdvance || !this.state.availableAdvance.max_allowed}
+                                                     value={this.state.totalPayingFromAdvanceAmount}
+                                                     onChange={this.setPaymentFromAdvanceAmount}/>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col span={12}>
+                                        <h3>Pay Now:</h3></Col>
+                                    <Col span={12}>
+                                        <InputNumber min={0} step={1}
+                                                     value={this.state.totalPayingAmount}
+                                                     onChange={this.setPaymentAmount}/>
+                                    </Col>
+                                </Row>
+
                             </Col>
                             <Col span={6}>
                                 <Select style={{width: '100%'}} value={this.state.selectedPaymentMode}
