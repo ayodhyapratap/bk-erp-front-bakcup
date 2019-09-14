@@ -319,6 +319,7 @@ class EditPatientDetails extends React.Component {
                 }
             },
         };
+        console.log("this.props",this.props)
         return (
             <Form onSubmit={that.handleSubmit}>
                 <Card title={<span>{that.props.currentPatient ? "Edit Profile" : "Add Patient"}&nbsp;&nbsp;<Link
@@ -362,6 +363,14 @@ class EditPatientDetails extends React.Component {
                             initialValue: this.props.currentPatient ? this.props.currentPatient.user.first_name : ''
                         })
                         (<Input placeholder="Patient Name"/>)
+                        }
+                    </Form.Item>
+
+                    <Form.Item label="Patient Id" {...formItemLayout}>
+                        {getFieldDecorator('custom_id', {
+                            initialValue: this.props.currentPatient ? this.props.currentPatient.custom_id: ''
+                        })
+                        (<Input placeholder="Patient Id"/>)
                         }
                     </Form.Item>
                     {this.props.currentPatient ? null :
