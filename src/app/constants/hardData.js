@@ -35,7 +35,15 @@ import {
     MARGIN_TYPE_WISE,
     PRODUCT_WISE,
     TRANSFERED_AMOUNT,
-    WALLET_BALANCE_AMOUNT
+    WALLET_BALANCE_AMOUNT,
+    CREDIT_AMOUNT_PER_DOCTOR,
+    PAYMENT_REFUND,
+    PATIENTS_UNSETTLED_ADVANCE,
+    PAYMENT_RECEIVED_PATIENT_GROUP,
+    MODE_OF_PAYMENTS,
+    PAYMENT_RECEIVED_PER_DAY,
+    PAYMENT_RECEIVED_PER_DOCTOR,
+    PAYMENT_RECEIVED_PER_MONTH, PAYMENT_SETTLEMENT, PAYMENT_SETTLEMENT_PER_DOCTOR, CREDIT_NOTES
 } from "../constants/dataKeys";
 
 
@@ -345,17 +353,17 @@ export const MLM_RELATED_REPORT=[
 
 /*Payments Reports*/
 export const PAYMENT_RELATED_REPORT = [
-    {name: 'Refund Payments', value: 'b'},
-    {name: 'Payment Received From Each Patient Group', value: 'c'},
-    {name: 'Patients With Unsettled Advance, As Of Today', value: 'd'},
-    {name: 'Modes Of Payment', value: 'e'},
-    {name: 'Payment Received Per Day', value: 'f'},
-    {name: 'Payment Received Per Doctor', value: 'g'},
-    {name: 'Payment Received Per Month', value: 'h'},
-    {name: 'Payment Settlement', value: 'i'},
-    {name: 'Payment Settlement Per Doctor', value: 'j'},
-    {name: 'Credit Notes', value: 'k'},
-    {name: 'Credit Amount Per Doctor', value: 'l'},
+    {name: 'Refund Payments', value:PAYMENT_REFUND},
+    {name: 'Payment Received From Each Patient Group', value:PATIENTS_UNSETTLED_ADVANCE},
+    {name: 'Patients With Unsettled Advance, As Of Today', value: PAYMENT_RECEIVED_PATIENT_GROUP},
+    {name: 'Modes Of Payment', value:MODE_OF_PAYMENTS},
+    {name: 'Payment Received Per Day', value:PAYMENT_RECEIVED_PER_DAY},
+    {name: 'Payment Received Per Doctor', value: PAYMENT_RECEIVED_PER_DOCTOR},
+    {name: 'Payment Received Per Month', value: PAYMENT_RECEIVED_PER_MONTH},
+    {name: 'Payment Settlement', value: PAYMENT_SETTLEMENT},
+    {name: 'Payment Settlement Per Doctor', value: PAYMENT_SETTLEMENT_PER_DOCTOR},
+    {name: 'Credit Notes', value: CREDIT_NOTES},
+    {name: 'Credit Amount Per Doctor', value:CREDIT_AMOUNT_PER_DOCTOR},
 ];
 
 export const SCHEDULE_OF_PAYMENT = [
@@ -363,4 +371,9 @@ export const SCHEDULE_OF_PAYMENT = [
     {label: "Only advance payments", value: "SERVICES"},
     {label: "Payment for services", value: "DAMAGED"},
     {label: "Payment for products", value: "RETURNED"},
+];
+
+export const PATIENT_AGE = [
+    {label:'DOB' ,value:'DOB'},
+    {label:'Age' ,value: 'AGE'}
 ];

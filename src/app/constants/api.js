@@ -103,7 +103,7 @@ export const RETURN_INVOICE_PDF_API ='return/%s/get_pdf'
 //search and advanced search API
 export const SEARCH_PATIENT = 'patients/search/?name=%s';
 export const PATIENT_PENDING_AMOUNT = 'patients/%s/pending_amount/';
-
+export const AVAILABLE_ADVANCE='patients/%s/advance_payment/';
 //extra data
 export const EXTRA_DATA = 'clinics/extra_data/';
 export const COUNTRY ='patients/country/';
@@ -128,7 +128,8 @@ export const EMR_REPORTS='clinics/%s/emr_report';
 export const PRODUCTS_API='inventory_item/products/';
 
 /** Expense Reports ***/
-export const EXPENSE_REPORT_API='expenses';
+export const EXPENSE_PAYMENT_MODE_API='expenses';
+export const EXPENSE_REPORT_API='expenses/report';
 /** Inventory Reports***/
 export const INVENTORY_REPORT_API='inventory_item/inventory_report';
 
