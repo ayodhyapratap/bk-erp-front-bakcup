@@ -1,136 +1,244 @@
 import React from "react";
-import {Button, Card, Col, Icon, Radio, Row, Table} from "antd";
-import {INVOICE_REPORTS} from "../../../constants/api";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import moment from "moment"
-import CustomizedTable from "../../common/CustomizedTable";
+import {Button, Card, Checkbox, Col, Radio, Row, Select} from "antd";
+import {EXPENSE_TYPE, PATIENT_GROUPS, PAYMENT_MODES, TAXES, VENDOR_API} from "../../../constants/api";
+import {getAPI, interpolate} from "../../../utils/common";
+import {PAYMENT_RELATED_REPORT, SCHEDULE_OF_PAYMENT, TYPE_OF_CONSUMPTION} from "../../../constants/hardData";
+import {
+    ALL_EXPENSES, ALL_PAYMENTS,
+    CREDIT_AMOUNT_PER_DOCTOR, CREDIT_NOTES, MODE_OF_PAYMENTS, PATIENTS_UNSETTLED_ADVANCE,
+    PAYMENT_RECEIVED_PATIENT_GROUP, PAYMENT_RECEIVED_PER_DAY, PAYMENT_RECEIVED_PER_DOCTOR, PAYMENT_RECEIVED_PER_MONTH,
+    PAYMENT_REFUND, PAYMENT_SETTLEMENT, PAYMENT_SETTLEMENT_PER_DOCTOR
+} from "../../../constants/dataKeys";
+// import AllPayments from "./AllPayments";
+import {loadDoctors} from "../../../utils/clinicUtils";
+// import CreditAmountPerDoctor from "./CreditAmountPerDoctor";
+// import RefundPayments from "./RefundPayments";
+// import PaymentReceivedEachPatientGroup from "./PaymentReceivedEachPatientGroup";
+// import PatientsWithUnsettledAdvance from "./PatientsWithUnsettledAdvance";
+// import ModesOfPayment from "./ModesOfPayment";
+// import PaymentReceivedPerDay from "./PaymentReceivedPerDay";
+// import PaymentReceivedPerMonth from "./PaymentReceivedPerMonth";
+// import PaymentReceivedPerDoctor from "./PaymentReceivedPerDoctor";
+// import CreditNotes from "./CreditNotes";
+// import PaymentSettlement from "./PaymentSettlement";
+// import PaymentSettlementPerDoctor from "./PaymentSettlementPerDoctor";
 
-export default class IncomeReport extends React.Component {
+export default class IncomeReportHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            report: [],
-            startDate: this.props.startDate,
-            endDate: this.props.endDate,
-            loading: true
-        }
-        this.report = this.report.bind(this);
-        this.report();
+            advancedOptionShow: true,
+            paymentModeOption: [],
+            sidePanelColSpan: 4,
+            type: 'ALL',
+            practiceDoctors: [],
+            patientGroup: [],
+            vendorOption: [],
+            taxes_list:[],
+        };
+        loadDoctors(this);
+        this.loadPatientGroup = this.loadPatientGroup.bind(this);
+        this.loadPaymentMode = this.loadPaymentMode.bind(this);
+        this.loadTaxes = this.loadTaxes.bind(this);
     }
 
-    componentWillReceiveProps(newProps) {
-        let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
-            this.setState({
-                startDate: newProps.startDate,
-                endDate: newProps.endDate
-            }, function () {
-                that.report();
-            })
-
+    componentDidMount() {
+        this.loadPatientGroup();
+        this.loadPaymentMode();
+        this.loadTaxes();
     }
 
-    report = () => {
+    loadPatientGroup() {
         let that = this;
-        this.setState({
-            loading: true
-        })
         let successFn = function (data) {
-            console.log(data);
             that.setState({
-                report: data.data,
-                loading: false
+                patientGroup: data,
             });
         };
         let errorFn = function () {
-            that.setState({
-                loading: false
-            })
-        };
-        getAPI(interpolate(INVOICE_REPORTS, [this.props.active_practiceId]), successFn, errorFn, {
-            start: this.state.startDate.format('YYYY-MM-DD'),
-            end: this.state.endDate.format('YYYY-MM-DD')
-        });
+
+        }
+        getAPI(interpolate(PATIENT_GROUPS, [this.props.active_practiceId]), successFn, errorFn)
     }
 
+    loadPaymentMode() {
+        let that = this;
+        let successFun = function (data) {
+            that.setState({
+                paymentModeOption: data,
+            })
+        };
+        let errorFn = function () {
+
+        };
+        getAPI(interpolate(PAYMENT_MODES, [this.props.active_practiceId]), successFun, errorFn);
+    }
+    loadTaxes() {
+        var that = this;
+        let successFn = function (data) {
+            that.setState({
+                taxes_list: data,
+            })
+        };
+        let errorFn = function () {
+        };
+        getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
+
+    }
+
+    onChangeHandle = (type, value) => {
+        let that = this;
+        this.setState({
+            [type]: value.target.value,
+        })
+    };
+
+    advancedOption(value) {
+        this.setState({
+            advancedOptionShow: value,
+        })
+    }
+
+    changeSidePanelSize = (sidePanel) => {
+        this.setState({
+            sidePanelColSpan: sidePanel ? 0 : 4
+        })
+    };
+    handleChangeOption = (type, value) => {
+        let that = this;
+        this.setState({
+            [type]: value,
+        })
+    };
+    onChangeCheckbox = (e) => {
+        this.setState({
+            exclude_cancelled: !this.state.exclude_cancelled,
+        });
+    };
+
     render() {
-        const columns = [{
-            title: 'Date',
-            key: 'date',
-            render: (text, record) => (
-                <span>
-                {moment(record.created_at).format('LL')}
-                  </span>
-            ),
-        }, {
-            title: '	Invoice Number	',
-            dataIndex: 'age',
-            key: 'age',
-        }, {
-            title: 'Patient',
-            dataIndex: 'age',
-            key: 'age',
-        }, {
-            title: 'Treatments & Products',
-            dataIndex: 'age',
-            key: 'age',
-        },];
         return <div>
-            <h2>Income Report
+            <h2>Payments Report <Button type="primary" shape="round"
+                                        icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
+                                        style={{float: "right"}}
+                                        onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
             </h2>
             <Card>
                 <Row gutter={16}>
-                    <Col span={16}>
-                        <CustomizedTable loading={this.state.loading} columns={columns} size={'small'}
-                                         dataSource={this.state.report}/>
+                    <Col span={(24 - this.state.sidePanelColSpan)}>
+
+                        {/*{this.state.type == ALL_PAYMENTS ?*/}
+                        {/*    <AllPayments {...this.props} {...this.state}/> : null}*/}
+
+                        {/*{this.state.type==PAYMENT_REFUND?*/}
+                        {/*    <RefundPayments {...this.props} {...this.state}/> : null}*/}
+
+                        {/*{this.state.type ==PAYMENT_RECEIVED_PATIENT_GROUP?*/}
+                        {/*    <PaymentReceivedEachPatientGroup {...this.props} {...this.state}/>:null}*/}
+
+                        {/*{this.state.type ==PATIENTS_UNSETTLED_ADVANCE?*/}
+                        {/*    <PatientsWithUnsettledAdvance {...this.props} {...this.state}/>:null}*/}
+
+                        {/*{this.state.type == MODE_OF_PAYMENTS ?*/}
+                        {/*    <ModesOfPayment {...this.props} {...this.state}/>:null}*/}
+
+                        {/*{this.state.type ==PAYMENT_RECEIVED_PER_DAY?*/}
+                        {/*    <PaymentReceivedPerDay {...this.props} {...this.state}/>:null}*/}
+
+                        {/*{this.state.type ==PAYMENT_RECEIVED_PER_MONTH?*/}
+                        {/*    <PaymentReceivedPerMonth {...this.props} {...this.state}/>:null}*/}
+
+                        {/*{this.state.type == PAYMENT_RECEIVED_PER_DOCTOR?*/}
+                        {/*    <PaymentReceivedPerDoctor {...this.props} {...this.state}/>:null}*/}
+
+                        {/*{this.state.type ==CREDIT_NOTES?*/}
+                        {/*    <CreditNotes {...this.props} {...this.state}/>:null}*/}
+
+                        {/*{this.state.type ==PAYMENT_SETTLEMENT?*/}
+                        {/*    <PaymentSettlement {...this.props} {...this.state}/>:null}*/}
+
+                        {/*{this.state.type ==PAYMENT_SETTLEMENT_PER_DOCTOR?*/}
+                        {/*    <PaymentSettlementPerDoctor {...this.props} {...this.state}/>:null}*/}
+
+                        {/*{this.state.type == CREDIT_AMOUNT_PER_DOCTOR?*/}
+                        {/*    <CreditAmountPerDoctor {...this.state} {...this.props}/>:null}*/}
+
                     </Col>
-                    <Col span={8}>
-                        <Radio.Group buttonStyle="solid" defaultValue="all">
-                            <h2>Patients</h2>
+
+
+                    <Col span={this.state.sidePanelColSpan}>
+                        <Radio.Group buttonStyle="solid" defaultValue={ALL_PAYMENTS}
+                                     onChange={(value) => this.onChangeHandle('type', value)}>
+                            <h2>Payments</h2>
                             <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value="all">
-                                All Invoices
+                                          value={ALL_PAYMENTS}>
+                                All Payments
                             </Radio.Button>
                             <p><br/></p>
                             <h2>Related Reports</h2>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value="b">
-                                Daily Invoiced Income
-                            </Radio.Button>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value="c">
-                                Monthly Invoiced Income
-                            </Radio.Button>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value="d">
-                                Taxed Invoiced Income
-                            </Radio.Button>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value="e">
-                                Invoiced Income For Each Doctor
-                            </Radio.Button>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value="f">
-                                Invoiced Income For Each Procedure
-                            </Radio.Button>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value="g">
-                                Invoiced Income For Each Patient Group
-                            </Radio.Button>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value="h">
-                                Invoiced Income For Each Product
-                            </Radio.Button>
-                            {/*<p><b>My Groups</b></p>*/}
-                            {/*{this.state.patientGroup.map((group) => <Radio.Button*/}
-                            {/*style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={group.id}>*/}
-                            {/*{group.name}*/}
-                            {/*</Radio.Button>)}*/}
-
-                            {/*<p><br/></p>*/}
-                            {/*<p><b>Membership</b></p>*/}
+                            {PAYMENT_RELATED_REPORT.map((item) => <Radio.Button
+                                style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                value={item.value}>
+                                {item.name}
+                            </Radio.Button>)}
                         </Radio.Group>
+
+                        <br/>
+                        <br/>
+                        {this.state.advancedOptionShow ? <>
+                            <Button type="link" onClick={(value) => this.advancedOption(false)}>Hide Advanced
+                                Options </Button>
+                            <Col> <br/>
+                                <h4>Show</h4>
+                                <Checkbox.Group style={{width: '100%', display: "inline-grid"}}
+                                                onChange={(value) => this.handleChangeOption('consume', value)}>
+                                    {/*<Row>*/}
+                                    {SCHEDULE_OF_PAYMENT.map((item) => <Checkbox
+                                        value={item.value}> {item.label}</Checkbox>)}
+                                    {/*</Row>*/}
+                                </Checkbox.Group>
+                                <br/>
+                                <br/>
+                                <h4>Doctors</h4>
+                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
+                                        onChange={(value) => this.handleChangeOption('doctors', value)}>
+                                    {this.state.practiceDoctors.map((item) => <Select.Option value={item.id}>
+                                        {item.user.first_name}</Select.Option>)}
+                                </Select>
+                                <br/>
+                                <br/>
+                                <h4>Patient Groups</h4>
+                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Patient Groups"
+                                        onChange={(value) => this.handleChangeOption('patient_groups', value)}>
+                                    {this.state.patientGroup.map((item) => <Select.Option value={item.id}>
+                                        {item.name}</Select.Option>)}
+                                </Select>
+                                <br/>
+                                <br/>
+                                <h4>Payment Modes</h4>
+                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Payment Modes"
+                                        onChange={(value) => this.handleChangeOption('payment_mode', value)}>
+                                    {this.state.paymentModeOption.map((item) => <Select.Option value={item.id}>
+                                        {item.mode}</Select.Option>)}
+                                </Select>
+                                <br/>
+                                <br/>
+                                <h4>Taxes</h4>
+                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Taxes"
+                                        onChange={(value) => this.handleChangeOption('taxes', value)}>
+                                    {this.state.taxes_list.map((item) => <Select.Option value={item.id}>
+                                        {item.name}</Select.Option>)}
+                                </Select>
+                                <br/>
+                                <br/>
+                                <Checkbox onChange={(e) => this.onChangeCheckbox(e)}> Exclude Cancelled</Checkbox>
+
+                            </Col>
+                        </> : <Button type="link" onClick={(value) => this.advancedOption(true)}>Show Advanced
+                            Options </Button>}
+
                     </Col>
+
                 </Row>
             </Card>
         </div>
