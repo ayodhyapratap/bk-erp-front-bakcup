@@ -146,7 +146,7 @@ export default class TreatmentForEachDoctor extends React.Component {
                             <Pie
                                 activeIndex={this.state.activeIndex}
                                 activeShape={renderActiveShape}
-                                data={this.state.treatmentEachDoctor.reverse()}
+                                data={[...this.state.treatmentEachDoctor].reverse()}
                                 cx={300}
                                 dataKey="count"
                                 cy={200}

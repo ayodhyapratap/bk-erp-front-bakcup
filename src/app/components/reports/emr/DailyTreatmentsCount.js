@@ -98,7 +98,7 @@ export default class DailyTreatmentsCount extends React.Component {
             <h2>Daily Treatments Count</h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.report.length>0?
-                <LineChart width={1000} height={300} data={this.state.report.reverse()}
+                <LineChart width={1000} height={300} data={[...this.state.report].reverse()}
                            margin={{top: 5, right: 30, left: 20, bottom: 55}}>
 
                     <XAxis dataKey="date" tickFormatter={(value) => {

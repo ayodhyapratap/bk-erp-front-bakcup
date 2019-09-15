@@ -148,7 +148,7 @@ export default class TreatmentForEachCategory extends React.Component {
                             <Pie
                                 activeIndex={this.state.activeIndex}
                                 activeShape={renderActiveShape}
-                                data={this.state.treatmentCategory.reverse()}
+                                data={[...this.state.treatmentCategory].reverse()}
                                 cx={300}
                                 dataKey="count"
                                 cy={200}

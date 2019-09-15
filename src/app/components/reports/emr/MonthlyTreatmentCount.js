@@ -98,7 +98,7 @@ export default class MonthlyTreatmentCount extends React.Component {
             </h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.treatmentMonthly.length>0?
-                <ComposedChart width={1000} height={400} data={this.state.treatmentMonthly.reverse()}
+                <ComposedChart width={1000} height={400} data={[...this.state.treatmentMonthly].reverse()}
                                margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
 
