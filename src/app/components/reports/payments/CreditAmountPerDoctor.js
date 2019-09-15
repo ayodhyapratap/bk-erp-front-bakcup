@@ -85,7 +85,7 @@ export default class CreditAmountPerDoctor extends React.Component {
         }];
 
         return <div>
-            <h2>All Payments Report</h2>
+            <h2>Credit Amount Per Doctor</h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign: "center"}}>
                     {/*<Statistic title="Total Appointments" value={this.state.total}/>*/}

@@ -3,9 +3,25 @@ import {Button, Card, Checkbox, Col, Radio, Row, Select} from "antd";
 import {EXPENSE_TYPE, PATIENT_GROUPS, PAYMENT_MODES, TAXES, VENDOR_API} from "../../../constants/api";
 import {getAPI, interpolate} from "../../../utils/common";
 import {PAYMENT_RELATED_REPORT, SCHEDULE_OF_PAYMENT, TYPE_OF_CONSUMPTION} from "../../../constants/hardData";
-import {ALL_EXPENSES} from "../../../constants/dataKeys";
+import {
+    ALL_EXPENSES, ALL_PAYMENTS,
+    CREDIT_AMOUNT_PER_DOCTOR, CREDIT_NOTES, MODE_OF_PAYMENTS, PATIENTS_UNSETTLED_ADVANCE,
+    PAYMENT_RECEIVED_PATIENT_GROUP, PAYMENT_RECEIVED_PER_DAY, PAYMENT_RECEIVED_PER_DOCTOR, PAYMENT_RECEIVED_PER_MONTH,
+    PAYMENT_REFUND, PAYMENT_SETTLEMENT, PAYMENT_SETTLEMENT_PER_DOCTOR
+} from "../../../constants/dataKeys";
 import AllPayments from "./AllPayments";
 import {loadDoctors} from "../../../utils/clinicUtils";
+import CreditAmountPerDoctor from "./CreditAmountPerDoctor";
+import RefundPayments from "./RefundPayments";
+import PaymentReceivedEachPatientGroup from "./PaymentReceivedEachPatientGroup";
+import PatientsWithUnsettledAdvance from "./PatientsWithUnsettledAdvance";
+import ModesOfPayment from "./ModesOfPayment";
+import PaymentReceivedPerDay from "./PaymentReceivedPerDay";
+import PaymentReceivedPerMonth from "./PaymentReceivedPerMonth";
+import PaymentReceivedPerDoctor from "./PaymentReceivedPerDoctor";
+import CreditNotes from "./CreditNotes";
+import PaymentSettlement from "./PaymentSettlement";
+import PaymentSettlementPerDoctor from "./PaymentSettlementPerDoctor";
 
 export default class PaymentsReportHome extends React.Component {
     constructor(props) {
@@ -111,18 +127,51 @@ export default class PaymentsReportHome extends React.Component {
                 <Row gutter={16}>
                     <Col span={(24 - this.state.sidePanelColSpan)}>
 
-                        {this.state.type == ALL_EXPENSES ?
+                        {this.state.type == ALL_PAYMENTS ?
                             <AllPayments {...this.props} {...this.state}/> : null}
+
+                        {this.state.type==PAYMENT_REFUND?
+                            <RefundPayments {...this.props} {...this.state}/> : null}
+
+                        {this.state.type ==PAYMENT_RECEIVED_PATIENT_GROUP?
+                            <PaymentReceivedEachPatientGroup {...this.props} {...this.state}/>:null}
+
+                        {this.state.type ==PATIENTS_UNSETTLED_ADVANCE?
+                            <PatientsWithUnsettledAdvance {...this.props} {...this.state}/>:null}
+
+                        {this.state.type == MODE_OF_PAYMENTS ?
+                            <ModesOfPayment {...this.props} {...this.state}/>:null}
+
+                        {this.state.type ==PAYMENT_RECEIVED_PER_DAY?
+                            <PaymentReceivedPerDay {...this.props} {...this.state}/>:null}
+
+                        {this.state.type ==PAYMENT_RECEIVED_PER_MONTH?
+                            <PaymentReceivedPerMonth {...this.props} {...this.state}/>:null}
+
+                        {this.state.type == PAYMENT_RECEIVED_PER_DOCTOR?
+                            <PaymentReceivedPerDoctor {...this.props} {...this.state}/>:null}
+
+                        {this.state.type ==CREDIT_NOTES?
+                            <CreditNotes {...this.props} {...this.state}/>:null}
+
+                        {this.state.type ==PAYMENT_SETTLEMENT?
+                            <PaymentSettlement {...this.props} {...this.state}/>:null}
+
+                        {this.state.type ==PAYMENT_SETTLEMENT_PER_DOCTOR?
+                        <PaymentSettlementPerDoctor {...this.props} {...this.state}/>:null}
+
+                        {this.state.type == CREDIT_AMOUNT_PER_DOCTOR?
+                            <CreditAmountPerDoctor {...this.state} {...this.props}/>:null}
 
                     </Col>
 
 
                     <Col span={this.state.sidePanelColSpan}>
-                        <Radio.Group buttonStyle="solid" defaultValue={ALL_EXPENSES}
+                        <Radio.Group buttonStyle="solid" defaultValue={ALL_PAYMENTS}
                                      onChange={(value) => this.onChangeHandle('type', value)}>
                             <h2>Payments</h2>
                             <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value={ALL_EXPENSES}>
+                                          value={ALL_PAYMENTS}>
                                 All Payments
                             </Radio.Button>
                             <p><br/></p>

@@ -6,7 +6,7 @@ import {Route, Switch} from "react-router-dom";
 import AppointmentsReportHome from "./appointments/AppointmentsReportHome";
 import EMRReportHome from "./emr/EMRReportHome";
 import ExpensesReportHome from "./expenses/ExpensesReportHome";
-import IncomeReport from "./income/IncomeReport";
+import IncomeReportHome from "./income/IncomeReportHome";
 import InventoryReportHome from "./inventory/InventoryReportHome";
 import PatientsReportHome from "./patients/PatientsReportHome";
 import PaymentsReportHome from "./payments/PaymentsReportHome";
@@ -59,7 +59,7 @@ class ReportsHome extends React.Component {
                            )}/>
                     <Route exact path="/reports/income"
                            render={(route) => (that.props.activePracticePermissions.ReportsIncome || that.props.allowAllPermissions ?
-                                   <IncomeReport  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                                   <IncomeReportHome  {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
                            )}/>
                     <Route exact path="/reports/inventory"
                            render={(route) => (that.props.activePracticePermissions.ReportsInventory || that.props.allowAllPermissions ?
