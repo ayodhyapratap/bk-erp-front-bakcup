@@ -1,5 +1,19 @@
 import React from "react";
-import {Button, Card, Checkbox, DatePicker, Form, Icon, Input, message, Modal, Select, Upload} from "antd";
+import {
+    Button,
+    Card,
+    Checkbox,
+    DatePicker,
+    Form,
+    Icon,
+    Input,
+    message,
+    Modal,
+    Select,
+    Radio,
+    Upload,
+    InputNumber
+} from "antd";
 import {
     FILE_UPLOAD_API,
     FILE_UPLOAD_BASE64,
@@ -27,9 +41,11 @@ import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 import WebCamField from "../../common/WebCamField";
 import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
-import {BLOOD_GROUPS} from "../../../constants/hardData";
+import {BLOOD_GROUPS, PATIENT_AGE} from "../../../constants/hardData";
 
 const {Option} = Select;
+
+
 
 class EditPatientDetails extends React.Component {
     constructor(props) {
@@ -46,6 +62,7 @@ class EditPatientDetails extends React.Component {
             cityList: [],
             country: this.props.currentPatient && this.props.currentPatient.country_data ? this.props.currentPatient.country : null,
             state: this.props.currentPatient && this.props.currentPatient.state_data ? this.props.currentPatient.state : null,
+            selectedFormType:'DOB',
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -187,9 +204,16 @@ class EditPatientDetails extends React.Component {
                         mobile: values.mobile,
                         email: values.email
                     },
-                    dob: moment(values.dob).format("YYYY-MM-DD"),
+
                     anniversary: moment(values.anniversary).format("YYYY-MM-DD"),
                 };
+                if (values.dob){
+                    reqData.dob= moment(values.dob).format("YYYY-MM-DD");
+                }
+                if (values.age){
+                    reqData.is_age=true;
+                    reqData.dob=moment().subtract(values.age,'years').format("YYYY-MM-DD");
+                }
                 let key = 'image';
                 if (reqData[key] && reqData[key].file && reqData[key].file.response)
                     reqData[key] = reqData[key].file.response.image_path;
@@ -197,6 +221,7 @@ class EditPatientDetails extends React.Component {
                 delete reqData.email;
                 delete reqData.referer_code;
                 delete reqData.mobile;
+                delete reqData.age;
                 that.setState({});
                 let successFn = function (data) {
                     displayMessage("Patient Saved Successfully!!");
@@ -209,6 +234,7 @@ class EditPatientDetails extends React.Component {
                     that.setState({})
                 }
                 reqData = removeEmpty(reqData);
+                console.log("form",reqData)
                 if (that.props.currentPatient) {
                     putAPI(interpolate(PATIENT_PROFILE, [that.props.currentPatient.id]), reqData, successFn, errorFn);
                 } else {
@@ -273,6 +299,12 @@ class EditPatientDetails extends React.Component {
             on_dialysis: !this.state.on_dialysis,
         });
     };
+    changeFormType = (e) => {
+        this.setState({
+            selectedFormType: e.target.value
+        })
+
+    }
     render() {
         let that = this;
         const {getFieldDecorator} = this.props.form;
@@ -395,11 +427,24 @@ class EditPatientDetails extends React.Component {
                         }
                     </Form.Item>
 
-                    <Form.Item label="DOB" {...formItemLayout}>
-                        {getFieldDecorator('dob', {defaultValue: this.props.currentPatient ? this.props.currentPatient.dob : null})
-                        (<DatePicker/>)
-                        }
+
+                    <Form.Item label=' ' {...formItemLayout} colon={false}>
+                        <Radio.Group buttonStyle="solid" size="small" onChange={this.changeFormType}
+                                     defaultValue={this.state.selectedFormType}>
+                            {PATIENT_AGE.map((item) => <Radio value={item.value}>{item.label}</Radio>)}
+                        </Radio.Group>
                     </Form.Item>
+                    {this.state.selectedFormType =='DOB'?
+                        <Form.Item label="DOB" {...formItemLayout}>
+                            {getFieldDecorator('dob', {defaultValue: this.props.currentPatient ? this.props.currentPatient.dob : null})
+                            (<DatePicker/>)
+                            }
+                        </Form.Item>
+                        :<Form.Item label="Age" {...formItemLayout}>
+                            {getFieldDecorator('age', {})
+                            (<InputNumber min={0} max={120} placeholder="Patient Age"/>)
+                            }
+                        </Form.Item>}
 
                     <Form.Item label="Anniversary" {...formItemLayout}>
                         {getFieldDecorator('anniversary', {defaultValue: this.props.currentPatient ? this.props.currentPatient.anniversary : null})
