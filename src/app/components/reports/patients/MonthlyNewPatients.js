@@ -41,7 +41,7 @@ export default class MonthlyNewPatients extends React.Component {
         })
         let successFn = function (data) {
             that.setState({
-                report:data.data.reverse(),
+                report:data.data,
                 total:data.total,
                 loading: false
             });
@@ -99,7 +99,7 @@ export default class MonthlyNewPatients extends React.Component {
             <h2>Monthly New Patients Report</h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.report.length>0?
-                <ComposedChart width={1000} height={400} data={this.state.report}
+                <ComposedChart width={1000} height={400} data={[...this.state.report].reverse()}
                                margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
 

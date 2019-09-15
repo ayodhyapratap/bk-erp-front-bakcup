@@ -41,7 +41,7 @@ export default class DailyNewPatientReports extends React.Component {
         })
         let successFn = function (data) {
             that.setState({
-                report: data.data.reverse(),
+                report: data.data,
                 total:data.total,
                 loading: false
             });
@@ -62,7 +62,6 @@ export default class DailyNewPatientReports extends React.Component {
         getAPI(PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }
     render() {
-        console.log("props",this.props)
         let that=this;
         let i = 1;
         const columns = [{
@@ -99,7 +98,7 @@ export default class DailyNewPatientReports extends React.Component {
             <h2>Daily New Patients Report</h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.report.length>0?
-                <LineChart width={1000} height={300} data={this.state.report}
+                <LineChart width={1000} height={300} data={[...this.state.report].reverse()}
                            margin={{top: 5, right: 30, left: 20, bottom: 55}}>
 
                     <XAxis dataKey="date" tickFormatter={(value) => {
