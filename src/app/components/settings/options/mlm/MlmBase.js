@@ -136,30 +136,30 @@ export default class MlmBase extends React.Component {
 
         let datasource = {};
 
-        that.state.productMargin.forEach(function (productMargin) {
-            datasource[productMargin.id] = [];
-
-            if (that.state.staffRoles) {
-                that.state.staffRoles.forEach(function (role) {
-                    let roledata = {"role": role.name, roleId: role.id};
-                    if (productMargin.level_count) {
-                        for (let level = 1; level <= productMargin.level_count; level++) {
-                            if (that.state.mlmItems) {
-                                for (let i = 0; i < that.state.mlmItems.length; i++) {
-                                    let item = that.state.mlmItems[i];
-                                    if (item.margin.id == productMargin.id && item.level == level && role.id == item.role) {
-                                        roledata[level] = item.commision_percent;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    datasource[productMargin.id].push(roledata);
-                })
-            }
-        });
+        // that.state.productMargin.forEach(function (productMargin) {
+        //     datasource[productMargin.id] = [];
+        //
+        //     if (that.state.staffRoles) {
+        //         that.state.staffRoles.forEach(function (role) {
+        //             let roledata = {"role": role.name, roleId: role.id};
+        //             if (productMargin.level_count) {
+        //                 for (let level = 1; level <= productMargin.level_count; level++) {
+        //                     if (that.state.mlmItems) {
+        //                         for (let i = 0; i < that.state.mlmItems.length; i++) {
+        //                             let item = that.state.mlmItems[i];
+        //                             if (item.margin.id == productMargin.id && item.level == level && role.id == item.role) {
+        //                                 roledata[level] = item.commision_percent;
+        //                                 break;
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //
+        //             datasource[productMargin.id].push(roledata);
+        //         })
+        //     }
+        // });
         return <div>
             <Switch>
                 <Route exact path="/settings/mlm/generate"

@@ -100,23 +100,27 @@ class MLMGenerate extends React.Component {
         e.preventDefault();
         let that = this;
         this.props.form.validateFieldsAndScroll((err, values) => {
-            console.log("form" ,values);
             let reqData = {};
-            // that.state.productLevels.forEach(function (level) {
-            //     reqData[level.name] = {...values[level.name]}
-            // });
-            reqData[values.margin_name] = {};
+            reqData={
+                comissions:[],
+                name:values.margin_name,
+                level_count:values.level_count,
+            }
+
             for (let i = 1; i <= that.state.level_count; i++) {
-                reqData[values.margin_name][i] = []
-                for (let j = 1; j < values[i].length; j++) {
-                    // if (values[i][j] != undefined)
-                    reqData[values.margin_name][i].push({[j]: values[i][j]})
-                }
+                this.state.staffRoles.forEach(function(role){
+                    reqData.comissions.push({
+                        level:i,
+                        role:role.id,
+                        commision_percent:values[i][role.id]
+                    })
+                });
             }
-            reqData[values.margin_name].details = {level_count: that.state.level_count};
-            if(that.state.editId){
-                reqData.id = that.state.editId
-            }
+
+            // console.log("ss",reqData)
+            // if(that.state.editId){
+            //     reqData.id = that.state.editId
+            // }
             if (!err) {
                 that.setState({changePassLoading: true, redirect:true});
                 let successFn = function (data) {
