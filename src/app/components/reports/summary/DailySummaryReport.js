@@ -98,6 +98,75 @@ export default class DailySummaryReport extends React.Component {
 
     render() {
         let that=this;
+        let i=1;
+
+        const columns = [{
+            title: 'S. No',
+            key: 'sno',
+            dataIndex:'abcd',
+            render: (item, record ,index) => <span> {index+1}</span>,
+            export:(item,record,index)=>index+1,
+            width: 50
+        }
+        ,{
+            title:'Patient Name',
+            key:'patient_name',
+            dataIndex:'patient_data.user.first_name',
+            export:(item,record)=>(record.patient_data.user.first_name),
+        }
+        ,{
+            title: 'Treatment & Products',
+            dataIndex: 'treatment',
+            key: 'treatment',
+            render: (text, record) => (
+                <span> <b>{record.name ? record.name : null}</b></span>)
+        },{
+            title:'Cost (INR)',
+            key:'unit_cost',
+            dataIndex:'unit_cost',
+            render: (item, record) => <span>{record.unit_cost ? record.unit_cost.toFixed(2) : '0.00'}</span>,
+            export:(item,record)=>(record.unit_cost ? record.unit_cost.toFixed(2) : '0.00'),
+        },{
+            title:'Discount (INR)',
+            key:'discount_value',
+            dataIndex:'discount',
+            render: (item, record) => <span>{record.discount ? record.discount.toFixed(2) : '0.00'}</span>,
+            export:(item,record)=>(record.discount ? record.discount.toFixed(2) : '0.00'),
+        }, {
+            title: 'Tax',
+            dataIndex: 'tax_value',
+            key: 'taxes',
+            render: (item, record) => <span>{record.taxes ? record.taxes.toFixed(2) : '0.00'}</span>,
+            export:(item,record)=>(record.taxes ? record.taxes.toFixed(2) : '0.00'),
+        },{
+            title:'Invoice No.',
+            key:'invoice_id',
+            dataIndex:'invoice_id',
+        },{
+            title: 'Invoice Cost (INR)',
+            key: 'invoice_cost',
+            dataIndex: 'cost',
+            render:(item,record)=><span>{record.cost?record.cost.toFixed(2):'0.00'}</span>,
+            export:(item,record)=>(record.cost ? record.cost.toFixed(2) : '0.00'),
+        },{
+            title:'Receipt No',
+            key:'receipt_no',
+            dataIndex:'',
+        }, {
+            title:'Mode Of Payment',
+            key:'mode_of_payments',
+            dataIndex:'payment_mode',
+        },{
+            title:'Amount Paid (INR)',
+            key:'amount_paid',
+            dataIndex:'pay_amount',
+        },{
+            title:'Total Amount Paid',
+            key:'total_amount_paid',
+            dataIndex:'total',
+            render: (text, record) => <span>{record.total ? record.total.toFixed(2) : '0.00'}</span>,
+            export:(item,record)=>(record.total ? record.total.toFixed(2) : '0.00'),
+        }];
 
         return <div><h2>Daily Summary Report
         </h2>
@@ -109,10 +178,14 @@ export default class DailySummaryReport extends React.Component {
                         {item.user.first_name}</Select.Option>)}
                 </Select></>
             }>
-                {this.state.dailySummary.map(invoice => InvoiceCard(invoice, that))}
-                <Spin spinning={this.state.loading}>
-                    <Row/>
-                </Spin>
+
+                <Table
+                    rowKey={(record, index) => {return index}}
+                    columns={columns}
+                    dataSource={this.state.dailySummary}
+                />
+
+
                 <InfiniteFeedLoaderButton
                     loaderFunction={() => this.loadDailySummary(this.state.nextItemPage)}
                     loading={this.state.loading}
@@ -121,135 +194,3 @@ export default class DailySummaryReport extends React.Component {
         </div>
     }
 }
-
-function InvoiceCard(invoice, that) {
-    let tableObjects = [];
-    if (invoice.reservation) {
-        let medicinesPackages = invoice.reservation_data.medicines.map(item => Object.create({
-            ...item,
-            unit: 1,
-            total: item.final_price,
-            unit_cost: item.price,
-            discount: 0
-        }));
-        let mapper = {
-            "NORMAL": {total: 'final_normal_price', tax: "normal_tax_value", unit_cost: "normal_price"},
-            "TATKAL": {total: 'final_tatkal_price', tax: "tatkal_tax_value", unit_cost: "tatkal_price"}
-        }
-        tableObjects = [...tableObjects, {
-            ...invoice.reservation_data.bed_package,
-            unit: 1,
-            total: invoice.reservation_data.bed_package ? invoice.reservation_data.bed_package[mapper[invoice.reservation_data.seat_type].total] : null,
-            tax_value: invoice.reservation_data.bed_package ? invoice.reservation_data.bed_package[mapper[invoice.reservation_data.seat_type].tax] : null,
-            unit_cost: invoice.reservation_data.bed_package ? invoice.reservation_data.bed_package[mapper[invoice.reservation_data.seat_type].unit_cost] : null
-        }, ...medicinesPackages]
-    }
-    // var invoiceIncome = invoice.reduce(function(prev, cur) {
-    //     return prev + cur.count;
-    // }, 0);
-    // var amountDue = invoice.reduce(function(prev, cur) {
-    //     return prev + cur.count;
-    // }, 0);
-    return <Card>
-        <Row gutter={8}>
-            <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4} style={{padding: 10}}>
-                <Statistic title="Patient Name" value={invoice.patient_data.user.first_name}/>
-                <p>Invoice Income : <span></span></p>
-                <p>Total Payment : <span>{invoice.total.toFixed(2)}</span></p>
-                <p>Amount Due : <span></span></p>
-
-            </Col>
-            <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
-                {invoice.type == "Membership Amount." ?
-                    <Table
-                        bordered={true}
-                        pagination={false}
-                        columns={columns}
-                        dataSource={[{
-                            inventory: true,
-                            name: "Membership",
-                            unit_cost: invoice.total,
-                            unit: 1,
-                            discount_value: 0,
-                            tax_value: 0,
-                            total: invoice.total
-                        }]}/> :
-                    <Table
-                        bordered={true}
-                        pagination={false}
-                        columns={columns}
-                        dataSource={[...tableObjects,...invoice.inventory, ...invoice.procedure]}
-                    />}
-            </Col>
-        </Row>
-
-
-    </Card>
-}
-
-let i=1;
-const columns = [{
-    title: 'S. No',
-    key: 'sno',
-    dataIndex:'abcd',
-    render: (item, record ,index) => <span> {index+1}</span>,
-    export:(item,record,index)=>index+1,
-    width: 50
-}
-,{
-    title:'Patient Name',
-    key:'patient_name',
-    dataIndex:'patient_data.user.first_name',
-    export:(item,record)=>(record.patient_data.user.first_name),
-}
-,{
-     title: 'Treatment & Products',
-     dataIndex: 'treatment',
-     key: 'treatment',
-     render: (text, record) => (
-         <span> <b>{record.name ? record.name : null}</b></span>)
- },{
-    title:'Cost (INR)',
-    key:'unit_cost',
-    dataIndex:'unit_cost',
-    render: (item, record) => <span>{record.unit_cost ? record.unit_cost.toFixed(2) : '0.00'}</span>,
-    export:(item,record)=>(record.unit_cost ? record.unit_cost.toFixed(2) : '0.00'),
-},{
-    title:'Discount (INR)',
-    key:'discount_value',
-    dataIndex:'discount_value',
-    render: (item, record) => <span>{record.discount_value ? record.discount_value.toFixed(2) : '0.00'}</span>,
-    export:(item,record)=>(record.discount_value ? record.discount_value.toFixed(2) : '0.00'),
-}, {
-    title: 'Tax',
-    dataIndex: 'tax_value',
-    key: 'tax_value',
-    render: (item, record) => <span>{record.tax_value ? record.tax_value.toFixed(2) : '0.00'}</span>,
-    export:(item,record)=>(record.tax_value ? record.tax_value.toFixed(2) : '0.00'),
-},{
-    title:'Invoice No.',
-    key:'invoice_id',
-    dataIndex:'invoiceId',
-},{
-    title: 'Invoice Cost (INR)',
-    key: 'invoice_cost',
-    dataIndex: ''
-},{
-    title:'Receipt No',
-    key:'receipt_no',
-    dataIndex:'',
-}, {
-    title:'Mode Of Payment',
-    key:'mode_of_payments',
-    dataIndex:'payment_mode',
-},{
-    title:'Amount Paid (INR)',
-    key:'amount_paid',
-    dataIndex:'pay_amount',
-},{
-    title:'Total Amount Paid',
-    key:'total_amount_paid',
-    dataIndex:'total',
-    render: (text, record) => <span>{record.total ? record.total.toFixed(2) : '0.00'}</span>,
-    export:(item,record)=>(record.total ? record.total.toFixed(2) : '0.00'),
-}];

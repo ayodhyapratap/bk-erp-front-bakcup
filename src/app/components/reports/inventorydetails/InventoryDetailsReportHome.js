@@ -4,6 +4,7 @@ import {MANUFACTURER_API ,SUPPLIER_API,PRODUCTS_API} from "../../../constants/ap
 import {ALL} from "../../../constants/dataKeys";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import { loadDoctors } from "../../../utils/clinicUtils";
+import ProfitLossReport from "./ProfitLossReport";
 
 
 export default class InventoryDetailsReportHome extends React.Component {
@@ -113,18 +114,12 @@ export default class InventoryDetailsReportHome extends React.Component {
                                             style={{float: "right"}}
                                             onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
             </h2>
-            {/*<h2>Appointments Report*/}
-            {/*    /!*<Button.Group style={{float: 'right'}}>*!/*/}
-            {/*    /!*<Button><Icon type="mail"/> Mail</Button>*!/*/}
-            {/*    /!*<Button><Icon type="printer"/> Print</Button>*!/*/}
-            {/*    /!*</Button.Group>*!/*/}
-            {/*</h2>*/}
             <Card>
                 <Row gutter={16}>
-                    {/*<Col span={(24 - this.state.sidePanelColSpan)}>*/}
-                    {/*    <ProfitLossReport  {...this.state} {...this.props}/>*/}
+                    <Col span={(24 - this.state.sidePanelColSpan)}>
+                        <ProfitLossReport  {...this.state} {...this.props}/>
 
-                    {/*</Col>*/}
+                    </Col>
                     <Col span={this.state.sidePanelColSpan}>
                         <Radio.Group buttonStyle="solid" defaultValue={ALL}>
                             <h2>Inventory Retails</h2>

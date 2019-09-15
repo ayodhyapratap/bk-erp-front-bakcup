@@ -19,7 +19,7 @@ class AppHeader extends React.Component {
     searchPatient = (value) => {
         this.setState({
             searchPatientString: value
-        })
+                })
         // console.log(e.target.value);
         let that = this;
         let successFn = function (data) {

@@ -95,7 +95,7 @@ export default class MonthlyInventory extends React.Component {
             <h2>Monthly Inventory</h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.report.length>0?
-                    <ComposedChart width={1000} height={400} data={this.state.report.reverse()}
+                    <ComposedChart width={1000} height={400} data={[...this.state.report].reverse()}
                                    margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
 

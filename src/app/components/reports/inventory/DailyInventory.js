@@ -94,12 +94,12 @@ export default class DailyInventory extends React.Component {
             <h2>Daily Inventory</h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.report.length>0?
-                    <ComposedChart width={1000} height={400} data={this.state.report.reverse()}
+                    <ComposedChart width={1000} height={400} data={[...this.state.report].reverse()}
                                    margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
 
                         <XAxis dataKey="date" tickFormatter={(value) => {
-                            return moment(value).format('MMM YY')
+                            return moment(value).format('DD MMM')
                         }} />
                         <YAxis label={{ value: 'Quantity Consumed', angle: -90, position: 'insideLeft' }} />
                         <Tooltip />
