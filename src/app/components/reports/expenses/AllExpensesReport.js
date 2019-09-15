@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Col, Icon, Radio, Row, Statistic, Table} from "antd";
-import {EXPENSE_REPORT_API} from "../../../constants/api";
+import {EXPENSE_REPORT_API,EXPENSE_PAYMENT_MODE_API} from "../../../constants/api";
 import {getAPI } from "../../../utils/common";
 import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
@@ -60,7 +60,7 @@ export default class ExpensesReport extends React.Component {
         if(this.props.expense_type){
             apiParams.expense_type=this.props.expense_type.toString();
         }
-        getAPI(EXPENSE_REPORT_API , successFn, errorFn, apiParams);
+        getAPI(EXPENSE_PAYMENT_MODE_API , successFn, errorFn, apiParams);
     }
 
 
