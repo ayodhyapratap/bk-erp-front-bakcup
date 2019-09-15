@@ -12,7 +12,7 @@ class AppHeader extends React.Component {
         super(props);
         this.state = {
             patientListData: [],
-            searchPatientString: null
+            // searchPatientString: ''
         }
     }
 
