@@ -114,7 +114,7 @@ export default class DailyBookingCount extends React.Component {
             </h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.bedBookingReports.length>0?
-                    <LineChart width={1000} height={300} data={this.state.bedBookingReports.reverse()}
+                    <LineChart width={1000} height={300} data={[...this.state.bedBookingReports].reverse()}
                                margin={{top: 5, right: 30, left: 20, bottom: 55}}>
 
                         <XAxis dataKey="date" tickFormatter={(value) => {

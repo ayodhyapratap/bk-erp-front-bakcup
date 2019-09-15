@@ -108,7 +108,7 @@ export default class MonthlyBookingCount extends React.Component {
             </h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.bedBookingReports.length>0?
-                    <ComposedChart width={1000} height={400} data={this.state.bedBookingReports.reverse()}
+                    <ComposedChart width={1000} height={400} data={[...this.state.bedBookingReports].reverse()}
                                    margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
 
