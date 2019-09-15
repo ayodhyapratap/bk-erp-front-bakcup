@@ -39,7 +39,7 @@ export default class DailyAppointmentCount extends React.Component {
 
         let successFn = function (data) {
             that.setState({
-                appointmentDaily: data.data.reverse(),
+                appointmentDaily: data.data,
                 total:data.total,
                 loading: false
             });
@@ -111,7 +111,7 @@ export default class DailyAppointmentCount extends React.Component {
             </h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.appointmentDaily.length>0?
-                <LineChart width={1000} height={300} data={this.state.appointmentDaily}
+                <LineChart width={1000} height={300} data={[...this.state.appointmentDaily].reverse()}
                            margin={{top: 5, right: 30, left: 20, bottom: 55}}>
 
                     <XAxis dataKey="date" tickFormatter={(value) => {
