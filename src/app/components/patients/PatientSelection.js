@@ -72,7 +72,7 @@ class PatientSelection extends React.Component {
             let successFn = function (data) {
                 if (data) {
                     that.setState({
-                        patientListData: data
+                        patientListData: data.results
                     })
                 }
             };

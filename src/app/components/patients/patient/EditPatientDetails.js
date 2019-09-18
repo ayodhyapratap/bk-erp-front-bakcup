@@ -436,18 +436,18 @@ class EditPatientDetails extends React.Component {
                     </Form.Item>
                     {this.state.selectedFormType =='DOB'?
                         <Form.Item label="DOB" {...formItemLayout}>
-                            {getFieldDecorator('dob', {defaultValue: this.props.currentPatient ? this.props.currentPatient.dob : null})
+                            {getFieldDecorator('dob', {initialValue: this.props.currentPatient && this.props.currentPatient.dob ? moment(this.props.currentPatient.dob) : null})
                             (<DatePicker/>)
                             }
                         </Form.Item>
                         :<Form.Item label="Age" {...formItemLayout}>
-                            {getFieldDecorator('age', {})
+                            {getFieldDecorator('age', {initialValue: this.props.currentPatient && this.props.currentPatient.dob ? moment().diff(this.props.currentPatient.dob,'years') : null})
                             (<InputNumber min={0} max={120} placeholder="Patient Age"/>)
                             }
                         </Form.Item>}
 
                     <Form.Item label="Anniversary" {...formItemLayout}>
-                        {getFieldDecorator('anniversary', {defaultValue: this.props.currentPatient ? this.props.currentPatient.anniversary : null})
+                        {getFieldDecorator('anniversary', {initialValue: this.props.currentPatient && this.props.currentPatient.anniversary ? moment(this.props.currentPatient.anniversary) : null})
                         (<DatePicker/>)
                         }
                     </Form.Item>

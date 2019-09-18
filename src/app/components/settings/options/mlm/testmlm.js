@@ -4,13 +4,7 @@ import {Button, Card, Icon, Table, Tabs, Row, Popconfirm,Collapse} from "antd";
 import {getAPI, interpolate, postAPI, patchAPI, deleteAPI, putAPI} from "../../../../utils/common";
 import MLMGenerate from "./MLMGenerate"
 import {Link, Route, Switch} from "react-router-dom";
-import {
-    PRODUCT_MARGIN,
-    ROLE_COMMISION,
-    SINGLE_PRODUCT_MARGIN,
-    AGENT_ROLES,
-    GENERATE_MLM_COMMISSON
-} from "../../../../constants/api";
+import {PRODUCT_MARGIN, ROLE_COMMISION, SINGLE_PRODUCT_MARGIN, AGENT_ROLES} from "../../../../constants/api";
 
 const TabPane = Tabs.TabPane;
 const {Panel} = Collapse;
@@ -53,7 +47,7 @@ export default class MlmBase extends React.Component {
             })
 
         }
-        getAPI(GENERATE_MLM_COMMISSON, successFn, errorFn);
+        getAPI(ROLE_COMMISION, successFn, errorFn);
     }
 
     loadRoles() {
@@ -86,7 +80,6 @@ export default class MlmBase extends React.Component {
     }
 
     editObject(id, record) {
-        console.log("edit",id,record)
         this.setState({
             editId: id,
             editRecord: record,
@@ -144,7 +137,7 @@ export default class MlmBase extends React.Component {
 
         let datasource = {};
 
-        that.state.mlmItems.forEach(function (productMargin) {
+        that.state.productMargin.forEach(function (productMargin) {
             datasource[productMargin.id] = [];
 
             if (that.state.staffRoles) {
@@ -152,10 +145,10 @@ export default class MlmBase extends React.Component {
                     let roledata = {"role": role.name, roleId: role.id};
                     if (productMargin.level_count) {
                         for (let level = 1; level <= productMargin.level_count; level++) {
-                            if (productMargin.comissions) {
-                                for (let i = 0; i < productMargin.comissions.length; i++) {
-                                    let item = productMargin.comissions[i];
-                                    if (item.margin == productMargin.id && item.level == level && role.id == item.role) {
+                            if (that.state.mlmItems) {
+                                for (let i = 0; i < that.state.mlmItems.length; i++) {
+                                    let item = that.state.mlmItems[i];
+                                    if (item.margin.id == productMargin.id && item.level == level && role.id == item.role) {
                                         roledata[level] = item.commision_percent;
                                         break;
                                     }

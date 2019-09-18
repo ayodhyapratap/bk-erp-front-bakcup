@@ -45,12 +45,15 @@ class MLMGenerate extends React.Component {
     loadMlmData() {
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                margin: data,
-                loading:false
-            },function () {
-                that.setLevelCount(data.level_count)
+            data.map(function (item) {
+                that.setState({
+                    margin: item,
+                    loading:false
+                },function () {
+                    that.setLevelCount(item.level_count)
+                })
             })
+
         }
         let errorFn = function () {
             that.setState({
@@ -58,7 +61,7 @@ class MLMGenerate extends React.Component {
             })
 
         }
-        getAPI(interpolate(SINGLE_PRODUCT_MARGIN, [this.state.editId]), successFn, errorFn);
+        getAPI(interpolate(GENERATE_MLM_COMMISSON, [this.state.editId]), successFn, errorFn);
     }
 
     loadRoles() {
@@ -107,20 +110,33 @@ class MLMGenerate extends React.Component {
                 level_count:values.level_count,
             }
 
-            for (let i = 1; i <= that.state.level_count; i++) {
-                this.state.staffRoles.forEach(function(role){
-                    reqData.comissions.push({
-                        level:i,
-                        role:role.id,
-                        commision_percent:values[i][role.id]
-                    })
-                });
+
+
+            if(that.state.editId) {
+                reqData.id = that.state.editId;
+                if (that.state.margin.comissions) {
+                    for (let i = 1; i <= that.state.level_count; i++) {
+                        that.state.margin.comissions.forEach(function (role) {
+                            reqData.comissions.push({
+                                id:role.id,
+                                role: role.role,
+                                commision_percent:values[i][role.role]
+                            })
+                        });
+                    }
+                }
+            }else {
+                for (let i = 1; i <= that.state.level_count; i++) {
+                    this.state.staffRoles.forEach(function(role){
+                        reqData.comissions.push({
+                            level:i,
+                            role:role.id,
+                            commision_percent:values[i][role.id]
+                        })
+                    });
+                }
             }
 
-            // console.log("ss",reqData)
-            // if(that.state.editId){
-            //     reqData.id = that.state.editId
-            // }
             if (!err) {
                 that.setState({changePassLoading: true, redirect:true});
                 let successFn = function (data) {
@@ -130,6 +146,7 @@ class MLMGenerate extends React.Component {
                 };
                 let errorFn = function () {
                 };
+                console.log("data",reqData);
                 postAPI(GENERATE_MLM_COMMISSON, reqData, successFn, errorFn);
             }
         });

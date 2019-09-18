@@ -2,7 +2,7 @@ import React from "react";
 import {AutoComplete, Avatar, Button, Dropdown, Icon, Layout, List, Menu, Select, Tag} from "antd";
 import {Link} from 'react-router-dom';
 import {getAPI, interpolate, makeFileURL} from "../../utils/common";
-import {SEARCH_PATIENT} from "../../constants/api";
+import {PATIENT_PROFILE, SEARCH_PATIENT} from "../../constants/api";
 import {hideMobile} from "../../utils/permissionUtils";
 
 const {Header} = Layout;
@@ -12,48 +12,51 @@ class AppHeader extends React.Component {
         super(props);
         this.state = {
             patientListData: [],
-            // searchPatientString: ''
+            searchPatientString: null,
         }
     }
 
     searchPatient = (value) => {
+        let that=this;
         this.setState({
             searchPatientString: value
-                })
-        // console.log(e.target.value);
-        let that = this;
+        });
         let successFn = function (data) {
             if (data) {
                 that.setState({
-                    patientListData: data,
+                    patientListData: data.results,
 
                 })
                 // console.log("list",that.state.patientListData);
             }
         };
-        let errorFn = function () {
+        let errorFn = function (data) {
+            that.setState({
+                searchPatientString:null,
+            })
         };
         getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
     }
 
+
     handlePatientSelect = (event) => {
-        console.log(event);
         if (event) {
             this.props.history.push("/patient/" + event + "/profile");
             this.setState({
-                searchPatientString: null
+                searchPatientString:null,
+                patientListData:null,
             })
-            // let that = this;
-            // let successFn = function (data) {
-            //     that.setState({
-            //         patientDetails: data
-            //
-            //     });
-            //     // console.log("event",that.state.patientDetails);
-            // };
-            // let errorFn = function () {
-            // };
-            // getAPI(interpolate(PATIENT_PROFILE, [event]), successFn, errorFn);
+            let that = this;
+            let successFn = function (data) {
+                that.setState({
+                    patientDetails: data
+
+                });
+                // console.log("event",that.state.patientDetails);
+            };
+            let errorFn = function () {
+            };
+            getAPI(interpolate(PATIENT_PROFILE, [event]), successFn, errorFn);
         }
     }
 

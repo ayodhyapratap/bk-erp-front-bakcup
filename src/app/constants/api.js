@@ -241,3 +241,7 @@ export const MEDICINE_PACKAGES = 'clinics/%s/medicine_packages/';
 export const BOOK_SEAT = 'clinics/%s/seat_booking/';
 export const CHECK_SEAT_AVAILABILITY = 'clinics/%s/seat_availability/';
 export const DISEASE_LIST = 'clinics/%s/other_diseases/';
+
+
+/** Agent Tree***/
+export const AGENT_TREE='patients/%s/agents_chain/';
