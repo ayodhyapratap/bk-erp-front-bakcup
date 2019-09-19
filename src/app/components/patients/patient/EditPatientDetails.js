@@ -511,7 +511,7 @@ class EditPatientDetails extends React.Component {
                                 initialValue: '',
 
                             })(
-                                <Input/>
+                                <Input placeholder="Country"/>
                             )}
                             <a onClick={() => that.setFormParams('country', SELECT_FIELD)}>Choose
                                 Country</a>
@@ -520,7 +520,7 @@ class EditPatientDetails extends React.Component {
                             {getFieldDecorator("country", {
                                 initialValue: this.props.currentPatient && this.props.currentPatient.country_data ? this.props.currentPatient.country_data.id : '',
                             })(
-                                <Select onChange={(value) => this.onChangeValue("country", value)}>
+                                <Select  placeholder="Select Country" onChange={(value) => this.onChangeValue("country", value)} showSearch optionFilterProp="children">
 
                                     {this.state.countrylist.map((option) => <Select.Option
                                         value={option.id}>{option.name}</Select.Option>)}
@@ -538,7 +538,7 @@ class EditPatientDetails extends React.Component {
                                 initialValue: '',
 
                             })(
-                                <Input/>
+                                <Input placeholder="State"/>
                             )}
                             <a onClick={() => that.setFormParams('state', SELECT_FIELD)}>Choose
                                 State</a>
@@ -547,7 +547,7 @@ class EditPatientDetails extends React.Component {
                             {getFieldDecorator("state", {
                                 initialValue: this.props.currentPatient && this.props.currentPatient.state_data ? this.props.currentPatient.state_data.id : '',
                             })(
-                                <Select onChange={(value) => this.onChangeValue("state", value)}>
+                                <Select placeholder="Select State" onChange={(value) => this.onChangeValue("state", value)} showSearch optionFilterProp="children">
                                     {this.state.stateList.map((option) => <Select.Option
                                         value={option.id}>{option.name}</Select.Option>)}
                                 </Select>
@@ -561,7 +561,7 @@ class EditPatientDetails extends React.Component {
                             {getFieldDecorator("city_extra", {
                                 initialValue: '',
                             })(
-                                <Input/>
+                                <Input placeholder="City"/>
                             )}
                             <a onClick={() => that.setFormParams('city', SELECT_FIELD)}>Choose
                                 City</a>
@@ -570,7 +570,7 @@ class EditPatientDetails extends React.Component {
                             {getFieldDecorator("city", {
                                 initialValue: this.props.currentPatient && this.props.currentPatient.city_data ? this.props.currentPatient.city_data.id : '',
                             })(
-                                <Select>
+                                <Select showSearch optionFilterProp="children" placeholder="Select City">
                                     {this.state.cityList.map((option) => <Select.Option
                                         value={option.id}>{option.name}</Select.Option>)}
                                 </Select>
