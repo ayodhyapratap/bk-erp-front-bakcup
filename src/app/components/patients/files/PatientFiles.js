@@ -318,7 +318,6 @@ class PatientFiles extends React.Component {
     };
 
     render() {
-        console.log("Files",this.state);
         let that = this;
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
         const fields = [{
