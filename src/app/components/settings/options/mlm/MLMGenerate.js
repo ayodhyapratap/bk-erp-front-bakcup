@@ -103,7 +103,6 @@ class MLMGenerate extends React.Component {
         e.preventDefault();
         let that = this;
         this.props.form.validateFieldsAndScroll((err, values) => {
-            console.log("form value",values);
             let reqData = {};
             reqData={
                 comissions:[],
@@ -119,8 +118,6 @@ class MLMGenerate extends React.Component {
                     })
                 });
             }
-
-
 
             if(that.state.editId) {
                 reqData.id = that.state.editId;
@@ -141,8 +138,6 @@ class MLMGenerate extends React.Component {
 
                 }
             }
-
-
 
             if (!err) {
                 that.setState({changePassLoading: true, redirect:true});
