@@ -103,11 +103,21 @@ class MLMGenerate extends React.Component {
         e.preventDefault();
         let that = this;
         this.props.form.validateFieldsAndScroll((err, values) => {
+            console.log("form value",values);
             let reqData = {};
             reqData={
                 comissions:[],
                 name:values.margin_name,
                 level_count:values.level_count,
+            };
+            for (let i = 1; i <= that.state.level_count; i++) {
+                this.state.staffRoles.forEach(function(role){
+                    reqData.comissions.push({
+                        level:i,
+                        role:role.id,
+                        commision_percent:values[i][role.id]
+                    })
+                });
             }
 
 
@@ -115,27 +125,24 @@ class MLMGenerate extends React.Component {
             if(that.state.editId) {
                 reqData.id = that.state.editId;
                 if (that.state.margin.comissions) {
-                    for (let i = 1; i <= that.state.level_count; i++) {
-                        that.state.margin.comissions.forEach(function (role) {
-                            reqData.comissions.push({
-                                id:role.id,
-                                role: role.role,
-                                commision_percent:values[i][role.role]
-                            })
-                        });
-                    }
-                }
-            }else {
-                for (let i = 1; i <= that.state.level_count; i++) {
-                    this.state.staffRoles.forEach(function(role){
-                        reqData.comissions.push({
-                            level:i,
-                            role:role.id,
-                            commision_percent:values[i][role.id]
-                        })
+                    that.state.margin.comissions.forEach(function (role,key) {
+                        for (let i = 1; i <= that.state.level_count; i++) {
+
+                            if (role.level ==i){
+                                reqData.comissions.push({
+                                    id:role.id,
+                                    ...role,
+                                    commision_percent:values[i][role.role]
+                                })
+                            }
+                        }
+                        reqData.comissions.shift();
                     });
+
                 }
             }
+
+
 
             if (!err) {
                 that.setState({changePassLoading: true, redirect:true});
@@ -146,7 +153,6 @@ class MLMGenerate extends React.Component {
                 };
                 let errorFn = function () {
                 };
-                console.log("data",reqData);
                 postAPI(GENERATE_MLM_COMMISSON, reqData, successFn, errorFn);
             }
         });
