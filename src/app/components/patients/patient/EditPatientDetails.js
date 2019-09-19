@@ -63,6 +63,8 @@ class EditPatientDetails extends React.Component {
             country: this.props.currentPatient && this.props.currentPatient.country_data ? this.props.currentPatient.country : null,
             state: this.props.currentPatient && this.props.currentPatient.state_data ? this.props.currentPatient.state : null,
             selectedFormType:'DOB',
+            file_count:10,
+            file_enable:true,
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -196,7 +198,9 @@ class EditPatientDetails extends React.Component {
             if (!err) {
                 let reqData = {
                     ...values,
-                    on_dialysis:false,
+                    file_enable:!!values.file_enable,
+                    file_count:values.file_count?values.file_count:this.state.file_count,
+                    on_dialysis:that.state.on_dialysis?true:false,
                     medical_history: values.medical_history,
                     patient_group: values.patient_group,
                     user: {
@@ -207,6 +211,7 @@ class EditPatientDetails extends React.Component {
 
                     anniversary: moment(values.anniversary).format("YYYY-MM-DD"),
                 };
+
                 if (values.dob){
                     reqData.dob= moment(values.dob).format("YYYY-MM-DD");
                 }
@@ -234,7 +239,6 @@ class EditPatientDetails extends React.Component {
                     that.setState({})
                 }
                 reqData = removeEmpty(reqData);
-                console.log("form",reqData)
                 if (that.props.currentPatient) {
                     putAPI(interpolate(PATIENT_PROFILE, [that.props.currentPatient.id]), reqData, successFn, errorFn);
                 } else {
@@ -304,7 +308,12 @@ class EditPatientDetails extends React.Component {
             selectedFormType: e.target.value
         })
 
-    }
+    };
+    // onFileEnable=(e)=>{
+    //     this.setState({
+    //         file_enable:!this.state.file_enable,
+    //     })
+    // }
     render() {
         let that = this;
         const {getFieldDecorator} = this.props.form;
@@ -621,7 +630,25 @@ class EditPatientDetails extends React.Component {
 
                     <Form.Item label="On Dialysis" {...formItemLayout}>
                         {getFieldDecorator('on_dialysis', {initialValue: this.props.currentPatient ? this.props.currentPatient.on_dialysis : false})
-                            (<Checkbox onChange={(e) => this.onChangeCheckbox(e)} style={{paddingTop:'4px'}}/>)
+                            (<Checkbox onChange={(e) => this.onChangeCheckbox(e)} style={{paddingTop:'4px'}} />)
+                        }
+                    </Form.Item>
+                    <Form.Item label="Allow File Upload" {...formItemLayout}>
+                        {getFieldDecorator('file_enable', {initialValue: this.props.currentPatient ? this.props.currentPatient.file_enable :true})
+                        (<Checkbox  style={{paddingTop:'4px'}}
+                                   defaultChecked={true}/>)
+                        }
+                    </Form.Item>
+
+                    {/*<Form.Item label="Allow File Upload" {...formItemLayout}>*/}
+                    {/*    {getFieldDecorator('file_enable',)*/}
+                    {/*    (<Checkbox  defaultChecked={true}/>)*/}
+                    {/*    }*/}
+                    {/*</Form.Item>*/}
+
+                    <Form.Item label="Max Uploads Allowed" {...formItemLayout}>
+                        {getFieldDecorator('file_count', {initialValue: this.props.currentPatient ? this.props.currentPatient.file_count : 10})
+                        (<InputNumber min={0}/>)
                         }
                     </Form.Item>
                     <Form.Item>
@@ -636,6 +663,7 @@ class EditPatientDetails extends React.Component {
                 </Card>
             </Form>)
     }
+
 }
 
 export default Form.create()(EditPatientDetails);
