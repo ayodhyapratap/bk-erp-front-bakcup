@@ -245,3 +245,6 @@ export const DISEASE_LIST = 'clinics/%s/other_diseases/';
 
 /** Agent Tree***/
 export const AGENT_TREE='patients/%s/agents_chain/';
+
+/**suggestions**/
+export const SUGGESTIONS='suggestions/';

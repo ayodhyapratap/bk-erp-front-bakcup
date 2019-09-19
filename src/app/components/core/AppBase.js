@@ -1,7 +1,7 @@
 import React from "react";
 import {Route, Switch} from "react-router-dom";
 import AppHeader from "./AppHeader";
-import {Layout, Spin} from "antd";
+import {Layout, Spin,Button,Drawer,Row,Col,Form,Input,Divider} from "antd";
 import AppSider from "./AppSider";
 import {loadUserDetails, loggedInactivePractice, loggedInUserPractices, setCurrentPractice} from "../../utils/auth";
 import SettingsDash from "../settings/SettingsDash"
@@ -16,8 +16,11 @@ import PrintPatientForm from "../patients/patient/PrintPatientForm";
 import CreateAppointment from "../calendar/CreateAppointment";
 import BlockCalendar from "../calendar/BlockCalendar";
 import PermissionDenied from "../common/errors/PermissionDenied";
+import {SUGGESTIONS} from "../../constants/api";
+import {displayMessage, interpolate, postAPI} from "../../utils/common";
+import {SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
 
-
+const { TextArea } = Input;
 class AppBase extends React.Component {
     constructor(props) {
         super(props);
@@ -30,6 +33,7 @@ class AppBase extends React.Component {
             specialisations: null,
             allowAllPermissions: false,
             loadingPermissions: false,
+            visible:false,
         };
         this.activeData = this.activeData.bind(this);
         // this.clinicData = this.clinicData.bind(this);
@@ -145,16 +149,50 @@ class AppBase extends React.Component {
     //         return returnObj;
     //     });
     // }
+    showDrawer = () => {
+        this.setState({
+            visible: true,
+        });
+    };
+    onClose = () => {
+        this.setState({
+            visible: false,
+        });
+    };
+    handleSubmit = (e) => {
+        e.preventDefault();
+        let that = this;
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            console.log("formValue",values);
+            let reqData={
+                ...values,
+            }
+            let successFn=function (data) {
+                displayMessage(SUCCESS_MSG_TYPE, data.message);
+                that.setState({
+                    visible:false,
 
+                })
+            }
+            let errorFn=function () {
 
+            }
+            postAPI(SUGGESTIONS,reqData,successFn,errorFn);
+        })
+    };
     render() {
         let that = this;
+        const { getFieldDecorator } = this.props.form;
         if (this.state.loadingPermissions) {
             return <Spin spinning={this.state.loadingPermissions} tip={"Loading Permissions...."}>
                 <div style={{width: '100vw', height: '100vh'}}/>
             </Spin>
         }
         return <Layout style={{minHeight: '100vh'}}>
+            <div style={{position:'fixed', right: '29px',
+                bottom: '23px',zIndex:'20'}}>
+                <Button type="primary" shape="circle" icon="mail" size={"large"} onClick={this.showDrawer}/>
+            </div>
             <Switch>
                 <Route path={"/patients/patientprintform"}
                        render={(route) => <PrintPatientForm {...this.state} key={that.state.active_practiceId}/>}/>
@@ -237,9 +275,81 @@ class AppBase extends React.Component {
                     </Layout>
                 </Route>
             </Switch>
+
+            <Drawer
+                title="Your Suggestion"
+                width={720}
+                onClose={this.onClose}
+                visible={this.state.visible}>
+
+                <Form layout="vertical" onSubmit={this.handleSubmit}>
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item label="Name">
+                                {getFieldDecorator('name', {
+                                    rules: [{ required: true, message: 'Please enter  name' }],
+                                })(<Input placeholder="Please enter user name" />)}
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Email">
+                                {getFieldDecorator('email', {
+                                    rules: [{ required: true, message: 'Please enter Email' }],
+                                })(
+                                    <Input
+                                        style={{ width: '100%' }}
+                                        placeholder="Please enter Email"
+                                    />,
+                                )}
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item label="Mobile">
+                                {getFieldDecorator('mobile')
+                                (<Input placeholder="Please enter Mobile" />)}
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Subject">
+                                {getFieldDecorator('subject')(
+                                    <Input
+                                        style={{ width: '100%' }}
+                                        placeholder="Please enter Email"
+                                    />,
+                                )}
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row gutter={16}>
+                        <Col span={24}>
+                            <Form.Item label="Description">
+                                {getFieldDecorator('description')
+                                (<TextArea placeholder="Please enter description"   autosize={{ minRows: 4, maxRows: 6 }}/>)}
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Divider/>
+                    <div
+                        style={{
+                            textAlign: '-webkit-center',
+                        }}
+                    >
+                        <Button onClick={this.onClose} style={{ marginRight: 8 }}>
+                            Cancel
+                        </Button>
+                        <Button htmlType="submit" onSubmit={this.handleSubmit} type="primary">
+                            Submit
+                        </Button>
+                    </div>
+                </Form>
+
+            </Drawer>
         </Layout>
             ;
     }
 }
 
-export default AppBase;
+export default Form.create()(AppBase);
