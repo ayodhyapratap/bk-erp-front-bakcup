@@ -384,3 +384,10 @@ export const SUGGESTIONS_STATUS=[
     {label:"In Progress" ,value:"InProgress"},
     {label: "Closed" ,value: "Closed"},
 ];
+
+export const SOURCE_PLATFORM=[
+    {label:'Facebook' ,value:'FACEBOOK'},
+    {label: "News Paper" ,value: "NEWS_PAPER"},
+    {label: "TV" ,value: "TV"},
+    {label:'Street Banners' ,value:"STREET"},
+];
