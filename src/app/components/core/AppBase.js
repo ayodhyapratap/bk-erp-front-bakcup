@@ -19,6 +19,7 @@ import PermissionDenied from "../common/errors/PermissionDenied";
 import {SUGGESTIONS} from "../../constants/api";
 import {displayMessage, interpolate, postAPI} from "../../utils/common";
 import {SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
+import SuggestionBox from "./SuggestionBox";
 
 const { TextArea } = Input;
 class AppBase extends React.Component {
@@ -149,6 +150,8 @@ class AppBase extends React.Component {
     //         return returnObj;
     //     });
     // }
+
+
     showDrawer = () => {
         this.setState({
             visible: true,
@@ -159,30 +162,9 @@ class AppBase extends React.Component {
             visible: false,
         });
     };
-    handleSubmit = (e) => {
-        e.preventDefault();
-        let that = this;
-        this.props.form.validateFieldsAndScroll((err, values) => {
-            console.log("formValue",values);
-            let reqData={
-                ...values,
-            }
-            let successFn=function (data) {
-                displayMessage(SUCCESS_MSG_TYPE, data.message);
-                that.setState({
-                    visible:false,
 
-                })
-            }
-            let errorFn=function () {
-
-            }
-            postAPI(SUGGESTIONS,reqData,successFn,errorFn);
-        })
-    };
     render() {
         let that = this;
-        const { getFieldDecorator } = this.props.form;
         if (this.state.loadingPermissions) {
             return <Spin spinning={this.state.loadingPermissions} tip={"Loading Permissions...."}>
                 <div style={{width: '100vw', height: '100vh'}}/>
@@ -275,81 +257,10 @@ class AppBase extends React.Component {
                     </Layout>
                 </Route>
             </Switch>
-
-            <Drawer
-                title="Your Suggestion"
-                width={720}
-                onClose={this.onClose}
-                visible={this.state.visible}>
-
-                <Form layout="vertical" onSubmit={this.handleSubmit}>
-                    <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item label="Name">
-                                {getFieldDecorator('name', {
-                                    rules: [{ required: true, message: 'Please enter  name' }],
-                                })(<Input placeholder="Please enter user name" />)}
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item label="Email">
-                                {getFieldDecorator('email', {
-                                    rules: [{ required: true, message: 'Please enter Email' }],
-                                })(
-                                    <Input
-                                        style={{ width: '100%' }}
-                                        placeholder="Please enter Email"
-                                    />,
-                                )}
-                            </Form.Item>
-                        </Col>
-                    </Row>
-
-                    <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item label="Mobile">
-                                {getFieldDecorator('mobile')
-                                (<Input placeholder="Please enter Mobile" />)}
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item label="Subject">
-                                {getFieldDecorator('subject')(
-                                    <Input
-                                        style={{ width: '100%' }}
-                                        placeholder="Please enter Email"
-                                    />,
-                                )}
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                    <Row gutter={16}>
-                        <Col span={24}>
-                            <Form.Item label="Description">
-                                {getFieldDecorator('description')
-                                (<TextArea placeholder="Please enter description"   autosize={{ minRows: 4, maxRows: 6 }}/>)}
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                    <Divider/>
-                    <div
-                        style={{
-                            textAlign: '-webkit-center',
-                        }}
-                    >
-                        <Button onClick={this.onClose} style={{ marginRight: 8 }}>
-                            Cancel
-                        </Button>
-                        <Button htmlType="submit" onSubmit={this.handleSubmit} type="primary">
-                            Submit
-                        </Button>
-                    </div>
-                </Form>
-
-            </Drawer>
+            <SuggestionBox {...this.state} close={this.onClose}/>
         </Layout>
             ;
     }
 }
 
-export default Form.create()(AppBase);
+export default AppBase;
