@@ -377,3 +377,10 @@ export const PATIENT_AGE = [
     {label:'DOB' ,value:'DOB'},
     {label:'Age' ,value: 'AGE'}
 ];
+
+/** Suggestions Reports***/
+export const SUGGESTIONS_STATUS=[
+    {label:"Open",value:"Open"},
+    {label:"In Progress" ,value:"InProgress"},
+    {label: "Closed" ,value: "Closed"},
+];
