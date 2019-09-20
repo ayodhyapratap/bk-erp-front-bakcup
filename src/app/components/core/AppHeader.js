@@ -44,7 +44,6 @@ class AppHeader extends React.Component {
             this.props.history.push("/patient/" + event + "/profile");
             this.setState({
                 searchPatientString:null,
-                patientListData:null,
             })
             let that = this;
             let successFn = function (data) {

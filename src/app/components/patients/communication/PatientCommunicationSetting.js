@@ -1,6 +1,6 @@
 import React from "react";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
-import {Button, List, Card, Form, Icon, Row, Table, Divider, Col, Radio} from "antd";
+import {Button, List, DatePicker,Card, Form, Icon, Row, Table, Divider, Col, Radio} from "antd";
 import {SINGLE_CHECKBOX_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, putAPI} from "../../../utils/common";
@@ -76,13 +76,14 @@ class PatientCommunicationSetting extends React.Component {
     }
 
     handleSubmit = (e) => {
-        console.log("state",this.state)
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
-                let reqData = {...values};
+                let reqData = {...values,
+                    medicine_till:moment(values.medicine_till).format('YYYY-MM-DD'),
+                    follow_up_date:moment(values.follow_up_date).format('YYYY-MM-DD'),
+                };
                 that.setState({
                     saving: true
                 });
@@ -184,6 +185,27 @@ class PatientCommunicationSetting extends React.Component {
                         )}
                     </label>
                     </Form.Item>
+
+                    <Form.Item {...formItemLayout} key={'medicine_till'}> <label>
+                        <span
+                            className="ant-form-text"> {"Medicine Till Date"} : </span>
+                            {getFieldDecorator('medicine_till', {initialValue: this.state.patientProfile && this.state.patientProfile.medicine_till? moment(this.state.patientProfile.medicine_till) : null})
+                                (<DatePicker/>
+                            )}
+                        </label>
+                    </Form.Item>
+
+                    <Form.Item {...formItemLayout} key={'medicine_till'}> <label>
+                        <span
+                            className="ant-form-text"> {"Next follow-up To"} : </span>
+                        {getFieldDecorator('follow_up_date', {initialValue: this.state.patientProfile && this.state.patientProfile.follow_up_date ? moment(this.state.patientProfile.follow_up_date) : null})
+                        (<DatePicker/>
+                        )}
+                    </label>
+                    </Form.Item>
+
+
+
 
                     <div>
                         <Divider dashed/>

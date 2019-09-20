@@ -214,16 +214,26 @@ class BedBookingForm extends React.Component {
                     rest_diseases: values.rest_diseases ? values.rest_diseases.join(',') : null,
                     report_upload: values.file && values.file.file.response ? values.file.file.response.image_path : null
                 };
+                // delete reqData.medicines;
+                //
+                // if (values.medicines){
+                //     values.medicines.forEach(function (item) {
+                //         let medicines={medicineId:item};
+                //     })
+                //
+                // }
+
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Saved Successfully!!");
                     that.props.history.goBack();
                     if (that.props.loadData)
                         that.props.loadData();
-                }
+                };
                 let errorFn = function () {
 
-                }
-                postAPI(interpolate(BOOK_SEAT, [this.props.active_practiceId]), reqData, successFn, errorFn);
+                };
+                console.log("Data",reqData);
+                // postAPI(interpolate(BOOK_SEAT, [this.props.active_practiceId]), reqData, successFn, errorFn);
             }
         })
 
@@ -262,7 +272,8 @@ class BedBookingForm extends React.Component {
                             type: "BED",
                             price_with_tax: payAmount,
                             tax: item.normal_tax_value,
-                            price: item.normal_price
+                            price: item.normal_price,
+                            _id:Math.random().toFixed(7),
                         };
                         medicinePkg = [bedPkg];
                     }
@@ -274,7 +285,8 @@ class BedBookingForm extends React.Component {
                             type: "BED",
                             price_with_tax: payAmount,
                             tax: item.tatkal_tax_value,
-                            price: item.tatkal_price
+                            price: item.tatkal_price,
+                            _id:Math.random().toFixed(7),
                         };
                         medicinePkg = [bedPkg];
                     }
@@ -290,7 +302,8 @@ class BedBookingForm extends React.Component {
                             ...item,
                             type: "MEDICINE",
                             price_with_tax: item.final_price,
-                            tax: item.tax_value
+                            tax: item.tax_value,
+                            _id:Math.random().toFixed(7),
                         }]
 
                     }
@@ -351,6 +364,7 @@ class BedBookingForm extends React.Component {
                 sm: {offset: 6, span: 14},
             },
         });
+
         const columns = [{
             title: 'Item',
             key: 'name',
@@ -367,6 +381,23 @@ class BedBookingForm extends React.Component {
             //     dataIndex: 'tatkal_price',
             //     // render:(value,record)=>(<p>{record?(record.tatkal_price).toFixed():null}</p>)
             // },
+            {
+                title: 'discount %',
+                key: 'discount',
+                width: 100,
+                dataIndex: 'discount',
+                render: (item, record) => <Form.Item
+                    key={`discount[${record._id}]`}
+                    {...formItemLayout}>
+                    {getFieldDecorator(`discount[${record._id}]`, {
+                        initialValue: record.discount,
+                        validateTrigger: ['onChange', 'onBlur'],
+
+                    })(
+                        <InputNumber min={0} max={100} placeholder="discount" size={'small'}/>
+                    )}
+                </Form.Item>
+            },
             {
                 title: 'Price',
                 key: 'price',

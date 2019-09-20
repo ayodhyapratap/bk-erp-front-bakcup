@@ -443,7 +443,7 @@ export default class CreateAppointmentForm extends React.Component {
         let successFn = function (data) {
             if (data) {
                 that.setState({
-                    patientListData: data
+                    patientListData: data.results,
                 })
                 // console.log("list",that.state.patientListData);
             }
@@ -543,7 +543,7 @@ export default class CreateAppointmentForm extends React.Component {
             patientDetails: null
         })
 
-    }
+    };
     loadAppointmentList(){
         let that=this;
         let successFn = function(data){
@@ -561,9 +561,6 @@ export default class CreateAppointmentForm extends React.Component {
         getAPI(interpolate(APPOINTMENT_SCHEDULE,[this.props.active_practiceId]),successFn,errorFn,apiParams);
     }
     render() {
-        console.log("state",this.state);
-        console.log("props",this.props.match.params.appointmentid);
-        
         const that = this;
         const formItemLayout = (this.props.formLayout ? this.props.formLayout : {
             labelCol: {span: 6},

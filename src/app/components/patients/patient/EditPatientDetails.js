@@ -41,7 +41,7 @@ import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 import WebCamField from "../../common/WebCamField";
 import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
-import {BLOOD_GROUPS, PATIENT_AGE} from "../../../constants/hardData";
+import {BLOOD_GROUPS, PATIENT_AGE, SOURCE_PLATFORM} from "../../../constants/hardData";
 
 const {Option} = Select;
 
@@ -413,6 +413,17 @@ class EditPatientDetails extends React.Component {
                         (<Input placeholder="Patient Id"/>)
                         }
                     </Form.Item>
+
+                    <Form.Item label={"Source"} {...formItemLayout}>
+                        {getFieldDecorator('source',{initialValue: this.props.currentPatient ? this.props.currentPatient.source : ' '})
+                        (<Select placeholder={"Select Source"} showSearch optionFilterProp="children">
+                            {SOURCE_PLATFORM.map((option)=><Select.Option value={option.value}>
+                                {option.label}
+                            </Select.Option>)}
+                        </Select>)
+                        }
+                    </Form.Item>
+
                     {this.props.currentPatient ? null :
                         <Form.Item label="Referral Code" {...formItemLayout}>
                             {getFieldDecorator('referal', {initialValue: this.props.currentPatient ? this.props.currentPatient.user.referer_code : ''})
@@ -428,7 +439,7 @@ class EditPatientDetails extends React.Component {
 
                     <Form.Item label="Gender" {...formItemLayout}>
                         {getFieldDecorator('gender', {initialValue: this.props.currentPatient ? this.props.currentPatient.gender : null})
-                        (<Select>
+                        (<Select placeholder={"Select Gender"}>
                             <Option value="male">Male</Option>
                             <Option value="female">Female</Option>
                             <Option value="other">Other</Option>
