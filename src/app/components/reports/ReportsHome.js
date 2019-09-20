@@ -17,6 +17,7 @@ import PermissionDenied from "../common/errors/PermissionDenied";
 import InventoryDetailsReportHome from "./inventorydetails/InventoryDetailsReportHome";
 import MlmReportHome from "./mlm/MlmReportHome";
 import AgentTree from "./agents/AgentTree";
+import SuggestionHome from "./suggestions/SuggestionHome";
 
 const {Content} = Layout;
 
@@ -98,6 +99,11 @@ class ReportsHome extends React.Component {
                     <Route exact path="/reports/agent/tree"
                            render={(route) => (that.props.activePracticePermissions.ReportsMLMReport || that.props.allowAllPermissions ?
                                    <AgentTree {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
+                           )}/>
+
+                    <Route exact path="/reports/suggestions"
+                           render={(route) => (that.props.activePracticePermissions.ReportsMLMReport || that.props.allowAllPermissions ?
+                                   <SuggestionHome {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
                            )}/>
                     <Route
                         render={(route) => (that.props.activePracticePermissions.ReportsAppointments || that.props.allowAllPermissions ?

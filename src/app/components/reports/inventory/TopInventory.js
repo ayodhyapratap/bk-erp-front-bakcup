@@ -41,6 +41,7 @@ export default class TopInventory extends React.Component {
         })
         let successFn = function (data) {
             that.setState({
+                report:data,
                 reportItem_wise: data.item_wise,
                 reportTotal:data.total,
                 loading: false
@@ -66,6 +67,27 @@ export default class TopInventory extends React.Component {
     }
     render() {
         let that=this;
+
+        let dailyInvetory=[];
+        that.state.reportTotal.forEach(function(itemName){
+            that.state.reportItem_wise.map(function(item){
+                if(itemName.inventory_item__name == item.inventory_item__name){
+                    if(item.type_of_consumption =='SALES' ||item.type_of_consumption =='DAMAGED'){
+                        dailyInvetory.push({item:item.inventory_item__name ,type:{
+                                sales:item.consume
+                            }})
+                    }
+                    if(item.type_of_consumption =='DAMAGED'){
+                        dailyInvetory.push({item:item.inventory_item__name ,type:{
+                                damaged:item.consume
+                            }})
+                    }
+                }
+            })
+        });
+        console.log("customizexd",dailyInvetory);
+
+
         let i = 1;
         const columns = [{
             title: 'S. No',

@@ -50,7 +50,8 @@ export default class DailyInventory extends React.Component {
             })
         };
         let apiParams={
-            start: this.state.startDate.format('YYYY-MM-DD'),
+            // start: this.state.startDate.format('YYYY-MM-DD'),
+            start:'2012-09-02',
             end: this.state.endDate.format('YYYY-MM-DD'),
             type:that.props.type,
         };
@@ -64,6 +65,9 @@ export default class DailyInventory extends React.Component {
     }
     render() {
         let that=this;
+
+
+
         let i = 1;
         const columns = [{
             title: 'S. No',
@@ -72,21 +76,35 @@ export default class DailyInventory extends React.Component {
             render: (item, record) => <span> {i++}</span>,
             export:(item,record,index)=>index+1,
             width: 50
-        },{
+        },
+        ,{
             title: 'Day',
             key: 'date',
             dataIndex:'date',
             render:((item, record) => <span>{moment(record.date).format('DD MMM')}</span>),
             export:(item,record)=>(moment(record.date).format('DD MMM')),
+        },
+            {
+            title:'Sales'
+        },{
+            title:'Services',
+        },{
+            title:'Damaged'
+        },{
+            title:'Returned'
+        },{
+            title:'Adjustment'
         },{
             title:'Type Of Consumption',
             key:'type_of_consumption',
             dataIndex:'type_of_consumption',
-        },{
-            title:'consume',
-            key:'consume',
-            dataIndex:'consume',
-        }];
+        }
+        // ,{
+        //     title:'consume',
+        //     key:'consume',
+        //     dataIndex:'consume',
+        // }
+        ];
         const renderCustomBarLabel = ({ payload, x, y, width, height, value }) => {
             return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value}</text>;
         };
