@@ -81,7 +81,8 @@ export default class PatientsFirstAppointment extends React.Component {
         },{
             title:'Patient Number',
             key:'id',
-            dataIndex:'patient_id'
+            render:(item ,record)=><span>{record.custom_id?record.custom_id:record.patient_id}</span>,
+            exports:(item ,record) =>(record.custom_id?record.custom_id:record.patient_id),
         }];
 
         return <div>

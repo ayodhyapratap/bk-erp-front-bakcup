@@ -1,12 +1,12 @@
 import React from "react";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
 import {getAPI, interpolate} from "../../../utils/common";
-import {PATIENTS_REPORTS} from "../../../constants/api";
+import {ACTIVE_PATIENTS_REPORTS, PATIENTS_REPORTS} from "../../../constants/api";
 import {Col, Row, Statistic, Table} from "antd";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import CustomizedTable from "../../common/CustomizedTable";
 
-export default class NewPatientReports extends React.Component {
+export default class ActivePatients extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -15,12 +15,10 @@ export default class NewPatientReports extends React.Component {
             report:[],
 
         }
-        this.loadNewPatient = this.loadNewPatient.bind(this);
+        this.loadActivePatient = this.loadActivePatient.bind(this);
     }
     componentDidMount() {
-        if (this.props.type=='DETAILED'){
-            this.loadNewPatient();
-        }
+        this.loadActivePatient();
     }
     componentWillReceiveProps(newProps) {
         let that = this;
@@ -30,18 +28,16 @@ export default class NewPatientReports extends React.Component {
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
             }, function () {
-                if (that.props.type=='DETAILED'){
-                    this.loadNewPatient();
-                }
+                this.loadActivePatient();
             })
     }
-    loadNewPatient() {
+    loadActivePatient() {
         let that = this;
 
         let successFn = function (data) {
-           that.setState({
-               report:data,
-           })
+            that.setState({
+                report:data,
+            })
         };
         let errorFn = function () {
             that.setState({
@@ -49,7 +45,6 @@ export default class NewPatientReports extends React.Component {
             })
         };
         let apiParams={
-            type:that.props.type?that.props.type:'DETAILED',
             from_date: this.props.startDate.format('YYYY-MM-DD'),
             to_date: this.props.endDate.format('YYYY-MM-DD'),
         };
@@ -59,7 +54,7 @@ export default class NewPatientReports extends React.Component {
         if (this.props.blood_group){
             apiParams.blood_group=this.props.blood_group;
         }
-        getAPI(PATIENTS_REPORTS,  successFn, errorFn,apiParams);
+        getAPI(ACTIVE_PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }
     render() {
         let that=this;
@@ -98,7 +93,7 @@ export default class NewPatientReports extends React.Component {
             dataIndex: 'gender',
         }];
         return <div>
-            <h2>New Patients Report</h2>
+            <h2>Active Patients Report</h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
                     <Statistic title="Total Patients" value={this.state.report.length} />
