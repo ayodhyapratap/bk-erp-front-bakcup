@@ -75,7 +75,7 @@ export default class ReportsHeader extends React.Component {
         },{
             name:'Suggestions',
             value:'/reports/suggestions',
-            active: that.props.activePracticePermissions.ReportsMLMReport || that.props.allowAllPermissions
+            active: that.props.activePracticePermissions.ReportsSuggestions || that.props.allowAllPermissions
 
         }];
         return <Header style={{background: '#fff'}}>

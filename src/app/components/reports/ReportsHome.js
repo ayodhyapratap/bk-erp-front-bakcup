@@ -102,7 +102,7 @@ class ReportsHome extends React.Component {
                            )}/>
 
                     <Route exact path="/reports/suggestions"
-                           render={(route) => (that.props.activePracticePermissions.ReportsMLMReport || that.props.allowAllPermissions ?
+                           render={(route) => (that.props.activePracticePermissions.ReportsSuggestions || that.props.allowAllPermissions ?
                                    <SuggestionHome {...this.props} {...this.state} {...route}/> : <PermissionDenied/>
                            )}/>
                     <Route
