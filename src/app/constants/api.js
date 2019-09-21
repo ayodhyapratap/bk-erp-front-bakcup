@@ -115,6 +115,7 @@ export const CITY ='patients/city/';
 
 /** *Patient Reports* **/
 export const PATIENTS_REPORTS='patients/new_patients';
+export const ACTIVE_PATIENTS_REPORTS='patients/active_patients';
 export const MEMBERSHIP_REPORTS='patients/membership_report';
 export const FIRST_APPOINTMENT_REPORTS='patients/first_appointment';
 

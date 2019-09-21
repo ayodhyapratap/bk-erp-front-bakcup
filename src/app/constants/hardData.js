@@ -43,7 +43,7 @@ import {
     MODE_OF_PAYMENTS,
     PAYMENT_RECEIVED_PER_DAY,
     PAYMENT_RECEIVED_PER_DOCTOR,
-    PAYMENT_RECEIVED_PER_MONTH, PAYMENT_SETTLEMENT, PAYMENT_SETTLEMENT_PER_DOCTOR, CREDIT_NOTES
+    PAYMENT_RECEIVED_PER_MONTH, PAYMENT_SETTLEMENT, PAYMENT_SETTLEMENT_PER_DOCTOR, CREDIT_NOTES, ACTIVE_PATIENTS
 } from "../constants/dataKeys";
 
 
@@ -278,6 +278,7 @@ export const PATIENTS_RELATED_REPORT= [
     {name: 'Patients First Appointment', value: PATIENTS_FIRST_APPOINTMENT},
     {name: 'Monthly New Patients', value: MONTHLY_NEW_PATIENTS},
     {name: 'New Membership', value: NEW_MEMBERSHIP},
+    {name:'Active Patients' ,value:ACTIVE_PATIENTS},
 ];
 
 /*Appointment Reports*/

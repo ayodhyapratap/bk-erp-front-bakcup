@@ -66,6 +66,7 @@ export const EXPIRING_MEMBERSHIP='EXPIRED';
 export const PATIENTS_FIRST_APPOINTMENT='patientsfirstappointment';
 export const MONTHLY_NEW_PATIENTS='MONTHLY';
 export const NEW_MEMBERSHIP='NEW';
+export const ACTIVE_PATIENTS='ACTIVE';
 
 /*Appointment Reports*/
 export const ALL_APPOINTMENT='ALL';
