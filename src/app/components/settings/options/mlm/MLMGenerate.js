@@ -142,7 +142,7 @@ class MLMGenerate extends React.Component {
             if (!err) {
                 that.setState({changePassLoading: true, redirect:true});
                 let successFn = function (data) {
-                    displayMessage(SUCCESS_MSG_TYPE, data.message);
+                    displayMessage(SUCCESS_MSG_TYPE, data.details);
                     that.props.loadData();
                     that.props.history.goBack();
                 };
