@@ -23,6 +23,7 @@ export default class InventoryReportHome extends React.Component {
             sidePanelColSpan: 4,
             productItems:[],
             type:'ALL',
+            consume:TYPE_OF_CONSUMPTION.map(item=>item.value),
         }
         this.loadProductItem = this.loadProductItem.bind(this);
     }
@@ -124,9 +125,9 @@ export default class InventoryReportHome extends React.Component {
                                     <br/>
                                     <br/>
                                     <br/>
-                                    <Checkbox.Group style={{ width: '100%',display:"inline-grid" }}  onChange={(value)=>this.handleChangeOption('consume',value)}>
+                                    <Checkbox.Group style={{ width: '100%',display:"inline-grid" }}  defaultValue={TYPE_OF_CONSUMPTION.map(item=>item.value)} onChange={(value)=>this.handleChangeOption('consume',value)}>
                                         {/*<Row>*/}
-                                            {TYPE_OF_CONSUMPTION.map((item) =><Checkbox value={item.value}> {item.label}</Checkbox>)}
+                                            {TYPE_OF_CONSUMPTION.map((item) =><Checkbox value={item.value} > {item.label}</Checkbox>)}
                                         {/*</Row>*/}
                                     </Checkbox.Group>
 

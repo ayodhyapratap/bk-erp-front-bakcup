@@ -3,8 +3,8 @@ import {Empty, Spin} from "antd"
 import {INVENTORY_REPORT_API,} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import {LineChart, Line, XAxis, YAxis,Bar, CartesianGrid, Tooltip, Label, Legend, ComposedChart} from 'recharts';
-import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
+import {TYPE_OF_CONSUMPTION} from "../../../constants/hardData";
 
 export default class TopInventory extends React.Component {
     constructor(props) {
@@ -68,53 +68,56 @@ export default class TopInventory extends React.Component {
     render() {
         let that=this;
 
-        let dailyInvetory=[];
-        that.state.reportTotal.forEach(function(itemName){
-            that.state.reportItem_wise.map(function(item){
-                if(itemName.inventory_item__name == item.inventory_item__name){
-                    if(item.type_of_consumption =='SALES' ||item.type_of_consumption =='DAMAGED'){
-                        dailyInvetory.push({item:item.inventory_item__name ,type:{
-                                sales:item.consume
-                            }})
-                    }
-                    if(item.type_of_consumption =='DAMAGED'){
-                        dailyInvetory.push({item:item.inventory_item__name ,type:{
-                                damaged:item.consume
-                            }})
-                    }
-                }
-            })
-        });
-        console.log("customizexd",dailyInvetory);
+        let currentData=that.state.reportItem_wise;
+        let topReports=[];
+        let itemName={};
+        let j=0;
+        for (i = 0; i < currentData.length; i++) {
+            if(currentData[i]["inventory_item__name"] in itemName){
+                itemName[currentData[i]["inventory_item__name"]][currentData[i]["type_of_consumption"]] = currentData[i]["consume"];
+            }else{
+                itemName[currentData[i]["inventory_item__name"]] = {"SALES": 0,"SERVICES": 0,"DAMAGED": 0,"RETURNED": 0,"ADJUSTMENT": 0};
+                itemName[currentData[i]["inventory_item__name"]][currentData[i]["type_of_consumption"]] = currentData[i]["consume"];
+            }
+        }
 
+        for(let key in itemName){
+            let inner = {"item_name":key,"type": itemName[key],"total_consumption": 0}
+            let total = itemName[key]["SALES"] + itemName[key]["SERVICES"] + itemName[key]["DAMAGED"] + itemName[key]["RETURNED"] + itemName[key]["ADJUSTMENT"];
+            inner["total_consumption"] = total;
+            topReports.push(inner);
+        }
 
         let i = 1;
-        const columns = [{
+        let columns = [{
             title: 'S. No',
             key: 'sno',
-            dataIndex:'abcd',
             render: (item, record) => <span> {i++}</span>,
-            export:(item,record,index)=>index+1,
+            export: (item, record, index) => index + 1,
             width: 50
-        },{
-            title: 'Month',
-            key: 'date',
-            dataIndex:'date',
-            render:((item, record) => <span>{moment(record.date).format('MMM YYYY')}</span>),
-            export:(item,record)=>(moment(record.date).format('MM YYYY')),
         },{
             title:'Item Name',
             key:'inventory_item__name',
-            dataIndex:'inventory_item__name',
-        },{
-            title:'Type Of Consumption',
-            key:'type_of_consumption',
-            dataIndex:'type_of_consumption',
-        },{
-            title:'consume',
-            key:'consume',
-            dataIndex:'consume',
+            dataIndex:'item_name',
         }];
+        for(let x=0;x<TYPE_OF_CONSUMPTION.length;x++){
+            let valueK=TYPE_OF_CONSUMPTION[x].value;
+            let obj = {
+                title: TYPE_OF_CONSUMPTION[x].label,
+                key: TYPE_OF_CONSUMPTION[x].value,
+                render:((item, record) => <span>{record.type[valueK]}</span>),
+                export:(item,record)=>(record.type.value),
+            }
+            if (that.props.consume.includes(TYPE_OF_CONSUMPTION[x].value)){
+                columns.push(obj);
+            }
+        }
+        columns.push({
+            title:'Total Consumption',
+            key:'total_consumption',
+            dataIndex:'total_consumption',
+        });
+
         const renderCustomBarLabel = ({ payload, x, y, width, height, value }) => {
             return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value}</text>;
         };
@@ -138,7 +141,7 @@ export default class TopInventory extends React.Component {
             <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                dataSource={this.state.reportItem_wise}/>
+                dataSource={topReports}/>
         </div>
     }
 }
