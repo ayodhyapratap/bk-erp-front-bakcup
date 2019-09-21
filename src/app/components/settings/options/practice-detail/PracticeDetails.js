@@ -95,7 +95,6 @@ class PracticeDetails extends React.Component {
 
     render() {
         let that = this;
-        console.log(that.props.practiceList);
         const columns = [{
             title: 'Name',
             dataIndex: 'name',
