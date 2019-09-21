@@ -50,12 +50,14 @@ export default class NewPatientReports extends React.Component {
         };
         let apiParams={
             type:that.props.type?that.props.type:'DETAILED',
-            blood_group:that.props.blood_group,
             from_date: this.props.startDate.format('YYYY-MM-DD'),
             to_date: this.props.endDate.format('YYYY-MM-DD'),
         };
         if (this.props.patient_groups){
             apiParams.groups=this.props.patient_groups.toString();
+        }
+        if (this.props.blood_group){
+            apiParams.blood_group=this.props.blood_group;
         }
         getAPI(PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }

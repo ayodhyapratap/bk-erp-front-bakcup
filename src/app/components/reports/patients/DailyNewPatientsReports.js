@@ -25,7 +25,7 @@ export default class DailyNewPatientReports extends React.Component {
     componentWillReceiveProps(newProps) {
         let that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.patient_groups !=newProps.patient_groups
-            ||this.props.blood_group !=newProps.blood_group || this.props.offer !=newProps.offer)
+            ||this.props.blood_group !=newProps.blood_group)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
@@ -58,6 +58,9 @@ export default class DailyNewPatientReports extends React.Component {
         }
         if (this.props.patient_groups){
             apiParams.groups=this.props.patient_groups.toString();
+        }
+        if (this.props.blood_group){
+            apiParams.blood_group=this.props.blood_group;
         }
         getAPI(PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }
