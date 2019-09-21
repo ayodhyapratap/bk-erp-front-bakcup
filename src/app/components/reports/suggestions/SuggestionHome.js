@@ -72,21 +72,21 @@ export default class SuggestionHome extends React.Component {
 
                         </Radio.Group>
 
-                        <br/>
-                        <br/>
-                        {this.state.advancedOptionShow?<>
-                            <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
-                            <Col> <br/>
-                                <h4>Status</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Status"
-                                        onChange={(value)=>this.handleChangeOption('status',value)}>
-                                    {SUGGESTIONS_STATUS.map((item) => <Select.Option value={item.value}>
-                                        {item.label}</Select.Option>)}
-                                </Select>
+                        {/*<br/>*/}
+                        {/*<br/>*/}
+                        {/*{this.state.advancedOptionShow?<>*/}
+                        {/*    <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>*/}
+                        {/*    <Col> <br/>*/}
+                        {/*        <h4>Status</h4>*/}
+                        {/*        <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Status"*/}
+                        {/*                onChange={(value)=>this.handleChangeOption('status',value)}>*/}
+                        {/*            {SUGGESTIONS_STATUS.map((item) => <Select.Option value={item.value}>*/}
+                        {/*                {item.label}</Select.Option>)}*/}
+                        {/*        </Select>*/}
 
-                                <br/>
-                            </Col>
-                        </>: <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
+                        {/*        <br/>*/}
+                        {/*    </Col>*/}
+                        {/*</>: <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}*/}
                     </Col>
                 </Row>
             </Card>
