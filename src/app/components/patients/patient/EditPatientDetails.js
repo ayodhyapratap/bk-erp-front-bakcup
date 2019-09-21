@@ -209,8 +209,11 @@ class EditPatientDetails extends React.Component {
                         email: values.email
                     },
 
-                    anniversary: moment(values.anniversary).format("YYYY-MM-DD"),
+
                 };
+                if (values.anniversary){
+                    reqData.anniversary=moment(values.anniversary).format("YYYY-MM-DD");
+                }
 
                 if (values.dob){
                     reqData.dob= moment(values.dob).format("YYYY-MM-DD");
@@ -456,7 +459,7 @@ class EditPatientDetails extends React.Component {
                     </Form.Item>
                     {this.state.selectedFormType =='DOB'?
                         <Form.Item label="DOB" {...formItemLayout}>
-                            {getFieldDecorator('dob', {initialValue: this.props.currentPatient && this.props.currentPatient.dob ? moment(this.props.currentPatient.dob) : null})
+                            {getFieldDecorator('dob', {initialValue: this.props.currentPatient && this.props.currentPatient.dob ? moment(this.props.currentPatient.dob) : ''})
                             (<DatePicker/>)
                             }
                         </Form.Item>
@@ -467,7 +470,7 @@ class EditPatientDetails extends React.Component {
                         </Form.Item>}
 
                     <Form.Item label="Anniversary" {...formItemLayout}>
-                        {getFieldDecorator('anniversary', {initialValue: this.props.currentPatient && this.props.currentPatient.anniversary ? moment(this.props.currentPatient.anniversary) : null})
+                        {getFieldDecorator('anniversary', {initialValue: this.props.currentPatient && this.props.currentPatient.anniversary ?moment(this.props.currentPatient.anniversary) : null})
                         (<DatePicker/>)
                         }
                     </Form.Item>

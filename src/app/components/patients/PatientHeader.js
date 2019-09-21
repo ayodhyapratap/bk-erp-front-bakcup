@@ -84,7 +84,7 @@ class PatientHeader extends React.Component {
                                         <Icon type="user"/>}
                                 </Avatar>)}
                             &nbsp;&nbsp;{that.props.currentPatient.user.first_name.length < 16 ? that.props.currentPatient.user.first_name : that.props.currentPatient.user.first_name.slice(0, 12) + '...'}
-                            <small><i><b> [ID: {that.props.currentPatient.id}]</b></i></small>
+                            <small><i><b> [ID: {that.props.currentPatient.custom_id?that.props.currentPatient.custom_id:that.props.currentPatient.id}]</b></i></small>
 
                         </a>
                         &nbsp;&nbsp;&nbsp;&nbsp;

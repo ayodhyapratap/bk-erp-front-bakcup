@@ -10,6 +10,7 @@ import {SUCCESS_MSG_TYPE, ERROR_MSG_TYPE} from "../../../constants/dataKeys";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
 import AddOrEditAgent from "./AddOrEditAgent";
 import {hashCode, intToRGB} from "../../../utils/clinicUtils";
+import moment from "moment";
 
 class PatientProfile extends React.Component {
     constructor(props) {
@@ -201,11 +202,15 @@ class PatientProfile extends React.Component {
 
                     <Col span={12}>
                         <PatientRow label="Patient Name" value={patient.user.first_name}/>
-                        <PatientRow label="Patient ID" value={patient.id}/>
+                        <PatientRow label="Patient ID" value={patient.custom_id?patient.custom_id:patient.id}/>
                         {patient && patient.role ?
                             <PatientRow label={"Agent Roles"} value={patient.role_data.name}/> : null}
                         <PatientRow label="Gender" value={patient.gender}/>
-                        <PatientRow label="Date of Birth" value={patient.dob}/>
+                        {patient.is_age?
+                            <PatientRow label="Age" value={patient.dob?moment().diff(this.props.currentPatient.dob,'years'):null}/>
+                            :
+                            <PatientRow label="Date of Birth" value={patient.dob}/>
+                        }
                         <Divider>Contact Details</Divider>
                         <PatientRow label="Email"
                                     value={that.props.activePracticePermissions.PatientEmailId ? patient.user.email : hideEmail(patient.user.email)}/>

@@ -66,23 +66,39 @@ class PatientSelection extends React.Component {
         getAPI(PATIENTS_LIST, successFn, errorFn);
     }
 
-    searchPatient(e) {
-        if (e.target.value) {
+    searchPatient(value) {
+
             let that = this;
+            that.setState({
+               searchvalue:true,
+            });
             let successFn = function (data) {
-                if (data) {
-                    that.setState({
-                        patientListData: data.results
+                    that.setState(function (prevState) {
+                        if (data.current > 1) {
+                            return {
+                                patientListData: [...prevState.patientListData, ...data.results],
+                                morePatients: data.next,
+                                currentPage: data.current,
+                            }
+                        }else {
+                            return {
+                                patientListData: [...data.results],
+                                morePatients: data.next,
+                                currentPage: data.current,
+                                loading: false
+                            }
+                        }
                     })
-                }
+
             };
             let errorFn = function () {
 
             };
-            getAPI(interpolate(SEARCH_PATIENT, [e.target.value]), successFn, errorFn);
-        } else {
-            this.getPatientListData();
-        }
+            if (value){
+                getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
+                } else {
+                this.getPatientListData();
+            }
     }
 
     getMorePatient() {
@@ -253,7 +269,7 @@ class PatientSelection extends React.Component {
             </Col>
             <Col span={19} style={{overflow: 'scroll', borderLeft: '1px solid #ccc'}}>
                 <Search placeholder="Search Patient By Name / ID / Mobile No / Aadhar No"
-                        onChange={value => this.searchPatient(value)}
+                        onChange={value => this.searchPatient(value.target.value)}
                         enterButton/>
                 <Spin spinning={this.state.loading}>
                     <Row>
@@ -267,9 +283,14 @@ class PatientSelection extends React.Component {
                         }
                     </Row>
                 </Spin>
-                <InfiniteFeedLoaderButton loaderFunction={this.getMorePatient}
-                                          loading={this.state.loading}
-                                          hidden={!this.state.morePatients}/>
+                {this.state.searchvalue ?  <InfiniteFeedLoaderButton loaderFunction={this.searchPatient}
+                                                                     loading={this.state.loading}
+                                                                     hidden={!this.state.morePatients}/> :
+
+                    <InfiniteFeedLoaderButton loaderFunction={this.getMorePatient}
+                                              loading={this.state.loading}
+                                              hidden={!this.state.morePatients}/>
+                }
 
             </Col>
             <Modal visible={this.state.showPatientGroupModal}
