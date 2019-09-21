@@ -70,7 +70,7 @@ export default class DailyExpenses extends React.Component {
         const columns = [{
             title: 'S. No',
             key: 'sno',
-            dataIndex:'abcd',
+            dataIndex:'sno',
             render: (item, record) => <span> {i++}</span>,
             export:(item,record,index)=>index+1,
             width: 50
@@ -78,19 +78,19 @@ export default class DailyExpenses extends React.Component {
             title: 'Day',
             key: 'date',
             dataIndex:'date',
-            render:((item, record) => <span>{moment(record.expense_date).format('ll')}</span>),
-            export:(item,record)=>(moment(record.expense_date).format('ll')),
+            render:((item, record) => <span>{moment(record.date).format('DD MMM')}</span>),
+            export:(item,record)=>(moment(record.date).format('DD MMM')),
         },{
             title:'Total Expenses (INR)',
-            key:'amount',
-            dataIndex:'amount',
+            key:'total',
+            dataIndex:'total',
         }];
 
         const renderCustomBarLabel = ({ payload, x, y, width, height, value }) => {
             return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value}</text>;
         };
         var totalAmount = this.state.report.reduce(function(prev, cur) {
-            return prev + cur.amount;
+            return prev + cur.total;
         }, 0);
         return <div>
             <h2>Daily Expense</h2>
@@ -100,13 +100,13 @@ export default class DailyExpenses extends React.Component {
                                    margin={{top: 20, right: 20, bottom: 20, left: 20}} >
 
 
-                        <XAxis   dataKey="expense_date" tickFormatter={(value) => {
+                        <XAxis   dataKey="date" tickFormatter={(value) => {
                             return moment(value).format('DD MMM')
                         }} label= {{value:"Data Range", offset:0, margin:{top:10}, position:"insideBottom"}} />
                         <YAxis label={{ value: 'Total Expenses(INR)', angle: -90, position: 'insideLeft' }} />
                         <Tooltip />
                         {/*<Legend />*/}
-                        <Bar dataKey='amount' barSize={35} fill='#0059b3' stroke="#0059b3" label={renderCustomBarLabel} />
+                        <Bar dataKey='total' barSize={35} fill='#0059b3' stroke="#0059b3" label={renderCustomBarLabel} />
                     </ComposedChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
             </Spin>
 

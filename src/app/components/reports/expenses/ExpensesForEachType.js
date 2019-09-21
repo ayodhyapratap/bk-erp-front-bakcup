@@ -75,15 +75,13 @@ export default class ExpensesForEachType extends React.Component {
             export:(item,record,index)=>index+1,
             width: 50
         },{
-            title: 'Day',
-            key: 'date',
-            dataIndex:'date',
-            render:((item, record) => <span>{moment(record.expense_date).format('ll')}</span>),
-            export:(item,record)=>(moment(record.expense_date).format('ll')),
+            title: 'Expense Name',
+            key: 'expense',
+            dataIndex:'expense',
         },{
             title:'Total Expenses (INR)',
-            key:'amount',
-            dataIndex:'amount',
+            key:'total',
+            dataIndex:'total',
         }];
         const COLORS = ['#89b9d8', '#8fc6eb','#81dac9','#f39e94','#bb98c9','#73c1c1'];
         const renderActiveShape = (props) => {
@@ -115,7 +113,7 @@ export default class ExpensesForEachType extends React.Component {
 
                     <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
                     <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
-                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.expense_type.name+','+ payload.amount}</text>
+                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.expense+','+ payload.total}</text>
                     <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
                         {`(Rate ${(percent * 100).toFixed(2)}%)`}
                     </text>
@@ -124,7 +122,7 @@ export default class ExpensesForEachType extends React.Component {
         };
 
         var totalAmount = this.state.report.reduce(function(prev, cur) {
-            return prev + cur.amount;
+            return prev + cur.total;
         }, 0);
 
         return <div>
@@ -138,7 +136,7 @@ export default class ExpensesForEachType extends React.Component {
                                     label={renderActiveShape}
                                     data={this.state.report}
                                     cx={300}
-                                    dataKey="amount"
+                                    dataKey="total"
                                     cy={200}
                                     innerRadius={60}
                                     outerRadius={80}
