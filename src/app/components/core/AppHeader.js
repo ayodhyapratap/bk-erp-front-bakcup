@@ -35,8 +35,11 @@ class AppHeader extends React.Component {
                 searchPatientString:null,
             })
         };
-        getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
-    }
+        if (value){
+            getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
+        }
+
+    };
 
 
     handlePatientSelect = (event) => {
@@ -103,7 +106,7 @@ class AppHeader extends React.Component {
                                 <List.Item.Meta
                                     avatar={<Avatar
                                         src={option.image ? makeFileURL(option.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
-                                    title={option.user.first_name + " (" + option.user.id + ")"}
+                                    title={option.user.first_name + " (" + (option.custom_id?option.custom_id:option.user.id) + ")"}
                                     description={that.props.activePracticePermissions.PatientPhoneNumber ? option.user.mobile : hideMobile(option.user.mobile)}
                                 />
                             </List.Item>
