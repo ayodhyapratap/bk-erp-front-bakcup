@@ -439,7 +439,7 @@ class PatientVitalSign extends React.Component {
                     <Card style={{marginTop: 10}}
                           title={<small>{vitalsign.date ? moment(vitalsign.date).format('ll') : null}
                               <Link to={"/patient/" + vitalsign.patient_data.id + "/emr/vitalsigns"}>
-                                  &nbsp;&nbsp; {vitalsign.patient_data.user ? vitalsign.patient_data.user.first_name : null} (ID: {vitalsign.patient_data.id})&nbsp;
+                                  &nbsp;&nbsp; {vitalsign.patient_data.user ? vitalsign.patient_data.user.first_name : null} (ID: {vitalsign.patient_data.custom_id?vitalsign.patient_data.custom_id:vitalsign.patient_data.id})&nbsp;
                               </Link>
                               <span>, {vitalsign.patient_data.gender}</span>
                           </small>}

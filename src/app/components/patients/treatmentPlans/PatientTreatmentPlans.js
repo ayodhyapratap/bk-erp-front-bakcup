@@ -343,7 +343,7 @@ class PatientTreatmentPlans extends React.Component {
                             <div style={{padding: 16}}>
                                 <h4>{treatment.date ? moment(treatment.date).format('ll') : null} 
                                 <Link to={"/patient/" + treatment.patient.id + "/emr/plans"}>
-                                    &nbsp;&nbsp; {treatment.patient.user?treatment.patient.user.first_name:null} (ID: {treatment.patient.id})&nbsp;
+                                    &nbsp;&nbsp; {treatment.patient.user?treatment.patient.user.first_name:null} (ID: {treatment.patient.custom_id?treatment.patient.custom_id:treatment.patient.id})&nbsp;
                                 </Link>
                                 <span>, {treatment.patient.gender}</span>
                                     

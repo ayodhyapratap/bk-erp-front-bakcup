@@ -351,7 +351,7 @@ class PatientClinicNotes extends React.Component {
                     title={<div>
                         <small>{clinicNote.date ? moment(clinicNote.date).format('ll') : null}
                             <Link to={"/patient/" + clinicNote.patient.id + "/emr/clinicnotes"}>
-                                &nbsp;&nbsp; {clinicNote.patient.user ? clinicNote.patient.user.first_name : null} (ID: {clinicNote.patient.id})&nbsp;
+                                &nbsp;&nbsp; {clinicNote.patient.user ? clinicNote.patient.user.first_name : null} (ID: {clinicNote.patient.custom_id?clinicNote.patient.custom_id:clinicNote.patient.id})&nbsp;
                             </Link>
                             <span>, {clinicNote.patient.gender}</span>
                         </small>

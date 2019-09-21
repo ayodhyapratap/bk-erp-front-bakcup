@@ -516,7 +516,7 @@ function InvoiceCard(invoice, that) {
         title={<small>{invoice.date ? moment(invoice.date).format('ll') : null}
             {that.state.currentPatient ? null : <span>
             <Link to={"/patient/" + (invoice.patient_data ? invoice.patient_data.id : null) + "/billing/invoices"}>
-                &nbsp;&nbsp; {invoice.patient_data ? invoice.patient_data.user.first_name : null} (ID: {invoice.patient_data ? invoice.patient_data.id : null})&nbsp;
+                &nbsp;&nbsp; {invoice.patient_data ? invoice.patient_data.user.first_name : null} (ID: {invoice.patient_data && invoice.patient_data.custom_id? invoice.patient_data.custom_id :invoice.patient_data.id })&nbsp;
             </Link>, {invoice.patient_data ? invoice.patient_data.gender : null}</span>}
         </small>}
         extra={<Dropdown.Button

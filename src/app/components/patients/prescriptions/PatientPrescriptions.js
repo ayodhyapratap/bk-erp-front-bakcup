@@ -262,7 +262,7 @@ class PatientPrescriptions extends React.Component {
                           bodyStyle={{padding: 0}}
                           title={<small>{presc.date ? moment(presc.date).format('ll') : null}
                               <Link to={"/patient/" + presc.patient.id + "/emr/prescriptions"}>
-                                  &nbsp;&nbsp; {presc.patient.user ? presc.patient.user.first_name : null} (ID: {presc.patient.id})&nbsp;
+                                  &nbsp;&nbsp; {presc.patient.user ? presc.patient.user.first_name : null} (ID: {presc.patient.custom_id?presc.patient.custom_id:presc.patient.id})&nbsp;
                               </Link>
                               <span>, {presc.patient.gender}</span>
                           </small>}

@@ -693,7 +693,7 @@ export default class CreateAppointmentForm extends React.Component {
                                                 <List.Item.Meta
                                                     avatar={<Avatar
                                                         src={option.image ? makeFileURL(option.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
-                                                    title={option.user.first_name + " (ID:" + option.user.id + ")"}
+                                                    title={option.user.first_name + " (ID:" + (option.custom_id?option.custom_id:option.user.id) + ")"}
                                                     description={that.props.activePracticePermissions.PatientPhoneNumber ? option.user.mobile : hideMobile(option.user.mobile)}
                                                 />
 

@@ -231,8 +231,9 @@ class Appointment extends React.Component {
             )
         }, {
             title: 'Patient ID',
-            dataIndex: 'patient.id',
-            key: 'patient_id',
+            key:'id',
+            render:(item ,record)=><span>{record.patient.custom_id?record.patient.custom_id:record.patient.id}</span>,
+            exports:(item ,record) =>(record.patient.custom_id?record.patient.custom_id:record.patient.id),
         }, {
             title: 'Patient Name',
             dataIndex: 'patient.user.first_name',
