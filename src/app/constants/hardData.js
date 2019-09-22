@@ -43,7 +43,12 @@ import {
     MODE_OF_PAYMENTS,
     PAYMENT_RECEIVED_PER_DAY,
     PAYMENT_RECEIVED_PER_DOCTOR,
-    PAYMENT_RECEIVED_PER_MONTH, PAYMENT_SETTLEMENT, PAYMENT_SETTLEMENT_PER_DOCTOR, CREDIT_NOTES, ACTIVE_PATIENTS
+    PAYMENT_RECEIVED_PER_MONTH,
+    PAYMENT_SETTLEMENT,
+    PAYMENT_SETTLEMENT_PER_DOCTOR,
+    CREDIT_NOTES,
+    ACTIVE_PATIENTS,
+    AGENT_TREE_VIEW
 } from "../constants/dataKeys";
 
 
@@ -350,6 +355,7 @@ export const MLM_RELATED_REPORT=[
     {name:'Margin Type wise', value:MARGIN_TYPE_WISE},
     // {name:'Product Wise', value:PRODUCT_WISE},
     {name:'Wallet Balance Amount', value:WALLET_BALANCE_AMOUNT},
+    {name:'Agent Tree View', value:AGENT_TREE_VIEW},
 ];
 
 /*Payments Reports*/

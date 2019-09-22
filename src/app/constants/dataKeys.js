@@ -121,6 +121,7 @@ export const BED_BOOKING_PACKAGE_COUNT='BED_PACKAGE_COUNT';
 export const MARGIN_TYPE_WISE='MARGIN';
 export const PRODUCT_WISE='PRODUCT';
 export const WALLET_BALANCE_AMOUNT='WALLET';
+export const AGENT_TREE_VIEW='AGENTVIEW'
 
 /** Payments Reports**/
 export const ALL_PAYMENTS='ALL';
