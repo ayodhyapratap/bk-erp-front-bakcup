@@ -93,7 +93,7 @@ class AddOrEditAgent extends React.Component {
         let successFn = function (data) {
             if (data) {
                 that.setState({
-                    userListData: data
+                    userListData: data.results
                 })
 
             }
@@ -107,7 +107,6 @@ class AddOrEditAgent extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            console.log("FormDtate",values)
             if (!err) {
                 that.setState({
                     saving: true
@@ -260,7 +259,7 @@ class AddOrEditAgent extends React.Component {
                                                 <List.Item.Meta
                                                     avatar={<Avatar
                                                         src={option.image ? makeFileURL(option.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
-                                                    title={option.user.first_name + " (ID:" + option.user.id + ")"}
+                                                    title={option.user.first_name + " (ID:" + (option.custom_id?option.custom_id:option.user.id) + ")"}
                                                     description={that.props.activePracticePermissions.PatientPhoneNumber ? option.user.mobile : hideMobile(option.user.mobile)}
 
                                                 />
