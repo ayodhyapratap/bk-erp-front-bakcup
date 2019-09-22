@@ -381,23 +381,23 @@ class BedBookingForm extends React.Component {
             //     dataIndex: 'tatkal_price',
             //     // render:(value,record)=>(<p>{record?(record.tatkal_price).toFixed():null}</p>)
             // },
-            {
-                title: 'discount %',
-                key: 'discount',
-                width: 100,
-                dataIndex: 'discount',
-                render: (item, record) => <Form.Item
-                    key={`discount[${record._id}]`}
-                    {...formItemLayout}>
-                    {getFieldDecorator(`discount[${record._id}]`, {
-                        initialValue: record.discount,
-                        validateTrigger: ['onChange', 'onBlur'],
-
-                    })(
-                        <InputNumber min={0} max={100} placeholder="discount" size={'small'}/>
-                    )}
-                </Form.Item>
-            },
+            // {
+            //     title: 'discount %',
+            //     key: 'discount',
+            //     width: 100,
+            //     dataIndex: 'discount',
+            //     render: (item, record) => <Form.Item
+            //         key={`discount[${record._id}]`}
+            //         {...formItemLayout}>
+            //         {getFieldDecorator(`discount[${record._id}]`, {
+            //             initialValue: record.discount,
+            //             validateTrigger: ['onChange', 'onBlur'],
+            //
+            //         })(
+            //             <InputNumber min={0} max={100} placeholder="discount" size={'small'}/>
+            //         )}
+            //     </Form.Item>
+            // },
             {
                 title: 'Price',
                 key: 'price',

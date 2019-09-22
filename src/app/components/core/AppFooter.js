@@ -1,15 +1,18 @@
 import React from "react";
-import {Divider } from 'antd';
-class AppFooter extends React.Component{
+import {Layout} from 'antd';
+
+const {Footer} = Layout;
+
+class AppFooter extends React.Component {
     constructor(props) {
         super(props);
     }
 
     render() {
-        return <div>
-          <Divider/>
-          <p>made by :PLUTONIC DEVS</p>
-          </div>
+        return <Footer style={{textAlign: 'center'}}>
+            Powered by: <a target="__blank" href="https://plutonic.co.in">Plutonic Services</a>
+        </Footer>
     }
 }
+
 export default AppFooter;
