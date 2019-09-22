@@ -65,6 +65,7 @@ class EditPatientDetails extends React.Component {
             selectedFormType:'DOB',
             file_count:10,
             file_enable:true,
+            // patientDetails:{},
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -72,6 +73,7 @@ class EditPatientDetails extends React.Component {
         this.getCountry = this.getCountry.bind(this);
         this.getState = this.getState.bind(this);
         this.getCity = this.getCity.bind(this);
+        this.loadPatientData = this.loadPatientData.bind(this);
     }
 
     componentDidMount() {
@@ -84,6 +86,9 @@ class EditPatientDetails extends React.Component {
         }
         if (this.state.state) {
             this.getCity();
+        }
+        if(this.props.currentPatient){
+            this.loadPatientData(this.props.currentPatient.id);
         }
 
     }
@@ -160,6 +165,23 @@ class EditPatientDetails extends React.Component {
 
         getAPI(interpolate(MEDICAL_HISTORY, [this.props.active_practiceId]), successFn, errorFn);
 
+    };
+    
+    loadPatientData(patient){
+
+        let that=this;
+        let successFn=function (data) {
+            that.setState({
+                patientDetails:data,
+                loading: false
+            })
+        }
+        let errorFn = function () {
+            that.setState({
+                loading: false
+            })
+        };
+        getAPI(interpolate(PATIENT_PROFILE, [that.props.currentPatient.id]), successFn, errorFn);
     }
 
     changeRedirect() {
@@ -319,6 +341,7 @@ class EditPatientDetails extends React.Component {
     // }
     render() {
         let that = this;
+        console.log("sate",that.state)
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = ({
             labelCol: {span: 6},
@@ -380,9 +403,9 @@ class EditPatientDetails extends React.Component {
                                 <Button>
                                     <Icon type="upload"/> Select File
                                 </Button>
-                                {this.props.currentPatient && this.props.currentPatient.image ?
+                                {this.state.patientDetails && this.state.patientDetails.image ?
                                     <img
-                                        src={makeFileURL(this.props.currentPatient ? this.props.currentPatient.image : null)}
+                                        src={makeFileURL(this.state.patientDetails ? this.state.patientDetails.image : null)}
                                         style={{maxWidth: '100%'}}/> : null}
                             </Upload>
                         )}
@@ -403,7 +426,7 @@ class EditPatientDetails extends React.Component {
                     <Form.Item label="Patient Name" {...formItemLayout}>
                         {getFieldDecorator('first_name', {
                             rules: [{required: true, message: 'Input Patient Name!'}],
-                            initialValue: this.props.currentPatient ? this.props.currentPatient.user.first_name : ''
+                            initialValue: this.state.patientDetails ? this.state.patientDetails.user.first_name : ''
                         })
                         (<Input placeholder="Patient Name"/>)
                         }
@@ -411,14 +434,14 @@ class EditPatientDetails extends React.Component {
 
                     <Form.Item label="Patient Id" {...formItemLayout}>
                         {getFieldDecorator('custom_id', {
-                            initialValue: this.props.currentPatient ? this.props.currentPatient.custom_id: ''
+                            initialValue: this.state.patientDetails ? this.state.patientDetails.custom_id: ''
                         })
                         (<Input placeholder="Patient Id"/>)
                         }
                     </Form.Item>
 
                     <Form.Item label={"Source"} {...formItemLayout}>
-                        {getFieldDecorator('source',{initialValue: this.props.currentPatient ? this.props.currentPatient.source : ' '})
+                        {getFieldDecorator('source',{initialValue: this.state.patientDetails ? this.state.patientDetails.source : ' '})
                         (<Select placeholder={"Select Source"} showSearch optionFilterProp="children">
                             {SOURCE_PLATFORM.map((option)=><Select.Option value={option.value}>
                                 {option.label}
@@ -427,21 +450,21 @@ class EditPatientDetails extends React.Component {
                         }
                     </Form.Item>
 
-                    {this.props.currentPatient ? null :
+                    {this.state.patientDetails ? null :
                         <Form.Item label="Referral Code" {...formItemLayout}>
-                            {getFieldDecorator('referal', {initialValue: this.props.currentPatient ? this.props.currentPatient.user.referer_code : ''})
+                            {getFieldDecorator('referal', {initialValue: this.state.patientDetails ? this.state.patientDetails.user.referer_code : ''})
                             (<Input placeholder="Referral Code"/>)
                             }
                         </Form.Item>
                     }
                     <Form.Item label="Aadhar ID" {...formItemLayout}>
-                        {getFieldDecorator('aadhar_id', {initialValue: this.props.currentPatient ? this.props.currentPatient.aadhar_id : ''})
+                        {getFieldDecorator('aadhar_id', {initialValue: this.state.patientDetails ? this.state.patientDetails.aadhar_id : ''})
                         (<Input placeholder="Patient Aadhar Number"/>)
                         }
                     </Form.Item>
 
                     <Form.Item label="Gender" {...formItemLayout}>
-                        {getFieldDecorator('gender', {initialValue: this.props.currentPatient ? this.props.currentPatient.gender : null})
+                        {getFieldDecorator('gender', {initialValue: this.state.patientDetails ? this.state.patientDetails.gender : null})
                         (<Select placeholder={"Select Gender"}>
                             <Option value="male">Male</Option>
                             <Option value="female">Female</Option>
@@ -459,18 +482,18 @@ class EditPatientDetails extends React.Component {
                     </Form.Item>
                     {this.state.selectedFormType =='DOB'?
                         <Form.Item label="DOB" {...formItemLayout}>
-                            {getFieldDecorator('dob', {initialValue: this.props.currentPatient && this.props.currentPatient.dob ? moment(this.props.currentPatient.dob) : ''})
+                            {getFieldDecorator('dob', {initialValue: this.state.patientDetails && this.state.patientDetails.dob ? moment(this.state.patientDetails.dob) : ''})
                             (<DatePicker/>)
                             }
                         </Form.Item>
                         :<Form.Item label="Age" {...formItemLayout}>
-                            {getFieldDecorator('age', {initialValue: this.props.currentPatient && this.props.currentPatient.dob ? moment().diff(this.props.currentPatient.dob,'years') : null})
+                            {getFieldDecorator('age', {initialValue: this.state.patientDetails && this.state.patientDetails.dob ? moment().diff(this.state.patientDetails.dob,'years') : null})
                             (<InputNumber min={0} max={120} placeholder="Patient Age"/>)
                             }
                         </Form.Item>}
 
                     <Form.Item label="Anniversary" {...formItemLayout}>
-                        {getFieldDecorator('anniversary', {initialValue: this.props.currentPatient && this.props.currentPatient.anniversary ?moment(this.props.currentPatient.anniversary) : null})
+                        {getFieldDecorator('anniversary', {initialValue: this.state.patientDetails && this.state.patientDetails.anniversary ?moment(this.state.patientDetails.anniversary) : null})
                         (<DatePicker/>)
                         }
                     </Form.Item>
@@ -481,7 +504,7 @@ class EditPatientDetails extends React.Component {
                     {/*    }*/}
                     {/*</Form.Item>*/}
                     <Form.Item label="Blood Group" {...formItemLayout}>
-                        {getFieldDecorator("blood_group", {initialValue: this.props.currentPatient ? this.props.currentPatient.blood_group : ''})
+                        {getFieldDecorator("blood_group", {initialValue: this.state.patientDetails ? this.state.patientDetails.blood_group : ''})
                         (<Select placeholder="Blood Group" >
                             {BLOOD_GROUPS.map((option) => <Select.Option
                                 value={option.value}>{option.name}</Select.Option>)}
@@ -490,7 +513,7 @@ class EditPatientDetails extends React.Component {
                     </Form.Item>
 
                     <Form.Item label="Family Relation" {...formItemLayout}>
-                        {getFieldDecorator('family_relation', {initialValue: this.props.currentPatient ? this.props.currentPatient.family_relation : ''})
+                        {getFieldDecorator('family_relation', {initialValue: this.state.patientDetails ? this.props.currentPatient.family_relation : ''})
                         (<Input placeholder="Patient Family Relation"/>)
                         }
                     </Form.Item>
