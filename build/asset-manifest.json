@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/static/css/main.3665a543.chunk.css",
-    "main.js": "/static/js/main.a51a7fb0.chunk.js",
-    "main.js.map": "/static/js/main.a51a7fb0.chunk.js.map",
+    "main.js": "/static/js/main.204234bb.chunk.js",
+    "main.js.map": "/static/js/main.204234bb.chunk.js.map",
     "runtime~main.js": "/static/js/runtime~main.f0113334.js",
     "runtime~main.js.map": "/static/js/runtime~main.f0113334.js.map",
-    "static/css/2.3723a0d3.chunk.css": "/static/css/2.3723a0d3.chunk.css",
-    "static/js/2.8db45717.chunk.js": "/static/js/2.8db45717.chunk.js",
-    "static/js/2.8db45717.chunk.js.map": "/static/js/2.8db45717.chunk.js.map",
+    "static/css/2.618f5120.chunk.css": "/static/css/2.618f5120.chunk.css",
+    "static/js/2.c05d90e9.chunk.js": "/static/js/2.c05d90e9.chunk.js",
+    "static/js/2.c05d90e9.chunk.js.map": "/static/js/2.c05d90e9.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.dd8aaa3935293b6df4fb01d2f749dbaa.js": "/precache-manifest.dd8aaa3935293b6df4fb01d2f749dbaa.js",
+    "precache-manifest.44c73df31654416307d6bcb9b7e2f860.js": "/precache-manifest.44c73df31654416307d6bcb9b7e2f860.js",
     "service-worker.js": "/service-worker.js",
-    "static/css/2.3723a0d3.chunk.css.map": "/static/css/2.3723a0d3.chunk.css.map",
+    "static/css/2.618f5120.chunk.css.map": "/static/css/2.618f5120.chunk.css.map",
     "static/css/main.3665a543.chunk.css.map": "/static/css/main.3665a543.chunk.css.map",
     "static/media/kidneycarelogo.png": "/static/media/kidneycarelogo.3378a129.png"
   }
