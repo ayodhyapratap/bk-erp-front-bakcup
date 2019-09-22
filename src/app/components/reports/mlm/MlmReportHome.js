@@ -1,9 +1,11 @@
 import React from "react";
 import {Button, Card, Checkbox, Col, Icon, Radio, Row, Select} from "antd";
-import {MLM_RELATED_REPORT} from "../../../constants/hardData";
+import {BLOOD_GROUPS, MLM_RELATED_REPORT} from "../../../constants/hardData";
 import {
-    ALL, ALL_TREATMENTS,
-    MARGIN_TYPE_WISE,
+    ACTIVE_PATIENTS,
+    AGENT_TREE_VIEW,
+    ALL, ALL_TREATMENTS, DAILY_NEW_PATIENTS,
+    MARGIN_TYPE_WISE, MONTHLY_NEW_PATIENTS, NEW_PATIENTS,
     PRODUCT_WISE,
     TRANSFERED_AMOUNT,
     WALLET_BALANCE_AMOUNT
@@ -15,6 +17,7 @@ import TransferredAmountReport from "./TransferredAmountReport";
 import WalletBalanceAmountReport from "./WalletBalanceAmountReport";
 import ProductWiseReport from "./ProductWiseReport";
 import AllTreatmentPerformed from "../emr/AllTreatmentPerformed";
+import AgentTreeReport from "./AgentTreeReport";
 
 export default class MlmReportHome extends React.Component {
     constructor(props) {
@@ -79,6 +82,7 @@ export default class MlmReportHome extends React.Component {
             </h2>
             <Card>
                 <Row gutter={16}>
+
                     <Col span={(24 - this.state.sidePanelColSpan)}>
                         {this.state.type==ALL?
                             <TransferredAmountReport {...this.state} {...this.props}/>:null}
@@ -86,8 +90,8 @@ export default class MlmReportHome extends React.Component {
                         {this.state.type ==MARGIN_TYPE_WISE?
                             <MarginTypewiseReport {...this.props} {...this.state}/>:null}
 
-                        {/*{this.state.type ==TRANSFERED_AMOUNT?*/}
-                        {/*    <TransferredAmountReport {...this.props} {...this.state}/>:null}*/}
+                        {this.state.type ==AGENT_TREE_VIEW?
+                            <AgentTreeReport {...this.props} {...this.state}/>:null}
 
                         {/*{this.state.type ==PRODUCT_WISE?*/}
                         {/*    <ProductWiseReport {...this.props} {...this.state}/>:null}*/}
@@ -114,19 +118,37 @@ export default class MlmReportHome extends React.Component {
 
                         <br/>
                         <br/>
-                        {this.state.advancedOptionShow?<>
-                            <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
-                            <Col> <br/>
-                                <h4>Agents</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Agents" showSearch optionFilterProp="children"
-                                        onChange={(value)=>this.handleChangeOption('agents',value)} >
-                                    {this.state.agentsOption.map((item) => <Select.Option value={item.id}>
-                                        {item.user.first_name}</Select.Option>)}
-                                </Select>
+                        {this.state.type == AGENT_TREE_VIEW ?<>
+                            {this.state.advancedOptionShow?<>
+                                <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
+                                <Col> <br/>
+                                    <h4>Agents</h4>
+                                    <Select style={{minWidth: '200px'}} placeholder="Select Agents" showSearch optionFilterProp="children"
+                                            onChange={(value)=>this.handleChangeOption('agent',value)} >
+                                        {this.state.agentsOption.map((item) => <Select.Option value={item.id}>
+                                            {item.user.first_name}</Select.Option>)}
+                                    </Select>
 
 
-                            </Col>
-                        </>: <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
+                                </Col>
+                            </>: <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
+                        </>:<>
+                            {this.state.advancedOptionShow?<>
+                                <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
+                                <Col> <br/>
+                                    <h4>Agents</h4>
+                                    <Select style={{minWidth: '200px'}} mode="multiple"  placeholder="Select Agents" showSearch optionFilterProp="children"
+                                            onChange={(value)=>this.handleChangeOption('agents',value)} >
+                                        {this.state.agentsOption.map((item) => <Select.Option value={item.id}>
+                                            {item.user.first_name}</Select.Option>)}
+                                    </Select>
+
+
+                                </Col>
+                            </>: <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
+
+                        </>}
+
                     </Col>
                 </Row>
             </Card>
