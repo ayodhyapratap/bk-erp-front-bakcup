@@ -11,7 +11,7 @@ export default class AgentTreeReport extends React.Component {
         super(props);
         this.state = {
             agentData:{},
-            agentTreeData:[],
+            agentTreeData:{},
         }
         this.loadAgentTree = this.loadAgentTree.bind(this);
     }
@@ -77,12 +77,12 @@ export default class AgentTreeReport extends React.Component {
     let that =this;
         return(
             <div>
-                {!this.state.agentTreeData ?
+                {/*{[that.state.agentTreeData].length >0 ?*/}
                     <Card>
                         <h2>Agent Tree</h2>
                         <OrgChart tree={this.state.agentTreeData}  NodeComponent={MyNodeComponent}/>
                     </Card>
-                : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+                {/*: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}*/}
 
             </div>
         )
