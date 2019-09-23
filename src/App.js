@@ -70,7 +70,7 @@ class App extends Component {
                 <Route exact path="/password-reset/:token"
                        render={(route) => <Auth {...route} {...this.state} login={this.login}/>}/>
                 <Route render={(route) => (this.state.user ?
-                    <AppBase {...this.state} {...route} logout={this.logout}/> :
+                    <AppBase {...this.state} {...route} {...this.props} logout={this.logout}/> :
                     <Auth {...this.state} login={this.login}/>)}/>
             </Switch>
         </Layout>
