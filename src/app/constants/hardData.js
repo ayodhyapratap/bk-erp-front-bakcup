@@ -398,3 +398,7 @@ export const SOURCE_PLATFORM=[
     {label: "TV" ,value: "TV"},
     {label:'Street Banners' ,value:"STREET"},
 ];
+
+export const OUTER_KEYS_HOTKEYS = 'alt+c ,alt+p, alt+r, alt+s, alt+b ,alt+w';
+
+export const INNER_KEYS_HOTKEYS = 'alt+f ,alt+a, alt+o, alt+m, alt+l ,p';
