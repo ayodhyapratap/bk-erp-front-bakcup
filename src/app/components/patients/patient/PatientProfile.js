@@ -38,7 +38,6 @@ class PatientProfile extends React.Component {
     }
 
     formChange = (value) => {
-        console.log("hi", value);
         this.setState({
             add: value,
         });

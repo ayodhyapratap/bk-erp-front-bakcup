@@ -204,7 +204,6 @@ class Appointment extends React.Component {
 
     render() {
         let that = this;
-        console.log("props", this.props)
         const procedures = {}
         if (this.state.procedure_category) {
             this.state.procedure_category.forEach(function (procedure) {

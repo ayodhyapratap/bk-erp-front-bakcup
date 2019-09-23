@@ -181,7 +181,7 @@ class AppBase extends React.Component {
                 <Route>
                     <Layout>
                         <AppSider toggleSider={this.toggleSider} {...this.state}
-                                  key={that.state.active_practiceId}/>
+                                  key={that.state.active_practiceId} {...this.props}/>
                         <Layout>
                             <AppHeader {...this.props}
                                        {...this.state}
