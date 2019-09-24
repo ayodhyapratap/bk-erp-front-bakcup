@@ -80,7 +80,13 @@ class PatientLedgers extends React.Component {
                 loadingLedger: false
             })
         }
-        getAPI(interpolate(PATIENT_LEDGER, [that.props.currentPatient.id]), successFn, errorFn);
+        let apiParams = {
+            practice_id: this.props.active_practiceId
+        };
+        if (this.props.showAllClinic && this.props.match.params.id) {
+            delete (apiParams.practice)
+        }
+        getAPI(interpolate(PATIENT_LEDGER, [that.props.currentPatient.id]), successFn, errorFn, apiParams);
     }
 
     ledgerCompleteToggle(id, option) {

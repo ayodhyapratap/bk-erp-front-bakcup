@@ -24,7 +24,7 @@ import {
     PATIENTS_LIST,
     COUNTRY,
     STATE,
-    CITY,
+    CITY, SOURCE,
 } from "../../../constants/api";
 import {
     displayMessage,
@@ -46,7 +46,6 @@ import {BLOOD_GROUPS, PATIENT_AGE, SOURCE_PLATFORM} from "../../../constants/har
 const {Option} = Select;
 
 
-
 class EditPatientDetails extends React.Component {
     constructor(props) {
         super(props);
@@ -60,11 +59,12 @@ class EditPatientDetails extends React.Component {
             countrylist: [],
             stateList: [],
             cityList: [],
+            sourceList: [],
             country: this.props.currentPatient && this.props.currentPatient.country_data ? this.props.currentPatient.country : null,
             state: this.props.currentPatient && this.props.currentPatient.state_data ? this.props.currentPatient.state : null,
-            selectedFormType:'DOB',
-            file_count:10,
-            file_enable:true,
+            selectedFormType: 'DOB',
+            file_count: 10,
+            file_enable: true,
             // patientDetails:{},
 
         }
@@ -73,6 +73,7 @@ class EditPatientDetails extends React.Component {
         this.getCountry = this.getCountry.bind(this);
         this.getState = this.getState.bind(this);
         this.getCity = this.getCity.bind(this);
+        this.getSources = this.getSources.bind(this);
         this.loadPatientData = this.loadPatientData.bind(this);
     }
 
@@ -80,6 +81,7 @@ class EditPatientDetails extends React.Component {
         this.loadMedicalHistory();
         this.getPatientGroup();
         this.getPatientMembership();
+        this.getSources();
         this.getCountry();
         if (this.state.country) {
             this.getState();
@@ -87,7 +89,7 @@ class EditPatientDetails extends React.Component {
         if (this.state.state) {
             this.getCity();
         }
-        if(this.props.currentPatient){
+        if (this.props.currentPatient) {
             this.loadPatientData(this.props.currentPatient.id);
         }
 
@@ -104,6 +106,19 @@ class EditPatientDetails extends React.Component {
 
         };
         getAPI(COUNTRY, successFn, errorFun);
+    }
+
+    getSources() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                sourceList: data,
+            })
+        };
+        let errorFun = function () {
+
+        };
+        getAPI(SOURCE, successFn, errorFun);
     }
 
     getState() {
@@ -166,13 +181,13 @@ class EditPatientDetails extends React.Component {
         getAPI(interpolate(MEDICAL_HISTORY, [this.props.active_practiceId]), successFn, errorFn);
 
     };
-    
-    loadPatientData(patient){
 
-        let that=this;
-        let successFn=function (data) {
+    loadPatientData(patient) {
+
+        let that = this;
+        let successFn = function (data) {
             that.setState({
-                patientDetails:data,
+                patientDetails: data,
                 loading: false
             })
         }
@@ -220,9 +235,9 @@ class EditPatientDetails extends React.Component {
             if (!err) {
                 let reqData = {
                     ...values,
-                    file_enable:!!values.file_enable,
-                    file_count:values.file_count?values.file_count:this.state.file_count,
-                    on_dialysis:that.state.on_dialysis?true:false,
+                    file_enable: !!values.file_enable,
+                    file_count: values.file_count ? values.file_count : this.state.file_count,
+                    on_dialysis: that.state.on_dialysis ? true : false,
                     medical_history: values.medical_history,
                     patient_group: values.patient_group,
                     user: {
@@ -233,16 +248,16 @@ class EditPatientDetails extends React.Component {
 
 
                 };
-                if (values.anniversary){
-                    reqData.anniversary=moment(values.anniversary).format("YYYY-MM-DD");
+                if (values.anniversary) {
+                    reqData.anniversary = moment(values.anniversary).format("YYYY-MM-DD");
                 }
 
-                if (values.dob){
-                    reqData.dob= moment(values.dob).format("YYYY-MM-DD");
+                if (values.dob) {
+                    reqData.dob = moment(values.dob).format("YYYY-MM-DD");
                 }
-                if (values.age){
-                    reqData.is_age=true;
-                    reqData.dob=moment().subtract(values.age,'years').format("YYYY-MM-DD");
+                if (values.age) {
+                    reqData.is_age = true;
+                    reqData.dob = moment().subtract(values.age, 'years').format("YYYY-MM-DD");
                 }
                 let key = 'image';
                 if (reqData[key] && reqData[key].file && reqData[key].file.response)
@@ -323,7 +338,7 @@ class EditPatientDetails extends React.Component {
             [type]: value
         })
     }
-    onChangeCheckbox=(e)=>{
+    onChangeCheckbox = (e) => {
         this.setState({
             on_dialysis: !this.state.on_dialysis,
         });
@@ -341,7 +356,7 @@ class EditPatientDetails extends React.Component {
     // }
     render() {
         let that = this;
-        console.log("sate",that.state)
+        console.log("sate", that.state)
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = ({
             labelCol: {span: 6},
@@ -434,22 +449,36 @@ class EditPatientDetails extends React.Component {
 
                     <Form.Item label="Patient Id" {...formItemLayout}>
                         {getFieldDecorator('custom_id', {
-                            initialValue: this.state.patientDetails ? this.state.patientDetails.custom_id: ''
+                            initialValue: this.state.patientDetails ? this.state.patientDetails.custom_id : ''
                         })
                         (<Input placeholder="Patient Id"/>)
                         }
                     </Form.Item>
 
-                    <Form.Item label={"Source"} {...formItemLayout}>
-                        {getFieldDecorator('source',{initialValue: this.state.patientDetails ? this.state.patientDetails.source : ' '})
+
+                    {this.state.source && this.state.source == INPUT_FIELD ?
+                        <Form.Item key={'source_extra'} label={"Source"}  {...formItemLayout}>
+                            {getFieldDecorator("source_extra", {
+                                initialValue: '',
+
+                            })(
+                                <Input placeholder="Source"/>
+                            )}
+                            <a onClick={() => that.setFormParams('source', SELECT_FIELD)}>Choose
+                                Source</a>
+                        </Form.Item>
+                        :  <Form.Item label={"Source"} {...formItemLayout}>
+                        {getFieldDecorator('source', {initialValue: this.state.patientDetails ? this.state.patientDetails.source : null})
                         (<Select placeholder={"Select Source"} showSearch optionFilterProp="children">
-                            {SOURCE_PLATFORM.map((option)=><Select.Option value={option.value}>
-                                {option.label}
+                            {this.state.sourceList.map((option) => <Select.Option value={option.id}>
+                                {option.name}
                             </Select.Option>)}
                         </Select>)
                         }
+                        <a onClick={() => that.setFormParams('source', INPUT_FIELD)}>Enter New
+                                Source</a>
                     </Form.Item>
-
+                    }
                     {this.state.patientDetails ? null :
                         <Form.Item label="Referral Code" {...formItemLayout}>
                             {getFieldDecorator('referal', {initialValue: this.state.patientDetails ? this.state.patientDetails.user.referer_code : ''})
@@ -480,20 +509,20 @@ class EditPatientDetails extends React.Component {
                             {PATIENT_AGE.map((item) => <Radio value={item.value}>{item.label}</Radio>)}
                         </Radio.Group>
                     </Form.Item>
-                    {this.state.selectedFormType =='DOB'?
+                    {this.state.selectedFormType == 'DOB' ?
                         <Form.Item label="DOB" {...formItemLayout}>
                             {getFieldDecorator('dob', {initialValue: this.state.patientDetails && this.state.patientDetails.dob ? moment(this.state.patientDetails.dob) : ''})
                             (<DatePicker/>)
                             }
                         </Form.Item>
-                        :<Form.Item label="Age" {...formItemLayout}>
-                            {getFieldDecorator('age', {initialValue: this.state.patientDetails && this.state.patientDetails.dob ? moment().diff(this.state.patientDetails.dob,'years') : null})
+                        : <Form.Item label="Age" {...formItemLayout}>
+                            {getFieldDecorator('age', {initialValue: this.state.patientDetails && this.state.patientDetails.dob ? moment().diff(this.state.patientDetails.dob, 'years') : null})
                             (<InputNumber min={0} max={120} placeholder="Patient Age"/>)
                             }
                         </Form.Item>}
 
                     <Form.Item label="Anniversary" {...formItemLayout}>
-                        {getFieldDecorator('anniversary', {initialValue: this.state.patientDetails && this.state.patientDetails.anniversary ?moment(this.state.patientDetails.anniversary) : null})
+                        {getFieldDecorator('anniversary', {initialValue: this.state.patientDetails && this.state.patientDetails.anniversary ? moment(this.state.patientDetails.anniversary) : null})
                         (<DatePicker/>)
                         }
                     </Form.Item>
@@ -505,7 +534,7 @@ class EditPatientDetails extends React.Component {
                     {/*</Form.Item>*/}
                     <Form.Item label="Blood Group" {...formItemLayout}>
                         {getFieldDecorator("blood_group", {initialValue: this.state.patientDetails ? this.state.patientDetails.blood_group : ''})
-                        (<Select placeholder="Blood Group" >
+                        (<Select placeholder="Blood Group">
                             {BLOOD_GROUPS.map((option) => <Select.Option
                                 value={option.value}>{option.name}</Select.Option>)}
                         </Select>)
@@ -566,7 +595,9 @@ class EditPatientDetails extends React.Component {
                             {getFieldDecorator("country", {
                                 initialValue: this.props.currentPatient && this.props.currentPatient.country_data ? this.props.currentPatient.country_data.id : '',
                             })(
-                                <Select  placeholder="Select Country" onChange={(value) => this.onChangeValue("country", value)} showSearch optionFilterProp="children">
+                                <Select placeholder="Select Country"
+                                        onChange={(value) => this.onChangeValue("country", value)} showSearch
+                                        optionFilterProp="children">
 
                                     {this.state.countrylist.map((option) => <Select.Option
                                         value={option.id}>{option.name}</Select.Option>)}
@@ -593,7 +624,9 @@ class EditPatientDetails extends React.Component {
                             {getFieldDecorator("state", {
                                 initialValue: this.props.currentPatient && this.props.currentPatient.state_data ? this.props.currentPatient.state_data.id : '',
                             })(
-                                <Select placeholder="Select State" onChange={(value) => this.onChangeValue("state", value)} showSearch optionFilterProp="children">
+                                <Select placeholder="Select State"
+                                        onChange={(value) => this.onChangeValue("state", value)} showSearch
+                                        optionFilterProp="children">
                                     {this.state.stateList.map((option) => <Select.Option
                                         value={option.id}>{option.name}</Select.Option>)}
                                 </Select>
@@ -667,12 +700,12 @@ class EditPatientDetails extends React.Component {
 
                     <Form.Item label="On Dialysis" {...formItemLayout}>
                         {getFieldDecorator('on_dialysis', {initialValue: this.props.currentPatient ? this.props.currentPatient.on_dialysis : false})
-                            (<Checkbox onChange={(e) => this.onChangeCheckbox(e)} style={{paddingTop:'4px'}} />)
+                        (<Checkbox onChange={(e) => this.onChangeCheckbox(e)} style={{paddingTop: '4px'}}/>)
                         }
                     </Form.Item>
                     <Form.Item label="Allow File Upload" {...formItemLayout}>
-                        {getFieldDecorator('file_enable', {initialValue: this.props.currentPatient ? this.props.currentPatient.file_enable :true})
-                        (<Checkbox  style={{paddingTop:'4px'}}
+                        {getFieldDecorator('file_enable', {initialValue: this.props.currentPatient ? this.props.currentPatient.file_enable : true})
+                        (<Checkbox style={{paddingTop: '4px'}}
                                    defaultChecked={true}/>)
                         }
                     </Form.Item>

@@ -539,7 +539,7 @@ function InvoiceCard(invoice, that) {
                     Edit
                 </Menu.Item>
                 <Menu.Item key="5" onClick={() => that.returnModelOpen(invoice)}
-                          disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>
+                          disabled={(invoice.practice != that.props.active_practiceId) || invoice.is_cancelled}>
                    <Icon type="redo"/>
                    Return
                 </Menu.Item>

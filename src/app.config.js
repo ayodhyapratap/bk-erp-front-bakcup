@@ -5,7 +5,7 @@
 const CONFIG = {
     backendBaseUrl: '',
     imageBaseUrl : '/media',
-    prodDomain : "clinic.bkarogyam.com",
+    prodDomain : ["clinic.bkarogyam.com","bk-erp.plutonic.co.in"],
     crashHandling : {
         slack : {
             sendOnProduction : true,

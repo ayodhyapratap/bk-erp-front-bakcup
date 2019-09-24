@@ -44,7 +44,7 @@ export const logErrorToSlackChannel = function (error, errorInfo) {
     let errorFn = function () {
         console.log("The above error notifications failed");
     }
-    if ((CONFIG.prodDomain && CONFIG.crashHandling.slack.sendOnProduction && CONFIG.prodDomain == window.location.hostname) || CONFIG.crashHandling.slack.sendOnDevelopment) {
+    if ((CONFIG.prodDomain && CONFIG.crashHandling.slack.sendOnProduction && CONFIG.prodDomain.indexOf(window.location.hostname) > -1) || CONFIG.crashHandling.slack.sendOnDevelopment) {
         postOuterAPI(CONFIG.crashHandling.slack.webHookUrl, crashData, successFn, errorFn, {
             'Content-type': 'application/x-www-form-urlencoded'
         });

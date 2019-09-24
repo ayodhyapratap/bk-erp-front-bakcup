@@ -122,7 +122,7 @@ export const getAPI = function (URL, successFn, errorFn, params = {}) {
         },
         params: params
     }).then(function (response) {
-        console.log(response);
+        // console.log(response);
         let data = response.data;
         successFn(data);
         if (data.detail)
@@ -142,7 +142,7 @@ export const deleteAPI = function (URL, successFn, errorFn) {
             Authorization: 'Token ' + getAuthToken()
         }
     }).then(function (response) {
-        console.log(response);
+        // console.log(response);
         let data = response.data;
         successFn(data);
         if (data.detail)
@@ -157,7 +157,7 @@ export const deleteAPI = function (URL, successFn, errorFn) {
 export const handleErrorResponse = function (error) {
     let response = error.response;
     if (response) {
-        console.info("Error Response Recieved", response);
+        console.info("Error Response Received", response);
         let status = response.status;
         if (status == 400) {
             if (response.data.detail) {

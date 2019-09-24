@@ -23,10 +23,6 @@ class App extends Component {
         this.logout = this.logout.bind(this);
     }
 
-    componentDidMount() {
-        console.log(window.location.hostname);
-    }
-
     login(data, withOtp = true) {
         let that = this;
         let successFn = function () {
@@ -79,3 +75,4 @@ class App extends Component {
 }
 
 export default App;
+
