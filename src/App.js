@@ -5,6 +5,7 @@ import {loggedInUser, logInUser, logInUserWithOtp, logOutUser,} from "./app/util
 import AppBase from "./app/components/core/AppBase";
 import Auth from "./app/components/auth/Auth";
 import ReactGA from 'react-ga';
+import CONFIG from "./app.config";
 
 class App extends Component {
     constructor(props) {
@@ -14,7 +15,7 @@ class App extends Component {
         this.state = {
             user: loggedInUser(),
             redirect: false,
-            production: (window.location.hostname == 'clinic.bkarogyam.com')
+            production: (window.location.hostname == CONFIG.prodDomain)
         };
         // momenttz.tz.setDefault('Asia/Kolkata');
 
