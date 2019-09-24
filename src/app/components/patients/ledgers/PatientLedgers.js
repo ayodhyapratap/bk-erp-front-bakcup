@@ -157,9 +157,9 @@ class PatientLedgers extends React.Component {
             <Card
                 title={this.state.currentPatient ? this.state.currentPatient.name + " Payment Ledger" : "Patient Ledgers"}
                 extra={<Button.Group>
-                    <Button type="primary">
-                        <Icon type="printer"/>Print billing summary
-                    </Button>
+                    {/*<Button type="primary">*/}
+                    {/*    <Icon type="printer"/>Print billing summary*/}
+                    {/*</Button>*/}
                     <Link to={"/patient/" + this.props.match.params.id + "/billing/payments"}> <Button
                         type="primary">
                         <Icon type="plus"/>&nbsp;Add Payment</Button>
@@ -170,13 +170,13 @@ class PatientLedgers extends React.Component {
                         <Icon type="plus"/>&nbsp;Add Invoice</Button>
                     </Link>&nbsp;
 
-                    <Button type="primary" onClick={() => this.loadPDF()}>
-                        <Icon type="printer"/>&nbsp;Print
-                    </Button>&nbsp;
+                    {/*<Button type="primary" onClick={() => this.loadPDF()}>*/}
+                    {/*    <Icon type="printer"/>&nbsp;Print*/}
+                    {/*</Button>&nbsp;*/}
 
-                    <Button type="primary" onClick={this.submitLedgers}>
-                        <Icon type="save"/>Send Payment Reminder
-                    </Button>
+                    {/*<Button type="primary" onClick={this.submitLedgers}>*/}
+                    {/*    <Icon type="save"/>Send Payment Reminder*/}
+                    {/*</Button>*/}
                 </Button.Group>}>
                 <Table loading={this.state.loadingLedger} columns={columns}
                        dataSource={this.state.ledger} pagination={false}/>

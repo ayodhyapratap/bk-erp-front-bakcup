@@ -176,10 +176,14 @@ class PatientInvoices extends React.Component {
 
     returnModelOpen(record) {
         let that = this;
+
         that.setState({
             returnIncoiceVisible: true,
             editInvoice: record,
+        },function(){
+            that.returnInvoiceData(that.state.editInvoice)
         });
+
         let reqData = {
             practice: this.props.active_practiceId,
             type: 'Invoice' + ':' + record.invoice_id + ' ' + 'Return'
@@ -194,7 +198,7 @@ class PatientInvoices extends React.Component {
         let errorFn = function () {
 
         };
-       postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+      // postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
     }
 
     returnInvoiceClose = () => {
@@ -205,6 +209,7 @@ class PatientInvoices extends React.Component {
 
     handleSubmitReturnInvoice = (e) => {
         let that = this;
+
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {

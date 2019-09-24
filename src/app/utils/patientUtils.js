@@ -6,11 +6,13 @@ export const patientInvoiceDetailsInString = function (invoiceObj) {
         invoiceDetailsString += invoiceObj.type + ", ";
     if (invoiceObj.procedure)
         invoiceObj.procedure.forEach(function (proc) {
-            invoiceDetailsString += proc.procedure_data.name + ", "
+            if (proc.procedure_data)
+                invoiceDetailsString += proc.procedure_data.name + ", "
         });
     if (invoiceObj.inventory)
         invoiceObj.inventory.forEach(function (proc) {
-            invoiceDetailsString += proc.inventory_item_data.name + ", "
+            if (proc.inventory_item_data)
+                invoiceDetailsString += proc.inventory_item_data.name + ", "
         });
     if (invoiceObj.reservation)
         invoiceDetailsString += invoiceObj.type + ",";
@@ -37,7 +39,8 @@ export const patientReturnInvoiceDetailsInString = function (payObj) {
     let paymentDetailsString = '';
     if (payObj.procedure)
         payObj.procedure.forEach(function (proc) {
-            paymentDetailsString += proc.procedure_data.name + ", "
+            if (proc.procedure_data)
+                paymentDetailsString += proc.procedure_data.name + ", "
         });
     if (payObj.inventory)
         payObj.inventory.forEach(function (proc) {
