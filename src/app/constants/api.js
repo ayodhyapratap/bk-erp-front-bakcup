@@ -50,6 +50,7 @@ export const MEDICAL_HISTORY = 'patients/history/?id=%s'
 // export const PATIENT_MEDICAL_HISTORY = 'patients/history/?id=%s';
 export const PATIENT_FILES = 'patients/files/';
 export const ALL_PATIENT_FILES = 'patients/files/';
+export const PATIENT_LEDGER = 'patients/%s/ledger/';
 export const EXPENSE_TYPE = 'clinics/%s/expense_type/';
 export const DRUG_CATALOG = 'clinics/%s/drugcatalog/';
 export const SINGLE_DRUG_CATALOG = 'clinics/%s/drugcatalog/?id=%s';
