@@ -15,7 +15,7 @@ class App extends Component {
         this.state = {
             user: loggedInUser(),
             redirect: false,
-            production: (window.location.hostname == CONFIG.prodDomain)
+            production: (window.location.hostname == "clinic.bkarogyam.com")
         };
         // momenttz.tz.setDefault('Asia/Kolkata');
 
