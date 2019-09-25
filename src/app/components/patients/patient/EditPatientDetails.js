@@ -65,7 +65,8 @@ class EditPatientDetails extends React.Component {
             selectedFormType: 'DOB',
             file_count: 10,
             file_enable: true,
-            relation_text:true,
+            relation_text: true,
+            loading: false
             // patientDetails:{},
 
         }
@@ -268,16 +269,23 @@ class EditPatientDetails extends React.Component {
                 delete reqData.referer_code;
                 delete reqData.mobile;
                 delete reqData.age;
-                that.setState({});
+                that.setState({
+                    loading: true
+                });
                 let successFn = function (data) {
                     displayMessage("Patient Saved Successfully!!");
+                    that.setState({
+                        loading: false
+                    });
                     if (that.props.currentPatient)
                         that.props.history.push('/patient/' + that.props.currentPatient.id + '/profile')
                     else
                         that.props.history.push('/patients/profile')
                 }
                 let errorFn = function () {
-                    that.setState({})
+                    that.setState({
+                        loading: false
+                    })
                 }
                 reqData = removeEmpty(reqData);
 
@@ -351,14 +359,14 @@ class EditPatientDetails extends React.Component {
         })
 
     };
-    handleRelation=(e)=>{
-        if(e){
+    handleRelation = (e) => {
+        if (e) {
             this.setState({
-                relation_text:false,
+                relation_text: false,
             });
-        }else {
+        } else {
             this.setState({
-                relation_text:true,
+                relation_text: true,
             });
         }
 
@@ -482,17 +490,17 @@ class EditPatientDetails extends React.Component {
                             <a onClick={() => that.setFormParams('source', SELECT_FIELD)}>Choose
                                 Source</a>
                         </Form.Item>
-                        :  <Form.Item label={"Source"} {...formItemLayout}>
-                        {getFieldDecorator('source', {initialValue: this.state.patientDetails ? this.state.patientDetails.source : null})
-                        (<Select placeholder={"Select Source"} showSearch optionFilterProp="children">
-                            {this.state.sourceList.map((option) => <Select.Option value={option.id}>
-                                {option.name}
-                            </Select.Option>)}
-                        </Select>)
-                        }
-                        <a onClick={() => that.setFormParams('source', INPUT_FIELD)}>Enter New
+                        : <Form.Item label={"Source"} {...formItemLayout}>
+                            {getFieldDecorator('source', {initialValue: this.state.patientDetails ? this.state.patientDetails.source : null})
+                            (<Select placeholder={"Select Source"} showSearch optionFilterProp="children">
+                                {this.state.sourceList.map((option) => <Select.Option value={option.id}>
+                                    {option.name}
+                                </Select.Option>)}
+                            </Select>)
+                            }
+                            <a onClick={() => that.setFormParams('source', INPUT_FIELD)}>Enter New
                                 Source</a>
-                    </Form.Item>
+                        </Form.Item>
                     }
                     {this.state.patientDetails ? null :
                         <Form.Item label="Referral Code" {...formItemLayout}>
@@ -563,19 +571,19 @@ class EditPatientDetails extends React.Component {
                     {/*</Form.Item>*/}
 
                     <Form.Item label="Family" {...formItemLayout}>
-                        <Form.Item style={{ display: 'inline-block',width: 'calc(30% - 12px)'}}>
-                            {getFieldDecorator("family_relation", {initialValue: this.state.patientDetails && this.state.patientDetails.family_relation  !=null? this.state.patientDetails.family_relation : RELATION})
-                            (<Select onChange={(value)=>this.handleRelation(value)} >
+                        <Form.Item style={{display: 'inline-block', width: 'calc(30% - 12px)'}}>
+                            {getFieldDecorator("family_relation", {initialValue: this.state.patientDetails && this.state.patientDetails.family_relation != null ? this.state.patientDetails.family_relation : RELATION})
+                            (<Select onChange={(value) => this.handleRelation(value)}>
                                 <Select.Option value={''}>{RELATION}</Select.Option>
                                 {FAMILY_GROUPS.map((option) => <Select.Option
                                     value={option.value}>{option.name}</Select.Option>)}
                             </Select>)
                             }
                         </Form.Item>
-                        <span style={{ display: 'inline-block', width: '14px', textAlign: 'center' }} />
-                        <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
-                            {getFieldDecorator("attendee",{initialValue: this.state.patientDetails ? this.state.patientDetails.attendee : ''})
-                                (<Input disabled={this.state.relation_text}/>)
+                        <span style={{display: 'inline-block', width: '14px', textAlign: 'center'}}/>
+                        <Form.Item style={{display: 'inline-block', width: 'calc(50% - 12px)'}}>
+                            {getFieldDecorator("attendee", {initialValue: this.state.patientDetails ? this.state.patientDetails.attendee : ''})
+                            (<Input disabled={this.state.relation_text}/>)
                             }
                         </Form.Item>
                     </Form.Item>
@@ -756,7 +764,7 @@ class EditPatientDetails extends React.Component {
                         }
                     </Form.Item>
                     <Form.Item>
-                        <Button style={{margin: 5}} type="primary" htmlType="submit">
+                        <Button style={{margin: 5}} type="primary" htmlType="submit" loading={this.state.loading}>
                             Submit
                         </Button>
                         {that.props.history ?

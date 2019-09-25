@@ -17,7 +17,7 @@ import {
     Table,
     Tabs,
     Tag,
-    Checkbox
+    Checkbox, Divider
 } from "antd";
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {DRUG, INVENTORY, PRESCRIPTIONS, PROCEDURES} from "../../../constants/hardData";
@@ -46,6 +46,7 @@ class AddReturnInvoice extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            editInvoice: this.props.editInvoice,
             classType: props.type,
             tableFormValues: [],
             maxQuantityforConsume: {},
@@ -58,8 +59,8 @@ class AddReturnInvoice extends React.Component {
             saveLoading: false,
             qrValue: '',
             searchItem: '',
-            return_with_tax:false
-
+            return_with_tax: false,
+            returnCashAvailable: 0
         }
 
     }
@@ -358,8 +359,8 @@ class AddReturnInvoice extends React.Component {
                     staff: this.props.editInvoice.staff_data ? this.props.editInvoice.staff_data.id : null,
                     prescription: that.state.selectedPrescriptions,
                     date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
-                    return_with_tax:this.state.return_with_tax?true:'',
-                    cash_return:values.cash_return,
+                    return_with_tax: this.state.return_with_tax ? true : '',
+                    cash_return: values.cash_return,
 
                 };
                 that.state.tableFormValues.forEach(function (item) {
@@ -428,7 +429,7 @@ class AddReturnInvoice extends React.Component {
                         saveLoading: false
                     });
                 }
-                
+
                 postAPI(INVOICE_RETURN_API, reqData, successFn, errorFn);
 
             }
@@ -537,11 +538,44 @@ class AddReturnInvoice extends React.Component {
 
     }
 
-    onChangeHandle=(e)=>{
-        let that=this;
+    onChangeHandle = (e) => {
+        let that = this;
         this.setState({
-            return_with_tax:e.target.checked
+            return_with_tax: e.target.checked
+        },function(){
+            that.calculateReturnCashAvailable();
         })
+    }
+
+    calculateReturnCashAvailable = () => {
+        let that = this;
+        let totalAmountPaid = this.state.editInvoice.payments.reduce((a, b) => a + b.pay_amount, 0);
+        let totalInvoiceAmount = this.state.editInvoice.total;
+        let pendingPayment = totalInvoiceAmount - totalAmountPaid;
+        let worthOfReturningItems = 0;
+        const {getFieldsValue} = this.props.form;
+        setTimeout(function () {
+            let values = getFieldsValue();
+            let taxAllowed = that.state.return_with_tax;
+            that.state.tableFormValues.forEach(function (item) {
+                let units = values.unit[item._id];
+                if (item.item_type == INVENTORY) {
+                    worthOfReturningItems += units * item.unit_cost;
+                    worthOfReturningItems += (taxAllowed ? (item.tax_value / item.unit) * units : null);
+                } else if (item.item_type == PRESCRIPTIONS) {
+                    worthOfReturningItems += units * item.unit_cost;
+                    worthOfReturningItems += (taxAllowed ? (item.tax_value / item.unit) * units : null);
+                } else if (item.item_type == PROCEDURES) {
+                    worthOfReturningItems += units * item.unit_cost;
+                    worthOfReturningItems += (taxAllowed ? (item.tax_value / item.unit) * units : null);
+                }
+            });
+            that.setState({
+                returnCashAvailable: (worthOfReturningItems > pendingPayment ? worthOfReturningItems - pendingPayment : 0).toFixed(2)
+            });
+        }, 500);
+
+
     }
 
     render() {
@@ -652,7 +686,7 @@ class AddReturnInvoice extends React.Component {
             }
         }];
         consumeRow = consumeRow.concat([{
-            title: 'Unit',
+            title: 'Returning Unit',
             key: 'unit',
             width: 100,
             dataIndex: 'unit',
@@ -665,6 +699,7 @@ class AddReturnInvoice extends React.Component {
                             initialValue: 0,
                         })(
                             <InputNumber max={(record.unit)}
+                                         onChange={this.calculateReturnCashAvailable}
                                          min={0}
                                          placeholder="units" size={'small'}
                                          disabled={!(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number])}/>
@@ -677,7 +712,8 @@ class AddReturnInvoice extends React.Component {
                             initialValue: 0,
                             validateTrigger: ['onChange', 'onBlur'],
                         })(
-                            <InputNumber min={0} max={record.unit} placeholder="unit" size={'small'}/>
+                            <InputNumber min={0} max={record.unit} placeholder="unit" size={'small'}
+                                         onChange={this.calculateReturnCashAvailable}/>
                         )}
                     </Form.Item>
             )
@@ -728,68 +764,84 @@ class AddReturnInvoice extends React.Component {
             key: 'total',
             width: 100,
             dataIndex: 'total',
-            render: (item, record) => item ? (record.total / record.unit).toFixed(2) : null
-        },]);
+            render: (item, record) => (record.unit ? (record.total/record.unit).toFixed(2) : record.total.toFixed(2))
+        }]);
 
         return <div>
             <Spin spinning={this.state.saveLoading} tip="Saving Invoice...">
-                <Card
-                    title={this.props.editId ? "Return Invoice (INV " + this.props.editId + ")" : "Add Invoice"}
-                    bodyStyle={{padding: 0}}>
-                    <Row gutter={16}>
-                        <Col span={24}>
-                            <Form onSubmit={this.handleSubmit} layout="inline">
-                                <Table pagination={false}
-                                       bordered={true}
-                                       dataSource={this.state.tableFormValues}
-                                       columns={consumeRow}/>
-                                <Affix offsetBottom={0}>
-                                    <Card>
-                                        <Row gutter={16}>
-                                            <Col span={6}>
-                                                <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
-                                                <DatePicker value={this.state.selectedDate}
-                                                    disabled
-                                                    onChange={(value) => this.selectedDefaultDate(value)}
-                                                    format={"DD-MM-YYYY"}
-                                                    allowClear={false}/>
-                                                <br/>
-                                                <br/>
-                                                <Checkbox onChange={this.onChangeHandle}  defaultChecked={this.state.return_with_tax}>
-                                                    Return With Tax
-                                                </Checkbox>
-                                            </Col>
-                                            <Col span={8}>
-                                                <Form.Item  label={"Returned Cash "}>
-                                                    {getFieldDecorator('cash_return',
-                                                    )
-                                                    (<InputNumber min={0} placeholder={"Cash Returned"}/>)
-                                                    }
+                <Row gutter={16}>
+                    <Col span={20}>
+                        <Card
+                            title={this.props.editId ? "Return Invoice (INV " + this.props.editId + ")" : "Add Invoice"}
+                            bodyStyle={{padding: 0}}>
+                            <Row gutter={16}>
+                                <Col span={24}>
+                                    <Form onSubmit={this.handleSubmit} layout="inline">
+                                        <Table pagination={false}
+                                               bordered={true}
+                                               dataSource={this.state.tableFormValues}
+                                               columns={consumeRow}/>
+                                        <Affix offsetBottom={0}>
+                                            <Card>
+                                                <Row gutter={16}>
+                                                    <Col span={6}>
+                                                        <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
+                                                        <DatePicker value={this.state.selectedDate}
+                                                                    disabled
+                                                                    onChange={(value) => this.selectedDefaultDate(value)}
+                                                                    format={"DD-MM-YYYY"}
+                                                                    allowClear={false}/>
+                                                        <br/>
+                                                        <br/>
+                                                        <Checkbox onChange={this.onChangeHandle}
+                                                                  defaultChecked={this.state.return_with_tax}>
+                                                            Return With Tax
+                                                        </Checkbox>
+                                                    </Col>
+                                                    <Col span={8}>
+                                                        <Form.Item label={"Returned Cash "}>
+                                                            {getFieldDecorator('cash_return',
+                                                            )
+                                                            (<InputNumber min={0} max={this.state.returnCashAvailable}
+                                                                          placeholder={"Cash Returned"}/>)
+                                                            }
+                                                            <span><br/>Max Cash Return Allowed (INR) {this.state.returnCashAvailable}</span>
+                                                        </Form.Item>
+                                                    </Col>
+                                                    <Col span={10}>
+                                                        <Form.Item {...formItemLayoutWithOutLabel}
+                                                                   style={{marginBottom: 0, float: 'right'}}>
+                                                            <Button type="primary" htmlType="submit"
+                                                                    style={{margin: 5}}>Save Return Invoice</Button>
+                                                            {that.props.history ?
+                                                                <Button style={{margin: 5, float: 'right'}}
+                                                                        onClick={() => that.props.history.goBack()}>
+                                                                    Cancel
+                                                                </Button> : null}
+                                                        </Form.Item>
 
-                                                </Form.Item>
-                                            </Col>
-                                            <Col span={10}>
-                                                <Form.Item {...formItemLayoutWithOutLabel}
-                                                        style={{marginBottom: 0, float: 'right'}}>
-                                                    <Button type="primary" htmlType="submit"
-                                                            style={{margin: 5}}>Save Return Invoice</Button>
-                                                    {that.props.history ?
-                                                        <Button style={{margin: 5, float: 'right'}}
-                                                                onClick={() => that.props.history.goBack()}>
-                                                            Cancel
-                                                        </Button> : null}
-                                                </Form.Item>
+                                                    </Col>
+                                                </Row>
 
-                                            </Col>
-                                        </Row>
-                                        
-                                       
-                                    </Card>
-                                </Affix>
-                            </Form>
-                        </Col>
-                    </Row>
-                </Card>
+
+                                            </Card>
+                                        </Affix>
+                                    </Form>
+                                </Col>
+                            </Row>
+                        </Card>
+                    </Col>
+                    <Col span={4}>
+                        <Divider>Payments Done</Divider>
+                        <List dataSource={this.state.editInvoice.payments}
+                              renderItem={payment => <Card title={payment.payment_id} style={{marginBottom: 10}}
+                                                           bodyStyle={{padding: 5}}>
+                                  <p>Paid (INR)<span
+                                      style={{float: 'right', fontWeight: 600}}> {payment.pay_amount.toFixed(2)}</span>
+                                  </p>
+                              </Card>}/>
+                    </Col>
+                </Row>
             </Spin>
         </div>
 
