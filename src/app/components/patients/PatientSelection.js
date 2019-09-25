@@ -314,7 +314,13 @@ function PatientCard(patient) {
                 </Avatar>)}
                   title={patient.user.first_name}
                   description={
-                      <span>{patient.showMobile ? patient.user.mobile : hideMobile(patient.user.mobile)}<br/>{patient.showEmail ? patient.user.email : hideEmail(patient.user.email)}</span>}/>
+                      <span>{patient.showMobile ? patient.user.mobile : hideMobile(patient.user.mobile)}<br/>{patient.showEmail ? patient.user.email : hideEmail(patient.user.email)} <br/>
+                          <span className={"patientIdHighlight"}>#
+                              {patient.custom_id?patient.custom_id:patient.id}
+                              {patient.gender?","+patient.gender.charAt(0).toUpperCase():null}
+                          </span>
+
+                      </span>}/>
         </Card>
     </Col>;
 }

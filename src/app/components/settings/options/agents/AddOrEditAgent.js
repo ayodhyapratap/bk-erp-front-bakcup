@@ -88,7 +88,6 @@ class AddOrEditAgent extends React.Component {
     }
 
     searchPatient(value) {
-        // console.log(e.target.value);
         let that = this;
         let successFn = function (data) {
             if (data) {
@@ -100,7 +99,10 @@ class AddOrEditAgent extends React.Component {
         };
         let errorFn = function () {
         };
-        getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
+        if (value){
+            getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
+        }
+
     }
 
     handleSubmit = (e) => {
@@ -227,9 +229,11 @@ class AddOrEditAgent extends React.Component {
                         <FormItem key="id" value={this.state.userDetails.id} {...formPatients}>
                             <Card bordered={false} style={{background: '#ECECEC'}}>
                                 <Meta
-                                    avatar={<Avatar style={{backgroundColor: '#ffff'}}
-                                                    size={150}
-                                                    src={this.state.userDetails.image ? makeFileURL(this.state.userDetails.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
+                                    avatar={(this.state.userDetails.image ? <Avatar src={makeFileURL(this.state.userDetails.image)}/> :
+                                        <Avatar style={{backgroundColor: '#87d068'}}>
+                                            {this.state.userDetails.user.first_name ? this.state.userDetails.user.first_name.charAt(0) :
+                                                <Icon type="user"/>}
+                                        </Avatar>)}
                                     title={this.state.userDetails.user.first_name}
                                     description={
                                         <span>{that.props.activePracticePermissions.PatientPhoneNumber ? this.state.userDetails.user.mobile : hideMobile(this.state.userDetails.user.mobile)}<br/>
@@ -257,8 +261,11 @@ class AddOrEditAgent extends React.Component {
                                             value={option.id.toString()}>
                                             <List.Item style={{padding: 0}}>
                                                 <List.Item.Meta
-                                                    avatar={<Avatar
-                                                        src={option.image ? makeFileURL(option.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
+                                                    avatar={(option.image ? <Avatar src={makeFileURL(option.image)}/> :
+                                                        <Avatar style={{backgroundColor: '#87d068'}}>
+                                                            {option.user.first_name ? option.user.first_name.charAt(0) :
+                                                                <Icon type="user"/>}
+                                                        </Avatar>)}
                                                     title={option.user.first_name + " (ID:" + (option.custom_id?option.custom_id:option.user.id) + ")"}
                                                     description={that.props.activePracticePermissions.PatientPhoneNumber ? option.user.mobile : hideMobile(option.user.mobile)}
 

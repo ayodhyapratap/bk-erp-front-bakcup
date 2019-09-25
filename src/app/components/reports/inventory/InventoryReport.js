@@ -15,7 +15,9 @@ class InventoryReport extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             nextItemPage:null,
-            supplierList: []
+            supplierList: [],
+            inventory:true,
+            invoice:true,
         }
         this.loadBillSupplier = this.loadBillSupplier.bind(this);
         this.loadSupplierList = this.loadSupplierList.bind(this);
@@ -70,14 +72,18 @@ class InventoryReport extends React.Component {
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD')
         }
-        if(that.state.bill_number)
-        apiParams.bill_number = that.state.bill_number
-        if(that.state.supplier)
-        apiParams.supplier = that.state.supplier
-        if(that.state.invoice)
-        apiParams.invoice = 1
-        if(that.state.inventory)
-        apiParams.inventory = 1
+        if(that.state.bill_number) {
+            apiParams.bill_number = that.state.bill_number;
+        }
+        if(that.state.supplier) {
+            apiParams.supplier = that.state.supplier.toString();
+        }
+        if(that.state.invoice) {
+            apiParams.invoice = 1;
+        }
+        if(that.state.inventory){
+            apiParams.inventory = 1;
+        }
         getAPI(BILL_SUPPLIER, successFn, errorFn,apiParams);
     }
    
@@ -108,10 +114,11 @@ class InventoryReport extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
+            console.log(values);
             if (!err) {
                 that.setState({
                     bill_number:values.bill_number,
-                    supplier:values.supplier.toString(),
+                    supplier:values.supplier,
                     inventory:values.inventory,
                     invoice:values.invoice
                 },function(){
@@ -119,7 +126,13 @@ class InventoryReport extends React.Component {
                 })
             }
         })
-    }
+    };
+
+    onChangeCheckbox=(type ,value)=>{
+        this.setState({
+            [type]: !value,
+        });
+    };
     render() {
         let that = this;
         const {getFieldDecorator} = this.props.form;
@@ -143,14 +156,16 @@ class InventoryReport extends React.Component {
                 extra={<div>
                     <Form layout="inline" onSubmit={this.handleSubmit}>
                     <Form.Item label="Invoice">
-                        {getFieldDecorator('invoice', {initialValue:true
-                        })(<Checkbox/>
+                        {getFieldDecorator('invoice', {valuePropName: "checked",
+                            initialValue: this.state.invoice
+                        })(<Checkbox  onChange={(value)=>this.onChangeCheckbox('invoice',value)}/>
                             )
                         }
                     </Form.Item>
                     <Form.Item label="Inventory">
-                        {getFieldDecorator('inventory', {
-                        })(<Checkbox/>
+                        {getFieldDecorator('inventory', {valuePropName: "checked",
+                            initialValue: this.state.inventory
+                        })(<Checkbox onChange={(value)=>this.onChangeCheckbox('inventory',value)} />
                             )
                         }
                     </Form.Item>

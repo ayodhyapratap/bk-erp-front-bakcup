@@ -101,7 +101,12 @@ export default class EventPatientPopover extends React.Component {
                 {this.state.appointment ? <div>
                         <Row>
                             <Col span={8}>
-                                <Avatar src={this.state.appointment.patient.image} size={80}/>
+                                {this.state.appointment.patient.image?<Avatar src={this.state.appointment.patient.image} size={80}/>:
+                                    <Avatar style={{backgroundColor: '#87d068'}}>
+                                        {this.state.appointment.patient.user.first_name ? this.state.appointment.patient.user.first_name.charAt(0) :
+                                            <Icon type="user"/>}
+                                    </Avatar>
+                                }
                             </Col>
                             <Col span={16}>
                                 <Link to={"/patient/" + this.state.appointment.patient.id + "/profile"}>

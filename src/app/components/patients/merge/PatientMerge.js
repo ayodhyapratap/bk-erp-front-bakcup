@@ -1,6 +1,6 @@
 import React from "react";
 import {Row, Alert, Card, Col, AutoComplete, List, Avatar, Button, Icon, Spin} from 'antd';
-import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
+import {displayMessage, getAPI, interpolate, makeFileURL, postAPI} from "../../../utils/common";
 import {MERGE_PATIENTS, PATIENT_PROFILE, SEARCH_PATIENT} from "../../../constants/api";
 import {ERROR_MSG_TYPE, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 
@@ -25,7 +25,7 @@ export default class PatientMerge extends React.Component {
         let successFn = function (data) {
             if (data) {
                 that.setState({
-                    patientListData: data,
+                    patientListData: data.results,
 
                 })
                 // console.log("list",that.state.patientListData);
@@ -33,13 +33,16 @@ export default class PatientMerge extends React.Component {
         };
         let errorFn = function () {
         };
-        getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
-    }
+        if (value){
+            getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
+        }
+
+    };
     removePatient = (type) => {
         this.setState({
             [type]: null
         })
-    }
+    };
     handlePatientSelect = (event, type) => {
         console.log(event);
         if (event) {
@@ -100,8 +103,12 @@ export default class PatientMerge extends React.Component {
                             {this.state.patient_from ?
                                 <Card bordered={false} style={{background: '#ECECEC', textAlign: 'left'}}>
                                     <Card.Meta
-                                        avatar={<Avatar style={{backgroundColor: '#ffff'}}
-                                                        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                        avatar={(this.state.patient_from.image ? <Avatar src={makeFileURL(this.state.patient_from.image)}/> :
+                                            <Avatar style={{backgroundColor: '#87d068'}}>
+                                                {this.state.patient_from.user.first_name ? this.state.patient_from.user.first_name.charAt(0) :
+                                                    <Icon type="user"/>}
+                                            </Avatar>)}
+
                                         title={this.state.patient_from.user.first_name}
                                         description={this.state.patient_from.user.mobile}
 
@@ -124,8 +131,11 @@ export default class PatientMerge extends React.Component {
                                         value={option.id.toString()}>
                                         <List.Item style={{padding: 0}}>
                                             <List.Item.Meta
-                                                avatar={<Avatar
-                                                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                                avatar={(option.image ? <Avatar src={makeFileURL(option.image)}/> :
+                                                    <Avatar style={{backgroundColor: '#87d068'}}>
+                                                        {option.user.first_name ? option.user.first_name.charAt(0) :
+                                                            <Icon type="user"/>}
+                                                    </Avatar>)}
                                                 title={option.user.first_name + " (" + option.user.id + ")"}
                                                 description={<small>{option.user.mobile}</small>}
                                             />
@@ -148,8 +158,11 @@ export default class PatientMerge extends React.Component {
                             {this.state.patient_to ?
                                 <Card bordered={false} style={{background: '#ECECEC', textAlign: 'left'}}>
                                     <Card.Meta
-                                        avatar={<Avatar style={{backgroundColor: '#ffff'}}
-                                                        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                        avatar={(this.state.patient_to.image ? <Avatar src={makeFileURL(this.state.patient_to.image)}/> :
+                                            <Avatar style={{backgroundColor: '#87d068'}}>
+                                                {this.state.patient_to.user.first_name ? this.state.patient_to.user.first_name.charAt(0) :
+                                                    <Icon type="user"/>}
+                                            </Avatar>)}
                                         title={this.state.patient_to.user.first_name}
                                         description={this.state.patient_to.user.mobile}
 
@@ -172,8 +185,11 @@ export default class PatientMerge extends React.Component {
                                         value={option.id.toString()}>
                                         <List.Item style={{padding: 0}}>
                                             <List.Item.Meta
-                                                avatar={<Avatar
-                                                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                                avatar={(option.image ? <Avatar src={makeFileURL(option.image)}/> :
+                                                    <Avatar style={{backgroundColor: '#87d068'}}>
+                                                        {option.user.first_name ? option.user.first_name.charAt(0) :
+                                                            <Icon type="user"/>}
+                                                    </Avatar>)}
                                                 title={option.user.first_name + " (" + option.user.id + ")"}
                                                 description={<small>{option.user.mobile}</small>}
                                             />

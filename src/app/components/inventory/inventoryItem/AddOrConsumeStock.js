@@ -52,7 +52,8 @@ class AddOrConsumeStock extends React.Component {
             tempValues: {},
             supplierList: [],
             customSupplier: false,
-            qrValue: ''
+            qrValue: '',
+            loading:true,
         }
         this.loadSupplierList = this.loadSupplierList.bind(this);
     }
@@ -102,8 +103,11 @@ class AddOrConsumeStock extends React.Component {
                         items: {
                             ...prevState.items,
                             [type]: data,
-                        }
+                        },
+                        loading:false,
+
                     }
+
                 });
             } else {
                 that.setState(function (prevState) {
@@ -111,10 +115,12 @@ class AddOrConsumeStock extends React.Component {
                         items: {
                             ...prevState.items,
                             [type]: [...prevState.items[type], ...data],
-                        }
+                        },
+                        loading:false,
                     }
                 });
             }
+
         }
         let errorFn = function () {
         }
@@ -155,10 +161,13 @@ class AddOrConsumeStock extends React.Component {
     };
 
     handleSubmit = (e) => {
+        let that = this;
+        that.setState({
+            loading:true,
+        })
         if (e.keyCode == 13) {
             return false;
         }
-        let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -198,13 +207,14 @@ class AddOrConsumeStock extends React.Component {
                     reqData.supplier = values.supplier;
 
                 let successFn = function (data) {
+
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
                     that.props.history.push('/inventory');
                 }
                 let errorFn = function () {
 
-                }
+                };
                 postAPI(BULK_STOCK_ENTRY, reqData, successFn, errorFn);
             }
         });
@@ -260,9 +270,9 @@ class AddOrConsumeStock extends React.Component {
     }
     storeValue = (type, id, value) => {
         let that = this;
-       // this.setState(function (prevState) {
-        //     return {tempValues: {...prevState.tempValues, [type.toString() + id.toString()]: value}}
-        // });
+       this.setState(function (prevState) {
+            return {tempValues: {...prevState.tempValues, [type.toString() + id.toString()]: value}}
+        });
         if (type == 'batch') {
             let {setFieldsValue} = that.props.form;
             that.state.tableFormValues.forEach(function (item) {
@@ -526,7 +536,7 @@ class AddOrConsumeStock extends React.Component {
             render: (value, record) => <a onClick={() => that.remove(record._id)}>Delete</a>
         }]);
         return <div>
-            <Card title={this.state.classType + " Stock"} extra={
+            <Card loading={this.state.loading} title={this.state.classType + " Stock"} extra={
                 <Search
                     loading={this.state.loadingQr}
                     value={this.state.qrValue}

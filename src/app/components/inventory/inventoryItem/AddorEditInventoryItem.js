@@ -34,7 +34,8 @@ class AddorEditInventoryItem extends React.Component {
             drugUnitList: [],
             drugTypeList: [],
             retail_price: 0,
-            productMargin: []
+            productMargin: [],
+            loading:false,
         };
         this.changeRedirect = this.changeRedirect.bind(this);
     }
@@ -198,13 +199,15 @@ class AddorEditInventoryItem extends React.Component {
 
                 let successFn = function (data) {
                     that.setState({
-                        redirect: true
+                        redirect: true,
 
-                    })
+
+                    });
                     that.props.loadData();
 
                 };
                 let errorFn = function () {
+
                 };
                 if (!this.state.editInventoryItem) {
                     postAPI(interpolate(INVENTORY_ITEM_API, [this.props.match.params.id]), reqData, successFn, errorFn);
@@ -269,9 +272,9 @@ class AddorEditInventoryItem extends React.Component {
             wrapperCol: {span: 14},
         });
 
-        return <Card title={this.state.editInventoryItem ? "Edit Inventory Item" : "Add Inventory Item"}>
+        return <Card title={this.state.editInventoryItem ? "Edit Inventory Item" : "Add Inventory Item"} loading={this.state.loading}>
             <Row>
-                <Col span={18}>
+                <Col span={18} >
                     <Form onSubmit={this.handleSubmit}>
                         <Form.Item label="Item Name" {...formItemLayout}>
                             {getFieldDecorator('name', {
@@ -282,9 +285,9 @@ class AddorEditInventoryItem extends React.Component {
                             }
                         </Form.Item>
 
-                        <Form.Item label="Item Code" {...formItemLayout}>
+                        <Form.Item label="HSN" {...formItemLayout}>
                             {getFieldDecorator('code', {initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.code : null})
-                            (<Input placeholder="Item Code"/>)
+                            (<Input placeholder="HSN Number"/>)
                             }
                         </Form.Item>
                         {this.state.manufacturerType && this.state.manufacturerType == INPUT_FIELD ?

@@ -19,33 +19,46 @@ class PatientSider extends React.Component {
         let that = this;
         switch (keyNm) {
             case 'alt+f':
-                this.props.history.push("/patients/profile");
-                break;
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/profile"):this.props.history.push("/patients/profile"));
+
             case 'alt+a':
-                this.props.history.push("/patients/appointments/");
-                break;
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/appointments"):this.props.history.push("/patients/appointments"));
+
             case 'alt+o':
-                this.props.history.push("/patients/communications/");
-                break;
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/communications"):this.props.history.push("/patients/communications"));
+
+            case 'alt+k':
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/booking"):this.props.history.push("/patients/profile"));
+
             case 'alt+m':
-                this.props.history.push("/patients/emr/vitalsigns");
-                break;
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/emr/vitalsigns"):this.props.history.push("/patients/emr/vitalsigns"));
+
+            case 'alt+n':
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/emr/vitalsigns"):this.props.history.push("/patients/emr/vitalsigns"));
+
+            case 'alt+t':
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/emr/plans"):this.props.history.push("/patients/emr/plans"));
 
             case 'alt+l':
-                this.props.history.push("/patients/emr/clinicnotes");
-                break;
-
-            // case 'alt+i':
-            //     this.props.history.push("/patients/emr/plans");
-            //     break;
-            //
-            // case 'alt+i':
-            //     this.props.history.push("/patients/billing/invoices/");
-            //     break;
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/emr/files"):this.props.history.push("/patients/emr/files"));
 
             case 'alt+i':
-                this.props.history.push("/patients/billing/invoices/");
-                break;
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/billing/invoices"):this.props.history.push("/patients/billing/invoices"));
+
+            case 'alt+e':
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/billing/return/invoices"):this.props.history.push("/patients/billing/return/invoices"));
+
+            case 'alt+y':
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/billing/payments"):this.props.history.push("/patients/billing/payments"));
+
+            case 'alt+u':
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/emr/workdone"):this.props.history.push("/patients/emr/workdone"));
+
+            case 'alt+s':
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/emr/prescriptions"):this.props.history.push("/patients/emr/prescriptions"));
+
+            case 'alt+g':
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/billing/ledger"):this.props.history.push("/patients/profile"));
         }
     }
 
@@ -89,7 +102,7 @@ class PatientSider extends React.Component {
                             <Menu.Item key="booking" disabled={!this.props.currentPatient}>
                                 <Link
                                     to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/booking" : "/patients/communications"}>
-                                    <Icon type="book"/>Booking
+                                    <Icon type="book"/>Boo<span className={"shortcutLetterHighlight"}>k</span>ing
                                 </Link>
                             </Menu.Item>
                             : null}
@@ -108,7 +121,7 @@ class PatientSider extends React.Component {
                             <Menu.Item key="21">
                                 <Link
                                     to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/clinicnotes" : "/patients/emr/clinicnotes"}>
-                                    <Icon type="solution"/>Clinica<span className={"shortcutLetterHighlight"}>l</span> Notes
+                                    <Icon type="solution"/>Clinical <span className={"shortcutLetterHighlight"}>N</span>otes
                                 </Link>
                             </Menu.Item>
                             : null}
@@ -116,7 +129,7 @@ class PatientSider extends React.Component {
                             <Menu.Item key="30">
                                 <Link
                                     to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/plans" : "/patients/emr/plans"}>
-                                    <Icon type="read"/>Treatment Plans
+                                    <Icon type="read"/><span className={"shortcutLetterHighlight"}>T</span>reatment Plans
                                 </Link>
                             </Menu.Item>
                             : null}
@@ -124,7 +137,7 @@ class PatientSider extends React.Component {
                             <Menu.Item key="22">
                                 <Link
                                     to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/workdone" : "/patients/emr/workdone"}>
-                                    <Icon type="check-circle"/>Completed Procedure
+                                    <Icon type="check-circle"/>Completed Proced<span className={"shortcutLetterHighlight"}>u</span>re
                                 </Link>
                             </Menu.Item>
                             : null}
@@ -132,7 +145,7 @@ class PatientSider extends React.Component {
                             <Menu.Item key="23">
                                 <Link
                                     to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/files" : "/patients/emr/files"}>
-                                    <Icon type="picture"/>Files
+                                    <Icon type="picture"/>Fi<span className={"shortcutLetterHighlight"}>l</span>es
                                 </Link>
                             </Menu.Item>
                             : null}
@@ -140,7 +153,7 @@ class PatientSider extends React.Component {
                             <Menu.Item key="24">
                                 <Link
                                     to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/prescriptions" : "/patients/emr/prescriptions"}>
-                                    <Icon type="solution"/>Prescriptions
+                                    <Icon type="solution"/>Pre<span className={"shortcutLetterHighlight"}>s</span>criptions
                                 </Link>
                             </Menu.Item>
                             : null}
@@ -168,7 +181,7 @@ class PatientSider extends React.Component {
                             <Menu.Item key="27">
                                 <Link
                                     to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/invoices" : "/patients/billing/invoices"}>
-                                    <Icon type="audit"/>Invoices
+                                    <Icon type="audit"/><span className={"shortcutLetterHighlight"}>I</span>nvoices
                                 </Link>
                             </Menu.Item>
                             : null}
@@ -176,7 +189,7 @@ class PatientSider extends React.Component {
                             <Menu.Item key="31">
                                 <Link
                                     to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/return/invoices" : "/patients/billing/return/invoices"}>
-                                    <Icon type="redo"/>Invoices Return
+                                    <Icon type="redo"/>Invoices R<span className={"shortcutLetterHighlight"}>e</span>turn
                                 </Link>
                             </Menu.Item>
                             : null}
@@ -184,7 +197,7 @@ class PatientSider extends React.Component {
                             <Menu.Item key="28">
                                 <Link
                                     to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/payments" : "/patients/billing/payments"}>
-                                    <Icon type="dollar"/>Payments
+                                    <Icon type="dollar"/>Pa<span className={"shortcutLetterHighlight"}>y</span>ments
                                 </Link>
                             </Menu.Item>
                             : null}
@@ -192,7 +205,7 @@ class PatientSider extends React.Component {
                             <Menu.Item key="29" disabled={!this.props.currentPatient}>
                                 <Link
                                     to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/billing/ledger" : "/patients/profile"}>
-                                    <Icon type="book"/>Ledger
+                                    <Icon type="book"/>Led<span className={"shortcutLetterHighlight"}>g</span>er
                                 </Link>
                             </Menu.Item>
                             : null}

@@ -446,10 +446,11 @@ class BedBookingForm extends React.Component {
                                                                         value={this.state.patientDetails ? this.state.patientDetails.id : ''} {...formPatients}>
                                         <Card bordered={false} style={{background: '#ECECEC'}}>
                                             <Meta
-                                                avatar={this.state.patientDetails.image ?
-                                                    <Avatar style={{backgroundColor: '#ffff'}}
-                                                            src={makeFileURL(this.state.patientDetails.image)}/> :
-                                                    <Icon type="user"/>}
+                                                avatar={(this.state.patientDetails.image ? <Avatar src={makeFileURL(this.state.patientDetails.image)}/> :
+                                                    <Avatar style={{backgroundColor: '#87d068'}}>
+                                                        {this.state.patientDetails.user.first_name ? this.state.patientDetails.user.first_name.charAt(0) :
+                                                            <Icon type="user"/>}
+                                                    </Avatar>)}
                                                 title={this.state.patientDetails.user.first_name}
                                                 description={this.state.patientDetails.user.mobile}
                                             />

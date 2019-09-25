@@ -39,7 +39,7 @@ import {
 import moment from 'moment';
 import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 import WebCamField from "../../common/WebCamField";
-import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD, ALL} from "../../../constants/dataKeys";
+import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD, ALL, RELATION} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
 import {BLOOD_GROUPS, FAMILY_GROUPS, PATIENT_AGE, SOURCE_PLATFORM} from "../../../constants/hardData";
 
@@ -65,6 +65,7 @@ class EditPatientDetails extends React.Component {
             selectedFormType: 'DOB',
             file_count: 10,
             file_enable: true,
+            relation_text:true,
             // patientDetails:{},
 
         }
@@ -279,6 +280,7 @@ class EditPatientDetails extends React.Component {
                     that.setState({})
                 }
                 reqData = removeEmpty(reqData);
+
                 if (that.props.currentPatient) {
                     putAPI(interpolate(PATIENT_PROFILE, [that.props.currentPatient.id]), reqData, successFn, errorFn);
                 } else {
@@ -349,14 +351,27 @@ class EditPatientDetails extends React.Component {
         })
 
     };
+    handleRelation=(e)=>{
+        if(e){
+            this.setState({
+                relation_text:false,
+            });
+        }else {
+            this.setState({
+                relation_text:true,
+            });
+        }
+
+    };
+
     // onFileEnable=(e)=>{
     //     this.setState({
     //         file_enable:!this.state.file_enable,
     //     })
     // }
+
     render() {
         let that = this;
-        console.log("sate", that.state)
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = ({
             labelCol: {span: 6},
@@ -549,9 +564,9 @@ class EditPatientDetails extends React.Component {
 
                     <Form.Item label="Family" {...formItemLayout}>
                         <Form.Item style={{ display: 'inline-block',width: 'calc(30% - 12px)'}}>
-                            {getFieldDecorator("family_relation")
-                            (<Select defaultValue={'Relation'}>
-                                <Select.Option value={''}>{'Relation'}</Select.Option>
+                            {getFieldDecorator("family_relation", {initialValue: this.state.patientDetails && this.state.patientDetails.family_relation  !=null? this.state.patientDetails.family_relation : RELATION})
+                            (<Select onChange={(value)=>this.handleRelation(value)} >
+                                <Select.Option value={''}>{RELATION}</Select.Option>
                                 {FAMILY_GROUPS.map((option) => <Select.Option
                                     value={option.value}>{option.name}</Select.Option>)}
                             </Select>)
@@ -559,8 +574,8 @@ class EditPatientDetails extends React.Component {
                         </Form.Item>
                         <span style={{ display: 'inline-block', width: '14px', textAlign: 'center' }} />
                         <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
-                            {getFieldDecorator("attendee", {initialValue: this.state.patientDetails ? this.state.patientDetails.attendee : ''})
-                                (<Input/>)
+                            {getFieldDecorator("attendee",{initialValue: this.state.patientDetails ? this.state.patientDetails.attendee : ''})
+                                (<Input disabled={this.state.relation_text}/>)
                             }
                         </Form.Item>
                     </Form.Item>
@@ -568,7 +583,7 @@ class EditPatientDetails extends React.Component {
 
                     <Form.Item label="Mobile (Primary)" {...formItemLayout}>
                         {getFieldDecorator('mobile', {
-                            initialValue: this.props.currentPatient ? this.props.currentPatient.user.mobile : null,
+                            initialValue: this.state.patientDetails ? this.state.patientDetails.user.mobile : null,
                             rules: [{required: true, message: 'Input Mobile Number'}]
                         })
                         (<Input placeholder="Patient Mobile Number (Primary)"/>)
@@ -576,25 +591,25 @@ class EditPatientDetails extends React.Component {
                     </Form.Item>
 
                     <Form.Item label="Mobile (Secondary)" {...formItemLayout}>
-                        {getFieldDecorator('secondary_mobile_no', {initialValue: this.props.currentPatient ? this.props.currentPatient.secondary_mobile_no : ''})
+                        {getFieldDecorator('secondary_mobile_no', {initialValue: this.state.patientDetails ? this.state.patientDetails.secondary_mobile_no : ''})
                         (<Input placeholder="Patient Mobile Number (Secondary)"/>)
                         }
                     </Form.Item>
 
                     <Form.Item label="Landline" {...formItemLayout}>
-                        {getFieldDecorator('landline_no', {initialValue: this.props.currentPatient ? this.props.currentPatient.landline_no : ''})
+                        {getFieldDecorator('landline_no', {initialValue: this.state.patientDetails ? this.state.patientDetails.landline_no : ''})
                         (<Input placeholder="Patient Landline Number"/>)
                         }
                     </Form.Item>
 
                     <Form.Item label="Address" {...formItemLayout}>
-                        {getFieldDecorator('address', {initialValue: this.props.currentPatient ? this.props.currentPatient.address : ''})
+                        {getFieldDecorator('address', {initialValue: this.state.patientDetails ? this.state.patientDetails.address : ''})
                         (<Input placeholder="Patient Address"/>)
                         }
                     </Form.Item>
 
                     <Form.Item label="Locality" {...formItemLayout}>
-                        {getFieldDecorator('locality', {initialValue: this.props.currentPatient ? this.props.currentPatient.locality : ''})
+                        {getFieldDecorator('locality', {initialValue: this.state.patientDetails ? this.state.patientDetails.locality : ''})
                         (<Input placeholder="Patient Locality"/>)
                         }
                     </Form.Item>
@@ -612,7 +627,7 @@ class EditPatientDetails extends React.Component {
                         </Form.Item>
                         : <Form.Item key={"country"} {...formItemLayout} label={"Country"}>
                             {getFieldDecorator("country", {
-                                initialValue: this.props.currentPatient && this.props.currentPatient.country_data ? this.props.currentPatient.country_data.id : '',
+                                initialValue: this.state.patientDetails && this.state.patientDetails.country_data ? this.state.patientDetails.country_data.id : '',
                             })(
                                 <Select placeholder="Select Country"
                                         onChange={(value) => this.onChangeValue("country", value)} showSearch
@@ -641,7 +656,7 @@ class EditPatientDetails extends React.Component {
                         </Form.Item>
                         : <Form.Item key={"state"} {...formItemLayout} label={"State"}>
                             {getFieldDecorator("state", {
-                                initialValue: this.props.currentPatient && this.props.currentPatient.state_data ? this.props.currentPatient.state_data.id : '',
+                                initialValue: this.state.patientDetails && this.state.patientDetails.state_data ? this.state.patientDetails.state_data.id : '',
                             })(
                                 <Select placeholder="Select State"
                                         onChange={(value) => this.onChangeValue("state", value)} showSearch
@@ -666,7 +681,7 @@ class EditPatientDetails extends React.Component {
                         </Form.Item>
                         : <Form.Item key={"City"} {...formItemLayout} label={"City"}>
                             {getFieldDecorator("city", {
-                                initialValue: this.props.currentPatient && this.props.currentPatient.city_data ? this.props.currentPatient.city_data.id : '',
+                                initialValue: this.state.patientDetails && this.state.patientDetails.city_data ? this.state.patientDetails.city_data.id : '',
                             })(
                                 <Select showSearch optionFilterProp="children" placeholder="Select City">
                                     {this.state.cityList.map((option) => <Select.Option
@@ -686,21 +701,21 @@ class EditPatientDetails extends React.Component {
                     </Form.Item> */}
 
                     <Form.Item label="Pincode" {...formItemLayout}>
-                        {getFieldDecorator('pincode', {initialValue: this.props.currentPatient ? this.props.currentPatient.pincode : ''})
+                        {getFieldDecorator('pincode', {initialValue: this.state.patientDetails ? this.state.patientDetails.pincode : ''})
                         (<Input placeholder="Patient PINCODE"/>)
                         }
                     </Form.Item>
 
                     <Form.Item label="Email" {...formItemLayout}>
                         {getFieldDecorator('email', {
-                            initialValue: this.props.currentPatient ? this.props.currentPatient.user.email : null,
+                            initialValue: this.state.patientDetails ? this.state.patientDetails.user.email : null,
                         })
                         (<Input placeholder="Patient Email"/>)
                         }
                     </Form.Item>
 
                     <Form.Item label="Medical History" {...formItemLayout}>
-                        {getFieldDecorator("medical_history", {initialValue: this.props.currentPatient ? this.props.currentPatient.medical_history : []})
+                        {getFieldDecorator("medical_history", {initialValue: this.state.patientDetails ? this.state.patientDetails.medical_history : []})
                         (<Select placeholder="Medical History" mode={"multiple"}>
                             {historyOption.map((option) => <Select.Option
                                 value={option.value}>{option.label}</Select.Option>)}
@@ -709,7 +724,7 @@ class EditPatientDetails extends React.Component {
                     </Form.Item>
 
                     <Form.Item label="Patient Group" {...formItemLayout}>
-                        {getFieldDecorator("patient_group", {initialValue: this.props.currentPatient ? this.props.currentPatient.patient_group : []})
+                        {getFieldDecorator("patient_group", {initialValue: this.state.patientDetails ? this.state.patientDetails.patient_group : []})
                         (<Select placeholder="Patient Group" mode={"multiple"}>
                             {patientGroupOption.map((option) => <Select.Option
                                 value={option.value}>{option.label}</Select.Option>)}
@@ -718,12 +733,12 @@ class EditPatientDetails extends React.Component {
                     </Form.Item>
 
                     <Form.Item label="On Dialysis" {...formItemLayout}>
-                        {getFieldDecorator('on_dialysis', {initialValue: this.props.currentPatient ? this.props.currentPatient.on_dialysis : false})
+                        {getFieldDecorator('on_dialysis', {initialValue: this.state.patientDetails ? this.state.patientDetails.on_dialysis : false})
                         (<Checkbox onChange={(e) => this.onChangeCheckbox(e)} style={{paddingTop: '4px'}}/>)
                         }
                     </Form.Item>
                     <Form.Item label="Allow File Upload" {...formItemLayout}>
-                        {getFieldDecorator('file_enable', {initialValue: this.props.currentPatient ? this.props.currentPatient.file_enable : true})
+                        {getFieldDecorator('file_enable', {initialValue: this.state.patientDetails ? this.state.patientDetails.file_enable : true})
                         (<Checkbox style={{paddingTop: '4px'}}
                                    defaultChecked={true}/>)
                         }
@@ -736,7 +751,7 @@ class EditPatientDetails extends React.Component {
                     {/*</Form.Item>*/}
 
                     <Form.Item label="Max Uploads Allowed" {...formItemLayout}>
-                        {getFieldDecorator('file_count', {initialValue: this.props.currentPatient ? this.props.currentPatient.file_count : 10})
+                        {getFieldDecorator('file_count', {initialValue: this.state.patientDetails ? this.state.patientDetails.file_count : 10})
                         (<InputNumber min={0}/>)
                         }
                     </Form.Item>

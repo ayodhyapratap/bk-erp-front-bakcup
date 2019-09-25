@@ -72,7 +72,7 @@ export default class InventoryItemList extends React.Component {
         let reqParams = {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
-            page: page
+            page: page,
         };
         if (that.state.itemTypeFilter != 'ALL') {
             reqParams.item_type = that.state.itemTypeFilter
@@ -127,10 +127,8 @@ export default class InventoryItemList extends React.Component {
     }
     changeInventoryFilters = (key, value) => {
         let that = this;
-        that.setState(function (prevState) {
-            return {
-                [key]: value
-            }
+        that.setState( {
+            [key]: value
         })
     }
 
@@ -138,7 +136,6 @@ export default class InventoryItemList extends React.Component {
         let that = this;
         let msg = startLoadingMessage("Generating Report...");
         let successFn = function (data) {
-            console.log("datattype", data)
             stopLoadingMessage(msg, SUCCESS_MSG_TYPE, "Report Generated Successfully!!");
             if (data.report_csv)
                 window.open(BACKEND_BASE_URL + data.report_csv);
@@ -221,7 +218,7 @@ export default class InventoryItemList extends React.Component {
             key: 'name',
             // render: (value,record) => <span>{record.inventory_item.name}</span>
         }, {
-            title: 'Item Code',
+            title: 'HSN',
             dataIndex: 'code',
             key: 'code',
             // render: (value,record) => <span>{record.inventory_item.code}</span>
@@ -384,19 +381,21 @@ export default class InventoryItemList extends React.Component {
                                 <Input style={{width: '100%'}} value={this.state.filterItemName}
                                        allowClear={true}
                                        disabled={this.state.loading}
+                                       placeholder={"Item Name"}
                                        onChange={(e) => this.changeInventoryFilters('filterItemName', e.target.value)}/>
                             </Col>
                             <Col span={4} style={{textAlign: "right"}}>
-                                <b> Item Code</b>
+                                <b> HSN</b>
                             </Col>
                             <Col span={4}>
                                 <Input style={{width: '100%'}} value={this.state.filterItemCode}
                                        allowClear={true}
                                        disabled={this.state.loading}
+                                       placeholder={"HSN Number"}
                                        onChange={(e) => this.changeInventoryFilters('filterItemCode', e.target.value)}/>
                             </Col>
                             <Col span={8}>
-                                <Button type={"primary"} onClick={this.loadData}> Filter Items</Button>
+                                <Button type={"primary"} onClick={()=>this.loadData()}> Filter Items</Button>
                             </Col>
 
                             <Col span={4}>

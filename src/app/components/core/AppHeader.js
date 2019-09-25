@@ -104,8 +104,12 @@ class AppHeader extends React.Component {
                             value={option.id.toString()}>
                             <List.Item style={{padding: 0}}>
                                 <List.Item.Meta
-                                    avatar={<Avatar
-                                        src={option.image ? makeFileURL(option.image) : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}/>}
+                                    avatar={(option.image ? <Avatar src={makeFileURL(option.image)}/> :
+                                        <Avatar style={{backgroundColor: '#87d068'}}>
+                                            {option.user.first_name ? option.user.first_name.charAt(0) :
+                                                <Icon type="user"/>}
+                                        </Avatar>)}
+
                                     title={option.user.first_name + " (" + (option.custom_id?option.custom_id:option.user.id) + ")"}
                                     description={that.props.activePracticePermissions.PatientPhoneNumber ? option.user.mobile : hideMobile(option.user.mobile)}
                                 />
