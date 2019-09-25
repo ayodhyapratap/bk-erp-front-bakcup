@@ -401,7 +401,7 @@ export const SOURCE_PLATFORM=[
 
 export const OUTER_KEYS_HOTKEYS = 'alt+c ,alt+p, alt+r, alt+s, alt+b ,alt+w';
 
-export const INNER_KEYS_HOTKEYS = 'alt+f ,alt+a, alt+o, alt+m, alt+l ,p';
+export const INNER_KEYS_HOTKEYS = 'alt+f ,alt+a, alt+o, alt+m, alt+l ,alt+i,alt+e ,alt+n ,alt+y ,alt+t,alt+s ,alt+k, alt+g';
 
 
 export const FAMILY_GROUPS=[
