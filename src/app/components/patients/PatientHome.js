@@ -392,11 +392,12 @@ class PatientHome extends React.Component {
                                            <PermissionDenied/>)}/>
 
                                 {/*** Patient Ledger Routes*/}
-                                <Route exact path='/patient/:id/billing/ledger'
-                                       render={(route) => (that.props.activePracticePermissions.PatientLedger || that.allowAllPermissions ?
-                                           <PatientLedgers
-                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/> :
-                                           <PermissionDenied/>)}/>
+                                {this.state.currentPatient ?
+                                    <Route exact path='/patient/:id/billing/ledger'
+                                           render={(route) => (that.props.activePracticePermissions.PatientLedger || that.allowAllPermissions ?
+                                               <PatientLedgers
+                                                   key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/> :
+                                               <PermissionDenied/>)}/> : null}
 
                                 <Route exact path='/patient/:id/prescriptions/template/add'
                                        render={(route) => (that.props.activePracticePermissions.PatientPrescriptions || that.allowAllPermissions ?

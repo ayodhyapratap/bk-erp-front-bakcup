@@ -5,6 +5,7 @@ import {loggedInUser, logInUser, logInUserWithOtp, logOutUser,} from "./app/util
 import AppBase from "./app/components/core/AppBase";
 import Auth from "./app/components/auth/Auth";
 import ReactGA from 'react-ga';
+import CONFIG from "./app.config";
 
 class App extends Component {
     constructor(props) {
@@ -14,16 +15,12 @@ class App extends Component {
         this.state = {
             user: loggedInUser(),
             redirect: false,
-            production: (window.location.hostname == 'clinic.bkarogyam.com')
+            production: (window.location.hostname == "clinic.bkarogyam.com")
         };
         // momenttz.tz.setDefault('Asia/Kolkata');
 
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
-    }
-
-    componentDidMount() {
-        console.log(window.location.hostname);
     }
 
     login(data, withOtp = true) {
@@ -78,3 +75,4 @@ class App extends Component {
 }
 
 export default App;
+

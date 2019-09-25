@@ -389,21 +389,23 @@ class PracticeDetails extends React.Component {
             title: "Action",
             key: "action",
             render: function (text, record) {
-                return (record.user && record.user.is_superuser ?
-                    <Tag color="red">SuperUser</Tag> :
-                    <span>
+                return <span>
             <Link to={"/settings/clinics-staff/" + record.id + "/edit"}>
               <a>Edit</a>
             </Link>
                      <Divider type="vertical"/>
-                        <a onClick={() => that.editPermissions(record.id)}
-                           disabled={!record.in_practice}>Permissions</a>
-                    <Divider type="vertical"/>
-                    <Popconfirm title="Are you sure delete this staff?"
-                                onConfirm={() => that.deleteStaff(record.id)} okText="Yes" cancelText="No">
-                         <a>Delete</a>
-                    </Popconfirm>
-            </span>)
+                    {record.user && record.user.is_superuser ?
+                        <Tag color="red">SuperUser</Tag> :
+                        <>
+                            <a onClick={() => that.editPermissions(record.id)}
+                               disabled={!record.in_practice}>Permissions</a>
+                            <Divider type="vertical"/>
+                            <Popconfirm title="Are you sure delete this staff?"
+                                        onConfirm={() => that.deleteStaff(record.id)} okText="Yes" cancelText="No">
+                                <a>Delete</a>
+                            </Popconfirm>
+                        </>}
+            </span>
             }
         }];
 
@@ -436,21 +438,22 @@ class PracticeDetails extends React.Component {
             title: "Action",
             key: "action",
             render: function (text, record) {
-                return (record.user && record.user.is_superuser ?
-                    <Tag color="red">SuperUser</Tag> :
-                    <span>
-            <Link to={"/settings/clinics-staff/staff/" + record.id + "/edit"}>
+                return <span>
+            <Link to={"/settings/clinics-staff/" + record.id + "/edit"}>
               <a>Edit</a>
             </Link>
                      <Divider type="vertical"/>
-                        <a onClick={() => that.editPermissions(record.id)}
-                           disabled={!record.in_practice}>Permissions</a>
-                    <Divider type="vertical"/>
-                    <Popconfirm title="Are you sure delete this staff?"
-                                onConfirm={() => that.deleteStaff(record.id)} okText="Yes" cancelText="No">
-                         <a>Delete</a>
-                    </Popconfirm>
-            </span>)
+                    {record.user && record.user.is_superuser ?
+                        <Tag color="red">SuperUser</Tag> :
+                        <>
+                            <a onClick={() => that.editPermissions(record.id)}
+                               disabled={!record.in_practice}>Permissions</a>
+                            <Divider type="vertical"/>
+                            <Popconfirm title="Are you sure delete this staff?"
+                                        onConfirm={() => that.deleteStaff(record.id)} okText="Yes" cancelText="No">
+                                <a>Delete</a>
+                            </Popconfirm></>}
+            </span>
             }
         }];
 
@@ -494,13 +497,11 @@ class PracticeDetails extends React.Component {
             title: "Action",
             key: "action",
             render: function (text, record) {
-                return (record.user && record.user.is_superuser ?
-                    <Tag> Not Allowed</Tag> :
-                    <span>
+                return <span>
             <Link to={"/settings/clinics-staff/" + record.id + "/edit"}>
               <a>Edit</a>
             </Link>
-            </span>)
+            </span>
             }
         }];
 

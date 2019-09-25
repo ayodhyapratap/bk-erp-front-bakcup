@@ -342,6 +342,7 @@ function PaymentCard(payment, that) {
         })
     }
     return <Card style={{marginTop: 10}}
+                 key={payment.id}
                  bodyStyle={{padding: 0}}
                  title={(payment.patient_data && !that.props.currentPatient ?
                      <small>{payment.created_at ? moment(payment.created_at).format('lll') : null}

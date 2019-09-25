@@ -50,6 +50,7 @@ export const MEDICAL_HISTORY = 'patients/history/?id=%s'
 // export const PATIENT_MEDICAL_HISTORY = 'patients/history/?id=%s';
 export const PATIENT_FILES = 'patients/files/';
 export const ALL_PATIENT_FILES = 'patients/files/';
+export const PATIENT_LEDGER = 'patients/%s/ledger/';
 export const EXPENSE_TYPE = 'clinics/%s/expense_type/';
 export const DRUG_CATALOG = 'clinics/%s/drugcatalog/';
 export const SINGLE_DRUG_CATALOG = 'clinics/%s/drugcatalog/?id=%s';
@@ -89,6 +90,7 @@ export const SINGLE_INVOICE_API = 'invoice/%s/';
 export const PATIENT_CLINIC_NOTES_API = 'patients/clinic_notes/';
 export const PATIENT_PAYMENTS_API = 'payment/';
 export const SINGLE_PAYMENT_API = 'payment/%s/';
+export const BULK_PAYMENT_API = 'payment/bulk_payments/';
 export const PRACTICE_PRINT_SETTING_API = 'clinics/%s/practice_print_settings/?type=%s&sub_type=%s';
 export const SAVE_ALL_PRINT_SETTINGS = 'clinics/%s/all_print_settings/';
 export const PATIENT_COMMUNICATION_HISTORY_API = 'users/sms_status_update/?user=%s';
@@ -109,6 +111,7 @@ export const EXTRA_DATA = 'clinics/extra_data/';
 export const COUNTRY ='patients/country/';
 export const STATE ='patients/state/';
 export const CITY ='patients/city/';
+export const SOURCE ='patients/source/';
 /**
  * Reports API
  * */

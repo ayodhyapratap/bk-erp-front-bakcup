@@ -728,7 +728,7 @@ class AddReturnInvoice extends React.Component {
             key: 'total',
             width: 100,
             dataIndex: 'total',
-            render: (item, record) => item ? item.toFixed(2) : null
+            render: (item, record) => item ? (record.total / record.unit).toFixed(2) : null
         },]);
 
         return <div>
@@ -746,7 +746,7 @@ class AddReturnInvoice extends React.Component {
                                 <Affix offsetBottom={0}>
                                     <Card>
                                         <Row gutter={16}>
-                                            <Col span={4}>
+                                            <Col span={6}>
                                                 <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
                                                 <DatePicker value={this.state.selectedDate}
                                                     disabled
@@ -759,7 +759,7 @@ class AddReturnInvoice extends React.Component {
                                                     Return With Tax
                                                 </Checkbox>
                                             </Col>
-                                            <Col span={10}>
+                                            <Col span={8}>
                                                 <Form.Item  label={"Returned Cash "}>
                                                     {getFieldDecorator('cash_return',
                                                     )

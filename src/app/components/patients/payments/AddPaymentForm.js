@@ -2,7 +2,7 @@ import React from "react";
 import {Button, Card, Col, Divider, InputNumber, List, Popconfirm, Row, Select} from 'antd';
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {
-    AVAILABLE_ADVANCE,
+    AVAILABLE_ADVANCE, BULK_PAYMENT_API,
     INVOICES_API,
     PATIENT_PAYMENTS_API,
     PAYMENT_MODES,
@@ -24,7 +24,8 @@ class AddPaymentForm extends React.Component {
             totalPayingAmount: 0,
             totalPayingFromAdvanceAmount: 0,
             selectedPaymentMode: null,
-            availableAdvance: null
+            availableAdvance: null,
+            advanceToBeSent:0
         }
     }
 
@@ -178,6 +179,7 @@ class AddPaymentForm extends React.Component {
             });
 
             return {
+                advanceToBeSent : totalPayingAmount,
                 totalPayableAmount: payable.toFixed(2),
                 invoicePayments: invoicePayments
             }
@@ -213,7 +215,7 @@ class AddPaymentForm extends React.Component {
             loading: true
         })
         let that = this;
-        let reqData = {
+        let newPayment = {
             "invoices": [],
             "bank": "",
             "number": 0,
@@ -223,9 +225,10 @@ class AddPaymentForm extends React.Component {
             "practice": that.props.active_practiceId,
             "patient": that.props.match.params.id,
             "payment_mode": that.state.selectedPaymentMode,
-            advance_value: 0,
-            "is_advance": false,
+            advance_value: that.state.advanceToBeSent,
+            "is_advance": !!that.state.advanceToBeSent,
         }
+        let reqData = []
         if (that.state.totalPayingAmount - that.state.totalPayableAmount > 1) {
             reqData.advance_value = that.state.totalPayingAmount - that.state.totalPayableAmount;
             reqData.is_advance = true;
@@ -244,6 +247,7 @@ class AddPaymentForm extends React.Component {
                     if (invoicePayments[invoices[consumedInvoices]] && maxConsumeAmount > invoicePayments[invoices[consumedInvoices]]) {
                         availableAdvancePayments.advance_value -= invoicePayments[invoices[consumedInvoices]];
                         availableAdvancePayments.invoices.push({
+                            "pay_amount_advance": invoicePayments[invoices[consumedInvoices]],
                             "pay_amount": invoicePayments[invoices[consumedInvoices]],
                             "is_active": true,
                             "invoice": invoices[consumedInvoices],
@@ -253,6 +257,7 @@ class AddPaymentForm extends React.Component {
                         invoicePayments[invoices[consumedInvoices]] -= invoicePayments[invoices[consumedInvoices]];
                     } else if (invoicePayments[invoices[consumedInvoices]]) {
                         availableAdvancePayments.invoices.push({
+                            "pay_amount_advance": maxConsumeAmount,
                             "pay_amount": maxConsumeAmount,
                             "is_active": true,
                             "invoice": invoices[consumedInvoices],
@@ -263,15 +268,22 @@ class AddPaymentForm extends React.Component {
                         availableAdvancePayments.advance_value -= maxConsumeAmount;
                     }
                 }
-                reqData.invoices.push(availableAdvancePayments);
+                reqData.push(availableAdvancePayments);
             });
         }
+
         for (; invoices.length > consumedInvoices; consumedInvoices++) {
-            reqData.invoices.push({
+            newPayment.invoices.push({
                 "pay_amount": invoicePayments[invoices[consumedInvoices]],
+                "type": "Invoice",
                 "is_active": true,
                 "invoice": invoices[consumedInvoices],
             });
+        }
+        if (this.props.editPayment && this.props.editPayment.id)
+            newPayment.id = this.props.editPayment.id;
+        if (newPayment.invoices.length || newPayment.id || newPayment.is_advance) {
+            reqData.push(newPayment);
         }
         let successFn = function (data) {
             that.setState({
@@ -286,13 +298,7 @@ class AddPaymentForm extends React.Component {
                 loading: false
             });
         }
-        if (this.props.editPayment) {
-            reqData.id = this.props.editPayment.id;
-            putAPI(interpolate(SINGLE_PAYMENT_API, [reqData.id]), reqData, successFn, errorFn)
-        } else {
-            postAPI(PATIENT_PAYMENTS_API, reqData, successFn, errorFn)
-        }
-
+        postAPI(BULK_PAYMENT_API, reqData, successFn, errorFn)
     }
 
     render() {
@@ -308,6 +314,7 @@ class AddPaymentForm extends React.Component {
                                 {/*<Col xs={24} sm={24} md={16} lg={16} xl={18} xxl={18}>*/}
 
                                 <table style={{width: '100%'}}>
+                                    <tbody>
                                     <tr style={{borderBottom: '2px solid #ccc'}}>
                                         <td style={{width: '20%'}}>
                                             <small>INVOICE NO</small>
@@ -316,15 +323,16 @@ class AddPaymentForm extends React.Component {
                                             <small>PROCEDURE</small>
                                         </td>
                                         <td style={{width: '20%', textAlign: 'right'}}>
-                                            <small>DUE (INR)</small>
+                                            <small>DUE(INR)</small>
                                         </td>
                                         <td style={{width: '20%', textAlign: 'right'}}>
-                                            <small>PAY NOW (INR)</small>
+                                            <small>PAY NOW(INR)</small>
                                         </td>
                                         <td style={{width: '20%', textAlign: 'right'}}>
-                                            <small>DUE AFTER PAYMENT (INR)</small>
+                                            <small>DUE AFTER PAYMENT(INR)</small>
                                         </td>
                                     </tr>
+
                                     {this.state.addedInvoice.map(invoice =>
                                         <tr style={{borderBottom: '2px solid #ccc'}}>
                                             <td>
@@ -350,6 +358,7 @@ class AddPaymentForm extends React.Component {
                                             </td>
                                         </tr>
                                     )}
+                                    </tbody>
                                 </table>
                             </Col>
                         </Row>
@@ -387,7 +396,7 @@ class AddPaymentForm extends React.Component {
                             <Col span={6}>
                                 <Select style={{width: '100%'}} value={this.state.selectedPaymentMode}
                                         onChange={this.changeSelectedPaymentMode}>
-                                    {this.state.paymentModes.map(mode => <Select.Option value={mode.id}>
+                                    {this.state.paymentModes.map(mode => <Select.Option value={mode.id} key={mode.id}>
                                         {mode.mode}
                                     </Select.Option>)}
                                 </Select>
@@ -410,13 +419,16 @@ class AddPaymentForm extends React.Component {
                                     onClick={() => this.addInvoiceToPayments(invoice.id)}
                                     style={{marginBottom: '10px'}}>
                                   <table style={{width: '100%'}}>
+                                      <tbody>
                                       <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}><h4>{invoice.invoice_id}</h4></td>
                                           <td style={{textAlign: 'right'}}><b>{invoice.date}</b></td>
                                       </tr>
+                                      </tbody>
                                   </table>
                                   <Divider style={{margin: 0}}/>
                                   <table style={{width: '100%'}}>
+                                      <tbody>
                                       {invoice.procedure.map(proc => <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}>{proc.procedure_data.name}</td>
                                           <td style={{textAlign: 'right'}}>
@@ -442,9 +454,11 @@ class AddPaymentForm extends React.Component {
                                               </tr>)}
                                           </>
                                           : null}
+                                      </tbody>
                                   </table>
                                   <Divider style={{margin: 0}}/>
                                   <table style={{width: '100%'}}>
+                                      <tbody>
                                       <tr>
                                           <td style={{maxWidth: 'calc(100% - 60px)'}}>Invoice Amount</td>
                                           <td style={{textAlign: 'right'}}><b>{invoice.total.toFixed(2)}</b></td>
@@ -459,7 +473,9 @@ class AddPaymentForm extends React.Component {
                                           <td style={{textAlign: 'right'}}>
                                               <b>{(invoice.total - invoice.payments_data).toFixed(2)}</b></td>
                                       </tr>
+                                      </tbody>
                                   </table>
+
                               </Card>)}/>
                 </Col>
             </Row>
