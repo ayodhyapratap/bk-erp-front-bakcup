@@ -1,4 +1,8 @@
 .shortcutLetterHighlight{
     font-weight: bolder;
     text-decoration: underline;
+    font-size: 18px;
+}
+.patientIdHighlight{
+    font-weight: bolder;
 }
