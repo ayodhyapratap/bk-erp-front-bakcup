@@ -103,7 +103,7 @@ class AppSider extends React.Component {
                     <Menu.Item key="5">
                         <Link to="/settings/clinics">
                             <Icon type="setting"/>
-                            <span className="nav-text">Settings</span>
+                            <span className="nav-text"><span className={"shortcutLetterHighlight"}>S</span>ettings</span>
                         </Link>
                     </Menu.Item>
                     <SubMenu key="sub1" title={<span><Icon type="gold"/><span><span className={"shortcutLetterHighlight"}>B</span>ack Office</span></span>}>

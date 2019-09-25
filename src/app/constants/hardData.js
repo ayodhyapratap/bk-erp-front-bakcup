@@ -402,3 +402,16 @@ export const SOURCE_PLATFORM=[
 export const OUTER_KEYS_HOTKEYS = 'alt+c ,alt+p, alt+r, alt+s, alt+b ,alt+w';
 
 export const INNER_KEYS_HOTKEYS = 'alt+f ,alt+a, alt+o, alt+m, alt+l ,p';
+
+
+export const FAMILY_GROUPS=[
+    {name:"Child", value:'CHILD'},
+    {name:"Parent  ", value:'PARENT'},
+    {name: "Brother/Sister", value:'BROTHER/SISTER'},
+    {name:"Husband/Wife", value:'HUSBAND/WIFE'},
+    {name:"Grandchild", value:'GRANDCHILD'},
+    {name:"GrandParent", value:'GRANDPARENT'},
+    {name:"Uncle/Aunt" ,value:'O+'},
+    {name:"Nephew/Niece",value:'NEPHEW/NIECE'},
+    {name:"Cousin",value:'COUSIN'},
+];

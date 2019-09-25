@@ -39,9 +39,9 @@ import {
 import moment from 'moment';
 import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 import WebCamField from "../../common/WebCamField";
-import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD} from "../../../constants/dataKeys";
+import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD, ALL} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
-import {BLOOD_GROUPS, PATIENT_AGE, SOURCE_PLATFORM} from "../../../constants/hardData";
+import {BLOOD_GROUPS, FAMILY_GROUPS, PATIENT_AGE, SOURCE_PLATFORM} from "../../../constants/hardData";
 
 const {Option} = Select;
 
@@ -512,11 +512,30 @@ class EditPatientDetails extends React.Component {
                         }
                     </Form.Item>
 
-                    <Form.Item label="Family Relation" {...formItemLayout}>
-                        {getFieldDecorator('family_relation', {initialValue: this.state.patientDetails ? this.props.currentPatient.family_relation : ''})
-                        (<Input placeholder="Patient Family Relation"/>)
-                        }
+                    {/*<Form.Item label="Family" {...formItemLayout}>*/}
+                    {/*    {getFieldDecorator('family_relation', {initialValue: this.state.patientDetails ? this.props.currentPatient.family_relation : ''})*/}
+                    {/*    (<Input placeholder="Patient Family Relation"/>)*/}
+                    {/*    }*/}
+                    {/*</Form.Item>*/}
+
+                    <Form.Item label="Family" {...formItemLayout}>
+                        <Form.Item style={{ display: 'inline-block',width: 'calc(30% - 12px)'}}>
+                            {getFieldDecorator("family_relation")
+                            (<Select defaultValue={'Relation'}>
+                                <Select.Option value={''}>{'Relation'}</Select.Option>
+                                {FAMILY_GROUPS.map((option) => <Select.Option
+                                    value={option.value}>{option.name}</Select.Option>)}
+                            </Select>)
+                            }
+                        </Form.Item>
+                        <span style={{ display: 'inline-block', width: '14px', textAlign: 'center' }} />
+                        <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
+                            {getFieldDecorator("attendee", {initialValue: this.state.patientDetails ? this.state.patientDetails.attendee : ''})
+                                (<Input/>)
+                            }
+                        </Form.Item>
                     </Form.Item>
+
 
                     <Form.Item label="Mobile (Primary)" {...formItemLayout}>
                         {getFieldDecorator('mobile', {
