@@ -7,7 +7,7 @@ import {
     PATIENTS_FIRST_APPOINTMENT,
     MONTHLY_NEW_PATIENTS,
     NEW_MEMBERSHIP,
-    EXPIRING_MEMBERSHIP, ACTIVE_PATIENTS
+    EXPIRING_MEMBERSHIP, ACTIVE_PATIENTS, FOLLOW_UP, MEDICINE
 } from "../../../constants/dataKeys";
 import {BLOOD_GROUPS, PATIENTS_RELATED_REPORT} from "../../../constants/hardData";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
@@ -18,6 +18,8 @@ import NewMembership from "./NewMembership";
 import NewPatientReports from "./NewPatientReport";
 import PatientsFirstAppointment from "./PatientsFirstAppointment";
 import ActivePatients from "./ActivePatients";
+import PatientFollowUp from "./PatientFollowUp";
+import PatientMedicine from "./PatientMedicine";
 
 export default class PatientsReportHome extends React.Component {
     constructor(props) {
@@ -111,6 +113,13 @@ export default class PatientsReportHome extends React.Component {
                         {this.state.type == ACTIVE_PATIENTS ?
                             <ActivePatients  {...this.props} {...this.state}/> : null}
 
+                        {this.state.type ==FOLLOW_UP ?
+                            <PatientFollowUp {...this.props} {...this.state}/>:null}
+
+                        {this.state.type ==MEDICINE ?
+                            <PatientMedicine {...this.props} {...this.state}/>:null}
+
+
                     </Col>
 
 
@@ -133,7 +142,8 @@ export default class PatientsReportHome extends React.Component {
 
                         <br/>
                         <br/>
-                        {this.state.type == NEW_PATIENTS || this.state.type == DAILY_NEW_PATIENTS ||this.state.type == MONTHLY_NEW_PATIENTS || this.state.type == ACTIVE_PATIENTS ?<>
+                        {this.state.type == NEW_PATIENTS || this.state.type == DAILY_NEW_PATIENTS ||this.state.type == MONTHLY_NEW_PATIENTS || this.state.type == ACTIVE_PATIENTS || this.state.type == FOLLOW_UP
+                            ||this.state.type ==MEDICINE ?<>
                             {this.state.advancedOptionShow?<>
                                 <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
                                 <Col> <br/>
@@ -147,7 +157,7 @@ export default class PatientsReportHome extends React.Component {
                                     <br/>
                                     <h4>Blood Groups</h4>
                                     <Select style={{minWidth: '200px'}} placeholder="Select Blood Group"
-                                            onChange={(value)=>this.handleChangeOption('blood_group',value)}>
+                                            onChange={(value)=>this.handleChangeOption('blood_group',value)} allowClear>
                                         {BLOOD_GROUPS.map((item) => <Select.Option value={item.value}>
                                             {item.name}</Select.Option>)}
                                     </Select>
