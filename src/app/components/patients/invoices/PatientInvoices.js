@@ -181,7 +181,7 @@ class PatientInvoices extends React.Component {
             returnIncoiceVisible: true,
             editInvoice: record,
         },function(){
-            that.returnInvoiceData(that.state.editInvoice)
+            // that.returnInvoiceData(that.state.editInvoice)
         });
 
         let reqData = {
@@ -198,7 +198,7 @@ class PatientInvoices extends React.Component {
         let errorFn = function () {
 
         };
-      // postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+       postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
     }
 
     returnInvoiceClose = () => {

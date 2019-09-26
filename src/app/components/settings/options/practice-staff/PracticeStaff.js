@@ -439,7 +439,7 @@ class PracticeDetails extends React.Component {
             key: "action",
             render: function (text, record) {
                 return <span>
-            <Link to={"/settings/clinics-staff/" + record.id + "/edit"}>
+            <Link to={"/settings/clinics-staff/staff/" + record.id + "/edit"}>
               <a>Edit</a>
             </Link>
                      <Divider type="vertical"/>
