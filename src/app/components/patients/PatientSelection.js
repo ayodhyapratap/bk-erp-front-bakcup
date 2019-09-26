@@ -1,10 +1,12 @@
 import React from "react";
-import {Avatar, Input, Card, Col, Icon, Radio, Row, Button, Spin, Modal, Tag} from "antd";
+import {Avatar, Input, Card, Col, Icon, Radio, Row, Button, Spin, Modal, Tag, Select,Form} from "antd";
 import {getAPI, interpolate, makeFileURL, postAPI} from "../../utils/common";
 import {PATIENT_GROUPS, SEARCH_PATIENT, PATIENTS_LIST} from "../../constants/api";
 import InfiniteFeedLoaderButton from "../common/InfiniteFeedLoaderButton";
 import PatientGroups from "./patientGroups/PatientGroups";
 import {hideEmail, hideMobile} from "../../utils/permissionUtils";
+import {ADVANCED_SEARCH, BLOOD_GROUPS} from "../../constants/hardData";
+import {ALL, CHOOSE} from "../../constants/dataKeys";
 
 const {Meta} = Card;
 const Search = Input.Search;
@@ -54,7 +56,8 @@ class PatientSelection extends React.Component {
                 morePatients: data.next,
                 currentPage: data.current,
                 totalPatients: data.count,
-                loading: false
+                loading: false,
+                advancedOptionShow: true,
             })
         };
         let errorFn = function () {
@@ -190,11 +193,73 @@ class PatientSelection extends React.Component {
         }, function () {
             that.getMorePatient();
         })
+    };
+    advancedOption(value){
+        this.setState({
+            advancedOptionShow:!value,
+        })
     }
+    addNewOptionField =()=>{
+        let id = 0;
+        const { form } = this.props;
+        const keys = form.getFieldValue('keys');
+        const nextKeys = keys.concat(id++);
+        form.setFieldsValue({
+            keys: nextKeys,
+        });
+
+    };
+    // removeNewOptionField = (k) => {
+    //     const { form } = this.props;
+    //     const keys = form.getFieldValue('keys');
+    //     if (keys.length === 1) {
+    //         return;
+    //     }
+    //     form.setFieldsValue({
+    //         keys: keys.filter(key => key !== k),
+    //     });
+    // };
+
+    handleChangeOption = (type,value) => {
+        let that = this;
+        this.setState({
+            [type]: value,
+        })
+    };
 
     render() {
         let that = this;
-        return <Row>
+        const { getFieldDecorator, getFieldValue } = this.props.form;
+        getFieldDecorator('keys', { initialValue: [] });
+        const keys = getFieldValue('keys');
+
+        const formItems = keys.map((k, index) => (<span>
+                <br/>
+                 <Select style={{minWidth: '200px'}} defaultValue={CHOOSE}
+                         onChange={(value)=>this.handleChangeOption('type',value)}>
+                        <Select.Option value={''}>{CHOOSE}</Select.Option>
+                     {ADVANCED_SEARCH.map((item) => <Select.Option value={item.value}>
+                         {item.label}</Select.Option>)}
+                </Select>
+
+            {this.state.type?<span>
+                    <Input placeholder="field" style={{ width: '60%', marginRight: 8 }} />
+                    {/*<Icon*/}
+                    {/*    className="dynamic-delete-button"*/}
+                    {/*    type="minus-circle-o"*/}
+                    {/*    onClick={()=>this.removeNewOptionField(k)}*/}
+                    {/*/>&nbsp;&nbsp;*/}
+                     <Icon
+                         className="dynamic-delete-button"
+                         type="plus-circle-o"
+                         onClick={this.addNewOptionField}
+                     />
+            </span>
+            :null}
+
+            </span>));
+
+        return <Row gutter={16}>
             <Col span={5}
                  style={{
                      height: 'calc(100% - 55px)',
@@ -268,9 +333,45 @@ class PatientSelection extends React.Component {
                 </Radio.Group>
             </Col>
             <Col span={19} style={{overflow: 'scroll', borderLeft: '1px solid #ccc'}}>
-                <Search placeholder="Search Patient By Name / ID / Mobile No / Aadhar No"
-                        onChange={value => this.searchPatient(value.target.value)}
-                        enterButton/>
+                <Row>
+                    {this.state.advancedOptionShow?<>
+                        <Col span={12} >
+                            <Search placeholder="Search Patient By Name / ID / Mobile No / Aadhar No"
+                                    onChange={value => this.searchPatient(value.target.value)}
+                                    enterButton/>
+                        </Col>
+
+                        <Col span={12} style={{textAlign:"center"}}>
+                        <Button  icon="search" onClick={(value)=>this.advancedOption(true)}>Advance Search</Button>
+                        </Col>
+
+
+                        </>:<>
+
+                             <Select style={{minWidth: '200px'}} defaultValue={CHOOSE}
+                                    onChange={(value)=>this.handleChangeOption('type',value)}>
+                                  <Select.Option value={''}>{CHOOSE}</Select.Option>
+                                {ADVANCED_SEARCH.map((item) => <Select.Option value={item.value}>
+                                    {item.label}</Select.Option>)}
+                            </Select>
+                            {this.state.type?<span>
+                                    <Input placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} />
+                                    <Icon
+                                        className="dynamic-delete-button"
+                                        type="plus-circle-o"
+                                        onClick={this.addNewOptionField}
+                                    />
+                            </span>
+                            :null}
+
+                            {formItems}
+                        &nbsp;&nbsp;
+                        <Button onChange={value => this.searchPatient(value.target.value)}>Search</Button>
+                        &nbsp;&nbsp;
+                        <a  icon="search" onClick={(value)=>this.advancedOption(false)}>Basic Search</a>
+                    </>}
+                </Row>
+
                 <Spin spinning={this.state.loading}>
                     <Row>
                         {this.state.patientListData.length ?
@@ -291,8 +392,35 @@ class PatientSelection extends React.Component {
                                               loading={this.state.loading}
                                               hidden={!this.state.morePatients}/>
                 }
-
             </Col>
+
+            {/*<Col span={19} style={{overflow: 'scroll', borderLeft: '1px solid #ccc'}}>*/}
+            {/*    <Search placeholder="Search Patient By Name / ID / Mobile No / Aadhar No"*/}
+            {/*            onChange={value => this.searchPatient(value.target.value)}*/}
+            {/*            enterButton/>*/}
+
+            {/*    <Spin spinning={this.state.loading}>*/}
+            {/*        <Row>*/}
+            {/*            {this.state.patientListData.length ?*/}
+            {/*                this.state.patientListData.map((patient) => <PatientCard {...patient}*/}
+            {/*                                                                         key={patient.id}*/}
+            {/*                                                                         showMobile={that.props.activePracticePermissions.PatientPhoneNumber}*/}
+            {/*                                                                         showEmail={that.props.activePracticePermissions.PatientEmailId}*/}
+            {/*                                                                         setCurrentPatient={that.props.setCurrentPatient}/>) :*/}
+            {/*                <p style={{textAlign: 'center'}}>No Data Found</p>*/}
+            {/*            }*/}
+            {/*        </Row>*/}
+            {/*    </Spin>*/}
+            {/*    {this.state.searchvalue ?  <InfiniteFeedLoaderButton loaderFunction={this.searchPatient}*/}
+            {/*                                                         loading={this.state.loading}*/}
+            {/*                                                         hidden={!this.state.morePatients}/> :*/}
+
+            {/*        <InfiniteFeedLoaderButton loaderFunction={this.getMorePatient}*/}
+            {/*                                  loading={this.state.loading}*/}
+            {/*                                  hidden={!this.state.morePatients}/>*/}
+            {/*    }*/}
+
+            {/*</Col>*/}
             <Modal visible={this.state.showPatientGroupModal}
                    footer={null}
                    onCancel={() => this.togglePatientGroupEditing(false)}>
@@ -302,7 +430,7 @@ class PatientSelection extends React.Component {
     }
 }
 
-export default PatientSelection;
+export default Form.create()(PatientSelection);
 
 function PatientCard(patient) {
     return <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6}>
