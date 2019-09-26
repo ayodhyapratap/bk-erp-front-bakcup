@@ -219,7 +219,6 @@ class AddPaymentForm extends React.Component {
             "invoices": [],
             "bank": "",
             "number": 0,
-
             "is_active": true,
             "is_cancelled": false,
             "practice": that.props.active_practiceId,

@@ -48,17 +48,33 @@ class PatientLedgers extends React.Component {
                     ledgerEntry.details = patientInvoiceDetailsInString(dataRow);
                     ledgerEntry.credit = dataRow.total;
                     ledgerEntry.debit = 0;
+                    ledgerEntry.return = 0;
+                    ledgerEntry.cash_return = 0;
 
                 } else if (dataRow.ledger_type == 'Payment') {
                     ledgerEntry.type_id = dataRow.payment_id;
                     ledgerEntry.details = patientPaymentDetailsInString(dataRow);
-                    ledgerEntry.credit = 0;
-                    ledgerEntry.debit = dataRow.total;
+                    if (dataRow.return_pay) {
+                        ledgerEntry.credit = 0;
+                        ledgerEntry.debit = 0;
+                        ledgerEntry.return = -1 * (dataRow.total + dataRow.advance_value);
+                    } else {
+                        ledgerEntry.credit = 0;
+                        ledgerEntry.debit = dataRow.total + dataRow.advance_value;
+                        ledgerEntry.return = 0;
+                    }
+                    ledgerEntry.cash_return = 0;
+
                 } else if (dataRow.ledger_type == 'Return') {
                     ledgerEntry.type_id = dataRow.return_id;
                     ledgerEntry.details = patientReturnInvoiceDetailsInString(dataRow);
                     ledgerEntry.credit = dataRow.cash_return;
-                    ledgerEntry.debit = dataRow.total;
+                    ledgerEntry.debit = 0;
+                    ledgerEntry.return = dataRow.return_value;
+                    if(dataRow.with_tax == false){
+                        ledgerEntry.credit += dataRow.taxes;
+                    }
+                    ledgerEntry.cash_return = dataRow.cash_return;
                 }
                 balance += ledgerEntry.credit;
                 balance -= ledgerEntry.debit;
@@ -121,7 +137,8 @@ class PatientLedgers extends React.Component {
             {
                 title: 'Date',
                 key: 'date',
-                dataIndex: "date"
+                dataIndex: "date",
+                width:120
             }, {
                 title: 'Invoice/ Receipt/ Return No',
                 key: 'type_id',
@@ -134,6 +151,18 @@ class PatientLedgers extends React.Component {
                 title: 'Type',
                 key: 'type',
                 dataIndex: "type",
+            }, {
+                title: 'Return(INR)',
+                key: 'return',
+                dataIndex: "return",
+                align: "right",
+                render: value => value.toFixed(2)
+            }, {
+                title: 'Cash Return(INR)',
+                key: 'cash_return',
+                dataIndex: "cash_return",
+                align: "right",
+                render: value => value.toFixed(2)
             }, {
                 title: 'Credit(INR)',
                 key: 'credit',
@@ -188,7 +217,8 @@ class PatientLedgers extends React.Component {
                         <h3>Total Debit: {this.state.debit.toFixed(2)}</h3>
                     </Col>
                     <Col span={8}>
-                        <h3>Total Balance: {this.state.balance.toFixed(2)}</h3>
+                        <h3>Total
+                            Balance: {this.state.balance < 0 ? (this.state.balance * -1).toFixed(2) + " (Advance)" : this.state.balance.toFixed(2)}</h3>
                     </Col>
                 </Row>
             </Card>
