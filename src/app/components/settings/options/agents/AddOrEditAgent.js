@@ -189,8 +189,6 @@ class AddOrEditAgent extends React.Component {
 
 
     render() {
-        console.log("state",this.state);
-        console.log("props",this.props);
         const that = this;
         const formItemLayout = (this.props.formLayout ? this.props.formLayout : {
             labelCol: {span: 6},
