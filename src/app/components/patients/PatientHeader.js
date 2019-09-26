@@ -105,30 +105,30 @@ class PatientHeader extends React.Component {
                             checkedChildren={"All Clinics"}
                             unCheckedChildren={"Current Clinic"}
                         />
-                        {this.state.pendingAmount ?
+                        {this.state.pendingAmount?
 
-                            <div style={{
-                                display: 'inline',
-                                float: 'left',
-                                maxWidth: 200,
-                                position: 'absolute',
-                                margin: '0px 15px',
-                                zIndex: 5
-                            }}>
-                                <Popover placement="rightTop"
-                                         content={<List size="small" dataSource={this.state.pendingAmount.practice_data}
-                                                        renderItem={item => <List.Item><List.Item.Meta title={item.name}
-                                                                                                       description={"Rs. " + item.total}/></List.Item>}/>}
-                                         title="Pending Payments">
+                            <Popover placement="rightTop"
+                                     content={<List size="small" dataSource={this.state.pendingAmount.practice_data}
+                                                    renderItem={item => <List.Item><List.Item.Meta title={item.name}
+                                                                                                   description={"Rs. " + item.total}/></List.Item>}/>}
+                                     title="Pending Payments">
+
+                                <div style={{
+                                    display: 'inline',
+                                    float: 'left',
+                                    maxWidth: 200,
+                                    position: 'absolute',
+                                    margin: '0px 15px',
+                                    zIndex: 5
+                                }}>
                                     <Statistic title="Total Pending Amount" value={this.state.pendingAmount.grand_total}
-                                               valueStyle={{
-                                                   color: this.state.pendingAmount.grand_total > 0 ? '#cf1322' : 'initial',
-                                                   fontWeight: 500
-                                               }}
-                                               precision={2}/>
-                                </Popover>
-                            </div>
-                            : null}
+                                    valueStyle={{
+                                    color: this.state.pendingAmount.grand_total > 0 ? '#cf1322' : 'initial',
+                                    fontWeight: 500 }}
+                                    precision={2}/>
+                                </div>
+                            </Popover>: null}
+
                         {this.state.walletAmount && this.state.walletAmount.length ?
                             <Popover placement="rightTop"
                                      title="Agent Wallet Amount"
