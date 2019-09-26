@@ -12,7 +12,9 @@ import {
     Select,
     Radio,
     Upload,
-    InputNumber
+    Popconfirm,
+    InputNumber,
+    Popover,
 } from "antd";
 import {
     FILE_UPLOAD_API,
@@ -184,7 +186,7 @@ class EditPatientDetails extends React.Component {
 
     };
 
-    loadPatientData(patient) {
+    loadPatientData(patientId) {
 
         let that = this;
         let successFn = function (data) {
@@ -198,7 +200,7 @@ class EditPatientDetails extends React.Component {
                 loading: false
             })
         };
-        getAPI(interpolate(PATIENT_PROFILE, [that.props.currentPatient.id]), successFn, errorFn);
+        getAPI(interpolate(PATIENT_PROFILE, [patientId]), successFn, errorFn);
     }
 
     changeRedirect() {
@@ -372,6 +374,20 @@ class EditPatientDetails extends React.Component {
 
     };
 
+    patientDelete=(id)=>{
+        let that = this;
+        let reqData = {'id': id, is_active: false}
+        let successFn = function (data) {
+            that.setState({
+                loading: false,
+            });
+            displayMessage("Patient Deleted!!");
+            that.props.history.push('/patients/profile');
+        };
+        let errorFn = function () {
+        };
+        putAPI(interpolate(PATIENT_PROFILE, [id]), reqData, successFn, errorFn)
+    };
     // onFileEnable=(e)=>{
     //     this.setState({
     //         file_enable:!this.state.file_enable,
@@ -429,11 +445,41 @@ class EditPatientDetails extends React.Component {
                 <Card title={<span>{that.props.currentPatient ? "Edit Profile" : "Add Patient"}&nbsp;&nbsp;<Link
                     to={"/patients/patientprintform"}>Print Patient Form</Link></span>}
                       extra={<div>
-                          <Button style={{margin: 5}} type="primary" htmlType="submit">Submit</Button>
+
+                          <Button style={{margin: 5}} type="primary" htmlType="submit">Save</Button>
+
                           {that.props.history ?
                               <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
                                   Cancel
                               </Button> : null}
+
+                          {this.state.patientDetails && this.state.patientDetails.is_approved?
+                              <Popover
+                                  placement="rightTop"
+                                  trigger={"hover"}
+                                  content="Since patient is approved.?"
+                                  // onConfirm={()=>that.patientDelete(this.state.patientDetails.id)}
+                                  // // onCancel={cancel}
+                                  // okText="Yes"
+                                  // cancelText="No"
+                              >
+                                      <Button style={{margin: 5}}  disabled>
+                                          Delete
+                                      </Button>
+                              </Popover>
+
+                              :  <Popconfirm
+                                  placement="bottom"
+                                  title="Are you sure delete this patient?"
+                                  onConfirm={()=>that.patientDelete(this.state.patientDetails.id)}
+                                  // onCancel={cancel}
+                                  okText="Yes"
+                                  cancelText="No">
+                                      <Button style={{margin: 5}}  >
+                                          Delete
+                                      </Button>
+                              </Popconfirm>}
+
                       </div>}>
                     <Form.Item key={'image'} {...formItemLayout} label={'Patient Image'}>
                         {getFieldDecorator('image', {valuePropName: 'image',})(
@@ -764,13 +810,14 @@ class EditPatientDetails extends React.Component {
                         }
                     </Form.Item>
                     <Form.Item>
-                        <Button style={{margin: 5}} type="primary" htmlType="submit" loading={this.state.loading}>
-                            Submit
-                        </Button>
                         {that.props.history ?
                             <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
                                 Cancel
                             </Button> : null}
+                        <Button style={{margin: 5}} type="primary" htmlType="submit" loading={this.state.loading}>
+                            Save
+                        </Button>
+
                     </Form.Item>
                 </Card>
             </Form>)
