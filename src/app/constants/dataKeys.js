@@ -67,6 +67,8 @@ export const PATIENTS_FIRST_APPOINTMENT='patientsfirstappointment';
 export const MONTHLY_NEW_PATIENTS='MONTHLY';
 export const NEW_MEMBERSHIP='NEW';
 export const ACTIVE_PATIENTS='ACTIVE';
+export const FOLLOW_UP='FOLLOW_UP';
+export const MEDICINE='MEDICINE';
 
 /*Appointment Reports*/
 export const ALL_APPOINTMENT='ALL';
@@ -138,3 +140,5 @@ export const PAYMENT_SETTLEMENT_PER_DOCTOR='SETTLEMENT_DOCTOR';
 export const PAYMENT_REFUND='REFUND';
 
 export const RELATION='Relation';
+
+export const CHOOSE ='Choose';

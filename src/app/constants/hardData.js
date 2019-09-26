@@ -48,8 +48,9 @@ import {
     PAYMENT_SETTLEMENT_PER_DOCTOR,
     CREDIT_NOTES,
     ACTIVE_PATIENTS,
-    AGENT_TREE_VIEW
+    AGENT_TREE_VIEW, FOLLOW_UP, MEDICINE
 } from "../constants/dataKeys";
+import number from "less/lib/less/functions/number";
 
 
 export const PAYMENT_TYPES = [
@@ -284,6 +285,8 @@ export const PATIENTS_RELATED_REPORT= [
     {name: 'Monthly New Patients', value: MONTHLY_NEW_PATIENTS},
     {name: 'New Membership', value: NEW_MEMBERSHIP},
     {name:'Active Patients' ,value:ACTIVE_PATIENTS},
+    {name:"Follow Up Report",value:FOLLOW_UP},
+    {name:"Medicine Report",value:MEDICINE},
 ];
 
 /*Appointment Reports*/
@@ -414,4 +417,14 @@ export const FAMILY_GROUPS=[
     {name:"Uncle/Aunt" ,value:'O+'},
     {name:"Nephew/Niece",value:'NEPHEW/NIECE'},
     {name:"Cousin",value:'COUSIN'},
+];
+
+
+export const ADVANCED_SEARCH=[
+    {label:'Patient Name', value:'name' ,type:"text"},
+    {label:'Contact No', value:'phone' ,type:"text"},
+    {label:'Age is', value:'age' ,type:"number"},
+    {label:'Age more than', value:'age_gte' ,type:"number"},
+    {label:'Age Less Than', value:'age_lte' ,type:"number"},
+    {label:'Has Age', value:'has_age' ,type:"option"},
 ];
