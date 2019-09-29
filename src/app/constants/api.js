@@ -46,7 +46,7 @@ export const PATIENTS_LIST = 'patients/';
 export const PATIENT_PROFILE = 'patients/%s/';
 export const MERGE_PATIENTS = 'patients/merge_patients/';
 export const STAFF_ROLES = 'staff/roles/';
-export const MEDICAL_HISTORY = 'patients/history/?id=%s'
+export const MEDICAL_HISTORY = 'patients/history/?id=%s';
 // export const PATIENT_MEDICAL_HISTORY = 'patients/history/?id=%s';
 export const PATIENT_FILES = 'patients/files/';
 export const ALL_PATIENT_FILES = 'patients/files/';
