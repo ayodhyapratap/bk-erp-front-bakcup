@@ -48,12 +48,13 @@ class PatientHeader extends React.Component {
                                         <Icon type="user"/>}
                                 </Avatar>)}
                             &nbsp;&nbsp;{that.props.currentPatient.user.first_name.length < 16 ? that.props.currentPatient.user.first_name : that.props.currentPatient.user.first_name.slice(0, 12) + '...'}
-                            <small><i><b> [ID: {that.props.currentPatient.custom_id?that.props.currentPatient.custom_id:that.props.currentPatient.id}]</b></i></small>
+                            <small><i><b> [ID: {that.props.currentPatient.custom_id ? that.props.currentPatient.custom_id : that.props.currentPatient.id}]</b></i></small>
 
                         </a>
                         &nbsp;&nbsp;&nbsp;&nbsp;
                         <Popover placement="topLeft" title={"Medical History"}
-                                 content={<div style={{width:250}}>{that.props.currentPatient.medical_history_data ? that.props.currentPatient.medical_history_data.map((item, index) =>
+                                 content={<div
+                                     style={{width: 250}}>{that.props.currentPatient.medical_history_data ? that.props.currentPatient.medical_history_data.map((item, index) =>
                                      <Tag color={'#' + intToRGB(hashCode(item.name))}>{item.name}</Tag>) : null}</div>}>
 
                             {that.props.currentPatient.medical_history_data ? that.props.currentPatient.medical_history_data.map((item, index) =>
@@ -74,7 +75,7 @@ class PatientHeader extends React.Component {
                             <Popover placement="rightTop"
                                      content={<List size="small" dataSource={this.props.pendingAmount.practice_data}
                                                     renderItem={item => <List.Item><List.Item.Meta title={item.name}
-                                                                                                   description={"Rs. " + item.total}/></List.Item>}/>}
+                                                                                                   description={"Rs. " + (item.total < 0 ? item.total * -1 + " (Advance)" : item.total)}/></List.Item>}/>}
                                      title="Pending Payments">
 
                                 <div style={{
@@ -91,7 +92,7 @@ class PatientHeader extends React.Component {
                                     fontWeight: 500 }}
                                     precision={2}/>
                                 </div>
-                            </Popover>: null}
+                            </Popover> : null}
 
                         {this.props.walletAmount && this.props.walletAmount.length ?
                             <Popover placement="rightTop"
