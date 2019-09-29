@@ -13,7 +13,7 @@ import {
     List,
     message,
     Row,
-    Select,
+    Select, Spin,
     Table,
     Tabs,
     Upload
@@ -536,240 +536,241 @@ class AddOrConsumeStock extends React.Component {
             render: (value, record) => <a onClick={() => that.remove(record._id)}>Delete</a>
         }]);
         return <div>
-            <Card loading={this.state.loading} title={this.state.classType + " Stock"} extra={
-                <Search
-                    loading={this.state.loadingQr}
-                    value={this.state.qrValue}
-                    onChange={this.setQrValue}
-                    placeholder="Search QR Code"
-                    onSearch={this.addItemThroughQR}
-                    style={{width: 200}}
-                />}>
-                <Row gutter={16}>
-                    <Col span={7}>
-                        <Tabs size="small" type="card">
-                            {INVENTORY_ITEM_TYPE.map(itemType => <TabPane tab={itemType.label} key={itemType.value}>
-                                <div style={{backgroundColor: '#ddd', padding: 8}}>
+            <Spin spinning={this.state.loading}>
+                <Card  title={this.state.classType + " Stock"} extra={
+                    <Search
+                        loading={this.state.loadingQr}
+                        value={this.state.qrValue}
+                        onChange={this.setQrValue}
+                        placeholder="Search QR Code"
+                        onSearch={this.addItemThroughQR}
+                        style={{width: 200}}
+                    />}>
+                    <Row gutter={16}>
+                        <Col span={7}>
+                            <Tabs size="small" type="card">
+                                {INVENTORY_ITEM_TYPE.map(itemType => <TabPane tab={itemType.label} key={itemType.value}>
+                                    <div style={{backgroundColor: '#ddd', padding: 8}}>
 
 
-                                    <Input.Search key={itemType.label}
-                                                  placeholder={"Search in " + itemType.label + "..."}
-                                                  onSearch={value => this.searchValues(itemType.label, value)}/>
-                                </div>
-                                <List size={"small"}
-                                      itemLayout="horizontal"
-                                      dataSource={this.state.items ? this.state.items[itemType.value] : []}
-                                      renderItem={item => (
-                                          <List.Item>
-                                              <List.Item.Meta
-                                                  title={item.name}
-                                                  description={item.item_type_stock.item_stock && item.item_type_stock.item_stock.map((stock) =>
-                                                      <span>#{stock.batch_number}({stock.quantity})<br/></span>)}/>
-                                              <Button type="primary" size="small" shape="circle"
-                                                      onClick={() => this.add(item)} icon={"arrow-right"}/>
-                                          </List.Item>)}/>
-                            </TabPane>)}
-                        </Tabs>
-                    </Col>
-                    <Col span={17}>
-                        <Form onSubmit={this.handleSubmit}>
-                            {this.state.classType == CONSUME_STOCK ?
-                                <Row>
-                                    <Col span={16}>
-                                        <Form.Item
-                                            key={`type_of_consumption`}
-                                            label={"Type of Consumption"}
-                                            {...{
-                                                labelCol: {span: 6},
-                                                wrapperCol: {span: 14},
-                                            }}>
-                                            {getFieldDecorator(`type_of_consumption`, {
-                                                validateTrigger: ['onChange', 'onBlur'],
-                                                rules: [{
-                                                    required:true,
-                                                    message: "This field is required.",
-                                                }],
-                                            })(
-                                                <Select>
-                                                    {TYPE_OF_CONSUMPTION.map(item => <Select.Option
-                                                        value={item.value}>{item.label}</Select.Option>)}
-                                                </Select>
-                                            )}
-                                        </Form.Item>
-                                    </Col>
-                                    {/*<Col span={8}>*/}
-                                    {/*<Search*/}
-                                    {/*loading={this.state.loadingQr}*/}
-                                    {/*value={this.state.qrValue}*/}
-                                    {/*onChange={this.setQrValue}*/}
-                                    {/*placeholder="Search QR Code"*/}
-                                    {/*onSearch={this.addItemThroughQR}*/}
-                                    {/*style={{width: 200}}*/}
-                                    {/*/>*/}
-                                    {/*</Col>*/}
-                                </Row>
-                                : null}
-
-                            {/*{this.state.classType == CONSUME_STOCK ?*/}
-                            {/*<Form.Item*/}
-                            {/*key={`supplier`}*/}
-                            {/*label={"Supplier"}*/}
-                            {/*{...{*/}
-                            {/*labelCol: {span: 6},*/}
-                            {/*wrapperCol: {span: 14},*/}
-                            {/*}}>*/}
-                            {/*{getFieldDecorator(`addedOn`, {*/}
-                            {/*validateTrigger: ['onChange', 'onBlur'],*/}
-                            {/*rules: [{*/}
-                            {/*message: "This field is required.",*/}
-                            {/*}],*/}
-                            {/*})(*/}
-                            {/*<Select>*/}
-                            {/*/!*{this.state.suppliersList && this.state.suppliersList.map(item =>*!/*/}
-                            {/*/!*<Select.Option*!/*/}
-                            {/*/!*value={item.id}>{item.name}</Select.Option>)}*!/*/}
-                            {/*</Select>*/}
-                            {/*)}*/}
-                            {/*</Form.Item>*/}
-                            {/*: null}*/}
-
-                            <Table pagination={false}
-                                   bordered={true}
-                                   dataSource={this.state.tableFormValues}
-                                   columns={consumeRow}/>
-                            {/*<List>{formItems}</List>*/}
-
-                            <Affix offsetBottom={0}>
-                                <Card>
+                                        <Input.Search key={itemType.label}
+                                                      placeholder={"Search in " + itemType.label + "..."}
+                                                      onSearch={value => this.searchValues(itemType.label, value)}/>
+                                    </div>
+                                    <List size={"small"}
+                                          itemLayout="horizontal"
+                                          dataSource={this.state.items ? this.state.items[itemType.value] : []}
+                                          renderItem={item => (
+                                              <List.Item>
+                                                  <List.Item.Meta
+                                                      title={item.name}
+                                                      description={item.item_type_stock.item_stock && item.item_type_stock.item_stock.map((stock) =>
+                                                          <span>#{stock.batch_number}({stock.quantity})<br/></span>)}/>
+                                                  <Button type="primary" size="small" shape="circle"
+                                                          onClick={() => this.add(item)} icon={"arrow-right"}/>
+                                              </List.Item>)}/>
+                                </TabPane>)}
+                            </Tabs>
+                        </Col>
+                        <Col span={17}>
+                            <Form onSubmit={this.handleSubmit}>
+                                {this.state.classType == CONSUME_STOCK ?
                                     <Row>
-                                        <Col span={8}>
-                                            <Form.Item {...formItemLayoutWithOutLabel}>
-                                                <Button type="primary" htmlType="submit">Submit</Button>
-                                                {that.props.history ?
-                                                    <Button style={{margin: 5}}
-                                                            onClick={() => that.props.history.goBack()}>
-                                                        Cancel
-                                                    </Button> : null}
-                                            </Form.Item>
-                                        </Col>
-                                        <Col span={8}>
+                                        <Col span={16}>
                                             <Form.Item
-                                                key={`date`}
-                                                label={this.state.classType == ADD_STOCK ? "Added On" : "Consumed On"}
+                                                key={`type_of_consumption`}
+                                                label={"Type of Consumption"}
                                                 {...{
-                                                    labelCol: {span: 10},
+                                                    labelCol: {span: 6},
                                                     wrapperCol: {span: 14},
                                                 }}>
-                                                {getFieldDecorator(`date`, {
+                                                {getFieldDecorator(`type_of_consumption`, {
                                                     validateTrigger: ['onChange', 'onBlur'],
                                                     rules: [{
-                                                        required: true,
+                                                        required:true,
                                                         message: "This field is required.",
                                                     }],
-                                                    initialValue: moment()
                                                 })(
-                                                    <DatePicker/>
-                                                )}
-                                            </Form.Item>
-
-                                            <Form.Item
-                                                key={`bill_number`}
-                                                label='Bill Number'
-                                                {...{
-                                                    labelCol: {span: 10},
-                                                    wrapperCol: {span: 14},
-                                                }}>
-                                                {getFieldDecorator(`bill_number`, {
-                                                    validateTrigger: ['onChange', 'onBlur'],
-                                                    rules: [{
-                                                        required: true,
-                                                        message: "This field is required.",
-                                                    }],
-
-                                                })(
-                                                    <Input/>
-                                                )}
-                                            </Form.Item>
-
-
-                                            {this.state.classType == ADD_STOCK ? <div>
-                                                {this.state.customSupplier ?
-                                                    <Form.Item
-                                                        key={`supplier_name`}
-                                                        label={"Supplier"}
-                                                        {...{
-                                                            labelCol: {span: 10},
-                                                            wrapperCol: {span: 14},
-                                                        }}>
-                                                        {getFieldDecorator(`supplier_name`, {
-                                                            validateTrigger: ['onChange', 'onBlur'],
-                                                            rules: [{
-                                                                required: true,
-                                                                message: "This field is required.",
-                                                            }],
-                                                        })(
-                                                            <Input/>
-                                                        )}
-                                                        {this.state.customSupplier ?
-                                                            <a onClick={() => this.changeSupplierType(false)}>Cancel</a> : null}
-                                                    </Form.Item> : <Form.Item
-                                                        key={`supplier`}
-                                                        label={"Supplier"}
-                                                        {...{
-                                                            labelCol: {span: 10},
-                                                            wrapperCol: {span: 14},
-                                                        }}>
-                                                        {getFieldDecorator(`supplier`, {
-                                                            validateTrigger: ['onChange', 'onBlur'],
-                                                            rules: [{
-                                                                required: true,
-                                                                message: "This field is required.",
-                                                            }],
-                                                        })(<Select>
-                                                            {this.state.supplierList.map(item => <Select.Option
-                                                                value={item.id}>
-                                                                {item.name}
-                                                            </Select.Option>)}
-                                                        </Select>)}
-                                                        {this.state.customSupplier ? null :
-                                                            <a onClick={() => this.changeSupplierType(true)}>Add
-                                                                New</a>}
-                                                    </Form.Item>} </div> : null}
-                                        </Col>
-                                        <Col span={6} offset={2}>
-                                            <Form.Item key={'file'} {...formItemLayout}>
-                                                {getFieldDecorator('file', {})(
-                                                    <Upload {...singleUploadprops}>
-                                                        <Button>
-                                                            <Icon type="upload"/> Select File
-                                                        </Button>
-
-                                                    </Upload>
+                                                    <Select>
+                                                        {TYPE_OF_CONSUMPTION.map(item => <Select.Option
+                                                            value={item.value}>{item.label}</Select.Option>)}
+                                                    </Select>
                                                 )}
                                             </Form.Item>
                                         </Col>
-                                        {this.state.classType == ADD_STOCK ?
-                                            <Col style={{textAlign: 'center'}} span={8}>
-
-                                                <h3>Grand
-                                                    Total: <b>{this.state.tableFormValues.reduce(function (total, item) {
-                                                        if (that.state.tempValues['quantity' + item._id] && that.state.tempValues['unit_cost' + item._id]) {
-                                                            return total + (that.state.tempValues['quantity' + item._id] * that.state.tempValues['unit_cost' + item._id])
-                                                        }
-                                                        return total
-                                                    }, 0)}</b></h3>
-                                            </Col>
-                                            : null}
+                                        {/*<Col span={8}>*/}
+                                        {/*<Search*/}
+                                        {/*loading={this.state.loadingQr}*/}
+                                        {/*value={this.state.qrValue}*/}
+                                        {/*onChange={this.setQrValue}*/}
+                                        {/*placeholder="Search QR Code"*/}
+                                        {/*onSearch={this.addItemThroughQR}*/}
+                                        {/*style={{width: 200}}*/}
+                                        {/*/>*/}
+                                        {/*</Col>*/}
                                     </Row>
-                                </Card>
-                            </Affix>
+                                    : null}
 
-                        </Form>
+                                {/*{this.state.classType == CONSUME_STOCK ?*/}
+                                {/*<Form.Item*/}
+                                {/*key={`supplier`}*/}
+                                {/*label={"Supplier"}*/}
+                                {/*{...{*/}
+                                {/*labelCol: {span: 6},*/}
+                                {/*wrapperCol: {span: 14},*/}
+                                {/*}}>*/}
+                                {/*{getFieldDecorator(`addedOn`, {*/}
+                                {/*validateTrigger: ['onChange', 'onBlur'],*/}
+                                {/*rules: [{*/}
+                                {/*message: "This field is required.",*/}
+                                {/*}],*/}
+                                {/*})(*/}
+                                {/*<Select>*/}
+                                {/*/!*{this.state.suppliersList && this.state.suppliersList.map(item =>*!/*/}
+                                {/*/!*<Select.Option*!/*/}
+                                {/*/!*value={item.id}>{item.name}</Select.Option>)}*!/*/}
+                                {/*</Select>*/}
+                                {/*)}*/}
+                                {/*</Form.Item>*/}
+                                {/*: null}*/}
 
-                    </Col>
-                </Row>
-            </Card>
+                                <Table pagination={false}
+                                       bordered={true}
+                                       dataSource={this.state.tableFormValues}
+                                       columns={consumeRow}/>
+                                {/*<List>{formItems}</List>*/}
 
+                                <Affix offsetBottom={0}>
+                                    <Card>
+                                        <Row>
+                                            <Col span={8}>
+                                                <Form.Item {...formItemLayoutWithOutLabel}>
+                                                    <Button type="primary" htmlType="submit">Submit</Button>
+                                                    {that.props.history ?
+                                                        <Button style={{margin: 5}}
+                                                                onClick={() => that.props.history.goBack()}>
+                                                            Cancel
+                                                        </Button> : null}
+                                                </Form.Item>
+                                            </Col>
+                                            <Col span={8}>
+                                                <Form.Item
+                                                    key={`date`}
+                                                    label={this.state.classType == ADD_STOCK ? "Added On" : "Consumed On"}
+                                                    {...{
+                                                        labelCol: {span: 10},
+                                                        wrapperCol: {span: 14},
+                                                    }}>
+                                                    {getFieldDecorator(`date`, {
+                                                        validateTrigger: ['onChange', 'onBlur'],
+                                                        rules: [{
+                                                            required: true,
+                                                            message: "This field is required.",
+                                                        }],
+                                                        initialValue: moment()
+                                                    })(
+                                                        <DatePicker/>
+                                                    )}
+                                                </Form.Item>
+
+                                                <Form.Item
+                                                    key={`bill_number`}
+                                                    label='Bill Number'
+                                                    {...{
+                                                        labelCol: {span: 10},
+                                                        wrapperCol: {span: 14},
+                                                    }}>
+                                                    {getFieldDecorator(`bill_number`, {
+                                                        validateTrigger: ['onChange', 'onBlur'],
+                                                        rules: [{
+                                                            required: true,
+                                                            message: "This field is required.",
+                                                        }],
+
+                                                    })(
+                                                        <Input/>
+                                                    )}
+                                                </Form.Item>
+
+
+                                                {this.state.classType == ADD_STOCK ? <div>
+                                                    {this.state.customSupplier ?
+                                                        <Form.Item
+                                                            key={`supplier_name`}
+                                                            label={"Supplier"}
+                                                            {...{
+                                                                labelCol: {span: 10},
+                                                                wrapperCol: {span: 14},
+                                                            }}>
+                                                            {getFieldDecorator(`supplier_name`, {
+                                                                validateTrigger: ['onChange', 'onBlur'],
+                                                                rules: [{
+                                                                    required: true,
+                                                                    message: "This field is required.",
+                                                                }],
+                                                            })(
+                                                                <Input/>
+                                                            )}
+                                                            {this.state.customSupplier ?
+                                                                <a onClick={() => this.changeSupplierType(false)}>Cancel</a> : null}
+                                                        </Form.Item> : <Form.Item
+                                                            key={`supplier`}
+                                                            label={"Supplier"}
+                                                            {...{
+                                                                labelCol: {span: 10},
+                                                                wrapperCol: {span: 14},
+                                                            }}>
+                                                            {getFieldDecorator(`supplier`, {
+                                                                validateTrigger: ['onChange', 'onBlur'],
+                                                                rules: [{
+                                                                    required: true,
+                                                                    message: "This field is required.",
+                                                                }],
+                                                            })(<Select>
+                                                                {this.state.supplierList.map(item => <Select.Option
+                                                                    value={item.id}>
+                                                                    {item.name}
+                                                                </Select.Option>)}
+                                                            </Select>)}
+                                                            {this.state.customSupplier ? null :
+                                                                <a onClick={() => this.changeSupplierType(true)}>Add
+                                                                    New</a>}
+                                                        </Form.Item>} </div> : null}
+                                            </Col>
+                                            <Col span={6} offset={2}>
+                                                <Form.Item key={'file'} {...formItemLayout}>
+                                                    {getFieldDecorator('file', {})(
+                                                        <Upload {...singleUploadprops}>
+                                                            <Button>
+                                                                <Icon type="upload"/> Select File
+                                                            </Button>
+
+                                                        </Upload>
+                                                    )}
+                                                </Form.Item>
+                                            </Col>
+                                            {this.state.classType == ADD_STOCK ?
+                                                <Col style={{textAlign: 'center'}} span={8}>
+
+                                                    <h3>Grand
+                                                        Total: <b>{this.state.tableFormValues.reduce(function (total, item) {
+                                                            if (that.state.tempValues['quantity' + item._id] && that.state.tempValues['unit_cost' + item._id]) {
+                                                                return total + (that.state.tempValues['quantity' + item._id] * that.state.tempValues['unit_cost' + item._id])
+                                                            }
+                                                            return total
+                                                        }, 0)}</b></h3>
+                                                </Col>
+                                                : null}
+                                        </Row>
+                                    </Card>
+                                </Affix>
+
+                            </Form>
+
+                        </Col>
+                    </Row>
+                </Card>
+            </Spin>
         </div>
 
     }

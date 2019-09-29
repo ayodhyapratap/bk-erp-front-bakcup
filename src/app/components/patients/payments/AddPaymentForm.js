@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Col, Divider, InputNumber, List, Popconfirm, Row, Select} from 'antd';
+import {Button, Card, Col, Divider, InputNumber, List, Popconfirm, Row, Select,DatePicker} from 'antd';
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {
     AVAILABLE_ADVANCE, BULK_PAYMENT_API,
@@ -9,6 +9,8 @@ import {
     SINGLE_PAYMENT_API
 } from "../../../constants/api";
 import {WARNING_MSG_TYPE} from "../../../constants/dataKeys";
+import moment from "moment";
+import {PROCEDURES} from "../../../constants/hardData";
 
 class AddPaymentForm extends React.Component {
     constructor(props) {
@@ -25,7 +27,8 @@ class AddPaymentForm extends React.Component {
             totalPayingFromAdvanceAmount: 0,
             selectedPaymentMode: null,
             availableAdvance: null,
-            advanceToBeSent:0
+            advanceToBeSent:0,
+            selectDate:moment(),
         }
     }
 
@@ -205,7 +208,13 @@ class AddPaymentForm extends React.Component {
         this.setState({
             selectedPaymentMode: e
         })
-    }
+    };
+    selectedDate=(value)=>{
+      let that=this;
+      that.setState({
+          selectDate:value,
+      })
+    };
     handleSubmit = (e) => {
         if (!this.state.totalPayingAmount) {
             displayMessage(WARNING_MSG_TYPE, "Payment Amount of O INR is not allowed.");
@@ -227,6 +236,7 @@ class AddPaymentForm extends React.Component {
             "payment_mode": that.state.selectedPaymentMode,
             advance_value: that.state.advanceToBeSent,
             "is_advance": !!that.state.advanceToBeSent,
+            "date":moment(that.state.selectDate).format("YYYY-MM-DD"),
         }
         let reqData = []
         if (that.state.totalPayingAmount - that.state.totalPayableAmount > 1) {
@@ -292,14 +302,14 @@ class AddPaymentForm extends React.Component {
             if (that.props.loadData)
                 that.props.loadData();
             that.props.history.push("/patient/" + that.props.match.params.id + "/billing/payments")
-        }
+        };
         let errorFn = function () {
             that.setState({
                 loading: false
             });
-        }
+        };
         postAPI(BULK_PAYMENT_API, reqData, successFn, errorFn)
-    }
+    };
 
     render() {
         let that = this;
@@ -400,6 +410,14 @@ class AddPaymentForm extends React.Component {
                                         {mode.mode}
                                     </Select.Option>)}
                                 </Select>
+
+                                <Row>
+                                    <Col span={6}>
+                                        <br/>
+                                        <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
+                                        <DatePicker style={{width:150}} defaultValue={moment()}  onChange={(value) => that.selectedDate(value)}/>
+                                    </Col>
+                                </Row>
                             </Col>
                             <Col span={6}>
                                 <Popconfirm
@@ -407,7 +425,10 @@ class AddPaymentForm extends React.Component {
                                     onConfirm={this.handleSubmit}>
                                     <Button type={'primary'}>Save Payments</Button>
                                 </Popconfirm>
+
+
                             </Col>
+
                         </Row>
                     </Card>
                 </Col>

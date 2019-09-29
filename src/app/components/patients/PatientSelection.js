@@ -19,8 +19,9 @@ class PatientSelection extends React.Component {
             patientGroup: [],
             morePatients: null,
             loading: true,
-            selectedPatientGroup: 'all'
-        }
+            selectedPatientGroup: 'all',
+            keys:[],
+        };
         this.getPatientListData = this.getPatientListData.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
         this.getMorePatient = this.getMorePatient.bind(this);
@@ -233,7 +234,7 @@ class PatientSelection extends React.Component {
         getFieldDecorator('keys', { initialValue: [] });
         const keys = getFieldValue('keys');
 
-        const formItems = keys.map((k, index) => (<span>
+        const formItems = this.state.keys.map((k, index) => (<span>
                 <br/>
                  <Select style={{minWidth: '200px'}} defaultValue={CHOOSE}
                          onChange={(value)=>this.handleChangeOption('type',value)}>

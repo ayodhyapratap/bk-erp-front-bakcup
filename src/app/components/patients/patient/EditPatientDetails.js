@@ -45,6 +45,9 @@ import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD, ALL, RELATION} from "../../
 import {Link} from "react-router-dom";
 import {BLOOD_GROUPS, FAMILY_GROUPS, PATIENT_AGE, SOURCE_PLATFORM} from "../../../constants/hardData";
 
+
+
+const confirm = Modal.confirm;
 const {Option} = Select;
 
 
@@ -349,7 +352,8 @@ class EditPatientDetails extends React.Component {
         this.setState({
             [type]: value
         })
-    }
+    };
+
     onChangeCheckbox = (e) => {
         this.setState({
             on_dialysis: !this.state.on_dialysis,
@@ -374,8 +378,22 @@ class EditPatientDetails extends React.Component {
 
     };
 
-    patientDelete=(id)=>{
+    onDeletePatient(){
+        let that=this;
+        confirm({
+            title:'Are you sure delete this patient?',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                that.patientDelete();
+            },
+
+        });
+    }
+    patientDelete(){
         let that = this;
+        let id=that.state.patientDetails.id
         let reqData = {'id': id, is_active: false}
         let successFn = function (data) {
             that.setState({
@@ -444,10 +462,7 @@ class EditPatientDetails extends React.Component {
             <Form onSubmit={that.handleSubmit}>
                 <Card title={<span>{that.props.currentPatient ? "Edit Profile" : "Add Patient"}&nbsp;&nbsp;<Link
                     to={"/patients/patientprintform"}>Print Patient Form</Link></span>}
-                      extra={<div>
-
-                          <Button style={{margin: 5}} type="primary" htmlType="submit">Save</Button>
-
+                      extra={<div> <Button style={{margin: 5}} type="primary" htmlType="submit">Save</Button>
                           {that.props.history ?
                               <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
                                   Cancel
@@ -455,30 +470,23 @@ class EditPatientDetails extends React.Component {
 
                           {this.state.patientDetails && this.state.patientDetails.is_approved?
                               <Popover
-                                  placement="rightTop"
+                                  placement="leftBottom"
                                   trigger={"hover"}
-                                  content="Since patient is approved.?"
+                                  content="An Agent is associated. Patient can not be deleted."
                                   // onConfirm={()=>that.patientDelete(this.state.patientDetails.id)}
                                   // // onCancel={cancel}
                                   // okText="Yes"
                                   // cancelText="No"
                               >
-                                      <Button style={{margin: 5}}  disabled>
+                                      <Button style={{margin: 5}} type={"danger"}  disabled>
                                           Delete
                                       </Button>
                               </Popover>
 
-                              :  <Popconfirm
-                                  placement="bottom"
-                                  title="Are you sure delete this patient?"
-                                  onConfirm={()=>that.patientDelete(this.state.patientDetails.id)}
-                                  // onCancel={cancel}
-                                  okText="Yes"
-                                  cancelText="No">
-                                      <Button style={{margin: 5}}  >
+                              : <Button style={{margin: 5}}  onClick={()=>that.onDeletePatient()} type={"danger"}>
                                           Delete
                                       </Button>
-                              </Popconfirm>}
+                          }
 
                       </div>}>
                     <Form.Item key={'image'} {...formItemLayout} label={'Patient Image'}>
@@ -629,7 +637,7 @@ class EditPatientDetails extends React.Component {
                         <span style={{display: 'inline-block', width: '14px', textAlign: 'center'}}/>
                         <Form.Item style={{display: 'inline-block', width: 'calc(50% - 12px)'}}>
                             {getFieldDecorator("attendee", {initialValue: this.state.patientDetails ? this.state.patientDetails.attendee : ''})
-                            (<Input disabled={this.state.relation_text}/>)
+                            (<Input disabled={ this.state.patientDetails && this.state.patientDetails.attendee ?false:this.state.relation_text}/>)
                             }
                         </Form.Item>
                     </Form.Item>

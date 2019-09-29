@@ -13,52 +13,16 @@ class PatientHeader extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            pendingAmount: null,
-            walletAmount: null
-        }
-    }
 
+        };
+    }
     componentDidMount() {
-        this.loadPatientPendingAmount();
-        this.loadPatientWallet();
-    }
-
-    loadPatientPendingAmount = () => {
-        let that = this;
-        if (this.props.currentPatient && this.props.currentPatient.id) {
-            let successFn = function (data) {
-                that.setState({
-                    pendingAmount: data
-                })
-            }
-            let errorFn = function () {
-
-            }
-            getAPI(interpolate(PATIENT_PENDING_AMOUNT, [this.props.currentPatient.id]), successFn, errorFn);
-        } else {
-            this.setState({
-                pendingAmount: null
-            })
+        let that=this;
+        if (that.props.refreshWallet){
+            that.props.refreshWallet();
         }
     }
-    loadPatientWallet = () => {
-        let that = this;
-        if (this.props.currentPatient && this.props.currentPatient.id) {
-            let successFn = function (data) {
-                that.setState({
-                    walletAmount: data
-                })
-            }
-            let errorFn = function () {
 
-            }
-            getAPI(interpolate(AGENT_WALLET, [this.props.currentPatient.id]), successFn, errorFn);
-        } else {
-            this.setState({
-                pendingAmount: null
-            })
-        }
-    }
 
     render() {
         let that = this;
@@ -105,10 +69,10 @@ class PatientHeader extends React.Component {
                             checkedChildren={"All Clinics"}
                             unCheckedChildren={"Current Clinic"}
                         />
-                        {this.state.pendingAmount?
+                        {this.props.pendingAmount?
 
                             <Popover placement="rightTop"
-                                     content={<List size="small" dataSource={this.state.pendingAmount.practice_data}
+                                     content={<List size="small" dataSource={this.props.pendingAmount.practice_data}
                                                     renderItem={item => <List.Item><List.Item.Meta title={item.name}
                                                                                                    description={"Rs. " + item.total}/></List.Item>}/>}
                                      title="Pending Payments">
@@ -121,20 +85,20 @@ class PatientHeader extends React.Component {
                                     margin: '0px 15px',
                                     zIndex: 5
                                 }}>
-                                    <Statistic title="Total Pending Amount" value={this.state.pendingAmount.grand_total}
+                                    <Statistic title="Total Pending Amount" value={this.props.pendingAmount.grand_total}
                                     valueStyle={{
-                                    color: this.state.pendingAmount.grand_total > 0 ? '#cf1322' : 'initial',
+                                    color: this.props.pendingAmount.grand_total > 0 ? '#cf1322' : 'initial',
                                     fontWeight: 500 }}
                                     precision={2}/>
                                 </div>
                             </Popover>: null}
 
-                        {this.state.walletAmount && this.state.walletAmount.length ?
+                        {this.props.walletAmount && this.props.walletAmount.length ?
                             <Popover placement="rightTop"
                                      title="Agent Wallet Amount"
                                      content={<p>
                                          {/*Refundable : {this.state.walletAmount[0].refundable_amount} <br/>*/}
-                                         Non-Refundable : {this.state.walletAmount[0].non_refundable}
+                                         Non-Refundable : {this.props.walletAmount[0].non_refundable}
                                      </p>}>
                                 <div style={{
                                     display: 'inline',
@@ -145,7 +109,7 @@ class PatientHeader extends React.Component {
                                     margin: '12px 15px'
                                 }}>
                                     <Statistic tile={"wallet"}
-                                               value={this.state.walletAmount[0].refundable_amount + this.state.walletAmount[0].non_refundable}
+                                               value={this.props.walletAmount[0].refundable_amount + this.props.walletAmount[0].non_refundable}
                                                prefix={<Icon type="wallet"/>}/>
                                 </div>
                             </Popover> : null}

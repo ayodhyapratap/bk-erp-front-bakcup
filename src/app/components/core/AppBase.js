@@ -16,8 +16,8 @@ import PrintPatientForm from "../patients/patient/PrintPatientForm";
 import CreateAppointment from "../calendar/CreateAppointment";
 import BlockCalendar from "../calendar/BlockCalendar";
 import PermissionDenied from "../common/errors/PermissionDenied";
-import {SUGGESTIONS} from "../../constants/api";
-import {displayMessage, interpolate, postAPI} from "../../utils/common";
+import {AGENT_WALLET, PATIENT_PENDING_AMOUNT, SUGGESTIONS} from "../../constants/api";
+import {displayMessage, getAPI, interpolate, postAPI} from "../../utils/common";
 import {SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
 import SuggestionBox from "./SuggestionBox";
 import ErrorBoundary from "../../../crashHandling/ErrorBoundary";
@@ -37,16 +37,20 @@ class AppBase extends React.Component {
             allowAllPermissions: false,
             loadingPermissions: false,
             visible: false,
+
         };
         this.activeData = this.activeData.bind(this);
         // this.clinicData = this.clinicData.bind(this);
         this.switchPractice = this.switchPractice.bind(this);
+
+
     }
 
     componentDidMount() {
-        this.activeData()
+        this.activeData();
 
     }
+
 
     toggleSider = (option) => {
         this.setState({
@@ -119,8 +123,6 @@ class AppBase extends React.Component {
 
     }
 
-
-
     showDrawer = () => {
         this.setState({
             visible: true,
@@ -131,6 +133,8 @@ class AppBase extends React.Component {
             visible: false,
         });
     };
+
+
 
     render() {
         let that = this;
@@ -153,7 +157,7 @@ class AppBase extends React.Component {
                     <Route>
                         <Layout>
                             <AppSider toggleSider={this.toggleSider} {...this.state}
-                                      key={that.state.active_practiceId} {...this.props}/>
+                                      key={that.state.active_practiceId} {...this.props} />
                             <Layout>
                                 <AppHeader {...this.props}
                                            {...this.state}

@@ -46,17 +46,23 @@ class PatientPayments extends React.Component {
             loading: true,
             otpSent: false,
             editPaymentVisible: false,
+            editPayment:null,
         }
 
     }
 
     componentDidMount() {
+        let that=this;
         this.loadPayments();
+
     }
 
 
     loadPayments = (page = 1) => {
         let that = this;
+        if (that.props.refreshWallet && page==1){
+            that.props.refreshWallet();
+        }
         this.setState({
             loading: true
         })
@@ -92,41 +98,31 @@ class PatientPayments extends React.Component {
         //     delete (apiParams.practice)
         // }
         getAPI(PATIENT_PAYMENTS_API, successFn, errorFn, apiParams);
-    }
+    };
 
 
-    editPaymentData(record) {
-        this.setState({
-            editPayment: record,
-        });
-        // let id = this.props.match.params.id
-        this.props.history.push("/patient/" + record.patient + "/billing/payments/edit")
-
-    }
 
     loadPDF = (id) => {
         let that = this;
         let successFn = function (data) {
             if (data.report)
                 window.open(BACKEND_BASE_URL + data.report);
-        }
+        };
         let errorFn = function () {
 
-        }
+        };
         getAPI(interpolate(PAYMENT_PDF, [id]), successFn, errorFn);
-    }
+    };
 
     deletePayment(patient, payment) {
-        console.log("Canceled", payment)
         let that = this;
         let reqData = {patient: patient, is_cancelled: true};
         let successFn = function (data) {
             displayMessage(SUCCESS_MSG_TYPE, "Payment cancelled successfully")
             that.loadPayments();
-        }
+        };
         let errorFn = function () {
-        }
-        console.log("reqdata", reqData)
+        };
         putAPI(interpolate(SINGLE_PAYMENT_API, [payment]), reqData, successFn, errorFn);
 
     }
@@ -147,7 +143,7 @@ class PatientPayments extends React.Component {
                 patientId: record.patient,
                 paymentId: record.payment_id
             })
-        }
+        };
         let errorFn = function () {
 
         };
@@ -158,7 +154,7 @@ class PatientPayments extends React.Component {
         this.setState({
             editPaymentVisible: false
         })
-    }
+    };
 
     handleSubmitEditPayment = (e) => {
         let that = this;
@@ -173,7 +169,7 @@ class PatientPayments extends React.Component {
                     that.setState({
                         editPaymentVisible: false,
                     });
-                    that.editPaymentData(that.state.editPayment)
+                    that.editPaymentData(that.state.editPayment);
                 };
                 let errorFn = function () {
 
@@ -181,7 +177,16 @@ class PatientPayments extends React.Component {
                 postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
             }
         });
-    }
+    };
+    editPaymentData=(record)=>{
+        let that =this;
+        that.setState({
+            editPayment:record,
+        },function () {
+            that.props.history.push("/patient/" + record.patient + "/billing/payments/edit")
+        });
+
+    };
 
     cancelModalOpen = (record) => {
         let that = this;
@@ -329,7 +334,8 @@ const columns = [{
 }, {
     title: 'Amount Paid',
     key: 'pay_amount',
-    dataIndex: 'pay_amount'
+    dataIndex: 'pay_amount',
+    render: value => value.toFixed(2),
 }];
 
 function PaymentCard(payment, that) {

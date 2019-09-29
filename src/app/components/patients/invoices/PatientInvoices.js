@@ -72,6 +72,9 @@ class PatientInvoices extends React.Component {
 
     loadInvoices(page = 1) {
         let that = this;
+        if (that.props.refreshWallet && page==1){
+            that.props.refreshWallet();
+        }
         that.setState({
             loading: true
         });

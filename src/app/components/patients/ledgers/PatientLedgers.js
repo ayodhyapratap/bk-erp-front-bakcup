@@ -30,6 +30,9 @@ class PatientLedgers extends React.Component {
 
     loadPatientLedger = () => {
         let that = this;
+        if (that.props.refreshWallet){
+            that.props.refreshWallet();
+        }
         this.setState({
             loadingLedger: true
         })
