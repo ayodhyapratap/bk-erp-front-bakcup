@@ -435,7 +435,7 @@ export default Form.create()(PatientSelection);
 
 function PatientCard(patient) {
     return <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6}>
-        <Card onClick={() => patient.setCurrentPatient(patient)} style={{margin: '5px', height: 120}}>
+        <Card onClick={() => patient.setCurrentPatient(patient)} style={{margin: '3px', paddingBottom:"8px"}}>
             <Meta avatar={(patient.image ? <Avatar src={makeFileURL(patient.image)} size={50}/> :
                 <Avatar style={{backgroundColor: '#87d068'}} size={50}>
                     {patient.user.first_name ? patient.user.first_name.charAt(0) :

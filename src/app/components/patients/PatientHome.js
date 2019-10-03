@@ -169,7 +169,7 @@ class PatientHome extends React.Component {
     refreshWallet=()=>{
         this.loadPatientWallet();
         this.loadPatientPendingAmount();
-    }
+    };
 
     render() {
         let that = this;
