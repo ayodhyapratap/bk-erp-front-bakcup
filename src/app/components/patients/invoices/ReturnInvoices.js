@@ -36,7 +36,7 @@ import {Route, Switch} from "react-router";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {Link, Redirect} from "react-router-dom";
 import {BACKEND_BASE_URL} from "../../../config/connect";
-import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {SUCCESS_MSG_TYPE, OTP_DELAY_TIME} from "../../../constants/dataKeys";
 
 class ReturnInvoices extends React.Component {
     constructor(props) {
@@ -165,25 +165,32 @@ class ReturnInvoices extends React.Component {
 
     cancelModalOpen = (record) => {
         let that = this;
-        that.setState({
-            cancelReturnIncoiceVisible: true,
-            editReturnInvoice: record
-        });
-        let reqData = {
-            practice: this.props.active_practiceId,
-            type: 'Return Invoice' + ':' + record.return_id + ' ' + ' Cancellation'
-        }
-        let successFn = function (data) {
-            that.setState({
-                otpSent: true,
-                patientId: record.patient,
-                returnInvoiceId: record.id
-            })
-        }
-        let errorFn = function () {
+        let created_time=moment().diff(record.created_at,'minutes');
 
-        };
-        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+        if(created_time >OTP_DELAY_TIME){
+                            
+            that.setState({
+                cancelReturnIncoiceVisible: true,
+                editReturnInvoice: record
+            });
+            let reqData = {
+                practice: this.props.active_practiceId,
+                type: 'Return Invoice' + ':' + record.return_id + ' ' + ' Cancellation'
+            }
+            let successFn = function (data) {
+                that.setState({
+                    otpSent: true,
+                    patientId: record.patient,
+                    returnInvoiceId: record.id
+                })
+            }
+            let errorFn = function () {
+
+            };
+            postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+        }else{
+            that.deleteReturnInvoice(record.patient, record.id);
+        }
     };
 
 

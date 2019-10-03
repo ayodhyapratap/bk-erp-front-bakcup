@@ -36,7 +36,7 @@ import AddInvoicedynamic from "./AddInvoicedynamic";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {Link, Redirect} from "react-router-dom";
 import {BACKEND_BASE_URL} from "../../../config/connect";
-import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {SUCCESS_MSG_TYPE, OTP_DELAY_TIME} from "../../../constants/dataKeys";
 import AddReturnInvoice from "./AddReturnInvoice";
 
 const confirm = Modal.confirm;
@@ -179,29 +179,35 @@ class PatientInvoices extends React.Component {
 
     returnModelOpen(record) {
         let that = this;
+        let created_time=moment().diff(record.created_at,'minutes');
+        if(created_time >OTP_DELAY_TIME){
+                that.setState({
+                    returnIncoiceVisible: true,
+                    editInvoice: record,
+                });
 
-        that.setState({
-            returnIncoiceVisible: true,
-            editInvoice: record,
-        },function(){
-            // that.returnInvoiceData(that.state.editInvoice)
-        });
+                let reqData = {
+                    practice: this.props.active_practiceId,
+                    type: 'Invoice' + ':' + record.invoice_id + ' ' + 'Return'
+                }
+                let successFn = function (data) {
+                    that.setState({
+                        otpSent: true,
+                        patientId: record.patient,
+                        invoiceId: record.id
+                    })
+                }
+                let errorFn = function () {
 
-        let reqData = {
-            practice: this.props.active_practiceId,
-            type: 'Invoice' + ':' + record.invoice_id + ' ' + 'Return'
+                };
+            postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+        }else{
+            this.setState({
+                editInvoice: record,
+            }, function () {
+                that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/return/")
+            });
         }
-        let successFn = function (data) {
-            that.setState({
-                otpSent: true,
-                patientId: record.patient,
-                invoiceId: record.id
-            })
-        }
-        let errorFn = function () {
-
-        };
-       postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
     }
 
     returnInvoiceClose = () => {
@@ -212,7 +218,6 @@ class PatientInvoices extends React.Component {
 
     handleSubmitReturnInvoice = (e) => {
         let that = this;
-
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -249,25 +254,38 @@ class PatientInvoices extends React.Component {
 
     editModelOpen = (record) => {
         let that = this;
-        that.setState({
-            editIncoiceVisible: true,
-            editInvoice: record,
-        });
-        let reqData = {
-            practice: this.props.active_practiceId,
-            type: 'Invoice' + ':' + record.invoice_id + ' ' + 'Edit'
-        }
-        let successFn = function (data) {
-            that.setState({
-                otpSent: true,
-                patientId: record.patient,
-                invoiceId: record.id
-            })
-        }
-        let errorFn = function () {
+        let created_time=moment().diff(record.created_at,'minutes');
 
-        };
-        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+        if(created_time >OTP_DELAY_TIME){
+            that.setState({
+                editIncoiceVisible: true,
+                editInvoice: record,
+            });
+
+            let reqData = {
+                practice: this.props.active_practiceId,
+                type: 'Invoice' + ':' + record.invoice_id + ' ' + 'Edit'
+            }
+            let successFn = function (data) {
+                that.setState({
+                    otpSent: true,
+                    patientId: record.patient,
+                    invoiceId: record.id
+                })
+            }
+            let errorFn = function () {
+    
+            };
+            postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+
+        }else{
+            this.setState({
+                editInvoice: record,
+            }, function () {
+                that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/edit/")
+            });
+        }
+       
     };
 
     editInvoiceClose = () => {
@@ -301,25 +319,34 @@ class PatientInvoices extends React.Component {
 
     cancelModalOpen = (record) => {
         let that = this;
-        that.setState({
-            cancelIncoiceVisible: true,
-            editInvoice: record
-        });
-        let reqData = {
-            practice: this.props.active_practiceId,
-            type: 'Invoice' + ':' + record.invoice_id + ' ' + ' Cancellation'
-        }
-        let successFn = function (data) {
-            that.setState({
-                otpSent: true,
-                patientId: record.patient,
-                invoiceId: record.id
-            })
-        }
-        let errorFn = function () {
+        let created_time=moment().diff(record.created_at,'minutes');
 
-        };
-        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+        if(created_time >OTP_DELAY_TIME){
+
+            that.setState({
+                cancelIncoiceVisible: true,
+                editInvoice: record
+            });
+
+            let reqData = {
+                practice: this.props.active_practiceId,
+                type: 'Invoice' + ':' + record.invoice_id + ' ' + ' Cancellation'
+            }
+            let successFn = function (data) {
+                that.setState({
+                    otpSent: true,
+                    patientId: record.patient,
+                    invoiceId: record.id
+                })
+            }
+            let errorFn = function () {
+
+            };
+            postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+
+        }else{
+            that.deleteInvoice(record.patient, record.id)
+        }
     };
 
 

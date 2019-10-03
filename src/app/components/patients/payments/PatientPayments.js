@@ -129,26 +129,38 @@ class PatientPayments extends React.Component {
 
     editModelOpen = (record) => {
         let that = this;
-        that.setState({
-            editPaymentVisible: true,
-            editPayment: record,
-        });
-        let reqData = {
-            practice: this.props.active_practiceId,
-            type: 'Payment' + ':' + record.payment_id + ' ' + 'Edit'
-        }
-        let successFn = function (data) {
+
+        let created_time=moment().diff(record.created_at,'minutes');
+
+        if(created_time >OTP_DELAY_TIME){
+
             that.setState({
-                otpSent: true,
-                patientId: record.patient,
-                paymentId: record.payment_id
-            })
-        };
-        let errorFn = function () {
+                editPaymentVisible: true,
+                editPayment: record,
+            });
+            let reqData = {
+                practice: this.props.active_practiceId,
+                type: 'Payment' + ':' + record.payment_id + ' ' + 'Edit'
+            }
+            let successFn = function (data) {
+                that.setState({
+                    otpSent: true,
+                    patientId: record.patient,
+                    paymentId: record.payment_id
+                })
+            };
+            let errorFn = function () {
 
-        };
+            };
 
-        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+            postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+        }else{
+            that.setState({
+                editPayment:record,
+            },function () {
+                that.props.history.push("/patient/" + record.patient + "/billing/payments/edit")
+            });
+        }
     };
     editPaymentClose = () => {
         this.setState({
@@ -190,26 +202,33 @@ class PatientPayments extends React.Component {
 
     cancelModalOpen = (record) => {
         let that = this;
-        that.setState({
-            cancelPaymentVisible: true,
-            editPayment: record,
-        });
-        let reqData = {
-            practice: this.props.active_practiceId,
-            type: 'Payment' + ':' + record.payment_id + ' ' + ' Cancellation'
-        }
-        let successFn = function (data) {
+        let created_time=moment().diff(record.created_at,'minutes');
+
+        if(created_time >OTP_DELAY_TIME){
+       
             that.setState({
-                otpSent: true,
-                patientId: record.patient,
-                paymentId: record.id
-            })
+                cancelPaymentVisible: true,
+                editPayment: record,
+            });
+            let reqData = {
+                practice: this.props.active_practiceId,
+                type: 'Payment' + ':' + record.payment_id + ' ' + ' Cancellation'
+            }
+            let successFn = function (data) {
+                that.setState({
+                    otpSent: true,
+                    patientId: record.patient,
+                    paymentId: record.id
+                })
+            }
+            let errorFn = function () {
+
+            };
+
+            postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+        }else{
+            that.deletePayment(record.patient, record.id)
         }
-        let errorFn = function () {
-
-        };
-
-        postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
     };
 
 
