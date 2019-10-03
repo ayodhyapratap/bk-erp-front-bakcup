@@ -162,9 +162,7 @@ class AddOrConsumeStock extends React.Component {
 
     handleSubmit = (e) => {
         let that = this;
-        that.setState({
-            loading:true,
-        })
+
         if (e.keyCode == 13) {
             return false;
         }
@@ -207,13 +205,17 @@ class AddOrConsumeStock extends React.Component {
                     reqData.supplier = values.supplier;
 
                 let successFn = function (data) {
-
+                    that.setState({
+                        loading:true,
+                    });
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
                     that.props.history.push('/inventory');
-                }
+                };
                 let errorFn = function () {
-
+                    that.setState({
+                        loading:true,
+                    });
                 };
                 postAPI(BULK_STOCK_ENTRY, reqData, successFn, errorFn);
             }

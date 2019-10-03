@@ -142,3 +142,5 @@ export const PAYMENT_REFUND='REFUND';
 export const RELATION='Relation';
 
 export const CHOOSE ='Choose';
+
+export const OTP_DELAY_TIME=130;
