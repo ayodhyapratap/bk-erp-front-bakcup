@@ -162,7 +162,9 @@ class AddOrConsumeStock extends React.Component {
 
     handleSubmit = (e) => {
         let that = this;
-
+        this.setState({
+            loading:true,
+        });
         if (e.keyCode == 13) {
             return false;
         }
@@ -199,28 +201,27 @@ class AddOrConsumeStock extends React.Component {
                     reqData.push(itemObject);
                 });
                 reqData.date = moment(values.date).isValid() ? moment(values.date).format() : null;
-                if (that.state.customSupplier)
+                if (that.state.customSupplier) {
                     reqData.supplier_name = values.supplier_name;
-                else
+                }
+                else {
                     reqData.supplier = values.supplier;
-
+                }
                 let successFn = function (data) {
-                    that.setState({
-                        loading:true,
-                    });
+                   
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
                     that.props.history.push('/inventory');
                 };
                 let errorFn = function () {
                     that.setState({
-                        loading:true,
+                        loading:false,
                     });
                 };
                 postAPI(BULK_STOCK_ENTRY, reqData, successFn, errorFn);
             }
         });
-    }
+    };
 
     changeMaxQuantityforConsume(recordId, batch) {
         this.setState(function (prevState) {
@@ -638,6 +639,7 @@ class AddOrConsumeStock extends React.Component {
 
                                 <Table pagination={false}
                                        bordered={true}
+                                       rowKey={record => record._id}
                                        dataSource={this.state.tableFormValues}
                                        columns={consumeRow}/>
                                 {/*<List>{formItems}</List>*/}
@@ -664,12 +666,12 @@ class AddOrConsumeStock extends React.Component {
                                                         wrapperCol: {span: 14},
                                                     }}>
                                                     {getFieldDecorator(`date`, {
-                                                        validateTrigger: ['onChange', 'onBlur'],
+                                                        // validateTrigger: ['onChange', 'onBlur'],
                                                         rules: [{
                                                             required: true,
                                                             message: "This field is required.",
                                                         }],
-                                                        initialValue: moment()
+                                                        initialValue: moment(),
                                                     })(
                                                         <DatePicker/>
                                                     )}
