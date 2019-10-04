@@ -32,7 +32,7 @@ import {Route, Switch} from "react-router";
 import AddPaymentForm from "./AddPaymentForm";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {BACKEND_BASE_URL} from "../../../config/connect";
-import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {OTP_DELAY_TIME, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import {Modal} from "antd/lib/index";
 
 const confirm = Modal.confirm;
