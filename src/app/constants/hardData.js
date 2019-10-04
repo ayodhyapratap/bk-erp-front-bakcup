@@ -421,10 +421,13 @@ export const FAMILY_GROUPS=[
 
 
 export const ADVANCED_SEARCH=[
-    {label:'Patient Name', value:'name' ,type:"text"},
-    {label:'Contact No', value:'phone' ,type:"text"},
-    {label:'Age is', value:'age' ,type:"number"},
-    {label:'Age more than', value:'age_gte' ,type:"number"},
-    {label:'Age Less Than', value:'age_lte' ,type:"number"},
-    {label:'Has Age', value:'has_age' ,type:"option"},
+    {label:'Patient Name', value:'name' ,input_type:"text" ,placeholder:"Patient Name"},
+    {label:'Contact No', value:'phone' ,input_type:"text" ,placeholder:"Contact No"},
+    {label:'Age is', value:'age' ,input_type:"number",placeholder:"Age is"},
+    {label:'Age more than', value:'age_gte' ,input_type:"number" ,placeholder:"Age more than"},
+    {label:'Age Less Than', value:'age_lte' ,input_type:"number" ,placeholder:"Age less than"},
+    {label:'Has Age', value:'has_age' ,input_type:"dropdown" ,values:[
+        "12", "25","45","78"
+        ]},
+
 ];
