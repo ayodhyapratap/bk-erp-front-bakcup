@@ -208,7 +208,7 @@ class AddOrConsumeStock extends React.Component {
                     reqData.supplier = values.supplier;
                 }
                 let successFn = function (data) {
-                   
+
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
                     that.props.history.push('/inventory');

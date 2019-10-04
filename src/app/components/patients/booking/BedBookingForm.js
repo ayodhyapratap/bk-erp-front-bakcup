@@ -232,19 +232,19 @@ class BedBookingForm extends React.Component {
                 let errorFn = function () {
 
                 };
-                console.log("Data",reqData);
-                // postAPI(interpolate(BOOK_SEAT, [this.props.active_practiceId]), reqData, successFn, errorFn);
+
+                postAPI(interpolate(BOOK_SEAT, [this.props.active_practiceId]), reqData, successFn, errorFn);
             }
         })
 
 
-    }
+    };
     handleClick = (e) => {
         this.setState({
             patientDetails: null
         })
 
-    }
+    };
     handleRoomType = (name, value) => {
         let that = this;
         this.setState({
@@ -332,7 +332,21 @@ class BedBookingForm extends React.Component {
             this.calculateTotalAmount()
         })
     }
+    changeDiscount=(id, value)=>{
+        let that=this;
+        that.setState(function (prevState) {
+            let newTableValue = [];
+            prevState.choosePkg.forEach(function (tableObj) {
+                if (tableObj._id == id) {
 
+                    newTableValue.push({...tableObj, discount: value})
+                }else {
+                    newTableValue.push(tableObj);
+                }
+            });
+            return {choosePkg:newTableValue}
+        });
+    }
     render() {
         const BOOKING_TYPE = [
             {
@@ -382,6 +396,7 @@ class BedBookingForm extends React.Component {
             //     // render:(value,record)=>(<p>{record?(record.tatkal_price).toFixed():null}</p>)
             // },
             // {
+            // {
             //     title: 'discount %',
             //     key: 'discount',
             //     width: 100,
@@ -394,7 +409,7 @@ class BedBookingForm extends React.Component {
             //             validateTrigger: ['onChange', 'onBlur'],
             //
             //         })(
-            //             <InputNumber min={0} max={100} placeholder="discount" size={'small'}/>
+            //             <InputNumber min={0} max={100} placeholder="discount" size={'small'} onChange={(value) => that.changeDiscount(record._id ,value)}/>
             //         )}
             //     </Form.Item>
             // },

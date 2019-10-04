@@ -21,6 +21,7 @@ class PatientSelection extends React.Component {
             loading: true,
             selectedPatientGroup: 'all',
             keys:[],
+            advanced_option:ADVANCED_SEARCH,
         };
         this.getPatientListData = this.getPatientListData.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
@@ -58,7 +59,7 @@ class PatientSelection extends React.Component {
                 currentPage: data.current,
                 totalPatients: data.count,
                 loading: false,
-                advancedOptionShow: true,
+                advancedOptionShow: false,
             })
         };
         let errorFn = function () {
@@ -201,65 +202,80 @@ class PatientSelection extends React.Component {
         })
     }
     addNewOptionField =()=>{
-        let id = 0;
-        const { form } = this.props;
-        const keys = form.getFieldValue('keys');
-        const nextKeys = keys.concat(id++);
-        form.setFieldsValue({
-            keys: nextKeys,
+        let that=this;
+        let keys=[];
+        that.setState(function (prevState) {
+            return{
+                keys:[prevState.type ,...prevState.keys]
+            }
         });
-
     };
-    // removeNewOptionField = (k) => {
-    //     const { form } = this.props;
-    //     const keys = form.getFieldValue('keys');
-    //     if (keys.length === 1) {
-    //         return;
-    //     }
-    //     form.setFieldsValue({
-    //         keys: keys.filter(key => key !== k),
-    //     });
-    // };
+    removeNewOptionField = (k) => {
+        let that=this;
+        if (this.state.keys.length === 1) {
+            return;
+        }
+        this.setState({
+            keys: this.state.keys.filter(key => key !== k)
+        });
+    };
 
-    handleChangeOption = (type,value) => {
+    handleChangeOption=(type,value)=>{
         let that = this;
+        if (value==null){
+            that.setState({
+                keys:null,
+                type:'',
+            })
+        }
         this.setState({
             [type]: value,
+        },function () {
+            that.addNewOptionField();
         })
     };
 
+    AdvanceSearchPatient=(e)=>{
+        console.log(e);
+    };
     render() {
         let that = this;
-        const { getFieldDecorator, getFieldValue } = this.props.form;
-        getFieldDecorator('keys', { initialValue: [] });
-        const keys = getFieldValue('keys');
+        const { getFieldDecorator} = this.props.form;
 
-        const formItems = this.state.keys.map((k, index) => (<span>
-                <br/>
-                 <Select style={{minWidth: '200px'}} defaultValue={CHOOSE}
-                         onChange={(value)=>this.handleChangeOption('type',value)}>
-                        <Select.Option value={''}>{CHOOSE}</Select.Option>
-                     {ADVANCED_SEARCH.map((item) => <Select.Option value={item.value}>
-                         {item.label}</Select.Option>)}
-                </Select>
+        const formItemLayout = {
+            labelCol: {
+                xs: { span: 24 },
+                sm: { span: 4 }
+            },
+            wrapperCol: {
+                xs: { span: 24 },
+                sm: { span: 20 }
+            }
+        };
+        const formItems = that.state.keys.map((k, index) => (
+            <Form.Item {...formItemLayout}
+                       key={index}
+            >
+                {getFieldDecorator(`names[${k}]`,
+                )(
+                    <Input
+                        placeholder={k}
+                        style={{  marginLeft:10 }}
+                    />
+                )}
+                {that.state.keys.length > 1 ? (
 
-            {this.state.type?<span>
-                    <Input placeholder="field" style={{ width: '60%', marginRight: 8 }} />
-                    {/*<Icon*/}
-                    {/*    className="dynamic-delete-button"*/}
-                    {/*    type="minus-circle-o"*/}
-                    {/*    onClick={()=>this.removeNewOptionField(k)}*/}
-                    {/*/>&nbsp;&nbsp;*/}
-                     <Icon
-                         className="dynamic-delete-button"
-                         type="plus-circle-o"
-                         onClick={this.addNewOptionField}
-                     />
-            </span>
-            :null}
-
-            </span>));
-
+                    <Icon
+                        className="dynamic-delete-button"
+                        type="minus-circle-o"
+                        onClick={() => that.removeNewOptionField(k)}
+                    />
+                ) : null}
+            </Form.Item>
+        // {that.state.keys.length > 1 ?<span></span>:
+        //
+        //     null}
+        ));
         return <Row gutter={16}>
             <Col span={5}
                  style={{
@@ -335,42 +351,56 @@ class PatientSelection extends React.Component {
             </Col>
             <Col span={19} style={{overflow: 'scroll', borderLeft: '1px solid #ccc'}}>
                 <Row>
-                    {this.state.advancedOptionShow?<>
-                        <Col span={12} >
-                            <Search placeholder="Search Patient By Name / ID / Mobile No / Aadhar No"
-                                    onChange={value => this.searchPatient(value.target.value)}
-                                    enterButton/>
-                        </Col>
-
-                        <Col span={12} style={{textAlign:"center"}}>
-                        <Button  icon="search" onClick={(value)=>this.advancedOption(true)}>Advance Search</Button>
-                        </Col>
-
-
-                        </>:<>
-
-                             <Select style={{minWidth: '200px'}} defaultValue={CHOOSE}
+                    {this.state.advancedOptionShow?<Form>
+                        <Col span={6} >
+                            <Select style={{minWidth: '200px'}} defaultValue={CHOOSE}
                                     onChange={(value)=>this.handleChangeOption('type',value)}>
-                                  <Select.Option value={''}>{CHOOSE}</Select.Option>
-                                {ADVANCED_SEARCH.map((item) => <Select.Option value={item.value}>
+                                <Select.Option value={''}>{CHOOSE}</Select.Option>
+                                {this.state.advanced_option.map((item) => <Select.Option value={item.value}>
                                     {item.label}</Select.Option>)}
                             </Select>
-                            {this.state.type?<span>
-                                    <Input placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} />
-                                    <Icon
-                                        className="dynamic-delete-button"
-                                        type="plus-circle-o"
-                                        onClick={this.addNewOptionField}
-                                    />
-                            </span>
-                            :null}
 
+                        </Col>
+
+                        {this.state.type ?<> <Col span={6}>
                             {formItems}
-                        &nbsp;&nbsp;
-                        <Button onChange={value => this.searchPatient(value.target.value)}>Search</Button>
-                        &nbsp;&nbsp;
-                        <a  icon="search" onClick={(value)=>this.advancedOption(false)}>Basic Search</a>
+
+                            </Col>
+                            <Col span={12}>
+                                <Icon
+                                    className="dynamic-delete-button"
+                                    type="plus-circle-o"
+                                    onClick={this.addNewOptionField}
+                                />
+                                &nbsp;&nbsp;
+                                <Button htmlType="submit" onSubmit={this.AdvanceSearchPatient}>Search</Button>
+                                &nbsp;&nbsp;
+                                <a icon="search" onClick={(value) => this.advancedOption(true)}>Basic Search</a>
+                            </Col>
+
+                        </> : <Col span={12}>
+
+                            &nbsp;&nbsp;
+                            <Button htmlType="submit" onSubmit={this.AdvanceSearchPatient}>Search</Button>
+                            &nbsp;&nbsp;
+                            <a icon="search" onClick={(value) => this.advancedOption(true)}>Basic Search</a>
+                        </Col>
+                        }
+
+
+                        </Form>:<>
+
+                            <Col span={12}>
+                                <Search placeholder="Search Patient By Name / ID / Mobile No / Aadhar No"
+                                        onChange={value => this.searchPatient(value.target.value)}
+                                        enterButton/>
+                            </Col>
+                            <Col span={12} style={{textAlign:"center"}}>
+                                <Button  icon="search" onClick={(value)=>this.advancedOption(false)}>Advance Search</Button>
+                            </Col>
+
                     </>}
+
                 </Row>
 
                 <Spin spinning={this.state.loading}>
