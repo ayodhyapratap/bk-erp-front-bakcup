@@ -607,7 +607,8 @@ class Addinvoicedynamic extends React.Component {
                         return <b>{record.name}</b>;
                     case INVENTORY:
                         return <div>
-                            {record.name}
+                            <span>{record.name}&nbsp;({record.total_quantity})</span>
+
                             <span><br/>by &nbsp;&nbsp;</span>
                             <Dropdown placement="topCenter" overlay={<Menu>
                                 {that.state.practiceDoctors.map(doctor =>
