@@ -83,7 +83,7 @@ export default class AddPost extends React.Component {
         },{
             label: "Posted On",
             key: "posted_on",
-            initialValue:this.state.editBlogData?moment(this.state.editBlogData.posted_on):null,
+            initialValue:this.state.editBlogData && this.state.editBlogData.posted_on?moment(this.state.editBlogData.posted_on):'',
             type: DATE_PICKER
 
         },{
@@ -100,7 +100,7 @@ export default class AddPost extends React.Component {
         },{
             label: "Content",
             key: "content",
-            required:true,
+            // required:true,
             initialValue:this.state.editBlogData?this.state.editBlogData.content:null,
             type: QUILL_TEXT_FIELD,
             preview:true

@@ -92,6 +92,7 @@ export default class AddEvent extends React.Component {
         }, {
             label: "Content",
             key: "content",
+            // required:true,
             initialValue: this.state.editBlogData ? this.state.editBlogData.content : null,
             type: QUILL_TEXT_FIELD,
         }];

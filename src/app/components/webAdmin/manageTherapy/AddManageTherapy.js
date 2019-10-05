@@ -61,7 +61,7 @@ export default class AddManageTherapy extends React.Component {
         },{
             label: "Content",
             key: "content",
-            required: true,
+            // required: true,
             initialValue: this.state.editTherapyData ? this.state.editTherapyData.content : null,
             type: QUILL_TEXT_FIELD,
         },];

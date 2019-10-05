@@ -56,9 +56,9 @@ export default class LandingPageContentList extends React.Component{
         let that = this;
         return<div><Switch>
             <Route exact path='/web/landingpagecontent/add'
-                   render={(route) => <AddLandingPageContent {...this.state} {...route}/>}/>
+                   render={(route) => <AddLandingPageContent {...this.state} {...route} loadData={this.loadData}/>}/>
             <Route exact path='/web/landingpagecontent/edit/:id'
-                   render={(route) => <AddLandingPageContent {...this.state} {...route}/>}/>
+                   render={(route) => <AddLandingPageContent {...this.state} {...route} loadData={this.loadData}/>}/>
             <Card title="Landing Page Content" extra={<Link to={"/web/landingpagecontent/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
                 <List loading={this.state.loading} dataSource={this.state.pageContent}
                       itemLayout="vertical"

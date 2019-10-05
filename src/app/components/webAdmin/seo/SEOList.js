@@ -5,6 +5,7 @@ import {BLOG_PAGE_SEO, SINGLE_PAGE_SEO} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddSEO from "./AddSEO";
 import {Link} from "react-router-dom";
+import AddPost from "../blog/AddPost";
 
 export default class SEOList extends React.Component{
     constructor(props){
@@ -63,10 +64,12 @@ export default class SEOList extends React.Component{
                 }
             }];
         return<div><Switch>
+                <Route exact path='/web/pageseo/add'
+                   render={(route) => <AddSEO {...this.state} {...route} loadData={this.loadData}/>}/>
                 <Route exact path='/web/pageseo/edit/:id'
                    render={(route) => <AddSEO loadData={this.loadData} {...this.state} {...route}/>}/>
      
-                <Card title="Pages SEO">
+                <Card title="Pages SEO"   extra={<Link to={"/web/pageseo/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
                 <Table loading={this.state.loading} dataSource={this.state.pageSEO} columns={coloumns}/>
             </Card>
         </Switch>

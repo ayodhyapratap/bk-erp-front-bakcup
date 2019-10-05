@@ -74,6 +74,7 @@ export default class AddSEO extends React.Component {
         }, {
             label: "SEO Keywords",
             key: "keywords",
+            required:true,
             initialValue: this.state.editBlogData ? this.state.editBlogData.keywords : null,
             type: TEXT_FIELD,
         },];

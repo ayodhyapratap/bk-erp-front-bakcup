@@ -64,9 +64,7 @@ export default class DiseaseList extends React.Component {
             export: function (text) {
                 return moment(text).format('lll');
             },
-            render: function (text) {
-                return moment(text).format('lll');
-            } 
+            render:(value ,record)=><span>{record.posted_on?<span>{moment(record.posted_on).format("lll")}</span>:null}</span>
             
         }, {
             title: 'Actions',
@@ -83,9 +81,9 @@ export default class DiseaseList extends React.Component {
         }];
         return <div><Switch>
             <Route exact path='/web/blog/add'
-                   render={(route) => <AddPost {...this.state} {...route}/>}/>
+                   render={(route) => <AddPost {...this.state} {...route} loadData={this.loadData}/>}/>
             <Route exact path='/web/blog/edit/:id'
-                   render={(route) => <AddPost {...this.state} {...route}/>}/>
+                   render={(route) => <AddPost {...this.state} {...route} loadData={this.loadData}/>}/>
             <Card title="Blogs"
                   extra={<Link to={"/web/blog/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
                 <Table loading={this.state.loading} dataSource={this.state.post} columns={coloumns}/>

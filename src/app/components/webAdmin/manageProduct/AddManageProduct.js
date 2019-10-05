@@ -65,9 +65,10 @@ export default class AddManageProduct extends React.Component {
         },{
             label: "Content",
             key: "content",
-            required : true,
-            initialValue: this.state.editProductData ? this.state.editProductData.content : null,
+            initialValue: this.state.editProductData? this.state.editProductData.content : '',
+            // required : true,
             type: QUILL_TEXT_FIELD,
+
         },];
 
         let editformProp;
