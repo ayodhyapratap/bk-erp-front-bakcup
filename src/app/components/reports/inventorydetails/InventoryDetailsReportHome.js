@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Card, Col, Icon, Radio, Row, Select, Checkbox} from "antd";
-import {MANUFACTURER_API ,SUPPLIER_API,PRODUCTS_API} from "../../../constants/api";
+import {MANUFACTURER_API, SUPPLIER_API, PRODUCTS_API, PATIENT_GROUPS} from "../../../constants/api";
 import {ALL} from "../../../constants/dataKeys";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import { loadDoctors } from "../../../utils/clinicUtils";
@@ -19,12 +19,14 @@ export default class InventoryDetailsReportHome extends React.Component {
             productsOption:[],
             suppliersOption:[],
             practiceDoctors:[],
+            patientGroup:[],
 
 
         };
         this.loadManufactures = this.loadManufactures.bind(this);
         this.loadProducts = this.loadProducts.bind(this);
         this.loadSuppliers = this.loadSuppliers.bind(this);
+        this.loadPatientGroup = this.loadPatientGroup.bind(this);
         loadDoctors(this);
 
     }
@@ -32,8 +34,20 @@ export default class InventoryDetailsReportHome extends React.Component {
         this.loadManufactures();
         this.loadProducts();
         this.loadSuppliers();
+        this.loadPatientGroup();
     }
+    loadPatientGroup(){
+        let that=this;
+        let successFn =function (data) {
+            that.setState({
+                patientGroup:data,
+            });
+        };
+        let errorFn=function () {
 
+        }
+        getAPI(interpolate(PATIENT_GROUPS,[this.props.active_practiceId]),successFn ,errorFn)
+    }
     loadManufactures(){
         let that=this;
         let successFn=function (data) {
@@ -137,6 +151,13 @@ export default class InventoryDetailsReportHome extends React.Component {
                         {this.state.advancedOptionShow?<>
                             <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
                             <Col> <br/>
+                                <h4>Patient Groups</h4>
+                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Patient Groups"
+                                        onChange={(value)=>this.handleChangeOption('patient_groups',value)}>
+                                    {this.state.patientGroup.map((item) => <Select.Option value={item.id}>
+                                        {item.name}</Select.Option>)}
+                                </Select>
+                                <br/>
                                 <h4>Doctors</h4>
                                 <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
                                         onChange={(value)=>this.handleChangeOption('doctors',value)}>
@@ -147,7 +168,7 @@ export default class InventoryDetailsReportHome extends React.Component {
                                 <br/>
                                 <br/>
                                 <h4>Products</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Products"
+                                <Select style={{minWidth: '200px'}}  placeholder="Select Products"
                                         onChange={(value)=>this.handleChangeOption('products',value)}>
                                     {this.state.productsOption.map((item) => <Select.Option value={item.id}>
                                         {item.name}</Select.Option>)}

@@ -130,6 +130,7 @@ export const EMR_REPORTS='clinics/%s/emr_report';
 
 /** Inventory Retails Reports**/
 export const PRODUCTS_API='inventory_item/products/';
+export const INVENTORY_RETAILS_REPORT='inventory_item/inventory_retail';
 
 /** Expense Reports ***/
 export const EXPENSE_PAYMENT_MODE_API='expenses';
