@@ -100,7 +100,7 @@ export default class AddPost extends React.Component {
         },{
             label: "Content",
             key: "content",
-            // required:true,
+            required:true,
             initialValue:this.state.editBlogData?this.state.editBlogData.content:null,
             type: QUILL_TEXT_FIELD,
             preview:true
@@ -137,12 +137,12 @@ export default class AddPost extends React.Component {
                     that.props.loadData();
                 console.log(data);
             },
-            errorFn:function(){
-
+            errorFn:function(data){
+                console.log(data);
             },
             action:  BLOG_POST,
             method: "post",
-        }
+        };
         let defaultValues=[];
 
         return <Row>

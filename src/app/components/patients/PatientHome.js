@@ -292,11 +292,11 @@ class PatientHome extends React.Component {
                                        render={(route) =>
                                            <PatientClinicNotes
                                                togglePatientListModal={this.togglePatientListModal}
-                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>}/>
+                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.props} {...this.state} {...route}/>}/>}/>
                                 <Route path={"/patient/:id/emr/clinicnotes"}
                                        render={(route) =>
                                            <PatientClinicNotes
-                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.props} {...this.state} {...route}/>}/>
 
                                 {/*** Patient Completed Procedures Routes*/}
                                 {that.props.activePracticePermissions.PatientCompletedProcedure || that.allowAllPermissions ?

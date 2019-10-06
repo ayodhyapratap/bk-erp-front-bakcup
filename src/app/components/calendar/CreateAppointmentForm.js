@@ -18,7 +18,7 @@ import {
 } from 'antd';
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import moment from "moment/moment";
-import {DOCTORS_ROLE, SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
+import {ALL, DOCTORS_ROLE, SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
 import {
     ALL_APPOINTMENT_API,
     APPOINTMENT_API,
@@ -573,12 +573,20 @@ export default class CreateAppointmentForm extends React.Component {
         });
         const {getFieldDecorator} = this.props.form;
 
-        const doctorOption = []
-        if (this.state.practice_doctors.length) {
-            this.state.practice_doctors.forEach(function (drug) {
-                doctorOption.push({label: (drug.user.first_name + "(" + drug.user.email + ")"), value: drug.id});
-            })
+        let doctorArray=this.state.practice_doctors;
+
+        // let doctorOption=null;
+        var doctorOption=[];
+        let i=0;
+        for (i; i<doctorArray.length; i++){
+            if (doctorArray[i].user.id == this.props.user.id){
+                doctorOption.push(doctorArray[i].user);
+                break;
+            }
+        }if(i==doctorArray.length){
+            doctorOption.push(doctorArray[0].user);
         }
+
         const treatmentNotesOption = [];
         if (this.state.treatmentNotes) {
             this.state.treatmentNotes.forEach(function (drug) {
@@ -731,13 +739,13 @@ export default class CreateAppointmentForm extends React.Component {
                         </div>}
 
                     <FormItem key="doctor" {...formItemLayout} label="Doctor">
-                        {getFieldDecorator("doctor", {initialValue: this.state.appointment ? this.state.appointment.doctor : null}, {
+                        {getFieldDecorator("doctor", {initialValue: this.state.appointment ? this.state.appointment.doctor:doctorOption}, {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
                             <Select placeholder="Doctor"
                                     onChange={(value) => this.setBlockedTiming("doctor", value)}>
-                                {doctorOption.map((option) => <Select.Option
-                                    value={option.value}>{option.label}</Select.Option>)}
+                                {this.state.practice_doctors.map((option) => <Select.Option
+                                    value={option.id}>{(option.user.first_name + "(" + option.user.email + ")")}</Select.Option>)}
                             </Select>
                         )}
                         {this.state.doctorBlock ?
