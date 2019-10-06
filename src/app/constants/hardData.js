@@ -88,25 +88,29 @@ export const INVENTORY_ITEM_TYPE = [
 export const ADD_STOCK = "ADD";
 export const CONSUME_STOCK = "CONSUME";
 
-export const APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS = [{
-    label: "CLINIC CONTACT",
-    value: "{{CLINICCONTACTNUMBER}}"
-}, {
-    label: "CLINIC NAME",
-    value: "{{CLINIC}}"
-}, {
-    label: "PATIENT NAME",
-    value: "{{PATIENT}}"
-}, {
-    label: "APPOINTMENT CATEGORY",
-    value: "{{CATEGORY}}"
-},{
-    label:"DATE",
-    value:"{{DATE}}"
-},{
-    label:"TIME",
-    value:"{{TIME}}"
-}];
+export const APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS = [
+    {
+        label: "PATIENT ID",
+        value: "{{PATIENT_ID}}"
+    }, {
+        label: "CLINIC CONTACT",
+        value: "{{CLINICCONTACTNUMBER}}"
+    }, {
+        label: "CLINIC NAME",
+        value: "{{CLINIC}}"
+    }, {
+        label: "PATIENT NAME",
+        value: "{{PATIENT}}"
+    }, {
+        label: "APPOINTMENT CATEGORY",
+        value: "{{CATEGORY}}"
+    }, {
+        label: "DATE",
+        value: "{{DATE}}"
+    }, {
+        label: "TIME",
+        value: "{{TIME}}"
+    }];
 
 export const EMR_TYPE = "EMR";
 export const BILLING_TYPE = "BILLING";
@@ -230,63 +234,63 @@ export const CUSTOM_STRING_SEPERATOR = '$_$';
 
 export const DAY_KEYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-export const NOTES =[
-    {label:"Valid for absence from court attendance", value: "valid_court"},
-    {label:"Invalid for absence from court attendance", value: "invalid_court"},
-    {label:"Dont mention", value: "no_mention"}
+export const NOTES = [
+    {label: "Valid for absence from court attendance", value: "valid_court"},
+    {label: "Invalid for absence from court attendance", value: "invalid_court"},
+    {label: "Dont mention", value: "no_mention"}
 ];
 
-export const DEFAULT_TEMPERATURE_IN=[
-    {label:"Degree Fahrenheit" ,value:"Degree Fahrenheit"},
-    {label:"Degree Celsius" , value:"Degree Celsius"}
+export const DEFAULT_TEMPERATURE_IN = [
+    {label: "Degree Fahrenheit", value: "Degree Fahrenheit"},
+    {label: "Degree Celsius", value: "Degree Celsius"}
 ];
-export const DEFAULT_TEMPERATURE_METHOD=[
-    {label:"Armpit", value:"Armpit"},
-    {label:"Forehead", value:"Forehead"},
-    {label:"Anus", value:"Anus"},
-    {label:"Mouth", value:"Mouth"},
-    {label:"Ear" , value:"Ear"}
+export const DEFAULT_TEMPERATURE_METHOD = [
+    {label: "Armpit", value: "Armpit"},
+    {label: "Forehead", value: "Forehead"},
+    {label: "Anus", value: "Anus"},
+    {label: "Mouth", value: "Mouth"},
+    {label: "Ear", value: "Ear"}
 ];
-export const DEFAULT_BP_METHOD=[
-    {label:"Sitting",value:"Sitting"},
-    {label:"Standing" ,value:"Standing"}
+export const DEFAULT_BP_METHOD = [
+    {label: "Sitting", value: "Sitting"},
+    {label: "Standing", value: "Standing"}
 ];
 
-export const APPOINTMENT_STATUS =[
-    {label:"Scheduled",value:SCHEDULE_STATUS},
-    {label:"Cancelled",value:CANCELLED_STATUS},
-    {label:"Engaged",value:ENGAGED_STATUS}
+export const APPOINTMENT_STATUS = [
+    {label: "Scheduled", value: SCHEDULE_STATUS},
+    {label: "Cancelled", value: CANCELLED_STATUS},
+    {label: "Engaged", value: ENGAGED_STATUS}
 ];
-export const MAILED ='true';
+export const MAILED = 'true';
 
 export const Booking_Type = [
     {value: 'TATKAL'},
     {value: 'NORMAL'}
 ];
 export const PAYMENT_STATUS = [
-    {label:"Success", value:"SUCCESSFUL"},
-    {label:"Failed" ,value:"FAILED"},
-    {label:"Pending",value:"PENDING"}
+    {label: "Success", value: "SUCCESSFUL"},
+    {label: "Failed", value: "FAILED"},
+    {label: "Pending", value: "PENDING"}
 ];
-export const OPD_IPD =[
-    {label:"OPD", value:"OPD"},
-    {label:"IPD",value:"IPD"}
+export const OPD_IPD = [
+    {label: "OPD", value: "OPD"},
+    {label: "IPD", value: "IPD"}
 ];
 
 export const ROLES = [
-    {label:"ADMIN" ,value:'1'},
-    {label:"CLINIC_ADMIN" ,value:'2'}
+    {label: "ADMIN", value: '1'},
+    {label: "CLINIC_ADMIN", value: '2'}
 ];
 /*Patient Reports*/
-export const PATIENTS_RELATED_REPORT= [
+export const PATIENTS_RELATED_REPORT = [
     {name: 'Daily New Patients', value: DAILY_NEW_PATIENTS},
     {name: 'Expiring Membership', value: EXPIRING_MEMBERSHIP},
     {name: 'Patients First Appointment', value: PATIENTS_FIRST_APPOINTMENT},
     {name: 'Monthly New Patients', value: MONTHLY_NEW_PATIENTS},
     {name: 'New Membership', value: NEW_MEMBERSHIP},
-    {name:'Active Patients' ,value:ACTIVE_PATIENTS},
-    {name:"Follow Up Report",value:FOLLOW_UP},
-    {name:"Medicine Report",value:MEDICINE},
+    {name: 'Active Patients', value: ACTIVE_PATIENTS},
+    {name: "Follow Up Report", value: FOLLOW_UP},
+    {name: "Medicine Report", value: MEDICINE},
 ];
 
 /*Appointment Reports*/
@@ -302,78 +306,78 @@ export const APPOINTMENT_RELATED_REPORT = [
     {name: 'Appointment For Each Patient Group', value: APPOINTMENT_FOR_EACH_PATIENT_GROUP}];
 
 /*Emr Reports*/
-export  const EMR_RELATED_REPORT=[
+export const EMR_RELATED_REPORT = [
     {name: 'Daily Treatments Count', value: DAILY_TREATMENT_COUNT},
     {name: 'Treatments For Each Doctor', value: TREATMENTS_FOR_EACH_DOCTOR},
     {name: 'Monthly Treatments Count', value: MONTHLY_TREATMENT_COUNT},
     {name: 'Treatments For Each Category', value: TREATMENT_FOR_EACH_CATEGORY}
-    ];
-
-/*Amount Due Reports*/
-export const  AMOUNT_DUE_RELATED_REPORT=[
-    {name:'Ageing Amount Due' ,value:AGEING_AMOUNT_DUE},
-    {name:'Amount Due Per Doctor', value:AMOUNT_DUE_PER_DOCTOR},
-    {name:'Amount Due Per Procedure' ,value:AMOUNT_DUE_PER_PROCEDURE},
-    {name:'Unsettled Invoice',value:UNSETTLED_INVOICE},
 ];
 
-export const BLOOD_GROUPS=[
-    {name:"A+", value:'A+'},
-    {name:"A-", value:'A-'},
-    {name: "B+", value:'B+'},
-    {name:"B-", value:'B-'},
-    {name:"AB+", value:'AB+'},
-    {name:"AB-", value:'AB-'},
-    {name:"O+" ,value:'O+'},
-    {name:"O-" ,value:'O-'},
+/*Amount Due Reports*/
+export const AMOUNT_DUE_RELATED_REPORT = [
+    {name: 'Ageing Amount Due', value: AGEING_AMOUNT_DUE},
+    {name: 'Amount Due Per Doctor', value: AMOUNT_DUE_PER_DOCTOR},
+    {name: 'Amount Due Per Procedure', value: AMOUNT_DUE_PER_PROCEDURE},
+    {name: 'Unsettled Invoice', value: UNSETTLED_INVOICE},
+];
+
+export const BLOOD_GROUPS = [
+    {name: "A+", value: 'A+'},
+    {name: "A-", value: 'A-'},
+    {name: "B+", value: 'B+'},
+    {name: "B-", value: 'B-'},
+    {name: "AB+", value: 'AB+'},
+    {name: "AB-", value: 'AB-'},
+    {name: "O+", value: 'O+'},
+    {name: "O-", value: 'O-'},
 ];
 
 /*** Expense Reports ***/
-export const EXPENSE_RELATED_REPORT=[
-    {name:'Daily Expenses' ,value:DAILY_EXPENSES},
-    {name:'Expenses For Each Type' , value: EXPENSES_EACH_TYPE},
-    {name:'Monthly Expenses' ,value:MONTHLY_EXPENSES}];
+export const EXPENSE_RELATED_REPORT = [
+    {name: 'Daily Expenses', value: DAILY_EXPENSES},
+    {name: 'Expenses For Each Type', value: EXPENSES_EACH_TYPE},
+    {name: 'Monthly Expenses', value: MONTHLY_EXPENSES}];
 
 /***Inventory Reports **/
 export const INVENTORY_RELATED_REPORT = [
-    {name:'Daily Stock Consumption Item Wise',value:DAILY_INVENTORY},
-    {name: 'Monthly Stock Consumption Item Wise', value:MONTHLY_INVENTORY},
-    {name:'Top 10 Consumed Items',value:TOP_INVENTORY}
+    {name: 'Daily Stock Consumption Item Wise', value: DAILY_INVENTORY},
+    {name: 'Monthly Stock Consumption Item Wise', value: MONTHLY_INVENTORY},
+    {name: 'Top 10 Consumed Items', value: TOP_INVENTORY}
 ];
-export const PRODUCT_ITEM=[
-    {label:'All' ,value:'ALL'},
+export const PRODUCT_ITEM = [
+    {label: 'All', value: 'ALL'},
     {label: DRUG, value: DRUG},
     {label: EQUIPMENT, value: EQUIPMENT},
     {label: SUPPLIES, value: SUPPLIES},
 ];
 /*Bed Booking Reports*/
-export const BED_BOOKING_RELATED_REPORT=[
-    {name:'Daily Booking Count',value:DAILY_BOOKING_COUNT},
-    {name:'Monthly Booking Count',value: MONTHLY_BOOKING_COUNT},
-    {name:'Medicine Usage Count',value:MEDICINE_USAGE_COUNT},
-    {name:'Bed Booking Package Count',value:BED_BOOKING_PACKAGE_COUNT},
+export const BED_BOOKING_RELATED_REPORT = [
+    {name: 'Daily Booking Count', value: DAILY_BOOKING_COUNT},
+    {name: 'Monthly Booking Count', value: MONTHLY_BOOKING_COUNT},
+    {name: 'Medicine Usage Count', value: MEDICINE_USAGE_COUNT},
+    {name: 'Bed Booking Package Count', value: BED_BOOKING_PACKAGE_COUNT},
 ];
 /*MLM reports*/
-export const MLM_RELATED_REPORT=[
-    {name:'Margin Type wise', value:MARGIN_TYPE_WISE},
+export const MLM_RELATED_REPORT = [
+    {name: 'Margin Type wise', value: MARGIN_TYPE_WISE},
     // {name:'Product Wise', value:PRODUCT_WISE},
-    {name:'Wallet Balance Amount', value:WALLET_BALANCE_AMOUNT},
-    {name:'Agent Tree View', value:AGENT_TREE_VIEW},
+    {name: 'Wallet Balance Amount', value: WALLET_BALANCE_AMOUNT},
+    {name: 'Agent Tree View', value: AGENT_TREE_VIEW},
 ];
 
 /*Payments Reports*/
 export const PAYMENT_RELATED_REPORT = [
-    {name: 'Refund Payments', value:PAYMENT_REFUND},
-    {name: 'Payment Received From Each Patient Group', value:PATIENTS_UNSETTLED_ADVANCE},
+    {name: 'Refund Payments', value: PAYMENT_REFUND},
+    {name: 'Payment Received From Each Patient Group', value: PATIENTS_UNSETTLED_ADVANCE},
     {name: 'Patients With Unsettled Advance, As Of Today', value: PAYMENT_RECEIVED_PATIENT_GROUP},
-    {name: 'Modes Of Payment', value:MODE_OF_PAYMENTS},
-    {name: 'Payment Received Per Day', value:PAYMENT_RECEIVED_PER_DAY},
+    {name: 'Modes Of Payment', value: MODE_OF_PAYMENTS},
+    {name: 'Payment Received Per Day', value: PAYMENT_RECEIVED_PER_DAY},
     {name: 'Payment Received Per Doctor', value: PAYMENT_RECEIVED_PER_DOCTOR},
     {name: 'Payment Received Per Month', value: PAYMENT_RECEIVED_PER_MONTH},
     {name: 'Payment Settlement', value: PAYMENT_SETTLEMENT},
     {name: 'Payment Settlement Per Doctor', value: PAYMENT_SETTLEMENT_PER_DOCTOR},
     {name: 'Credit Notes', value: CREDIT_NOTES},
-    {name: 'Credit Amount Per Doctor', value:CREDIT_AMOUNT_PER_DOCTOR},
+    {name: 'Credit Amount Per Doctor', value: CREDIT_AMOUNT_PER_DOCTOR},
 ];
 
 export const SCHEDULE_OF_PAYMENT = [
@@ -384,22 +388,22 @@ export const SCHEDULE_OF_PAYMENT = [
 ];
 
 export const PATIENT_AGE = [
-    {label:'DOB' ,value:'DOB'},
-    {label:'Age' ,value: 'AGE'}
+    {label: 'DOB', value: 'DOB'},
+    {label: 'Age', value: 'AGE'}
 ];
 
 /** Suggestions Reports***/
-export const SUGGESTIONS_STATUS=[
-    {label:"Open",value:"Open"},
-    {label:"In Progress" ,value:"InProgress"},
-    {label: "Closed" ,value: "Closed"},
+export const SUGGESTIONS_STATUS = [
+    {label: "Open", value: "Open"},
+    {label: "In Progress", value: "InProgress"},
+    {label: "Closed", value: "Closed"},
 ];
 
-export const SOURCE_PLATFORM=[
-    {label:'Facebook' ,value:'FACEBOOK'},
-    {label: "News Paper" ,value: "NEWS_PAPER"},
-    {label: "TV" ,value: "TV"},
-    {label:'Street Banners' ,value:"STREET"},
+export const SOURCE_PLATFORM = [
+    {label: 'Facebook', value: 'FACEBOOK'},
+    {label: "News Paper", value: "NEWS_PAPER"},
+    {label: "TV", value: "TV"},
+    {label: 'Street Banners', value: "STREET"},
 ];
 
 export const OUTER_KEYS_HOTKEYS = 'alt+c ,alt+p, alt+r, alt+s, alt+b ,alt+w';
@@ -407,27 +411,29 @@ export const OUTER_KEYS_HOTKEYS = 'alt+c ,alt+p, alt+r, alt+s, alt+b ,alt+w';
 export const INNER_KEYS_HOTKEYS = 'alt+f ,alt+a, alt+o, alt+m, alt+l ,alt+i,alt+e ,alt+n ,alt+y ,alt+t,alt+s ,alt+k, alt+g';
 
 
-export const FAMILY_GROUPS=[
-    {name:"Child", value:'CHILD'},
-    {name:"Parent  ", value:'PARENT'},
-    {name: "Brother/Sister", value:'BROTHER/SISTER'},
-    {name:"Husband/Wife", value:'HUSBAND/WIFE'},
-    {name:"Grandchild", value:'GRANDCHILD'},
-    {name:"GrandParent", value:'GRANDPARENT'},
-    {name:"Uncle/Aunt" ,value:'O+'},
-    {name:"Nephew/Niece",value:'NEPHEW/NIECE'},
-    {name:"Cousin",value:'COUSIN'},
+export const FAMILY_GROUPS = [
+    {name: "Child", value: 'CHILD'},
+    {name: "Parent  ", value: 'PARENT'},
+    {name: "Brother/Sister", value: 'BROTHER/SISTER'},
+    {name: "Husband/Wife", value: 'HUSBAND/WIFE'},
+    {name: "Grandchild", value: 'GRANDCHILD'},
+    {name: "GrandParent", value: 'GRANDPARENT'},
+    {name: "Uncle/Aunt", value: 'O+'},
+    {name: "Nephew/Niece", value: 'NEPHEW/NIECE'},
+    {name: "Cousin", value: 'COUSIN'},
 ];
 
 
-export const ADVANCED_SEARCH=[
-    {label:'Patient Name', value:'name' ,input_type:"text" ,placeholder:"Patient Name"},
-    {label:'Contact No', value:'phone' ,input_type:"text" ,placeholder:"Contact No"},
-    {label:'Age is', value:'age' ,input_type:"number",placeholder:"Age is"},
-    {label:'Age more than', value:'age_gte' ,input_type:"number" ,placeholder:"Age more than"},
-    {label:'Age Less Than', value:'age_lte' ,input_type:"number" ,placeholder:"Age less than"},
-    {label:'Has Age', value:'has_age' ,input_type:"dropdown" ,values:[
-        "12", "25","45","78"
-        ]},
+export const ADVANCED_SEARCH = [
+    {label: 'Patient Name', value: 'name', input_type: "text", placeholder: "Patient Name"},
+    {label: 'Contact No', value: 'phone', input_type: "text", placeholder: "Contact No"},
+    {label: 'Age is', value: 'age', input_type: "number", placeholder: "Age is"},
+    {label: 'Age more than', value: 'age_gte', input_type: "number", placeholder: "Age more than"},
+    {label: 'Age Less Than', value: 'age_lte', input_type: "number", placeholder: "Age less than"},
+    {
+        label: 'Has Age', value: 'has_age', input_type: "dropdown", values: [
+            "12", "25", "45", "78"
+        ]
+    },
 
 ];
