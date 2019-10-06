@@ -537,10 +537,7 @@ class DynamicFieldsForm extends React.Component {
                                 <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
                                     {getFieldDecorator(field.key, {
                                         initialValue: (field.initialValue && field.initialValue.length ? field.initialValue : ''),
-                                        rules: [{
-                                            required: field.required,
-                                            message: REQUIRED_FIELD_MESSAGE
-                                        }]
+                                        rules: []
                                     })(
                                         <div style={{border: '1px solid #eee'}}>
                                             <Editor

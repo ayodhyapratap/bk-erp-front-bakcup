@@ -3,8 +3,8 @@
  * */
 
 const CONFIG = {
-    backendBaseUrl: '',
-    imageBaseUrl : '/media',
+    backendBaseUrl: 'https://bk-erp.plutonic.co.in',
+    imageBaseUrl : 'https://bk-erp.plutonic.co.in/media',
     prodDomain : ["clinic.bkarogyam.com","bk-erp.plutonic.co.in"],
     crashHandling : {
         slack : {
