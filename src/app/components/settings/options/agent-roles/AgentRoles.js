@@ -90,11 +90,11 @@ class AgentRoles extends React.Component {
             render: (text, record) => (
                 <span>
               <a onClick={() => this.editFunction(record)}>  Edit</a>
-                <Divider type="vertical"/>
+                {/* <Divider type="vertical"/>
                     <Popconfirm title="Are you sure delete this item?"
                                 onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
                       <a>Delete</a>
-                  </Popconfirm>
+                  </Popconfirm> */}
               </span>
             ),
         }];
