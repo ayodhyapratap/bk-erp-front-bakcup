@@ -16,7 +16,8 @@ class DoctorTiming extends React.Component {
             timings: null,
             openPracticeDays: {},
             visting_hour_same_week: true,
-            twoSessions: {}
+            twoSessions: {},
+            loading:true,
         }
 
     }
@@ -48,6 +49,7 @@ class DoctorTiming extends React.Component {
                     visting_hour_same_week: visting_hour_same_week,
                     openPracticeDays: openPracticeDays,
                     twoSessions: twoSessions,
+                    loading:false,
                 })
             } else {
                 that.setState({
@@ -55,6 +57,7 @@ class DoctorTiming extends React.Component {
                     visting_hour_same_week: visting_hour_same_week,
                     openPracticeDays: openPracticeDays,
                     twoSessions: twoSessions,
+                    loading:false,
                 })
                 displayMessage(WARNING_MSG_TYPE, "Doctors visit timing is empty");
             }
@@ -104,6 +107,9 @@ class DoctorTiming extends React.Component {
                         reqData.id = that.state.timings.id
                     }
                     let successFn = function (data) {
+                        that.setState({
+                            loading:true,
+                        });
                         that.props.history.goBack();
                         if (that.props.loadData)
                             that.props.loadData();
@@ -148,7 +154,7 @@ class DoctorTiming extends React.Component {
             });
             const {getFieldDecorator} = this.props.form;
             return <div>
-                <Card>
+                <Card loading={this.state.loading}>
                     <Form onSubmit={this.handleSubmit}>
                         <Form.Item key={"visting_hour_same_week"}  {...formItemLayout}>
                             {getFieldDecorator("visting_hour_same_week", {

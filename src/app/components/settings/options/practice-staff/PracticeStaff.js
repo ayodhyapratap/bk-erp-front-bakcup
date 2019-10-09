@@ -63,7 +63,8 @@ class PracticeDetails extends React.Component {
             bulkEditLoading: false
         }
         this.setPermission = this.setPermission.bind(this);
-        this.staffRoles();
+        this.staffRoles()
+        this.loadData = this.loadData.bind(this);
     }
 
     componentDidMount() {
