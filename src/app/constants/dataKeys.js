@@ -139,6 +139,17 @@ export const PAYMENT_SETTLEMENT='SETTLEMENT';
 export const PAYMENT_SETTLEMENT_PER_DOCTOR='SETTLEMENT_DOCTOR';
 export const PAYMENT_REFUND='REFUND';
 
+
+/*Invoice Reports*/
+export const ALL_INVOICE='ALL';
+export const DAILY_INCOME="DAILY";
+export const MONTHLY_INCOME="MONTHLY";
+export const TAXED_INCOME="TAX";
+export const DOCTOR_EACH_INCOME='DOCTOR';
+export const PROCEDURE_INCOME="PROCEDURE";
+export const PRODUCT_INCOME="PRODUCT";
+export const PATIENT_GROUPS_INCOME="PATIENT_GROUPS";
+
 export const RELATION='Relation';
 
 export const CHOOSE ='Choose';

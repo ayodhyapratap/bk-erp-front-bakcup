@@ -48,7 +48,15 @@ import {
     PAYMENT_SETTLEMENT_PER_DOCTOR,
     CREDIT_NOTES,
     ACTIVE_PATIENTS,
-    AGENT_TREE_VIEW, FOLLOW_UP, MEDICINE
+    AGENT_TREE_VIEW,
+    FOLLOW_UP,
+    MEDICINE,
+    ALL_INVOICE,
+    DAILY_INCOME,
+    MONTHLY_INCOME,
+    TAXED_INCOME,
+    PATIENT_GROUPS_INCOME,
+    PRODUCT_INCOME, PROCEDURE_INCOME, DOCTOR_EACH_INCOME
 } from "../constants/dataKeys";
 import number from "less/lib/less/functions/number";
 
@@ -378,6 +386,30 @@ export const PAYMENT_RELATED_REPORT = [
     {name: 'Payment Settlement Per Doctor', value: PAYMENT_SETTLEMENT_PER_DOCTOR},
     {name: 'Credit Notes', value: CREDIT_NOTES},
     {name: 'Credit Amount Per Doctor', value: CREDIT_AMOUNT_PER_DOCTOR},
+];
+
+/*Invoice Reports*/
+
+export const INVOICE_RELATED_REPORT=[
+    {name:"Daily Invoiced Income" ,value:DAILY_INCOME},
+    {name:"Monthly Invoiced Income" ,value:MONTHLY_INCOME},
+    {name:"Taxed Invoiced Income" ,value:TAXED_INCOME},
+    {name:"Invoiced Income For Each Doctor" ,value:DOCTOR_EACH_INCOME},
+    {name:"Invoiced Income For Each Procedure" ,value:PROCEDURE_INCOME},
+    {name:"Invoiced Income For Each Patient Group" ,value:PATIENT_GROUPS_INCOME},
+    {name:"Invoiced Income For Each Product" ,value:PRODUCT_INCOME},
+
+]
+export const SCHEDULE_OF_INVOICES = [
+    {label: "all ", value: ''},
+    {label: "Services", value: "SERVICES"},
+    {label: "Products", value: "PRODUCTS"},
+    {label: "Lab orders", value: "RESERVATION"},
+];
+
+export const DISCOUNT=[
+    {label:"Zero" ,value:"ZERO"},
+    {label:"Non Zero" ,value:"NON_ZERO"},
 ];
 
 export const SCHEDULE_OF_PAYMENT = [

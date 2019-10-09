@@ -63,12 +63,12 @@ class PatientTreatmentPlans extends React.Component {
                     next: data.next,
                     loading: false
                 }
-            })
+            });
             data.results.forEach(function (treatmentplan) {
                 if (!treatmentplan.is_completed) {
                     incompleted.push(treatmentplan)
                 }
-            })
+            });
             that.setState(function (prevState) {
                 if (data.current == 1) {
                     return {

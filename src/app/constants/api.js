@@ -144,6 +144,8 @@ export const MLM_Agent_Wallet='patients/agent_wallet_balance';
 /** Payment Reports**/
 export const PAYMENT_REPORTS='xyz';
 
+/** Income Reports**/
+export const INCOME_REPORTS="invoice/invoice_reports";
 
 export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/';
 export const EXPENSE_REPORT = 'clinics/%s/expense_report/';

@@ -2,15 +2,22 @@ import React from "react";
 import {Button, Card, Checkbox, Col, Radio, Row, Select} from "antd";
 import {EXPENSE_TYPE, PATIENT_GROUPS, PAYMENT_MODES, TAXES, VENDOR_API} from "../../../constants/api";
 import {getAPI, interpolate} from "../../../utils/common";
-import {PAYMENT_RELATED_REPORT, SCHEDULE_OF_PAYMENT, TYPE_OF_CONSUMPTION} from "../../../constants/hardData";
 import {
-    ALL_EXPENSES, ALL_PAYMENTS,
+    DISCOUNT,
+    INVOICE_RELATED_REPORT,
+    PAYMENT_RELATED_REPORT, SCHEDULE_OF_INVOICES,
+    SCHEDULE_OF_PAYMENT,
+    TYPE_OF_CONSUMPTION
+} from "../../../constants/hardData";
+import {
+    ALL_EXPENSES, ALL_INVOICE, ALL_PAYMENTS,
     CREDIT_AMOUNT_PER_DOCTOR, CREDIT_NOTES, MODE_OF_PAYMENTS, PATIENTS_UNSETTLED_ADVANCE,
     PAYMENT_RECEIVED_PATIENT_GROUP, PAYMENT_RECEIVED_PER_DAY, PAYMENT_RECEIVED_PER_DOCTOR, PAYMENT_RECEIVED_PER_MONTH,
     PAYMENT_REFUND, PAYMENT_SETTLEMENT, PAYMENT_SETTLEMENT_PER_DOCTOR
 } from "../../../constants/dataKeys";
 // import AllPayments from "./AllPayments";
 import {loadDoctors} from "../../../utils/clinicUtils";
+import AllInvoices from "./AllInvoices";
 // import CreditAmountPerDoctor from "./CreditAmountPerDoctor";
 // import RefundPayments from "./RefundPayments";
 // import PaymentReceivedEachPatientGroup from "./PaymentReceivedEachPatientGroup";
@@ -112,7 +119,7 @@ export default class IncomeReportHome extends React.Component {
     };
     onChangeCheckbox = (e) => {
         this.setState({
-            exclude_cancelled: !this.state.exclude_cancelled,
+            is_cancelled: !this.state.is_cancelled,
         });
     };
 
@@ -127,8 +134,8 @@ export default class IncomeReportHome extends React.Component {
                 <Row gutter={16}>
                     <Col span={(24 - this.state.sidePanelColSpan)}>
 
-                        {/*{this.state.type == ALL_PAYMENTS ?*/}
-                        {/*    <AllPayments {...this.props} {...this.state}/> : null}*/}
+                        {this.state.type == ALL_PAYMENTS ?
+                            <AllInvoices {...this.props} {...this.state}/> : null}
 
                         {/*{this.state.type==PAYMENT_REFUND?*/}
                         {/*    <RefundPayments {...this.props} {...this.state}/> : null}*/}
@@ -167,16 +174,16 @@ export default class IncomeReportHome extends React.Component {
 
 
                     <Col span={this.state.sidePanelColSpan}>
-                        <Radio.Group buttonStyle="solid" defaultValue={ALL_PAYMENTS}
+                        <Radio.Group buttonStyle="solid" defaultValue={ALL_INVOICE}
                                      onChange={(value) => this.onChangeHandle('type', value)}>
-                            <h2>Payments</h2>
+                            <h2>Income</h2>
                             <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value={ALL_PAYMENTS}>
-                                All Payments
+                                          value={ALL_INVOICE}>
+                                All Invoice
                             </Radio.Button>
                             <p><br/></p>
                             <h2>Related Reports</h2>
-                            {PAYMENT_RELATED_REPORT.map((item) => <Radio.Button
+                            {INVOICE_RELATED_REPORT.map((item) => <Radio.Button
                                 style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
                                 value={item.value}>
                                 {item.name}
@@ -189,14 +196,14 @@ export default class IncomeReportHome extends React.Component {
                             <Button type="link" onClick={(value) => this.advancedOption(false)}>Hide Advanced
                                 Options </Button>
                             <Col> <br/>
-                                <h4>Show</h4>
-                                <Checkbox.Group style={{width: '100%', display: "inline-grid"}}
-                                                onChange={(value) => this.handleChangeOption('consume', value)}>
+                                <h4>Show income from</h4>
+                                <Radio.Group style={{width: '100%', display: "inline-grid"}}
+                                                onChange={(e) => this.handleChangeOption('income_type', e.target.value)}>
                                     {/*<Row>*/}
-                                    {SCHEDULE_OF_PAYMENT.map((item) => <Checkbox
-                                        value={item.value}> {item.label}</Checkbox>)}
+                                    {SCHEDULE_OF_INVOICES.map((item) => <Radio
+                                        value={item.value}> {item.label}</Radio>)}
                                     {/*</Row>*/}
-                                </Checkbox.Group>
+                                </Radio.Group>
                                 <br/>
                                 <br/>
                                 <h4>Doctors</h4>
@@ -215,11 +222,11 @@ export default class IncomeReportHome extends React.Component {
                                 </Select>
                                 <br/>
                                 <br/>
-                                <h4>Payment Modes</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Payment Modes"
-                                        onChange={(value) => this.handleChangeOption('payment_mode', value)}>
-                                    {this.state.paymentModeOption.map((item) => <Select.Option value={item.id}>
-                                        {item.mode}</Select.Option>)}
+                                <h4>Discount</h4>
+                                <Select style={{minWidth: '200px'}}  placeholder="Select Discount"
+                                        onChange={(value) => this.handleChangeOption('discount', value)}>
+                                    {DISCOUNT.map((item) => <Select.Option value={item.value}>
+                                        {item.label}</Select.Option>)}
                                 </Select>
                                 <br/>
                                 <br/>

@@ -22,7 +22,7 @@ class PatientSelection extends React.Component {
             selectedPatientGroup: 'all',
             advanced_option:ADVANCED_SEARCH,
             selectedOption:{},
-            keys:0,
+            keys:1,
         };
         this.getPatientListData = this.getPatientListData.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
@@ -244,9 +244,16 @@ class PatientSelection extends React.Component {
                 sm: { span: 20 }
             }
         };
+        // ADVANCED_SEARCH.map((item, i) => {
+        //     if (item.name == this.state.selectedOption.field_type){
+        //         <Form.Item>
+        //
+        //         </Form.Item>
+        //     }
+        // });
         const formItems =<span>
             {this.state.selectedOption.field_type=='name'?
-                    <Input type={'text'} name={this.state.selectedOption.field_type} placeholder={this.state.selectedOption.field_type}/>:
+                    <Input type={'text'}  name={this.state.selectedOption.field_type} placeholder={this.state.selectedOption.field_type}/>:
                 null}
             {this.state.selectedOption.field_type=='phone'?
                 <Input type={'text'} name={this.state.selectedOption.field_type} placeholder={this.state.selectedOption.field_type}/>:
@@ -339,9 +346,21 @@ class PatientSelection extends React.Component {
                             </Select>
 
                         </Col>
-                        <Col span={16}>
+                        <Col span={6}>
                             {formItems}
                         </Col>
+                        {/*{this.state.keys>1? <Col span={6} >*/}
+                        {/*        <Select style={{minWidth: '200px'}} defaultValue={CHOOSE}*/}
+                        {/*                onChange={(value)=>this.handleChangeOption('type',value)}>*/}
+                        {/*            <Select.Option value={''}>{CHOOSE}</Select.Option>*/}
+                        {/*            {this.state.advanced_option.map((item) => <Select.Option value={item.value}>*/}
+                        {/*                {item.label}</Select.Option>)}*/}
+                        {/*        </Select>*/}
+
+                        {/*    </Col>:*/}
+
+                        {/*    <p>test</p>*/}
+                        {/*}*/}
                         <Col span={12}>
                             <Icon
                                 className="dynamic-delete-button"
