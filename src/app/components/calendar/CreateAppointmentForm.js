@@ -203,6 +203,7 @@ export default class CreateAppointmentForm extends React.Component {
             });
     }
     setBlockedTiming = (type, value) => {
+        console.log("Onchange",value)
         let that = this;
         if (type) {
             this.setState(function (prevState) {
@@ -359,20 +360,23 @@ export default class CreateAppointmentForm extends React.Component {
         let that = this;
         let successFn = function (data) {
             let doctor = [];
+            let selectedDoctor = {};
             data.staff.forEach(function (usersdata) {
                 if (usersdata.role == DOCTORS_ROLE) {
                     doctor.push(usersdata);
+                    if (that.props.user.id==usersdata.user.id) {
+                        selectedDoctor = usersdata;
+                    }
 
                 }
             });
             that.setState(function (prevState) {
-                let selectedDoctor = null
-                if (doctor.length) {
-                    selectedDoctor = doctor[0].id
-                }
+
+
                 return {
+                    selectedDoctor:(doctor.length && !selectedDoctor.id ? doctor[0].user.id : selectedDoctor.user.id),
                     practice_doctors: doctor,
-                    timeToCheckBlock: {...prevState.timeToCheckBlock, doctor: selectedDoctor}
+                    timeToCheckBlock: {...prevState.timeToCheckBlock, doctor: (doctor.length && !selectedDoctor.id ? doctor[0].user.id: selectedDoctor.user.id)}
                 }
             }, function () {
                 that.findBlockedTiming();
@@ -573,19 +577,19 @@ export default class CreateAppointmentForm extends React.Component {
         });
         const {getFieldDecorator} = this.props.form;
 
-        let doctorArray=this.state.practice_doctors;
-
-        // let doctorOption=null;
-        var doctorOption=[];
-        let i=0;
-        for (i; i<doctorArray.length; i++){
-            if (doctorArray[i].user.id == this.props.user.id){
-                doctorOption.push(doctorArray[i].user);
-                break;
-            }
-        }if(i==doctorArray.length){
-            doctorOption.push(doctorArray[0].user);
-        }
+        // let doctorArray=this.state.practice_doctors;
+        // let loginUser =that.props.user;
+        // const doctorId={};
+        // let flag=true;
+        // doctorArray.forEach(function (items) {
+        //    if (items.user.id == that.props.user.id){
+        //        doctorId.id=that.props.user.id;
+        //        flag=false;
+        //        return false;
+        //    }
+        // },function () {
+        //     doctorId.id=doctorArray[0].user.id;
+        // });
 
         const treatmentNotesOption = [];
         if (this.state.treatmentNotes) {
@@ -739,7 +743,7 @@ export default class CreateAppointmentForm extends React.Component {
                         </div>}
 
                     <FormItem key="doctor" {...formItemLayout} label="Doctor">
-                        {getFieldDecorator("doctor", {initialValue: this.state.appointment ? this.state.appointment.doctor:doctorOption}, {
+                        {getFieldDecorator("doctor", {initialValue: this.state.appointment ? this.state.appointment.doctor:this.state.selectedDoctor}, {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
                             <Select placeholder="Doctor"

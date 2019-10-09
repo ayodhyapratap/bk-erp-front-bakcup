@@ -33,10 +33,11 @@ class BlockCalendar extends React.Component {
                 block_to:moment(),
             }
         };
-    }
-    componentDidMount() {
         loadDoctors(this);
     }
+    // componentDidMount() {
+    //
+    // }
     changeParamsForBlockedAppointments = (type, value) => {
         let that = this;
         this.setState(function (prevState) {
@@ -103,8 +104,6 @@ class BlockCalendar extends React.Component {
     }
    
     render(){
-        console.log("Doctor list",this.state)
-        console.log(this.props)
         let that = this;
         const {getFieldDecorator} = this.props.form;
  
@@ -112,6 +111,21 @@ class BlockCalendar extends React.Component {
             labelCol: {span: 6},
             wrapperCol: {span: 4},
         });
+        //
+        // let doctorArray=this.state.practiceDoctors;
+        // let loginUser =that.props.user;
+        // const doctorId={};
+        // let flag=true;
+        // doctorArray.forEach(function (items) {
+        //     if (items.user.id == loginUser.id){
+        //         doctorId.id=that.loginUser.id;
+        //         flag=false;
+        //         return false;
+        //     }
+        // },function () {
+        //     doctorId.id=doctorArray[0].user.id
+        // });
+
         return(<Card title={'Block Calendar'}>
                 <Row>
                     <Col span={18}>
@@ -135,7 +149,7 @@ class BlockCalendar extends React.Component {
                             </Form.Item>
 
                             <Form.Item label="Doctor" {...formItemLayout}>
-                                {getFieldDecorator('doctor', {})
+                                {getFieldDecorator('doctor', {initialValue:6})
                                 (<Select placeholder="Docto List"  onChange={(value) => this.changeParamsForBlockedAppointments("doctor", value)}>
                                     {this.state.practiceDoctors.map((option) => <Select.Option
                                     value={option.id}>{option.user.first_name}</Select.Option>)}

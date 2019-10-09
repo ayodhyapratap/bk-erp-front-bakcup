@@ -251,11 +251,11 @@ class PatientTreatmentPlans extends React.Component {
         if (this.props.match.params.id) {
             return <div><Switch>
                 <Route exact path='/patient/:id/emr/plans/add'
-                       render={(route) => <AddorEditDynamicTreatmentPlans {...this.state} {...route}
+                       render={(route) => <AddorEditDynamicTreatmentPlans {...this.state} {...route} {...that.props}
                                                                           loadData={this.loadTreatmentPlans}/>}/>
                 <Route exact path='/patient/:id/emr/plans/edit'
                        render={(route) => (this.state.editTreatmentPlan ?
-                           <AddorEditDynamicTreatmentPlans {...this.state} {...route}
+                           <AddorEditDynamicTreatmentPlans {...this.state} {...route} {...that.props}
                                                            loadData={this.loadTreatmentPlans}
                                                            editId={this.state.editTreatmentPlan.id}/> :
                            <Redirect to={"/patient/" + this.props.match.params.id + "/emr/plans"}/>)}/>

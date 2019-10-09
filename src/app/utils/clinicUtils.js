@@ -13,8 +13,8 @@ export const loadDoctors = function (that) {
 
             if (usersdata.role.indexOf(parseInt(DOCTORS_ROLE)) > -1 || usersdata.role.indexOf(DOCTORS_ROLE) > -1) {
                 doctor.push(usersdata);
-                if (that.state.selectedDoctor) {
-                    selectedDoctor = that.state.selectedDoctor
+                if (that.props.user.id==usersdata.user.id) {
+                    selectedDoctor = usersdata;
                 }
             }
         });

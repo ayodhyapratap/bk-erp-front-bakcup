@@ -20,8 +20,9 @@ class PatientSelection extends React.Component {
             morePatients: null,
             loading: true,
             selectedPatientGroup: 'all',
-            keys:[],
             advanced_option:ADVANCED_SEARCH,
+            selectedOption:{},
+            keys:0,
         };
         this.getPatientListData = this.getPatientListData.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
@@ -203,11 +204,8 @@ class PatientSelection extends React.Component {
     }
     addNewOptionField =()=>{
         let that=this;
-        let keys=[];
-        that.setState(function (prevState) {
-            return{
-                keys:[prevState.type ,...prevState.keys]
-            }
+        that.setState({
+            keys:this.state.keys+1,
         });
     };
     removeNewOptionField = (k) => {
@@ -222,23 +220,17 @@ class PatientSelection extends React.Component {
 
     handleChangeOption=(type,value)=>{
         let that = this;
-        if (value==null){
-            that.setState({
-                keys:null,
-                type:'',
-            })
-        }
-        this.setState({
-            [type]: value,
-        },function () {
-            that.addNewOptionField();
-        })
+        let selectedOption={};
+       that.setState({
+           selectedOption:{field_type:value },
+       })
     };
 
     AdvanceSearchPatient=(e)=>{
         console.log(e);
     };
     render() {
+        console.log("form",this.state)
         let that = this;
         const { getFieldDecorator} = this.props.form;
 
@@ -252,30 +244,16 @@ class PatientSelection extends React.Component {
                 sm: { span: 20 }
             }
         };
-        const formItems = that.state.keys.map((k, index) => (
-            <Form.Item {...formItemLayout}
-                       key={index}
-            >
-                {getFieldDecorator(`names[${k}]`,
-                )(
-                    <Input
-                        placeholder={k}
-                        style={{  marginLeft:10 }}
-                    />
-                )}
-                {that.state.keys.length > 1 ? (
+        const formItems =<span>
+            {this.state.selectedOption.field_type=='name'?
+                    <Input type={'text'} name={this.state.selectedOption.field_type} placeholder={this.state.selectedOption.field_type}/>:
+                null}
+            {this.state.selectedOption.field_type=='phone'?
+                <Input type={'text'} name={this.state.selectedOption.field_type} placeholder={this.state.selectedOption.field_type}/>:
+                null}
+        </span>;
 
-                    <Icon
-                        className="dynamic-delete-button"
-                        type="minus-circle-o"
-                        onClick={() => that.removeNewOptionField(k)}
-                    />
-                ) : null}
-            </Form.Item>
-        // {that.state.keys.length > 1 ?<span></span>:
-        //
-        //     null}
-        ));
+
         return <Row gutter={16}>
             <Col span={5}
                  style={{
@@ -361,31 +339,45 @@ class PatientSelection extends React.Component {
                             </Select>
 
                         </Col>
-
-                        {this.state.type ?<> <Col span={6}>
+                        <Col span={16}>
                             {formItems}
-
-                            </Col>
-                            <Col span={12}>
-                                <Icon
-                                    className="dynamic-delete-button"
-                                    type="plus-circle-o"
-                                    onClick={this.addNewOptionField}
-                                />
-                                &nbsp;&nbsp;
-                                <Button htmlType="submit" onSubmit={this.AdvanceSearchPatient}>Search</Button>
-                                &nbsp;&nbsp;
-                                <a icon="search" onClick={(value) => this.advancedOption(true)}>Basic Search</a>
-                            </Col>
-
-                        </> : <Col span={12}>
-
+                        </Col>
+                        <Col span={12}>
+                            <Icon
+                                className="dynamic-delete-button"
+                                type="plus-circle-o"
+                                onClick={this.addNewOptionField}
+                            />
                             &nbsp;&nbsp;
                             <Button htmlType="submit" onSubmit={this.AdvanceSearchPatient}>Search</Button>
                             &nbsp;&nbsp;
                             <a icon="search" onClick={(value) => this.advancedOption(true)}>Basic Search</a>
                         </Col>
-                        }
+
+                        {/*{this.state.type ?<> <Col span={6}>*/}
+                        {/*    {formItems}*/}
+
+                        {/*    </Col>*/}
+                        {/*    <Col span={12}>*/}
+                        {/*        <Icon*/}
+                        {/*            className="dynamic-delete-button"*/}
+                        {/*            type="plus-circle-o"*/}
+                        {/*            onClick={this.addNewOptionField}*/}
+                        {/*        />*/}
+                        {/*        &nbsp;&nbsp;*/}
+                        {/*        <Button htmlType="submit" onSubmit={this.AdvanceSearchPatient}>Search</Button>*/}
+                        {/*        &nbsp;&nbsp;*/}
+                        {/*        <a icon="search" onClick={(value) => this.advancedOption(true)}>Basic Search</a>*/}
+                        {/*    </Col>*/}
+
+                        {/*</> : <Col span={12}>*/}
+
+                        {/*    &nbsp;&nbsp;*/}
+                        {/*    <Button htmlType="submit" onSubmit={this.AdvanceSearchPatient}>Search</Button>*/}
+                        {/*    &nbsp;&nbsp;*/}
+                        {/*    <a icon="search" onClick={(value) => this.advancedOption(true)}>Basic Search</a>*/}
+                        {/*</Col>*/}
+                        {/*}*/}
 
 
                         </Form>:<>
