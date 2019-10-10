@@ -1,6 +1,14 @@
 import React from "react";
 import {Button, Card, Checkbox, Col, Radio, Row, Select} from "antd";
-import {EXPENSE_TYPE, PATIENT_GROUPS, PAYMENT_MODES, TAXES, VENDOR_API} from "../../../constants/api";
+import {
+    EXPENSE_TYPE,
+    PATIENT_GROUPS,
+    PAYMENT_MODES,
+    PROCEDURE_CATEGORY,
+    PRODUCTS_API,
+    TAXES,
+    VENDOR_API
+} from "../../../constants/api";
 import {getAPI, interpolate} from "../../../utils/common";
 import {
     DISCOUNT,
@@ -10,51 +18,64 @@ import {
     TYPE_OF_CONSUMPTION
 } from "../../../constants/hardData";
 import {
-    ALL_EXPENSES, ALL_INVOICE, ALL_PAYMENTS,
-    CREDIT_AMOUNT_PER_DOCTOR, CREDIT_NOTES, MODE_OF_PAYMENTS, PATIENTS_UNSETTLED_ADVANCE,
-    PAYMENT_RECEIVED_PATIENT_GROUP, PAYMENT_RECEIVED_PER_DAY, PAYMENT_RECEIVED_PER_DOCTOR, PAYMENT_RECEIVED_PER_MONTH,
-    PAYMENT_REFUND, PAYMENT_SETTLEMENT, PAYMENT_SETTLEMENT_PER_DOCTOR
+    ALL,
+    ALL_INVOICE,
+    ALL_PAYMENTS,
+    DAILY_INCOME,
+    DOCTOR_EACH_INCOME,
+    MONTHLY_INCOME, PATIENT_GROUPS_INCOME, PROCEDURE_INCOME, PRODUCT_INCOME,
+    TAXED_INCOME
 } from "../../../constants/dataKeys";
-// import AllPayments from "./AllPayments";
 import {loadDoctors} from "../../../utils/clinicUtils";
 import AllInvoices from "./AllInvoices";
-// import CreditAmountPerDoctor from "./CreditAmountPerDoctor";
-// import RefundPayments from "./RefundPayments";
-// import PaymentReceivedEachPatientGroup from "./PaymentReceivedEachPatientGroup";
-// import PatientsWithUnsettledAdvance from "./PatientsWithUnsettledAdvance";
-// import ModesOfPayment from "./ModesOfPayment";
-// import PaymentReceivedPerDay from "./PaymentReceivedPerDay";
-// import PaymentReceivedPerMonth from "./PaymentReceivedPerMonth";
-// import PaymentReceivedPerDoctor from "./PaymentReceivedPerDoctor";
-// import CreditNotes from "./CreditNotes";
-// import PaymentSettlement from "./PaymentSettlement";
-// import PaymentSettlementPerDoctor from "./PaymentSettlementPerDoctor";
+import DailyInvoicedIncome from "./DailyInvoicedIncome";
+import MonthlyInvoicedIncome from "./MonthlyInvoicedIncome";
+import TaxedInvoicedIncome from "./TaxedInvoicedIncome";
+import InvoicedIncomeForEachDoctor from "./InvoicedIncomeForEachDoctor";
+import InvoicedIncomeForEachProcedure from "./InvoicedIncomeForEachProcedure";
+import InvoicedIncomeForEachPatientGroup from "./InvoicedIncomeForEachPatientGroup";
+import InvoicedIncomeForEachProduct from "./InvoicedIncomeForEachProduct";
 
 export default class IncomeReportHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             advancedOptionShow: true,
-            paymentModeOption: [],
             sidePanelColSpan: 4,
             type: 'ALL',
             practiceDoctors: [],
             patientGroup: [],
             vendorOption: [],
             taxes_list:[],
+            productItems:[],
+            treatment_data:[],
         };
         loadDoctors(this);
         this.loadPatientGroup = this.loadPatientGroup.bind(this);
-        this.loadPaymentMode = this.loadPaymentMode.bind(this);
         this.loadTaxes = this.loadTaxes.bind(this);
+        this.loadProductItem = this.loadProductItem.bind(this);
+        this.loadTreatments = this.loadTreatments.bind(this);
     }
 
     componentDidMount() {
         this.loadPatientGroup();
-        this.loadPaymentMode();
         this.loadTaxes();
+        this.loadProductItem();
+        this.loadTreatments();
     }
+    
+    loadProductItem(){
+        let that=this;
+        let successFn =function (data) {
+            that.setState({
+                productItems:data,
+            });
+        };
+        let errorFn=function () {
 
+        }
+        getAPI(PRODUCTS_API,successFn ,errorFn,{practice:this.props.active_practiceId})
+    }
     loadPatientGroup() {
         let that = this;
         let successFn = function (data) {
@@ -68,18 +89,6 @@ export default class IncomeReportHome extends React.Component {
         getAPI(interpolate(PATIENT_GROUPS, [this.props.active_practiceId]), successFn, errorFn)
     }
 
-    loadPaymentMode() {
-        let that = this;
-        let successFun = function (data) {
-            that.setState({
-                paymentModeOption: data,
-            })
-        };
-        let errorFn = function () {
-
-        };
-        getAPI(interpolate(PAYMENT_MODES, [this.props.active_practiceId]), successFun, errorFn);
-    }
     loadTaxes() {
         var that = this;
         let successFn = function (data) {
@@ -90,6 +99,19 @@ export default class IncomeReportHome extends React.Component {
         let errorFn = function () {
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
+
+    }
+
+    loadTreatments() {
+        var that = this;
+        let successFn = function (data) {
+            that.setState({
+                treatment_data: data,
+            })
+        };
+        let errorFn = function () {
+        };
+        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
 
     }
 
@@ -125,7 +147,7 @@ export default class IncomeReportHome extends React.Component {
 
     render() {
         return <div>
-            <h2>Payments Report <Button type="primary" shape="round"
+            <h2>Income Report <Button type="primary" shape="round"
                                         icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
                                         style={{float: "right"}}
                                         onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
@@ -137,38 +159,27 @@ export default class IncomeReportHome extends React.Component {
                         {this.state.type == ALL_PAYMENTS ?
                             <AllInvoices {...this.props} {...this.state}/> : null}
 
-                        {/*{this.state.type==PAYMENT_REFUND?*/}
-                        {/*    <RefundPayments {...this.props} {...this.state}/> : null}*/}
+                        {this.state.type==DAILY_INCOME?
+                            <DailyInvoicedIncome {...this.props} {...this.state}/> : null}
 
-                        {/*{this.state.type ==PAYMENT_RECEIVED_PATIENT_GROUP?*/}
-                        {/*    <PaymentReceivedEachPatientGroup {...this.props} {...this.state}/>:null}*/}
+                        {this.state.type ==MONTHLY_INCOME?
+                            <MonthlyInvoicedIncome {...this.props} {...this.state}/>:null}
 
-                        {/*{this.state.type ==PATIENTS_UNSETTLED_ADVANCE?*/}
-                        {/*    <PatientsWithUnsettledAdvance {...this.props} {...this.state}/>:null}*/}
+                        {this.state.type ==TAXED_INCOME?
+                            <TaxedInvoicedIncome {...this.props} {...this.state}/>:null}
 
-                        {/*{this.state.type == MODE_OF_PAYMENTS ?*/}
-                        {/*    <ModesOfPayment {...this.props} {...this.state}/>:null}*/}
+                        {this.state.type == DOCTOR_EACH_INCOME ?
+                            <InvoicedIncomeForEachDoctor {...this.props} {...this.state}/>:null}
 
-                        {/*{this.state.type ==PAYMENT_RECEIVED_PER_DAY?*/}
-                        {/*    <PaymentReceivedPerDay {...this.props} {...this.state}/>:null}*/}
+                        {this.state.type ==PROCEDURE_INCOME?
+                            <InvoicedIncomeForEachProcedure {...this.props} {...this.state}/>:null}
 
-                        {/*{this.state.type ==PAYMENT_RECEIVED_PER_MONTH?*/}
-                        {/*    <PaymentReceivedPerMonth {...this.props} {...this.state}/>:null}*/}
+                        {this.state.type ==PATIENT_GROUPS_INCOME?
+                            <InvoicedIncomeForEachPatientGroup {...this.props} {...this.state}/>:null}
 
-                        {/*{this.state.type == PAYMENT_RECEIVED_PER_DOCTOR?*/}
-                        {/*    <PaymentReceivedPerDoctor {...this.props} {...this.state}/>:null}*/}
+                        {this.state.type == PRODUCT_INCOME?
+                            <InvoicedIncomeForEachProduct {...this.props} {...this.state}/>:null}
 
-                        {/*{this.state.type ==CREDIT_NOTES?*/}
-                        {/*    <CreditNotes {...this.props} {...this.state}/>:null}*/}
-
-                        {/*{this.state.type ==PAYMENT_SETTLEMENT?*/}
-                        {/*    <PaymentSettlement {...this.props} {...this.state}/>:null}*/}
-
-                        {/*{this.state.type ==PAYMENT_SETTLEMENT_PER_DOCTOR?*/}
-                        {/*    <PaymentSettlementPerDoctor {...this.props} {...this.state}/>:null}*/}
-
-                        {/*{this.state.type == CREDIT_AMOUNT_PER_DOCTOR?*/}
-                        {/*    <CreditAmountPerDoctor {...this.state} {...this.props}/>:null}*/}
 
                     </Col>
 
@@ -195,7 +206,7 @@ export default class IncomeReportHome extends React.Component {
                         {this.state.advancedOptionShow ? <>
                             <Button type="link" onClick={(value) => this.advancedOption(false)}>Hide Advanced
                                 Options </Button>
-                            <Col> <br/>
+                            <Col> <br/><br/>
                                 <h4>Show income from</h4>
                                 <Radio.Group style={{width: '100%', display: "inline-grid"}}
                                                 onChange={(e) => this.handleChangeOption('income_type', e.target.value)}>
@@ -227,6 +238,22 @@ export default class IncomeReportHome extends React.Component {
                                         onChange={(value) => this.handleChangeOption('discount', value)}>
                                     {DISCOUNT.map((item) => <Select.Option value={item.value}>
                                         {item.label}</Select.Option>)}
+                                </Select>
+                                <br/>
+                                <br/>
+                                <h4>Product</h4>
+                                <Select style={{minWidth: '200px'}} mode={"multiple"} placeholder={"Select Products"}
+                                        onChange={(value)=>this.handleChangeOption('products',value)}>
+                                    {this.state.productItems.map((item) => <Select.Option value={item.id}>
+                                        {item.name}</Select.Option>)}
+                                </Select>
+                                <br/>
+                                <br/>
+                                <h4>Treatments</h4>
+                                <Select style={{minWidth: '200px'}} mode={"multiple"} placeholder={"Select Treatments"}
+                                        onChange={(value)=>this.handleChangeOption('treatments',value)}>
+                                    {this.state.treatment_data.map((item) => <Select.Option value={item.id}>
+                                        {item.name}</Select.Option>)}
                                 </Select>
                                 <br/>
                                 <br/>

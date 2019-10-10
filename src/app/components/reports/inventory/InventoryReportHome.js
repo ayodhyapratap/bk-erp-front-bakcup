@@ -68,7 +68,7 @@ export default class InventoryReportHome extends React.Component {
     };
     render() {
         return <div>
-            <h2>Patients Report <Button type="primary" shape="round"
+            <h2>Inventory Report <Button type="primary" shape="round"
                                         icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
                                         style={{float: "right"}}
                                         onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>

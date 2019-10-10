@@ -1,9 +1,9 @@
 import React from "react";
-import {Table, Divider, Statistic, Tag} from "antd";
-import {INCOME_REPORTS, INVENTORY_RETAILS_REPORT, PATIENTS_LIST} from "../../../constants/api";
+import {Table, Tag} from "antd";
+import {INCOME_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import moment from "moment";
-import {ComposedChart, Line, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart} from 'recharts';
+import CustomizedTable from "../../common/CustomizedTable";
 
 export default class AllInvoices extends React.Component {
     constructor(props) {
@@ -26,8 +26,8 @@ export default class AllInvoices extends React.Component {
     componentWillReceiveProps(newProps) {
         let that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.products!=newProps.products || this.props.income_type!=newProps.income_type
-            ||this.props.is_cancelled!=newProps.is_cancelled ||this.props.discount!=newProps.discount
-            ||this.props.doctors!=newProps.doctors ||this.props.taxes!=newProps.taxes ||this.props.suppliers!=newProps.suppliers ||this.props.patient_groups!=newProps.patient_groups)
+            ||this.props.is_cancelled!=newProps.is_cancelled ||this.props.discount!=newProps.discount || this.props.treatments!=newProps.treatments
+            ||this.props.doctors!=newProps.doctors ||this.props.taxes!=newProps.taxes ||this.props.patient_groups!=newProps.patient_groups)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
@@ -81,9 +81,9 @@ export default class AllInvoices extends React.Component {
         if(this.props.taxes){
             apiParams.taxes=this.props.taxes.toString();
         }
-        // if(this.props.suppliers){
-        //     apiParams.suppliers=this.props.suppliers.toString();
-        // }
+        if(this.props.treatments){
+            apiParams.treatments=this.props.treatments.toString();
+        }
 
         getAPI(INCOME_REPORTS,  successFn, errorFn, apiParams);
     };
@@ -159,27 +159,32 @@ export default class AllInvoices extends React.Component {
             title:'Total Sales (INR)',
             key:'sale_amount',
             dataIndex:'sale_amount',
-            render:(value,record)=>(<span>{record.sale_amount.toFixed(2)}</span>)
+            render:(value,record)=>(<span>{record.sale_amount.toFixed(2)}</span>),
+            export:(item,record)=>(record.sale_amount.toFixed(2)),
         },{
             title:'Total Cost (INR)',
             key:'cost_amount',
             dataIndex:'cost_amount',
-            render:(value,record)=>(<span>{record.cost_amount.toFixed(2)}</span>)
+            render:(value,record)=>(<span>{record.cost_amount.toFixed(2)}</span>),
+            export:(item,record)=>(record.cost_amount.toFixed(2)),
         },{
             title:'Total Profit before Tax(INR)',
             key:'tax_with_out',
             dataIndex:'profit_before_tax',
-            render:(value,record)=>(<span>{record.profit_before_tax.toFixed(2)}</span>)
+            render:(value,record)=>(<span>{record.profit_before_tax.toFixed(2)}</span>),
+            export:(item,record)=>(record.profit_before_tax.toFixed(2)),
         },{
             title:'Total Tax(INR)',
             key:'tax_amount',
             dataIndex:"tax_amount",
-            render:(value ,record)=>(<span>{record.tax_amount.toFixed(2)}</span>)
+            render:(value ,record)=>(<span>{record.tax_amount.toFixed(2)}</span>),
+            export:(item,record)=>(record.tax_amount.toFixed(2)),
         },{
             title:'Total Profit after Tax(INR)',
             key:'tax_with',
             dataIndex:"profit_after_tax",
-            render:(value,record)=>(<span>{record.profit_after_tax.toFixed(2)}</span>)
+            render:(value,record)=>(<span>{record.profit_after_tax.toFixed(2)}</span>),
+            export:(item,record)=>(record.profit_after_tax.toFixed(2)),
         }];
 
         const DetailColumns = [{
@@ -195,6 +200,7 @@ export default class AllInvoices extends React.Component {
                 {moment(record.created_at).format('ll')}
                   </span>
             ),
+            export:(item,record)=>(moment(record.created_at).format('ll')),
         },{
             title:'Invoice Number',
             key:'invoice_id',
@@ -203,24 +209,61 @@ export default class AllInvoices extends React.Component {
             title:'Patient',
             key:'patient',
             dataIndex:'patient',
-            render:(value,record)=>(<span>{record.patint_data?record.patint_data.user.first_name:record.patient}</span>)
+            render:(value,record)=>(<span>{record.patint_data?record.patint_data.user.first_name:record.patient}</span>),
+            export:(item,record)=>(record.patint_data?record.patint_data.user.first_name:record.patient),
         },{
             title:'Treatments & Products',
             key:'treatments',
             render: (text, record) => <span>{record.treatment.map((item) =>
                 <Tag>{item.name}</Tag>
-            )}</span>
+            )}</span>,
+            export:(text,record)=>(record.treatment.map((item)=>(item.name+ ",")))
         }];
+
+        if(that.props.income_type=='PRODUCTS'){
+            DetailColumns.push({
+                title:'Cost(INR)',
+                key:'cost',
+                dataIndex:'cost',
+                render:(value,record)=><span>{record.cost.toFixed(2)}</span>,
+                export:(item,record)=>(record.cost.toFixed(2)),
+            },{
+                title:'Discount(INR)',
+                key:'discount',
+                dataIndex:'discount',
+                render:(value,record)=><span>{record.discount.toFixed(2)}</span>,
+                export:(item,record)=>(record.discount.toFixed(2)),
+            },{
+                title:"tax(INR)",
+                key:'tax',
+                dataIndex:'taxes',
+                render:(value,record)=><span>{record.taxes.toFixed(2)}</span>,
+                export:(item,record)=>(record.taxes.toFixed(2)),
+
+            },{
+                title:"Invoice Amount(INR)",
+                key:'amount',
+                dataIndex:'total',
+                render:(value,record)=><span>{record.total.toFixed(2)}</span>,
+                export:(item,record)=>(record.total.toFixed(2)),
+
+            },{
+                title:"Amount Paid(INR)",
+                key:'tax',
+                dataIndex:'tax',
+                // render:(value,record)=><span>{record.taxes.toFixed(2)}</span>,
+                // export:(item,record)=>(record.taxes.toFixed(2)),
+
+            });
+        }
 
 
         return <div>
             <h2>All Invoices</h2>
 
-
-
             <Table loading={this.state.loading} columns={SummaryColumns} pagination={false} dataSource={inventorySummary}/>
 
-            <Table loading={this.state.loading} columns={DetailColumns} pagination={false} dataSource={newData}/>
+            <CustomizedTable loading={this.state.loading} columns={DetailColumns} pagination={false} dataSource={newData}/>
 
         </div>
     }
