@@ -17,6 +17,7 @@ import {
 } from 'recharts';
 import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadDoctors} from "../../../utils/clinicUtils";
 
 export default class InvoicedIncomeForEachDoctor extends React.Component {
     constructor(props) {
@@ -26,10 +27,12 @@ export default class InvoicedIncomeForEachDoctor extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: true,
-            activeIndex:0
+            activeIndex:0,
+            practiceDoctors:[],
 
         }
-        this.loadEachDoctorIncome = this.loadEachDoctorIncome.bind(this);
+        this.loadEachDoctorIncome = this.loadEachDoctorIncome.bind(this)
+        loadDoctors(this);
     }
     componentDidMount() {
         this.loadEachDoctorIncome();
@@ -112,6 +115,12 @@ export default class InvoicedIncomeForEachDoctor extends React.Component {
             title:'Doctor',
             key:'doctor',
             dataIndex:'doctor',
+            render:(value,record)=><span>{record.doctor=='NA'?<span>{"No Doctor assigned"}</span>:<>
+                {this.state.practiceDoctors.map((item)=>(item.id == record.doctor?
+                    <span>{item.user.first_name}</span>
+                    :null)
+                )}</>}
+            </span>
         },{
             title:'Cost(INR)',
             key:'cost',
@@ -177,7 +186,13 @@ export default class InvoicedIncomeForEachDoctor extends React.Component {
                     />
                     <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
                     <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
-                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.doctor+','+ payload.cost}</text>
+                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{
+                        payload.doctor=='NA'?"No Doctor assigned":<>
+                            {this.state.practiceDoctors.map((item)=>(item.id == payload.doctor?<>
+                                    {item.user.first_name}</>
+                                :null)
+                            )}</>}
+                    </text>
                     <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
                         {`(Rate ${(percent * 100).toFixed(2)}%)`}
                     </text>
