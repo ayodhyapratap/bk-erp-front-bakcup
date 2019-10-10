@@ -455,17 +455,92 @@ export const FAMILY_GROUPS = [
     {name: "Cousin", value: 'COUSIN'},
 ];
 
+// //
+// export const ADVANCED_SEARCH = [
+//     {label: 'Patient Name', value: 'name', input_type: "text", placeholder: "Patient Name"},
+//     {label: 'Contact No', value: 'phone', input_type: "text", placeholder: "Contact No"},
+//     {label: 'Age is', value: 'age', input_type: "number", placeholder: "Age is"},
+//     {label: 'Age more than', value: 'age_gte', input_type: "number", placeholder: "Age more than"},
+//     {label: 'Age Less Than', value: 'age_lte', input_type: "number", placeholder: "Age less than"},
+//     {
+//         label: 'Has Age', value: 'has_age', input_type: "dropdown", values: [
+//             "12", "25", "45", "78"
+//         ]
+//     },
+//
+// ];
 
+/** Advanced Search Constant Data**/
 export const ADVANCED_SEARCH = [
-    {label: 'Patient Name', value: 'name', input_type: "text", placeholder: "Patient Name"},
-    {label: 'Contact No', value: 'phone', input_type: "text", placeholder: "Contact No"},
-    {label: 'Age is', value: 'age', input_type: "number", placeholder: "Age is"},
-    {label: 'Age more than', value: 'age_gte', input_type: "number", placeholder: "Age more than"},
-    {label: 'Age Less Than', value: 'age_lte', input_type: "number", placeholder: "Age less than"},
-    {
-        label: 'Has Age', value: 'has_age', input_type: "dropdown", values: [
-            "12", "25", "45", "78"
-        ]
-    },
+    {label:'Patient Name' ,value:'name'},
+    {label:'Contact No' , value: 'phone'},
+    {label:'Age is ' ,value:'age'},
+    {label:'Age more than ' ,value:'age_gte'},
+    {label:'Age Less Than' ,value:'age_lte'},
+    {label:'Has Age ' ,value:'has_age'},
+    {label:'Date of Birth is ' ,value:'dob'},
+    {label:'Date of Birth is more than ' ,value:'dob_gte'},
+    {label:'Date of Birth is less than' ,value:'dob_lte'},
+    {label:'Birthday is in' ,value:'dob_month'},
+    {label:'Has Date of Birth' ,value:'has_dob'},
+    {label:'Patient Id' ,value:'patient_id'},
+    {label:'Has Aadhar Id' ,value:'has_aadhar'},
+    {label:'Aadhar Id' ,value:'aadhar'},
+    {label:'Email' ,value:'email'},
+    {label:'Has Email' ,value:'has_email'},
+    {label:'Gender is' ,value:'gender'},
+    {label:'Has Gender' ,value:'has_gender'},
+    {label:'Pincode' ,value:'pincode'},
+    {label:'Has Pincode' ,value:'has_pincode'},
+    {label:'Has Street Address' ,value:'has_street'},
+    {label:'Street Address ' ,value:'street'},
+    {label:'Blood Group' ,value:'blood_group'},
+    {label:'Referal Source' ,value:'source'},
+    {label:'Referal Source' ,value:'agent_referal'},
+    // {label:'Refered by Agent' ,value:'agent_referal'},
 
+];
+
+export const HAS_AGE=[
+    {label:'Yes' ,value:'Y'},
+    {label:'No' ,value:'N'}
+];
+
+export const HAS_DOB=[
+    {label:'Yes' ,value:'Y'},
+    {label:'No' ,value:'N'}
+];
+export const HAS_AADHAR_ID=[
+    {label:'Yes' ,value:'Y'},
+    {label:'No' ,value:'N'}
+];
+export const HAS_EMAIL=[
+    {label:'Yes' ,value:'Y'},
+    {label:'No' ,value:'N'}
+];
+
+export const HAS_GENDER=[
+    {label:'Yes' ,value:'Y'},
+    {label:'No' ,value:'N'}
+];
+
+export const HAS_PINCODE=[
+    {label:'Yes' ,value:'Y'},
+    {label:'No' ,value:'N'}
+];
+
+export const HAS_STREET=[
+    {label:'Yes' ,value:'Y'},
+    {label:'No' ,value:'N'}
+];
+
+export const REFERED_BY_AGENT=[
+    {label:'Yes' ,value:'Y'},
+    {label:'No' ,value:'N'}
+];
+
+export const GENDER_OPTION=[
+    {label:'Female' , value:'female'},
+    {label:'Male' , value:'male'},
+    {label:'Other' , value:'other'},
 ];

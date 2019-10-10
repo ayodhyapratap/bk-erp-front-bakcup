@@ -103,6 +103,7 @@ export const INVOICE_RETURN_API = 'return/';
 export const SINGLE_RETURN_API='return/%s/'
 export const RETURN_INVOICE_PDF_API ='return/%s/get_pdf'
 //search and advanced search API
+export const ADVANCED_SEARCH_PATIENT='patients/advance_search/'
 export const SEARCH_PATIENT = 'patients/search/?name=%s';
 export const PATIENT_PENDING_AMOUNT = 'patients/%s/pending_amount/';
 export const AVAILABLE_ADVANCE='patients/%s/advance_payment/';
