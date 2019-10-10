@@ -1,16 +1,31 @@
 import React from "react";
-import {Avatar, Input, Card, Col, Icon, Radio, Row, Button, Spin, Modal, Tag, Select,Form} from "antd";
+import {Avatar, Input, Card, Col, Icon, InputNumber,Radio, Row, Button, Spin, Modal, Tag,
+    DatePicker,Select,Form} from "antd";
 import {getAPI, interpolate, makeFileURL, postAPI} from "../../utils/common";
-import {PATIENT_GROUPS, SEARCH_PATIENT, PATIENTS_LIST} from "../../constants/api";
+import {
+    PATIENT_GROUPS,
+    SEARCH_PATIENT,
+    PATIENTS_LIST,
+    ADVANCED_SEARCH_PATIENT, SOURCE
+} from "../../constants/api";
 import InfiniteFeedLoaderButton from "../common/InfiniteFeedLoaderButton";
 import PatientGroups from "./patientGroups/PatientGroups";
 import {hideEmail, hideMobile} from "../../utils/permissionUtils";
-import {ADVANCED_SEARCH, BLOOD_GROUPS} from "../../constants/hardData";
-import {ALL, CHOOSE} from "../../constants/dataKeys";
+import {
+    ADVANCED_SEARCH,
+    BLOOD_GROUPS,
+    HAS_AADHAR_ID,
+    HAS_AGE,
+    HAS_DOB,
+    HAS_EMAIL,
+    HAS_GENDER, HAS_PINCODE, HAS_STREET, REFERED_BY_AGENT
+} from "../../constants/hardData";
+import {CHOOSE, GENDER} from "../../constants/dataKeys";
 
 const {Meta} = Card;
 const Search = Input.Search;
-
+const { MonthPicker } = DatePicker;
+let id=1;
 class PatientSelection extends React.Component {
     constructor(props) {
         super(props);
@@ -23,16 +38,33 @@ class PatientSelection extends React.Component {
             advanced_option:ADVANCED_SEARCH,
             selectedOption:{},
             keys:1,
+            sourceList: [],
         };
         this.getPatientListData = this.getPatientListData.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
         this.getMorePatient = this.getMorePatient.bind(this);
+        this.getSources = this.getSources.bind(this);
     }
 
     componentDidMount() {
         this.getPatientListData();
         this.getPatientGroup();
+        this.getSources();
     }
+
+    getSources() {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                sourceList: data,
+            })
+        };
+        let errorFun = function () {
+
+        };
+        getAPI(SOURCE, successFn, errorFun);
+    }
+
 
     getPatientGroup() {
         let that = this;
@@ -202,37 +234,68 @@ class PatientSelection extends React.Component {
             advancedOptionShow:!value,
         })
     }
+
     addNewOptionField =()=>{
-        let that=this;
-        that.setState({
-            keys:this.state.keys+1,
+
+        const { form } = this.props;
+
+        const keys = form.getFieldValue('keys');
+        console.log("form",form,keys)
+        const nextKeys = keys.concat(id++);
+        form.setFieldsValue({
+            keys: nextKeys,
         });
     };
     removeNewOptionField = (k) => {
-        let that=this;
-        if (this.state.keys.length === 1) {
+        const { form } = this.props;
+        const keys = form.getFieldValue('keys');
+        if (keys.length === 1) {
             return;
         }
-        this.setState({
-            keys: this.state.keys.filter(key => key !== k)
+
+        form.setFieldsValue({
+            keys: keys.filter(key => key !== k),
         });
     };
 
-    handleChangeOption=(type,value)=>{
+    handleChangeOption=(index,type,value)=>{
         let that = this;
         let selectedOption={};
-       that.setState({
-           selectedOption:{field_type:value },
+       that.setState(function(prevState){
+           return {
+               selectedOption: {...prevState.selectedOption,[index]: value},
+           }
        })
     };
 
     AdvanceSearchPatient=(e)=>{
-        console.log(e);
+        e.preventDefault();
+        let that=this;
+        let reqData={}
+        this.props.form.validateFields((err, values) => {
+
+            if (!err) {
+                reqData = {...values
+
+                };
+
+            }
+        });
+        delete reqData.keys;
+        let successFn =function(data){
+            that.setState({
+                patientListData:data,
+            })
+
+        };
+        let errorFn=function(){
+
+        };
+        getAPI(ADVANCED_SEARCH_PATIENT,successFn,errorFn,reqData)
     };
     render() {
-        console.log("form",this.state)
         let that = this;
-        const { getFieldDecorator} = this.props.form;
+        const { getFieldDecorator,getFieldValue} = this.props.form;
 
         const formItemLayout = {
             labelCol: {
@@ -244,21 +307,30 @@ class PatientSelection extends React.Component {
                 sm: { span: 20 }
             }
         };
-        // ADVANCED_SEARCH.map((item, i) => {
-        //     if (item.name == this.state.selectedOption.field_type){
-        //         <Form.Item>
-        //
-        //         </Form.Item>
-        //     }
-        // });
-        const formItems =<span>
-            {this.state.selectedOption.field_type=='name'?
-                    <Input type={'text'}  name={this.state.selectedOption.field_type} placeholder={this.state.selectedOption.field_type}/>:
-                null}
-            {this.state.selectedOption.field_type=='phone'?
-                <Input type={'text'} name={this.state.selectedOption.field_type} placeholder={this.state.selectedOption.field_type}/>:
-                null}
-        </span>;
+        getFieldDecorator('keys', { initialValue: [0] });
+        const keys = getFieldValue('keys');
+        const chooseOption = keys.map((k, index) => (<>
+            <Select style={{minWidth: '200px'}} defaultValue={CHOOSE} key={k}
+                     onChange={(value)=>this.handleChangeOption(k,'type',value)}>
+                <Select.Option value={''}>{CHOOSE}</Select.Option>
+                {this.state.advanced_option.map((item) => <Select.Option value={item.value} key={k}>
+                    {item.label}</Select.Option>)}
+            </Select>
+                <FormItems k={k} selectedOption={this.state.selectedOption} form={this.props.form} />
+            {keys.length > 1 ? (
+                <Icon
+                    className="dynamic-delete-button"
+                    type="minus-circle-o"
+                    onClick={()=>this.removeNewOptionField(k)}
+                />
+            ) : null}
+
+        </>
+        ));
+
+
+
+
 
 
         return <Row gutter={16}>
@@ -336,70 +408,32 @@ class PatientSelection extends React.Component {
             </Col>
             <Col span={19} style={{overflow: 'scroll', borderLeft: '1px solid #ccc'}}>
                 <Row>
-                    {this.state.advancedOptionShow?<Form>
-                        <Col span={6} >
-                            <Select style={{minWidth: '200px'}} defaultValue={CHOOSE}
-                                    onChange={(value)=>this.handleChangeOption('type',value)}>
-                                <Select.Option value={''}>{CHOOSE}</Select.Option>
-                                {this.state.advanced_option.map((item) => <Select.Option value={item.value}>
-                                    {item.label}</Select.Option>)}
-                            </Select>
+                    {this.state.advancedOptionShow?<Col span={24} >
+                        <Form onSubmit={this.AdvanceSearchPatient}>
 
-                        </Col>
-                        <Col span={6}>
-                            {formItems}
-                        </Col>
-                        {/*{this.state.keys>1? <Col span={6} >*/}
-                        {/*        <Select style={{minWidth: '200px'}} defaultValue={CHOOSE}*/}
-                        {/*                onChange={(value)=>this.handleChangeOption('type',value)}>*/}
-                        {/*            <Select.Option value={''}>{CHOOSE}</Select.Option>*/}
-                        {/*            {this.state.advanced_option.map((item) => <Select.Option value={item.value}>*/}
-                        {/*                {item.label}</Select.Option>)}*/}
-                        {/*        </Select>*/}
+                                {chooseOption}
 
-                        {/*    </Col>:*/}
+                            {/*</Col>*/}
+                            {/*<Col span={20} style={{display:'flex'}}>*/}
+                                <Icon
+                                    className="dynamic-delete-button"
+                                    type="plus-circle-o"
+                                    onClick={this.addNewOptionField}
+                                />
+                                {/*&nbsp;&nbsp;*/}
+                                {/*<Button htmlType="submit" onSubmit={()=>this.AdvanceSearchPatient}>Search</Button>*/}
+                                &nbsp;&nbsp;
+                                <a icon="search" onClick={(value) => this.advancedOption(true)}>Basic Search</a>
 
-                        {/*    <p>test</p>*/}
-                        {/*}*/}
-                        <Col span={12}>
-                            <Icon
-                                className="dynamic-delete-button"
-                                type="plus-circle-o"
-                                onClick={this.addNewOptionField}
-                            />
-                            &nbsp;&nbsp;
+
+
+                        <Form.Item>
                             <Button htmlType="submit" onSubmit={this.AdvanceSearchPatient}>Search</Button>
-                            &nbsp;&nbsp;
-                            <a icon="search" onClick={(value) => this.advancedOption(true)}>Basic Search</a>
+                        </Form.Item>
+
+                        </Form>
                         </Col>
-
-                        {/*{this.state.type ?<> <Col span={6}>*/}
-                        {/*    {formItems}*/}
-
-                        {/*    </Col>*/}
-                        {/*    <Col span={12}>*/}
-                        {/*        <Icon*/}
-                        {/*            className="dynamic-delete-button"*/}
-                        {/*            type="plus-circle-o"*/}
-                        {/*            onClick={this.addNewOptionField}*/}
-                        {/*        />*/}
-                        {/*        &nbsp;&nbsp;*/}
-                        {/*        <Button htmlType="submit" onSubmit={this.AdvanceSearchPatient}>Search</Button>*/}
-                        {/*        &nbsp;&nbsp;*/}
-                        {/*        <a icon="search" onClick={(value) => this.advancedOption(true)}>Basic Search</a>*/}
-                        {/*    </Col>*/}
-
-                        {/*</> : <Col span={12}>*/}
-
-                        {/*    &nbsp;&nbsp;*/}
-                        {/*    <Button htmlType="submit" onSubmit={this.AdvanceSearchPatient}>Search</Button>*/}
-                        {/*    &nbsp;&nbsp;*/}
-                        {/*    <a icon="search" onClick={(value) => this.advancedOption(true)}>Basic Search</a>*/}
-                        {/*</Col>*/}
-                        {/*}*/}
-
-
-                        </Form>:<>
+                        :<>
 
                             <Col span={12}>
                                 <Search placeholder="Search Patient By Name / ID / Mobile No / Aadhar No"
@@ -493,4 +527,221 @@ function PatientCard(patient) {
                       </span>}/>
         </Card>
     </Col>;
+}
+function FormItems(index) {
+    return (
+        <>
+            {index.selectedOption[index.k]=='name'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('name',)
+                        (<Input placeholder={"patient Name"}/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='phone'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('phone',)
+                    (<Input placeholder={"Contact Number"}/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='age'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('age',)
+                    (<InputNumber placeholder={"Patient Age"}/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='age_gte'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('age_gte',)
+                    (<InputNumber placeholder={"Age more than"}/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='age_lte'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('age_lte',)
+                    (<InputNumber placeholder={"Age Less than"}/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='has_age'?
+                <Form.Item>
+                    {index.form.getFieldDecorator('has_age')
+                    (<Select>
+                        {HAS_AGE.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
+                    </Select>)
+                    }
+                </Form.Item>
+                : null}
+
+            {index.selectedOption[index.k]=='dob'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('dob',)
+                    (<DatePicker placeholder={"Date of Birth"}/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='dob_gte'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('dob_gte',)
+                    (<DatePicker/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='dob_lte'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('dob_lte',)
+                    (<DatePicker/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='dob_month'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('dob_month',)
+                    (<MonthPicker/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='has_dob'?
+                <Form.Item>
+                    {index.form.getFieldDecorator('has_dob')
+                    (<Select>
+                        {HAS_DOB.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
+                    </Select>)
+                    }
+                </Form.Item>
+                : null}
+
+            {index.selectedOption[index.k]=='patient_id'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('patient_id',)
+                    (<Input placeholder={"Patient Id"}/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='has_aadhar'?
+                <Form.Item>
+                    {index.form.getFieldDecorator('has_aadhar')
+                    (<Select>
+                        {HAS_AADHAR_ID.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
+                    </Select>)
+                    }
+                </Form.Item>
+                : null}
+
+            {index.selectedOption[index.k]=='aadhar'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('aadhar',)
+                    (<Input placeholder={"Aadhar Id"}/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='email'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('email',)
+                    (<Input placeholder={"Email Id"}/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='has_email'?
+                <Form.Item>
+                    {index.form.getFieldDecorator('has_email')
+                    (<Select>
+                        {HAS_EMAIL.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
+                    </Select>)
+                    }
+                </Form.Item>
+                : null}
+
+            {index.selectedOption[index.k]=='gender'?
+                <Form.Item>
+                    {index.form.getFieldDecorator('gender')
+                    (<Select>
+                        {GENDER.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
+                    </Select>)
+                    }
+                </Form.Item>
+                : null}
+
+
+            {index.selectedOption[index.k]=='has_gender'?
+                <Form.Item>
+                    {index.form.getFieldDecorator('has_gender')
+                    (<Select>
+                        {HAS_GENDER.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
+                    </Select>)
+                    }
+                </Form.Item>
+                : null}
+
+            {index.selectedOption[index.k]=='pincode'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('pincode',)
+                    (<Input placeholder={"PINCODE"}/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='has_pincode'?
+                <Form.Item>
+                    {index.form.getFieldDecorator('has_pincode')
+                    (<Select>
+                        {HAS_PINCODE.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
+                    </Select>)
+                    }
+                </Form.Item>
+                : null}
+
+            {index.selectedOption[index.k]=='has_street'?
+                <Form.Item>
+                    {index.form.getFieldDecorator('has_street')
+                    (<Select>
+                        {HAS_STREET.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
+                    </Select>)
+                    }
+                </Form.Item>
+                : null}
+
+
+            {index.selectedOption[index.k]=='street'?
+                <Form.Item key={index.key}>
+                    {index.form.getFieldDecorator('street',)
+                    (<Input placeholder={"Street Address"}/>)
+                    }
+                </Form.Item> : null}
+
+            {index.selectedOption[index.k]=='blood_group'?
+                <Form.Item>
+                    {index.form.getFieldDecorator('blood_group')
+                    (<Select>
+                        {BLOOD_GROUPS.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
+                    </Select>)
+                    }
+                </Form.Item>
+                : null}
+
+            {index.selectedOption[index.k]=='source'?
+                <Form.Item>
+                    {index.form.getFieldDecorator('source')
+                    (<Select>
+                        {this.state.sourceList.map((option)=><Select.Option value={option.id}>{option.name} </Select.Option>)}
+                    </Select>)
+                    }
+                </Form.Item>
+                : null}
+
+            {index.selectedOption[index.k]=='agent_referal'?
+                <Form.Item>
+                    {index.form.getFieldDecorator('agent_referal')
+                    (<Select>
+                        {REFERED_BY_AGENT.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
+                    </Select>)
+                    }
+                </Form.Item>
+                : null}
+
+
+
+        </>)
 }

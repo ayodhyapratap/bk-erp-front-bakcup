@@ -203,7 +203,7 @@ class DynamicFieldsForm extends React.Component {
                 if (that.state.formProp.beforeSend) {
                     values = that.state.formProp.beforeSend(values);
                 }
-                // console.log("Fields in the form", values);
+                console.log("Fields in the form", values);
                 that.submitForm(values);
             }
         });
