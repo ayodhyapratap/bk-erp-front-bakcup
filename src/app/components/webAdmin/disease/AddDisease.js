@@ -98,7 +98,7 @@ export default class AddDisease extends React.Component {
         }, {
             label: "Content",
             key: "content",
-            initialValue: this.state.editBlogData ? this.state.editBlogData.content : null,
+            initialValue: this.state.editBlogData ? this.state.editBlogData.content : ' ',
             type: QUILL_TEXT_FIELD,
         },];
 

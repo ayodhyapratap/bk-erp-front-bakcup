@@ -536,7 +536,7 @@ class DynamicFieldsForm extends React.Component {
                             return <div>
                                 <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
                                     {getFieldDecorator(field.key, {
-                                        initialValue: (field.initialValue && field.initialValue.length ? field.initialValue : ''),
+                                        initialValue: (field.initialValue && field.initialValue.length ? field.initialValue :''),
                                         rules: []
                                     })(
                                         <div style={{border: '1px solid #eee'}}>
