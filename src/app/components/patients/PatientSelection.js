@@ -21,6 +21,7 @@ import {
     HAS_GENDER, HAS_PINCODE, HAS_STREET, REFERED_BY_AGENT
 } from "../../constants/hardData";
 import {CHOOSE, GENDER} from "../../constants/dataKeys";
+import moment from "moment";
 
 const {Meta} = Card;
 const Search = Input.Search;
@@ -37,7 +38,7 @@ class PatientSelection extends React.Component {
             selectedPatientGroup: 'all',
             advanced_option:ADVANCED_SEARCH,
             selectedOption:{},
-            keys:1,
+            // keys:1,
             sourceList: [],
         };
         this.getPatientListData = this.getPatientListData.bind(this);
@@ -92,7 +93,7 @@ class PatientSelection extends React.Component {
                 currentPage: data.current,
                 totalPatients: data.count,
                 loading: false,
-                advancedOptionShow: false,
+                // advancedOptionShow: false,
             })
         };
         let errorFn = function () {
@@ -230,9 +231,19 @@ class PatientSelection extends React.Component {
         })
     };
     advancedOption(value){
+        // console.log("value",value)
+        let that=this;
+        this.getPatientListData();
         this.setState({
             advancedOptionShow:!value,
-        })
+            selectedOption:'',
+        });
+        if (value){
+            that.props.form.setFieldsValue({
+                keys: [0],
+            });
+        }
+
     }
 
     addNewOptionField =()=>{
@@ -240,7 +251,7 @@ class PatientSelection extends React.Component {
         const { form } = this.props;
 
         const keys = form.getFieldValue('keys');
-        console.log("form",form,keys)
+        // console.log("form",form,keys)
         const nextKeys = keys.concat(id++);
         form.setFieldsValue({
             keys: nextKeys,
@@ -273,11 +284,14 @@ class PatientSelection extends React.Component {
         let that=this;
         let reqData={}
         this.props.form.validateFields((err, values) => {
-
             if (!err) {
-                reqData = {...values
-
+                reqData = {...values,
+                    dob:values.dob?moment(values.dob).format('YYYY-MM-DD'):null,
+                    dob_gte:values.dob_gte?moment(values.dob_gte).format('YYYY-MM-DD'):null,
+                    dob_lte:values.dob_lte?moment(values.dob_lte).format('YYYY-MM-DD'):null,
+                    dob_month:values.dob_month?moment(values.dob_month).format('MM'):null,
                 };
+
 
             }
         });
@@ -310,20 +324,29 @@ class PatientSelection extends React.Component {
         getFieldDecorator('keys', { initialValue: [0] });
         const keys = getFieldValue('keys');
         const chooseOption = keys.map((k, index) => (<>
-            <Select style={{minWidth: '200px'}} defaultValue={CHOOSE} key={k}
-                     onChange={(value)=>this.handleChangeOption(k,'type',value)}>
-                <Select.Option value={''}>{CHOOSE}</Select.Option>
-                {this.state.advanced_option.map((item) => <Select.Option value={item.value} key={k}>
-                    {item.label}</Select.Option>)}
-            </Select>
-                <FormItems k={k} selectedOption={this.state.selectedOption} form={this.props.form} />
-            {keys.length > 1 ? (
-                <Icon
-                    className="dynamic-delete-button"
-                    type="minus-circle-o"
-                    onClick={()=>this.removeNewOptionField(k)}
-                />
-            ) : null}
+             <Col span={12}>
+                <Select style={{minWidth: '200px'}} defaultValue={CHOOSE} key={k}
+                         onChange={(value)=>this.handleChangeOption(k,'type',value)}>
+                    <Select.Option value={''}>{CHOOSE}</Select.Option>
+                    {this.state.advanced_option.map((item) => <Select.Option value={item.value} key={k}>
+                        {item.label}</Select.Option>)}
+                </Select>
+             </Col>
+                {this.state.selectedOption?
+                    <Col span={10} style={{display:"flex"}}>
+                        <FormItems k={k} selectedOption={this.state.selectedOption} form={this.props.form} sourceList={this.state.sourceList} />
+                        {keys.length > 1 ?(
+                            <Form.Item>
+                                <Button shape="circle"  onClick={()=>this.removeNewOptionField(k)}>
+                                    <Icon className="dynamic-delete-button" type="minus-circle-o"/>
+                                </Button>
+                                <br/>
+                            </Form.Item>
+
+                        ) : null}
+                    </Col>:null
+                }
+
 
         </>
         ));
@@ -407,32 +430,30 @@ class PatientSelection extends React.Component {
                 </Radio.Group>
             </Col>
             <Col span={19} style={{overflow: 'scroll', borderLeft: '1px solid #ccc'}}>
-                <Row>
-                    {this.state.advancedOptionShow?<Col span={24} >
+                <Row gutter={16}>
+                    {this.state.advancedOptionShow?
                         <Form onSubmit={this.AdvanceSearchPatient}>
 
                                 {chooseOption}
 
-                            {/*</Col>*/}
-                            {/*<Col span={20} style={{display:'flex'}}>*/}
-                                <Icon
-                                    className="dynamic-delete-button"
-                                    type="plus-circle-o"
-                                    onClick={this.addNewOptionField}
-                                />
-                                {/*&nbsp;&nbsp;*/}
-                                {/*<Button htmlType="submit" onSubmit={()=>this.AdvanceSearchPatient}>Search</Button>*/}
-                                &nbsp;&nbsp;
-                                <a icon="search" onClick={(value) => this.advancedOption(true)}>Basic Search</a>
 
+                            <Col span={12} style={{display:'flex'}}>
+                                <Form.Item>
+                                    <Button shape="circle"  onClick={this.addNewOptionField}>
+                                        <Icon className="dynamic-delete-button" type="plus-circle-o"/>
+                                    </Button>
+                                </Form.Item>
 
+                                <Form.Item>
+                                    <Button htmlType="submit" onSubmit={this.AdvanceSearchPatient}>Search</Button>
+                                </Form.Item>
 
-                        <Form.Item>
-                            <Button htmlType="submit" onSubmit={this.AdvanceSearchPatient}>Search</Button>
-                        </Form.Item>
+                                <Form.Item>
+                                    <Button icon="search" onClick={(value) => this.advancedOption(true)}>Basic Search</Button>
+                                </Form.Item>
 
+                            </Col>
                         </Form>
-                        </Col>
                         :<>
 
                             <Col span={12}>
@@ -569,7 +590,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='has_age'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_age')
-                    (<Select>
+                    (<Select style={{width:100}}>
                         {HAS_AGE.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -607,7 +628,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='has_dob'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_dob')
-                    (<Select>
+                    (<Select style={{width:100}}>
                         {HAS_DOB.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -624,7 +645,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='has_aadhar'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_aadhar')
-                    (<Select>
+                    (<Select style={{width:100}}>
                         {HAS_AADHAR_ID.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -648,7 +669,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='has_email'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_email')
-                    (<Select>
+                    (<Select style={{width:100}}>
                         {HAS_EMAIL.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -658,7 +679,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='gender'?
                 <Form.Item>
                     {index.form.getFieldDecorator('gender')
-                    (<Select>
+                    (<Select style={{width:100}}>
                         {GENDER.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -669,7 +690,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='has_gender'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_gender')
-                    (<Select>
+                    (<Select style={{width:100}}>
                         {HAS_GENDER.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -686,7 +707,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='has_pincode'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_pincode')
-                    (<Select>
+                    (<Select style={{width:100}}>
                         {HAS_PINCODE.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -696,7 +717,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='has_street'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_street')
-                    (<Select>
+                    (<Select style={{width:100}}>
                         {HAS_STREET.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -714,8 +735,8 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='blood_group'?
                 <Form.Item>
                     {index.form.getFieldDecorator('blood_group')
-                    (<Select>
-                        {BLOOD_GROUPS.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
+                    (<Select style={{width:100}}>
+                        {BLOOD_GROUPS.map((option)=><Select.Option value={option.value}>{option.name} </Select.Option>)}
                     </Select>)
                     }
                 </Form.Item>
@@ -724,8 +745,8 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='source'?
                 <Form.Item>
                     {index.form.getFieldDecorator('source')
-                    (<Select>
-                        {this.state.sourceList.map((option)=><Select.Option value={option.id}>{option.name} </Select.Option>)}
+                    (<Select style={{width:100}}>
+                        {index.sourceList.map((option)=><Select.Option value={option.id}>{option.name} </Select.Option>)}
                     </Select>)
                     }
                 </Form.Item>
@@ -734,7 +755,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='agent_referal'?
                 <Form.Item>
                     {index.form.getFieldDecorator('agent_referal')
-                    (<Select>
+                    (<Select style={{width:100}}>
                         {REFERED_BY_AGENT.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }

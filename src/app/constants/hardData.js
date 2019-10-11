@@ -496,7 +496,7 @@ export const ADVANCED_SEARCH = [
     {label:'Street Address ' ,value:'street'},
     {label:'Blood Group' ,value:'blood_group'},
     {label:'Referal Source' ,value:'source'},
-    {label:'Referal Source' ,value:'agent_referal'},
+    {label:'Refered by Agent' ,value:'agent_referal'},
     // {label:'Refered by Agent' ,value:'agent_referal'},
 
 ];
