@@ -58,6 +58,7 @@ class Addinvoicedynamic extends React.Component {
             saveLoading: false,
             qrValue: '',
             searchItem: '',
+            selectedDoctor: {},
 
         }
 
@@ -286,13 +287,16 @@ class Addinvoicedynamic extends React.Component {
             let finalTableFormValues = [];
             prevState.tableFormValues.forEach(function (formValue) {
                 if (formValue._id == id && formValue.item_type == type) {
-                    finalTableFormValues.push({...formValue, selectedDoctor: doctor})
+                    finalTableFormValues.push({...formValue, selectedDoctor: doctor});
+
                 } else {
-                    finalTableFormValues.push(formValue)
+                    finalTableFormValues.push(formValue);
+
                 }
             });
             return {
-                tableFormValues: finalTableFormValues
+                tableFormValues: finalTableFormValues,
+                // selectedDoctor:doctor,
             }
         })
     }
@@ -613,12 +617,12 @@ class Addinvoicedynamic extends React.Component {
                             <Dropdown placement="topCenter" overlay={<Menu>
                                 {that.state.practiceDoctors.map(doctor =>
                                     <Menu.Item key={doctor.id}>
-                                        <a onClick={() => that.selectDoctor(doctor, record._id, PROCEDURES)}>{doctor.user.first_name}</a>
+                                        <a onClick={() => that.selectDoctor(doctor, record._id, INVENTORY)}>{doctor.user.first_name}</a>
                                     </Menu.Item>)}
                             </Menu>} trigger={['click']}>
                                 <a className="ant-dropdown-link" href="#">
                                     <b>
-                                        {record.selectedDoctor && record.selectedDoctor.user ? record.selectedDoctor.user.first_name : '+Add Doctor'}
+                                        {record.selectedDoctor.user ? record.selectedDoctor.user.first_name : 'No DOCTORS Found'}
                                     </b>
                                 </a>
                             </Dropdown>
@@ -867,8 +871,7 @@ class Addinvoicedynamic extends React.Component {
                                         <Form.Item {...formItemLayoutWithOutLabel}
                                                    style={{marginBottom: 0, float: 'right'}}>
                                             <Button type="primary" htmlType="submit"
-                                                    style={{margin: 5}}>Save
-                                                Invoice</Button>
+                                                    style={{margin: 5}}>Save Invoice</Button>
                                             {that.props.history ?
                                                 <Button style={{margin: 5, float: 'right'}}
                                                         onClick={() => that.props.history.goBack()}>

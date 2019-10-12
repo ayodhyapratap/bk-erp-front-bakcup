@@ -396,12 +396,12 @@ class PatientHome extends React.Component {
                                                    to={"/patient/" + this.state.currentPatient.id + "/billing/invoices"}/> :
                                                <PatientInvoices
                                                    togglePatientListModal={this.togglePatientListModal}
-                                                   key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route} />)}/>
+                                                   key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.props} {...this.state} {...route} />)}/>
                                     : null}
                                 <Route path='/patient/:id/billing/invoices'
                                        render={(route) => (that.props.activePracticePermissions.PatientInvoices || that.allowAllPermissions ?
                                            <PatientInvoices refreshWallet={this.refreshWallet}
-                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/> :
+                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.props} {...this.state} {...route}/> :
                                            <PermissionDenied/>)}/>
 
 

@@ -38,6 +38,10 @@ import {Link, Redirect} from "react-router-dom";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import {SUCCESS_MSG_TYPE, OTP_DELAY_TIME} from "../../../constants/dataKeys";
 import AddReturnInvoice from "./AddReturnInvoice";
+import InvoiceReturnModal from "./InvoiceReturnModal";
+import EditReturnModal from "./EditReturnModal";
+import CancelReturnModal from "./CancelReturnModal";
+import TestComp from "./TestComp";
 
 const confirm = Modal.confirm;
 
@@ -53,16 +57,17 @@ class PatientInvoices extends React.Component {
             taxes_list: null,
             editInvoice: null,
             loading: true,
-            cancelIncoiceVisible: false,
-            otpSent: false,
-            editIncoiceVisible: false,
-            returnIncoiceVisible: false,
+            returnIncoiceVisible:false,
+            editIncoiceVisible:false,
+            cancelIncoiceVisible:false,
+
+
         }
         this.loadInvoices = this.loadInvoices.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
         this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
         this.loadTaxes = this.loadTaxes.bind(this);
-        this.editInvoiceData = this.editInvoiceData.bind(this);
+        // this.editInvoiceData = this.editInvoiceData.bind(this);
 
     }
 
@@ -156,88 +161,6 @@ class PatientInvoices extends React.Component {
 
     }
 
-    editInvoiceData = (record) => {
-        let that = this;
-        // let id = this.props.match.params.id;
-        this.setState({
-            editInvoice: record,
-        }, function () {
-            that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/edit/")
-        });
-
-
-    }
-   returnInvoiceData = (record) => {
-        let that = this;
-        // let id = this.props.match.params.id;
-        this.setState({
-            editInvoice: record,
-        }, function () {
-            that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/return/")
-        });
-    }
-
-    returnModelOpen(record) {
-        let that = this;
-        let created_time=moment().diff(record.created_at,'minutes');
-        if(created_time >OTP_DELAY_TIME){
-                that.setState({
-                    returnIncoiceVisible: true,
-                    editInvoice: record,
-                });
-
-                let reqData = {
-                    practice: this.props.active_practiceId,
-                    type: 'Invoice' + ':' + record.invoice_id + ' ' + 'Return'
-                }
-                let successFn = function (data) {
-                    that.setState({
-                        otpSent: true,
-                        patientId: record.patient,
-                        invoiceId: record.id
-                    })
-                }
-                let errorFn = function () {
-
-                };
-            postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
-        }else{
-            this.setState({
-                editInvoice: record,
-            }, function () {
-                that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/return/")
-            });
-        }
-    }
-
-    returnInvoiceClose = () => {
-        this.setState({
-            returnIncoiceVisible: false
-        })
-    }
-
-    handleSubmitReturnInvoice = (e) => {
-        let that = this;
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                let reqData = {
-                    ...values,
-                    practice: this.props.active_practiceId,
-                }
-                let successFn = function (data) {
-                    that.setState({
-                        returnIncoiceVisible: false,
-                    });
-                    that.returnInvoiceData(that.state.editInvoice)
-                };
-                let errorFn = function () {
-
-                };
-                postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
-            }
-        });
-    }
 
 
     loadPDF = (id) => {
@@ -252,13 +175,55 @@ class PatientInvoices extends React.Component {
         getAPI(interpolate(INVOICE_PDF_API, [id]), successFn, errorFn);
     }
 
-    editModelOpen = (record) => {
+
+
+
+
+    returnModelOpen=(record) =>{
+        let that = this;
+        let created_time=moment().diff(record.created_at,'minutes');
+        if(created_time >OTP_DELAY_TIME){
+            that.setState({
+                returnIncoiceVisible: true,
+                editIncoiceVisible: false,
+                cancelIncoiceVisible:false,
+                editInvoice: record,
+            });
+
+            let reqData = {
+                practice: this.props.active_practiceId,
+                type: 'Invoice' + ':' + record.invoice_id + ' ' + 'Return'
+            };
+            let successFn = function (data) {
+                that.setState({
+                    otpSent: true,
+                    patientId: record.patient,
+                    invoiceId: record.id
+                })
+            };
+            let errorFn = function () {
+
+            };
+            postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+        }else{
+            this.setState({
+                editInvoice: record,
+            }, function () {
+                that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/return/")
+            });
+        }
+    };
+
+
+    editModelOpen(record){
         let that = this;
         let created_time=moment().diff(record.created_at,'minutes');
 
         if(created_time >OTP_DELAY_TIME){
             that.setState({
                 editIncoiceVisible: true,
+                cancelIncoiceVisible:false,
+                returnIncoiceVisible:false,
                 editInvoice: record,
             });
 
@@ -274,7 +239,7 @@ class PatientInvoices extends React.Component {
                 })
             }
             let errorFn = function () {
-    
+
             };
             postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
 
@@ -285,37 +250,10 @@ class PatientInvoices extends React.Component {
                 that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/edit/")
             });
         }
-       
+
     };
 
-    editInvoiceClose = () => {
-        this.setState({
-            editIncoiceVisible: false
-        })
-    }
 
-    handleSubmitEditInvoice = (e) => {
-        let that = this;
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                let reqData = {
-                    ...values,
-                    practice: this.props.active_practiceId,
-                }
-                let successFn = function (data) {
-                    that.setState({
-                        editIncoiceVisible: false,
-                    });
-                    that.editInvoiceData(that.state.editInvoice)
-                };
-                let errorFn = function () {
-
-                };
-                postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
-            }
-        });
-    }
 
     cancelModalOpen = (record) => {
         let that = this;
@@ -325,6 +263,8 @@ class PatientInvoices extends React.Component {
 
             that.setState({
                 cancelIncoiceVisible: true,
+                editIncoiceVisible: false,
+                returnIncoiceVisible:false,
                 editInvoice: record
             });
 
@@ -349,58 +289,6 @@ class PatientInvoices extends React.Component {
         }
     };
 
-
-    sendOTP() {
-        let that = this;
-        let successFn = function (data) {
-
-        }
-        let errorFn = function () {
-
-        }
-        getAPI(CANCELINVOICE_RESENT_OTP, successFn, errorFn);
-    }
-
-    cancelInvoiceClose = () => {
-        this.setState({
-            cancelIncoiceVisible: false
-        })
-    }
-    handleSubmitCancelInvoice = (e) => {
-        let that = this;
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                let reqData = {
-                    ...values,
-                    practice: this.props.active_practiceId,
-                }
-                let successFn = function (data) {
-                    that.setState({
-                        cancelIncoiceVisible: false,
-                    });
-                    that.deleteInvoice(that.state.patientId, that.state.invoiceId)
-                };
-                let errorFn = function () {
-
-                };
-                postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
-            }
-        });
-    }
-
-
-    deleteInvoice(patient, invoice) {
-        let that = this;
-        let reqData = {patient: patient, is_cancelled: true};
-        let successFn = function (data) {
-            displayMessage(SUCCESS_MSG_TYPE, "Invoice cancelled successfully")
-            that.loadInvoices();
-        }
-        let errorFn = function () {
-        }
-        putAPI(interpolate(SINGLE_INVOICES_API, [invoice]), reqData, successFn, errorFn);
-    }
 
     render() {
         let that = this;
@@ -429,12 +317,12 @@ class PatientInvoices extends React.Component {
             return <div>
                 <Switch>
                     <Route  path='/patient/:id/billing/invoices/add'
-                           render={(route) => <AddInvoicedynamic {...this.state}  {...route}
+                           render={(route) => <AddInvoicedynamic  {...route} {...this.props}
                                                                  loadData={this.loadInvoices}/>}/>
                     <Route  path='/patient/:id/billing/invoices/edit'
                            render={(route) => (
                                this.state.editInvoice?
-                                   <AddInvoicedynamic {...this.state} {...route}
+                                   <AddInvoicedynamic {...this.state} {...route} {...this.props}
                                                       editId={this.state.editInvoice.id}
                                                       loadData={this.loadInvoices}/> :
                                    <Redirect to={"/patient/" + this.props.match.params.id + "/billing/invoices"}/>
@@ -628,99 +516,17 @@ function InvoiceCard(invoice, that) {
             </Col>
         </Row>
 
-        <Modal
-            visible={(that.state.cancelIncoiceVisible && that.state.editInvoice && that.state.editInvoice.id == invoice.id)}
-            title="Cancel Invoice"
-            footer={null}
-            onOk={that.handleSubmitCancelInvoice}
-            onCancel={that.cancelInvoiceClose}
-        >
-            <Form>
-                <Form.Item>
-                    {getFieldDecorator('otp', {
-                        rules: [{required: true, message: 'Please input Otp!'}],
-                    })(
-                        <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                               placeholder="Otp"
-                        />,
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
-                        Resend Otp ?
-                    </a> : null}
-                    <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitCancelInvoice}>
-                        Submit
-                    </Button>&nbsp;
-                    <Button size="small" onClick={that.cancelInvoiceClose}>
-                        Close
-                    </Button>
-                </Form.Item>
-            </Form>
-        </Modal>
 
 
-        <Modal
-            visible={(that.state.editIncoiceVisible && that.state.editInvoice && that.state.editInvoice.id == invoice.id)}
-            title="Edit Invoice"
-            footer={null}
-            onOk={that.handleSubmitEditInvoice}
-            onCancel={that.editInvoiceClose}
-        >
-            <Form>
-                <Form.Item>
-                    {getFieldDecorator('otp', {
-                        rules: [{required: true, message: 'Please input Otp!'}],
-                    })(
-                        <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                               placeholder="Otp"
-                        />,
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
-                        Resend Otp ?
-                    </a> : null}
-                    <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitEditInvoice}>
-                        Submit
-                    </Button>&nbsp;
-                    <Button size="small" onClick={that.editInvoiceClose}>
-                        Close
-                    </Button>
-                </Form.Item>
-            </Form>
-        </Modal>
 
-        <Modal
-            visible={(that.state.returnIncoiceVisible && that.state.editInvoice && that.state.editInvoice.id == invoice.id)}
-            title="Return Invoice"
-            footer={null}
-            onOk={that.handleSubmitReturnInvoice}
-            onCancel={that.returnInvoiceClose}
-        >
-            <Form>
-                <Form.Item>
-                    {getFieldDecorator('otp', {
-                        rules: [{required: true, message: 'Please input Otp!'}],
-                    })(
-                        <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                               placeholder="Otp"
-                        />,
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
-                        Resend Otp ?
-                    </a> : null}
-                    <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitReturnInvoice}>
-                        Submit
-                    </Button>&nbsp;
-                    <Button size="small" onClick={that.returnInvoiceClose}>
-                        Close
-                    </Button>
-                </Form.Item>
-            </Form>
-        </Modal>
+
+
+        {that.state.cancelIncoiceVisible && that.state.otpSent && <CancelReturnModal {...that.state} invoice={invoice} {...that.props} loadInvoices={that.loadInvoices} />}
+
+        {that.state.editIncoiceVisible && that.state.otpSent && <EditReturnModal {...that.state} invoice={invoice} {...that.props} />}
+        {that.state.returnIncoiceVisible && that.state.otpSent && <InvoiceReturnModal {...that.state} invoice={invoice} {...that.props} />}
+
+        <TestComp/>
     </Card>
 }
 
