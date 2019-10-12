@@ -41,7 +41,6 @@ import AddReturnInvoice from "./AddReturnInvoice";
 import InvoiceReturnModal from "./InvoiceReturnModal";
 import EditReturnModal from "./EditReturnModal";
 import CancelReturnModal from "./CancelReturnModal";
-import TestComp from "./TestComp";
 
 const confirm = Modal.confirm;
 
@@ -526,7 +525,6 @@ function InvoiceCard(invoice, that) {
         {that.state.editIncoiceVisible && that.state.otpSent && <EditReturnModal {...that.state} invoice={invoice} {...that.props} />}
         {that.state.returnIncoiceVisible && that.state.otpSent && <InvoiceReturnModal {...that.state} invoice={invoice} {...that.props} />}
 
-        <TestComp/>
     </Card>
 }
 
