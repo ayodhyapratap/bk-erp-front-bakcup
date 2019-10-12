@@ -205,13 +205,15 @@ export default class AllInvoices extends React.Component {
             title:'Invoice Number',
             key:'invoice_id',
             dataIndex:'invoice_id',
-        },{
+        },
+            {
             title:'Patient',
             key:'patient',
             dataIndex:'patient',
-            render:(value,record)=>(<span>{record.patint_data?record.patint_data.user.first_name:record.patient}</span>),
-            export:(item,record)=>(record.patint_data?record.patint_data.user.first_name:record.patient),
-        },{
+            render:(value,record)=>(<span>{record.patient?record.patient.user.first_name:record.patient}</span>),
+            export:(item,record)=>(record.patient?record.patient.user.first_name:record.patient),
+        },
+            {
             title:'Treatments & Products',
             key:'treatments',
             render: (text, record) => <span>{record.treatment.map((item) =>
