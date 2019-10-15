@@ -1,9 +1,20 @@
 import React from "react";
 import {AutoComplete, Avatar, Button, Dropdown, Icon, Layout, List, Menu, Select, Tag} from "antd";
-import {Link} from 'react-router-dom';
-import {getAPI, interpolate, makeFileURL} from "../../utils/common";
-import {PATIENT_PROFILE, SEARCH_PATIENT} from "../../constants/api";
+import {Link, Redirect} from 'react-router-dom';
+import {
+    displayMessage,
+    getAPI,
+    handleErrorResponse,
+    interpolate,
+    makeFileURL,
+    makeURL,
+    postOuterAPI
+} from "../../utils/common";
+import {CREDENTIALS, PATIENT_PROFILE, SEARCH_PATIENT, SWITCH_PORTAL} from "../../constants/api";
 import {hideMobile} from "../../utils/permissionUtils";
+import axios from "axios";
+import {getAuthToken} from "../../utils/auth";
+import {ERROR_MSG_TYPE, SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
 
 const {Header} = Layout;
 
@@ -41,6 +52,49 @@ class AppHeader extends React.Component {
 
     };
 
+    setUserCredentials(email,password) {
+        let that = this;
+        sessionStorage.removeItem('token');
+        let reqData = {
+            email:email ,
+            password: password
+        };
+        let successFn = function (data) {
+            if (data.success) {
+                sessionStorage.setItem("token", data.token);
+            }if (sessionStorage.getItem('token')){
+                that.props.history.push('task/#/app/dashboard');
+            }
+            else {
+                displayMessage(ERROR_MSG_TYPE,"Authentication failed. User not found.");
+            }
+
+        };
+        let errorFn = function () {
+
+        };
+        if (sessionStorage.getItem('token') ==null){
+            postOuterAPI(CREDENTIALS, reqData, successFn, errorFn);
+        }
+
+    };
+
+    switchPortal=()=>{
+        let  that=this;
+        let successFn=function (data) {
+            if (data){
+                that.setUserCredentials('sc6500@gmail.com','Shivam44');
+                // that.setUserCredentials(data.email,data.password);
+            }
+
+        };
+        let errorFn=function () {
+
+        };
+
+        getAPI(SWITCH_PORTAL,successFn,errorFn);
+    };
+
 
     handlePatientSelect = (event) => {
         if (event) {
@@ -70,8 +124,8 @@ class AppHeader extends React.Component {
                     <Link to="/profile">Profile</Link>
                 </Menu.Item>
                 <Menu.Divider/>
-                <Menu.Item key={"website"}>
-                    <a href={'https://bkarogyam.com'}>
+                <Menu.Item key={"website"} onClick={this.switchPortal}>
+                    <a href={'#'}>
                         <small>Switch to Website ></small>
                     </a>
                 </Menu.Item>

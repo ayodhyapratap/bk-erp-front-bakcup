@@ -255,4 +255,8 @@ export const DISEASE_LIST = 'clinics/%s/other_diseases/';
 export const AGENT_TREE='patients/%s/agents_chain/';
 
 /**suggestions**/
-export const SUGGESTIONS='suggestions/';
+export const SUGGESTIONS='suggestions/'
+
+/** Credentials Save**/
+export const CREDENTIALS='https://www.bkarogyam.com/api/authenticate';
+export const SWITCH_PORTAL='';

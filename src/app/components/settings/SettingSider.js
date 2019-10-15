@@ -113,11 +113,11 @@ class SettingSider extends React.Component {
                             <Icon type="dollar"/> Expense Types
                         </Link>
                     </Menu.Item> : null}
-                    {/*<Menu.Item key="20">*/}
-                    {/*<Link to="/settings/integration">*/}
-                    {/*<Icon type="link"/> My Integrations*/}
-                    {/*</Link>*/}
-                    {/*</Menu.Item>*/}
+                    <Menu.Item key="20">
+                    <Link to="/settings/integration">
+                    <Icon type="link"/> My Integrations
+                    </Link>
+                    </Menu.Item>
                 </Menu.ItemGroup>
                 <Menu.ItemGroup key="g2" title={<Divider style={{margin: '0px'}}>Bed & Medicine</Divider>}>
                 {this.props.activePracticePermissions.SettingsRoomTypes ?

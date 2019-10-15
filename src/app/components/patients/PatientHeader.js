@@ -70,8 +70,10 @@ class PatientHeader extends React.Component {
                             checkedChildren={"All Clinics"}
                             unCheckedChildren={"Current Clinic"}
                         />
-                        {this.props.pendingAmount?
-
+                        {this.props.pendingAmount?<>
+                            <Button style={{marginLeft:'20px'}} type="primary" size={"small"}>
+                                <Link to={'/patient/'+ this.props.currentPatient.id +'/billing/payments/add'}> Pay Now!</Link>
+                            </Button>
                             <Popover placement="rightTop"
                                      content={<List size="small" dataSource={this.props.pendingAmount.practice_data}
                                                     renderItem={item => <List.Item><List.Item.Meta title={item.name}
@@ -91,8 +93,10 @@ class PatientHeader extends React.Component {
                                     color: this.props.pendingAmount.grand_total > 0 ? '#cf1322' : 'initial',
                                     fontWeight: 500 }}
                                     precision={2}/>
+
                                 </div>
-                            </Popover> : null}
+                            </Popover>
+                            </>: null}
 
                         {this.props.walletAmount && this.props.walletAmount.length ?
                             <Popover placement="rightTop"
@@ -106,7 +110,7 @@ class PatientHeader extends React.Component {
                                     float: 'left',
                                     maxWidth: 400,
                                     position: 'absolute',
-                                    paddingLeft: 200,
+                                    paddingLeft: 173,
                                     margin: '12px 15px'
                                 }}>
                                     <Statistic tile={"wallet"}
