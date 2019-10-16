@@ -63,7 +63,7 @@ class AppHeader extends React.Component {
             if (data.success) {
                 sessionStorage.setItem("token", data.token);
             }if (sessionStorage.getItem('token')){
-                that.props.history.push('/task/');
+                window.open(window.location.hostname+'/task/');
             }
             else {
                 displayMessage(ERROR_MSG_TYPE,"Authentication failed. User not found.");
