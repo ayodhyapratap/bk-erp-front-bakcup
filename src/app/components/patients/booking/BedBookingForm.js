@@ -384,35 +384,35 @@ class BedBookingForm extends React.Component {
             key: 'name',
             dataIndex: 'name'
         },
-            //     {
-            //     title: 'Normal Price',
-            //     key: 'normal_price',
-            //     dataIndex: 'normal_price',
-            //     // render:(value,record)=>(<p>{value.toFixed()}</p>)
-            // }, {
-            //     title: 'Tatkal Price',
-            //     key: 'tatkal_price',
-            //     dataIndex: 'tatkal_price',
-            //     // render:(value,record)=>(<p>{record?(record.tatkal_price).toFixed():null}</p>)
-            // },
-            // {
-            // {
-            //     title: 'discount %',
-            //     key: 'discount',
-            //     width: 100,
-            //     dataIndex: 'discount',
-            //     render: (item, record) => <Form.Item
-            //         key={`discount[${record._id}]`}
-            //         {...formItemLayout}>
-            //         {getFieldDecorator(`discount[${record._id}]`, {
-            //             initialValue: record.discount,
-            //             validateTrigger: ['onChange', 'onBlur'],
-            //
-            //         })(
-            //             <InputNumber min={0} max={100} placeholder="discount" size={'small'} onChange={(value) => that.changeDiscount(record._id ,value)}/>
-            //         )}
-            //     </Form.Item>
-            // },
+                {
+                title: 'Normal Price',
+                key: 'normal_price',
+                dataIndex: 'normal_price',
+                // render:(value,record)=>(<p>{value.toFixed()}</p>)
+            }, {
+                title: 'Tatkal Price',
+                key: 'tatkal_price',
+                dataIndex: 'tatkal_price',
+                // render:(value,record)=>(<p>{record?(record.tatkal_price).toFixed():null}</p>)
+            },
+
+            {
+                title: 'discount %',
+                key: 'discount',
+                width: 100,
+                dataIndex: 'discount',
+                render: (item, record) => <Form.Item
+                    key={`discount[${record._id}]`}
+                    {...formItemLayout}>
+                    {getFieldDecorator(`discount[${record._id}]`, {
+                        initialValue: record.discount,
+                        validateTrigger: ['onChange', 'onBlur'],
+
+                    })(
+                        <InputNumber min={0} max={100} placeholder="discount" size={'small'} value={record.discount} onChange={(value) => that.changeDiscount(record._id ,value)}/>
+                    )}
+                </Form.Item>
+            },
             {
                 title: 'Price',
                 key: 'price',

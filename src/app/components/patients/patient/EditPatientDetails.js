@@ -529,7 +529,7 @@ class EditPatientDetails extends React.Component {
 
                     <Form.Item label="Patient Id" {...formItemLayout}>
                         {getFieldDecorator('custom_id', {
-                            initialValue: this.state.patientDetails ? this.state.patientDetails.custom_id : ''
+                            initialValue: this.state.patientDetails ? this.state.patientDetails.custom_id.replace(/\D/g,'') : ''
                         })
                         (<Input addonBefore={"BK-"} placeholder="Patient Id"/>)
                         }
