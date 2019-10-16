@@ -33,7 +33,7 @@ export default class IntegrationHome extends React.Component {
                 loading:false
             })
         }
-        getAPI(interpolate(SAVE_CREDENTIALS,[that.props.user.id]),successFn ,errorFn)
+        getAPI(interpolate(SAVE_CREDENTIALS,[that.props.user.staff.id]),successFn ,errorFn)
     }
     render() {
         let that = this;
@@ -58,7 +58,7 @@ export default class IntegrationHome extends React.Component {
             errorFn : function (){
 
             },
-            action: interpolate(SAVE_CREDENTIALS, [this.props.user.id]),
+            action: interpolate(SAVE_CREDENTIALS, [this.props.user.staff.id]),
         };
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <Row>

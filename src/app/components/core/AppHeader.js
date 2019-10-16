@@ -63,7 +63,7 @@ class AppHeader extends React.Component {
             if (data.success) {
                 sessionStorage.setItem("token", data.token);
             }if (sessionStorage.getItem('token')){
-                that.props.history.push('task/#/app/dashboard');
+                that.props.history.push('/task/');
             }
             else {
                 displayMessage(ERROR_MSG_TYPE,"Authentication failed. User not found.");
@@ -92,7 +92,7 @@ class AppHeader extends React.Component {
 
         };
 
-        getAPI(interpolate(SAVE_CREDENTIALS,[that.props.user.id]),successFn,errorFn);
+        getAPI(interpolate(SAVE_CREDENTIALS,[that.props.user.staff.id]),successFn,errorFn);
     };
 
 
