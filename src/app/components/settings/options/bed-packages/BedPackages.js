@@ -99,7 +99,7 @@ export default class BedPackages extends React.Component {
         }]
         return <Switch>
             <Route path={"/settings/bed-packages/add"}
-                   render={(route) => <AddorEditBedPackages {...this.state}{...this.props} {...route}
+                   render={(route) => <AddorEditBedPackages {...this.props} {...route}
                                                             loadData={this.loadData}/>}/>
             <Route path={"/settings/bed-packages/edit"}
                    render={(route) => (this.state.editPackage ?

@@ -21,6 +21,7 @@ import {displayMessage, getAPI, interpolate, postAPI} from "../../utils/common";
 import {SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
 import SuggestionBox from "./SuggestionBox";
 import ErrorBoundary from "../../../crashHandling/ErrorBoundary";
+import MeetingBooking from "../conference/conference-meeting/MeetingBooking";
 
 const {TextArea} = Input;
 
@@ -221,13 +222,21 @@ class AppBase extends React.Component {
                                                                                            {...route}
                                                                                            key={that.state.active_practiceId}/>}/> : null}
 
+                                    <Route path="/meeting-booking" render={(route)=><MeetingBooking  {...this.state}
+                                                                                                     {...this.props}
+                                                                                                     {...route}
+                                                                                                     key={that.state.active_practiceId}/>}/>
+
                                     <Route path="/" render={(route) => <PatientHome {...this.state}
                                                                                     {...this.props}
                                                                                     {...route}
                                                                                     key={that.state.active_practiceId}/>}/>
+
+
+
                                     <Route component={Error404}/>
 
-                                </Switch>
+                                 </Switch>
                                 {/*<AppFooter/>*/}
                             </Layout>
                         </Layout>

@@ -97,7 +97,7 @@ export default class MedicinePackages extends React.Component {
         }]
         return <Switch>
             <Route path={"/settings/medicine-packages/add"}
-                   render={(route) => <AddorEditMedicinePackages {...this.state}{...this.props} {...route}
+                   render={(route) => <AddorEditMedicinePackages {...this.props} {...route}
                                                                  loadData={this.loadData}/>}/>
             <Route path={"/settings/medicine-packages/edit"}
                    render={(route) => (this.state.editPackage ?

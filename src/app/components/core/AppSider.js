@@ -158,6 +158,15 @@ class AppSider extends React.Component {
                             </Link>
                         </Menu.Item>
                         : null}
+
+                    {/*{this.props.activePracticePermissions.WebAdmin ?*/}
+                    {/*<Menu.Item key={'conference'}>*/}
+                    {/*    <Link to="/meeting-booking">*/}
+                    {/*        <Icon type={"reconciliation"}/>*/}
+                    {/*        <span className="nav-text">Conference Booking</span>*/}
+                    {/*    </Link>*/}
+                    {/*</Menu.Item>*/}
+                        {/*: null}*/}
                 </Menu>
             </Sider>
         </Hotkeys>
