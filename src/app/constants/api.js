@@ -260,3 +260,4 @@ export const SUGGESTIONS='suggestions/'
 /** Credentials Save**/
 export const CREDENTIALS='https://www.bkarogyam.com/api/authenticate';
 export const SWITCH_PORTAL='';
+export const SAVE_CREDENTIALS='/staff/%s/task_login/';
