@@ -125,9 +125,7 @@ class AppHeader extends React.Component {
                 </Menu.Item>
                 <Menu.Divider/>
                 <Menu.Item key={"website"} onClick={this.switchPortal}>
-                    <a href={'#'}>
-                        <small>Switch to Website ></small>
-                    </a>
+                        <small>Switch to Tasks ></small>
                 </Menu.Item>
                 <Menu.Divider/>
                 <Menu.Item key="logout">
