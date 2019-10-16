@@ -38,7 +38,6 @@ export default class ManageProductList extends React.Component{
             })
 
         }
-        console.log("product Data",that.state.product);
 
         getAPI(MANAGE_PRODUCT, successFn, errorFn);
 

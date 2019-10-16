@@ -10,7 +10,7 @@ import {
     makeURL,
     postOuterAPI
 } from "../../utils/common";
-import {CREDENTIALS, PATIENT_PROFILE, SEARCH_PATIENT, SWITCH_PORTAL} from "../../constants/api";
+import {CREDENTIALS, PATIENT_PROFILE, SAVE_CREDENTIALS, SEARCH_PATIENT, SWITCH_PORTAL} from "../../constants/api";
 import {hideMobile} from "../../utils/permissionUtils";
 import axios from "axios";
 import {getAuthToken} from "../../utils/auth";
@@ -83,7 +83,7 @@ class AppHeader extends React.Component {
         let  that=this;
         let successFn=function (data) {
             if (data){
-                that.setUserCredentials('sc6500@gmail.com','Shivam44');
+                that.setUserCredentials(data.login,data.password);
                 // that.setUserCredentials(data.email,data.password);
             }
 
@@ -92,7 +92,7 @@ class AppHeader extends React.Component {
 
         };
 
-        getAPI(SWITCH_PORTAL,successFn,errorFn);
+        getAPI(interpolate(SAVE_CREDENTIALS,[that.props.user.id]),successFn,errorFn);
     };
 
 
