@@ -267,7 +267,7 @@ class EditPatientDetails extends React.Component {
                     reqData.dob = moment().subtract(values.age, 'years').format("YYYY-MM-DD");
                 }
                 if (values.custom_id){
-                    reqData.custom_id='BK-'+values.custom_id;
+                    reqData.custom_id='BK'+values.custom_id;
                 }
                 let key = 'image';
                 if (reqData[key] && reqData[key].file && reqData[key].file.response)
@@ -534,7 +534,7 @@ class EditPatientDetails extends React.Component {
                         {getFieldDecorator('custom_id', {
                             initialValue: this.state.patientDetails ? this.state.patientDetails.custom_id.replace(/\D/g,'') : ''
                         })
-                        (<Input addonBefore={"BK-"} placeholder="Patient Id"/>)
+                        (<Input addonBefore={"BK"} placeholder="Patient Id"/>)
                         }
                     </Form.Item>
 
