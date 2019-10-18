@@ -471,25 +471,28 @@ class EditPatientDetails extends React.Component {
                                   Cancel
                               </Button> : null}
 
-                          {this.state.patientDetails && this.state.patientDetails.is_approved?
-                              <Popover
-                                  placement="leftBottom"
-                                  trigger={"hover"}
-                                  content="An Agent is associated. Patient can not be deleted."
-                                  // onConfirm={()=>that.patientDelete(this.state.patientDetails.id)}
-                                  // // onCancel={cancel}
-                                  // okText="Yes"
-                                  // cancelText="No"
-                              >
-                                      <Button style={{margin: 5}} type={"danger"}  disabled>
+                          {that.props.currentPatient ?<>
+                                  {this.state.patientDetails && this.state.patientDetails.is_approved?
+                                      <Popover
+                                          placement="leftBottom"
+                                          trigger={"hover"}
+                                          content="An Agent is associated. Patient can not be deleted."
+                                          // onConfirm={()=>that.patientDelete(this.state.patientDetails.id)}
+                                          // // onCancel={cancel}
+                                          // okText="Yes"
+                                          // cancelText="No"
+                                      >
+                                          <Button style={{margin: 5}} type={"danger"}  disabled>
+                                              Delete
+                                          </Button>
+                                      </Popover>:
+                                      <Button style={{margin: 5}}  onClick={()=>that.onDeletePatient()} type={"danger"}>
                                           Delete
                                       </Button>
-                              </Popover>
+                                  }
+                              </>
+                              :null}
 
-                              : <Button style={{margin: 5}}  onClick={()=>that.onDeletePatient()} type={"danger"}>
-                                          Delete
-                                      </Button>
-                          }
 
                       </div>}>
                     <Form.Item key={'image'} {...formItemLayout} label={'Patient Image'}>
