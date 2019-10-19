@@ -17,7 +17,11 @@ export default class IntegrationHome extends React.Component {
         this.loadData = this.loadData.bind(this);
     }
     componentWillMount() {
-        this.loadData();
+       let that=this;
+        if (that.props){
+            this.loadData();
+        }
+
     }
 
     loadData(){

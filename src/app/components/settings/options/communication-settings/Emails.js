@@ -4,7 +4,7 @@ import {Form} from "antd";
 import {
     DIVIDER_FIELD,
     SUCCESS_MSG_TYPE,
-    SINGLE_CHECKBOX_FIELD, TIME_PICKER, MAIL_TEMPLATE_FIELD
+    SINGLE_CHECKBOX_FIELD, TIME_PICKER, MAIL_TEMPLATE_FIELD, INPUT_FIELD, SINGLE_IMAGE_UPLOAD_FIELD
 } from "../../../../constants/dataKeys";
 import {EMAIL_COMMUNICATONS_API} from "../../../../constants/api"
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
@@ -38,6 +38,31 @@ class Emails extends React.Component {
     render() {
         let that = this;
         const fields = [{
+            label: "Contact Number",
+            key: "contact_number",
+            placeholder: "Contact Number",
+            initialValue: this.state.data ? this.state.data.contact_number : ' ',
+            extra: "Maximum 15 characters & represented as {{CLINICCONTACTNUMBER}}",
+            type: INPUT_FIELD
+        }, {
+            label: "Email",
+            key: "email",
+            placeholder: "Email Address",
+            initialValue: this.state.data ? this.state.data.email : ' ',
+            extra: "All replies by Patients for emails will be sent to this address",
+            type: INPUT_FIELD
+        },{
+            label: "SMS clinic Name",
+            key: "sms_clinic_name",
+            placeholder: "Clinic Name",
+            initialValue: this.state.data ? this.state.data.sms_clinic_name : ' ',
+            extra: "{{CLINIC}} will use this name.",
+            type: INPUT_FIELD,
+        },{
+            label:'Clinic Logo',
+            key:'clinic_logo',
+            type:SINGLE_IMAGE_UPLOAD_FIELD
+        },{
             key: "appointment_confirmation_email",
             initialValue: this.state.data ? this.state.data.appointment_confirmation_email : false,
             type: SINGLE_CHECKBOX_FIELD,

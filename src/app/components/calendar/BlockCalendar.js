@@ -79,29 +79,29 @@ class BlockCalendar extends React.Component {
     }
 
     handleSubmit =(e)=>{
+        let that=this;
         e.preventDefault();
         let reqData={}
         this.props.form.validateFields((err, values) => {
-            console.log(values);
-            
             if (!err) {
                 reqData = {...values,
                     practice:this.props.active_practiceId,
+                    // block_from:moment(that.state.blockedAppointmentParams.block_from).format('YYYY-MM-DD'),
+                    // block_to:moment(that.state.blockedAppointmentParams.block_to).format('YYYY-MM-DD'),
 
                 };
-                
-                // reqData.
+
             }
         });
 
         let successFn =function(data){
 
-        }
+        };
         let errorFn=function(){
 
-        }
+        };
         postAPI(BLOCK_CALENDAR,reqData,successFn,errorFn)
-    }
+    };
    
     render(){
         let that = this;
