@@ -21,7 +21,8 @@ import {displayMessage, getAPI, interpolate, postAPI} from "../../utils/common";
 import {SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
 import SuggestionBox from "./SuggestionBox";
 import ErrorBoundary from "../../../crashHandling/ErrorBoundary";
-import MeetingBooking from "../conference/conference-meeting/MeetingBooking";
+import MeetingBooking from "../conference/meeting/MeetingBooking";
+import ZoomUser from "../settings/options/zoom-user/ZoomUser";
 
 const {TextArea} = Input;
 
@@ -226,6 +227,8 @@ class AppBase extends React.Component {
                                                                                                      {...this.props}
                                                                                                      {...route}
                                                                                                      key={that.state.active_practiceId}/>}/>
+
+
 
                                     <Route path="/" render={(route) => <PatientHome {...this.state}
                                                                                     {...this.props}

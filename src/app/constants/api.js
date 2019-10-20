@@ -255,9 +255,13 @@ export const DISEASE_LIST = 'clinics/%s/other_diseases/';
 export const AGENT_TREE='patients/%s/agents_chain/';
 
 /**suggestions**/
-export const SUGGESTIONS='suggestions/'
+export const SUGGESTIONS='suggestions/';
 
 /** Credentials Save**/
 export const CREDENTIALS='https://www.bkarogyam.com/api/authenticate';
 export const SWITCH_PORTAL='';
 export const SAVE_CREDENTIALS='staff/%s/task_login/';
+
+/** Meetings**/
+export const  MEETING_USER='meetings/zoom_user/';
+// export const  SINGLE_MEETING_USER='/meetings/zoom_user/%s/';

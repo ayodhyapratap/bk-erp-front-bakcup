@@ -110,9 +110,11 @@ class PatientSelection extends React.Component {
             let that = this;
             that.setState({
                searchvalue:true,
+                searchString:value
             });
             let successFn = function (data) {
                     that.setState(function (prevState) {
+                        if(prevState.searchString == value)
                         if (data.current > 1) {
                             return {
                                 patientListData: [...prevState.patientListData, ...data.results],

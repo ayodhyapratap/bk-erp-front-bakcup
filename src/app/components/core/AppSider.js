@@ -158,15 +158,21 @@ class AppSider extends React.Component {
                             </Link>
                         </Menu.Item>
                         : null}
+                    <SubMenu key="sub2" title={<span><Icon type={'reconciliation'}/>{'Meeting'}</span>}>
+                        <Menu.Item key={'11'}>
+                            <Link to="/meeting-booking">
+                                <Icon type={"reconciliation"}/>
+                                <span className="nav-text">Meeting Booking</span>
+                            </Link>
+                        </Menu.Item>
 
-                    {/*{this.props.activePracticePermissions.WebAdmin ?*/}
-                    {/*<Menu.Item key={'conference'}>*/}
-                    {/*    <Link to="/meeting-booking">*/}
-                    {/*        <Icon type={"reconciliation"}/>*/}
-                    {/*        <span className="nav-text">Conference Booking</span>*/}
-                    {/*    </Link>*/}
-                    {/*</Menu.Item>*/}
-                        {/*: null}*/}
+                        <Menu.Item key={'12'}>
+                            <Link to="/zoom-user">
+                                <Icon type={"user"}/>
+                                <span className="nav-text">Zoom User</span>
+                            </Link>
+                        </Menu.Item>
+                    </SubMenu>
                 </Menu>
             </Sider>
         </Hotkeys>

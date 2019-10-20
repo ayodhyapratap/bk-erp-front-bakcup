@@ -22,7 +22,7 @@ import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../uti
 import {DRUG, INVENTORY, PRESCRIPTIONS, PROCEDURES} from "../../../constants/hardData";
 import {
     CREATE_OR_EDIT_INVOICES,
-    INVENTORY_ITEM_API,
+    INVENTORY_ITEM_API, OFFERS,
     PROCEDURE_CATEGORY,
     SEARCH_THROUGH_QR,
     SINGLE_INVOICE_API,
@@ -59,9 +59,10 @@ class Addinvoicedynamic extends React.Component {
             qrValue: '',
             searchItem: '',
             selectedDoctor: {},
+            offers:[],
 
-        }
-
+        };
+        this.loadOffer = this.loadOffer.bind(this);
     }
 
     componentDidMount() {
@@ -70,16 +71,32 @@ class Addinvoicedynamic extends React.Component {
         this.loadProcedures();
         this.loadPrescriptions();
         this.loadTaxes();
+        this.loadOffer();
         if (this.props.editId) {
             this.loadEditInvoiceData();
         }
     }
 
+    loadOffer(){
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                offers: data,
+                loading: false
+            })
+        };
+        let errorFn = function () {
+            that.setState({
+                loading: true
+            })
+        };
+        getAPI(interpolate(OFFERS, [this.props.active_practiceId]), successFn, errorFn);
+    }
     selectedDefaultDate = (date) => {
         this.setState({
             selectedDate: date
         })
-    }
+    };
     loadEditInvoiceData = () => {
         let invoice = this.props.editInvoice;
         this.setState(function (prevState) {
@@ -326,7 +343,7 @@ class Addinvoicedynamic extends React.Component {
                 }
             });
             return {
-                tableFormValues: finalTableFormValues
+                tableFonChangeOfferormValues: finalTableFormValues
             }
         })
     }
@@ -540,7 +557,23 @@ class Addinvoicedynamic extends React.Component {
         }, 1000);
 
     }
+    onChangeOffer=(value)=>{
+        let  that=this;
+        that.state.offers.forEach(function (item) {
+            if (item.id == value) {
+                that.setState({
+                    selected_offer:item.discount,
+                });
+                console.log(item)
+            }
+        });
+        if(value =='none' && value =='custom'){
+            that.setState({
+                selected_offer:value
+            })
+        }
 
+    };
     render() {
         let that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
@@ -716,11 +749,19 @@ class Addinvoicedynamic extends React.Component {
                 {...formItemLayout}>
                 {getFieldDecorator(`discount[${record._id}]`, {
                     initialValue: record.discount,
-                    validateTrigger: ['onChange', 'onBlur'],
+                    // validateTrigger: ['onChange', 'onBlur'],
 
                 })(
-                    <InputNumber min={0} max={100} placeholder="discount" size={'small'}/>
+                    <Select size={'small'} style={{width:100}} onChange={(value)=>this.onChangeOffer(value)}>
+                        <Select.Option value={'none'}>{'None'}</Select.Option>
+                        {that.state.offers.map(option=><Select.Option value={option.id} key={option.id}>
+                            {option.code}
+                        </Select.Option>)}
+                        <Select.Option key={'custom'} >{'Custom'}</Select.Option>
+                    </Select>
+
                 )}
+                <span>{that.state.selected_offer?that.state.selected_offer:''}</span>
             </Form.Item>
         }, {
             title: 'Taxes',
