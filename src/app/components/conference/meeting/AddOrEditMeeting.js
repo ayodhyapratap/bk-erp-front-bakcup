@@ -12,6 +12,7 @@ class AddOrEditMeeting extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            loading:false,
             patientListData: [],
             fetching: false,
             no_of_participant: 1,
@@ -76,6 +77,9 @@ class AddOrEditMeeting extends React.Component {
 
     handleSubmit = (e) => {
         let that = this;
+        that.setState({
+            loading:true
+        });
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -104,10 +108,15 @@ class AddOrEditMeeting extends React.Component {
                     participant_count += values.other_user.length;
                 }
                 let successFn = function (data) {
-
+                    that.setState({
+                        loading:false
+                    });
+                    that.props.history.push("/meeting-booking")
                 };
                 let errorFn = function () {
-
+                    that.setState({
+                        loading:false
+                    });
                 };
 
                 postAPI(MEETINGS, reqData, successFn, errorFn);
@@ -251,7 +260,7 @@ class AddOrEditMeeting extends React.Component {
         ));
 
         return (<Card title={"Add Booking"}>
-                <Form onSubmit={this.handleSubmit}>
+                <Form onSubmit={this.handleSubmit} >
                     <Form.Item label={"Purpose"} {...formItemLayout}>
                         {getFieldDecorator('name', {initialValue: ''})
                         (<Input placeholder={"Purpose"}/>)
@@ -277,7 +286,8 @@ class AddOrEditMeeting extends React.Component {
                                  showSearch onSearch={this.loadPatient} filterOption={false}>
 
                             {this.state.patientListData.map(option => (
-                                <Select.Option value={option.id}>{option.user.first_name} ({option.custom_id})</Select.Option>))}
+                                <Select.Option
+                                    value={option.id}>{option.user.first_name} ({option.custom_id})</Select.Option>))}
                         </Select>)
                         }
                     </Form.Item>
@@ -294,10 +304,12 @@ class AddOrEditMeeting extends React.Component {
                     </Form.Item>
 
                     <Form.Item label={"Meeting User"} {...formItemLayout} key={'zoom_user'}>
-                        {getFieldDecorator('zoom_user', {initialValue: [],rules: [{
+                        {getFieldDecorator('zoom_user', {
+                            initialValue: [], rules: [{
                                 required: true,
                                 message: REQUIRED_FIELD_MESSAGE
-                            }]})
+                            }]
+                        })
                         (<Select placeholder="Select Zoom User" style={{width: '100%'}}>
                             {this.state.zoom_user.map(option => (
                                 <Select.Option key={option.id}>{option.username}</Select.Option>))}
@@ -337,7 +349,7 @@ class AddOrEditMeeting extends React.Component {
                     </Form.Item>
                     <Form.Item {...formItemLayout}>
                         <Button type="primary" htmlType="submit" style={{margin: 5}}
-                                disabled={this.state.meetingNotAllowed}>
+                                disabled={this.state.meetingNotAllowed} loading={this.state.loading}>
                             Submit
                         </Button>
                         {that.props.history ?
