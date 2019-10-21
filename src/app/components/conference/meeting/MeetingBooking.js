@@ -21,13 +21,13 @@ export default class MeetingBooking extends React.Component{
     }
     onSelectSlot=(value)=> {
        let  that=this;
-        let time = moment(value.start).format();
+        let time = moment(value.start);
         if (value.action == "doubleClick") {
             that.setState({
                 startTime: time,
                 redirect: true
             });
-            this.props.history.push('/meeting-booking/add')
+            this.props.history.push('/meeting-booking/add');
         }
 
     }
@@ -50,7 +50,7 @@ export default class MeetingBooking extends React.Component{
                 'end': new Date(2016, 2, 20, 0, 0, 0)
             }]
         return(
-            <div>
+            <div style={{margin:20}}>
                 <Switch>
                     <Route exact path='/meeting-booking/add'
                            render={(route) => <AddOrEditMeeting {...this.state} {...route} {...this.props} loadData={this.loadData}/>}/>

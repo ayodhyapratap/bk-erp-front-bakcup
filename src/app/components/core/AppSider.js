@@ -58,8 +58,8 @@ class AppSider extends React.Component {
 
     render() {
         let that = this;
-        return <Hotkeys keyName={OUTER_KEYS_HOTKEYS} onKeyDown={(value)=>this.onHotKeyDown(value)}>
-                <Sider
+        return <Hotkeys keyName={OUTER_KEYS_HOTKEYS} onKeyDown={(value) => this.onHotKeyDown(value)}>
+            <Sider
                 // style={{background: '#fff'}}
                 trigger={null}
                 collapsible
@@ -84,14 +84,16 @@ class AppSider extends React.Component {
                         <Menu.Item key="1">
                             <Link to="/calendar">
                                 <Icon type="schedule"/>
-                                <span className="nav-text"><span className={"shortcutLetterHighlight"}>C</span>alendar</span>
+                                <span className="nav-text"><span
+                                    className={"shortcutLetterHighlight"}>C</span>alendar</span>
                             </Link>
                         </Menu.Item> : null}
                     <Menu.Item key="26">
                         <Link
                             to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/profile" : "/patients/profile"}>
                             <Icon type="user"/>
-                            <span className="nav-text"><span className={"shortcutLetterHighlight"}>P</span>atients</span>
+                            <span className="nav-text"><span
+                                className={"shortcutLetterHighlight"}>P</span>atients</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="27">
@@ -103,10 +105,12 @@ class AppSider extends React.Component {
                     <Menu.Item key="5">
                         <Link to="/settings/clinics">
                             <Icon type="setting"/>
-                            <span className="nav-text"><span className={"shortcutLetterHighlight"}>S</span>ettings</span>
+                            <span className="nav-text"><span
+                                className={"shortcutLetterHighlight"}>S</span>ettings</span>
                         </Link>
                     </Menu.Item>
-                    <SubMenu key="sub1" title={<span><Icon type="gold"/><span><span className={"shortcutLetterHighlight"}>B</span>ack Office</span></span>}>
+                    <SubMenu key="sub1"
+                             title={<span><Icon type="gold"/><span><span className={"shortcutLetterHighlight"}>B</span>ack Office</span></span>}>
                         <Menu.Item key="6">
                             <Link to="/inventory/expenses">
                                 <Icon type="credit-card"/>
@@ -164,8 +168,6 @@ class AppSider extends React.Component {
                                 <span className="nav-text">Meeting Booking</span>
                             </Link>
                         </Menu.Item>
-
-
                 </Menu>
             </Sider>
         </Hotkeys>

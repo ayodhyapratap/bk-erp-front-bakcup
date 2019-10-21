@@ -216,17 +216,17 @@ class AppBase extends React.Component {
                                         <Profile {...this.state}
                                                  {...this.props}
                                                  {...route} key={that.state.active_practiceId}/>}/>
-
+                                    <Route path="/meeting-booking" render={(route)=><MeetingBooking  {...this.state}
+                                                                                                     {...this.props}
+                                                                                                     {...route}
+                                                                                                     key={that.state.active_practiceId}/>}/>
                                     {this.state.activePracticePermissions.ViewCalendar ?
                                         <Route exact path="/" render={(route) => <Calendar {...this.state}
                                                                                            {...this.props}
                                                                                            {...route}
                                                                                            key={that.state.active_practiceId}/>}/> : null}
 
-                                    <Route path="/meeting-booking" render={(route)=><MeetingBooking  {...this.state}
-                                                                                                     {...this.props}
-                                                                                                     {...route}
-                                                                                                     key={that.state.active_practiceId}/>}/>
+
 
 
 
