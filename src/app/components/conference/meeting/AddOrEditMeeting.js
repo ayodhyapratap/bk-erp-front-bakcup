@@ -259,13 +259,13 @@ class AddOrEditMeeting extends React.Component {
                         (<Input placeholder={"Purpose"}/>)
                         }
                     </Form.Item>
-                    <Form.Item label={"No. of Participants"} {...formItemLayout}>
-                        {getFieldDecorator('participants', {initialValue: '1'})
-                        (<InputNumber placeholder={"No. of Participants"} min={1} max={MAX_PARTICIPANT}
-                                      onChange={(value) => this.onChangeParticipant(value)}/>)
+                    {/*<Form.Item label={"No. of Participants"} {...formItemLayout}>*/}
+                    {/*    {getFieldDecorator('participants', {initialValue: '1'})*/}
+                    {/*    (<InputNumber placeholder={"No. of Participants"} min={1} max={MAX_PARTICIPANT}*/}
+                    {/*                  onChange={(value) => this.onChangeParticipant(value)}/>)*/}
 
-                        }
-                    </Form.Item>
+                    {/*    }*/}
+                    {/*</Form.Item>*/}
 
                     <Form.Item label={"Patients"} {...formItemLayout} key={'patient'}>
                         {getFieldDecorator('patients', {initialValue: []})
@@ -274,7 +274,7 @@ class AddOrEditMeeting extends React.Component {
                                  showSearch onSearch={this.loadPatient} filterOption={false}>
 
                             {this.state.patientListData.map(option => (
-                                <Select.Option value={option.user.id}>{option.user.first_name}</Select.Option>))}
+                                <Select.Option value={option.id}>{option.user.first_name}</Select.Option>))}
                         </Select>)
                         }
                     </Form.Item>
@@ -284,7 +284,7 @@ class AddOrEditMeeting extends React.Component {
                         (<Select placeholder="Select Doctors" style={{width: '100%'}} showSearch mode={"multiple"}>
 
                             {this.state.practiceDoctors.map(option => (
-                                <Select.Option key={option.user.id}>{option.user.first_name}</Select.Option>))}
+                                <Select.Option key={option.id}>{option.user.first_name}</Select.Option>))}
                         </Select>)
                         }
 
