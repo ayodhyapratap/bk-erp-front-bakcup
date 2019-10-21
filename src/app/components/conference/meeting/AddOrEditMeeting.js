@@ -1,7 +1,7 @@
 import React from "react";
-import {Button, Card, DatePicker, Form, Input, InputNumber, Select, Spin, Icon, Col, Row} from "antd";
+import {Button, Card, Col, DatePicker, Form, Icon, Input, InputNumber, Row, Select, Spin} from "antd";
 import {getAPI, interpolate, postAPI} from "../../../utils/common";
-import {MEETING_USER, MEETINGS, SEARCH_PATIENT} from "../../../constants/api";
+import {MEETING_DETAILS, MEETING_USER, MEETINGS, SEARCH_PATIENT} from "../../../constants/api";
 import {loadDoctors} from "../../../utils/clinicUtils";
 import {MAX_PARTICIPANT} from "../../../constants/dataKeys";
 import moment from "moment";
@@ -18,7 +18,9 @@ class AddOrEditMeeting extends React.Component {
             practiceDoctors: [],
             zoom_user: [],
             add_new_user: false,
-            startSchedule: this.props ? moment(this.props.startTime).format() : moment(),
+            meetingNotAllowed: true,
+            duration: 30,
+            startSchedule: this.props ? moment(this.props.startTime) : moment(),
         };
         this.loadPatient = this.loadPatient.bind(this);
         this.loadZoomUser = this.loadZoomUser.bind(this);
@@ -28,6 +30,7 @@ class AddOrEditMeeting extends React.Component {
         this.loadPatient();
         loadDoctors(this);
         this.loadZoomUser();
+        this.loadMeetingList(this.state.startSchedule, moment(this.state.startSchedule).add(this.state.duration, 'minute'));
     }
 
     loadPatient = (value) => {
@@ -135,6 +138,41 @@ class AddOrEditMeeting extends React.Component {
             keys: keys.filter(key => key !== k),
         });
     };
+
+    loadMeetingList = (start, end) => {
+        let that = this;
+        that.setState({
+            loading: true
+        })
+        let successFn = function (data) {
+
+            that.setState({
+                meetingList: data,
+                loading: false,
+                meetingNotAllowed: !!data.length
+            })
+        }
+        let errorFn = function () {
+            that.setState({
+                meetingNotAllowed: true,
+                loading: false,
+            })
+        }
+        let params = {
+            start: start.format('YYYY-MM-DD'),
+            end: end.format('YYYY-MM-DD')
+        }
+        getAPI(MEETING_DETAILS, successFn, errorFn, params)
+    }
+
+    checkMeetingAvailabilty = (type, value) => {
+        let that = this;
+        this.setState({
+            [type]: value
+        }, function () {
+            that.loadMeetingList(that.state.startSchedule, moment(that.state.startSchedule).add(that.state.duration, 'minute'));
+        });
+    }
 
     render() {
         let that = this;
@@ -281,19 +319,21 @@ class AddOrEditMeeting extends React.Component {
                     <Form.Item label={"Booking From"} {...formItemLayout}>
 
                         {getFieldDecorator('form', {initialValue: that.state.startSchedule && moment(that.state.startSchedule).isValid() ? moment(that.state.startSchedule) : (that.props.startTime && moment(that.props.startTime).isValid() ? moment(that.props.startTime) : null)})
-                        (<DatePicker format="YYYY/MM/DD HH:mm" showTime/>)
+                        (<DatePicker format="YYYY/MM/DD HH:mm" showTime
+                                     onChange={(value) => that.checkMeetingAvailabilty('startSchedule', value)}/>)
                         }
                     </Form.Item>
 
                     <Form.Item label={"Duration"} {...formItemLayout}>
-                        {getFieldDecorator('duration', {initialValue: '30'})
-                        (<InputNumber/>)
+                        {getFieldDecorator('duration', {initialValue: this.state.duration})
+                        (<InputNumber onChange={(value) => that.checkMeetingAvailabilty('duration', value)}/>)
 
                         }
                         <span className="ant-form-text">Minutes</span>
                     </Form.Item>
                     <Form.Item {...formItemLayout}>
-                        <Button type="primary" htmlType="submit" style={{margin: 5}}>
+                        <Button type="primary" htmlType="submit" style={{margin: 5}}
+                                disabled={this.state.meetingNotAllowed}>
                             Submit
                         </Button>
                         {that.props.history ?

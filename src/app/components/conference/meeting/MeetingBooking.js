@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Icon, Spin, Table} from "antd";
+import {Button, Card, Icon, Spin} from "antd";
 import {Route, Switch} from "react-router";
 import AddOrEditMeeting from "./AddOrEditMeeting";
 import {Link} from "react-router-dom";
@@ -8,19 +8,27 @@ import {Calendar as BigCalendar, momentLocalizer, Navigate} from "react-big-cale
 import moment from "moment";
 import TimeGrid from "react-big-calendar/lib/TimeGrid";
 import * as dates from "date-arithmetic";
+import {getAPI} from "../../../utils/common";
+import {MEETING_DETAILS} from "../../../constants/api";
 
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
 const localizer = momentLocalizer(moment);
-export default class MeetingBooking extends React.Component{
-    constructor(props){
+export default class MeetingBooking extends React.Component {
+    constructor(props) {
         super(props);
-        this.state={
-            loading:false,
+        this.state = {
+            loading: false,
             selectedDate: moment(),
+            meetingList: []
         }
     }
-    onSelectSlot=(value)=> {
-       let  that=this;
+
+    componentDidMount() {
+        this.loadMeetingList(moment().subtract(1, 'days'), moment().add(5, 'days'));
+    }
+
+    onSelectSlot = (value) => {
+        let that = this;
         let time = moment(value.start);
         if (value.action == "doubleClick") {
             that.setState({
@@ -31,38 +39,81 @@ export default class MeetingBooking extends React.Component{
         }
 
     }
-    render() {
-        const events=[  {
-            'title': 'All Day Event very long title',
-            'allDay': true,
-            'start': new Date(2015, 3, 0),
-            'end': new Date(2015, 3, 1)
-        },
-            {
-                'title': 'Long Event',
-                'start': new Date(2015, 3, 7),
-                'end': new Date(2015, 3, 10)
-            },
+    onRangeChange = (e) => {
+        if (e.start && e.end) {
+            this.loadMeetingList(moment(e.start), moment(e.end));
+            if (moment(e.start).date() == 1) {
+                this.setState({
+                    selectedDate: moment(e.start)
+                })
+            } else {
+                let newDate = moment(e.start);
+                this.setState({
+                    selectedDate: newDate.month(newDate.month() + 1).date(1)
+                })
+            }
+        } else if (e.length) {
+            if (e.length == 7) {
+                this.loadMeetingList(moment(e[0]).subtract(1, 'day'), moment(e[e.length - 1]).subtract(1, 'day'));
+            } else {
+                this.loadMeetingList(moment(e[0]), moment(e[e.length - 1]));
+            }
+            this.setState({
+                selectedDate: moment(e[0])
+            });
+        }
+    }
+    loadMeetingList = (start, end) => {
+        let that = this;
+        that.setState({
+            loading: true
+        })
+        let successFn = function (data) {
+            let eventList = [];
+            data.forEach(function (meeting) {
+                eventList.push({
+                    ...meeting,
+                    title: meeting.agenda,
+                    start: new Date(meeting.start),
+                    end: new Date(meeting.end),
+                });
+            })
+            that.setState({
+                meetingList: eventList,
+                loading: false
+            })
+        }
+        let errorFn = function () {
 
-            {
-                'title': 'DTS STARTS',
-                'start': new Date(2016, 2, 13, 0, 0, 0),
-                'end': new Date(2016, 2, 20, 0, 0, 0)
-            }]
-        return(
-            <div style={{margin:20}}>
+        }
+        let params = {
+            start: start.format('YYYY-MM-DD'),
+            end: end.format('YYYY-MM-DD')
+        }
+        getAPI(MEETING_DETAILS, successFn, errorFn, params)
+    }
+
+    render() {
+        return (
+            <div style={{margin: 20}}>
                 <Switch>
                     <Route exact path='/meeting-booking/add'
-                           render={(route) => <AddOrEditMeeting {...this.state} {...route} {...this.props} loadData={this.loadData}/>}/>
+                           render={(route) => <AddOrEditMeeting {...this.state} {...route} {...this.props}
+                                                                loadData={this.loadData}/>}/>
 
-                    <Route exact path={"/meeting-booking/edit/:id"} render={(route)=><AddOrEditMeeting  {...route} {...this.props} {...this.state}/>}/>
+                    <Route exact path={"/meeting-booking/edit/:id"}
+                           render={(route) => <AddOrEditMeeting  {...route} {...this.props} {...this.state}/>}/>
 
-                    <Card title="Meeting Booking" extra={<Link to="/meeting-booking/add" ><Button type="primary"><Icon type="plus"/> Add Booking</Button></Link>}>
+                    <Card title="Meeting Booking"
+                          extra={<Link to="/meeting-booking/add"><Button type="primary"><Icon type="plus"/> Add Booking</Button></Link>}>
                         <Spin size="large" spinning={this.state.loading}>
                             <DragAndDropCalendar
                                 localizer={localizer}
                                 startAccessor="start"
-                                events={events}
+                                defaultView="week"
+                                step={10}
+                                timeslots={1}
+                                events={this.state.meetingList}
                                 selectable
                                 date={new Date(this.state.selectedDate.format())}
                                 endAccessor="end"
@@ -70,19 +121,15 @@ export default class MeetingBooking extends React.Component{
                                 views={{month: true, week: MyWeek, day: true}}
                                 onSelectSlot={this.onSelectSlot}
                                 style={{height: "calc(100vh - 85px)"}}
-                            >
-
-                            </DragAndDropCalendar>
+                                onRangeChange={this.onRangeChange}
+                            />
                         </Spin>
-
-                        {/*<Table title={"xyz"}/>*/}
                     </Card>
                 </Switch>
             </div>
         )
     }
 }
-
 
 
 class MyWeek

@@ -37,7 +37,7 @@ export const EMR_OBSERVATIONS = 'clinics/%s/observations/';
 export const EMR_TREATMENTNOTES = 'clinics/%s/treatmentnotes/';
 export const EMR_INVESTIGATIONS = 'clinics/%s/investigations/';
 export const EMR_FILETAGS = 'clinics/%s/filetags/';
-export const EMR_VITAL_SIGNS ='clinics/%s/vital_sign/'
+export const EMR_VITAL_SIGNS = 'clinics/%s/vital_sign/'
 export const APPOINTMENT_CATEGORIES = 'clinics/%s/appointment_category/';
 export const ALL_PRACTICE_STAFF = 'staff/';
 export const SINGLE_PRACTICE_STAFF_API = 'staff/%s/';
@@ -67,16 +67,16 @@ export const VITAL_SIGNS_API = 'patients/vital_sign/'; //?patient=patientId&prac
 export const PRESCRIPTIONS_API = 'patients/prescriptions/'; //?id=patientId&practice=practiceId
 export const SINGLE_REATMENTPLANS_API = 'patients/procedure/?id=%s';
 export const BLOCK_CALENDAR = 'appointment/block_calendar/';
-export const APPOINTMENT_SCHEDULE='appointment/?practice=%s';
+export const APPOINTMENT_SCHEDULE = 'appointment/?practice=%s';
 
 export const PATIENT_NOTES = 'patients/patient_notes/?patient=%s&practice=%s';
 export const LABPANEL_API = 'clinics/%s/labpanel/';
 export const PATIENT_TIMELINE_API = 'patients/%s/combine_patient_report/';
 export const PATIENT_TIMELINE_PDF = 'patients/%s/timeline_pdf/';
-export const ALL_MEDICAL_CERITICATE_API= 'patients/medical_certificate/?practice=%s&page=%s'
+export const ALL_MEDICAL_CERITICATE_API = 'patients/medical_certificate/?practice=%s&page=%s'
 export const MEDICAL_CERTIFICATE_API = 'patients/medical_certificate/?practice=%s&patient=%s';
-export const MEDICAL_MEMBERSHIP_CANCEL_API ='patients/cancel_membership/'
-export const PATIENTS_MEMBERSHIP_API='patients/membership/?patient=%s'
+export const MEDICAL_MEMBERSHIP_CANCEL_API = 'patients/cancel_membership/'
+export const PATIENTS_MEMBERSHIP_API = 'patients/membership/?patient=%s'
 export const PATIENT_MAILEDFILES = 'patients/files/';
 /*DELETE OBJECT*/
 export const TREATMENTPLANS_API = 'patients/procedure/'; //?id=patientId&complete=true/false
@@ -96,57 +96,57 @@ export const SAVE_ALL_PRINT_SETTINGS = 'clinics/%s/all_print_settings/';
 export const PATIENT_COMMUNICATION_HISTORY_API = 'users/sms_status_update/?user=%s';
 export const PRESCRIPTION_TEMPLATE = "clinics/%s/prescription_template/";
 export const UNPAID_PRESCRIPTIONS = "patients/unpaid_prescriptions/?id=%s";
-export const CANCELINVOICE_GENERATE_OTP ="patients/generate_otp/";
-export const CANCELINVOICE_VERIFY_OTP='patients/verify_otp/';
+export const CANCELINVOICE_GENERATE_OTP = "patients/generate_otp/";
+export const CANCELINVOICE_VERIFY_OTP = 'patients/verify_otp/';
 export const CANCELINVOICE_RESENT_OTP = 'patients/resend_otp/'
 export const INVOICE_RETURN_API = 'return/';
-export const SINGLE_RETURN_API='return/%s/'
-export const RETURN_INVOICE_PDF_API ='return/%s/get_pdf'
+export const SINGLE_RETURN_API = 'return/%s/'
+export const RETURN_INVOICE_PDF_API = 'return/%s/get_pdf'
 //search and advanced search API
-export const ADVANCED_SEARCH_PATIENT='patients/advance_search/'
+export const ADVANCED_SEARCH_PATIENT = 'patients/advance_search/'
 export const SEARCH_PATIENT = 'patients/search/?name=%s';
 export const PATIENT_PENDING_AMOUNT = 'patients/%s/pending_amount/';
-export const AVAILABLE_ADVANCE='patients/%s/advance_payment/';
+export const AVAILABLE_ADVANCE = 'patients/%s/advance_payment/';
 //extra data
 export const EXTRA_DATA = 'clinics/extra_data/';
-export const COUNTRY ='patients/country/';
-export const STATE ='patients/state/';
-export const CITY ='patients/city/';
-export const SOURCE ='patients/source/';
+export const COUNTRY = 'patients/country/';
+export const STATE = 'patients/state/';
+export const CITY = 'patients/city/';
+export const SOURCE = 'patients/source/';
 /**
  * Reports API
  * */
 
 /** *Patient Reports* **/
-export const PATIENTS_REPORTS='patients/new_patients';
-export const ACTIVE_PATIENTS_REPORTS='patients/active_patients';
-export const MEMBERSHIP_REPORTS='patients/membership_report';
-export const FIRST_APPOINTMENT_REPORTS='patients/first_appointment';
+export const PATIENTS_REPORTS = 'patients/new_patients';
+export const ACTIVE_PATIENTS_REPORTS = 'patients/active_patients';
+export const MEMBERSHIP_REPORTS = 'patients/membership_report';
+export const FIRST_APPOINTMENT_REPORTS = 'patients/first_appointment';
 
 /** Appointment Reports**/
-export const PATIENT_APPOINTMENTS_REPORTS='appointment/appointment_report';
+export const PATIENT_APPOINTMENTS_REPORTS = 'appointment/appointment_report';
 
 /** EMR Reports**/
-export const EMR_REPORTS='clinics/%s/emr_report';
+export const EMR_REPORTS = 'clinics/%s/emr_report';
 
 /** Inventory Retails Reports**/
-export const PRODUCTS_API='inventory_item/products/';
-export const INVENTORY_RETAILS_REPORT='inventory_item/inventory_retail';
+export const PRODUCTS_API = 'inventory_item/products/';
+export const INVENTORY_RETAILS_REPORT = 'inventory_item/inventory_retail';
 
 /** Expense Reports ***/
-export const EXPENSE_PAYMENT_MODE_API='expenses';
-export const EXPENSE_REPORT_API='expenses/report';
+export const EXPENSE_PAYMENT_MODE_API = 'expenses';
+export const EXPENSE_REPORT_API = 'expenses/report';
 /** Inventory Reports***/
-export const INVENTORY_REPORT_API='inventory_item/inventory_report';
+export const INVENTORY_REPORT_API = 'inventory_item/inventory_report';
 
 /** MLM Reports**/
-export const MLM_Reports='patients/mlm_report';
-export const MLM_Agent_Wallet='patients/agent_wallet_balance';
+export const MLM_Reports = 'patients/mlm_report';
+export const MLM_Agent_Wallet = 'patients/agent_wallet_balance';
 /** Payment Reports**/
-export const PAYMENT_REPORTS='xyz';
+export const PAYMENT_REPORTS = 'xyz';
 
 /** Income Reports**/
-export const INCOME_REPORTS="invoice/invoice_reports";
+export const INCOME_REPORTS = "invoice/invoice_reports";
 
 export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/';
 export const EXPENSE_REPORT = 'clinics/%s/expense_report/';
@@ -158,7 +158,7 @@ export const DRUG_TYPE_API = 'clinics/%s/drugtype/';
 export const DRUG_UNIT_API = 'clinics/%s/drugunit/';
 export const PRINT_PREVIEW_RENDER = 'patients/print/';
 export const MEMBERSHIP_API = 'clinics/%s/membership/';
-export const BED_BOOKING_REPORTS ='clinics/seat_booking_report';
+export const BED_BOOKING_REPORTS = 'clinics/seat_booking_report';
 /**
  * Blogs API
  * */
@@ -214,7 +214,7 @@ export const BULK_STOCK_ENTRY = "stock_entry/bulk/";
 export const SUPPLIER_API = 'stock_entry/practice_supplier';
 export const SEARCH_THROUGH_QR = 'item_type_stock/find_item';
 export const BILL_SUPPLIER = 'stock_entry/bills_suppliers/';
-export const INVENTORY_ITEM_EXPORT='inventory_item/export'
+export const INVENTORY_ITEM_EXPORT = 'inventory_item/export'
 
 /**
  * MLM API
@@ -224,8 +224,8 @@ export const PRODUCT_LEVEL = "product_level";
 export const PRODUCT_MARGIN = "product_margin/";
 export const SINGLE_PRODUCT_MARGIN = "product_margin/%s/";
 export const GENERATE_MLM_COMMISSON = 'product_margin/generate_mlm/';
-export const AGENT_ROLES ='role_commission/agent_roles/';
-export const AGENT_WALLET ='patient_wallet/?patient=%s';
+export const AGENT_ROLES = 'role_commission/agent_roles/';
+export const AGENT_WALLET = 'patient_wallet/?patient=%s';
 export const WALLET_LEDGER = 'wallet_ledger/?patient=%s';
 
 
@@ -252,18 +252,18 @@ export const DISEASE_LIST = 'clinics/%s/other_diseases/';
 
 
 /** Agent Tree***/
-export const AGENT_TREE='patients/%s/agents_chain/';
+export const AGENT_TREE = 'patients/%s/agents_chain/';
 
 /**suggestions**/
-export const SUGGESTIONS='suggestions/';
+export const SUGGESTIONS = 'suggestions/';
 
 /** Credentials Save**/
-export const CREDENTIALS='https://www.bkarogyam.com/api/authenticate';
-export const SWITCH_PORTAL='';
-export const SAVE_CREDENTIALS='staff/%s/task_login/';
+export const CREDENTIALS = 'https://www.bkarogyam.com/api/authenticate';
+export const SWITCH_PORTAL = '';
+export const SAVE_CREDENTIALS = 'staff/%s/task_login/';
 
 /** Meetings**/
-export const  MEETING_USER='meetings/zoom_user/';
-export const MEETINGS='meetings/';
-export const MEETING_DETAILS='meetings/details';
-export const  SINGLE_MEETING='meetings/%s/';
+export const MEETING_USER = 'meetings/zoom_user/';
+export const MEETINGS = 'meetings/';
+export const MEETING_DETAILS = 'meetings/details';
+export const SINGLE_MEETING = 'meetings/%s/';
