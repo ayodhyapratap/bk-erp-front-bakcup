@@ -4,6 +4,7 @@ import {getAPI, interpolate, postAPI} from "../../../utils/common";
 import {MEETING_DETAILS, MEETING_USER, MEETINGS, SEARCH_PATIENT} from "../../../constants/api";
 import {loadDoctors} from "../../../utils/clinicUtils";
 import moment from "moment";
+import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 
 let id = 0;
 
@@ -288,7 +289,10 @@ class AddOrEditMeeting extends React.Component {
                     </Form.Item>
 
                     <Form.Item label={"Meeting User"} {...formItemLayout} key={'zoom_user'}>
-                        {getFieldDecorator('zoom_user', {initialValue: []})
+                        {getFieldDecorator('zoom_user', {initialValue: [],rules: [{
+                                required: true,
+                                message: REQUIRED_FIELD_MESSAGE
+                            }]})
                         (<Select placeholder="Select Zoom User" style={{width: '100%'}}>
                             {this.state.zoom_user.map(option => (
                                 <Select.Option key={option.id}>{option.username}</Select.Option>))}
@@ -313,7 +317,7 @@ class AddOrEditMeeting extends React.Component {
 
                     <Form.Item label={"Booking From"} {...formItemLayout}>
 
-                        {getFieldDecorator('form', {initialValue: that.state.startSchedule && moment(that.state.startSchedule).isValid() ? moment(that.state.startSchedule) : (that.props.startTime && moment(that.props.startTime).isValid() ? moment(that.props.startTime) : null)})
+                        {getFieldDecorator('start', {initialValue: that.state.startSchedule && moment(that.state.startSchedule).isValid() ? moment(that.state.startSchedule) : (that.props.startTime && moment(that.props.startTime).isValid() ? moment(that.props.startTime) : null)})
                         (<DatePicker format="YYYY/MM/DD HH:mm" showTime
                                      onChange={(value) => that.checkMeetingAvailabilty('startSchedule', value)}/>)
                         }
