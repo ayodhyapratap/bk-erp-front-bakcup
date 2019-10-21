@@ -3,7 +3,6 @@ import {Button, Card, Col, DatePicker, Form, Icon, Input, InputNumber, Row, Sele
 import {getAPI, interpolate, postAPI} from "../../../utils/common";
 import {MEETING_DETAILS, MEETING_USER, MEETINGS, SEARCH_PATIENT} from "../../../constants/api";
 import {loadDoctors} from "../../../utils/clinicUtils";
-import {MAX_PARTICIPANT} from "../../../constants/dataKeys";
 import moment from "moment";
 
 let id = 0;
@@ -109,10 +108,8 @@ class AddOrEditMeeting extends React.Component {
                 let errorFn = function () {
 
                 };
-                if (values.participants >= participant_count) {
-                    console.log(reqData);
-                    postAPI(MEETINGS, reqData, successFn, errorFn);
-                }
+
+                postAPI(MEETINGS, reqData, successFn, errorFn);
 
             }
         });
@@ -274,14 +271,14 @@ class AddOrEditMeeting extends React.Component {
                                  showSearch onSearch={this.loadPatient} filterOption={false}>
 
                             {this.state.patientListData.map(option => (
-                                <Select.Option value={option.id}>{option.user.first_name}</Select.Option>))}
+                                <Select.Option value={option.id}>{option.user.first_name} ({option.custom_id})</Select.Option>))}
                         </Select>)
                         }
                     </Form.Item>
                     {/*{patientField()}*/}
                     <Form.Item label={"Doctors"} {...formItemLayout} key={'doctors'}>
                         {getFieldDecorator('doctors', {initialValue: []})
-                        (<Select placeholder="Select Doctors" style={{width: '100%'}} showSearch mode={"multiple"}>
+                        (<Select placeholder="Select Doctors" style={{width: '100%'}} mode={"multiple"}>
 
                             {this.state.practiceDoctors.map(option => (
                                 <Select.Option key={option.id}>{option.user.first_name}</Select.Option>))}
@@ -293,11 +290,9 @@ class AddOrEditMeeting extends React.Component {
                     <Form.Item label={"Meeting User"} {...formItemLayout} key={'zoom_user'}>
                         {getFieldDecorator('zoom_user', {initialValue: []})
                         (<Select placeholder="Select Zoom User" style={{width: '100%'}}>
-
                             {this.state.zoom_user.map(option => (
                                 <Select.Option key={option.id}>{option.username}</Select.Option>))}
-                        </Select>)
-                        }
+                        </Select>)}
 
                     </Form.Item>
 
