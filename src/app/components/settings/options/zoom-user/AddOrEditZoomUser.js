@@ -21,19 +21,26 @@ export default class AddOrEditZoomUser extends React.Component{
         }
     }
 
+    changeRedirect(){
+        var redirectVar=this.state.redirect;
+        this.setState({
+            redirect:  !redirectVar,
+        })  ;
+    }
+
     loadData(){
         let that =this;
         let successFn = function (data) {
             that.setState({
                 editZoomData:data[0],
             })
-        }
+        };
         let errorFn = function () {
 
-        }
+        };
         let reqData={
             id:that.props.match.params.id
-        }
+        };
         getAPI(MEETING_USER ,successFn, errorFn,reqData);
 
 
@@ -82,7 +89,10 @@ export default class AddOrEditZoomUser extends React.Component{
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
 
-                console.log("Data",data);
+                that.setState({
+                    redirect: true
+                });
+                that.props.loadData();
             },
             errorFn: function () {
 
@@ -94,14 +104,15 @@ export default class AddOrEditZoomUser extends React.Component{
         return <Row>
             <Card>
                 <Route exact path='/settings/zoom-user/edit/:id'
-                       render={() => <TestFormLayout title="Edit Zoom User" defaultValues={defaultValues}
-                                                     formProp={editformProp} fields={fields}/>}/>
+                       render={() =>(this.props.match.params.id? <TestFormLayout title="Edit Zoom User" defaultValues={defaultValues} changeRedirect= {this.changeRedirect}
+                                                     formProp={editformProp} fields={fields}/>: <Redirect to={'/settings/zoom-user'} />)}/>
 
                 <Route exact path='/settings/zoom-user/add'
-                       render={() => <TestFormLayout title="Add Zoom User"
+                       render={() => <TestFormLayout title="Add Zoom User" changeRedirect= {this.changeRedirect}
                                                      formProp={formProp} fields={fields}/>}/>
 
             </Card>
+            {this.state.redirect&&    <Redirect to={'/settings/zoom-user'} />}
         </Row>
     }
 }

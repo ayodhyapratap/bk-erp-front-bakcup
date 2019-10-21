@@ -264,4 +264,6 @@ export const SAVE_CREDENTIALS='staff/%s/task_login/';
 
 /** Meetings**/
 export const  MEETING_USER='meetings/zoom_user/';
-// export const  SINGLE_MEETING_USER='/meetings/zoom_user/%s/';
+export const MEETINGS='meetings/';
+export const MEETING_DETAILS='meetings/details';
+export const  SINGLE_MEETING='meetings/%s/';
