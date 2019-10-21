@@ -253,8 +253,13 @@ class AddOrEditMeeting extends React.Component {
         return (<Card title={"Add Booking"}>
                 <Form onSubmit={this.handleSubmit}>
                     <Form.Item label={"Purpose"} {...formItemLayout}>
-                        {getFieldDecorator('purpose', {initialValue: ''})
+                        {getFieldDecorator('name', {initialValue: ''})
                         (<Input placeholder={"Purpose"}/>)
+                        }
+                    </Form.Item>
+                    <Form.Item label={"Agenda"} {...formItemLayout}>
+                        {getFieldDecorator('agenda', {initialValue: ''})
+                        (<Input.TextArea placeholder={"Agenda"} rows={3}/>)
                         }
                     </Form.Item>
                     {/*<Form.Item label={"No. of Participants"} {...formItemLayout}>*/}
