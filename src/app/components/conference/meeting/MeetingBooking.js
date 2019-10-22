@@ -10,6 +10,7 @@ import TimeGrid from "react-big-calendar/lib/TimeGrid";
 import * as dates from "date-arithmetic";
 import {getAPI} from "../../../utils/common";
 import {MEETING_DETAILS} from "../../../constants/api";
+import MeetingEventComponent from "./MeetingEventComponent";
 
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
 const localizer = momentLocalizer(moment);
@@ -19,12 +20,14 @@ export default class MeetingBooking extends React.Component {
         this.state = {
             loading: false,
             selectedDate: moment(),
+            selectedStartDate: moment().subtract(1, 'days'),
+            selectedEndDate: moment().add(5, 'days'),
             meetingList: []
         }
     }
 
     componentDidMount() {
-        this.loadMeetingList(moment().subtract(1, 'days'), moment().add(5, 'days'));
+        this.loadMeetingList();
     }
 
     onSelectSlot = (value) => {
@@ -40,30 +43,51 @@ export default class MeetingBooking extends React.Component {
 
     }
     onRangeChange = (e) => {
+        let that = this;
+        console.log(e);
         if (e.start && e.end) {
-            this.loadMeetingList(moment(e.start), moment(e.end));
+
             if (moment(e.start).date() == 1) {
                 this.setState({
-                    selectedDate: moment(e.start)
+                    selectedDate: moment(e.start),
+                    selectedStartDate: moment(e.start),
+                    selectedEndDate: moment(e.end),
+                }, function () {
+                    that.loadMeetingList();
                 })
             } else {
                 let newDate = moment(e.start);
                 this.setState({
-                    selectedDate: newDate.month(newDate.month() + 1).date(1)
+                    selectedDate: newDate.month(newDate.month() + 1).date(1),
+                    selectedStartDate: newDate.month(newDate.month() + 1).date(1),
+                    selectedEndDate: moment(e.end),
+                }, function () {
+                    that.loadMeetingList();
                 })
             }
         } else if (e.length) {
             if (e.length == 7) {
-                this.loadMeetingList(moment(e[0]).subtract(1, 'day'), moment(e[e.length - 1]).subtract(1, 'day'));
+                this.setState({
+                    selectedDate: moment(e[0]),
+                    selectedStartDate: moment(e[0]).subtract(1, 'day'),
+                    selectedEndDate: moment(e[e.length - 1]).subtract(1, 'day')
+                }, function () {
+                    that.loadMeetingList();
+                });
             } else {
-                this.loadMeetingList(moment(e[0]), moment(e[e.length - 1]));
+                // this.loadMeetingList(moment(e[0]), moment(e[e.length - 1]));
+                this.setState({
+                    selectedDate: moment(e[0]),
+                    selectedStartDate: moment(e[0]),
+                    selectedEndDate: moment(e[e.length - 1])
+                }, function () {
+                    that.loadMeetingList();
+                });
             }
-            this.setState({
-                selectedDate: moment(e[0])
-            });
+
         }
     }
-    loadMeetingList = (start, end) => {
+    loadMeetingList = () => {
         let that = this;
         that.setState({
             loading: true
@@ -87,22 +111,24 @@ export default class MeetingBooking extends React.Component {
 
         }
         let params = {
-            start: start.format('YYYY-MM-DD'),
-            end: end.format('YYYY-MM-DD')
+            start: this.state.selectedStartDate.startOf('day'),
+            end: this.state.selectedEndDate.endOf('day')
         }
         getAPI(MEETING_DETAILS, successFn, errorFn, params)
     }
 
     render() {
+        let that = this;
         return (
             <div style={{margin: 20}}>
                 <Switch>
                     <Route exact path='/meeting-booking/add'
                            render={(route) => <AddOrEditMeeting {...this.state} {...route} {...this.props}
-                                                                loadData={this.loadData}/>}/>
+                                                                loadData={this.loadMeetingList}/>}/>
 
                     <Route exact path={"/meeting-booking/edit/:id"}
-                           render={(route) => <AddOrEditMeeting  {...route} {...this.props} {...this.state}/>}/>
+                           render={(route) => <AddOrEditMeeting  {...route} {...this.props} {...this.state}
+                                                                 loadData={this.loadMeetingList}/>}/>
 
                     <Card title="Meeting Booking"
                           extra={<Link to="/meeting-booking/add"><Button type="primary"><Icon type="plus"/> Add Booking</Button></Link>}>
@@ -122,6 +148,11 @@ export default class MeetingBooking extends React.Component {
                                 onSelectSlot={this.onSelectSlot}
                                 style={{height: "calc(100vh - 85px)"}}
                                 onRangeChange={this.onRangeChange}
+                                components={{
+                                    event: function (option) {
+                                        return <MeetingEventComponent {...option} {...that.props}/>
+                                    }
+                                }}
                             />
                         </Spin>
                     </Card>

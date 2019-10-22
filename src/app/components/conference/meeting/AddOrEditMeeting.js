@@ -12,7 +12,7 @@ class AddOrEditMeeting extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading:false,
+            loading: false,
             patientListData: [],
             fetching: false,
             no_of_participant: 1,
@@ -78,7 +78,7 @@ class AddOrEditMeeting extends React.Component {
     handleSubmit = (e) => {
         let that = this;
         that.setState({
-            loading:true
+            loading: true
         });
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -109,13 +109,15 @@ class AddOrEditMeeting extends React.Component {
                 }
                 let successFn = function (data) {
                     that.setState({
-                        loading:false
+                        loading: false
                     });
+                    if (that.props.loadData)
+                        that.props.loadData();
                     that.props.history.push("/meeting-booking")
                 };
                 let errorFn = function () {
                     that.setState({
-                        loading:false
+                        loading: false
                     });
                 };
 
@@ -166,8 +168,8 @@ class AddOrEditMeeting extends React.Component {
             })
         }
         let params = {
-            start: start.format('YYYY-MM-DD'),
-            end: end.format('YYYY-MM-DD')
+            start: start,
+            end: end
         }
         getAPI(MEETING_DETAILS, successFn, errorFn, params)
     }
@@ -260,7 +262,7 @@ class AddOrEditMeeting extends React.Component {
         ));
 
         return (<Card title={"Add Booking"}>
-                <Form onSubmit={this.handleSubmit} >
+                <Form onSubmit={this.handleSubmit}>
                     <Form.Item label={"Purpose"} {...formItemLayout}>
                         {getFieldDecorator('name', {initialValue: ''})
                         (<Input placeholder={"Purpose"}/>)
