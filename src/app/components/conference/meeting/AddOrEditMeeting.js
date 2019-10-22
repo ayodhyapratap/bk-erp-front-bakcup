@@ -168,8 +168,8 @@ class AddOrEditMeeting extends React.Component {
             })
         }
         let params = {
-            start: start,
-            end: end
+            start: start.format(),
+            end: end.format()
         }
         getAPI(MEETING_DETAILS, successFn, errorFn, params)
     }

@@ -111,8 +111,8 @@ export default class MeetingBooking extends React.Component {
 
         }
         let params = {
-            start: this.state.selectedStartDate.startOf('day'),
-            end: this.state.selectedEndDate.endOf('day')
+            start: moment(this.state.selectedStartDate).startOf('day').format(),
+            end: moment(this.state.selectedEndDate).endOf('day').format()
         }
         getAPI(MEETING_DETAILS, successFn, errorFn, params)
     }
