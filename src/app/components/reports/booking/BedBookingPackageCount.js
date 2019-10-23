@@ -11,7 +11,7 @@ export default class BedBookingPackageCount extends React.Component {
         this.state = {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
             bedBookingReports: [],
             packages: [],
             activeIndex:0,
@@ -40,9 +40,9 @@ export default class BedBookingPackageCount extends React.Component {
 
     loadBedBookingReport = () => {
         let that = this;
-        this.setState({
-            loading: true
-        })
+        that.setState({
+            loading:true,
+        });
         let successFn = function (data) {
             that.setState({
                 bedBookingReports:data,
