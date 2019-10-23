@@ -22,7 +22,7 @@ export default class DailySummaryReport extends React.Component {
         this.state = {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
             dailySummary:[],
             practiceDoctors:[],
 
