@@ -26,7 +26,7 @@ export default class InvoicedIncomeForEachDoctor extends React.Component {
             report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
             activeIndex:0,
             practiceDoctors:[],
 

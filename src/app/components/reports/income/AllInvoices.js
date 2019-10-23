@@ -12,7 +12,7 @@ export default class AllInvoices extends React.Component {
             inventoryReports:[],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
             invoiceReports:[],
         };
         this.loadInvoices = this.loadInvoices.bind(this);

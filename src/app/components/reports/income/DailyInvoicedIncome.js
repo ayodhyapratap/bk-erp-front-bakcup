@@ -13,7 +13,7 @@ export default class DailyInvoicedIncome extends React.Component {
             report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
 
         }
         this.loadDailyIncome = this.loadDailyIncome.bind(this);

@@ -25,7 +25,7 @@ export default class TaxedInvoicedIncome extends React.Component {
             report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
             activeIndex:0
 
         }
