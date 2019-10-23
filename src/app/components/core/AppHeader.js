@@ -8,7 +8,7 @@ import {
     interpolate,
     makeFileURL,
     makeURL,
-    postOuterAPI
+    postOuterAPI, startLoadingMessage, stopLoadingMessage
 } from "../../utils/common";
 import {CREDENTIALS, PATIENT_PROFILE, SAVE_CREDENTIALS, SEARCH_PATIENT, SWITCH_PORTAL} from "../../constants/api";
 import {hideMobile} from "../../utils/permissionUtils";
@@ -24,6 +24,7 @@ class AppHeader extends React.Component {
         this.state = {
             patientListData: [],
             searchPatientString: null,
+            // loading:false
         }
     }
 
@@ -54,6 +55,7 @@ class AppHeader extends React.Component {
 
     setUserCredentials(email,password) {
         let that = this;
+        let msg = startLoadingMessage("Waiting for authentication from server...");
         sessionStorage.removeItem('token');
         let reqData = {
             email:email ,
@@ -61,12 +63,13 @@ class AppHeader extends React.Component {
         };
         let successFn = function (data) {
             if (data.success) {
+                stopLoadingMessage(msg, SUCCESS_MSG_TYPE, " Authentication Successfully!!");
                 sessionStorage.setItem("token", data.token);
             }if (sessionStorage.getItem('token')){
                 window.open('/task/');
             }
             else {
-                displayMessage(ERROR_MSG_TYPE,"Authentication failed. User not found.");
+                stopLoadingMessage(msg, ERROR_MSG_TYPE,"Authentication failed. User not found.");
             }
 
         };
@@ -89,7 +92,7 @@ class AppHeader extends React.Component {
 
         };
         let errorFn=function () {
-
+            displayMessage(ERROR_MSG_TYPE,"Something went wrong.");
         };
 
         getAPI(interpolate(SAVE_CREDENTIALS,[that.props.user.staff.id]),successFn,errorFn);
