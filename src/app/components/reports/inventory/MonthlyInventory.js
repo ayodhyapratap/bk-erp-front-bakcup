@@ -14,7 +14,7 @@ export default class MonthlyInventory extends React.Component {
             report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
 
         }
         this.loadMonthlyInventory = this.loadMonthlyInventory.bind(this);

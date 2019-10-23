@@ -9,7 +9,7 @@ export default class ReportInnerTable extends React.Component {
         super(props);
         this.state = {
             inventoryList: [],
-            loading:true,
+            loading:false,
         }
         this.loadData = this.loadData.bind(this);
     }
@@ -20,6 +20,9 @@ export default class ReportInnerTable extends React.Component {
 
     loadData() {
         let that = this;
+        that.setState({
+            loading:true,
+        });
         let successFn = function (data) {
             that.setState({
                 inventoryList:data.results,

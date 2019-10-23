@@ -14,7 +14,7 @@ export default class TopInventory extends React.Component {
             reportTotal:[],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
 
         }
         this.loadDailyInventory = this.loadDailyInventory.bind(this);
