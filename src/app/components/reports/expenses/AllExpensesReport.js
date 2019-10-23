@@ -12,7 +12,7 @@ export default class ExpensesReport extends React.Component {
             report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true
+            loading: false
         }
         this.ExpenseReport = this.ExpenseReport.bind(this);
     }

@@ -13,7 +13,7 @@ export default class DailyExpenses extends React.Component {
             report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
 
         }
         this.loadDailyExpense = this.loadDailyExpense.bind(this);

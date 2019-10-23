@@ -13,7 +13,7 @@ export default class ExpensesForEachType extends React.Component {
             report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
 
         }
         this.loadExpenseEachType = this.loadExpenseEachType.bind(this);
