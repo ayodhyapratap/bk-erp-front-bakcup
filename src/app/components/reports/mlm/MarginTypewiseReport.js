@@ -15,7 +15,7 @@ export default class MarginTypewiseReport extends React.Component {
             report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true
+            loading: false
         }
         this.loadMlmReport = this.loadMlmReport.bind(this);
     }

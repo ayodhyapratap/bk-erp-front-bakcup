@@ -12,7 +12,8 @@ export default class AgentTreeReport extends React.Component {
         this.state = {
             agentData: {},
             agentTreeData: {},
-        }
+            loading:false,
+        };
         this.loadAgentTree = this.loadAgentTree.bind(this);
     }
 
@@ -40,17 +41,24 @@ export default class AgentTreeReport extends React.Component {
 
     loadAgentTree() {
         let that = this;
+        that.setState({
+            loading:true,
+        });
         let successFn = function (data) {
             that.setState({
-                agentData: data
+                agentData: data,
+                loading:false
             }, function () {
                 that.setState({
                     agentTreeData: this.general_list(0, data[0][0]),
+                    loading:false
                 });
             })
         }
         let errorFn = function () {
-
+            that.setState({
+                loading:false,
+            });
         };
 
         getAPI(interpolate(AGENT_TREE, [that.props.agent]), successFn, errorFn);

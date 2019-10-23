@@ -16,7 +16,7 @@ export default class TransferredAmountReport extends React.Component {
             reportSummary:[],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
             activeIndex:0,
         }
         this.loadMlmReport = this.loadMlmReport.bind(this);
