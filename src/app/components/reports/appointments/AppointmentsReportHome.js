@@ -12,7 +12,7 @@ import {
     APPOINTMENT_FOR_EACH_DOCTOR,
     MONTHLY_APPOINTMENT_COUNT,
     APPOINTMENT_FOR_EACH_PATIENT_GROUP,
-    NEW_PATIENTS, DOCTORS_ROLE
+    NEW_PATIENTS, DOCTORS_ROLE, APPOINTMENT_FOR_PATIENT_CONVERSION
 }
     from "../../../constants/dataKeys";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
@@ -29,6 +29,7 @@ import DailyAppointmentCount from "./DailyAppointmentCount";
 import MonthlyAppointmentCount from './MonthlyAppointmentCount'
 import ReasonsForCancellations from "./ReasonsForCancellations";
 import { loadDoctors } from "../../../utils/clinicUtils";
+import Patient_Conversion from "./Patient_Conversion";
 
 
 export default class AppointmentsReportHome extends React.Component {
@@ -131,7 +132,7 @@ export default class AppointmentsReportHome extends React.Component {
                        {this.state.type == CANCELLATION_NUMBERS?<CancellationsNumbers {...this.state} {...this.props}/>:null}
                        {this.state.type == DAILY_APPOINTMENT_COUNT?<DailyAppointmentCount {...this.state} {...this.props}/>:null}
                        {this.state.type == MONTHLY_APPOINTMENT_COUNT?<MonthlyAppointmentCount {...this.state} {...this.props}/>:null}
-                       {/*{this.state.type==REASONS_FOR_CANCELLATIONS?<ReasonsForCancellations {...this.props} type={this.state.type}/>:null}*/}
+                       {this.state.type==APPOINTMENT_FOR_PATIENT_CONVERSION?<Patient_Conversion {...this.props} {...this.state}/>:null}
 
                     </Col>
                     <Col span={this.state.sidePanelColSpan}>

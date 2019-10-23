@@ -53,14 +53,15 @@ class Emails extends React.Component {
             type: INPUT_FIELD
         },{
             label: "SMS clinic Name",
-            key: "sms_clinic_name",
+            key: "email_clinic_name",
             placeholder: "Clinic Name",
-            initialValue: this.state.data ? this.state.data.sms_clinic_name : ' ',
+            initialValue: this.state.data ? this.state.data.email_clinic_name : ' ',
             extra: "{{CLINIC}} will use this name.",
             type: INPUT_FIELD,
         },{
             label:'Clinic Logo',
             key:'clinic_logo',
+            // initialValue: this.state.data ? this.state.data.clinic_logo : ' ',
             type:SINGLE_IMAGE_UPLOAD_FIELD
         },{
             key: "appointment_confirmation_email",
@@ -197,6 +198,7 @@ class Emails extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "Communication Settings Saved Successfully!!");
+                console.log("form",data);
             },
             errorFn: function () {
 

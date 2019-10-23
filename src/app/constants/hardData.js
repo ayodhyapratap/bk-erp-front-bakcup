@@ -56,7 +56,7 @@ import {
     MONTHLY_INCOME,
     TAXED_INCOME,
     PATIENT_GROUPS_INCOME,
-    PRODUCT_INCOME, PROCEDURE_INCOME, DOCTOR_EACH_INCOME
+    PRODUCT_INCOME, PROCEDURE_INCOME, DOCTOR_EACH_INCOME, APPOINTMENT_FOR_PATIENT_CONVERSION
 } from "../constants/dataKeys";
 import number from "less/lib/less/functions/number";
 
@@ -311,7 +311,9 @@ export const APPOINTMENT_RELATED_REPORT = [
     {name: 'Daily Appointment Count', value: DAILY_APPOINTMENT_COUNT},
     {name: 'Appointments For Each Doctor', value: APPOINTMENT_FOR_EACH_DOCTOR},
     {name: 'Monthly Appointment Count', value: MONTHLY_APPOINTMENT_COUNT},
-    {name: 'Appointment For Each Patient Group', value: APPOINTMENT_FOR_EACH_PATIENT_GROUP}];
+    {name: 'Appointment For Each Patient Group', value: APPOINTMENT_FOR_EACH_PATIENT_GROUP},
+    {name:'Patient Conversion' , value:APPOINTMENT_FOR_PATIENT_CONVERSION},
+    ];
 
 /*Emr Reports*/
 export const EMR_RELATED_REPORT = [
