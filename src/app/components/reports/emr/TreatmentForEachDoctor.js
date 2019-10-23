@@ -13,7 +13,7 @@ export default class TreatmentForEachDoctor extends React.Component {
             treatmentEachDoctor: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
             activeIndex:0,
         }
         this.loadTreatmentEachDoctor = this.loadTreatmentEachDoctor.bind(this);
@@ -37,6 +37,9 @@ export default class TreatmentForEachDoctor extends React.Component {
 
     loadTreatmentEachDoctor = () => {
         let that = this;
+        that.setState({
+            loading:true,
+        });
         let successFn = function (data) {
             that.setState({
                 treatmentEachDoctor: data,

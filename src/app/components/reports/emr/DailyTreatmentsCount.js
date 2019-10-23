@@ -13,7 +13,7 @@ export default class DailyTreatmentsCount extends React.Component {
             report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
 
         }
         this.loadDailyTreatments = this.loadDailyTreatments.bind(this);
@@ -37,7 +37,7 @@ export default class DailyTreatmentsCount extends React.Component {
         let that = this;
         that.setState({
             loading: true
-        })
+        });
         let successFn = function (data) {
             that.setState({
                 report: data.data,
