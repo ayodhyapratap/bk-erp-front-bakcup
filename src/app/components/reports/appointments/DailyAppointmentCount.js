@@ -13,7 +13,7 @@ export default class DailyAppointmentCount extends React.Component {
             appointmentDaily: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true
+            loading: false
         }
         this.loadAppointmentDaily = this.loadAppointmentDaily.bind(this);
     }
@@ -36,7 +36,9 @@ export default class DailyAppointmentCount extends React.Component {
 
     loadAppointmentDaily = () => {
         let that = this;
-
+        that.setState({
+            loading:true,
+        });
         let successFn = function (data) {
             that.setState({
                 appointmentDaily: data.data,

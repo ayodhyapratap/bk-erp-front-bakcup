@@ -13,7 +13,7 @@ export default class AppointmentForEachPatientGroup extends React.Component {
             appointmentGroup: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
             activeIndex:0,
         }
         this.loadAppointmentPatientGroup = this.loadAppointmentPatientGroup.bind(this);
@@ -37,6 +37,9 @@ export default class AppointmentForEachPatientGroup extends React.Component {
 
     loadAppointmentPatientGroup = () => {
         let that = this;
+        that.setState({
+            loading:true,
+        });
         let successFn = function (data) {
             that.setState({
                 appointmentGroup: data.data,

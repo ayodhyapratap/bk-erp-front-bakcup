@@ -12,7 +12,7 @@ export default class CancellationsNumbers extends React.Component {
             appointmentCancel: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
             activeIndex:0
         }
         this.loadAppointmentCancellation = this.loadAppointmentCancellation.bind(this);
@@ -36,6 +36,9 @@ export default class CancellationsNumbers extends React.Component {
 
     loadAppointmentCancellation = () => {
         let that = this;
+        that.setState({
+            loading:true,
+        });
         let successFn = function (data) {
             console.log(Object.entries(data));
             that.setState({

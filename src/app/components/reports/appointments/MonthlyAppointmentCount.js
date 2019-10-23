@@ -13,7 +13,7 @@ export default class MonthlyAppointmentCount extends React.Component {
             appointmentMonthly: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true
+            loading: false
         }
         this.loadAppointmentMonthly = this.loadAppointmentMonthly.bind(this);
     }
@@ -36,7 +36,9 @@ export default class MonthlyAppointmentCount extends React.Component {
 
     loadAppointmentMonthly = () => {
         let that = this;
-
+        that.setState({
+            loading:true,
+        });
         let successFn = function (data) {
             that.setState({
                 appointmentMonthly: data.data,

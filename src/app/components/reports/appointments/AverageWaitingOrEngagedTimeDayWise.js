@@ -13,7 +13,7 @@ export default class AverageWaitingOrEngagedTimeDayWise extends React.Component 
             appointmentDayWait: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true
+            loading: false
         }
         this.loadAppointmentDayWait = this.loadAppointmentDayWait.bind(this);
     }
@@ -37,6 +37,9 @@ export default class AverageWaitingOrEngagedTimeDayWise extends React.Component 
 
     loadAppointmentDayWait = () => {
         let that = this;
+        that.setState({
+            loading:true,
+        });
         let successFn = function (data) {
             that.setState({
                 appointmentDayWait: data,

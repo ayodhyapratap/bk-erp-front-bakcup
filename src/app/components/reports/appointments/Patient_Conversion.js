@@ -12,7 +12,7 @@ export default class Patient_Conversion extends React.Component{
             distinct_patients:'',
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
             activeIndex:0,
         };
         this.loadPatientConversion = this.loadPatientConversion.bind(this);
@@ -36,6 +36,9 @@ export default class Patient_Conversion extends React.Component{
 
     loadPatientConversion(){
         let that=this;
+        that.setState({
+            loading:true,
+        });
         let successFn =function (data) {
             that.setState({
                 patient_conversion:data.data,

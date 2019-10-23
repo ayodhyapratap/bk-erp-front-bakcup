@@ -11,7 +11,7 @@ export default class AppointmentByCategory extends React.Component {
         this.state = {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
             appointmentCategory:[],
             activeIndex:0,
         }
@@ -37,6 +37,9 @@ export default class AppointmentByCategory extends React.Component {
 
     loadAppointmentWithCategory = () => {
         let that = this;
+        that.setState({
+            loading:true,
+        });
         this.setState({
             loading:true
         });

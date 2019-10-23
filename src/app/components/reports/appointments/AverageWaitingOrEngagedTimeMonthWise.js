@@ -13,7 +13,7 @@ export default class AverageWaitingOrEngagedTimeMonthWise extends React.Componen
             appointmentMonthWait: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true
+            loading: false
         }
         this.loadAppointmentMonthWait = this.loadAppointmentMonthWait.bind(this);
 
@@ -37,6 +37,9 @@ export default class AverageWaitingOrEngagedTimeMonthWise extends React.Componen
 
     loadAppointmentMonthWait = () => {
         let that = this;
+        that.setState({
+            loading:true,
+        });
         let successFn = function (data) {
             that.setState({
                 appointmentMonthWait: data,
