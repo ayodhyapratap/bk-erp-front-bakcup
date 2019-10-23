@@ -12,7 +12,7 @@ export default class NewMembership extends React.Component {
             report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
 
         }
         this.loadNewMembership = this.loadNewMembership.bind(this);

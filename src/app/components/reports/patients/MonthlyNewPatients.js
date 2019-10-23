@@ -13,7 +13,7 @@ export default class MonthlyNewPatients extends React.Component {
             report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
 
         }
         this.loadMonthlyPatients = this.loadMonthlyPatients.bind(this);

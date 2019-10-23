@@ -13,6 +13,7 @@ export default class NewPatientReports extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             report:[],
+            loading:false
 
         }
         this.loadNewPatient = this.loadNewPatient.bind(this);
@@ -37,10 +38,13 @@ export default class NewPatientReports extends React.Component {
     }
     loadNewPatient() {
         let that = this;
-
+        that.setState({
+            loading:true,
+        });
         let successFn = function (data) {
            that.setState({
                report:data,
+               loading:false
            })
         };
         let errorFn = function () {
