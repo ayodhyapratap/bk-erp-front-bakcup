@@ -12,7 +12,7 @@ export default class ProfitLossReport extends React.Component {
             inventoryReports:[],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true
+            loading: false
         }
         this.loadInventoryRetails = this.loadInventoryRetails.bind(this);
     }
@@ -35,7 +35,9 @@ export default class ProfitLossReport extends React.Component {
 
     loadInventoryRetails= () => {
         let that = this;
-
+        that.setState({
+            loading:true,
+        });
         let successFn = function (data) {
             that.setState({
                 inventoryReports:data,
