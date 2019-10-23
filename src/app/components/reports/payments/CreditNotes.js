@@ -11,7 +11,7 @@ export default class CreditNotes extends React.Component {
         this.state = {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: true,
+            loading: false,
             report: [],
         };
         this.loadPaymentsReport = this.loadPaymentsReport.bind(this);
@@ -36,6 +36,9 @@ export default class CreditNotes extends React.Component {
 
     loadPaymentsReport = () => {
         let that = this;
+        that.setState({
+            loading:true,
+        });
         let successFn = function (data) {
             that.setState({
                 report: data.data,
