@@ -1,7 +1,7 @@
 import React from "react";
-import {Card, Form, Row} from "antd";
+import {Avatar, Card, Form, Row} from "antd";
 import {INPUT_FIELD, QUILL_TEXT_FIELD ,SUCCESS_MSG_TYPE, SINGLE_IMAGE_UPLOAD_FIELD, NUMBER_FIELD} from "../../../constants/dataKeys";
-import {displayMessage, getAPI, interpolate} from "../../../utils/common";
+import {displayMessage, getAPI, interpolate, makeFileURL} from "../../../utils/common";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {MANAGE_PRODUCT, MANAGE_SINGLE_PRODUCT} from "../../../constants/api";
 import {Route} from "react-router";
@@ -62,6 +62,7 @@ export default class AddManageProduct extends React.Component {
             label: "Product Image",
             key: "image",
             type: SINGLE_IMAGE_UPLOAD_FIELD,
+            initialValue:this.state.editProductData ? this.state.editProductData.image : null,
         },{
             label: "Content",
             key: "content",

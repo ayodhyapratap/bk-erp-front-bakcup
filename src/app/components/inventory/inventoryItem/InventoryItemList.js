@@ -10,6 +10,7 @@ import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import moment from "moment";
 import PermissionDenied from "../../common/errors/PermissionDenied";
 import {
+    ASCENDING_ORDER,
     ERROR_MSG_TYPE,
     SUCCESS_MSG_TYPE,
 } from "../../../constants/dataKeys";
@@ -73,6 +74,8 @@ export default class InventoryItemList extends React.Component {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
             page: page,
+            sort:ASCENDING_ORDER,
+            on:'total_quantity',
         };
         if (that.state.itemTypeFilter != 'ALL') {
             reqParams.item_type = that.state.itemTypeFilter
@@ -146,6 +149,8 @@ export default class InventoryItemList extends React.Component {
         let reqParams = {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
+            sort:ASCENDING_ORDER,
+            on:'total_quantity',
         };
         if (that.state.itemTypeFilter != 'ALL') {
             reqParams.item_type = that.state.itemTypeFilter
@@ -176,6 +181,8 @@ export default class InventoryItemList extends React.Component {
         let reqParams = {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
+            sort:ASCENDING_ORDER,
+            on:'total_quantity',
         };
         if (that.state.itemTypeFilter != 'ALL') {
             reqParams.item_type = that.state.itemTypeFilter

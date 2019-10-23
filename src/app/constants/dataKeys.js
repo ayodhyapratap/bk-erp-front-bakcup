@@ -157,3 +157,4 @@ export const CHOOSE ='Choose';
 
 export const OTP_DELAY_TIME=130;
 export const MAX_PARTICIPANT=100;
+export const ASCENDING_ORDER='asc';

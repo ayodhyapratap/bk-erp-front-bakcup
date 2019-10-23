@@ -40,6 +40,7 @@ class PatientSelection extends React.Component {
             selectedOption:{},
             // keys:1,
             sourceList: [],
+            custm_col:8,
         };
         this.getPatientListData = this.getPatientListData.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
@@ -277,6 +278,7 @@ class PatientSelection extends React.Component {
        that.setState(function(prevState){
            return {
                selectedOption: {...prevState.selectedOption,[index]: value},
+               custm_col:value?12:8,
            }
        })
     };
@@ -326,8 +328,8 @@ class PatientSelection extends React.Component {
         getFieldDecorator('keys', { initialValue: [0] });
         const keys = getFieldValue('keys');
         const chooseOption = keys.map((k, index) => (<>
-             <Col span={12}>
-                <Select style={{minWidth: '200px'}} defaultValue={CHOOSE} key={k}
+             <Col span={8}>
+                <Select style={{minWidth: '200px'}} defaultValue={CHOOSE} key={k} size={"small"}
                          onChange={(value)=>this.handleChangeOption(k,'type',value)}>
                     <Select.Option value={''}>{CHOOSE}</Select.Option>
                     {this.state.advanced_option.map((item) => <Select.Option value={item.value} key={k}>
@@ -335,12 +337,12 @@ class PatientSelection extends React.Component {
                 </Select>
              </Col>
                 {this.state.selectedOption?
-                    <Col span={10} style={{display:"flex"}}>
+                    <Col span={this.state.custm_col} style={{display:"flex"}}>
                         <FormItems k={k} selectedOption={this.state.selectedOption} form={this.props.form} sourceList={this.state.sourceList} />
                         {keys.length > 1 ?(
                             <Form.Item>
-                                <Button shape="circle"  onClick={()=>this.removeNewOptionField(k)}>
-                                    <Icon className="dynamic-delete-button" type="minus-circle-o"/>
+                                <Button shape="circle"  onClick={()=>this.removeNewOptionField(k)} size={"small"}>
+                                    <Icon className="dynamic-delete-button" type="minus-circle-o" style={{color:"red"}}/>
                                 </Button>
                                 <br/>
                             </Form.Item>
@@ -348,7 +350,6 @@ class PatientSelection extends React.Component {
                         ) : null}
                     </Col>:null
                 }
-
 
         </>
         ));
@@ -438,20 +439,19 @@ class PatientSelection extends React.Component {
 
                                 {chooseOption}
 
-
-                            <Col span={12} style={{display:'flex'}}>
+                            <Col span={4} style={{display:'flex'}}>
                                 <Form.Item>
-                                    <Button shape="circle"  onClick={this.addNewOptionField}>
+                                    <Button shape="circle"  onClick={this.addNewOptionField} size={"small"}>
                                         <Icon className="dynamic-delete-button" type="plus-circle-o"/>
                                     </Button>
                                 </Form.Item>
 
                                 <Form.Item>
-                                    <Button htmlType="submit" onSubmit={this.AdvanceSearchPatient}>Search</Button>
+                                    <Button htmlType="submit" onSubmit={this.AdvanceSearchPatient} size={"small"}>Search</Button>
                                 </Form.Item>
 
                                 <Form.Item>
-                                    <Button icon="search" onClick={(value) => this.advancedOption(true)}>Basic Search</Button>
+                                    <Button icon="search" onClick={(value) => this.advancedOption(true)} size={"small"}>Basic Search</Button>
                                 </Form.Item>
 
                             </Col>
@@ -459,12 +459,12 @@ class PatientSelection extends React.Component {
                         :<>
 
                             <Col span={12}>
-                                <Search placeholder="Search Patient By Name / ID / Mobile No / Aadhar No"
+                                <Search placeholder="Search Patient By Name / ID / Mobile No / Aadhar No" size={"small"}
                                         onChange={value => this.searchPatient(value.target.value)}
                                         enterButton/>
                             </Col>
                             <Col span={12} style={{textAlign:"center"}}>
-                                <Button  icon="search" onClick={(value)=>this.advancedOption(false)}>Advance Search</Button>
+                                <Button  icon="search" onClick={(value)=>this.advancedOption(false)} size={"small"}>Advance Search</Button>
                             </Col>
 
                     </>}
@@ -557,42 +557,42 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='name'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('name',)
-                        (<Input placeholder={"patient Name"}/>)
+                        (<Input placeholder={"patient Name"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='phone'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('phone',)
-                    (<Input placeholder={"Contact Number"}/>)
+                    (<Input placeholder={"Contact Number"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='age'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('age',)
-                    (<InputNumber placeholder={"Patient Age"}/>)
+                    (<InputNumber placeholder={"Patient Age"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='age_gte'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('age_gte',)
-                    (<InputNumber placeholder={"Age more than"}/>)
+                    (<InputNumber placeholder={"Age more than"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='age_lte'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('age_lte',)
-                    (<InputNumber placeholder={"Age Less than"}/>)
+                    (<InputNumber placeholder={"Age Less than"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='has_age'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_age')
-                    (<Select style={{width:100}}>
+                    (<Select style={{width:100}} size={"small"}>
                         {HAS_AGE.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -602,35 +602,35 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='dob'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('dob',)
-                    (<DatePicker placeholder={"Date of Birth"}/>)
+                    (<DatePicker placeholder={"Date of Birth"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='dob_gte'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('dob_gte',)
-                    (<DatePicker/>)
+                    (<DatePicker size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='dob_lte'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('dob_lte',)
-                    (<DatePicker/>)
+                    (<DatePicker size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='dob_month'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('dob_month',)
-                    (<MonthPicker/>)
+                    (<MonthPicker size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='has_dob'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_dob')
-                    (<Select style={{width:100}}>
+                    (<Select style={{width:100}} size={"small"}>
                         {HAS_DOB.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -640,14 +640,14 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='patient_id'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('patient_id',)
-                    (<Input placeholder={"Patient Id"}/>)
+                    (<Input placeholder={"Patient Id"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='has_aadhar'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_aadhar')
-                    (<Select style={{width:100}}>
+                    (<Select style={{width:100}} size={"small"}>
                         {HAS_AADHAR_ID.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -657,21 +657,21 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='aadhar'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('aadhar',)
-                    (<Input placeholder={"Aadhar Id"}/>)
+                    (<Input placeholder={"Aadhar Id"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='email'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('email',)
-                    (<Input placeholder={"Email Id"}/>)
+                    (<Input placeholder={"Email Id"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='has_email'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_email')
-                    (<Select style={{width:100}}>
+                    (<Select style={{width:100}} size={"small"}>
                         {HAS_EMAIL.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -681,7 +681,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='gender'?
                 <Form.Item>
                     {index.form.getFieldDecorator('gender')
-                    (<Select style={{width:100}}>
+                    (<Select style={{width:100}} size={"small"}>
                         {GENDER.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -692,7 +692,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='has_gender'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_gender')
-                    (<Select style={{width:100}}>
+                    (<Select style={{width:100}} size={"small"}>
                         {HAS_GENDER.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -702,14 +702,14 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='pincode'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('pincode',)
-                    (<Input placeholder={"PINCODE"}/>)
+                    (<Input placeholder={"PINCODE"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='has_pincode'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_pincode')
-                    (<Select style={{width:100}}>
+                    (<Select style={{width:100}} size={"small"}>
                         {HAS_PINCODE.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -719,7 +719,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='has_street'?
                 <Form.Item>
                     {index.form.getFieldDecorator('has_street')
-                    (<Select style={{width:100}}>
+                    (<Select style={{width:100}} size={"small"}>
                         {HAS_STREET.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }
@@ -730,14 +730,14 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='street'?
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('street',)
-                    (<Input placeholder={"Street Address"}/>)
+                    (<Input placeholder={"Street Address"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k]=='blood_group'?
                 <Form.Item>
                     {index.form.getFieldDecorator('blood_group')
-                    (<Select style={{width:100}}>
+                    (<Select style={{width:100}} size={"small"}>
                         {BLOOD_GROUPS.map((option)=><Select.Option value={option.value}>{option.name} </Select.Option>)}
                     </Select>)
                     }
@@ -747,7 +747,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='source'?
                 <Form.Item>
                     {index.form.getFieldDecorator('source')
-                    (<Select style={{width:100}}>
+                    (<Select style={{width:100}} size={"small"}>
                         {index.sourceList.map((option)=><Select.Option value={option.id}>{option.name} </Select.Option>)}
                     </Select>)
                     }
@@ -757,7 +757,7 @@ function FormItems(index) {
             {index.selectedOption[index.k]=='agent_referal'?
                 <Form.Item>
                     {index.form.getFieldDecorator('agent_referal')
-                    (<Select style={{width:100}}>
+                    (<Select style={{width:100}} size={"small"}>
                         {REFERED_BY_AGENT.map((option)=><Select.Option value={option.value}>{option.label} </Select.Option>)}
                     </Select>)
                     }

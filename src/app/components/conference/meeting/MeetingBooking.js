@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Icon, Spin} from "antd";
+import {Button, Card, Col, Icon, Row, Spin} from "antd";
 import {Route, Switch} from "react-router";
 import AddOrEditMeeting from "./AddOrEditMeeting";
 import {Link} from "react-router-dom";
@@ -11,6 +11,7 @@ import * as dates from "date-arithmetic";
 import {getAPI} from "../../../utils/common";
 import {MEETING_DETAILS} from "../../../constants/api";
 import MeetingEventComponent from "./MeetingEventComponent";
+import MeetingRightPanel from "./MeetingRightPanel";
 
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
 const localizer = momentLocalizer(moment);
@@ -133,27 +134,34 @@ export default class MeetingBooking extends React.Component {
                     <Card title="Meeting Booking"
                           extra={<Link to="/meeting-booking/add"><Button type="primary"><Icon type="plus"/> Add Booking</Button></Link>}>
                         <Spin size="large" spinning={this.state.loading}>
-                            <DragAndDropCalendar
-                                localizer={localizer}
-                                startAccessor="start"
-                                defaultView="week"
-                                step={10}
-                                timeslots={1}
-                                events={this.state.meetingList}
-                                selectable
-                                date={new Date(this.state.selectedDate.format())}
-                                endAccessor="end"
-                                defaultDate={new Date()}
-                                views={{month: true, week: MyWeek, day: true}}
-                                onSelectSlot={this.onSelectSlot}
-                                style={{height: "calc(100vh - 85px)"}}
-                                onRangeChange={this.onRangeChange}
-                                components={{
-                                    event: function (option) {
-                                        return <MeetingEventComponent {...option} {...that.props}/>
-                                    }
-                                }}
-                            />
+                            <Row gutter={16}>
+                                <Col span={19}>
+                                    <DragAndDropCalendar
+                                        localizer={localizer}
+                                        startAccessor="start"
+                                        defaultView="week"
+                                        step={10}
+                                        timeslots={1}
+                                        events={this.state.meetingList}
+                                        selectable
+                                        date={new Date(this.state.selectedDate.format())}
+                                        endAccessor="end"
+                                        defaultDate={new Date()}
+                                        views={{month: true, week: MyWeek, day: true}}
+                                        onSelectSlot={this.onSelectSlot}
+                                        style={{height: "calc(100vh - 85px)"}}
+                                        onRangeChange={this.onRangeChange}
+                                        components={{
+                                            event: function (option) {
+                                                return <MeetingEventComponent {...option} {...that.props}/>
+                                            }
+                                        }}
+                                    />
+                                </Col>
+                                <Col span={5}>
+                                    <MeetingRightPanel {...this.props} {...this.state}/>
+                                </Col>
+                            </Row>
                         </Spin>
                     </Card>
                 </Switch>

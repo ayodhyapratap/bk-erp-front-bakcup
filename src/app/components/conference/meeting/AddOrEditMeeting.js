@@ -148,7 +148,7 @@ class AddOrEditMeeting extends React.Component {
         });
     };
 
-    loadMeetingList = (start, end) => {
+    loadMeetingList = (start, end ,zoomUser) => {
         let that = this;
         that.setState({
             loading: true
@@ -169,7 +169,8 @@ class AddOrEditMeeting extends React.Component {
         }
         let params = {
             start: start.format(),
-            end: end.format()
+            end: end.format(),
+            zoomUser:zoomUser,
         }
         getAPI(MEETING_DETAILS, successFn, errorFn, params)
     }
@@ -179,7 +180,7 @@ class AddOrEditMeeting extends React.Component {
         this.setState({
             [type]: value
         }, function () {
-            that.loadMeetingList(that.state.startSchedule, moment(that.state.startSchedule).add(that.state.duration, 'minute'));
+            that.loadMeetingList(that.state.startSchedule, moment(that.state.startSchedule).add(that.state.duration, 'minute'),that.state.zoomUser);
         });
     }
 
@@ -312,7 +313,7 @@ class AddOrEditMeeting extends React.Component {
                                 message: REQUIRED_FIELD_MESSAGE
                             }]
                         })
-                        (<Select placeholder="Select Zoom User" style={{width: '100%'}}>
+                        (<Select placeholder="Select Zoom User" style={{width: '100%'}} onChange={(value) => that.checkMeetingAvailabilty('zoomUser', value)}>
                             {this.state.zoom_user.map(option => (
                                 <Select.Option key={option.id}>{option.username}</Select.Option>))}
                         </Select>)}

@@ -1,7 +1,7 @@
 import React from "react";
-import {Card, Button, Icon, Table, Divider, Popconfirm} from "antd";
+import {Card, Button, Icon, Table, Divider, Popconfirm, Avatar} from "antd";
 import {INPUT_FIELD, QUILL_TEXT_FIELD ,SUCCESS_MSG_TYPE, SINGLE_IMAGE_UPLOAD_FIELD} from "../../../constants/dataKeys";
-import {displayMessage, getAPI, interpolate, patchAPI} from "../../../utils/common";
+import {displayMessage, getAPI, interpolate, makeFileURL, patchAPI} from "../../../utils/common";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {MANAGE_PRODUCT, MANAGE_SINGLE_PRODUCT} from "../../../constants/api";
 import {Route, Switch} from "react-router";
@@ -61,6 +61,11 @@ export default class ManageProductList extends React.Component{
             title: 'Name',
             dataIndex: 'title',
             key: 'title'
+        },{
+            title:'image',
+            key:'image',
+            dataIndex:'image',
+            render:(item,record)=><Avatar src={makeFileURL(record.image)}/>
         },{
             title: 'Description',
             render: (item)=>{
