@@ -114,7 +114,7 @@ export default class EventPatientPopover extends React.Component {
                                         <br/>
                                         <small>
                                             Patient
-                                            ID: {this.state.appointment.patient.id} , {this.state.appointment.patient.gender}
+                                            ID: {this.state.appointment.patient.custom_id} , {this.state.appointment.patient.gender}
                                             <br/>{this.state.appointment.patient.user.mobile}
                                         </small>
                                     </h3>
