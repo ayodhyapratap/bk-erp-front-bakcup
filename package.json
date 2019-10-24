@@ -35,12 +35,13 @@
     "react-scripts": "^3.1.0",
     "react-webcam": "^1.1.1",
     "react-youtube": "^7.9.0",
-    "recharts": "^1.7.0"
+    "recharts": "^1.7.0",
+    "source-map-explorer": "^2.1.0"
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
+    "build": "react-app-rewired build --progress",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
