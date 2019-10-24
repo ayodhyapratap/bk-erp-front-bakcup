@@ -56,7 +56,12 @@ import {
     MONTHLY_INCOME,
     TAXED_INCOME,
     PATIENT_GROUPS_INCOME,
-    PRODUCT_INCOME, PROCEDURE_INCOME, DOCTOR_EACH_INCOME, APPOINTMENT_FOR_PATIENT_CONVERSION
+    PRODUCT_INCOME,
+    PROCEDURE_INCOME,
+    DOCTOR_EACH_INCOME,
+    APPOINTMENT_FOR_PATIENT_CONVERSION,
+    ALL_INVOICE_RETURN,
+    DAILY_WISE_INVOICE, MONTHLY_WISE_INCOME, RETURN_ITEMS
 } from "../constants/dataKeys";
 import number from "less/lib/less/functions/number";
 
@@ -390,9 +395,9 @@ export const PAYMENT_RELATED_REPORT = [
     {name: 'Credit Amount Per Doctor', value: CREDIT_AMOUNT_PER_DOCTOR},
 ];
 
-/*Invoice Reports*/
+/*Income Reports*/
 
-export const INVOICE_RELATED_REPORT=[
+export const INCOME_RELATED_REPORT=[
     {name:"Daily Invoiced Income" ,value:DAILY_INCOME},
     {name:"Monthly Invoiced Income" ,value:MONTHLY_INCOME},
     {name:"Taxed Invoiced Income" ,value:TAXED_INCOME},
@@ -401,7 +406,17 @@ export const INVOICE_RELATED_REPORT=[
     {name:"Invoiced Income For Each Patient Group" ,value:PATIENT_GROUPS_INCOME},
     {name:"Invoiced Income For Each Product" ,value:PRODUCT_INCOME},
 
-]
+];
+
+/* Invoiced Report */
+export const INVOICE_RELATED_REPORT=[
+    // {name:"All Returned Invoices" ,value:ALL_INVOICE_RETURN},
+    {name:"Monthly wise Return Count & Revenue" ,value:DAILY_WISE_INVOICE},
+    {name:"Day wise Return Count & Revenue" ,value:MONTHLY_WISE_INCOME},
+    {name:"Return Items Count, item wise" ,value:RETURN_ITEMS}
+];
+
+
 export const SCHEDULE_OF_INVOICES = [
     {label: "all ", value: ''},
     {label: "Services", value: "SERVICES"},

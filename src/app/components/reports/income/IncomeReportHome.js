@@ -11,11 +11,8 @@ import {
 } from "../../../constants/api";
 import {getAPI, interpolate} from "../../../utils/common";
 import {
-    DISCOUNT,
-    INVOICE_RELATED_REPORT,
-    PAYMENT_RELATED_REPORT, SCHEDULE_OF_INVOICES,
-    SCHEDULE_OF_PAYMENT,
-    TYPE_OF_CONSUMPTION
+    DISCOUNT, INCOME_RELATED_REPORT,
+    INVOICE_RELATED_REPORT, SCHEDULE_OF_INVOICES,
 } from "../../../constants/hardData";
 import {
     ALL,
@@ -194,7 +191,7 @@ export default class IncomeReportHome extends React.Component {
                             </Radio.Button>
                             <p><br/></p>
                             <h2>Related Reports</h2>
-                            {INVOICE_RELATED_REPORT.map((item) => <Radio.Button
+                            {INCOME_RELATED_REPORT.map((item) => <Radio.Button
                                 style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
                                 value={item.value}>
                                 {item.name}

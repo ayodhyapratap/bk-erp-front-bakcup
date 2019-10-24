@@ -141,7 +141,7 @@ export const PAYMENT_SETTLEMENT_PER_DOCTOR='SETTLEMENT_DOCTOR';
 export const PAYMENT_REFUND='REFUND';
 
 
-/*Invoice Reports*/
+/*Income Reports*/
 export const ALL_INVOICE='ALL';
 export const DAILY_INCOME="DAILY";
 export const MONTHLY_INCOME="MONTHLY";
@@ -150,6 +150,12 @@ export const DOCTOR_EACH_INCOME='DOCTOR';
 export const PROCEDURE_INCOME="PROCEDURE";
 export const PRODUCT_INCOME="PRODUCT";
 export const PATIENT_GROUPS_INCOME="PATIENT_GROUPS";
+
+/*Invoice Reports */
+export const ALL_INVOICE_RETURN='ALL';
+export const DAILY_WISE_INVOICE='DAILY';
+export const MONTHLY_WISE_INCOME='MONTHLY';
+export const RETURN_ITEMS='ITEM_COUNT';
 
 export const RELATION='Relation';
 

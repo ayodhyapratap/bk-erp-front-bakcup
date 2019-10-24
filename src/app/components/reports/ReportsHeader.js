@@ -67,6 +67,10 @@ export default class ReportsHeader extends React.Component {
             name: 'MLM ',
             value: '/reports/mlm',
             active: that.props.activePracticePermissions.ReportsMLMReport || that.props.allowAllPermissions
+        },{
+            name: 'Invoice Returns ',
+            value: '/reports/invoice-return',
+            active: that.props.activePracticePermissions.ReportsInventoryRetail || that.props.allowAllPermissions
         }
         // ,{
         //     name:'Agent Chain',
