@@ -60,7 +60,7 @@ export default class MeetingBooking extends React.Component {
                 let newDate = moment(e.start);
                 this.setState({
                     selectedDate: newDate.month(newDate.month() + 1).date(1),
-                    selectedStartDate: newDate.month(newDate.month() + 1).date(1),
+                    selectedStartDate: moment(e.start),
                     selectedEndDate: moment(e.end),
                 }, function () {
                     that.loadMeetingList();
@@ -69,14 +69,14 @@ export default class MeetingBooking extends React.Component {
         } else if (e.length) {
             if (e.length == 7) {
                 this.setState({
-                    selectedDate: moment(e[0]),
+                    selectedDate: moment(e[1]),
                     selectedStartDate: moment(e[0]).subtract(1, 'day'),
-                    selectedEndDate: moment(e[e.length - 1]).subtract(1, 'day')
+                    selectedEndDate: moment(e[e.length - 1]).add(1, 'day')
                 }, function () {
                     that.loadMeetingList();
                 });
             } else {
-                // this.loadMeetingList(moment(e[0]), moment(e[e.length - 1]));
+                this.loadMeetingList(moment(e[0]), moment(e[e.length - 1]));
                 this.setState({
                     selectedDate: moment(e[0]),
                     selectedStartDate: moment(e[0]),

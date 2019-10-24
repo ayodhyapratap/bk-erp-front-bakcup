@@ -486,7 +486,7 @@ class App extends Component {
                 this.appointmentList(moment(e[0]), moment(e[e.length - 1]));
             }
             this.setState({
-                selectedDate: moment(e[0])
+                selectedDate: moment(e[1]) //changed moment(e[0])
             });
         }
     }
