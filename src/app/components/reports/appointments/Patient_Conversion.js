@@ -119,12 +119,12 @@ export default class Patient_Conversion extends React.Component{
                 dataIndex:'source',
             },{
                 title:'Last Patient Note',
-                key:'lat_patient_note',
-                dataIndex:'last_patient_notes'
+                key:'last_note',
+                dataIndex:'last_note'
             },{
                 title:'Last Payments',
-                key:'last_payment',
-                dataIndex:'last_payment',
+                key:'invoice_total',
+                dataIndex:'invoice_total',
             }
         ];
         return(<div>
