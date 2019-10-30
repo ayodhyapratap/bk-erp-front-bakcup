@@ -442,23 +442,36 @@ export default class CreateAppointmentForm extends React.Component {
     }
 
     searchPatient(value) {
-        let that = this;
+        let that=this;
+        this.setState({
+            searchPatientString: value
+        });
         let successFn = function (data) {
-            if (data) {
-                that.setState({
-                    patientListData: data.results,
-                })
-                // console.log("list",that.state.patientListData);
-            }
+            that.setState(function (prevState) {
+                if(prevState.searchPatientString == value)
+                    if (data.current > 1) {
+                        return {
+                            patientListData: [...prevState.patientListData, ...data.results],
+
+                        }
+                    }else {
+                        return {
+                            patientListData: [...data.results],
+
+                        }
+                    }
+            })
         };
-        let errorFn = function () {
+        let errorFn = function (data) {
+            that.setState({
+                searchPatientString:null,
+            })
         };
         if (value){
             getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
         }
 
-    }
-
+    };
     handleSubmit = (e) => {
         let that = this;
         let patient = {};

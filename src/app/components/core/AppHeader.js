@@ -23,7 +23,7 @@ class AppHeader extends React.Component {
         super(props);
         this.state = {
             patientListData: [],
-            searchPatientString: null,
+            // searchPatientString: null,
             // loading:false
         }
     }
@@ -34,13 +34,20 @@ class AppHeader extends React.Component {
             searchPatientString: value
         });
         let successFn = function (data) {
-            if (data) {
-                that.setState({
-                    patientListData: data.results,
+            that.setState(function (prevState) {
+                if(prevState.searchPatientString == value)
+                    if (data.current > 1) {
+                        return {
+                            patientListData: [...prevState.patientListData, ...data.results],
 
-                })
-                // console.log("list",that.state.patientListData);
-            }
+                        }
+                    }else {
+                        return {
+                            patientListData: [...data.results],
+
+                        }
+                    }
+            })
         };
         let errorFn = function (data) {
             that.setState({
