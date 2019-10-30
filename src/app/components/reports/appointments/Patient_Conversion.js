@@ -120,7 +120,8 @@ export default class Patient_Conversion extends React.Component{
             },{
                 title:'Last Patient Note',
                 key:'last_note',
-                dataIndex:'last_note'
+                dataIndex:'last_note',
+                render:(item,record)=><span>{record.last_note ?record.last_note + '( '+ record.last_note  +')':''}</span>
             },{
                 title:'Last Payments',
                 key:'invoice_total',
