@@ -22,7 +22,7 @@ export default class MlmBase extends React.Component {
             productMargin: [],
             active_practiceId: this.props.active_practiceId,
             loading: true
-        }
+        };
         this.loadMlmData = this.loadMlmData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
         this.loadRoles = this.loadRoles.bind(this);
@@ -46,13 +46,13 @@ export default class MlmBase extends React.Component {
                 mlmItems: data,
                 loading: false
             })
-        }
+        };
         let errorFn = function () {
             that.setState({
                 loading: false
             })
 
-        }
+        };
         getAPI(GENERATE_MLM_COMMISSON, successFn, errorFn);
     }
 
@@ -63,12 +63,12 @@ export default class MlmBase extends React.Component {
                 staffRoles: data,
                 loading: false
             })
-        }
+        };
         let errorFn = function () {
             that.setState({
                 loading: false
             })
-        }
+        };
         getAPI(AGENT_ROLES, successFn, errorFn);
     }
 
@@ -78,15 +78,14 @@ export default class MlmBase extends React.Component {
             that.setState({
                 productMargin: data
             })
-        }
+        };
         let errorFn = function () {
 
-        }
+        };
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
 
     editObject(id, record) {
-        console.log("edit",id,record)
         this.setState({
             editId: id,
             editRecord: record,
@@ -102,9 +101,9 @@ export default class MlmBase extends React.Component {
         reqData.is_active = false;
         let successFn = function (data) {
             that.loadData();
-        }
+        };
         let errorFn = function () {
-        }
+        };
         putAPI(interpolate(SINGLE_PRODUCT_MARGIN, [record.id]), reqData, successFn, errorFn);
     }
 
@@ -123,7 +122,7 @@ export default class MlmBase extends React.Component {
                 rolesdata[role.id] = role.name;
             })
         }
-        let columns = {}
+        let columns = {};
 
         that.state.productMargin.forEach(function (productMargin) {
             columns[productMargin.id] = [{

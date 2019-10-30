@@ -46,12 +46,14 @@ class MLMGenerate extends React.Component {
         let that = this;
         let successFn = function (data) {
             data.map(function (item) {
-                that.setState({
-                    margin: item,
-                    loading:false
-                },function () {
-                    that.setLevelCount(item.level_count)
-                })
+                if (item.id == that.props.editId) {
+                    that.setState({
+                        margin: item,
+                        loading: false
+                    }, function () {
+                        that.setLevelCount(item.level_count)
+                    })
+                }
             })
 
         }
@@ -61,7 +63,7 @@ class MLMGenerate extends React.Component {
             })
 
         }
-        getAPI(interpolate(GENERATE_MLM_COMMISSON, [this.state.editId]), successFn, errorFn);
+        getAPI(GENERATE_MLM_COMMISSON,  successFn, errorFn);
     }
 
     loadRoles() {
