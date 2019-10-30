@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Col, Icon, Row, Spin} from "antd";
+import {Button, Card, Col, Dropdown, Icon, Menu, Row, Spin} from "antd";
 import {Route, Switch} from "react-router";
 import AddOrEditMeeting from "./AddOrEditMeeting";
 import {Link} from "react-router-dom";
@@ -9,9 +9,10 @@ import moment from "moment";
 import TimeGrid from "react-big-calendar/lib/TimeGrid";
 import * as dates from "date-arithmetic";
 import {getAPI} from "../../../utils/common";
-import {MEETING_DETAILS} from "../../../constants/api";
+import {MEETING_DETAILS, MEETING_USER} from "../../../constants/api";
 import MeetingEventComponent from "./MeetingEventComponent";
 import MeetingRightPanel from "./MeetingRightPanel";
+import {CANCELLED_STATUS} from "../../../constants/hardData";
 
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
 const localizer = momentLocalizer(moment);
@@ -23,14 +24,34 @@ export default class MeetingBooking extends React.Component {
             selectedDate: moment(),
             selectedStartDate: moment().subtract(1, 'days'),
             selectedEndDate: moment().add(5, 'days'),
-            meetingList: []
+            meetingList: [],
+            filterType: 'Zoom User',
+            zoomUser:[],
         }
+        this.loadZoomUser = this.loadZoomUser.bind(this);
     }
 
     componentDidMount() {
         this.loadMeetingList();
+        this.loadZoomUser();
     }
 
+
+    loadZoomUser(){
+        let that=this;
+        let successFn=function (data) {
+            that.setState({
+                zoomUser:data,
+                loading:false,
+            })
+        };
+        let errorFn =function () {
+            that.setState({
+                loading:false,
+            })
+        };
+        getAPI(MEETING_USER,successFn,errorFn);
+    }
     onSelectSlot = (value) => {
         let that = this;
         let time = moment(value.start);
@@ -88,7 +109,7 @@ export default class MeetingBooking extends React.Component {
 
         }
     }
-    loadMeetingList = () => {
+    loadMeetingList = (value) => {
         let that = this;
         that.setState({
             loading: true
@@ -113,10 +134,44 @@ export default class MeetingBooking extends React.Component {
         }
         let params = {
             start: moment(this.state.selectedStartDate).startOf('day').format(),
-            end: moment(this.state.selectedEndDate).endOf('day').format()
+            end: moment(this.state.selectedEndDate).endOf('day').format(),
+            zoom_user:value?value:null,
         }
         getAPI(MEETING_DETAILS, successFn, errorFn, params)
-    }
+    };
+
+    setFilterType = (e) => {
+        let that = this;
+        this.setState({
+            filterType: e.key,
+            selectedZoomUser: 'ALL',
+        }, function () {
+            if (e.key == 'Zoom User') {
+                that.changeFilter('selectedZoomUser', 'ALL')
+            }
+        })
+    };
+
+    changeFilter = (type, value) => {
+        console.log(type,value)
+        if (type == "selectedZoomUser" && value != 'ALL') {
+            this.loadMeetingList(value)
+        }
+        this.setState(function (prevState) {
+            let filteredEvent = [];
+            prevState.meetingList.forEach(function (event) {
+                if (value == 'ALL') {
+                    filteredEvent.push(event)
+                } else if (type == "selectedZoomUser" && event.zoom_user == value) {
+                    filteredEvent.push(event)
+                }
+            })
+            return {
+                [type]: value,
+                meetingList: filteredEvent
+            }
+        })
+    };
 
     render() {
         let that = this;
@@ -135,7 +190,43 @@ export default class MeetingBooking extends React.Component {
                           extra={<Link to="/meeting-booking/add"><Button type="primary"><Icon type="plus"/> Add Booking</Button></Link>}>
                         <Spin size="large" spinning={this.state.loading}>
                             <Row gutter={16}>
-                                <Col span={19}>
+                                <Col span={3}>
+                                    <div>
+                                        <Dropdown trigger={'click'} overlay={
+                                            <Menu >
+                                                <Menu.Item key={"Zoom User"}>
+                                                    Zoom User
+                                                </Menu.Item>
+                                            </Menu>
+
+                                        }>
+                                            <Button block style={{margin: 5}}>
+                                                {this.state.filterType} <Icon type={"caret-down"}/>
+                                            </Button>
+                                        </Dropdown>
+                                        <Menu  defaultSelectedKeys={"ALL"} onClick={(e) => this.changeFilter('selectedZoomUser', e.key)}>
+                                            <Menu.Item key={"ALL"} style={{
+                                                marginBottom: 2,
+                                                textOverflow: "ellipsis",
+                                                borderRight: 'none'
+                                            }}><span>All Zoom User</span>
+                                            </Menu.Item>
+                                            {this.state.zoomUser.map(item =>
+                                                <Menu.Item key={item.id} style={{
+                                                    textOverflow: "ellipsis",
+                                                    borderRight: 'none',
+                                                    // borderLeft: '5px solid ' + item.calendar_colour,
+                                                    // backgroundColor: this.state.selectedDoctor == item.id ? item.calendar_colour : 'inherit',
+                                                    // color: this.state.selectedDoctor == item.id ? 'white' : 'inherit',
+                                                    // fontWeight: this.state.selectedDoctor == item.id ? 'bold' : 'inherit',
+                                                }}>
+                                                    <span>{item.id ? item.username :null}</span>
+                                                </Menu.Item>
+                                            )}
+                                        </Menu>
+                                    </div>
+                                </Col>
+                                <Col span={16}>
                                     <DragAndDropCalendar
                                         localizer={localizer}
                                         startAccessor="start"
