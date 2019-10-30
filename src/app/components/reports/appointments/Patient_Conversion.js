@@ -109,6 +109,22 @@ export default class Patient_Conversion extends React.Component{
                 dataIndex:'email',
                 render:(value)=>that.props.activePracticePermissions.PatientEmailId ? value : hideEmail(value),
                 exports:(value)=>(value),
+            },{
+                title:'Address',
+                key:'address',
+                dataIndex:'address',
+            },{
+                title:'Source',
+                key:'source',
+                dataIndex:'source',
+            },{
+                title:'Last Patient Note',
+                key:'lat_patient_note',
+                dataIndex:'last_patient_notes'
+            },{
+                title:'Last Payments',
+                key:'last_payment',
+                dataIndex:'last_payment',
             }
         ];
         return(<div>
