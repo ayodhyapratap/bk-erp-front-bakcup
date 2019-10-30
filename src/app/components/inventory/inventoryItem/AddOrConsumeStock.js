@@ -151,11 +151,11 @@ class AddOrConsumeStock extends React.Component {
     add = (item, randId = Math.random().toFixed(7)) => {
         this.setState(function (prevState) {
             return {
-                tableFormValues: [...prevState.tableFormValues, {
+                tableFormValues: [{
                     ...tableFormFields,
                     ...item,
                     _id: randId,
-                }]
+                },...prevState.tableFormValues]
             }
         });
     };

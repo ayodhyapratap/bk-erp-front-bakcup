@@ -15,6 +15,7 @@ import {
     SUCCESS_MSG_TYPE,
 } from "../../../constants/dataKeys";
 import {BACKEND_BASE_URL} from "../../../config/connect";
+import Search from "antd/es/input/Search";
 
 export default class InventoryItemList extends React.Component {
     constructor(props) {
@@ -132,6 +133,8 @@ export default class InventoryItemList extends React.Component {
         let that = this;
         that.setState( {
             [key]: value
+        },function () {
+            that.loadData();
         })
     }
 
@@ -380,31 +383,6 @@ export default class InventoryItemList extends React.Component {
                             </Radio.Group>
                         </Row>
                         <Row gutter={16} style={{marginBottom: 10}}>
-
-                            <Col span={4} style={{textAlign: "right"}}>
-                                <b> Item Name</b>
-                            </Col>
-                            <Col span={4}>
-                                <Input style={{width: '100%'}} value={this.state.filterItemName}
-                                       allowClear={true}
-                                       disabled={this.state.loading}
-                                       placeholder={"Item Name"}
-                                       onChange={(e) => this.changeInventoryFilters('filterItemName', e.target.value)}/>
-                            </Col>
-                            <Col span={4} style={{textAlign: "right"}}>
-                                <b> HSN</b>
-                            </Col>
-                            <Col span={4}>
-                                <Input style={{width: '100%'}} value={this.state.filterItemCode}
-                                       allowClear={true}
-                                       disabled={this.state.loading}
-                                       placeholder={"HSN Number"}
-                                       onChange={(e) => this.changeInventoryFilters('filterItemCode', e.target.value)}/>
-                            </Col>
-                            <Col span={8}>
-                                <Button type={"primary"} onClick={()=>this.loadData()}> Filter Items</Button>
-                            </Col>
-
                             <Col span={4}>
                                 <Button.Group size="small">
                                     <Button disabled={this.state.loading} type="primary"
@@ -414,7 +392,34 @@ export default class InventoryItemList extends React.Component {
                                         type="file-pdf"/> PDF</Button>
                                 </Button.Group>
                             </Col>
+
+                            <Col span={2} style={{textAlign: "right"}}>
+                                <b> Item Name</b>
+                            </Col>
+                            <Col span={4}>
+                                <Input style={{width: '100%'}} value={this.state.filterItemName}
+                                       allowClear={true}
+                                       // disabled={this.state.loading}
+                                       placeholder={"Item Name"}
+                                       onChange={(e) => this.changeInventoryFilters('filterItemName', e.target.value)}/>
+                            </Col>
+                            <Col span={2} style={{textAlign: "right"}}>
+                                <b> HSN</b>
+                            </Col>
+                            <Col span={4}>
+                                <Input style={{width: '100%'}} value={this.state.filterItemCode}
+                                       allowClear={true}
+                                       // disabled={this.state.loading}
+                                       placeholder={"HSN Number"}
+                                       onChange={(e) => this.changeInventoryFilters('filterItemCode', e.target.value)}/>
+                            </Col>
+                            {/*<Col span={8}>*/}
+                            {/*    <Button type={"primary"} onClick={()=>this.loadData()}> Filter Items</Button>*/}
+                            {/*</Col>*/}
+
+
                         </Row>
+
                         <Row>
                             <Table bordered={true}
                                    pagination={false}
