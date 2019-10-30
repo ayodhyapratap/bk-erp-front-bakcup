@@ -611,7 +611,7 @@ class Addinvoicedynamic extends React.Component {
                         return <b>{record.name}</b>;
                     case INVENTORY:
                         return <div>
-                            <span>{record.name}&nbsp;({record.total_quantity})</span>
+                            <span>{record.name}</span>
 
                             <span><br/>by &nbsp;&nbsp;</span>
                             <Dropdown placement="topCenter" overlay={<Menu>
@@ -799,7 +799,7 @@ class Addinvoicedynamic extends React.Component {
                                           renderItem={item => (
                                               <List.Item>
                                                   <List.Item.Meta
-                                                      title={item.name}
+                                                      title={item.name + ' ('+ item.total_quantity +')'}
                                                   />
                                                   <Button type="primary" size="small" shape="circle"
                                                           onClick={() => this.add({
