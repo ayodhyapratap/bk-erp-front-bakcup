@@ -18,11 +18,11 @@ export default class MeetingRightPanel extends React.Component {
         return <div>
 
             <Divider>
-                <a type="primary"><Icon type="left"/></a>&nbsp; Meeting's Schedule&nbsp;<a type="primary"><Icon type="right"/></a>
+                <a type="primary"><Icon type="left"/></a> Meeting's Schedule <a type="primary"><Icon type="right"/></a>
 
             </Divider>
             <Spin spinning={this.props.loading}>
-                <List dataSource={that.props.meetingList}
+                <List dataSource={that.props.filterMeetingList}
                       renderItem={meeting => (
                           <List.Item>
 

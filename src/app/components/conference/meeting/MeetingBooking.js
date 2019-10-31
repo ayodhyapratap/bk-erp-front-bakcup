@@ -12,6 +12,7 @@ import {getAPI} from "../../../utils/common";
 import {MEETING_DETAILS, MEETING_USER} from "../../../constants/api";
 import MeetingEventComponent from "./MeetingEventComponent";
 import MeetingRightPanel from "./MeetingRightPanel";
+import PermissionDenied from "../../common/errors/PermissionDenied";
 import {CANCELLED_STATUS} from "../../../constants/hardData";
 
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
@@ -25,6 +26,7 @@ export default class MeetingBooking extends React.Component {
             selectedStartDate: moment().subtract(1, 'days'),
             selectedEndDate: moment().add(5, 'days'),
             meetingList: [],
+            filterMeetingList:[],
             filterType: 'Zoom User',
             zoomUser:[],
         }
@@ -66,7 +68,6 @@ export default class MeetingBooking extends React.Component {
     }
     onRangeChange = (e) => {
         let that = this;
-        console.log(e);
         if (e.start && e.end) {
 
             if (moment(e.start).date() == 1) {
@@ -108,12 +109,12 @@ export default class MeetingBooking extends React.Component {
             }
 
         }
-    }
-    loadMeetingList = (value) => {
+    };
+    loadMeetingList (){
         let that = this;
         that.setState({
             loading: true
-        })
+        });
         let successFn = function (data) {
             let eventList = [];
             data.forEach(function (meeting) {
@@ -123,20 +124,23 @@ export default class MeetingBooking extends React.Component {
                     start: new Date(meeting.start),
                     end: new Date(meeting.end),
                 });
-            })
+            });
             that.setState({
                 meetingList: eventList,
+                filterMeetingList:eventList,
                 loading: false
             })
-        }
+        };
         let errorFn = function () {
 
-        }
+        };
         let params = {
             start: moment(this.state.selectedStartDate).startOf('day').format(),
             end: moment(this.state.selectedEndDate).endOf('day').format(),
-            zoom_user:value?value:null,
-        }
+        };
+        // if (value){
+        //     params.zoom_user=value;
+        // }
         getAPI(MEETING_DETAILS, successFn, errorFn, params)
     };
 
@@ -153,9 +157,8 @@ export default class MeetingBooking extends React.Component {
     };
 
     changeFilter = (type, value) => {
-        console.log(type,value)
-        if (type == "selectedZoomUser" && value != 'ALL') {
-            this.loadMeetingList(value)
+        if (type == "selectedDoctor" && value != 'ALL') {
+            this.loadMeetingList()
         }
         this.setState(function (prevState) {
             let filteredEvent = [];
@@ -165,12 +168,13 @@ export default class MeetingBooking extends React.Component {
                 } else if (type == "selectedZoomUser" && event.zoom_user == value) {
                     filteredEvent.push(event)
                 }
-            })
+            });
             return {
                 [type]: value,
-                meetingList: filteredEvent
+                filterMeetingList: filteredEvent
             }
         })
+
     };
 
     render() {
@@ -179,12 +183,12 @@ export default class MeetingBooking extends React.Component {
             <div style={{margin: 20}}>
                 <Switch>
                     <Route exact path='/meeting-booking/add'
-                           render={(route) => <AddOrEditMeeting {...this.state} {...route} {...this.props}
-                                                                loadData={this.loadMeetingList}/>}/>
+                           render={(route) =>(that.props.activePracticePermissions || that.props.CreateMeeting?<AddOrEditMeeting {...this.state} {...route} {...this.props}
+                                                                loadData={this.loadMeetingList}/>:<PermissionDenied/>)}/>
 
                     <Route exact path={"/meeting-booking/edit/:id"}
-                           render={(route) => <AddOrEditMeeting  {...route} {...this.props} {...this.state}
-                                                                 loadData={this.loadMeetingList}/>}/>
+                           render={(route) =>(that.props.activePracticePermissions || that.props.UpdateMeeting? <AddOrEditMeeting  {...route} {...this.props} {...this.state}
+                                                                 loadData={this.loadMeetingList}/>:<PermissionDenied/>)}/>
 
                     <Card title="Meeting Booking"
                           extra={<Link to="/meeting-booking/add"><Button type="primary"><Icon type="plus"/> Add Booking</Button></Link>}>
@@ -233,7 +237,7 @@ export default class MeetingBooking extends React.Component {
                                         defaultView="week"
                                         step={10}
                                         timeslots={1}
-                                        events={this.state.meetingList}
+                                        events={this.state.filterMeetingList}
                                         selectable
                                         date={new Date(this.state.selectedDate.format())}
                                         endAccessor="end"

@@ -209,7 +209,7 @@ export default class CalendarRightPanel extends React.Component {
                 </Col>
             </Row>
             <Divider>
-                <a type="primary" onClick={() => this.changeDate(false)}><Icon type="left"/></a>&nbsp;
+                <a type="primary" onClick={() => this.changeDate(false)}><Icon type="left"/></a>
                 {this.state.selectedDate.format("MMM Do") == moment().format("MMM Do") ? 'Today' : this.state.selectedDate.format("MMM Do")}'s
                 Schedule ({this.state.todaysFilteredAppointments.length})
                 &nbsp;<a type="primary" onClick={() => this.changeDate(true)}><Icon type="right"/></a>

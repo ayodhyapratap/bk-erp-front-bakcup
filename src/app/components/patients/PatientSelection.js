@@ -106,7 +106,7 @@ class PatientSelection extends React.Component {
         getAPI(PATIENTS_LIST, successFn, errorFn);
     }
 
-    searchPatient(value) {
+    searchPatient(value ,page =1) {
 
             let that = this;
             that.setState({
@@ -136,8 +136,12 @@ class PatientSelection extends React.Component {
             let errorFn = function () {
 
             };
+            let apiParams = {
+                page: page,
+                page_size:20
+            };
             if (value){
-                getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
+                getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn,apiParams);
                 } else {
                 this.getPatientListData();
             }
