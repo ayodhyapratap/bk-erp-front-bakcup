@@ -26,11 +26,11 @@ class PatientHeader extends React.Component {
 
     render() {
         let that = this;
-        return <Header className="header" style={{background: '#e4e4e4'}}>
+        return <Header className="header" style={{background: '#e4e4e4',padding:'0px 20px'}}>
             <div>
                 {this.props.currentPatient ?
                     <div style={{display: 'inline'}}>
-                        <div style={{display: 'inline', textSize: '25px'}}>
+                        <div style={{display: 'inline', textSize: '15px'}}>
                             <Tooltip title="Switch Back to All Patients">
                                 <Button onClick={() => this.props.setCurrentPatient(null)} type="primary" ghost>
                                     <Icon type="solution"/> &nbsp;
@@ -39,7 +39,7 @@ class PatientHeader extends React.Component {
                             </Tooltip>
                         </div>
 
-                        <a style={{padding: '8px', fontSize: '20px'}}
+                        <a style={{padding: '8px', fontSize: '15px'}}
                            onClick={() => this.props.togglePatientListModal(true)}>
                             {(this.props.currentPatient.image ?
                                 <Avatar src={makeFileURL(this.props.currentPatient.image)}/> :

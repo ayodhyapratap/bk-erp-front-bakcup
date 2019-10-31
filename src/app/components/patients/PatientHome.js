@@ -187,7 +187,7 @@ class PatientHome extends React.Component {
                                  key={this.state.showAllClinic.toString()}
                                  style={{
                                      // margin: '24px 16px',
-                                     padding: 10,
+                                     padding: '0px 5px',
                                      minHeight: 280,
                                      // marginLeft: '200px'
                                  }}>
