@@ -14,7 +14,6 @@ class AddOrEditMeeting extends React.Component {
         this.state = {
             loading: false,
             patientListData: [],
-            fetching: false,
             no_of_participant: 1,
             practiceDoctors: [],
             zoom_user: [],
@@ -36,14 +35,10 @@ class AddOrEditMeeting extends React.Component {
 
     loadPatient = (value) => {
         let that = this;
-        this.setState({
-            fetching: true,
-        });
         let successFn = function (data) {
             if (data.results.length > 0) {
                 that.setState({
                     patientListData: data.results,
-                    fetching: false,
                 })
                 // console.log("list",that.state.patientListData);
             }
@@ -284,7 +279,7 @@ class AddOrEditMeeting extends React.Component {
 
                     <Form.Item label={"Patients"} {...formItemLayout} key={'patient'}>
                         {getFieldDecorator('patients', {initialValue: []})
-                        (<Select mode={"multiple"} notFoundContent={this.state.fetching ? <Spin size="small"/> : null}
+                        (<Select mode={"multiple"}
                                  placeholder="Select Patient" style={{width: '100%'}}
                                  showSearch onSearch={this.loadPatient} filterOption={false}>
 
