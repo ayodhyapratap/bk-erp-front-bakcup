@@ -19,10 +19,10 @@ import {
     Tag
 } from "antd";
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
-import {DRUG, INVENTORY, PRESCRIPTIONS, PROCEDURES} from "../../../constants/hardData";
+import {CURRENCY_TYPE, DRUG, INVENTORY, PRESCRIPTIONS, PROCEDURES} from "../../../constants/hardData";
 import {
     CREATE_OR_EDIT_INVOICES,
-    INVENTORY_ITEM_API,
+    INVENTORY_ITEM_API, OFFERS,
     PROCEDURE_CATEGORY,
     SEARCH_THROUGH_QR,
     SINGLE_INVOICE_API,
@@ -59,6 +59,8 @@ class Addinvoicedynamic extends React.Component {
             qrValue: '',
             searchItem: '',
             selectedDoctor: {},
+            tempValues: {},
+            offers:[],
 
         }
 
@@ -70,6 +72,7 @@ class Addinvoicedynamic extends React.Component {
         this.loadProcedures();
         this.loadPrescriptions();
         this.loadTaxes();
+        this.loadLoyaltyDiscount();
         if (this.props.editId) {
             this.loadEditInvoiceData();
         }
@@ -511,7 +514,7 @@ class Addinvoicedynamic extends React.Component {
         const {getFieldsValue, setFields} = this.props.form;
         setTimeout(function () {
             let values = getFieldsValue();
-            if (values.total_unit_cost[id]) {
+            if (values.total_unit_cost[id] && values.unit[id]) {
 
                 that.setState(function (prevState) {
                     let newTableValues = []
@@ -525,7 +528,8 @@ class Addinvoicedynamic extends React.Component {
                                 })
                             });
                             let retailPrice = values.total_unit_cost[id] / (1 + totalTaxAmount * 0.01);
-                            newTableValues.push({...tableObj, unit_cost: retailPrice})
+                            let total = values.unit[id] * values.total_unit_cost[id];
+                            newTableValues.push({...tableObj, unit_cost: retailPrice ,total:total})
                         } else {
                             newTableValues.push(tableObj);
                         }
@@ -539,7 +543,61 @@ class Addinvoicedynamic extends React.Component {
             }
         }, 1000);
 
-    }
+    };
+
+    loadLoyaltyDiscount = () => {
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                offers: data,
+                loading: false
+            })
+        };
+        let errorFn = function () {
+            that.setState({
+                loading: true
+            })
+        };
+        getAPI(interpolate(OFFERS, [this.props.active_practiceId]), successFn, errorFn);
+    };
+    onChangeOption=(type ,id)=>{
+       let that=this;
+        that.setState(function (prevState) {
+            let tempArr = [];
+
+            prevState.tableFormValues.forEach(function (formValue) {
+
+                if (formValue._id == id) {
+                    tempArr.push({...formValue, selectOption: true})
+                } else {
+                    tempArr.push(formValue)
+                }
+            });
+            return {tableFormValues: tempArr}
+        });
+    };
+    onChangeOffer =(value ,id)=>{
+        let that=this;
+
+            that.setState(function (prevState) {
+                let selectedOffer=[];
+                prevState.tableFormValues.forEach(function (formValue) {
+                    if (formValue._id == id){
+                        prevState.offers.forEach(function (item) {
+                           if (item.id == value){
+                               console.log(formValue)
+                                selectedOffer.push({...formValue , loyaltyDiscount:item.discount})
+                           }
+                        });
+                    }else {
+                        selectedOffer.push(formValue);
+                    }
+                });
+                return{ tableFormValues:selectedOffer}
+
+            });
+
+    };
 
     render() {
         let that = this;
@@ -567,6 +625,15 @@ class Addinvoicedynamic extends React.Component {
                 sm: {span: 24},
             },
         };
+
+        const prefixSelector = getFieldDecorator('prefix', {
+            initialValue: '%',
+        })(
+            <Select>
+              {CURRENCY_TYPE.map(option =><Select.Option value={option.value}> {option.value}</Select.Option>)}
+            </Select>
+        );
+
         getFieldDecorator('keys', {initialValue: []});
         let consumeRow = [{
             title: 'Item Name',
@@ -666,7 +733,7 @@ class Addinvoicedynamic extends React.Component {
                         })(
                             <InputNumber min={1}
                                          max={(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number] ? that.state.stocks[record.inventory][record.selectedBatch.batch_number] : 0)}
-                                         placeholder="units" size={'small'}
+                                         placeholder="units" size={'small'}  onChange={(value) => this.changeNetPrice( record._id)}
                                          disabled={!(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number])}/>
                         )}
                     </Form.Item>
@@ -681,7 +748,7 @@ class Addinvoicedynamic extends React.Component {
                                 message: "This field is required.",
                             }],
                         })(
-                            <InputNumber min={1} max={100} placeholder="unit" size={'small'}/>
+                            <InputNumber min={1} max={100} placeholder="unit" size={'small'}  onChange={(value) => this.changeNetPrice(record._id)}/>
                         )}
                     </Form.Item>
             )
@@ -711,7 +778,12 @@ class Addinvoicedynamic extends React.Component {
             key: 'discount',
             width: 100,
             dataIndex: 'discount',
-            render: (item, record) => <Form.Item
+            render: (item, record) =>(record.selectOption ?<Form.Item  key={`discount[${record._id}]`} extra={<span>{record && record.loyaltyDiscount?record.loyaltyDiscount + '% Discount' :null} </span>}><Select style={{width:150}} defaultValue={'None'} onChange={(value)=>that.onChangeOffer(value, record._id)}>
+                <Select.Option value={'none'}>None</Select.Option>
+                {that.state.offers.map(option =><Select.Option value={option.id}>{option.code}</Select.Option>)}
+                <Select.Option value={'custom'}>Custom</Select.Option>
+            </Select>
+            </Form.Item>:<Form.Item extra={<a  onClick={()=>that.onChangeOption('selectOption' ,record._id)}>Choose Form Offers</a>}
                 key={`discount[${record._id}]`}
                 {...formItemLayout}>
                 {getFieldDecorator(`discount[${record._id}]`, {
@@ -719,9 +791,10 @@ class Addinvoicedynamic extends React.Component {
                     validateTrigger: ['onChange', 'onBlur'],
 
                 })(
-                    <InputNumber min={0} max={100} placeholder="discount" size={'small'}/>
+                    <Input placeholder="discount"  addonAfter={prefixSelector}
+                           style={{ width: 150 }}/>
                 )}
-            </Form.Item>
+            </Form.Item>)
         }, {
             title: 'Taxes',
             key: 'taxes',
@@ -762,7 +835,13 @@ class Addinvoicedynamic extends React.Component {
                 )}
             </Form.Item>
             // render:(item,record)=> `unit_cost[${record._id}]`
-        },]);
+        },{
+            title:'Total',
+            key:'total',
+            width:100,
+            dataIndex:'total',
+
+        }]);
 
         consumeRow = consumeRow.concat([{
             key: '_id',
@@ -863,13 +942,21 @@ class Addinvoicedynamic extends React.Component {
                                 {/*<List>{formItems}</List>*/}
                                 <Affix offsetBottom={0}>
                                     <Card>
+                                        <Col span={8}>
+                                            <h3>Grand Total: <b>{this.state.tableFormValues.reduce(function (total, item) {
+                                                return total + item.total;
+                                            },0)}</b></h3>
+                                        </Col>
+
                                         <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
                                         <DatePicker value={this.state.selectedDate}
                                                     onChange={(value) => this.selectedDefaultDate(value)}
                                                     format={"DD-MM-YYYY"}
                                                     allowClear={false}/>
+
                                         <Form.Item {...formItemLayoutWithOutLabel}
                                                    style={{marginBottom: 0, float: 'right'}}>
+
                                             <Button type="primary" htmlType="submit"
                                                     style={{margin: 5}}>Save Invoice</Button>
                                             {that.props.history ?

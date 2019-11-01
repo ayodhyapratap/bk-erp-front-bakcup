@@ -415,7 +415,7 @@ class PatientSelection extends React.Component {
         return <div>
             <Row gutter={16}>
                 {this.state.advancedOptionShow ?
-                    <Form onSubmit={this.AdvanceSearchPatient}>
+                    <Form onSubmit={this.AdvanceSearchPatient} layout={'inline'}>
                         <Row gutter={16}>
                             <Col span={16}>
                                 {chooseOption}
@@ -614,14 +614,14 @@ function FormItems(index) {
     return (
         <>
             {index.selectedOption[index.k] == 'name' ?
-                <Form.Item key={index.key}>
+                <Form.Item key={index.key} label={'contains'}>
                     {index.form.getFieldDecorator('name',)
                     (<Input placeholder={"patient Name"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k] == 'phone' ?
-                <Form.Item key={index.key}>
+                <Form.Item key={index.key} label={'contains'}>
                     {index.form.getFieldDecorator('phone',)
                     (<Input placeholder={"Contact Number"} size={"small"}/>)
                     }
@@ -659,7 +659,7 @@ function FormItems(index) {
                 : null}
 
             {index.selectedOption[index.k] == 'dob' ?
-                <Form.Item key={index.key}>
+                <Form.Item key={index.key} label={'is'}>
                     {index.form.getFieldDecorator('dob',)
                     (<DatePicker placeholder={"Date of Birth"} size={"small"}/>)
                     }
@@ -697,7 +697,7 @@ function FormItems(index) {
                 : null}
 
             {index.selectedOption[index.k] == 'patient_id' ?
-                <Form.Item key={index.key}>
+                <Form.Item key={index.key} label={'contains'}>
                     {index.form.getFieldDecorator('patient_id',)
                     (<Input placeholder={"Patient Id"} size={"small"}/>)
                     }
@@ -715,14 +715,14 @@ function FormItems(index) {
                 : null}
 
             {index.selectedOption[index.k] == 'aadhar' ?
-                <Form.Item key={index.key}>
+                <Form.Item key={index.key} label={'contains'}>
                     {index.form.getFieldDecorator('aadhar',)
                     (<Input placeholder={"Aadhar Id"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k] == 'email' ?
-                <Form.Item key={index.key}>
+                <Form.Item key={index.key} label={'contains'}>
                     {index.form.getFieldDecorator('email',)
                     (<Input placeholder={"Email Id"} size={"small"}/>)
                     }
@@ -739,7 +739,7 @@ function FormItems(index) {
                 : null}
 
             {index.selectedOption[index.k] == 'gender' ?
-                <Form.Item>
+                <Form.Item key={index.key} label={'is'}>
                     {index.form.getFieldDecorator('gender')
                     (<Select style={{width: 100}} size={"small"}>
                         {GENDER_OPTION.map((option) => <Select.Option
@@ -762,7 +762,7 @@ function FormItems(index) {
                 : null}
 
             {index.selectedOption[index.k] == 'pincode' ?
-                <Form.Item key={index.key}>
+                <Form.Item key={index.key} label={'contains'}>
                     {index.form.getFieldDecorator('pincode',)
                     (<Input placeholder={"PINCODE"} size={"small"}/>)
                     }
@@ -792,14 +792,14 @@ function FormItems(index) {
 
 
             {index.selectedOption[index.k] == 'street' ?
-                <Form.Item key={index.key}>
+                <Form.Item key={index.key} label={'contains'}>
                     {index.form.getFieldDecorator('street',)
                     (<Input placeholder={"Street Address"} size={"small"}/>)
                     }
                 </Form.Item> : null}
 
             {index.selectedOption[index.k] == 'blood_group' ?
-                <Form.Item>
+                <Form.Item key={index.key} label={'is'}>
                     {index.form.getFieldDecorator('blood_group')
                     (<Select style={{width: 100}} size={"small"}>
                         {BLOOD_GROUPS.map((option) => <Select.Option

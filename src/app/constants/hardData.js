@@ -561,3 +561,8 @@ export const GENDER_OPTION=[
     {label:'Male' , value:'male'},
     {label:'Other' , value:'other'},
 ];
+
+export const CURRENCY_TYPE=[
+    {label: 'Percent', value: '%'},
+    {label: 'Rupees', value: 'INR'}
+];
