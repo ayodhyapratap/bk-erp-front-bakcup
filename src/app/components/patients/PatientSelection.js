@@ -46,6 +46,7 @@ class PatientSelection extends React.Component {
             // keys:1,
             sourceList: [],
             custm_col: 8,
+            advanceLoading:false,
         };
         this.getPatientListData = this.getPatientListData.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
@@ -294,9 +295,9 @@ class PatientSelection extends React.Component {
     };
 
     AdvanceSearchPatient = (e) => {
-        e.preventDefault();
         let that = this;
-        let reqData = {}
+        e.preventDefault();
+        let reqData = {};
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 reqData = {
@@ -309,16 +310,49 @@ class PatientSelection extends React.Component {
             }
         });
         delete reqData.keys;
-        let successFn = function (data) {
-            that.setState({
-                patientListData: data,
-            })
-        };
-        let errorFn = function () {
+        that.setState({
+            patientData:reqData,
+        },function () {
+            that.loadAdvanceSearchPatient();
+        });
 
-        };
-        getAPI(ADVANCED_SEARCH_PATIENT, successFn, errorFn, reqData)
     };
+
+    loadAdvanceSearchPatient=(page=1)=>{
+        let that=this;
+        let reqData=that.state.patientData;
+        that.setState({
+            advancedSearch: true,
+            advanceLoading:true,
+        });
+            let successFn = function (data) {
+                that.setState(function (prevState) {
+                    if (data.current > 1) {
+                        return {
+                            patientListData: [...prevState.patientListData, ...data.results],
+                            morePatientList: data.next,
+                            currentPage: data.current,
+                            advanceLoading: false
+                        }
+                    } else {
+                        return {
+                            patientListData: [...data.results],
+                            morePatientList: data.next,
+                            currentPage: data.current,
+                            advanceLoading: false
+                        }
+                    }
+                });
+            };
+            let errorFn = function () {
+                that.setState({
+                    advanceLoading:false,
+                })
+            };
+            reqData.page =page;
+            getAPI(ADVANCED_SEARCH_PATIENT, successFn, errorFn, reqData)
+
+    }
 
     render() {
         let that = this;
@@ -505,11 +539,13 @@ class PatientSelection extends React.Component {
                     </Spin>
                     {this.state.searchvalue ? <InfiniteFeedLoaderButton loaderFunction={this.searchPatient}
                                                                         loading={this.state.loading}
-                                                                        hidden={!this.state.morePatients}/> :
+                                                                        hidden={!this.state.morePatients}/> :(this.state.advancedSearch?<InfiniteFeedLoaderButton loading ={this.state.advanceLoading}
+                                                                                                                                                                  loaderFunction={()=>this.loadAdvanceSearchPatient(that.state.morePatientList)}
+                                                                                                                                            hidden={!this.state.morePatientList}/>:
 
                         <InfiniteFeedLoaderButton loaderFunction={this.getMorePatient}
                                                   loading={this.state.loading}
-                                                  hidden={!this.state.morePatients}/>
+                                                  hidden={!this.state.morePatients}/>)
                     }
                 </Col>
 
