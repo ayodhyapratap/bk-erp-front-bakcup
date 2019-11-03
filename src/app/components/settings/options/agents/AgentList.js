@@ -216,7 +216,7 @@ class AgentRoles extends React.Component {
             key: 'is_approved',
             render: (value, record) => (
                 value ? <Tag color="#87d068">Approved</Tag> : <Popconfirm
-                    title="Are you sure approve this agent?"
+                    title="Are you sure approve this Advisor?"
                     onConfirm={() => that.approveAgent(record)}
                     okText="Yes"
                     cancelText="No"
@@ -245,23 +245,23 @@ class AgentRoles extends React.Component {
         ];
         return <Switch>
             <Route exact path={"/settings/agents/add"}
-                   render={(route) => <AddOrEditAgent  {...this.props} title={"Create Agent"}
+                   render={(route) => <AddOrEditAgent  {...this.props} title={"Create Advisor"}
                                                        loadData={this.loadData}/>}/>
 
             <Route exact path={"/settings/agents/:id/edit"}
-                   render={(route) => <AddOrEditAgent  {...this.props} {...this.state} title={"Edit Agent"}
+                   render={(route) => <AddOrEditAgent  {...this.props} {...this.state} title={"Edit Advisor"}
                                                        loadData={this.loadData}/>}/>
             <Route>
-                <Card title={<h4>Agents <Link to={"/settings/agents/add"}>
+                <Card title={<h4>Advisor <Link to={"/settings/agents/add"}>
                     <Button style={{float: 'right'}} type={"primary"}><Icon type={"plus"}/>
                         Add</Button></Link></h4>}>
                     <Row>
                         <Col style={{float: "right"}}>
                             <Form layout="inline" onSubmit={this.handleSubmit}>
-                                <Form.Item key="role" label="Agent Role">
+                                <Form.Item key="role" label="Advisor Role">
                                     {getFieldDecorator("role", {initialValue: this.state.agentRoles ? this.state.agentRoles.id : ''},
                                     )(
-                                        <Select placeholder="Agent Role" style={{minWidth: 150}} allowClear={true}>
+                                        <Select placeholder="Advisor Role" style={{minWidth: 150}} allowClear={true}>
                                             {this.state.agentRoles.map((option) => <Select.Option
                                                 value={option.id}>{option.name}</Select.Option>)}
                                         </Select>

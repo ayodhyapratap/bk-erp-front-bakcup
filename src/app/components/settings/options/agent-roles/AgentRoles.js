@@ -101,7 +101,7 @@ class AgentRoles extends React.Component {
         const fields = [{
             label:"Role Name",
             key: "name",
-            placeholder:"Agent roles",
+            placeholder:"Advisor roles",
             required: true,
             type: INPUT_FIELD
         },];
@@ -133,12 +133,12 @@ class AgentRoles extends React.Component {
         }]
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <Card title='Add Agent Roles'>
+        return <Card title='Add Advisor Roles'>
             <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
             <Divider/>
             <Table loading={this.state.loading} columns={columns} dataSource={this.state.data}/>
             <Modal
-                title={"Edit Agent Roles"}
+                title={"Edit Advisor Roles"}
                 visible={this.state.visible}
                 footer={null}
                 onCancel={this.handleCancel}>

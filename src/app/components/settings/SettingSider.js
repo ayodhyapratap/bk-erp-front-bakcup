@@ -47,15 +47,15 @@ class SettingSider extends React.Component {
                     <Menu.Item key="32">
                         <Link to="/settings/agents">
                             <Icon type="usergroup-add"/>
-                            <span className="nav-text">Agents</span>
+                            <span className="nav-text">Advisor</span>
                         </Link>
                     </Menu.Item>:null}
-                    
+
                     {this.props.activePracticePermissions.SettingsAgentRoles || this.props.allowAllPermissions?
                     <Menu.Item key="33">
                         <Link to="/settings/agent-roles">
                             <Icon type="apartment"/>
-                            <span className="nav-text">Agent Roles</span>
+                            <span className="nav-text">Advisor Roles</span>
                         </Link>
                     </Menu.Item>:null}
 
@@ -75,7 +75,7 @@ class SettingSider extends React.Component {
                         </Link>
                     </Menu.Item> : null}
 
-                   
+
 
                     {this.props.activePracticePermissions.SettingsMLMSettings ? <Menu.Item key="30">
                         <Link to="/settings/mlm">
@@ -137,7 +137,7 @@ class SettingSider extends React.Component {
                     </Menu.Item>
                 :null}
 
-                {this.props.activePracticePermissions.SettingsBedPackages ?   
+                {this.props.activePracticePermissions.SettingsBedPackages ?
                     <Menu.Item key="23">
                         <Link to="/settings/bed-packages">
                             <Icon type="box-plot"/> Bed Packages
@@ -145,7 +145,7 @@ class SettingSider extends React.Component {
                     </Menu.Item>
                 :null}
 
-                {this.props.activePracticePermissions.SettingsMedicinePackages ?  
+                {this.props.activePracticePermissions.SettingsMedicinePackages ?
                     <Menu.Item key="24">
                         <Link to="/settings/medicine-packages">
                             <Icon type="medicine-box"/> Medicine Packages
@@ -153,7 +153,7 @@ class SettingSider extends React.Component {
                     </Menu.Item>
                 :null}
 
-                {this.props.activePracticePermissions.SettingsDiseaseList ?  
+                {this.props.activePracticePermissions.SettingsDiseaseList ?
                     <Menu.Item key="25">
                         <Link to="/settings/diseases">
                             <Icon type="apartment"/> Disease List

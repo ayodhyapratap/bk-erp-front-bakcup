@@ -16,12 +16,12 @@ export default class AddOrEditAgentRoles extends React.Component {
         }
     }
 
-   
+
 
     render() {
         console.log(this.state);
         console.log("prop",this.props);
-                
+
         let that = this;
         let AgentRolesForm = Form.create()(DynamicFieldsForm);
         let fields = [{
@@ -69,17 +69,17 @@ export default class AddOrEditAgentRoles extends React.Component {
             defaultValues.push({key: 'id', value: that.props.editRole.id})
         }
 
-        
+
         return <div>
             <Card>
                 <Route exact path="/settings/agent-roles/:id/edit"
                     render={(route) => (this.props.match.params.id ?
-                            <AgentRolesForm title={"Edit Agent Roles"} fields={fields} formProp={formProp} defaultValues={defaultValues} {...this.props} {...route} changeRedirect={this.changeRedirect}/>:
+                            <AgentRolesForm title={"Edit Adviser Roles"} fields={fields} formProp={formProp} defaultValues={defaultValues} {...this.props} {...route} changeRedirect={this.changeRedirect}/>:
                             <Redirect to={"/settings/agent-roles-roles"} />
                         )}/>
 
                 <Route exact path='/settings/agent-roles/add'
-                       render={(route) => <AgentRolesForm defaultValues={defaultValues} title="Add Agent Roles" changeRedirect={this.changeRedirect}
+                       render={(route) => <AgentRolesForm defaultValues={defaultValues} title="Add Adviser Roles" changeRedirect={this.changeRedirect}
                        formProp={formProp} fields={fields}/>}/>
             </Card>
             {this.state.redirect && <Redirect to={'/settings/agent-roles-roles'}/>}

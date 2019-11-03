@@ -243,11 +243,11 @@ class AddOrEditAgent extends React.Component {
                             </Card>
                         </FormItem>
                         : <div>
-                            <FormItem key="name" label="Agent Name"  {...formItemLayout}>
+                            <FormItem key="name" label="Advisor Name"  {...formItemLayout}>
                                 {getFieldDecorator("first_name", {
                                     initialValue: that.props.editAgentData ? that.props.editAgentData.user.first_name : ''
                                 })(
-                                    <AutoComplete placeholder="Agent Name"
+                                    <AutoComplete placeholder="Advisor Name"
                                                   showSearch
                                                   disabled={that.props.editAgentData?true:false}
                                                   onSearch={this.searchPatient}
