@@ -395,7 +395,7 @@ class Addinvoicedynamic extends React.Component {
                                 "unit": item.unit,
                                 "taxes": item.taxes,
                                 "unit_cost": item.unit_cost,
-                                "discount": item.discount,
+                                "discount": item.discount?item.discount.split('#')[0]:0,
                                 "discount_type": "%",
                                 "offers": null,
                                 "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
@@ -510,7 +510,7 @@ class Addinvoicedynamic extends React.Component {
 
     }
     changeNetPrice = (id,value) => {
-        console.log(id,value)
+        // console.log(id,value)
         let that = this;
         const {getFieldsValue, setFields} = this.props.form;
         setTimeout(function () {
