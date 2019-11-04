@@ -509,27 +509,41 @@ class Addinvoicedynamic extends React.Component {
         })
 
     }
-    changeNetPrice = (id) => {
+    changeNetPrice = (id,value) => {
+        console.log(id,value)
         let that = this;
         const {getFieldsValue, setFields} = this.props.form;
         setTimeout(function () {
             let values = getFieldsValue();
-            if (values.total_unit_cost[id] && values.unit[id]) {
-
+            if (values.unit_cost[id] || values.unit[id] || values.discount[id]) {
+               
                 that.setState(function (prevState) {
                     let newTableValues = []
                     prevState.tableFormValues.forEach(function (tableObj) {
                         if (tableObj._id == id) {
+
                             let totalTaxAmount = 0;
+                            let initialDiscount=0;
+                            let selectOption=tableObj.selectOption || tableObj.selectOption==false?tableObj.selectOption:false;
                             values.taxes[id].forEach(function (taxid) {
                                 prevState.taxes_list.forEach(function (taxObj) {
                                     if (taxObj.id == taxid)
                                         totalTaxAmount += taxObj.tax_value;
                                 })
                             });
-                            let retailPrice = values.total_unit_cost[id] / (1 + totalTaxAmount * 0.01);
-                            let total = values.unit[id] * values.total_unit_cost[id];
-                            newTableValues.push({...tableObj, unit_cost: retailPrice ,total:total})
+                            if(value == '0'){
+                                selectOption=false
+                            }else{
+                                initialDiscount=values.discount[id]?values.discount[id].split('#')[0]:'';
+                            }
+                            
+
+
+                            let retailPrice = (values.unit_cost[id]?values.unit_cost[id]:0)*(1-(values.discount[id]?values.discount[id].split('#')[0]:initialDiscount)*0.01) * (1 + totalTaxAmount * 0.01);
+                            // console.log("TAX",retailPrice);
+                            let total = values.unit[id]*retailPrice;
+                           
+                            newTableValues.push({...tableObj, total_unit_cost: retailPrice ,total:total,selectOption:selectOption,discount:initialDiscount})
                         } else {
                             newTableValues.push(tableObj);
                         }
@@ -578,18 +592,27 @@ class Addinvoicedynamic extends React.Component {
     };
     onChangeOffer =(value ,id)=>{
         let that=this;
-
             that.setState(function (prevState) {
                 let selectedOffer=[];
                 prevState.tableFormValues.forEach(function (formValue) {
                     if (formValue._id == id){
-                        prevState.offers.forEach(function (item) {
-                           if (item.id == value){
-                               console.log(formValue)
-                                selectedOffer.push({...formValue , loyaltyDiscount:item.discount})
-                           }
-                        });
-                    }else {
+
+                        if(value == 'none'){
+                            selectedOffer.push({...formValue , loyaltyDiscount:null})
+                        }
+                        if(value == '0'){
+                            selectedOffer.push({...formValue,selectOption:false})
+                        }else{
+                            prevState.offers.forEach(function (item) {
+                           
+                                if (item.id == value){
+                                    selectedOffer.push({...formValue , loyaltyDiscount:item.discount})
+                                }
+                            });
+                        }
+                        
+                       
+                    }else{
                         selectedOffer.push(formValue);
                     }
                 });
@@ -599,6 +622,28 @@ class Addinvoicedynamic extends React.Component {
 
     };
 
+
+    onchangeDiscountSimple = (value ,id)=>{
+        console.log(value,id);
+        let that=this;
+        that.setState(function (prevState) {
+            let selectedOffer=[];
+            prevState.tableFormValues.forEach(function (formValue) {
+                if (formValue._id == id){
+
+                    let retailPrice = formValue.unit_cost / (1 + value * 0.01);
+                    console.log(retailPrice);
+                    selectedOffer.push({...formValue , loyaltyDiscount:value})
+                    
+                }else{
+                    selectedOffer.push(formValue);
+                }
+            });
+            return{ tableFormValues:selectedOffer}
+
+        });
+
+    }
     render() {
         let that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
@@ -758,31 +803,40 @@ class Addinvoicedynamic extends React.Component {
             width: 100,
             dataIndex: 'unit_cost',
 
-            // render: (item, record) => <Form.Item
-            //     key={`unit_cost[${record._id}]`}
-            //     {...formItemLayout}>
-            //     {getFieldDecorator(`unit_cost[${record._id}]`, {
-            //         validateTrigger: ['onChange', 'onBlur'],
-            //         initialValue: record.retail_without_tax,
-            //         rules: [{
-            //             required: true,
-            //             message: "This field is required.",
-            //         }],
-            //     })(
-            //         <InputNumber min={0} placeholder="Unit Cost" size={'small'}/>
-            //     )}
-            // </Form.Item>
-            render: (item, record) => item ? item.toFixed(2) : null
+            render: (item, record) => <Form.Item
+                key={`unit_cost[${record._id}]`}
+                {...formItemLayout}>
+                {getFieldDecorator(`unit_cost[${record._id}]`, {
+                    validateTrigger: ['onChange', 'onBlur'],
+                    initialValue: record.item_type == INVENTORY ? record.retail_without_tax : record.cost,
+                    rules: [{
+                        required: true,
+                        message: "This field is required.",
+                    }],
+                })(
+                    <InputNumber min={1} placeholder="Unit Cost" size={'small'} onChange={() => that.changeNetPrice(record._id)}/>
+                )}
+            </Form.Item>
+            // render: (item, record) => item ? item.toFixed(2) : null
         }, {
             title: 'discount %',
             key: 'discount',
             width: 100,
             dataIndex: 'discount',
-            render: (item, record) =>(record.selectOption ?<Form.Item  key={`discount[${record._id}]`} extra={<span>{record && record.loyaltyDiscount?record.loyaltyDiscount + '% Discount' :null} </span>}><Select style={{width:150}} defaultValue={'None'} onChange={(value)=>that.onChangeOffer(value, record._id)}>
-                <Select.Option value={'none'}>None</Select.Option>
-                {that.state.offers.map(option =><Select.Option value={option.id}>{option.code}</Select.Option>)}
-                <Select.Option value={'custom'}>Custom</Select.Option>
-            </Select>
+            render: (item, record) =>(record.selectOption ?
+            <Form.Item  key={`discount[${record._id}]`} extra={<span>{record && record.discount?record.discount + '% Discount' :null} </span>}>
+                  {getFieldDecorator(`discount[${record._id}]`, {
+                    initialValue: record.discount,
+                    validateTrigger: ['onChange', 'onBlur'],
+
+                })
+
+               (<Select style={{width:150}} onChange={(value)=>that.changeNetPrice(record._id ,value)} size={"small"}>
+                    {/* <Select.Option value={'none'}>None</Select.Option> */}
+                    {that.state.offers.map(option =><Select.Option value={option.discount+'#'+option.id}>{option.code}</Select.Option>)}
+                    <Select.Option value={'0'}>Custom</Select.Option>
+                </Select>)
+                }
             </Form.Item>:<Form.Item extra={<a  onClick={()=>that.onChangeOption('selectOption' ,record._id)}>Choose Form Offers</a>}
                 key={`discount[${record._id}]`}
                 {...formItemLayout}>
@@ -791,8 +845,8 @@ class Addinvoicedynamic extends React.Component {
                     validateTrigger: ['onChange', 'onBlur'],
 
                 })(
-                    <Input placeholder="discount"  addonAfter={prefixSelector}
-                           style={{ width: 150 }}/>
+                    <Input placeholder="discount"  addonAfter={prefixSelector} size={"small"}
+                           style={{ width: 150 }}  onChange={(e) => this.changeNetPrice(record._id,e.target.value)}/>
                 )}
             </Form.Item>)
         }, {
@@ -819,27 +873,29 @@ class Addinvoicedynamic extends React.Component {
             key: 'total_unit_cost',
             width: 100,
             dataIndex: 'total_unit_cost',
-            render: (item, record) => <Form.Item
-                key={`total_unit_cost[${record._id}]`}
-                {...formItemLayout}>
-                {getFieldDecorator(`total_unit_cost[${record._id}]`, {
-                    validateTrigger: ['onChange', 'onBlur'],
-                    initialValue: record.item_type == INVENTORY ? record.retail_with_tax : record.cost_with_tax,
-                    rules: [{
-                        required: true,
-                        message: "This field is required.",
-                    }],
-                })(
-                    <InputNumber min={0} placeholder="Unit Cost" size={'small'}
-                                 onChange={() => that.changeNetPrice(record._id)}/>
-                )}
-            </Form.Item>
-            // render:(item,record)=> `unit_cost[${record._id}]`
+            // render: (item, record) => <Form.Item
+            //     key={`total_unit_cost[${record._id}]`}
+            //     {...formItemLayout}>
+            //     {getFieldDecorator(`total_unit_cost[${record._id}]`, {
+            //         validateTrigger: ['onChange', 'onBlur'],
+            //         initialValue: record.item_type == INVENTORY ? record.retail_with_tax : record.cost_with_tax,
+            //         rules: [{
+            //             required: true,
+            //             message: "This field is required.",
+            //         }],
+            //     })(
+            //         <InputNumber min={0} placeholder="Unit Cost" size={'small'}
+            //                      onChange={() => that.changeNetPrice(record._id)}/>
+            //     )}
+            // </Form.Item>
+            // render: (item, record) => item ? item.toFixed(2) : null
+            render: (item, record) => ((record.item_type == INVENTORY) && record.total_unit_cost) ? record.total_unit_cost.toFixed(2) :record.cost_with_tax ?record.cost_with_tax.toFixed(2) :record.retail_with_tax.toFixed(2),
         },{
             title:'Total',
             key:'total',
             width:100,
             dataIndex:'total',
+            render: (item, record) => item ? item.toFixed(2) : null
 
         }]);
 
@@ -944,7 +1000,7 @@ class Addinvoicedynamic extends React.Component {
                                     <Card>
                                         <Col span={8}>
                                             <h3>Grand Total: <b>{this.state.tableFormValues.reduce(function (total, item) {
-                                                return total + item.total;
+                                                return (parseFloat(total) + (item&&item.total?item.total:0)).toFixed(2);
                                             },0)}</b></h3>
                                         </Col>
 
