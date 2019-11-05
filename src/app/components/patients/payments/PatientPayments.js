@@ -34,6 +34,9 @@ import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import {OTP_DELAY_TIME, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import {Modal} from "antd/lib/index";
+import EditPaymentModal from "../payments/EditPaymentModal";
+import InvoiceReturnModal from "../invoices/InvoiceReturnModal";
+import CancelPaymentModal from "./CancelPaymentModal";
 
 const confirm = Modal.confirm;
 
@@ -65,7 +68,7 @@ class PatientPayments extends React.Component {
         }
         this.setState({
             loading: true
-        })
+        });
         let successFn = function (data) {
             that.setState(function (prevState) {
                 if (data.current == 1)
@@ -114,18 +117,8 @@ class PatientPayments extends React.Component {
         getAPI(interpolate(PAYMENT_PDF, [id]), successFn, errorFn);
     };
 
-    deletePayment(patient, payment) {
-        let that = this;
-        let reqData = {patient: patient, is_cancelled: true};
-        let successFn = function (data) {
-            displayMessage(SUCCESS_MSG_TYPE, "Payment cancelled successfully")
-            that.loadPayments();
-        };
-        let errorFn = function () {
-        };
-        putAPI(interpolate(SINGLE_PAYMENT_API, [payment]), reqData, successFn, errorFn);
 
-    }
+
 
     editModelOpen = (record) => {
         let that = this;
@@ -133,9 +126,9 @@ class PatientPayments extends React.Component {
         let created_time=moment().diff(record.created_at,'minutes');
 
         if(created_time >OTP_DELAY_TIME){
-
             that.setState({
                 editPaymentVisible: true,
+                cancelPaymentVisible:false,
                 editPayment: record,
             });
             let reqData = {
@@ -162,51 +155,65 @@ class PatientPayments extends React.Component {
             });
         }
     };
-    editPaymentClose = () => {
-        this.setState({
-            editPaymentVisible: false
-        })
-    };
 
-    handleSubmitEditPayment = (e) => {
+
+    editPaymentData = (record) => {
         let that = this;
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                let reqData = {
-                    ...values,
-                    practice: this.props.active_practiceId,
-                }
-                let successFn = function (data) {
-                    that.setState({
-                        editPaymentVisible: false,
-                    });
-                    that.editPaymentData(that.state.editPayment);
-                };
-                let errorFn = function () {
-
-                };
-                postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
-            }
-        });
-    };
-    editPaymentData=(record)=>{
-        let that =this;
+        // let id = this.props.match.params.id;
         that.setState({
-            editPayment:record,
-        },function () {
-            that.props.history.push("/patient/" + record.patient + "/billing/payments/edit")
+            editPayment: record,
+        }, function () {
+            that.props.history.push("/patient/" + record.patient + "/billing/payments/edit/")
         });
-
     };
+    // editPaymentClose = () => {
+    //     this.setState({
+    //         editPaymentVisible: false
+    //     })
+    // };
+    //
+    // handleSubmitEditPayment = (e) => {
+    //     let that = this;
+    //     e.preventDefault();
+    //     this.props.form.validateFields((err, values) => {
+    //         if (!err) {
+    //             let reqData = {
+    //                 ...values,
+    //                 practice: this.props.active_practiceId,
+    //             };
+    //             let successFn = function (data) {
+    //                 that.setState({
+    //                     editPaymentVisible: false,
+    //                 });
+    //                 that.editPaymentData(that.state.editPayment);
+    //
+    //             };
+    //             let errorFn = function () {
+    //
+    //             };
+    //             postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
+    //         }
+    //     });
+    // };
+    // editPaymentData=(record)=>{
+    //     let that =this;
+    //     console.log('"""""""""""""""""""""""">',record);
+    //     that.setState({
+    //         editPayment:record,
+    //     },function () {
+    //         that.props.history.push("/patient/" + record.patient + "/billing/payments/edit")
+    //     });
+    //
+    // };
 
     cancelModalOpen = (record) => {
         let that = this;
         let created_time=moment().diff(record.created_at,'minutes');
 
         if(created_time >OTP_DELAY_TIME){
-       
+
             that.setState({
+                editPaymentVisible:false,
                 cancelPaymentVisible: true,
                 editPayment: record,
             });
@@ -231,46 +238,33 @@ class PatientPayments extends React.Component {
         }
     };
 
-
-    handleSubmitCancelPayment = (e) => {
+    deletePayment(patient, payment) {
         let that = this;
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                let reqData = {
-                    ...values,
-                    practice: this.props.active_practiceId,
-                }
-                let successFn = function (data) {
-                    that.setState({
-                        cancelPaymentVisible: false,
-                    });
-                    that.deletePayment(that.state.patientId, that.state.paymentId)
-                };
-                let errorFn = function () {
-
-                };
-                postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
-            }
-        });
-    }
-
-    sendOTP() {
-        let that = this;
+        let reqData = {patient: patient, is_cancelled: true};
         let successFn = function (data) {
-
-        }
+            displayMessage(SUCCESS_MSG_TYPE, "Payment cancelled successfully")
+            that.loadPayments();
+        };
         let errorFn = function () {
+        };
+        putAPI(interpolate(SINGLE_PAYMENT_API, [payment]), reqData, successFn, errorFn);
 
-        }
-        getAPI(CANCELINVOICE_RESENT_OTP, successFn, errorFn);
     }
 
+
+
+
+    editPaymentClose = () => {
+        this.setState({
+            editPaymentVisible: false
+        })
+    };
     cancelPaymentClose = () => {
         this.setState({
             cancelPaymentVisible: false
         })
     }
+
 
     render() {
         let that = this;
@@ -290,7 +284,9 @@ class PatientPayments extends React.Component {
                                                               loadData={this.loadPayments}/>}/>
                     <Route exact path='/patient/:id/billing/payments/edit'
                            render={(route) => (that.state.editPayment ?
-                               <AddPaymentForm {...this.state} {...route} loadData={this.loadPayments}/> :
+                               <AddPaymentForm {...this.state} {...route} {...this.props}
+                                               paymentId={this.state.paymentId}
+                                               loadData={this.loadPayments}/> :
                                <Redirect to={"/patient/" + route.match.params.id + "/billing/payments"}/>)
                            }/>
                     <Route>
@@ -417,67 +413,10 @@ function PaymentCard(payment, that) {
             </Col>
         </Row>
 
-        <Modal
-            visible={(that.state.editPaymentVisible && that.state.editPayment && that.state.editPayment.id == payment.id)}
-            title="Edit Payment"
-            footer={null}
-            onOk={that.handleSubmitEditPayment}
-            onCancel={that.editPaymentClose}
-        >
-            <Form>
-                <Form.Item>
-                    {getFieldDecorator('otp', {
-                        rules: [{required: true, message: 'Please input Otp!'}],
-                    })(
-                        <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                               placeholder="Otp"
-                        />,
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
-                        Resend Otp ?
-                    </a> : null}
-                    <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitEditPayment}>
-                        Submit
-                    </Button>&nbsp;
-                    <Button size="small" onClick={that.editPaymentClose}>
-                        Close
-                    </Button>
-                </Form.Item>
-            </Form>
-        </Modal>
+        {that.state.editPaymentVisible && that.state.otpSent && <EditPaymentModal {...that.state} payment={payment} editPaymentClose={that.editPaymentClose} editPaymentData={that.editPaymentData} {...that.props} />}
 
-        <Modal
-            visible={(that.state.cancelPaymentVisible && that.state.editPayment && that.state.editPayment.id == payment.id)}
-            title="Cancel Payment"
-            footer={null}
-            onOk={that.handleSubmitCancelPayment}
-            onCancel={that.cancelPaymentClose}
-        >
-            <Form>
-                <Form.Item>
-                    {getFieldDecorator('otp', {
-                        rules: [{required: true, message: 'Please input Otp!'}],
-                    })(
-                        <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                               placeholder="Otp"
-                        />,
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
-                        Resend Otp ?
-                    </a> : null}
-                    <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitCancelPayment}>
-                        Submit
-                    </Button>&nbsp;
-                    <Button size="small" onClick={that.cancelPaymentClose}>
-                        Close
-                    </Button>
-                </Form.Item>
-            </Form>
-        </Modal>
+        {that.state.cancelPaymentVisible && that.state.otpSent && <CancelPaymentModal {...that.state} payment={payment} cancelPaymentClose={that.cancelPaymentClose} {...that.props} loadPayments={that.loadPayments} />}
+
     </Card>
 }
 

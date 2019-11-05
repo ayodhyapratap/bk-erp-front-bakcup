@@ -30,27 +30,31 @@ class AddPaymentForm extends React.Component {
             advanceToBeSent:0,
             selectDate:moment(),
         }
+        this.loadEditPyament = this.loadEditPyament.bind(this);
     }
 
     componentWillMount() {
         let that = this;
-        if (this.props.editPayment && this.props.editPayment.invoices) {
-            let addedInvoicesId = {};
-            let addedInvoice = [];
-            let totalPayingAmount = 0;
-            this.props.editPayment.invoices.forEach(function (inv) {
-                addedInvoicesId[inv.invoice] = true;
-                addedInvoice.push({...inv, ...inv.invoice_data});
-                totalPayingAmount += inv.pay_amount + inv.pay_amount_wallet
-            })
-            this.setState({
-                addedInvoiceId: addedInvoicesId,
-                addedInvoice: addedInvoice,
-                // totalPayingAmount : totalPayingAmount
-            }, function () {
-                that.calculateInvoicePayments();
-                that.setPaymentAmount(totalPayingAmount);
-            })
+        if (that.props.editPayment && that.props.editPayment.invoices) {
+            that.loadEditPyament(that.props.editPayment.invoices);
+            // let addedInvoicesId = {};
+            // let addedInvoice = [];
+            // let totalPayingAmount = 0;
+            // this.props.editPayment.invoices.forEach(function (inv) {
+            //     console.log("Item",inv);
+            //     addedInvoicesId[inv.invoice] = true;
+            //     addedInvoice.push({...inv, ...inv.invoice_data});
+            //     totalPayingAmount += inv.pay_amount + inv.pay_amount_wallet
+            // })
+            // that.setState({
+            //     addedInvoiceId: addedInvoicesId,
+            //     addedInvoice: addedInvoice,
+            //     // totalPayingAmount : totalPayingAmount
+            // }, function () {
+            //     console.log("Infinity Loop");
+            //     that.calculateInvoicePayments();
+            //     that.setPaymentAmount(totalPayingAmount);
+            // })
 
 
         }
@@ -59,6 +63,31 @@ class AddPaymentForm extends React.Component {
         this.loadAvailableAdvance();
     }
 
+    loadEditPyament=(editPayment)=>{
+        let that=this;
+        let addedInvoicesId = {};
+        let addedInvoice = [];
+        let totalPayingAmount = 0;
+        this.setState(function (prevState) {
+            editPayment.forEach(function (inv) {
+                console.log("Item",inv);
+                addedInvoicesId[inv.invoice] = true;
+                addedInvoice.push({...inv, ...inv.invoice_data});
+                totalPayingAmount += inv.pay_amount + inv.pay_amount_wallet;
+
+            },function () {
+                that.calculateInvoicePayments();
+                that.setPaymentAmount(totalPayingAmount);
+            });
+            return{
+                addedInvoice:addedInvoice,
+                addedInvoiceId: addedInvoicesId,
+            }
+        });
+
+
+
+    };
     loadAvailableAdvance = () => {
         let that = this;
         let sucessFn = function (data) {
@@ -298,8 +327,8 @@ class AddPaymentForm extends React.Component {
             that.setState({
                 loading: false
             });
-            if (that.props.loadData)
-                that.props.loadData();
+            // if (that.props.loadData)
+            that.props.loadData();
             that.props.history.push("/patient/" + that.props.match.params.id + "/billing/payments")
         };
         let errorFn = function () {

@@ -1,22 +1,21 @@
 import React from "react";
 import {Button, Card, Form, Icon, Input, Modal} from "antd";
-import moment from "moment";
-import {CANCELINVOICE_GENERATE_OTP, CANCELINVOICE_RESENT_OTP, CANCELINVOICE_VERIFY_OTP} from "../../../constants/api";
+import {CANCELINVOICE_RESENT_OTP, CANCELINVOICE_VERIFY_OTP} from "../../../constants/api";
 import {getAPI, postAPI} from "../../../utils/common";
-import {OTP_DELAY_TIME} from "../../../constants/dataKeys";
-class EditReturnModal extends React.Component {
+class EditPaymentModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             otpSent:this.props.otpSent,
-            returnIncoiceVisible: this.props.returnIncoiceVisible,
-            editIncoiceVisible: this.props.editIncoiceVisible,
+            editPaymentVisible: this.props.editPaymentVisible,
+            cancelPaymentVisible:this.props.cancelPaymentVisible,
 
 
         };
+        this.editPaymentData = this.editPaymentData.bind(this);
     }
 
-    handleSubmitEditInvoice = (e) => {
+    handleSubmitEditPayment = (e) => {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -27,10 +26,10 @@ class EditReturnModal extends React.Component {
                 }
                 let successFn = function (data) {
                     that.setState({
-                        editIncoiceVisible: false,
+                        editPaymentVisible: false,
                     });
-                    that.editInvoiceData(that.props.editInvoice);
-                    that.props.editInvoiceClose();
+                    that.editPaymentData(that.props.editPayment);
+                    that.props.editPaymentClose();
                 };
                 let errorFn = function () {
 
@@ -40,14 +39,9 @@ class EditReturnModal extends React.Component {
         });
     };
 
-    editInvoiceData = (record) => {
+    editPaymentData = (record) => {
         let that = this;
-        // let id = this.props.match.params.id;
-        this.setState({
-            editInvoice: record,
-        }, function () {
-            that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/edit/")
-        });
+        that.props.history.push("/patient/" + record.patient + "/billing/payments/edit/");
     };
 
 
@@ -67,11 +61,11 @@ class EditReturnModal extends React.Component {
         const {getFieldDecorator} = that.props.form;
         return(
             <Modal
-                visible={(that.state.editIncoiceVisible && that.props.editInvoice && that.props.editInvoice.id == that.props.invoice.id)}
+                visible={(that.state.editPaymentVisible && that.props.editPayment && that.props.editPayment.id == that.props.payment.id)}
                 title="Edit Invoice"
                 footer={null}
-                onOk={that.handleSubmitEditInvoice}
-                onCancel={that.props.editInvoiceClose}
+                onOk={that.handleSubmitEditPayment}
+                onCancel={that.props.editPaymentClose}
             >
                 <Form>
                     <Form.Item>
@@ -87,10 +81,10 @@ class EditReturnModal extends React.Component {
                         {that.props.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
                             Resend Otp ?
                         </a> : null}
-                        <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitEditInvoice}>
+                        <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitEditPayment}>
                             Submit
                         </Button>&nbsp;
-                        <Button size="small" onClick={that.props.editInvoiceClose}>
+                        <Button size="small" onClick={that.props.editPaymentClose}>
                             Close
                         </Button>
                     </Form.Item>
@@ -101,4 +95,4 @@ class EditReturnModal extends React.Component {
 
 
 }
-export default Form.create()(EditReturnModal);
+export default Form.create()(EditPaymentModal);
