@@ -61,6 +61,8 @@ class Addinvoicedynamic extends React.Component {
             selectedDoctor: {},
             tempValues: {},
             offers:[],
+            // loading:true,
+            taxes_list:[],
 
         }
 
@@ -75,6 +77,7 @@ class Addinvoicedynamic extends React.Component {
         this.loadLoyaltyDiscount();
         if (this.props.editId) {
             this.loadEditInvoiceData();
+
         }
     }
 
@@ -84,22 +87,26 @@ class Addinvoicedynamic extends React.Component {
         })
     }
     loadEditInvoiceData = () => {
+        let that=this;
         let invoice = this.props.editInvoice;
+
         this.setState(function (prevState) {
             let tableValues = [];
             invoice.procedure.forEach(function (proc) {
+                let id = Math.random().toFixed(7);
                 tableValues.push({
                     ...proc.procedure_data,
                     ...proc,
                     selectedDoctor: proc.doctor_data,
                     selectedDate: moment(proc.date).isValid() ? moment(proc.date) : null,
-                    _id: Math.random().toFixed(7),
+                    _id: id,
                     item_type: PROCEDURES
-                })
+                });
+                that.changeNetPrice(id, proc.discount)
             });
             let stocks = {...prevState.stocks};
             invoice.inventory.forEach(function (proc) {
-
+                let id = Math.random().toFixed(7);
                 if (prevState.itemBatches[proc.inventory]) {
                     if (stocks[proc.inventory]) {
                         let stock_quantity = stocks[proc.inventory];
@@ -121,18 +128,21 @@ class Addinvoicedynamic extends React.Component {
                     ...proc.inventory_item_data,
                     ...proc,
                     selectedDoctor: proc.doctor_data,
-                    _id: Math.random().toFixed(7),
+                    _id: id,
                     item_type: INVENTORY
                 });
+                that.changeNetPrice(id, proc.discount)
             });
 
             return {
                 tableFormValues: tableValues,
                 selectedDate: moment(invoice.date).isValid() ? moment(invoice.date) : null,
-                stocks: stocks
+                stocks: stocks,
+                // loading:false,
             }
         })
-    }
+
+    };
 
     loadInventoryItemList() {
         let that = this;
@@ -174,7 +184,8 @@ class Addinvoicedynamic extends React.Component {
                     return {
                         items: items,
                         stocks: {...prevState.stocks, ...stocks},
-                        itemBatches: {...prevState.itemBatches, ...itemBatches}
+                        itemBatches: {...prevState.itemBatches, ...itemBatches},
+                        saveLoading:false,
                     }
                 }, function () {
                     if (that.props.editId) {
@@ -380,9 +391,9 @@ class Addinvoicedynamic extends React.Component {
                                 "is_active": true,
                                 "margin": item.margin,
                                 "taxes": item.taxes,
-                                // "unit_cost": item.unit_cost,
-                                "unit_cost": item.total_unit_cost?item.total_unit_cost:item.unit_cost,
-                                "discount": item.discount?item.discount.split('#')[0]:0,
+                                "unit_cost": item.unit_cost,
+                                // "unit_cost": item.total_unit_cost?item.total_unit_cost:item.unit_cost,
+                                "discount": item.discount?item.discount.toString().split('#')[0]:0,
                                 "discount_type": "%",
                                 "offers": null,
                                 "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
@@ -395,9 +406,9 @@ class Addinvoicedynamic extends React.Component {
                                 "name": item.name,
                                 "unit": item.unit,
                                 "taxes": item.taxes,
-                                // "unit_cost": item.unit_cost,
-                                "unit_cost": item.total_unit_cost?item.total_unit_cost:item.unit_cost,
-                                "discount": item.discount?item.discount.split('#')[0]:0,
+                                "unit_cost": item.unit_cost,
+                                // "unit_cost": item.total_unit_cost?item.total_unit_cost:item.unit_cost,
+                                "discount": item.discount?item.discount.toString().split('#')[0]:0,
                                 "discount_type": "%",
                                 "offers": null,
                                 "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
@@ -517,7 +528,6 @@ class Addinvoicedynamic extends React.Component {
         setTimeout(function () {
             let values = getFieldsValue();
             if (values.unit_cost[id] || values.unit[id] || values.discount[id] ) {
-
                 that.setState(function (prevState) {
                     let newTableValues = []
                     prevState.tableFormValues.forEach(function (tableObj) {
@@ -536,13 +546,13 @@ class Addinvoicedynamic extends React.Component {
                                 if (value == '0') {
                                     selectOption = false
                                 } else {
-                                    initialDiscount = values.discount[id] ? values.discount[id].split('#')[0] : '';
+                                    initialDiscount = values.discount[id] ? values.discount[id].toString().split('#')[0] : '';
                                 }
                             }
 
 
 
-                            let retailPrice = (values.unit_cost[id]?values.unit_cost[id]:0)*(1-(value && values.discount[id]?values.discount[id].split('#')[0]:initialDiscount)*0.01) * (1 + totalTaxAmount * 0.01);
+                            let retailPrice = (values.unit_cost[id]?values.unit_cost[id]:0)*(1-(value && values.discount[id]?values.discount[id].toString().split('#')[0]:initialDiscount)*0.01) * (1 + totalTaxAmount * 0.01);
                             // console.log("TAX",retailPrice);
                             let total = values.unit[id]*retailPrice;
 
@@ -567,12 +577,12 @@ class Addinvoicedynamic extends React.Component {
         let successFn = function (data) {
             that.setState({
                 offers: data,
-                loading: false
+                // loading: false
             })
         };
         let errorFn = function () {
             that.setState({
-                loading: true
+                // loading: true
             })
         };
         getAPI(interpolate(OFFERS, [this.props.active_practiceId]), successFn, errorFn);
@@ -781,7 +791,7 @@ class Addinvoicedynamic extends React.Component {
                         })(
                             <InputNumber min={1}
                                          max={(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number] ? that.state.stocks[record.inventory][record.selectedBatch.batch_number] : 0)}
-                                         placeholder="units" size={'small'}  onChange={(value) => this.changeNetPrice( record._id)}
+                                         placeholder="units" size={'small'}  onChange={(value) => this.changeNetPrice( record._id,record.discount)}
                                          disabled={!(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number])}/>
                         )}
                     </Form.Item>
@@ -796,7 +806,7 @@ class Addinvoicedynamic extends React.Component {
                                 message: "This field is required.",
                             }],
                         })(
-                            <InputNumber min={1} max={100} placeholder="unit" size={'small'}  onChange={(value) => this.changeNetPrice(record._id)}/>
+                            <InputNumber min={1} max={100} placeholder="unit" size={'small'}  onChange={(value) => this.changeNetPrice(record._id,record.discount)}/>
                         )}
                     </Form.Item>
             )
@@ -817,7 +827,7 @@ class Addinvoicedynamic extends React.Component {
                         message: "This field is required.",
                     }],
                 })(
-                    <InputNumber min={1} placeholder="Unit Cost" size={'small'} onChange={() => that.changeNetPrice(record._id)}/>
+                    <InputNumber min={1} placeholder="Unit Cost" size={'small'} onChange={() => that.changeNetPrice(record._id,record.discount)}/>
                 )}
             </Form.Item>
             // render: (item, record) => item ? item.toFixed(2) : null
@@ -865,7 +875,7 @@ class Addinvoicedynamic extends React.Component {
                 })(
                     <Select placeholder="Taxes" size={'small'} mode={"multiple"}
                             style={{width:150}}
-                            onChange={() => that.changeNetPrice(record._id)}>
+                            onChange={() => that.changeNetPrice(record._id,record.discount)}>
                         {this.state.taxes_list && this.state.taxes_list.map((tax) => <Select.Option
                             value={tax.id}>{tax.name}@{tax.tax_value}%</Select.Option>)}
                     </Select>
