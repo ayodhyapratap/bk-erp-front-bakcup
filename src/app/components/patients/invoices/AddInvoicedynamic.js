@@ -61,7 +61,7 @@ class Addinvoicedynamic extends React.Component {
             selectedDoctor: {},
             tempValues: {},
             offers:[],
-            // loading:true,
+            loading:true,
             taxes_list:[],
 
         }
@@ -69,6 +69,7 @@ class Addinvoicedynamic extends React.Component {
     }
 
     componentDidMount() {
+        let that=this;
         loadDoctors(this);
         this.loadInventoryItemList();
         this.loadProcedures();
@@ -76,7 +77,13 @@ class Addinvoicedynamic extends React.Component {
         this.loadTaxes();
         this.loadLoyaltyDiscount();
         if (this.props.editId) {
-            this.loadEditInvoiceData();
+            setTimeout(function () {
+                that.setState({
+                    loading:false,
+                })
+                that.loadEditInvoiceData();
+            }.bind(this), 2000);
+
 
         }
     }
@@ -138,7 +145,7 @@ class Addinvoicedynamic extends React.Component {
                 tableFormValues: tableValues,
                 selectedDate: moment(invoice.date).isValid() ? moment(invoice.date) : null,
                 stocks: stocks,
-                // loading:false,
+
             }
         })
 
@@ -186,6 +193,7 @@ class Addinvoicedynamic extends React.Component {
                         stocks: {...prevState.stocks, ...stocks},
                         itemBatches: {...prevState.itemBatches, ...itemBatches},
                         saveLoading:false,
+                        loading:false,
                     }
                 }, function () {
                     if (that.props.editId) {
@@ -1005,7 +1013,7 @@ class Addinvoicedynamic extends React.Component {
                         </Col>
                         <Col span={17}>
                             <Form onSubmit={this.handleSubmit}>
-                                <Table pagination={false}
+                                <Table pagination={false} loading={that.state.loading}
                                        bordered={true}
                                        dataSource={this.state.tableFormValues}
                                        columns={consumeRow}/>
