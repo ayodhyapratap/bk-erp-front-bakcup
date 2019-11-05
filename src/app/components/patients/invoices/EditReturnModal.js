@@ -1,7 +1,9 @@
 import React from "react";
 import {Button, Card, Form, Icon, Input, Modal} from "antd";
-import {CANCELINVOICE_RESENT_OTP, CANCELINVOICE_VERIFY_OTP} from "../../../constants/api";
+import moment from "moment";
+import {CANCELINVOICE_GENERATE_OTP, CANCELINVOICE_RESENT_OTP, CANCELINVOICE_VERIFY_OTP} from "../../../constants/api";
 import {getAPI, postAPI} from "../../../utils/common";
+import {OTP_DELAY_TIME} from "../../../constants/dataKeys";
 class EditReturnModal extends React.Component {
     constructor(props) {
         super(props);
@@ -28,6 +30,7 @@ class EditReturnModal extends React.Component {
                         editIncoiceVisible: false,
                     });
                     that.editInvoiceData(that.props.editInvoice)
+                    that.props.editInvoiceClose();
                 };
                 let errorFn = function () {
 
@@ -47,11 +50,7 @@ class EditReturnModal extends React.Component {
         });
     };
 
-    editInvoiceClose = () => {
-        this.setState({
-            editIncoiceVisible: false
-        })
-    };
+
     sendOTP() {
         let that = this;
         let successFn = function (data) {
@@ -72,7 +71,7 @@ class EditReturnModal extends React.Component {
                 title="Edit Invoice"
                 footer={null}
                 onOk={that.handleSubmitEditInvoice}
-                onCancel={that.editInvoiceClose}
+                onCancel={that.props.editInvoiceClose}
             >
                 <Form>
                     <Form.Item>
@@ -91,7 +90,7 @@ class EditReturnModal extends React.Component {
                         <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitEditInvoice}>
                             Submit
                         </Button>&nbsp;
-                        <Button size="small" onClick={that.editInvoiceClose}>
+                        <Button size="small" onClick={that.props.editInvoiceClose}>
                             Close
                         </Button>
                     </Form.Item>

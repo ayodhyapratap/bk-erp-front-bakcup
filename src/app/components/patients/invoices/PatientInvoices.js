@@ -287,8 +287,32 @@ class PatientInvoices extends React.Component {
             that.deleteInvoice(record.patient, record.id)
         }
     };
-
-
+    deleteInvoice(patient, invoice) {
+        let that = this;
+        let reqData = {patient: patient, is_cancelled: true};
+        let successFn = function (data) {
+            displayMessage(SUCCESS_MSG_TYPE, "Invoice cancelled successfully")
+            that.loadInvoices();
+        }
+        let errorFn = function () {
+        }
+        putAPI(interpolate(SINGLE_INVOICES_API, [invoice]), reqData, successFn, errorFn);
+    }
+    editInvoiceClose = () => {
+        this.setState({
+            editIncoiceVisible: false
+        })
+    };
+    returnInvoiceClose = () => {
+        this.setState({
+            returnIncoiceVisible: false
+        })
+    };
+    cancelInvoiceClose = () => {
+        this.setState({
+            cancelIncoiceVisible: false
+        })
+    };
     render() {
         let that = this;
         const drugs = {}
@@ -520,10 +544,10 @@ function InvoiceCard(invoice, that) {
 
 
 
-        {that.state.cancelIncoiceVisible && that.state.otpSent && <CancelReturnModal {...that.state} invoice={invoice} {...that.props} loadInvoices={that.loadInvoices} />}
+        {that.state.cancelIncoiceVisible && that.state.otpSent && <CancelReturnModal {...that.state} invoice={invoice} cancelInvoiceClose={that.cancelInvoiceClose}{...that.props} loadInvoices={that.loadInvoices} />}
 
-        {that.state.editIncoiceVisible && that.state.otpSent && <EditReturnModal {...that.state} invoice={invoice} {...that.props} />}
-        {that.state.returnIncoiceVisible && that.state.otpSent && <InvoiceReturnModal {...that.state} invoice={invoice} {...that.props} />}
+        {that.state.editIncoiceVisible && that.state.otpSent && <EditReturnModal {...that.state} invoice={invoice} editInvoiceClose={that.editInvoiceClose} {...that.props} />}
+        {that.state.returnIncoiceVisible && that.state.otpSent && <InvoiceReturnModal {...that.state} invoice={invoice} returnInvoiceClose={that.returnInvoiceClose} {...that.props} />}
 
     </Card>
 }

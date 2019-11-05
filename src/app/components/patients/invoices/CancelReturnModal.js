@@ -53,11 +53,7 @@ class CancelReturnModal extends React.Component {
         putAPI(interpolate(SINGLE_INVOICES_API, [invoice]), reqData, successFn, errorFn);
     }
 
-    cancelInvoiceClose = () => {
-        this.setState({
-            cancelIncoiceVisible: false
-        })
-    }
+   
 
     sendOTP() {
         let that = this;

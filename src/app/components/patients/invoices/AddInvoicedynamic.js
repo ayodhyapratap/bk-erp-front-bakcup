@@ -380,8 +380,9 @@ class Addinvoicedynamic extends React.Component {
                                 "is_active": true,
                                 "margin": item.margin,
                                 "taxes": item.taxes,
-                                "unit_cost": item.unit_cost,
-                                "discount": item.discount,
+                                // "unit_cost": item.unit_cost,
+                                "unit_cost": item.total_unit_cost?item.total_unit_cost:item.unit_cost,
+                                "discount": item.discount?item.discount.split('#')[0]:0,
                                 "discount_type": "%",
                                 "offers": null,
                                 "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
@@ -394,7 +395,8 @@ class Addinvoicedynamic extends React.Component {
                                 "name": item.name,
                                 "unit": item.unit,
                                 "taxes": item.taxes,
-                                "unit_cost": item.unit_cost,
+                                // "unit_cost": item.unit_cost,
+                                "unit_cost": item.total_unit_cost?item.total_unit_cost:item.unit_cost,
                                 "discount": item.discount?item.discount.split('#')[0]:0,
                                 "discount_type": "%",
                                 "offers": null,
@@ -417,14 +419,14 @@ class Addinvoicedynamic extends React.Component {
                     that.props.loadData();
                     let url = '/patient/' + that.props.match.params.id + '/billing/invoices';
                     that.props.history.push(url);
-                }
+                };
                 let errorFn = function () {
                     that.setState({
                         saveLoading: false
                     });
-                }
+                };
                 if (that.props.editId) {
-                    putAPI(interpolate(SINGLE_INVOICE_API, [that.props.editId]), reqData, successFn, errorFn);
+                    putAPI(interpolate(SINGLE_INVOICE_API,[that.props.editId]), reqData, successFn, errorFn);
                 } else {
                     postAPI(CREATE_OR_EDIT_INVOICES, reqData, successFn, errorFn);
                 }
@@ -510,13 +512,12 @@ class Addinvoicedynamic extends React.Component {
 
     }
     changeNetPrice = (id,value) => {
-        // console.log(id,value)
         let that = this;
         const {getFieldsValue, setFields} = this.props.form;
         setTimeout(function () {
             let values = getFieldsValue();
-            if (values.unit_cost[id] || values.unit[id] || values.discount[id]) {
-               
+            if (values.unit_cost[id] || values.unit[id] || values.discount[id] ) {
+
                 that.setState(function (prevState) {
                     let newTableValues = []
                     prevState.tableFormValues.forEach(function (tableObj) {
@@ -531,18 +532,20 @@ class Addinvoicedynamic extends React.Component {
                                         totalTaxAmount += taxObj.tax_value;
                                 })
                             });
-                            if(value == '0'){
-                                selectOption=false
-                            }else{
-                                initialDiscount=values.discount[id]?values.discount[id].split('#')[0]:'';
+                            if (value) {
+                                if (value == '0') {
+                                    selectOption = false
+                                } else {
+                                    initialDiscount = values.discount[id] ? values.discount[id].split('#')[0] : '';
+                                }
                             }
-                            
 
 
-                            let retailPrice = (values.unit_cost[id]?values.unit_cost[id]:0)*(1-(values.discount[id]?values.discount[id].split('#')[0]:initialDiscount)*0.01) * (1 + totalTaxAmount * 0.01);
+
+                            let retailPrice = (values.unit_cost[id]?values.unit_cost[id]:0)*(1-(value && values.discount[id]?values.discount[id].split('#')[0]:initialDiscount)*0.01) * (1 + totalTaxAmount * 0.01);
                             // console.log("TAX",retailPrice);
                             let total = values.unit[id]*retailPrice;
-                           
+
                             newTableValues.push({...tableObj, total_unit_cost: retailPrice ,total:total,selectOption:selectOption,discount:initialDiscount})
                         } else {
                             newTableValues.push(tableObj);
@@ -604,14 +607,14 @@ class Addinvoicedynamic extends React.Component {
                             selectedOffer.push({...formValue,selectOption:false})
                         }else{
                             prevState.offers.forEach(function (item) {
-                           
+
                                 if (item.id == value){
                                     selectedOffer.push({...formValue , loyaltyDiscount:item.discount})
                                 }
                             });
                         }
-                        
-                       
+
+
                     }else{
                         selectedOffer.push(formValue);
                     }
@@ -634,7 +637,7 @@ class Addinvoicedynamic extends React.Component {
                     let retailPrice = formValue.unit_cost / (1 + value * 0.01);
                     console.log(retailPrice);
                     selectedOffer.push({...formValue , loyaltyDiscount:value})
-                    
+
                 }else{
                     selectedOffer.push(formValue);
                 }
@@ -841,7 +844,7 @@ class Addinvoicedynamic extends React.Component {
                 key={`discount[${record._id}]`}
                 {...formItemLayout}>
                 {getFieldDecorator(`discount[${record._id}]`, {
-                    initialValue: record.discount,
+                    initialValue: record.discount?record.discount:0,
                     validateTrigger: ['onChange', 'onBlur'],
 
                 })(
@@ -889,7 +892,8 @@ class Addinvoicedynamic extends React.Component {
             //     )}
             // </Form.Item>
             // render: (item, record) => item ? item.toFixed(2) : null
-            render: (item, record) => ((record.item_type == INVENTORY) && record.total_unit_cost) ? record.total_unit_cost.toFixed(2) :record.cost_with_tax ?record.cost_with_tax.toFixed(2) :record.retail_with_tax.toFixed(2),
+            // render: (item, record) => ((record.item_type == INVENTORY) && record.total_unit_cost) ? record.total_unit_cost.toFixed(2) :record.cost_with_tax ?record.cost_with_tax.toFixed(2) :record.retail_with_tax.toFixed(2),
+            render:(item,record)=><span>{item?item.toFixed(2):record.item_type == INVENTORY ? record.retail_with_tax.toFixed(2) : record.cost_with_tax.toFixed(2)}</span>,
         },{
             title:'Total',
             key:'total',

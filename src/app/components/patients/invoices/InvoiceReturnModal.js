@@ -26,6 +26,7 @@ class InvoiceReturnModal extends React.Component {
                         returnIncoiceVisible: false,
                     });
                     that.returnInvoiceData(that.props.editInvoice)
+                    that.props.returnInvoiceClose();
                 };
                 let errorFn = function () {
 
@@ -45,11 +46,7 @@ class InvoiceReturnModal extends React.Component {
         });
     }
 
-    returnInvoiceClose = () => {
-        this.setState({
-            returnIncoiceVisible: false
-        })
-    };
+
 
     sendOTP() {
         let that = this;
@@ -71,7 +68,7 @@ class InvoiceReturnModal extends React.Component {
                 title="Return Invoice"
                 footer={null}
                 onOk={that.props.handleSubmitReturnInvoice}
-                onCancel={that.returnInvoiceClose}
+                onCancel={that.props.returnInvoiceClose}
             >
                 <Form>
                     <Form.Item>
@@ -90,7 +87,7 @@ class InvoiceReturnModal extends React.Component {
                         <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitReturnInvoice}>
                             Submit
                         </Button>&nbsp;
-                        <Button size="small" onClick={that.returnInvoiceClose}>
+                        <Button size="small" onClick={that.props.returnInvoiceClose}>
                             Close
                         </Button>
                     </Form.Item>
