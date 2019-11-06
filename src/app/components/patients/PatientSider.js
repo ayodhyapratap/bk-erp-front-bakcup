@@ -59,6 +59,9 @@ class PatientSider extends React.Component {
 
             case 'alt+g':
                 return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/billing/ledger"):this.props.history.push("/patients/profile"));
+
+            case 'alt+w':
+                return (this.props.currentPatient ?this.props.history.push("/patient/" + this.props.currentPatient.id + "/emr/timeline"):this.props.history.push("/patients/profile"));
         }
     }
 
@@ -161,7 +164,7 @@ class PatientSider extends React.Component {
                             <Menu.Item key="25" disabled={!this.props.currentPatient}>
                                 <Link
                                     to={this.props.currentPatient ? "/patient/" + this.props.currentPatient.id + "/emr/timeline" : "/patients/profile"}>
-                                    <Icon type="clock-circle"/>Timeline
+                                    <Icon type="clock-circle"/>Timeline <span  className={"shortcutLetterHighlight"}>w</span>
                                 </Link>
                             </Menu.Item>
                             : null}
