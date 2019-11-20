@@ -102,7 +102,7 @@ class AppHeader extends React.Component {
             displayMessage(ERROR_MSG_TYPE,"Something went wrong.");
         };
 
-        getAPI(interpolate(SAVE_CREDENTIALS,[that.props.user.staff.id]),successFn,errorFn);
+        getAPI(interpolate(SAVE_CREDENTIALS,[that.props.user.id]),successFn,errorFn);
     };
 
 

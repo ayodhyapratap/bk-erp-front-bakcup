@@ -203,7 +203,7 @@ class PatientProfile extends React.Component {
                         <PatientRow label="Patient Name" value={patient.user.first_name}/>
                         <PatientRow label="Patient ID" value={patient.custom_id?patient.custom_id:patient.id}/>
                         {patient && patient.role ?
-                            <PatientRow label={"Agent Roles"} value={patient.role_data.name}/> : null}
+                            <PatientRow label={"Advisor Role"} value={patient.role_data.name}/> : null}
                         <PatientRow label="Gender" value={patient.gender}/>
                         {patient.is_age?
                             <PatientRow label="Age" value={patient.dob?moment().diff(this.props.currentPatient.dob,'years'):null}/>

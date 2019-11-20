@@ -3,7 +3,7 @@
  * */
 
 const CONFIG = {
-    backendBaseUrl: '',
+    backendBaseUrl: '' ,
     imageBaseUrl : '/media',
     prodDomain : ["clinic.bkarogyam.com","bk-erp.plutonic.co.in"],
     crashHandling : {

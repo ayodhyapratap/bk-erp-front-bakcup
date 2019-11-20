@@ -123,22 +123,22 @@ class MLMGenerate extends React.Component {
 
             if(that.state.editId) {
                 reqData.id = that.state.editId;
-                if (that.state.margin.comissions) {
-                    that.state.margin.comissions.forEach(function (role,key) {
-                        for (let i = 1; i <= that.state.level_count; i++) {
-
-                            if (role.level ==i){
-                                reqData.comissions.push({
-                                    id:role.id,
-                                    ...role,
-                                    commision_percent:values[i][role.role]
-                                })
-                            }
-                        }
-                        reqData.comissions.shift();
-                    });
-
-                }
+                // if (that.state.margin.comissions) {
+                //     that.state.margin.comissions.forEach(function (role,key) {
+                //         for (let i = 1; i <= that.state.level_count; i++) {
+                //
+                //             if (role.level ==i){
+                //                 reqData.comissions.push({
+                //                     id:role.id,
+                //                     ...role,
+                //                     commision_percent:values[i][role.role]
+                //                 })
+                //             }
+                //         }
+                //         reqData.comissions.shift();
+                //     });
+                //
+                // }
             }
 
             if (!err) {

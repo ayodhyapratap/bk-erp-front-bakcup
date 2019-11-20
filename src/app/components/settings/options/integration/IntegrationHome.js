@@ -37,7 +37,7 @@ export default class IntegrationHome extends React.Component {
                 loading:false
             })
         }
-        getAPI(interpolate(SAVE_CREDENTIALS,[that.props.user.staff.id]),successFn ,errorFn)
+        getAPI(interpolate(SAVE_CREDENTIALS,[that.props.user.id]),successFn ,errorFn)
     }
     render() {
         let that = this;
@@ -62,7 +62,7 @@ export default class IntegrationHome extends React.Component {
             errorFn : function (){
 
             },
-            action: interpolate(SAVE_CREDENTIALS, [this.props.user.staff.id]),
+            action: interpolate(SAVE_CREDENTIALS, [this.props.user.id]),
         };
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <Row>
@@ -72,9 +72,9 @@ export default class IntegrationHome extends React.Component {
                     <TabPane tab={<span><Icon type="check-circle"/>Task Tracker</span>} key="Complaints">
                         <TestFormLayout fields={taskIntegrateFormFields} formProp={taskIntegrateFormProp}/>
                     </TabPane>
-                    <TabPane tab={<span><Icon type="phone"/>Calling</span>} key="observations">
-                        {/*<TableData {...this.props} id={EMR_OBSERVATIONS} name="Observations"/>*/}
-                    </TabPane>
+                    {/*<TabPane tab={<span><Icon type="phone"/>Calling</span>} key="observations">*/}
+                    {/*    /!*<TableData {...this.props} id={EMR_OBSERVATIONS} name="Observations"/>*!/*/}
+                    {/*</TabPane>*/}
                 </Tabs>
 
             </Card>
