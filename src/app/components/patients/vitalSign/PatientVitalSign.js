@@ -73,16 +73,16 @@ class PatientVitalSign extends React.Component {
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                let that = this;
                 let reqData = {...record, is_active: false};
                 let successFn = function (data) {
-                    displayMessage(SUCCESS_MSG_TYPE, "Deleted Successfully!!")
                     that.loadVitalsigns();
-                }
+                    displayMessage(SUCCESS_MSG_TYPE, "Deleted Successfully!!")
+
+                };
                 let errorFn = function () {
 
-                }
-                postAPI(interpolate(VITAL_SIGNS_API, [this.props.match.params.id]), reqData, successFn, errorFn)
+                };
+                postAPI(interpolate(VITAL_SIGNS_API, [record.patient]), reqData, successFn, errorFn)
             },
             onCancel() {
                 console.log('Cancel');
@@ -94,8 +94,14 @@ class PatientVitalSign extends React.Component {
             editVitalSign: record,
             loading: false
         });
-        let id = this.props.match.params.id;
-        this.props.history.push("/patient/" + id + "/emr/vitalsigns/edit")
+        if (this.props.match.params.id){
+            let id = this.props.match.params.id;
+            this.props.history.push("/patient/" + id + "/emr/vitalsigns/edit")
+        }else {
+            this.props.history.push("/patient/" + record.patient + "/emr/vitalsigns");
+        }
+
+
 
     }
 
@@ -115,9 +121,9 @@ class PatientVitalSign extends React.Component {
         let that = this;
         const columns = [{
             title: 'Time',
-            dataIndex: 'created_at',
+            dataIndex: 'date',
             key: 'name',
-            render: created_at => <span>{moment(created_at).format('LLL')}</span>,
+            render: (item,record) => <span>{record.date?moment(record.date).format('LLL'):''}</span>,
         }, {
             title: 'Temp(F)',
             key: 'temperature',

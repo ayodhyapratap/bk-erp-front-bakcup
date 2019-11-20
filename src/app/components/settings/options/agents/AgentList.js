@@ -177,38 +177,52 @@ class AgentRoles extends React.Component {
 
     render() {
         let that = this;
+        let i = 1;
         const {getFieldDecorator} = this.props.form;
         const columns = [{
+            title: 'S. No',
+            key: 'sno',
+            dataIndex: 'sno',
+            render: (item, record) => <span> {i++}</span>,
+            export: (item, record, index) => index + 1,
+        },{
             title: 'Name',
             dataIndex: 'user.first_name',
             key: 'name',
-            render: (value, record) => <Link to={"/patient/" + record.id + "/profile"}>{value}</Link>
+            render: (value, record) => <Link to={"/patient/" + record.id + "/profile"}>{value}</Link>,
+            export:(item,record)=>(record.user.first_name),
         }, {
             title: 'Email',
             dataIndex: 'user.email',
-            key: 'email'
+            key: 'email',
+            export:(item,record)=>(record.user.email),
         }, {
             title: 'Mobile',
             dataIndex: 'user.mobile',
-            key: 'mobile'
+            key: 'mobile',
+            export:(item,record)=>(record.user.mobile),
         }, {
             title: 'Referrer',
             dataIndex: 'user.referer_data.referer.first_name',
             key: 'referrer',
             render: (value, record) => (value && record.user.referer_data.patient ?
-                <Link to={"/patient/" + record.user.referer_data.patient + "/profile"}>{value}</Link> : '--')
+                <Link to={"/patient/" + record.user.referer_data.patient + "/profile"}>{value}</Link> : '--'),
+            export:(item,record)=>(record.user.referer?record.user.referer_data.referer.first_name:'--'),
         }, {
             title: 'Role',
             dataIndex: 'role_data.name',
             key: 'role_data',
+            export:(item,record)=>(record.role_data.name),
         }, {
             title: 'Aadhar',
             dataIndex: 'aadhar_id',
             key: 'aadhar_id',
+            export:(value)=>(value),
         }, {
             title: 'Document',
             dataIndex: 'aadhar_upload',
             key: 'aadhar_upload',
+            hideExport:true,
             render: (value) => (value ? <a target="_blank" href={makeFileURL(value)}>Open Document</a> : '--')
         }, {
             title: 'Status',
@@ -227,6 +241,7 @@ class AgentRoles extends React.Component {
         }, {
             title: 'Action',
             key: 'action',
+            hideExport:true,
             render: (text, record) => (
                 <span>
               <a onClick={() => this.editObject(record)}>  Edit</a>

@@ -3,7 +3,7 @@ import {Route} from "react-router";
 
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Card, Form, Row} from "antd";
-import {NUMBER_FIELD, SELECT_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {DATE_PICKER, NUMBER_FIELD, SELECT_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import {VITAL_SIGNS_API} from "../../../constants/api";
 import {displayMessage, interpolate} from "../../../utils/common";
 import {Redirect} from 'react-router-dom'
@@ -104,7 +104,12 @@ class AddorEditPatientVitalSigns extends React.Component {
             key: "uric_acid",
             initialValue: this.props.editVitalSign ? this.props.editVitalSign.uric_acid : null,
             type: NUMBER_FIELD,
-        },];
+        },{
+            label:'Date',
+            key:'date',
+            initialValue:this.props.editVitalSign && this.props.editVitalSign.data ?this.props.editVitalSign.data:'',
+            type:DATE_PICKER
+        }];
 
 
         let editformProp;

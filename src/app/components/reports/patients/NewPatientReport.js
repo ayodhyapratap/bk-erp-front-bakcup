@@ -70,10 +70,11 @@ export default class NewPatientReports extends React.Component {
         let i = 1;
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
-            export:(item,record,index)=>index+1,
+            // key: 'sno',
+            // dataIndex:'sno',
+             render: (item, record) => <span> {i++}</span>,
+            // export:(item,record,index)=>index+1,
+            key: 'index',
             width: 50
         },{
             title: 'Patient Name',
