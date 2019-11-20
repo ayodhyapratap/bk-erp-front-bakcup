@@ -60,16 +60,16 @@ class Addinvoicedynamic extends React.Component {
             searchItem: '',
             selectedDoctor: {},
             tempValues: {},
-            offers:[],
-            loading:true,
-            taxes_list:[],
+            offers: [],
+            loading: true,
+            taxes_list: [],
 
         }
 
     }
 
     componentDidMount() {
-        let that=this;
+        let that = this;
         loadDoctors(this);
         this.loadInventoryItemList();
         this.loadProcedures();
@@ -79,7 +79,7 @@ class Addinvoicedynamic extends React.Component {
         if (this.props.editId) {
             setTimeout(function () {
                 that.setState({
-                    loading:false,
+                    loading: false,
                 })
                 that.loadEditInvoiceData();
             }.bind(this), 2000);
@@ -94,7 +94,7 @@ class Addinvoicedynamic extends React.Component {
         })
     }
     loadEditInvoiceData = () => {
-        let that=this;
+        let that = this;
         let invoice = this.props.editInvoice;
 
         this.setState(function (prevState) {
@@ -192,8 +192,8 @@ class Addinvoicedynamic extends React.Component {
                         items: items,
                         stocks: {...prevState.stocks, ...stocks},
                         itemBatches: {...prevState.itemBatches, ...itemBatches},
-                        saveLoading:false,
-                        loading:false,
+                        saveLoading: false,
+                        loading: false,
                     }
                 }, function () {
                     if (that.props.editId) {
@@ -295,12 +295,12 @@ class Addinvoicedynamic extends React.Component {
                 }
             }
             return {
-                tableFormValues: [...prevState.tableFormValues, {
+                tableFormValues: [{
                     ...tableFormFields,
                     ...item,
                     id: undefined,
                     _id: randId,
-                }]
+                }, ...prevState.tableFormValues]
             }
         });
     };
@@ -401,7 +401,7 @@ class Addinvoicedynamic extends React.Component {
                                 "taxes": item.taxes,
                                 "unit_cost": item.unit_cost,
                                 // "unit_cost": item.total_unit_cost?item.total_unit_cost:item.unit_cost,
-                                "discount": item.discount?item.discount.toString().split('#')[0]:0,
+                                "discount": item.discount ? item.discount.toString().split('#')[0] : 0,
                                 "discount_type": "%",
                                 "offers": null,
                                 "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
@@ -416,7 +416,7 @@ class Addinvoicedynamic extends React.Component {
                                 "taxes": item.taxes,
                                 "unit_cost": item.unit_cost,
                                 // "unit_cost": item.total_unit_cost?item.total_unit_cost:item.unit_cost,
-                                "discount": item.discount?item.discount.toString().split('#')[0]:0,
+                                "discount": item.discount ? item.discount.toString().split('#')[0] : 0,
                                 "discount_type": "%",
                                 "offers": null,
                                 "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
@@ -445,7 +445,7 @@ class Addinvoicedynamic extends React.Component {
                     });
                 };
                 if (that.props.editId) {
-                    putAPI(interpolate(SINGLE_INVOICE_API,[that.props.editId]), reqData, successFn, errorFn);
+                    putAPI(interpolate(SINGLE_INVOICE_API, [that.props.editId]), reqData, successFn, errorFn);
                 } else {
                     postAPI(CREATE_OR_EDIT_INVOICES, reqData, successFn, errorFn);
                 }
@@ -530,20 +530,20 @@ class Addinvoicedynamic extends React.Component {
         })
 
     }
-    changeNetPrice = (id,value) => {
+    changeNetPrice = (id, value) => {
         let that = this;
         const {getFieldsValue, setFields} = this.props.form;
         setTimeout(function () {
             let values = getFieldsValue();
-            if (values.unit_cost[id] || values.unit[id] || values.discount[id] ) {
+            if (values.unit_cost[id] || values.unit[id] || values.discount[id]) {
                 that.setState(function (prevState) {
                     let newTableValues = []
                     prevState.tableFormValues.forEach(function (tableObj) {
                         if (tableObj._id == id) {
 
                             let totalTaxAmount = 0;
-                            let initialDiscount=0;
-                            let selectOption=tableObj.selectOption || tableObj.selectOption==false?tableObj.selectOption:false;
+                            let initialDiscount = 0;
+                            let selectOption = tableObj.selectOption || tableObj.selectOption == false ? tableObj.selectOption : false;
                             values.taxes[id].forEach(function (taxid) {
                                 prevState.taxes_list.forEach(function (taxObj) {
                                     if (taxObj.id == taxid)
@@ -559,12 +559,17 @@ class Addinvoicedynamic extends React.Component {
                             }
 
 
-
-                            let retailPrice = (values.unit_cost[id]?values.unit_cost[id]:0)*(1-(value && values.discount[id]?values.discount[id].toString().split('#')[0]:initialDiscount)*0.01) * (1 + totalTaxAmount * 0.01);
+                            let retailPrice = (values.unit_cost[id] ? values.unit_cost[id] : 0) * (1 - (value && values.discount[id] ? values.discount[id].toString().split('#')[0] : initialDiscount) * 0.01) * (1 + totalTaxAmount * 0.01);
                             // console.log("TAX",retailPrice);
-                            let total = values.unit[id]*retailPrice;
+                            let total = values.unit[id] * retailPrice;
 
-                            newTableValues.push({...tableObj, total_unit_cost: retailPrice ,total:total,selectOption:selectOption,discount:initialDiscount})
+                            newTableValues.push({
+                                ...tableObj,
+                                total_unit_cost: retailPrice,
+                                total: total,
+                                selectOption: selectOption,
+                                discount: initialDiscount
+                            })
                         } else {
                             newTableValues.push(tableObj);
                         }
@@ -595,8 +600,8 @@ class Addinvoicedynamic extends React.Component {
         };
         getAPI(interpolate(OFFERS, [this.props.active_practiceId]), successFn, errorFn);
     };
-    onChangeOption=(type ,id)=>{
-       let that=this;
+    onChangeOption = (type, id) => {
+        let that = this;
         that.setState(function (prevState) {
             let tempArr = [];
 
@@ -611,60 +616,61 @@ class Addinvoicedynamic extends React.Component {
             return {tableFormValues: tempArr}
         });
     };
-    onChangeOffer =(value ,id)=>{
-        let that=this;
-            that.setState(function (prevState) {
-                let selectedOffer=[];
-                prevState.tableFormValues.forEach(function (formValue) {
-                    if (formValue._id == id){
+    onChangeOffer = (value, id) => {
+        let that = this;
+        that.setState(function (prevState) {
+            let selectedOffer = [];
+            prevState.tableFormValues.forEach(function (formValue) {
+                if (formValue._id == id) {
 
-                        if(value == 'none'){
-                            selectedOffer.push({...formValue , loyaltyDiscount:null})
-                        }
-                        if(value == '0'){
-                            selectedOffer.push({...formValue,selectOption:false})
-                        }else{
-                            prevState.offers.forEach(function (item) {
-
-                                if (item.id == value){
-                                    selectedOffer.push({...formValue , loyaltyDiscount:item.discount})
-                                }
-                            });
-                        }
-
-
-                    }else{
-                        selectedOffer.push(formValue);
+                    if (value == 'none') {
+                        selectedOffer.push({...formValue, loyaltyDiscount: null})
                     }
-                });
-                return{ tableFormValues:selectedOffer}
+                    if (value == '0') {
+                        selectedOffer.push({...formValue, selectOption: false})
+                    } else {
+                        prevState.offers.forEach(function (item) {
 
+                            if (item.id == value) {
+                                selectedOffer.push({...formValue, loyaltyDiscount: item.discount})
+                            }
+                        });
+                    }
+
+
+                } else {
+                    selectedOffer.push(formValue);
+                }
             });
+            return {tableFormValues: selectedOffer}
+
+        });
 
     };
 
 
-    onchangeDiscountSimple = (value ,id)=>{
-        console.log(value,id);
-        let that=this;
+    onchangeDiscountSimple = (value, id) => {
+        console.log(value, id);
+        let that = this;
         that.setState(function (prevState) {
-            let selectedOffer=[];
+            let selectedOffer = [];
             prevState.tableFormValues.forEach(function (formValue) {
-                if (formValue._id == id){
+                if (formValue._id == id) {
 
                     let retailPrice = formValue.unit_cost / (1 + value * 0.01);
                     console.log(retailPrice);
-                    selectedOffer.push({...formValue , loyaltyDiscount:value})
+                    selectedOffer.push({...formValue, loyaltyDiscount: value})
 
-                }else{
+                } else {
                     selectedOffer.push(formValue);
                 }
             });
-            return{ tableFormValues:selectedOffer}
+            return {tableFormValues: selectedOffer}
 
         });
 
     }
+
     render() {
         let that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
@@ -696,7 +702,7 @@ class Addinvoicedynamic extends React.Component {
             initialValue: '%',
         })(
             <Select>
-              {CURRENCY_TYPE.map(option =><Select.Option value={option.value}> {option.value}</Select.Option>)}
+                {CURRENCY_TYPE.map(option => <Select.Option value={option.value}> {option.value}</Select.Option>)}
             </Select>
         );
 
@@ -799,7 +805,8 @@ class Addinvoicedynamic extends React.Component {
                         })(
                             <InputNumber min={1}
                                          max={(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number] ? that.state.stocks[record.inventory][record.selectedBatch.batch_number] : 0)}
-                                         placeholder="units" size={'small'}  onChange={(value) => this.changeNetPrice( record._id,record.discount)}
+                                         placeholder="units" size={'small'}
+                                         onChange={(value) => this.changeNetPrice(record._id, record.discount)}
                                          disabled={!(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number])}/>
                         )}
                     </Form.Item>
@@ -814,7 +821,8 @@ class Addinvoicedynamic extends React.Component {
                                 message: "This field is required.",
                             }],
                         })(
-                            <InputNumber min={1} max={100} placeholder="unit" size={'small'}  onChange={(value) => this.changeNetPrice(record._id,record.discount)}/>
+                            <InputNumber min={1} max={100} placeholder="unit" size={'small'}
+                                         onChange={(value) => this.changeNetPrice(record._id, record.discount)}/>
                         )}
                     </Form.Item>
             )
@@ -835,7 +843,8 @@ class Addinvoicedynamic extends React.Component {
                         message: "This field is required.",
                     }],
                 })(
-                    <InputNumber min={1} placeholder="Unit Cost" size={'small'} onChange={() => that.changeNetPrice(record._id,record.discount)}/>
+                    <InputNumber min={1} placeholder="Unit Cost" size={'small'}
+                                 onChange={() => that.changeNetPrice(record._id, record.discount)}/>
                 )}
             </Form.Item>
             // render: (item, record) => item ? item.toFixed(2) : null
@@ -844,32 +853,36 @@ class Addinvoicedynamic extends React.Component {
             key: 'discount',
             width: 100,
             dataIndex: 'discount',
-            render: (item, record) =>(record.selectOption ?
-            <Form.Item  key={`discount[${record._id}]`} extra={<span>{record && record.discount?record.discount + '% Discount' :null} </span>}>
-                  {getFieldDecorator(`discount[${record._id}]`, {
-                    initialValue: record.discount,
-                    validateTrigger: ['onChange', 'onBlur'],
+            render: (item, record) => (record.selectOption ?
+                <Form.Item key={`discount[${record._id}]`}
+                           extra={<span>{record && record.discount ? record.discount + '% Discount' : null} </span>}>
+                    {getFieldDecorator(`discount[${record._id}]`, {
+                        initialValue: record.discount,
+                        validateTrigger: ['onChange', 'onBlur'],
 
-                })
+                    })
 
-               (<Select style={{width:150}} onChange={(value)=>that.changeNetPrice(record._id ,value)} size={"small"}>
-                    {/* <Select.Option value={'none'}>None</Select.Option> */}
-                    {that.state.offers.map(option =><Select.Option value={option.discount+'#'+option.id}>{option.code}</Select.Option>)}
-                    <Select.Option value={'0'}>Custom</Select.Option>
-                </Select>)
-                }
-            </Form.Item>:<Form.Item extra={<a  onClick={()=>that.onChangeOption('selectOption' ,record._id)}>Choose Form Offers</a>}
-                key={`discount[${record._id}]`}
-                {...formItemLayout}>
-                {getFieldDecorator(`discount[${record._id}]`, {
-                    initialValue: record.discount?record.discount:0,
-                    validateTrigger: ['onChange', 'onBlur'],
+                    (<Select style={{width: 150}} onChange={(value) => that.changeNetPrice(record._id, value)}
+                             size={"small"}>
+                        {/* <Select.Option value={'none'}>None</Select.Option> */}
+                        {that.state.offers.map(option => <Select.Option
+                            value={option.discount + '#' + option.id}>{option.code}</Select.Option>)}
+                        <Select.Option value={'0'}>Custom</Select.Option>
+                    </Select>)
+                    }
+                </Form.Item> : <Form.Item
+                    extra={<a onClick={() => that.onChangeOption('selectOption', record._id)}>Choose Form Offers</a>}
+                    key={`discount[${record._id}]`}
+                    {...formItemLayout}>
+                    {getFieldDecorator(`discount[${record._id}]`, {
+                        initialValue: record.discount ? record.discount : 0,
+                        validateTrigger: ['onChange', 'onBlur'],
 
-                })(
-                    <Input placeholder="discount"  addonAfter={prefixSelector} size={"small"}
-                           style={{ width: 150 }}  onChange={(e) => this.changeNetPrice(record._id,e.target.value)}/>
-                )}
-            </Form.Item>)
+                    })(
+                        <Input placeholder="discount" addonAfter={prefixSelector} size={"small"}
+                               style={{width: 150}} onChange={(e) => this.changeNetPrice(record._id, e.target.value)}/>
+                    )}
+                </Form.Item>)
         }, {
             title: 'Taxes',
             key: 'taxes',
@@ -882,8 +895,8 @@ class Addinvoicedynamic extends React.Component {
                     validateTrigger: ['onChange', 'onBlur'],
                 })(
                     <Select placeholder="Taxes" size={'small'} mode={"multiple"}
-                            style={{width:150}}
-                            onChange={() => that.changeNetPrice(record._id,record.discount)}>
+                            style={{width: 150}}
+                            onChange={() => that.changeNetPrice(record._id, record.discount)}>
                         {this.state.taxes_list && this.state.taxes_list.map((tax) => <Select.Option
                             value={tax.id}>{tax.name}@{tax.tax_value}%</Select.Option>)}
                     </Select>
@@ -911,12 +924,13 @@ class Addinvoicedynamic extends React.Component {
             // </Form.Item>
             // render: (item, record) => item ? item.toFixed(2) : null
             // render: (item, record) => ((record.item_type == INVENTORY) && record.total_unit_cost) ? record.total_unit_cost.toFixed(2) :record.cost_with_tax ?record.cost_with_tax.toFixed(2) :record.retail_with_tax.toFixed(2),
-            render:(item,record)=><span>{item?item.toFixed(2):record.item_type == INVENTORY ? record.retail_with_tax.toFixed(2) : record.cost_with_tax.toFixed(2)}</span>,
-        },{
-            title:'Total',
-            key:'total',
-            width:100,
-            dataIndex:'total',
+            render: (item, record) =>
+                <span>{item ? item.toFixed(2) : record.item_type == INVENTORY ? record.retail_with_tax.toFixed(2) : record.cost_with_tax.toFixed(2)}</span>,
+        }, {
+            title: 'Total',
+            key: 'total',
+            width: 100,
+            dataIndex: 'total',
             render: (item, record) => item ? item.toFixed(2) : null
 
         }]);
@@ -956,7 +970,7 @@ class Addinvoicedynamic extends React.Component {
                                           renderItem={item => (
                                               <List.Item>
                                                   <List.Item.Meta
-                                                      title={item.name + ' ('+ item.total_quantity +')'}
+                                                      title={item.name + ' (' + item.total_quantity + ')'}
                                                   />
                                                   <Button type="primary" size="small" shape="circle"
                                                           onClick={() => this.add({
@@ -1021,9 +1035,10 @@ class Addinvoicedynamic extends React.Component {
                                 <Affix offsetBottom={0}>
                                     <Card>
                                         <Col span={8}>
-                                            <h3>Grand Total: <b>{this.state.tableFormValues.reduce(function (total, item) {
-                                                return (parseFloat(total) + (item&&item.total?item.total:0)).toFixed(2);
-                                            },0)}</b></h3>
+                                            <h3>Grand
+                                                Total: <b>{this.state.tableFormValues.reduce(function (total, item) {
+                                                    return (parseFloat(total) + (item && item.total ? item.total : 0)).toFixed(2);
+                                                }, 0)}</b></h3>
                                         </Col>
 
                                         <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>

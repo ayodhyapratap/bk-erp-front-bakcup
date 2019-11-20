@@ -89,9 +89,9 @@ export default class AgentTreeReport extends React.Component {
                 {/*{[that.state.agentTreeData].length >0 ?*/}
 
                 <h2 style={{padding:"10px"}}>Agent Tree</h2>
-                {/*<div style={{width:'100%',overflowX:'scroll'}}>*/}
+                <div style={{width:'100%',overflowX:'scroll'}}>
                 <OrgChart tree={this.state.agentTreeData} NodeComponent={MyNodeComponent}/>
-                {/*</div>*/}
+                </div>
                 {/*: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}*/}
 
             </div>
