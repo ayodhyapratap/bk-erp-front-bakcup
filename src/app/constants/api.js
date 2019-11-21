@@ -37,7 +37,8 @@ export const EMR_OBSERVATIONS = 'clinics/%s/observations/';
 export const EMR_TREATMENTNOTES = 'clinics/%s/treatmentnotes/';
 export const EMR_INVESTIGATIONS = 'clinics/%s/investigations/';
 export const EMR_FILETAGS = 'clinics/%s/filetags/';
-export const EMR_VITAL_SIGNS = 'clinics/%s/vital_sign/'
+export const EMR_VITAL_SIGNS = 'clinics/%s/vital_sign/';
+export const EMR_MEDICATION = 'clinics/%s/medication/';
 export const APPOINTMENT_CATEGORIES = 'clinics/%s/appointment_category/';
 export const ALL_PRACTICE_STAFF = 'staff/';
 export const SINGLE_PRACTICE_STAFF_API = 'staff/%s/';
@@ -267,3 +268,6 @@ export const MEETING_USER = 'meetings/zoom_user/';
 export const MEETINGS = 'meetings/';
 export const MEETING_DETAILS = 'meetings/details';
 export const SINGLE_MEETING = 'meetings/%s/';
+
+/** Alternate Medicine Conversion **/
+export const ALTERNATE_MEDICINE = 'conversion/';

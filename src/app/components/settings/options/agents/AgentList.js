@@ -22,7 +22,8 @@ class AgentRoles extends React.Component {
             data: null,
             loading: true,
             agentRoles: [],
-            practiceList: []
+            practiceList: [],
+            approved:null
 
         };
         this.loadData = this.loadData.bind(this);
@@ -40,13 +41,9 @@ class AgentRoles extends React.Component {
         let successFn = function (data) {
             that.setState({
                 agentRoles: data,
-                loading: false
             })
         };
         let errorFn = function () {
-            that.setState({
-                loading: false
-            })
         };
         getAPI(AGENT_ROLES, successFn, errorFn);
 
@@ -284,7 +281,7 @@ class AgentRoles extends React.Component {
                                 </Form.Item>
 
                                 <Form.Item key="approved" label="Status">
-                                    {getFieldDecorator("approved", {initialValue: this.state.approved ? this.state.approved : ''},
+                                    {getFieldDecorator("approved", {initialValue: this.state.approved ? this.state.approved : null},
                                     )(
                                         <Select placeholder="status" style={{minWidth: 150}}>
                                             {status.map(item => <Select.Option

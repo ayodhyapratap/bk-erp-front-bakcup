@@ -1,7 +1,7 @@
 import React from "react";
 
 import {Layout, Spin} from "antd";
-import {Redirect, Route} from "react-router";
+import {Redirect, Route, matchPath} from "react-router";
 import PatientProfile from "./patient/PatientProfile";
 import EditPatientDetails from "./patient/EditPatientDetails";
 import Appointment from "./appointment/Appointment"
@@ -32,6 +32,7 @@ import PatientMedicalCertificate from "./files/PatientMedicalCertificate";
 import PermissionDenied from "../common/errors/PermissionDenied";
 import BookingHome from "./booking/BookingHome";
 import PatientWalletLedger from "./wallet-ledger/PatientWalletLedger";
+import {ROUTES_TO_HIDE_PATIENT_SIDE_PANEL} from "../../constants/hardData";
 
 const {Content} = Layout;
 
@@ -47,6 +48,7 @@ class PatientHome extends React.Component {
             showAllClinic: getCommonSettings('showAllClinic'),
             pendingAmount: null,
             walletAmount: null,
+            hideSidePanel: false
         };
         this.setCurrentPatient = this.setCurrentPatient.bind(this);
         this.togglePatientListModal = this.togglePatientListModal.bind(this);
@@ -61,6 +63,32 @@ class PatientHome extends React.Component {
         }
         this.loadPatientPendingAmount();
         this.loadPatientWallet();
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        let that = this;
+        if (this.state.currentPathLocation != nextProps.location)
+            this.setState({
+                currentPathLocation: nextProps.location
+            }, function () {
+                let foundFlag = false;
+                for (var i = 0; i < ROUTES_TO_HIDE_PATIENT_SIDE_PANEL.length; i++) {
+                    if (matchPath(that.state.currentPathLocation.pathname, {
+                        path: ROUTES_TO_HIDE_PATIENT_SIDE_PANEL[i],
+                        exact: false,
+                        strict: false
+                    })) {
+                        foundFlag = true;
+                        that.setState({
+                            hideSidePanel: true
+                        })
+                    }
+                }
+                if (!foundFlag)
+                    that.setState({
+                        hideSidePanel: false
+                    })
+            })
     }
 
     getPatientListData(id) {
@@ -166,7 +194,7 @@ class PatientHome extends React.Component {
         }
     };
 
-    refreshWallet=()=>{
+    refreshWallet = () => {
         this.loadPatientWallet();
         this.loadPatientPendingAmount();
     };
@@ -311,7 +339,7 @@ class PatientHome extends React.Component {
                                 {that.props.activePracticePermissions.PatientCompletedProcedure || that.allowAllPermissions ?
                                     <Route path='/patient/:id/emr/workdone'
                                            render={(route) => <PatientCompletedProcedures {...that.props}
-                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
+                                                                                          key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/>}/>
                                     : null}
                                 {/*** Patient Files Routes*/}
                                 {that.props.activePracticePermissions.PatientFiles || that.allowAllPermissions ?
@@ -401,7 +429,7 @@ class PatientHome extends React.Component {
                                 <Route path='/patient/:id/billing/invoices'
                                        render={(route) => (that.props.activePracticePermissions.PatientInvoices || that.allowAllPermissions ?
                                            <PatientInvoices refreshWallet={this.refreshWallet}
-                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.props} {...this.state} {...route}/> :
+                                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.props} {...this.state} {...route}/> :
                                            <PermissionDenied/>)}/>
 
 
@@ -419,7 +447,7 @@ class PatientHome extends React.Component {
                                 <Route exact path='/patient/:id/billing/return/invoices'
                                        render={(route) => (that.props.activePracticePermissions.PatientReturns || that.allowAllPermissions ?
                                            <PatientInvoicesReturn refreshWallet={this.refreshWallet}
-                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/> :
+                                                                  key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/> :
                                            <PermissionDenied/>)}/>
 
 
@@ -436,7 +464,7 @@ class PatientHome extends React.Component {
                                 <Route path='/patient/:id/billing/payments'
                                        render={(route) => (that.props.activePracticePermissions.PatientPayments || that.allowAllPermissions ?
                                            <PatientPayments refreshWallet={this.refreshWallet}
-                                               key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/> :
+                                                            key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.state} {...route}/> :
                                            <PermissionDenied/>)}/>
 
                                 {/*** Patient Ledger Routes*/}

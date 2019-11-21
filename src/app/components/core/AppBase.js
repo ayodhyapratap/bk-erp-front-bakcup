@@ -1,7 +1,7 @@
 import React from "react";
 import {Route, Switch} from "react-router-dom";
 import AppHeader from "./AppHeader";
-import {Layout, Spin, Button, Drawer, Row, Col, Form, Input, Divider} from "antd";
+import {Layout, Spin, Button, Input} from "antd";
 import AppSider from "./AppSider";
 import {loadUserDetails, loggedInactivePractice, loggedInUserPractices, setCurrentPractice} from "../../utils/auth";
 import SettingsDash from "../settings/SettingsDash"
@@ -16,13 +16,10 @@ import PrintPatientForm from "../patients/patient/PrintPatientForm";
 import CreateAppointment from "../calendar/CreateAppointment";
 import BlockCalendar from "../calendar/BlockCalendar";
 import PermissionDenied from "../common/errors/PermissionDenied";
-import {AGENT_WALLET, PATIENT_PENDING_AMOUNT, SUGGESTIONS} from "../../constants/api";
-import {displayMessage, getAPI, interpolate, postAPI} from "../../utils/common";
-import {SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
 import SuggestionBox from "./SuggestionBox";
 import ErrorBoundary from "../../../crashHandling/ErrorBoundary";
 import MeetingBooking from "../conference/meeting/MeetingBooking";
-import ZoomUser from "../settings/options/zoom-user/ZoomUser";
+import AlternateMedicineHome from "../alternateMedicine/AlternateMedicineHome";
 
 const {TextArea} = Input;
 
@@ -36,7 +33,7 @@ class AppBase extends React.Component {
             activePracticeData: null,
             activePracticePermissions: {},
             specialisations: null,
-            allowAllPermissions: false,
+            allowAllPermissions: true,
             loadingPermissions: false,
             visible: false,
 
@@ -220,6 +217,9 @@ class AppBase extends React.Component {
                                     <Route path="/meeting-booking" render={(route)=>(this.state.activePracticePermissions.ViewMeeting || this.state.allowAllPermissions?
                                         <MeetingBooking  {...this.state} {...this.props} {...route}
                                                          key={that.state.active_practiceId}/>:<PermissionDenied/>)}/>
+                                    {/*<Route path="/alternate-medicine" render={(route)=>(this.state.activePracticePermissions.ManageMedicineConversion || this.state.allowAllPermissions?*/}
+                                    {/*    <AlternateMedicineHome  {...this.state} {...this.props} {...route}*/}
+                                    {/*                     key={that.state.active_practiceId}/>:<PermissionDenied/>)}/>*/}
 
                                     {this.state.activePracticePermissions.ViewCalendar ?
                                         <Route exact path="/" render={(route) => <Calendar {...this.state}

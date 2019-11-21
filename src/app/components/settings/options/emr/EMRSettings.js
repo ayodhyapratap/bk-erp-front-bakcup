@@ -10,7 +10,7 @@ import {
     EMR_OBSERVATIONS,
     EMR_INVESTIGATIONS,
     EMR_TREATMENTNOTES,
-    EMR_VITAL_SIGNS
+    EMR_VITAL_SIGNS, EMR_MEDICATION
 } from "../../../../constants/api"
 import VITALSINGS from "../emr/VitalSigns";
 const TabPane = Tabs.TabPane;
@@ -45,6 +45,9 @@ class EMRSettings extends React.Component {
                         </TabPane>
                         <TabPane tab={<span><Icon type="solution"/>Notes</span>} key="#treatmentnotes">
                             <TableData {...this.props} id={EMR_TREATMENTNOTES} name="Treatment Notes"/>
+                        </TabPane>
+                        <TabPane tab={<span><Icon type="medicine-box"/>Medication</span>} key="#medication">
+                            <TableData {...this.props} id={EMR_MEDICATION} name="Medication"/>
                         </TabPane>
                         <TabPane tab={<span><Icon type="file"/>File Labels</span>} key="#filetags">
                             <TableData {...this.props} id={EMR_FILETAGS} name="File Labels"/>

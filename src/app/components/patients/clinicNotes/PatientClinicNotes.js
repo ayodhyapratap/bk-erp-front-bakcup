@@ -285,7 +285,18 @@ class PatientClinicNotes extends React.Component {
                                     <Divider style={{margin: 0}}/>
                                 </Col>
                             </Row>
-
+                            <Row>
+                                <Col span={6}>
+                                    <h3>Recent Medications</h3>
+                                </Col>
+                                <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                                    <div style={{minHeight: 30}}>
+                                        {clinicNote.medication ? clinicNote.medication.split(CUSTOM_STRING_SEPERATOR).map((str, index) =>
+                                            <span>{index ? <br/> : null}{str}</span>) : null}
+                                    </div>
+                                    <Divider style={{margin: 0}}/>
+                                </Col>
+                            </Row>
                             <div>
                                 {clinicNote.doctor ?
                                     <Tag color={clinicNote.doctor ? clinicNote.doctor.calendar_colour : null}>
@@ -416,7 +427,18 @@ class PatientClinicNotes extends React.Component {
                             <Divider style={{margin: 0}}/>
                         </Col>
                     </Row>
-
+                    <Row>
+                        <Col span={6}>
+                            <h3>Recent Medications</h3>
+                        </Col>
+                        <Col span={18} style={{borderLeft: '1px solid #ccc', padding: 4}}>
+                            <div style={{minHeight: 30}}>
+                                {clinicNote.medication ? clinicNote.medication.split(CUSTOM_STRING_SEPERATOR).map((str, index) =>
+                                    <span>{index ? <br/> : null}{str}</span>) : null}
+                            </div>
+                            <Divider style={{margin: 0}}/>
+                        </Col>
+                    </Row>
                     <div>
                         {clinicNote.doctor ?
                             <Tag color={clinicNote.doctor ? clinicNote.doctor.calendar_colour : null}>

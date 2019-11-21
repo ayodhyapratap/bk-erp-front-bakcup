@@ -148,12 +148,6 @@ class AppSider extends React.Component {
                             </Link>
                         </Menu.Item>
                     </SubMenu>
-                    {/*<Menu.Item key="booking">*/}
-                    {/*    <Link to="/booking">*/}
-                    {/*        <Icon type="box-plot" />*/}
-                    {/*        <span className="nav-text">Booking</span>*/}
-                    {/*    </Link>*/}
-                    {/*</Menu.Item>*/}
                     {this.props.activePracticePermissions.WebAdmin ?
                         <Menu.Item key="web-1">
                             <Link to="/web/videos">
@@ -168,6 +162,12 @@ class AppSider extends React.Component {
                                 <span className="nav-text">Meeting Booking</span>
                             </Link>
                         </Menu.Item>
+                    {/*<Menu.Item key={'12'}>*/}
+                    {/*    <Link to="/alternate-medicine">*/}
+                    {/*        <Icon type={"swap"}/>*/}
+                    {/*        <span className="nav-text">Alternate Medicines</span>*/}
+                    {/*    </Link>*/}
+                    {/*</Menu.Item>*/}
                 </Menu>
             </Sider>
         </Hotkeys>

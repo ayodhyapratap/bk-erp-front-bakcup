@@ -20,7 +20,7 @@ import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/commo
 import {
     EMR_COMPLAINTS,
     EMR_DIAGNOSES,
-    EMR_INVESTIGATIONS,
+    EMR_INVESTIGATIONS, EMR_MEDICATION,
     EMR_OBSERVATIONS,
     EMR_TREATMENTNOTES, PATIENT_CLINIC_NOTES_API
 } from "../../../constants/api";
@@ -31,13 +31,14 @@ import {loadDoctors} from "../../../utils/clinicUtils";
 import moment from "moment";
 
 const {TabPane} = Tabs;
-const tabLists = ['Complaints', 'Observations', 'Diagnoses', 'Investigations', 'Notes'];
+const tabLists = ['Complaints', 'Observations', 'Diagnoses', 'Investigations', 'Notes','Recent Medication'];
 const tabResourcesAPI = {
     'Complaints': EMR_COMPLAINTS,
     'Observations': EMR_OBSERVATIONS,
     'Diagnoses': EMR_DIAGNOSES,
     'Investigations': EMR_INVESTIGATIONS,
-    'Notes': EMR_TREATMENTNOTES
+    'Notes': EMR_TREATMENTNOTES,
+    'Recent Medication' : EMR_MEDICATION
 };
 let id = 0;
 
@@ -65,6 +66,7 @@ class AddClinicNotesDynamic extends React.Component {
         this.loadRequiredResources(interpolate(EMR_DIAGNOSES, [this.props.active_practiceId]), 'Diagnoses');
         this.loadRequiredResources(interpolate(EMR_INVESTIGATIONS, [this.props.active_practiceId]), 'Investigations');
         this.loadRequiredResources(interpolate(EMR_TREATMENTNOTES, [this.props.active_practiceId]), 'Notes');
+        this.loadRequiredResources(interpolate(EMR_MEDICATION, [this.props.active_practiceId]), 'Recent Medication');
         if (this.state.editClinicNotes) {
             this.setInitialData();
         }
@@ -97,6 +99,11 @@ class AddClinicNotesDynamic extends React.Component {
             initialData.observations.split(CUSTOM_STRING_SEPERATOR).forEach(str => setTimeout(function () {
                 if (str.length)
                     that.addValues('Observations', str)
+            }, 500));
+        if (initialData.medication)
+            initialData.medication.split(CUSTOM_STRING_SEPERATOR).forEach(str => setTimeout(function () {
+                if (str.length)
+                    that.addValues('Recent Medication', str)
             }, 500));
 
     }
@@ -221,6 +228,7 @@ class AddClinicNotesDynamic extends React.Component {
                 reqData.diagnosis = values.Diagnoses.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
                 reqData.notes = values.Notes.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
                 reqData.observations = values.Observations.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
+                reqData.medication = values['Recent Medication'].map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
                 reqData.patient = that.props.match.params.id;
                 reqData.practice = that.props.active_practiceId;
                 reqData.doctor = that.state.selectedDoctor && that.state.selectedDoctor.id ? that.state.selectedDoctor.id : that.state.selectedDoctor;

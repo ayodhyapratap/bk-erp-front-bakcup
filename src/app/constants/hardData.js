@@ -317,8 +317,8 @@ export const APPOINTMENT_RELATED_REPORT = [
     {name: 'Appointments For Each Doctor', value: APPOINTMENT_FOR_EACH_DOCTOR},
     {name: 'Monthly Appointment Count', value: MONTHLY_APPOINTMENT_COUNT},
     {name: 'Appointment For Each Patient Group', value: APPOINTMENT_FOR_EACH_PATIENT_GROUP},
-    {name:'Patient Conversion' , value:APPOINTMENT_FOR_PATIENT_CONVERSION},
-    ];
+    {name: 'Patient Conversion', value: APPOINTMENT_FOR_PATIENT_CONVERSION},
+];
 
 /*Emr Reports*/
 export const EMR_RELATED_REPORT = [
@@ -397,23 +397,23 @@ export const PAYMENT_RELATED_REPORT = [
 
 /*Income Reports*/
 
-export const INCOME_RELATED_REPORT=[
-    {name:"Daily Invoiced Income" ,value:DAILY_INCOME},
-    {name:"Monthly Invoiced Income" ,value:MONTHLY_INCOME},
-    {name:"Taxed Invoiced Income" ,value:TAXED_INCOME},
-    {name:"Invoiced Income For Each Doctor" ,value:DOCTOR_EACH_INCOME},
-    {name:"Invoiced Income For Each Procedure" ,value:PROCEDURE_INCOME},
-    {name:"Invoiced Income For Each Patient Group" ,value:PATIENT_GROUPS_INCOME},
-    {name:"Invoiced Income For Each Product" ,value:PRODUCT_INCOME},
+export const INCOME_RELATED_REPORT = [
+    {name: "Daily Invoiced Income", value: DAILY_INCOME},
+    {name: "Monthly Invoiced Income", value: MONTHLY_INCOME},
+    {name: "Taxed Invoiced Income", value: TAXED_INCOME},
+    {name: "Invoiced Income For Each Doctor", value: DOCTOR_EACH_INCOME},
+    {name: "Invoiced Income For Each Procedure", value: PROCEDURE_INCOME},
+    {name: "Invoiced Income For Each Patient Group", value: PATIENT_GROUPS_INCOME},
+    {name: "Invoiced Income For Each Product", value: PRODUCT_INCOME},
 
 ];
 
 /* Invoiced Report */
-export const INVOICE_RELATED_REPORT=[
+export const INVOICE_RELATED_REPORT = [
     // {name:"All Returned Invoices" ,value:ALL_INVOICE_RETURN},
-    {name:"Monthly wise Return Count & Revenue" ,value:DAILY_WISE_INVOICE},
-    {name:"Day wise Return Count & Revenue" ,value:MONTHLY_WISE_INCOME},
-    {name:"Return Items Count, item wise" ,value:RETURN_ITEMS}
+    {name: "Monthly wise Return Count & Revenue", value: DAILY_WISE_INVOICE},
+    {name: "Day wise Return Count & Revenue", value: MONTHLY_WISE_INCOME},
+    {name: "Return Items Count, item wise", value: RETURN_ITEMS}
 ];
 
 
@@ -424,9 +424,9 @@ export const SCHEDULE_OF_INVOICES = [
     {label: "Lab orders", value: "RESERVATION"},
 ];
 
-export const DISCOUNT=[
-    {label:"Zero" ,value:"ZERO"},
-    {label:"Non Zero" ,value:"NON_ZERO"},
+export const DISCOUNT = [
+    {label: "Zero", value: "ZERO"},
+    {label: "Non Zero", value: "NON_ZERO"},
 ];
 
 export const SCHEDULE_OF_PAYMENT = [
@@ -489,80 +489,80 @@ export const FAMILY_GROUPS = [
 
 /** Advanced Search Constant Data**/
 export const ADVANCED_SEARCH = [
-    {label:'Patient Name' ,value:'name'},
-    {label:'Contact No' , value: 'phone'},
-    {label:'Age is ' ,value:'age'},
-    {label:'Age more than ' ,value:'age_gte'},
-    {label:'Age Less Than' ,value:'age_lte'},
-    {label:'Has Age ' ,value:'has_age'},
-    {label:'Date of Birth is ' ,value:'dob'},
-    {label:'Date of Birth is more than ' ,value:'dob_gte'},
-    {label:'Date of Birth is less than' ,value:'dob_lte'},
-    {label:'Birthday is in' ,value:'dob_month'},
-    {label:'Has Date of Birth' ,value:'has_dob'},
-    {label:'Patient Id' ,value:'patient_id'},
-    {label:'Has Aadhar Id' ,value:'has_aadhar'},
-    {label:'Aadhar Id' ,value:'aadhar'},
-    {label:'Email' ,value:'email'},
-    {label:'Has Email' ,value:'has_email'},
-    {label:'Gender is' ,value:'gender'},
-    {label:'Has Gender' ,value:'has_gender'},
-    {label:'Pincode' ,value:'pincode'},
-    {label:'Has Pincode' ,value:'has_pincode'},
-    {label:'Has Street Address' ,value:'has_street'},
-    {label:'Street Address ' ,value:'street'},
-    {label:'Blood Group' ,value:'blood_group'},
-    {label:'Referal Source' ,value:'source'},
-    {label:'Refered by Agent' ,value:'agent_referal'},
+    {label: 'Patient Name', value: 'name'},
+    {label: 'Contact No', value: 'phone'},
+    {label: 'Age is ', value: 'age'},
+    {label: 'Age more than ', value: 'age_gte'},
+    {label: 'Age Less Than', value: 'age_lte'},
+    {label: 'Has Age ', value: 'has_age'},
+    {label: 'Date of Birth is ', value: 'dob'},
+    {label: 'Date of Birth is more than ', value: 'dob_gte'},
+    {label: 'Date of Birth is less than', value: 'dob_lte'},
+    {label: 'Birthday is in', value: 'dob_month'},
+    {label: 'Has Date of Birth', value: 'has_dob'},
+    {label: 'Patient Id', value: 'patient_id'},
+    {label: 'Has Aadhar Id', value: 'has_aadhar'},
+    {label: 'Aadhar Id', value: 'aadhar'},
+    {label: 'Email', value: 'email'},
+    {label: 'Has Email', value: 'has_email'},
+    {label: 'Gender is', value: 'gender'},
+    {label: 'Has Gender', value: 'has_gender'},
+    {label: 'Pincode', value: 'pincode'},
+    {label: 'Has Pincode', value: 'has_pincode'},
+    {label: 'Has Street Address', value: 'has_street'},
+    {label: 'Street Address ', value: 'street'},
+    {label: 'Blood Group', value: 'blood_group'},
+    {label: 'Referal Source', value: 'source'},
+    {label: 'Refered by Agent', value: 'agent_referal'},
     // {label:'Refered by Agent' ,value:'agent_referal'},
 
 ];
 
-export const HAS_AGE=[
-    {label:'Yes' ,value:'Y'},
-    {label:'No' ,value:'N'}
+export const HAS_AGE = [
+    {label: 'Yes', value: 'Y'},
+    {label: 'No', value: 'N'}
 ];
 
-export const HAS_DOB=[
-    {label:'Yes' ,value:'Y'},
-    {label:'No' ,value:'N'}
+export const HAS_DOB = [
+    {label: 'Yes', value: 'Y'},
+    {label: 'No', value: 'N'}
 ];
-export const HAS_AADHAR_ID=[
-    {label:'Yes' ,value:'Y'},
-    {label:'No' ,value:'N'}
+export const HAS_AADHAR_ID = [
+    {label: 'Yes', value: 'Y'},
+    {label: 'No', value: 'N'}
 ];
-export const HAS_EMAIL=[
-    {label:'Yes' ,value:'Y'},
-    {label:'No' ,value:'N'}
-];
-
-export const HAS_GENDER=[
-    {label:'Yes' ,value:'Y'},
-    {label:'No' ,value:'N'}
+export const HAS_EMAIL = [
+    {label: 'Yes', value: 'Y'},
+    {label: 'No', value: 'N'}
 ];
 
-export const HAS_PINCODE=[
-    {label:'Yes' ,value:'Y'},
-    {label:'No' ,value:'N'}
+export const HAS_GENDER = [
+    {label: 'Yes', value: 'Y'},
+    {label: 'No', value: 'N'}
 ];
 
-export const HAS_STREET=[
-    {label:'Yes' ,value:'Y'},
-    {label:'No' ,value:'N'}
+export const HAS_PINCODE = [
+    {label: 'Yes', value: 'Y'},
+    {label: 'No', value: 'N'}
 ];
 
-export const REFERED_BY_AGENT=[
-    {label:'Yes' ,value:'Y'},
-    {label:'No' ,value:'N'}
+export const HAS_STREET = [
+    {label: 'Yes', value: 'Y'},
+    {label: 'No', value: 'N'}
 ];
 
-export const GENDER_OPTION=[
-    {label:'Female' , value:'female'},
-    {label:'Male' , value:'male'},
-    {label:'Other' , value:'other'},
+export const REFERED_BY_AGENT = [
+    {label: 'Yes', value: 'Y'},
+    {label: 'No', value: 'N'}
 ];
 
-export const CURRENCY_TYPE=[
+export const GENDER_OPTION = [
+    {label: 'Female', value: 'female'},
+    {label: 'Male', value: 'male'},
+    {label: 'Other', value: 'other'},
+];
+
+export const CURRENCY_TYPE = [
     {label: 'Percent', value: '%'},
     // {label: 'Rupees', value: 'INR'}
 ];
@@ -571,4 +571,22 @@ export const LANGUAGE = [
     {label:'English',value:'ENGLISH'},
     {label:'Hindi',value:'HINDI'},
     // {label:'Urdu',value:'URDU'},
+];
+
+export const ROUTES_TO_HIDE_PATIENT_SIDE_PANEL = [
+    '/patients/profile/add',
+    '/patient/:id/emr/vitalsigns/add',
+    "/patient/:id/emr/vitalsigns/edit",
+    "/patient/:id/emr/clinicnotes/add",
+    "/patient/:id/emr/clinicnotes/edit",
+    "/patient/:id/emr/plans/add",
+    "/patient/:id/emr/plans/edit",
+    "/patient/:id/emr/workdone/add",
+    "/patient/:id/emr/workdone/edit",
+    "/patient/:id/emr/prescriptions/add",
+    "/patient/:id/emr/prescriptions/edit",
+    "/patient/:id/billing/invoices/add",
+    "/patient/:id/billing/invoices/edit",
+    "/patient/:id/billing/payments/add",
+    "/patient/:id/billing/payments/edit"
 ];
