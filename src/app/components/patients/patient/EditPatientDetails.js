@@ -43,7 +43,7 @@ import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 import WebCamField from "../../common/WebCamField";
 import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD, ALL, RELATION} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
-import {BLOOD_GROUPS, FAMILY_GROUPS, PATIENT_AGE, SOURCE_PLATFORM} from "../../../constants/hardData";
+import {BLOOD_GROUPS, FAMILY_GROUPS, PATIENT_AGE, SOURCE_PLATFORM,LANGUAGE} from "../../../constants/hardData";
 
 
 
@@ -569,6 +569,15 @@ class EditPatientDetails extends React.Component {
                             }
                         </Form.Item>
                     }
+                    <Form.Item label={"SMS Language"} {...formItemLayout}>
+                        {getFieldDecorator('language',{initialValue:this.state.patientDetails && this.state.patientDetails.language?this.state.patientDetails.language:this.props.activePracticeData.language})
+                        (<Select>
+                            {LANGUAGE.map((option) =><Select.Option value={option.value}>
+                                {option.label}
+                            </Select.Option>)}
+                        </Select>)
+                        }
+                    </Form.Item>
                     <Form.Item label="Aadhar ID" {...formItemLayout}>
                         {getFieldDecorator('aadhar_id', {initialValue: this.state.patientDetails ? this.state.patientDetails.aadhar_id : ''})
                         (<Input placeholder="Patient Aadhar Number"/>)
