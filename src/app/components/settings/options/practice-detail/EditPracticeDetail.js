@@ -13,6 +13,7 @@ import {
 import {PRACTICE} from "../../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
 import {Redirect} from 'react-router-dom'
+import {LANGUAGE} from "../../../../constants/hardData";
 
 
 class EditPracticeDetail extends React.Component {
@@ -136,6 +137,13 @@ class EditPracticeDetail extends React.Component {
                 placeholder:"Practice Email",
                 initialValue: this.state.practiceDetail.email,
                 type: EMAIL_FIELD
+            },{
+                label:"SMS Language",
+                key:"language",
+                placeholder:'SMS Language',
+                initialValue:this.state.practiceDetail && this.state.practiceDetail.language?this.state.practiceDetail.language:this.props.activePracticeData.language,
+                type:SELECT_FIELD,
+                options:LANGUAGE,
             }, {
                 label: "Practice website",
                 key: "website",

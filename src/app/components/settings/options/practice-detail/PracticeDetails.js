@@ -112,6 +112,11 @@ class PracticeDetails extends React.Component {
             title: 'Specialisation',
             key: 'specialisation',
             dataIndex: 'specialisation',
+        },{
+            title:'SMS Language',
+            dataIndex:'language',
+            key:'language',
+            // render:(item,record)=>
         }, {
             title: 'Action',
             key: 'action',

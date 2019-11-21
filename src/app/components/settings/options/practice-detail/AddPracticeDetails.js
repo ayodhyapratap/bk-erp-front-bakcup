@@ -1,10 +1,17 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Card, Form, Row} from "antd";
-import {EMAIL_FIELD, INPUT_FIELD, SINGLE_IMAGE_UPLOAD_FIELD, SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
+import {
+    EMAIL_FIELD,
+    INPUT_FIELD,
+    SELECT_FIELD,
+    SINGLE_IMAGE_UPLOAD_FIELD,
+    SUCCESS_MSG_TYPE
+} from "../../../../constants/dataKeys";
 import {ALL_PRACTICE, EXTRA_DATA} from "../../../../constants/api";
 import {displayMessage, getAPI} from "../../../../utils/common";
 import {Redirect} from 'react-router-dom'
+import {LANGUAGE} from "../../../../constants/hardData";
 
 
 class AddPracticeDetails extends React.Component {
@@ -116,7 +123,14 @@ class AddPracticeDetails extends React.Component {
             key: "email",
             placeholder: "Practice Email",
             type: EMAIL_FIELD
-        }, {
+        },{
+            label:"SMS Language",
+            key:"language",
+            placeholder:'SMS Language',
+            initialValue:this.props.activePracticeData.language?this.props.activePracticeData.language:[],
+            type:SELECT_FIELD,
+            options:LANGUAGE,
+        },  {
             label: "Practice Website",
             key: "website",
             placeholder: "Practice Website",
