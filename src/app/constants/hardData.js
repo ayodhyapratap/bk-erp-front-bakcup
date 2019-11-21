@@ -566,3 +566,9 @@ export const CURRENCY_TYPE=[
     {label: 'Percent', value: '%'},
     // {label: 'Rupees', value: 'INR'}
 ];
+
+export const LANGUAGE = [
+    {label:'English',value:'ENGLISH'},
+    {label:'Hindi',value:'HINDI'},
+    // {label:'Urdu',value:'URDU'},
+];
