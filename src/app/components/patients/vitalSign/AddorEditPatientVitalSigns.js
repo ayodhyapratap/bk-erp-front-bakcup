@@ -107,7 +107,7 @@ class AddorEditPatientVitalSigns extends React.Component {
         },{
             label:'Date',
             key:'date',
-            initialValue:this.props.editVitalSign && this.props.editVitalSign.data ?this.props.editVitalSign.data:'',
+            initialValue:this.props.editVitalSign && this.props.editVitalSign.date ?this.props.editVitalSign.date:'',
             type:DATE_PICKER
         }];
 
