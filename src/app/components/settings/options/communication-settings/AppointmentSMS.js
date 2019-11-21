@@ -1,6 +1,6 @@
 import React from "react";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
-import {Form} from "antd";
+import {Col, Form, Row, Select} from "antd";
 import {
     SUCCESS_MSG_TYPE,
     INPUT_FIELD, SMS_FIELD, SINGLE_CHECKBOX_FIELD, TIME_PICKER, SELECT_FIELD
@@ -8,7 +8,7 @@ import {
 import {COMMUNICATONS_API} from "../../../../constants/api"
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
 import {
-    APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS
+    APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS, LANGUAGE
 } from "../../../../constants/hardData";
 import moment from "moment";
 
@@ -19,6 +19,7 @@ class AppointmentSMS extends React.Component {
         this.state = {
             redirect: false,
             data: null,
+            language:this.props.activePracticeData && this.props.activePracticeData.language?this.props.activePracticeData.language:'',
         };
         this.loadData = this.loadData.bind(this);
     }
@@ -29,6 +30,7 @@ class AppointmentSMS extends React.Component {
 
     loadData() {
         var that = this;
+        let reqData={};
         let successFn = function (data) {
             console.log("length",data.length-1);
             that.setState({
@@ -37,7 +39,10 @@ class AppointmentSMS extends React.Component {
         };
         let errorFn = function () {
         };
-        getAPI(interpolate(COMMUNICATONS_API, [this.props.active_practiceId]), successFn, errorFn);
+        if (that.state.language){
+            reqData.language=that.state.language;
+        }
+        getAPI(interpolate(COMMUNICATONS_API, [this.props.active_practiceId]), successFn, errorFn,reqData);
     }
 
     changeRedirect() {
@@ -47,9 +52,28 @@ class AppointmentSMS extends React.Component {
         });
     }
 
+    handleChangeLanguage =(type,value) =>{
+      let  that=this;
+      that.setState({
+          [type]:value,
+      },function () {
+          that.loadData();
+      })
+    };
     render() {
         let that = this;
-        const fields = [{
+        const fields = [
+        //     {
+        //     label: "SMS Language",
+        //     key: "sms_language",
+        //     placeholder:"SMS Language",
+        //     initialValue: this.state.data && this.state.data.sms_language? this.state.data.sms_language : this.props.activePracticeData.language,
+        //     extra: "SMS to Patients will be sent in this language",
+        //     type: SELECT_FIELD,
+        //     options:LANGUAGE,
+        //     // onchange:()
+        // },
+            {
             label: "Contact Number",
             key: "contact_number",
             placeholder: "Contact Number",
@@ -64,14 +88,7 @@ class AppointmentSMS extends React.Component {
             extra: "All replies by Patients for emails will be sent to this address",
             type: INPUT_FIELD
         },
-            //     {
-            //     label: "SMS Language",
-            //     key: "sms_language",
-            //     placeholder:"SMS Language",
-            //     initialValue: this.state.data ? this.state.data.sms_language : null,
-            //     extra: "SMS to Patients will be sent in this language",
-            //     type: INPUT_FIELD
-            // },
+
             {
                 label: "SMS clinic Name",
                 key: "sms_clinic_name",
@@ -202,6 +219,7 @@ class AppointmentSMS extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
+                that.loadData();
             },
             errorFn: function () {
 
@@ -209,13 +227,30 @@ class AppointmentSMS extends React.Component {
             action: interpolate(COMMUNICATONS_API, [that.props.active_practiceId]),
             method: "post",
         };
-        const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}, {
-            "key": "id",
-            "value": this.state.data ? this.state.data.id : null,
-        }];
+        const defaultValues = [
+            {"key": "practice", "value": this.props.active_practiceId},
+            {"key": "id", "value": this.state.data ? this.state.data.id : null},
+            {"key" : "sms_language" , "value" : this.state.language}
+            ];
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         return <div>
+            <Row>
+                <Col span={8}>
+                    <span style={{float:'right',color:'rgba(0, 0, 0, 0.85)'}}>SMS Language : &nbsp;</span>
+                </Col>
+                <Col span={8}>
+                    <Select defaultValue={this.data && this.data.sms_language?this.data.sms_language:that.state.language} style={{ width: 220 }} onChange={(value)=>this.handleChangeLanguage('language',value)}>
+                        {LANGUAGE.map((option) =><Select.Option value={option.value}>
+                            {option.label}
+                        </Select.Option>)}
+                    </Select>
+                    <br/>
+                    <span>SMS to Patients will be sent in this language</span>
+                </Col>
+
+            </Row>
+
             <TestFormLayout formProp={formProp} defaultValues={defaultValues}
                             fields={fields} {...this.props}/>
         </div>
