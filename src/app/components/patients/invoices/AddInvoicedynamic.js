@@ -136,7 +136,8 @@ class Addinvoicedynamic extends React.Component {
                     ...proc,
                     selectedDoctor: proc.doctor_data,
                     _id: id,
-                    item_type: INVENTORY
+                    item_type: INVENTORY,
+                    selectOption : !!proc.offers
                 });
                 that.changeNetPrice(id, proc.discount)
             });
@@ -388,7 +389,8 @@ class Addinvoicedynamic extends React.Component {
                     item.taxes = values.taxes[item._id];
                     // item.unit_cost = values.unit_cost[item._id];
                     item.discount = values.discount[item._id];
-                    item.discount_type = '%';
+                    item.discount_type = values.discount_type[item._id];
+                    item.offers = values.offers;
                     switch (item.item_type) {
                         case PROCEDURES:
                             reqData.procedure.push({
@@ -401,9 +403,9 @@ class Addinvoicedynamic extends React.Component {
                                 "taxes": item.taxes,
                                 "unit_cost": item.unit_cost,
                                 // "unit_cost": item.total_unit_cost?item.total_unit_cost:item.unit_cost,
-                                "discount": item.discount ? item.discount.toString().split('#')[0] : 0,
-                                "discount_type": "%",
-                                "offers": null,
+                                "discount": item.discount,
+                                "discount_type": item.discount_type,
+                                "offers": item.offers,
                                 "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
                                 id: that.props.editId ? item.id : undefined
                             });
@@ -416,9 +418,9 @@ class Addinvoicedynamic extends React.Component {
                                 "taxes": item.taxes,
                                 "unit_cost": item.unit_cost,
                                 // "unit_cost": item.total_unit_cost?item.total_unit_cost:item.unit_cost,
-                                "discount": item.discount ? item.discount.toString().split('#')[0] : 0,
-                                "discount_type": "%",
-                                "offers": null,
+                                "discount": item.discount,
+                                "discount_type": item.discount_type,
+                                "offers": item.offers,
                                 "doctor": item.selectedDoctor ? item.selectedDoctor.id : null,
                                 "instruction": item.instruction,
                                 "is_active": true,
@@ -535,14 +537,15 @@ class Addinvoicedynamic extends React.Component {
         const {getFieldsValue, setFields} = this.props.form;
         setTimeout(function () {
             let values = getFieldsValue();
-            if (values.unit_cost[id] || values.unit[id] || values.discount[id]) {
+            if (values.unit_cost[id] || values.unit[id] || values.discount[id] || values.discount_type[id]) {
                 that.setState(function (prevState) {
                     let newTableValues = []
                     prevState.tableFormValues.forEach(function (tableObj) {
                         if (tableObj._id == id) {
-
                             let totalTaxAmount = 0;
                             let initialDiscount = 0;
+                            let initialDiscountType = '%';
+                            let offer = null;
                             let selectOption = tableObj.selectOption || tableObj.selectOption == false ? tableObj.selectOption : false;
                             values.taxes[id].forEach(function (taxid) {
                                 prevState.taxes_list.forEach(function (taxObj) {
@@ -550,25 +553,45 @@ class Addinvoicedynamic extends React.Component {
                                         totalTaxAmount += taxObj.tax_value;
                                 })
                             });
-                            if (value) {
-                                if (value == '0') {
-                                    selectOption = false
+                            if (value && value == '0') {
+                                selectOption = false
+                            }
+                            if (values.discount_type && values.discount_type[id]) {
+                                initialDiscount = values.discount[id];
+                                initialDiscountType = values.discount_type[id];
+                                offer = null;
+                            } else {
+                                initialDiscount = values.discount[id] ? values.discount[id].toString().split('#')[0] : '';
+                                initialDiscountType = values.discount[id] ? values.discount[id].toString().split('#')[1] : '';
+                                offer = values.discount[id] ? values.discount[id].toString().split('#')[2] : null;
+                            }
+
+                            let total = values.unit[id] * (values.unit_cost[id] ? values.unit_cost[id] : 0);
+
+                            if (initialDiscountType == '%' && initialDiscount) {
+                                if (initialDiscount > 100) {
+                                    initialDiscount = 100
+                                }
+                                total *= (1 - (initialDiscount * 0.01));
+                            } else if (initialDiscountType == 'INR' && initialDiscount) {
+                                if (total > initialDiscount) {
+                                    total -= initialDiscount;
                                 } else {
-                                    initialDiscount = values.discount[id] ? values.discount[id].toString().split('#')[0] : '';
+                                    total = 0;
                                 }
                             }
 
-
-                            let retailPrice = (values.unit_cost[id] ? values.unit_cost[id] : 0) * (1 - (value && values.discount[id] ? values.discount[id].toString().split('#')[0] : initialDiscount) * 0.01) * (1 + totalTaxAmount * 0.01);
-                            // console.log("TAX",retailPrice);
-                            let total = values.unit[id] * retailPrice;
+                            total *= (1 + totalTaxAmount * 0.01);
+                            let totalWithoutTaxWithDiscount = total / values.unit[id];
 
                             newTableValues.push({
                                 ...tableObj,
-                                total_unit_cost: retailPrice,
+                                total_unit_cost: totalWithoutTaxWithDiscount,
                                 total: total,
                                 selectOption: selectOption,
-                                discount: initialDiscount
+                                discount: initialDiscount,
+                                discount_type: initialDiscountType,
+                                offers: offer
                             })
                         } else {
                             newTableValues.push(tableObj);
@@ -698,19 +721,13 @@ class Addinvoicedynamic extends React.Component {
             },
         };
 
-        const prefixSelector = getFieldDecorator('prefix', {
-            initialValue: '%',
-        })(
-            <Select>
-                {CURRENCY_TYPE.map(option => <Select.Option value={option.value}> {option.value}</Select.Option>)}
-            </Select>
-        );
 
         getFieldDecorator('keys', {initialValue: []});
         let consumeRow = [{
             title: 'Item Name',
             key: 'item_name',
             dataIndex: 'name',
+            width: 180,
             render: function (name, record) {
                 switch (record.item_type) {
                     case PROCEDURES:
@@ -849,37 +866,42 @@ class Addinvoicedynamic extends React.Component {
             </Form.Item>
             // render: (item, record) => item ? item.toFixed(2) : null
         }, {
-            title: 'discount %',
+            title: 'Discount',
             key: 'discount',
-            width: 100,
             dataIndex: 'discount',
             render: (item, record) => (record.selectOption ?
                 <Form.Item key={`discount[${record._id}]`}
-                           extra={<span>{record && record.discount ? record.discount + '% Discount' : null} </span>}>
+                           extra={
+                               <span>{record && record.discount ? record.discount + ' ' + record.discount_type + ' Discount' : null} </span>}>
                     {getFieldDecorator(`discount[${record._id}]`, {
-                        initialValue: record.discount,
+                        initialValue: record.offers,
                         validateTrigger: ['onChange', 'onBlur'],
-
                     })
-
                     (<Select style={{width: 150}} onChange={(value) => that.changeNetPrice(record._id, value)}
                              size={"small"}>
-                        {/* <Select.Option value={'none'}>None</Select.Option> */}
+                        <Select.Option value={'0'}>Custom Offer</Select.Option>
                         {that.state.offers.map(option => <Select.Option
-                            value={option.discount + '#' + option.id}>{option.code}</Select.Option>)}
-                        <Select.Option value={'0'}>Custom</Select.Option>
+                            value={option.discount + '#' + option.unit + '#' + option.id}>{option.code}</Select.Option>)}
                     </Select>)
                     }
                 </Form.Item> : <Form.Item
-                    extra={<a onClick={() => that.onChangeOption('selectOption', record._id)}>Choose Form Offers</a>}
+                    extra={<a onClick={() => that.onChangeOption('selectOption', record._id)}>Choose Offer</a>}
                     key={`discount[${record._id}]`}
                     {...formItemLayout}>
                     {getFieldDecorator(`discount[${record._id}]`, {
                         initialValue: record.discount ? record.discount : 0,
                         validateTrigger: ['onChange', 'onBlur'],
-
                     })(
-                        <Input placeholder="discount" addonAfter={prefixSelector} size={"small"}
+                        <Input placeholder="discount"
+                               addonAfter={getFieldDecorator(`discount_type[${record._id}]`, {
+                                   initialValue: record.discount_type || '%',
+                               })(
+                                   <Select onChange={(value) => that.changeNetPrice(record._id, value)}>
+                                       {CURRENCY_TYPE.map(option => <Select.Option
+                                           value={option.value}> {option.value}</Select.Option>)}
+                                   </Select>
+                               )}
+                               size={"small"}
                                style={{width: 150}} onChange={(e) => this.changeNetPrice(record._id, e.target.value)}/>
                     )}
                 </Form.Item>)
@@ -905,7 +927,8 @@ class Addinvoicedynamic extends React.Component {
         }, {
             title: 'Total Unit Cost',
             key: 'total_unit_cost',
-            width: 100,
+            width: 80,
+            align: 'right',
             dataIndex: 'total_unit_cost',
             // render: (item, record) => <Form.Item
             //     key={`total_unit_cost[${record._id}]`}
@@ -925,13 +948,14 @@ class Addinvoicedynamic extends React.Component {
             // render: (item, record) => item ? item.toFixed(2) : null
             // render: (item, record) => ((record.item_type == INVENTORY) && record.total_unit_cost) ? record.total_unit_cost.toFixed(2) :record.cost_with_tax ?record.cost_with_tax.toFixed(2) :record.retail_with_tax.toFixed(2),
             render: (item, record) =>
-                <span>{item ? item.toFixed(2) : record.item_type == INVENTORY ? record.retail_with_tax.toFixed(2) : record.cost_with_tax.toFixed(2)}</span>,
+                <span>{item ? item.toFixed(2) : '0.00'}</span>,
         }, {
             title: 'Total',
             key: 'total',
-            width: 100,
+            width: 80,
+            align: 'right',
             dataIndex: 'total',
-            render: (item, record) => item ? item.toFixed(2) : null
+            render: (item, record) => item ? item.toFixed(2) : '0.00'
 
         }]);
 
@@ -956,8 +980,8 @@ class Addinvoicedynamic extends React.Component {
                         style={{width: 200}}
                     />}
                     bodyStyle={{padding: 0}}>
-                    <Row gutter={16}>
-                        <Col span={7}>
+                    <Row>
+                        <Col span={6}>
                             <Tabs size="small" type="card">
                                 <TabPane tab={INVENTORY} key={INVENTORY}>
                                     <div style={{backgroundColor: '#ddd', padding: 8}}>
@@ -992,8 +1016,7 @@ class Addinvoicedynamic extends React.Component {
                                                           <Tag color="red" style={{
                                                               float: 'right',
                                                               lineHeight: '18px'
-                                                          }}>Not
-                                                              Sold</Tag>}<br/></div>)}
+                                                          }}>Not Sold</Tag>}<br/></div>)}
                                                       description={item.doctor ?
                                                           <Tag
                                                               color={item.doctor ? item.doctor.calendar_colour : null}>
@@ -1025,7 +1048,7 @@ class Addinvoicedynamic extends React.Component {
 
                             </Tabs>
                         </Col>
-                        <Col span={17}>
+                        <Col span={18}>
                             <Form onSubmit={this.handleSubmit}>
                                 <Table pagination={false} loading={that.state.loading}
                                        bordered={true}

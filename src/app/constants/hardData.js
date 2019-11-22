@@ -564,7 +564,7 @@ export const GENDER_OPTION = [
 
 export const CURRENCY_TYPE = [
     {label: 'Percent', value: '%'},
-    // {label: 'Rupees', value: 'INR'}
+    {label: 'Rupees', value: 'INR'}
 ];
 
 export const LANGUAGE = [
