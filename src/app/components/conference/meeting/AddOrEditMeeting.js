@@ -1,10 +1,11 @@
 import React from "react";
-import {Button, Card, Col, DatePicker, Form, Icon, Input, InputNumber, Row, Select, Spin} from "antd";
+import {Alert, Button, Card, Col, DatePicker, Form, Icon, Input, InputNumber, List, Row, Select, Spin} from "antd";
 import {getAPI, interpolate, postAPI} from "../../../utils/common";
 import {MEETING_DETAILS, MEETING_USER, MEETINGS, SEARCH_PATIENT} from "../../../constants/api";
 import {loadDoctors} from "../../../utils/clinicUtils";
 import moment from "moment";
 import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
+import MeetingRightPanel from "./MeetingRightPanel";
 
 let id = 0;
 
@@ -21,6 +22,7 @@ class AddOrEditMeeting extends React.Component {
             meetingNotAllowed: true,
             duration: 30,
             startSchedule: this.props ? moment(this.props.startTime) : moment(),
+            filterMeetingList:[],
         };
         this.loadPatient = this.loadPatient.bind(this);
         this.loadZoomUser = this.loadZoomUser.bind(this);
@@ -151,7 +153,7 @@ class AddOrEditMeeting extends React.Component {
         let successFn = function (data) {
 
             that.setState({
-                meetingList: data,
+                filterMeetingList: data,
                 loading: false,
                 meetingNotAllowed: !!data.length
             })
@@ -165,7 +167,7 @@ class AddOrEditMeeting extends React.Component {
         let params = {
             start: start.format(),
             end: end.format(),
-            zoomUser:zoomUser,
+            zoom_user:zoomUser,
         }
         getAPI(MEETING_DETAILS, successFn, errorFn, params)
     }
@@ -173,7 +175,8 @@ class AddOrEditMeeting extends React.Component {
     checkMeetingAvailabilty = (type, value) => {
         let that = this;
         this.setState({
-            [type]: value
+            [type]: value,
+            loading:true
         }, function () {
             that.loadMeetingList(that.state.startSchedule, moment(that.state.startSchedule).add(that.state.duration, 'minute'),that.state.zoomUser);
         });
@@ -183,13 +186,13 @@ class AddOrEditMeeting extends React.Component {
         let that = this;
         const {getFieldDecorator, getFieldValue} = this.props.form;
         const formItemLayout = {
-            labelCol: {span: 4},
-            wrapperCol: {span: 8},
+            labelCol: {span: 6},
+            wrapperCol: {span: 18},
         };
         const formItemLayoutWithOutLabel = {
             wrapperCol: {
                 xs: {span: 24, offset: 0},
-                sm: {span: 20, offset: 4},
+                sm: {span: 18, offset: 6},
             },
         };
         // const patientField =()=> {
@@ -258,104 +261,114 @@ class AddOrEditMeeting extends React.Component {
         ));
 
         return (<Card title={"Add Booking"}>
-                <Form onSubmit={this.handleSubmit}>
-                    <Form.Item label={"Purpose"} {...formItemLayout}>
-                        {getFieldDecorator('name', {initialValue: ''})
-                        (<Input placeholder={"Purpose"}/>)
-                        }
-                    </Form.Item>
-                    <Form.Item label={"Agenda"} {...formItemLayout}>
-                        {getFieldDecorator('agenda', {initialValue: ''})
-                        (<Input.TextArea placeholder={"Agenda"} rows={3}/>)
-                        }
-                    </Form.Item>
-                    {/*<Form.Item label={"No. of Participants"} {...formItemLayout}>*/}
-                    {/*    {getFieldDecorator('participants', {initialValue: '1'})*/}
-                    {/*    (<InputNumber placeholder={"No. of Participants"} min={1} max={MAX_PARTICIPANT}*/}
-                    {/*                  onChange={(value) => this.onChangeParticipant(value)}/>)*/}
+                <Row gutter={16}>
+                    <Col span={14}>
+                        <Form onSubmit={this.handleSubmit}>
+                            <Form.Item label={"Purpose"} {...formItemLayout}>
+                                {getFieldDecorator('name', {initialValue: ''})
+                                (<Input placeholder={"Purpose"}/>)
+                                }
+                            </Form.Item>
+                            <Form.Item label={"Agenda"} {...formItemLayout}>
+                                {getFieldDecorator('agenda', {initialValue: ''})
+                                (<Input.TextArea placeholder={"Agenda"} rows={3}/>)
+                                }
+                            </Form.Item>
+                            {/*<Form.Item label={"No. of Participants"} {...formItemLayout}>*/}
+                            {/*    {getFieldDecorator('participants', {initialValue: '1'})*/}
+                            {/*    (<InputNumber placeholder={"No. of Participants"} min={1} max={MAX_PARTICIPANT}*/}
+                            {/*                  onChange={(value) => this.onChangeParticipant(value)}/>)*/}
 
-                    {/*    }*/}
-                    {/*</Form.Item>*/}
+                            {/*    }*/}
+                            {/*</Form.Item>*/}
 
-                    <Form.Item label={"Patients"} {...formItemLayout} key={'patient'}>
-                        {getFieldDecorator('patients', {initialValue: []})
-                        (<Select mode={"multiple"}
-                                 placeholder="Select Patient" style={{width: '100%'}}
-                                 showSearch onSearch={this.loadPatient} filterOption={false}>
+                            <Form.Item label={"Patients"} {...formItemLayout} key={'patient'}>
+                                {getFieldDecorator('patients', {initialValue: []})
+                                (<Select mode={"multiple"}
+                                         placeholder="Select Patient" style={{width: '100%'}}
+                                         showSearch onSearch={this.loadPatient} filterOption={false}>
 
-                            {this.state.patientListData.map(option => (
-                                <Select.Option
-                                    value={option.id}>{option.user.first_name} ({option.custom_id})</Select.Option>))}
-                        </Select>)
-                        }
-                    </Form.Item>
-                    {/*{patientField()}*/}
-                    <Form.Item label={"Doctors"} {...formItemLayout} key={'doctors'}>
-                        {getFieldDecorator('doctors', {initialValue: []})
-                        (<Select placeholder="Select Doctors" style={{width: '100%'}} mode={"multiple"}>
+                                    {this.state.patientListData.map(option => (
+                                        <Select.Option
+                                            value={option.id}>{option.user.first_name} ({option.custom_id})</Select.Option>))}
+                                </Select>)
+                                }
+                            </Form.Item>
+                            {/*{patientField()}*/}
+                            <Form.Item label={"Doctors"} {...formItemLayout} key={'doctors'}>
+                                {getFieldDecorator('doctors', {initialValue: []})
+                                (<Select placeholder="Select Doctors" style={{width: '100%'}} mode={"multiple"}>
 
-                            {this.state.practiceDoctors.map(option => (
-                                <Select.Option key={option.id}>{option.user.first_name}</Select.Option>))}
-                        </Select>)
-                        }
+                                    {this.state.practiceDoctors.map(option => (
+                                        <Select.Option key={option.id}>{option.user.first_name}</Select.Option>))}
+                                </Select>)
+                                }
 
-                    </Form.Item>
+                            </Form.Item>
 
-                    <Form.Item label={"Meeting User"} {...formItemLayout} key={'zoom_user'}>
-                        {getFieldDecorator('zoom_user', {
-                            initialValue: [], rules: [{
-                                required: true,
-                                message: REQUIRED_FIELD_MESSAGE
-                            }]
-                        })
-                        (<Select placeholder="Select Zoom User" style={{width: '100%'}} onChange={(value) => that.checkMeetingAvailabilty('zoomUser', value)}>
-                            {this.state.zoom_user.map(option => (
-                                <Select.Option key={option.id}>{option.username}</Select.Option>))}
-                        </Select>)}
+                            <Form.Item label={"Meeting User"} {...formItemLayout} key={'zoom_user'}>
+                                {getFieldDecorator('zoom_user', {
+                                    initialValue: [], rules: [{
+                                        required: true,
+                                        message: REQUIRED_FIELD_MESSAGE
+                                    }]
+                                })
+                                (<Select placeholder="Select Zoom User" style={{width: '100%'}} onChange={(value) => that.checkMeetingAvailabilty('zoomUser', value)}>
+                                    {this.state.zoom_user.map(option => (
+                                        <Select.Option key={option.id}>{option.username}</Select.Option>))}
+                                </Select>)}
 
-                    </Form.Item>
+                            </Form.Item>
 
-                    <Row gutter={16}>
-                        {chooseOption}
-                    </Row>
+                            <Row gutter={16}>
+                                {chooseOption}
+                            </Row>
 
-                    {/*{this.state.add_new_user?<Form.Item label={"No. Of New Participants"} {...formItemLayout} >*/}
-                    {/*    {getFieldDecorator('no_of_new_participant',{initialValue:''})*/}
-                    {/*    (<InputNumber placeholder={"number"} onChange={(value)=>this.newParticipant(value)}/>)*/}
-                    {/*    }*/}
-                    {/*</Form.Item>:null}*/}
+                            {/*{this.state.add_new_user?<Form.Item label={"No. Of New Participants"} {...formItemLayout} >*/}
+                            {/*    {getFieldDecorator('no_of_new_participant',{initialValue:''})*/}
+                            {/*    (<InputNumber placeholder={"number"} onChange={(value)=>this.newParticipant(value)}/>)*/}
+                            {/*    }*/}
+                            {/*</Form.Item>:null}*/}
 
-                    <Form.Item {...formItemLayoutWithOutLabel}>
-                        <a onClick={() => this.addNewUser()}> <Icon type="plus"/> Add New User</a>
-                    </Form.Item>
+                            <Form.Item {...formItemLayoutWithOutLabel}>
+                                <a onClick={() => this.addNewUser()}> <Icon type="plus"/> Add New User</a>
+                            </Form.Item>
 
 
-                    <Form.Item label={"Booking From"} {...formItemLayout}>
+                            <Form.Item label={"Booking From"} {...formItemLayout}>
 
-                        {getFieldDecorator('start', {initialValue: that.state.startSchedule && moment(that.state.startSchedule).isValid() ? moment(that.state.startSchedule) : (that.props.startTime && moment(that.props.startTime).isValid() ? moment(that.props.startTime) : null)})
-                        (<DatePicker format="YYYY/MM/DD HH:mm" showTime
-                                     onChange={(value) => that.checkMeetingAvailabilty('startSchedule', value)}/>)
-                        }
-                    </Form.Item>
+                                {getFieldDecorator('start', {initialValue: that.state.startSchedule && moment(that.state.startSchedule).isValid() ? moment(that.state.startSchedule) : (that.props.startTime && moment(that.props.startTime).isValid() ? moment(that.props.startTime) : null)})
+                                (<DatePicker format="YYYY/MM/DD HH:mm" showTime
+                                             onChange={(value) => that.checkMeetingAvailabilty('startSchedule', value)}/>)
+                                }
+                                {this.state.filterMeetingList.length>0 ?
+                                    <Alert message="Selected time slot Booked!!" type="warning"
+                                           showIcon/> : null}
+                            </Form.Item>
 
-                    <Form.Item label={"Duration"} {...formItemLayout}>
-                        {getFieldDecorator('duration', {initialValue: this.state.duration})
-                        (<InputNumber onChange={(value) => that.checkMeetingAvailabilty('duration', value)}/>)
+                            <Form.Item label={"Duration"} {...formItemLayout}>
+                                {getFieldDecorator('duration', {initialValue: this.state.duration})
+                                (<InputNumber onChange={(value) => that.checkMeetingAvailabilty('duration', value)}/>)
 
-                        }
-                        <span className="ant-form-text">Minutes</span>
-                    </Form.Item>
-                    <Form.Item {...formItemLayout}>
-                        <Button type="primary" htmlType="submit" style={{margin: 5}}
-                                disabled={this.state.meetingNotAllowed} loading={this.state.loading}>
-                            Submit
-                        </Button>
-                        {that.props.history ?
-                            <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
-                                Cancel
-                            </Button> : null}
-                    </Form.Item>
-                </Form>
+                                }
+                                <span className="ant-form-text">Minutes</span>
+                            </Form.Item>
+                            <Form.Item {...formItemLayout}>
+                                <Button type="primary" htmlType="submit" style={{margin: 5}}
+                                        disabled={this.state.meetingNotAllowed} loading={this.state.loading}>
+                                    Submit
+                                </Button>
+                                {that.props.history ?
+                                    <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
+                                        Cancel
+                                    </Button> : null}
+                            </Form.Item>
+                        </Form>
+                    </Col>
+                    <Col span={6} style={{float:'Right'}}>
+                        <MeetingRightPanel conflictList={true} filterMeetingList={this.state.filterMeetingList} loading={this.state.loading}/>
+                    </Col>
+                </Row>
             </Card>
 
         )
