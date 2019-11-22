@@ -456,10 +456,7 @@ class DynamicFieldsForm extends React.Component {
                             return <FormItem key={field.key} label={field.label} {...formItemLayout}
                                              extra={field.extra}>
                                 {getFieldDecorator(field.key,
-                                    {initialValue: field.initialValue ? moment(field.initialValue) : null},
-                                    {
-                                        rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],
-                                    })(
+                                    {initialValue: field.initialValue ? moment(field.initialValue) : null,  rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],})(
                                     <DatePicker format={field.format}/>
                                 )}
                             </FormItem>;

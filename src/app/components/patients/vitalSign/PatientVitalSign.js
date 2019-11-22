@@ -120,10 +120,10 @@ class PatientVitalSign extends React.Component {
     render() {
         let that = this;
         const columns = [{
-            title: 'Time',
+            title: 'Date',
             dataIndex: 'date',
-            key: 'name',
-            render: (item,record) => <span>{record.date?moment(record.date).format('LLL'):''}</span>,
+            key: 'date',
+            render: (item,record) => <span>{record.date?moment(record.date).format('LL'):''}</span>,
         }, {
             title: 'Temp(F)',
             key: 'temperature',
@@ -216,14 +216,14 @@ class PatientVitalSign extends React.Component {
                                     {/*    </linearGradient>*/}
                                     {/*    <Legend verticalAlign="top" height={36}/>*/}
                                     {/*</defs>*/}
-                                    <XAxis dataKey="created_at" tickFormatter={(value) => {
-                                        return moment(value).format('LLL')
+                                    <XAxis dataKey="date" tickFormatter={(value) => {
+                                        return moment(value).format('LL')
                                     }} tickCount={that.state.vitalsign.length}/>
                                     <YAxis
                                         domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
                                     <Tooltip
-                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LL') : '--')}/>
                                     <Line type="monotone" dataKey="pulse" stroke="#8884d8" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>
@@ -238,14 +238,14 @@ class PatientVitalSign extends React.Component {
                                             <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
                                         </linearGradient>
                                     </defs>
-                                    <XAxis dataKey="created_at" tickFormatter={(value) => {
-                                        return moment(value).format('LLL')
+                                    <XAxis dataKey="date" tickFormatter={(value) => {
+                                        return moment(value).format('LL')
                                     }} tickCount={this.state.vitalsign.length}/>
                                     <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
 
                                     <Tooltip
-                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LL') : '--')}/>
                                     <Line type="monotone" dataKey="temperature" stroke="#82ca9d" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>
@@ -259,12 +259,12 @@ class PatientVitalSign extends React.Component {
                                             <stop offset="95%" stopColor="#ffc658" stopOpacity={0}/>
                                         </linearGradient>
                                     </defs>
-                                    <XAxis dataKey="created_at" tickFormatter={(value) => {
-                                        return moment(value).format('LLL')
+                                    <XAxis dataKey="date" tickFormatter={(value) => {
+                                        return moment(value).format('LL')
                                     }} tickCount={this.state.vitalsign.length}/>
                                     <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
-                                    <Tooltip labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                    <Tooltip labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LL') : '--')}/>
                                     <Line type="monotone" dataKey="blood_pressure_up" stroke="#ffc658" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>
@@ -285,13 +285,13 @@ class PatientVitalSign extends React.Component {
                                             <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
                                         </linearGradient>
                                     </defs>
-                                    <XAxis dataKey="created_at" tickFormatter={(value) => {
-                                        return moment(value).format('LLL')
+                                    <XAxis dataKey="date" tickFormatter={(value) => {
+                                        return moment(value).format('LL')
                                     }} tickCount={this.state.vitalsign.length}/>
                                     <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
                                     <Tooltip
-                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LL') : '--')}/>
                                     <Line type="monotone" dataKey="weight" stroke="#8884d8" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>
@@ -309,13 +309,13 @@ class PatientVitalSign extends React.Component {
                                             <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
                                         </linearGradient>
                                     </defs>
-                                    <XAxis dataKey="created_at" tickFormatter={(value) => {
-                                        return moment(value).format('LLL')
+                                    <XAxis dataKey="date" tickFormatter={(value) => {
+                                        return moment(value).format('LL')
                                     }} tickCount={this.state.vitalsign.length}/>
                                     <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
                                     <Tooltip
-                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LL') : '--')}/>
                                     <Line type="monotone" dataKey="resp_rate" stroke="#82ca9d" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>
@@ -333,13 +333,13 @@ class PatientVitalSign extends React.Component {
                                             <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
                                         </linearGradient>
                                     </defs>
-                                    <XAxis dataKey="created_at" tickFormatter={(value) => {
-                                        return moment(value).format('LLL')
+                                    <XAxis dataKey="date" tickFormatter={(value) => {
+                                        return moment(value).format('LL')
                                     }} tickCount={this.state.vitalsign.length}/>
                                     <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
                                     <Tooltip
-                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LL') : '--')}/>
                                     <Line type="monotone" dataKey="creatinine" stroke="#82ca9d" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>
@@ -357,13 +357,13 @@ class PatientVitalSign extends React.Component {
                                             <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
                                         </linearGradient>
                                     </defs>
-                                    <XAxis dataKey="created_at" tickFormatter={(value) => {
-                                        return moment(value).format('LLL')
+                                    <XAxis dataKey="date" tickFormatter={(value) => {
+                                        return moment(value).format('LL')
                                     }} tickCount={this.state.vitalsign.length}/>
                                     <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
                                     <Tooltip
-                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LL') : '--')}/>
                                     <Line type="monotone" dataKey="haemoglobin" stroke="#82ca9d" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>
@@ -381,13 +381,13 @@ class PatientVitalSign extends React.Component {
                                             <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
                                         </linearGradient>
                                     </defs>
-                                    <XAxis dataKey="created_at" tickFormatter={(value) => {
-                                        return moment(value).format('LLL')
+                                    <XAxis dataKey="date" tickFormatter={(value) => {
+                                        return moment(value).format('LL')
                                     }} tickCount={this.state.vitalsign.length}/>
                                     <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
                                     <Tooltip
-                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LL') : '--')}/>
                                     <Line type="monotone" dataKey="urea" stroke="#82ca9d" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>
@@ -405,13 +405,13 @@ class PatientVitalSign extends React.Component {
                                             <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
                                         </linearGradient>
                                     </defs>
-                                    <XAxis dataKey="created_at" tickFormatter={(value) => {
-                                        return moment(value).format('LLL')
+                                    <XAxis dataKey="date" tickFormatter={(value) => {
+                                        return moment(value).format('LL')
                                     }} tickCount={this.state.vitalsign.length}/>
                                     <YAxis domain={[dataMin => (Math.abs(dataMin)), dataMax =>  (dataMax * 1.1).toFixed(0)]}/>
                                     <CartesianGrid strokeDasharray="3 3"/>
                                     <Tooltip
-                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LLL') : '--')}/>
+                                        labelFormatter={(value) => (value && moment(value).isValid() ? moment(value).format('LL') : '--')}/>
                                     <Line type="monotone" dataKey="uric_acid" stroke="#82ca9d" fillOpacity={1}
                                           strokeWidth={4}
                                           fill="url(#colorUv)"/>

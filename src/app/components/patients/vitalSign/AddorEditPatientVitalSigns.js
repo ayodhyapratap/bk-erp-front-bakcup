@@ -7,6 +7,7 @@ import {DATE_PICKER, NUMBER_FIELD, SELECT_FIELD, SUCCESS_MSG_TYPE} from "../../.
 import {VITAL_SIGNS_API} from "../../../constants/api";
 import {displayMessage, interpolate} from "../../../utils/common";
 import {Redirect} from 'react-router-dom'
+import moment from "moment";
 
 
 class AddorEditPatientVitalSigns extends React.Component {
@@ -107,8 +108,9 @@ class AddorEditPatientVitalSigns extends React.Component {
         },{
             label:'Date',
             key:'date',
-            initialValue:this.props.editVitalSign && this.props.editVitalSign.date ?this.props.editVitalSign.date:'',
-            type:DATE_PICKER
+            initialValue:this.props.editVitalSign && this.props.editVitalSign.date ?this.props.editVitalSign.date:moment(),
+            type:DATE_PICKER,
+            required:true,
         }];
 
 
