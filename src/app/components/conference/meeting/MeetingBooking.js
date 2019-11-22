@@ -219,10 +219,7 @@ export default class MeetingBooking extends React.Component {
                                                 <Menu.Item key={item.id} style={{
                                                     textOverflow: "ellipsis",
                                                     borderRight: 'none',
-                                                    // borderLeft: '5px solid ' + item.calendar_colour,
-                                                    // backgroundColor: this.state.selectedDoctor == item.id ? item.calendar_colour : 'inherit',
-                                                    // color: this.state.selectedDoctor == item.id ? 'white' : 'inherit',
-                                                    // fontWeight: this.state.selectedDoctor == item.id ? 'bold' : 'inherit',
+
                                                 }}>
                                                     <span>{item.id ? item.username :null}</span>
                                                 </Menu.Item>

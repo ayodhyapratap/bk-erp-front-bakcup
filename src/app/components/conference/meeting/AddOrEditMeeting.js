@@ -1,11 +1,27 @@
 import React from "react";
-import {Alert, Button, Card, Col, DatePicker, Form, Icon, Input, InputNumber, List, Row, Select, Spin} from "antd";
+import {
+    Alert,
+    Button,
+    Card,
+    Col,
+    DatePicker,
+    Form,
+    Icon,
+    Input,
+    InputNumber,
+    List,
+    Popover,
+    Row,
+    Select,
+    Spin
+} from "antd";
 import {getAPI, interpolate, postAPI} from "../../../utils/common";
 import {MEETING_DETAILS, MEETING_USER, MEETINGS, SEARCH_PATIENT} from "../../../constants/api";
 import {loadDoctors} from "../../../utils/clinicUtils";
 import moment from "moment";
 import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 import MeetingRightPanel from "./MeetingRightPanel";
+import EventMeetingPopover from "./EventMeetingPopover";
 
 let id = 0;
 
@@ -108,9 +124,8 @@ class AddOrEditMeeting extends React.Component {
                     that.setState({
                         loading: false
                     });
-                    if (that.props.loadData)
-                        that.props.loadData();
-                    that.props.history.push("/meeting-booking")
+                    that.props.history.push("/meeting-booking");
+                    that.props.loadData();
                 };
                 let errorFn = function () {
                     that.setState({
@@ -185,6 +200,7 @@ class AddOrEditMeeting extends React.Component {
     render() {
         let that = this;
         const {getFieldDecorator, getFieldValue} = this.props.form;
+        const {filterMeetingList} = this.state;
         const formItemLayout = {
             labelCol: {span: 6},
             wrapperCol: {span: 18},
@@ -366,7 +382,19 @@ class AddOrEditMeeting extends React.Component {
                         </Form>
                     </Col>
                     <Col span={6} style={{float:'Right'}}>
-                        <MeetingRightPanel conflictList={true} filterMeetingList={this.state.filterMeetingList} loading={this.state.loading}/>
+                        <div>
+                            <Spin spinning={this.props.loading}>
+                                <List dataSource={filterMeetingList}
+                                      bordered={filterMeetingList.length>0?true:false}
+                                      renderItem={meeting => (
+                                          <List.Item>
+
+                                              <MeetingBlock {...meeting}/>
+                                          </List.Item>
+                                      )}
+                                />
+                            </Spin>
+                        </div>
                     </Col>
                 </Row>
             </Card>
@@ -376,3 +404,18 @@ class AddOrEditMeeting extends React.Component {
 }
 
 export default Form.create()(AddOrEditMeeting)
+
+function MeetingBlock(meeting) {
+
+    return <div style={{width: '100%'}}>
+        <p style={{marginBottom: 0}}>
+            <Popover placement="right" content={<EventMeetingPopover meetingId={meeting.id}
+                                                                     key={meeting.id} />}>
+            <span style={{width: 'calc(100% - 60px)'}}><b>{moment(meeting.start).format("LLL")}</b>&nbsp;
+                {meeting.name}</span>
+            </Popover>
+
+
+        </p>
+    </div>
+}
