@@ -369,7 +369,7 @@ class Addinvoicedynamic extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 that.setState({
-                    saveLoading: true
+                    // saveLoading: true
                 });
                 let reqData = {
                     practice: that.props.active_practiceId,
@@ -388,9 +388,9 @@ class Addinvoicedynamic extends React.Component {
                     item.unit = values.unit[item._id];
                     item.taxes = values.taxes[item._id];
                     // item.unit_cost = values.unit_cost[item._id];
-                    item.discount = values.discount[item._id];
-                    item.discount_type = values.discount_type[item._id];
-                    item.offers = values.offers;
+                    // item.discount = values.discount[item._id];
+                    // item.discount_type = values.discount_type[item._id];
+                    // item.offers = values.offers;
                     switch (item.item_type) {
                         case PROCEDURES:
                             reqData.procedure.push({
@@ -659,8 +659,6 @@ class Addinvoicedynamic extends React.Component {
                             }
                         });
                     }
-
-
                 } else {
                     selectedOffer.push(formValue);
                 }
@@ -696,7 +694,7 @@ class Addinvoicedynamic extends React.Component {
 
     render() {
         let that = this;
-        const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
+        const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
             labelCol: {
                 xs: {span: 24},
