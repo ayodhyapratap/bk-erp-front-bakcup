@@ -515,7 +515,7 @@ class AddPaymentForm extends React.Component {
                                     <Popconfirm
                                         title={"Are you sure to take payment of INR " + this.state.totalPayingAmount + "?"}
                                         onConfirm={() => this.paymentHandler(this.state.addedInvoice.map(inv => inv.invoice_id).join(', '), this.props.currentPatient, this.state.totalPayingAmount)}>
-                                        <Button type={'primary'} style={{margin: 5}}>Pay Online & Save Payments</Button>
+                                        <Button type={'primary'} style={{margin: 5}} disabled={that.props.editPayment && that.props.editPayment.invoices}>Pay Online & Save Payments</Button>
                                     </Popconfirm>
                                     <Popconfirm
                                         title={"Are you sure to take payment of INR " + this.state.totalPayingAmount + "?"}
