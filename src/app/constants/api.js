@@ -160,6 +160,7 @@ export const DRUG_UNIT_API = 'clinics/%s/drugunit/';
 export const PRINT_PREVIEW_RENDER = 'patients/print/';
 export const MEMBERSHIP_API = 'clinics/%s/membership/';
 export const BED_BOOKING_REPORTS = 'clinics/seat_booking_report';
+export const ACCEPT_PAYMENT = 'clinics/payment/';
 /**
  * Blogs API
  * */
