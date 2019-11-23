@@ -9,13 +9,14 @@ import {
     Row,
     Spin,
     Statistic,
-    Table, Tag, Select
+    Table, Tag, Select, Typography, List
 } from "antd";
 import {getAPI} from "../../../utils/common";
 import {INVOICES_API} from "../../../constants/api";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {loadDoctors} from "../../../utils/clinicUtils";
 
+const {Text} = Typography;
 export default class DailySummaryReport extends React.Component {
     constructor(props) {
         super(props)
@@ -25,6 +26,7 @@ export default class DailySummaryReport extends React.Component {
             loading: false,
             dailySummary: [],
             practiceDoctors: [],
+            paidAmountForPaymentMode: {}
 
         }
         this.loadDailySummary = this.loadDailySummary.bind(this);
@@ -54,37 +56,80 @@ export default class DailySummaryReport extends React.Component {
         let successFn = function (data) {
             that.setState(function (prevState) {
                 let rows = [];
-                data.results.forEach(function (resultRow) {
-                    resultRow.inventory.forEach(function (inventory) {
-                        rows.push({
-                            ...inventory,
-                            invoice: resultRow,
+                let finalRow = {
+                    type: 'FINAL',
+                    unit_cost: 0,
+                    tax_value: 0,
+                    unit: 1,
+                    total: 0,
+                    discount_value: 0,
+                    invoice: {
+                        inventory: [],
+                        prescription: [],
+                        procedure: [],
+                        payments: []
+                    },
+                    paidAmount: 0,
+
+                }
+                let paidAmountForPaymentMode = {...prevState.paidAmountForPaymentMode};
+                if (data.results.length)
+                    data.results.forEach(function (resultRow) {
+                        resultRow.inventory.forEach(function (inventory) {
+                            rows.push({
+                                ...inventory,
+                                invoice: resultRow,
+                            });
+                            finalRow.unit_cost += inventory.unit_cost * inventory.unit;
+                            finalRow.tax_value += inventory.tax_value;
+                            finalRow.discount_value += inventory.discount_value;
+                            finalRow.total += inventory.total;
                         });
-                    });
-                    resultRow.prescription.forEach(function (prescription) {
-                        rows.push({
-                            ...prescription,
-                            invoice: resultRow,
+                        resultRow.prescription.forEach(function (prescription) {
+                            rows.push({
+                                ...prescription,
+                                invoice: resultRow,
+                            });
+                            finalRow.unit_cost += prescription.unit_cost * prescription.unit;
+                            finalRow.tax_value += prescription.tax_value;
+                            finalRow.discount_value += prescription.discount_value;
+                            finalRow.total += prescription.total;
                         });
-                    });
-                    resultRow.procedure.forEach(function (procedure) {
-                        rows.push({
-                            ...procedure,
-                            invoice: resultRow,
+                        resultRow.procedure.forEach(function (procedure) {
+                            rows.push({
+                                ...procedure,
+                                invoice: resultRow,
+                            });
+                            finalRow.unit_cost += procedure.unit_cost * procedure.unit;
+                            finalRow.tax_value += procedure.tax_value;
+                            finalRow.discount_value += procedure.discount_value;
+                            finalRow.total += procedure.total;
                         });
+                        finalRow.paidAmount += resultRow.payments.map(payment => payment.pay_amount).reduce((a, b) => a + b, 0);
+                        resultRow.payments.forEach(function (payment) {
+                            if (paidAmountForPaymentMode[payment.payment_mode]) {
+                                paidAmountForPaymentMode[payment.payment_mode] += payment.pay_amount;
+                            } else {
+                                paidAmountForPaymentMode[payment.payment_mode] = payment.pay_amount;
+                            }
+                        })
                     });
-                });
+                if (data.count && !data.next) {
+                    rows.push(finalRow);
+                }
                 if (data.current == 1) {
                     return {
                         loading: false,
                         dailySummary: rows,
-                        nextItemPage: data.next
+                        nextItemPage: data.next,
+                        paidAmountForPaymentMode: paidAmountForPaymentMode
                     }
                 } else {
                     return {
                         loading: false,
                         dailySummary: [...prevState.dailySummary, ...rows],
-                        nextItemPage: data.next
+                        nextItemPage: data.next,
+                        paidAmountForPaymentMode: paidAmountForPaymentMode
                     }
                 }
             })
@@ -98,12 +143,12 @@ export default class DailySummaryReport extends React.Component {
         };
         let apiParams = {
             page: page,
-            start: '2012-09-02',
-            // start: this.state.startDate.format('YYYY-MM-DD'),
-            end: this.state.endDate.format('YYYY-MM-DD')
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            practice: this.props.active_practiceId
         };
         if (this.state.doctors) {
-            apiParams.staff = this.state.doctors.toString();
+            apiParams.doctor = this.state.doctors.toString();
         }
 
         getAPI(INVOICES_API, successFn, errorFn, apiParams);
@@ -131,18 +176,22 @@ export default class DailySummaryReport extends React.Component {
             title: 'S. No',
             key: 'sno',
             dataIndex: 'abcd',
+            align: 'center',
             render: (item, record, index) => {
                 let obj = {props: {}};
                 if (record.invoice.invoice_id == lastInvoiceForSerialNo) {
                     obj.props.rowSpan = 0
                 } else {
                     lastInvoiceForSerialNo = record.invoice.invoice_id;
-                    obj.children = <span> {i++}</span>;
+                    obj.children = record.type == 'FINAL' ? '--' : <span> {i++}</span>;
                     obj.props.rowSpan = record.invoice.inventory.length + record.invoice.prescription.length + record.invoice.procedure.length;
+                    if (record.type == 'FINAL') {
+                        obj.props.rowSpan = 1;
+                    }
                 }
                 return obj;
             },
-            export: (item, record, index) => index + 1,
+            // export: (item, record, index) => index + 1,
             width: 50
         }, {
             title: 'Patient Name',
@@ -154,12 +203,24 @@ export default class DailySummaryReport extends React.Component {
                     obj.props.rowSpan = 0
                 } else {
                     lastInvoiceForPatientName = record.invoice.invoice_id;
-                    obj.children = <span><b>{item} ({record.invoice.patient_data.custom_id})</b></span>;
+                    let paidAmount = record.invoice.payments.map(payment => payment.pay_amount).reduce((a, b) => a + b, 0).toFixed(2);
+                    obj.children = record.type == 'FINAL' ? '--' :
+                        <span><b>{item} ({record.invoice.patient_data.custom_id})</b><br/>
+                        <span>Invoice Income: <Text
+                            type="danger">INR&nbsp;{record.invoice.total.toFixed(2)}</Text></span><br/>
+                    <span>Total Payment: <Text
+                        type="danger">INR&nbsp;{paidAmount}</Text></span><br/>
+                    <span>Amount Due: <Text
+                        type="danger">INR&nbsp;{(record.invoice.total - paidAmount).toFixed(2)}</Text></span><br/>
+                    </span>;
                     obj.props.rowSpan = record.invoice.inventory.length + record.invoice.prescription.length + record.invoice.procedure.length;
+                    if (record.type == 'FINAL') {
+                        obj.props.rowSpan = 1;
+                    }
                 }
                 return obj;
             },
-            export: (item, record) => (record.patient_data.user.first_name),
+            // export: (item, record) => (record.patient_data.user.first_name),
         }, {
             title: 'Treatment & Products',
             dataIndex: 'name',
@@ -170,7 +231,10 @@ export default class DailySummaryReport extends React.Component {
             dataIndex: 'unit_cost',
             align: 'right',
             render: (item, record) => record.unit_cost ?
-                <span>{(record.unit_cost.toFixed(2) * record.unit).toFixed(2)}<br/><small>{record.unit_cost.toFixed(2)}x{record.unit}</small></span> : '--',
+                <span>{(record.unit_cost.toFixed(2) * record.unit).toFixed(2)}
+                    {record.type == 'FINAL' ? null :
+                        <span><br/><small>{record.unit_cost.toFixed(2)}x{record.unit}</small></span>}
+                </span> : '--',
             // export: (item, record) => (record.unit_cost ? record.unit_cost.toFixed(2) : '0.00'),
         }, {
             title: 'Discount (INR)',
@@ -190,6 +254,7 @@ export default class DailySummaryReport extends React.Component {
             title: 'Invoice No.',
             key: 'invoice_id',
             dataIndex: 'invoice.invoice_id',
+            render: (item, record) => <span>{item}<br/><small>{record.invoice.date}</small></span>
         }, {
             title: 'Invoice Cost (INR)',
             key: 'invoice_cost',
@@ -210,6 +275,9 @@ export default class DailySummaryReport extends React.Component {
                     obj.children =
                         <span>{record.invoice.payments.map(payment => <span>{payment.payment_id}<br/></span>)}</span>;
                     obj.props.rowSpan = record.invoice.inventory.length + record.invoice.prescription.length + record.invoice.procedure.length;
+                    if (record.type == 'FINAL') {
+                        obj.props.rowSpan = 1;
+                    }
                 }
                 return obj;
             },
@@ -217,15 +285,21 @@ export default class DailySummaryReport extends React.Component {
             title: 'Mode Of Payment',
             key: 'mode_of_payments',
             dataIndex: 'payment_mode',
+            align: 'center',
             render: (item, record, index) => {
                 let obj = {props: {}};
                 if (record.invoice.invoice_id == lastInvoiceForPaymentMode) {
                     obj.props.rowSpan = 0
                 } else {
                     lastInvoiceForPaymentMode = record.invoice.invoice_id;
-                    obj.children =
-                        <span>{record.invoice.payments.map(payment => <span>{payment.payment_mode}<br/></span>)}</span>;
+                    obj.children = <span>
+                            {record.invoice.payments.map(payment => <span>{payment.payment_mode || '--'}<br/></span>)}
+                        </span>;
                     obj.props.rowSpan = record.invoice.inventory.length + record.invoice.prescription.length + record.invoice.procedure.length;
+                    if (record.type == 'FINAL') {
+                        obj.props.rowSpan = 1;
+
+                    }
                 }
                 return obj;
             },
@@ -234,36 +308,70 @@ export default class DailySummaryReport extends React.Component {
             key: 'amount_paid',
             dataIndex: 'pay_amount',
             align: 'right',
+            render: (item, record, index) => {
+                let obj = {props: {}};
+                if (record.invoice.invoice_id == lastInvoiceForAmountPaid) {
+                    obj.props.rowSpan = 0
+                } else {
+                    lastInvoiceForAmountPaid = record.invoice.invoice_id;
+                    obj.children = <span>
+                            {record.invoice.payments.map(payment =>
+                                <span>{payment.pay_amount.toFixed(2) || '--'}<br/></span>)}
+                        </span>;
+                    obj.props.rowSpan = record.invoice.inventory.length + record.invoice.prescription.length + record.invoice.procedure.length;
+                    if (record.type == 'FINAL') {
+                        obj.props.rowSpan = 1;
+                        obj.children = <span>{record.paidAmount.toFixed(2)}</span>
+                    }
+                }
+                return obj;
+            },
         }, {
             title: 'Total Amount Paid',
             key: 'total_amount_paid',
             dataIndex: 'total',
             align: 'right',
-            render: (text, record) => <span>{record.total ? record.total.toFixed(2) : '0.00'}</span>,
-            export: (item, record) => (record.total ? record.total.toFixed(2) : '0.00'),
+            render: (item, record, index) => {
+                let obj = {props: {}};
+                if (record.invoice.invoice_id == lastInvoiceForTotalAmountPaid) {
+                    obj.props.rowSpan = 0
+                } else {
+                    lastInvoiceForTotalAmountPaid = record.invoice.invoice_id;
+                    obj.children = <span>
+                            {record.invoice.payments.map(payment =>
+                                <b>{payment.pay_amount.toFixed(2) || '--'}<br/></b>)}
+                        </span>;
+                    obj.props.rowSpan = record.invoice.inventory.length + record.invoice.prescription.length + record.invoice.procedure.length;
+                    if (record.type == 'FINAL') {
+                        obj.props.rowSpan = 1;
+                        obj.children = <span>{record.paidAmount.toFixed(2)}</span>
+                    }
+                }
+                return obj;
+            },
+            // export: (item, record) => (record.total ? record.total.toFixed(2) : '0.00'),
         }];
 
         return <div><h2>Daily Summary Report
         </h2>
             <Card
-                bodyStyle={{padding:0}}
+                bodyStyle={{padding: 0}}
                 extra={<>
-                <span>Doctors :</span>
-                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
-                        onChange={(value) => this.filterReport('doctors', value)}>
-                    {this.state.practiceDoctors.map((item) => <Select.Option key={item.id} value={item.id}>
-                        {item.user.first_name}</Select.Option>)}
-                </Select></>
-            }>
+                    <span>Doctors :</span>
+                    <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
+                            onChange={(value) => this.filterReport('doctors', value)}>
+                        {this.state.practiceDoctors.map((item) => <Select.Option key={item.id} value={item.id}>
+                            {item.user.first_name}</Select.Option>)}
+                    </Select></>
+                }>
 
-                <Table
-                    bordered={true}
-                    rowKey={(record, index) => {
-                        return index
-                    }}
-                    columns={columns}
-                    dataSource={this.state.dailySummary}
-                    pagination={false}
+                <Table bordered={true}
+                       rowKey={(record, index) => {
+                           return index
+                       }}
+                       columns={columns}
+                       dataSource={this.state.dailySummary}
+                       pagination={false}
                 />
 
 
@@ -271,6 +379,18 @@ export default class DailySummaryReport extends React.Component {
                     loaderFunction={() => this.loadDailySummary(this.state.nextItemPage)}
                     loading={this.state.loading}
                     hidden={!this.state.nextItemPage}/>
+                {this.state.nextItemPage ? null : <Row gutter={16}>
+                    <Col span={6} style={{margin: 15}}>
+                        <h4>Amount Total by Mode of Payments</h4>
+                        <List size="small" dataSource={Object.keys(this.state.paidAmountForPaymentMode).map(key => {
+                            return {payment_mode: key || '--', value: 0}
+                        })}
+                              renderItem={item => <List.Item>
+                                  <List.Item.Meta title={item.payment_mode || '--'}/>
+                                  <span>INR {that.state.paidAmountForPaymentMode[item.payment_mode].toFixed(2)}</span>
+                              </List.Item>}/>
+                    </Col>
+                </Row>}
             </Card>
         </div>
     }
