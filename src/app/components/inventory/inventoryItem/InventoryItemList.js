@@ -356,14 +356,14 @@ export default class InventoryItemList extends React.Component {
                     <Card title="Inventory List"
                           extra={<Button.Group>
                               <Link to="/inventory/add"><Button type="primary"
-                                                                disabled={!that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions}><Icon
+                                                                disabled={!that.props.activePracticePermissions.AddInventoryItem && !that.props.allowAllPermissions}><Icon
                                   type="plus"/> Add Item</Button></Link>
 
                               <Link to="/inventory/add-stock"> <Button
-                                  disabled={!that.props.activePracticePermissions.AddInventoryStock} type="primary">Add
+                                  disabled={!that.props.activePracticePermissions.AddInventoryStock && !that.props.allowAllPermissions} type="primary">Add
                                   Stock</Button></Link>
                               <Link to="/inventory/consume-stock"><Button
-                                  disabled={!that.props.activePracticePermissions.ConsumeInventoryStock} type="primary">Consume
+                                  disabled={!that.props.activePracticePermissions.ConsumeInventoryStock && !that.props.allowAllPermissions} type="primary">Consume
                                   Stock</Button></Link>
                           </Button.Group>}>
                         <Row>

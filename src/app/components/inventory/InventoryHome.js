@@ -37,7 +37,6 @@ export default class InventoryHome extends React.Component {
                     <LabList {...this.props}/>:<PermissionDenied/>)}/>
                 <Route path="/inventory/activity" render={(route) =>(that.props.activePracticePermissions.ViewActivities || that.props.allowAllPermissions ?
                     <ActivityList {...this.props} {...route}/>:<PermissionDenied/>)}/>
-                    
                 <Route path="/inventory" render={(route)=> (that.props.activePracticePermissions.ViewInventory || that.props.allowAllPermissions ?
                     <InventoryItemList {...route} {...this.props}/>:<PermissionDenied/>)}/>
             </Switch>
