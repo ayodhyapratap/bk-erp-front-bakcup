@@ -60,8 +60,8 @@ export default class ExpiringMembership extends React.Component {
         let that=this;
         const {report} =this.state;
         const reportData = [];
-        for (let i = 1; i < report.length; i++) {
-            reportData.push({s_no: i,...report[i]});
+        for (let i = 1; i <= report.length; i++) {
+            reportData.push({s_no: i,...report[i-1]});
         };
         const columns = [{
             title: 'S. No',
