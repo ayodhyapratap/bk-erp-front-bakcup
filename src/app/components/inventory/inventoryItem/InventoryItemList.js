@@ -424,7 +424,7 @@ export default class InventoryItemList extends React.Component {
                             <Table bordered={true}
                                    pagination={false}
                                    hideReport={true}
-                                   dataSource={this.state.inventoryItems}
+                                   dataSource={this.state.inventoryItems.sort((a,b) =>parseInt(b.total_quantity) -parseInt(a.total_quantity))}
                                    columns={columns}/>
                             <Spin spinning={this.state.loading}>
                                 <Row/>

@@ -25,7 +25,7 @@ import {
     DATE_TIME_PICKER,
     DIVIDER_FIELD,
     EMAIL_FIELD,
-    INPUT_FIELD,
+    INPUT_FIELD, LABEL_FIELD,
     MAIL_TEMPLATE_FIELD,
     MULTI_IMAGE_UPLOAD_FIELD,
     MULTI_SELECT_FIELD,
@@ -724,6 +724,15 @@ class DynamicFieldsForm extends React.Component {
                             </FormItem>;
                         case DIVIDER_FIELD :
                             return <Divider style={{margin: 4}}/>
+
+
+                        case LABEL_FIELD :
+                            return  <FormItem key={field.key} {...formItemLayout} label={field.label}
+                                              extra={field.extra}>
+
+                                {field.follow ? <span className="ant-form-text">{field.follow}</span> : null}
+
+                            </FormItem>;
                         default:
                             return null;
                     }

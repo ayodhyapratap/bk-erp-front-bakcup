@@ -14,6 +14,7 @@ export default class AllAppointments extends React.Component {
             endDate: this.props.endDate,
             loading: true,
             appointmentCategory:[],
+            appointmentReports:[],
             activeIndex:0,
         }
         this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
@@ -73,13 +74,18 @@ export default class AllAppointments extends React.Component {
         });
     };
     render() {
-    let that=this;
-        let i=1;
+
+        const {appointmentReports} =this.state;
+        const appointmentReportsData = [];
+        for (let i = 1; i < appointmentReports.length; i++) {
+            appointmentReportsData.push({key: i,...appointmentReports[i]});
+        }
+
         const columns = [{
             title: 'S. No',
             key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
+            dataIndex:'key',
+            render: (item, record) => <span> {record.key}</span>,
             export:(item,record,index)=>index+1,
             width: 50
         },{
@@ -183,7 +189,7 @@ export default class AllAppointments extends React.Component {
             <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                dataSource={this.state.appointmentReports}/>
+                dataSource={appointmentReportsData}/>
 
 
 

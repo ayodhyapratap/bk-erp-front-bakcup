@@ -590,3 +590,25 @@ export const ROUTES_TO_HIDE_PATIENT_SIDE_PANEL = [
     "/patient/:id/billing/payments/add",
     "/patient/:id/billing/payments/edit"
 ];
+
+
+export const PROMO_CODE_SMS_TAG_OPTIONS = [
+    {
+        label: "PATIENT NAME",
+        value: "{{PATIENT}}"
+    }, {
+        label: "CLINIC NAME",
+        value: "{{CLINIC}}"
+    }, {
+        label: "CLINIC NAME",
+        value: "{{EXPIRY}}"
+    }, {
+        label: "VALUE",
+        value: "{{VALUE}}"
+    }, {
+        label: "MAX VALUE",
+        value: "{{MAX_VALUE}}"
+    }, {
+        label: "MIN PURCHASE",
+        value: "{{MIN_PURCHASE}}"
+    }];
