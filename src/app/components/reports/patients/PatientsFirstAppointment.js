@@ -57,13 +57,16 @@ export default class PatientsFirstAppointment extends React.Component {
     }
     render() {
         let that=this;
-        let i = 1;
+        const {report} =this.state;
+        const reportData = [];
+        for (let i = 1; i < report.length; i++) {
+            reportData.push({s_no: i,...report[i]});
+        };
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
-            export:(item,record,index)=>index+1,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Date',
@@ -97,7 +100,7 @@ export default class PatientsFirstAppointment extends React.Component {
             <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                dataSource={this.state.report}/>
+                dataSource={reportData}/>
 
 
         </div>

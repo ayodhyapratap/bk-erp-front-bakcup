@@ -65,14 +65,17 @@ export default class DailyNewPatientReports extends React.Component {
         getAPI(PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }
     render() {
-        let that=this;
-        let i = 1;
+        const {report} =this.state;
+        const reportData = [];
+        for (let i = 1; i < report.length; i++) {
+            reportData.push({s_no: i,...report[i]});
+        };
+
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
-            export:(item,record,index)=>index+1,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Day',
@@ -100,8 +103,8 @@ export default class DailyNewPatientReports extends React.Component {
         return <div>
             <h2>Daily New Patients Report</h2>
             <Spin size="large" spinning={this.state.loading}>
-                {this.state.report.length>0?
-                <LineChart width={1000} height={300} data={[...this.state.report].reverse()}
+                {reportData.length>0?
+                <LineChart width={1000} height={300} data={[...reportData].reverse()}
                            margin={{top: 5, right: 30, left: 20, bottom: 55}}>
 
                     <XAxis dataKey="date" tickFormatter={(value) => {
@@ -122,7 +125,7 @@ export default class DailyNewPatientReports extends React.Component {
             <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                dataSource={this.state.report}/>
+                dataSource={reportData}/>
         </div>
     }
 }

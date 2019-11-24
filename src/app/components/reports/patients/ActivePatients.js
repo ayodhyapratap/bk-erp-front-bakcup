@@ -62,12 +62,18 @@ export default class ActivePatients extends React.Component {
     }
     render() {
         let that=this;
-        let i = 1;
+
+        const {report} =this.state;
+        const reportData = [];
+        for (let i = 1; i < report.length; i++) {
+            reportData.push({s_no: i,...report[i]});
+        };
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
+            key: 's_no',
+            dataIndex:'s_no',
+            render: (item, record) => <span> {record.s_no}</span>,
             export:(item,record,index)=>index+1,
             width: 50
         },{
@@ -108,7 +114,7 @@ export default class ActivePatients extends React.Component {
             <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                dataSource={this.state.report}/>
+                dataSource={reportData}/>
 
             {/*<InfiniteFeedLoaderButton loaderFunction={() => this.loadNewPatient(that.state.next)}*/}
             {/*                          loading={this.state.loading}*/}

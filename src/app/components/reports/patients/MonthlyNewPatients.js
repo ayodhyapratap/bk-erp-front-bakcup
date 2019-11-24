@@ -62,14 +62,17 @@ export default class MonthlyNewPatients extends React.Component {
         getAPI(PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }
     render() {
-        let that=this;
-        let i = 1;
+        const {report} =this.state;
+        const reportData = [];
+        for (let i = 1; i < report.length; i++) {
+            reportData.push({s_no: i,...report[i]});
+        };
+
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
-            export:(item,record,index)=>index+1,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: "Month",
@@ -98,8 +101,8 @@ export default class MonthlyNewPatients extends React.Component {
         return <div>
             <h2>Monthly New Patients Report</h2>
             <Spin size="large" spinning={this.state.loading}>
-                {this.state.report.length>0?
-                <ComposedChart width={1000} height={400} data={[...this.state.report].reverse()}
+                {reportData.length>0?
+                <ComposedChart width={1000} height={400} data={[...reportData].reverse()}
                                margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
 
@@ -117,7 +120,7 @@ export default class MonthlyNewPatients extends React.Component {
             <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                dataSource={this.state.report}/>
+                dataSource={reportData}/>
 
 
         </div>
