@@ -26,6 +26,7 @@ import {CHOOSE, GENDER} from "../../constants/dataKeys";
 import moment from "moment";
 import filter from "lodash/filter";
 import mapKeys from "lodash/mapKeys"
+import PermissionDenied from "../common/errors/PermissionDenied";
 
 const {Meta} = Card;
 const Search = Input.Search;
@@ -46,7 +47,7 @@ class PatientSelection extends React.Component {
             // keys:1,
             sourceList: [],
             custm_col: 8,
-            advanceLoading:false,
+            advanceLoading: false,
         };
         this.getPatientListData = this.getPatientListData.bind(this);
         this.searchPatient = this.searchPatient.bind(this);
@@ -311,46 +312,46 @@ class PatientSelection extends React.Component {
         });
         delete reqData.keys;
         that.setState({
-            patientData:reqData,
-        },function () {
+            patientData: reqData,
+        }, function () {
             that.loadAdvanceSearchPatient();
         });
 
     };
 
-    loadAdvanceSearchPatient=(page=1)=>{
-        let that=this;
-        let reqData=that.state.patientData;
+    loadAdvanceSearchPatient = (page = 1) => {
+        let that = this;
+        let reqData = that.state.patientData;
         that.setState({
             advancedSearch: true,
-            advanceLoading:true,
+            advanceLoading: true,
         });
-            let successFn = function (data) {
-                that.setState(function (prevState) {
-                    if (data.current > 1) {
-                        return {
-                            patientListData: [...prevState.patientListData, ...data.results],
-                            morePatientList: data.next,
-                            currentPage: data.current,
-                            advanceLoading: false
-                        }
-                    } else {
-                        return {
-                            patientListData: [...data.results],
-                            morePatientList: data.next,
-                            currentPage: data.current,
-                            advanceLoading: false
-                        }
+        let successFn = function (data) {
+            that.setState(function (prevState) {
+                if (data.current > 1) {
+                    return {
+                        patientListData: [...prevState.patientListData, ...data.results],
+                        morePatientList: data.next,
+                        currentPage: data.current,
+                        advanceLoading: false
                     }
-                });
-            };
-            let errorFn = function () {
-                that.setState({
-                    advanceLoading:false,
-                })
-            };
-            reqData.page =page;
-            getAPI(ADVANCED_SEARCH_PATIENT, successFn, errorFn, reqData)
+                } else {
+                    return {
+                        patientListData: [...data.results],
+                        morePatientList: data.next,
+                        currentPage: data.current,
+                        advanceLoading: false
+                    }
+                }
+            });
+        };
+        let errorFn = function () {
+            that.setState({
+                advanceLoading: false,
+            })
+        };
+        reqData.page = page;
+        getAPI(ADVANCED_SEARCH_PATIENT, successFn, errorFn, reqData)
 
     }
 
@@ -412,7 +413,8 @@ class PatientSelection extends React.Component {
         ));
 
 
-        return <div>
+        return that.props.activePracticePermissions.ViewPatient ? <div>
+
             <Row gutter={16}>
                 {this.state.advancedOptionShow ?
                     <Form onSubmit={this.AdvanceSearchPatient} layout={'inline'}>
@@ -437,7 +439,8 @@ class PatientSelection extends React.Component {
                     </Form>
                     : <>
                         <Col span={12}>
-                            <Search style={{margin: 5}} placeholder="Search Patient By Name / ID / Mobile No / Aadhar No" size={"small"}
+                            <Search style={{margin: 5}}
+                                    placeholder="Search Patient By Name / ID / Mobile No / Aadhar No" size={"small"}
                                     onChange={value => this.searchPatient(value.target.value)}
                                     enterButton/>
                         </Col>
@@ -539,9 +542,10 @@ class PatientSelection extends React.Component {
                     </Spin>
                     {this.state.searchvalue ? <InfiniteFeedLoaderButton loaderFunction={this.searchPatient}
                                                                         loading={this.state.loading}
-                                                                        hidden={!this.state.morePatients}/> :(this.state.advancedSearch?<InfiniteFeedLoaderButton loading ={this.state.advanceLoading}
-                                                                                                                                                                  loaderFunction={()=>this.loadAdvanceSearchPatient(that.state.morePatientList)}
-                                                                                                                                            hidden={!this.state.morePatientList}/>:
+                                                                        hidden={!this.state.morePatients}/> : (this.state.advancedSearch ?
+                        <InfiniteFeedLoaderButton loading={this.state.advanceLoading}
+                                                  loaderFunction={() => this.loadAdvanceSearchPatient(that.state.morePatientList)}
+                                                  hidden={!this.state.morePatientList}/> :
 
                         <InfiniteFeedLoaderButton loaderFunction={this.getMorePatient}
                                                   loading={this.state.loading}
@@ -582,7 +586,7 @@ class PatientSelection extends React.Component {
                     <PatientGroups {...this.props}/>
                 </Modal>
             </Row>
-        </div>
+        </div> : <PermissionDenied/>
     }
 }
 

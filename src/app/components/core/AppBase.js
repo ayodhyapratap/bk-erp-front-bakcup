@@ -33,7 +33,7 @@ class AppBase extends React.Component {
             activePracticeData: null,
             activePracticePermissions: {},
             specialisations: null,
-            allowAllPermissions: true,
+            allowAllPermissions: false,
             loadingPermissions: false,
             visible: false,
 
