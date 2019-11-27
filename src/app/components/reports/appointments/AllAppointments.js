@@ -78,15 +78,13 @@ export default class AllAppointments extends React.Component {
         const {appointmentReports} =this.state;
         const appointmentReportsData = [];
         for (let i = 1; i <= appointmentReports.length; i++) {
-            appointmentReportsData.push({key: i,...appointmentReports[i-1]});
+            appointmentReportsData.push({s_no: i,...appointmentReports[i-1]});
         };
 
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'key',
-            render: (item, record) => <span> {record.key}</span>,
-            export:(item,record,index)=>index+1,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Date',

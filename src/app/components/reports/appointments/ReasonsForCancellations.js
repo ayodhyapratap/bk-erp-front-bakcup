@@ -71,10 +71,10 @@ export default class ReasonsForCancellations extends React.Component {
     render() {
 
         const {appointmentReports} =this.state;
-        const appointmentReportsData = [];
-        for (let i = 1; i <= appointmentReports.length; i++) {
-            appointmentReportsData.push({s_no: i,...appointmentReports[i-1]});
-        };
+        // const appointmentReportsData = [];
+        // for (let i = 1; i <= appointmentReports.length; i++) {
+        //     appointmentReportsData.push({s_no: i,...appointmentReports[i-1]});
+        // };
 
 
         const columns = [{
@@ -154,7 +154,7 @@ export default class ReasonsForCancellations extends React.Component {
             <h2>Reasons For Cancellations
             </h2>
             <CustomizedTable loading={this.state.loading} columns={columns} size={'small'}
-                             dataSource={appointmentReportsData}/>
+                             dataSource={appointmentReports}/>
 
         </div>
     }
