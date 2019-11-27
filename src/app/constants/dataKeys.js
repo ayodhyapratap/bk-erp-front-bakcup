@@ -51,6 +51,7 @@ export const EMAIL_FIELD = 'email';
 export const SMS_FIELD = 'sms_field';
 export const DIVIDER_FIELD = 'divider_field';
 export const MAIL_TEMPLATE_FIELD = 'mail_field';
+export const LABEL_FIELD ='label_field';
 /***
  *Role
  **/

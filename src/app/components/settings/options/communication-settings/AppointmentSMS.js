@@ -3,12 +3,12 @@ import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Col, Form, Row, Select} from "antd";
 import {
     SUCCESS_MSG_TYPE,
-    INPUT_FIELD, SMS_FIELD, SINGLE_CHECKBOX_FIELD, TIME_PICKER, SELECT_FIELD
+    INPUT_FIELD, SMS_FIELD, SINGLE_CHECKBOX_FIELD, TIME_PICKER, SELECT_FIELD, LABEL_FIELD
 } from "../../../../constants/dataKeys";
 import {COMMUNICATONS_API} from "../../../../constants/api"
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
 import {
-    APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS, LANGUAGE
+    APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS, LANGUAGE, PROMO_CODE_SMS_TAG_OPTIONS
 } from "../../../../constants/hardData";
 import moment from "moment";
 
@@ -183,7 +183,21 @@ class AppointmentSMS extends React.Component {
                 minRows: 4,
                 type: SMS_FIELD,
                 options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS
-            }, {
+            },{
+                key: "promo_code_text",
+                initialValue: this.state.data ? this.state.data.promo_code_text : false,
+                type: LABEL_FIELD,
+                extra: "This SMS is sent to the Patient when payment is received.",
+                follow: <b>PROMO CODE SMS TEXT</b>
+            },{
+                key: "promo_code_text",
+                placeholder: "Promo Code  SMS Text",
+                initialValue: this.state.data ? this.state.data.payment_sms_text : null,
+                minRows: 4,
+                type: SMS_FIELD,
+                options: PROMO_CODE_SMS_TAG_OPTIONS
+            },
+            {
                 key: "lab_order_confirmation_sms",
                 initialValue: this.state.data ? this.state.data.lab_order_confirmation_sms : false,
                 type: SINGLE_CHECKBOX_FIELD,
