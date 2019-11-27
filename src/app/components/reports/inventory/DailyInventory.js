@@ -70,6 +70,7 @@ export default class DailyInventory extends React.Component {
         let dailyReports=[];
         let itemDate={};
         let j=0;
+        let i = 1;
         for (i = 0; i < currentData.length; i++) {
             if(currentData[i]["date"] in itemDate){
                 itemDate[currentData[i]["date"]][currentData[i]["type_of_consumption"]] = currentData[i]["consume"];
@@ -87,7 +88,7 @@ export default class DailyInventory extends React.Component {
             dailyReports.push(inner);
         }
 
-        let i = 1;
+
         let columns = [{
             title: 'S. No',
             key: 'sno',

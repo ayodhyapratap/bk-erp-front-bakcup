@@ -81,13 +81,17 @@ export default class AppointmentByCategory extends React.Component {
     };
     render() {
 
-        let i=1;
+        const {appointmentCategory} =this.state;
+        const appointmentCategoryData = [];
+        for (let i = 1; i <= appointmentCategory.length; i++) {
+            appointmentCategoryData.push({s_no: i,...appointmentCategory[i-1]});
+        }
+
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
-            export:(item,record,index)=>index+1,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
            title: 'Appointment Category',
@@ -154,12 +158,12 @@ export default class AppointmentByCategory extends React.Component {
             <Row>
                 <Col span={12} offset={6}>
                     <Spin  size="large" spinning={this.state.loading}>
-                        {this.state.appointmentCategory.length>0?
+                        {appointmentCategoryData.length>0?
                             <PieChart width={800} height={400}>
                                 <Pie
                                     activeIndex={this.state.activeIndex}
                                     activeShape={renderActiveShape}
-                                    data={this.state.appointmentCategory}
+                                    data={appointmentCategoryData}
                                     cx={300}
                                     dataKey="count"
                                     cy={200}
@@ -168,7 +172,7 @@ export default class AppointmentByCategory extends React.Component {
                                     fill="#8884d8"
                                     onMouseEnter={this.onPieEnter}>
                                     {
-                                        this.state.appointmentCategory.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                        appointmentCategoryData.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
                                     }
                                 </Pie>
                                 {/*<Tooltip/>*/}
@@ -176,7 +180,7 @@ export default class AppointmentByCategory extends React.Component {
                     </Spin>
                 </Col>
             </Row>
-            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.appointmentCategory}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={appointmentCategoryData}/>
 
         </div>
     }

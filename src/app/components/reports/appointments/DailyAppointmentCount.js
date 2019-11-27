@@ -73,13 +73,17 @@ export default class DailyAppointmentCount extends React.Component {
     };
 
     render() {
-        let i=1;
+
+        const {appointmentDaily} =this.state;
+        const appointmentDailyData = [];
+        for (let i = 1; i <= appointmentDaily.length; i++) {
+            appointmentDailyData.push({s_no: i,...appointmentDaily[i-1]});
+        };
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
-            export:(item,record,index)=>index+1,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Day',
@@ -112,8 +116,8 @@ export default class DailyAppointmentCount extends React.Component {
             <h2>Daily Appointment Count
             </h2>
             <Spin size="large" spinning={this.state.loading}>
-                {this.state.appointmentDaily.length>0?
-                <LineChart width={1000} height={300} data={[...this.state.appointmentDaily].reverse()}
+                {appointmentDailyData.length>0?
+                <LineChart width={1000} height={300} data={[...appointmentDailyData].reverse()}
                            margin={{top: 5, right: 30, left: 20, bottom: 55}}>
 
                     <XAxis dataKey="date" tickFormatter={(value) => {
@@ -131,7 +135,7 @@ export default class DailyAppointmentCount extends React.Component {
             </Spin>
 
             <Divider><Statistic title="Total" value={this.state.total} /></Divider>
-            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.appointmentDaily}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={appointmentDailyData}/>
 
         </div>
     }

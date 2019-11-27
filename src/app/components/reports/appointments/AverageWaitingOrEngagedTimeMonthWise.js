@@ -72,13 +72,16 @@ export default class AverageWaitingOrEngagedTimeMonthWise extends React.Componen
     };
 
     render() {
-        let i=1;
+        const {appointmentMonthWait} =this.state;
+        const appointmentMonthWaitData = [];
+        for (let i = 1; i <= appointmentMonthWait.length; i++) {
+            appointmentMonthWaitData.push({s_no: i,...appointmentMonthWait[i-1]});
+        };
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
-            export:(item,record,index)=>index+1,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Appointment Time Month',
@@ -128,7 +131,7 @@ export default class AverageWaitingOrEngagedTimeMonthWise extends React.Componen
             <h2>Average Waiting/engaged Time Month Wise
             </h2>
             <CustomizedTable loading={this.state.loading} columns={columns}
-                             dataSource={this.state.appointmentMonthWait}/>
+                             dataSource={appointmentMonthWaitData}/>
 
         </div>
     }

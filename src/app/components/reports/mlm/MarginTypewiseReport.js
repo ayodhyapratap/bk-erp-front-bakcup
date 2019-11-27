@@ -65,14 +65,16 @@ export default class MarginTypewiseReport extends React.Component {
 
 
     render() {
-        let that=this;
-        let i=1;
+        const {report} =this.state;
+        const reportData = [];
+        for (let i = 1; i <= report.length; i++) {
+            reportData.push({s_no: i,...report[i-1]});
+        };
+
         const columns=[{
             title: 'S. No',
-            key: 'sno',
-            dataIndex: 'sno',
-            render: (item, record) => <span> {i++}</span>,
-            export: (item, record, index) => index + 1,
+            key: 's_no',
+            dataIndex: 's_no',
             width: 50,
         },{
             title: 'Name',
@@ -141,7 +143,7 @@ export default class MarginTypewiseReport extends React.Component {
         //     dataIndex: 'comments',
         //     key: 'comments',
         // }];
-        var totalAmount = this.state.report.reduce(function(prev, cur) {
+        var totalAmount = reportData.reduce(function(prev, cur) {
             return prev + cur.total;
         }, 0);
 
@@ -187,11 +189,11 @@ export default class MarginTypewiseReport extends React.Component {
             <Row>
                 <Col span={12} offset={6}>
                     <Spin size="large" spinning={this.state.loading}>
-                        {this.state.report.length>0 && totalAmount?
+                        {reportData.length>0 && totalAmount?
                             <PieChart width={800} height={400} >
                                 <Pie
                                     label={renderActiveShape}
-                                    data={this.state.report}
+                                    data={reportData}
                                     cx={300}
                                     dataKey="total"
                                     cy={200}
@@ -199,7 +201,7 @@ export default class MarginTypewiseReport extends React.Component {
                                     outerRadius={80}
                                     fill="#8884d8">
                                     {
-                                        this.state.report.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                        reportData.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
                                     }
                                 </Pie>
                                 {/*<Tooltip/>*/}
@@ -217,7 +219,7 @@ export default class MarginTypewiseReport extends React.Component {
             <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                dataSource={this.state.report}/>
+                dataSource={reportData}/>
         </div>
     }
 }

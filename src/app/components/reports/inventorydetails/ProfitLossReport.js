@@ -92,7 +92,6 @@ export default class ProfitLossReport extends React.Component {
             }
         inventorySummary.push({sale_amount:total_sale,tax_amount:total_tax,cost_amount:total_cost ,profit_before_tax:profit_before_tax ,profit_after_tax:profit_after_tax});
 
-        let i=1;
         const SummaryColumns = [{
             title:'Total Sales (INR)',
             key:'sale_amount',
@@ -120,10 +119,17 @@ export default class ProfitLossReport extends React.Component {
             render:(value,record)=>(<span>{record.profit_after_tax.toFixed(2)}</span>)
         }];
 
+        const {inventoryReports} =this.state;
+        const inventoryReportsData = [];
+        for (let i = 1; i <= inventoryReports.length; i++) {
+            inventoryReportsData.push({s_no: i,...inventoryReports[i-1]});
+        };
+
+
         const DetailColumns = [{
             title: 'S. No',
-            key: 'sno',
-            render: (item, record) => <span> {i++}</span>,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Date',
@@ -173,7 +179,7 @@ export default class ProfitLossReport extends React.Component {
             {/*    /!*</Button.Group>*!/*/}
             {/*</h2>*/}
 
-            <ComposedChart width={1000} height={400} data={this.state.inventoryReports}
+            <ComposedChart width={1000} height={400} data={inventoryReportsData}
                            margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
                 <XAxis dataKey="date" tickFormatter={(value) => {
@@ -191,7 +197,7 @@ export default class ProfitLossReport extends React.Component {
 
             <Table loading={this.state.loading} columns={SummaryColumns} pagination={false} dataSource={inventorySummary}/>
 
-            <Table loading={this.state.loading} columns={DetailColumns} pagination={false} dataSource={this.state.inventoryReports}/>
+            <Table loading={this.state.loading} columns={DetailColumns} pagination={false} dataSource={inventoryReportsData}/>
 
         </div>
     }

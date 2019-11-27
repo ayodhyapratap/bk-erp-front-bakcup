@@ -78,8 +78,7 @@ export default class AllPayments extends React.Component {
     };
 
     render() {
-        let that = this;
-        let i = 1;
+
         const columns = [{
             title: 'Date',
             key: 'date',

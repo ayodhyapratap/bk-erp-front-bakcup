@@ -71,13 +71,17 @@ export default class Patient_Conversion extends React.Component{
 
     render() {
         let that =this;
-        let i=1;
+
+        const {patient_conversion} =this.state;
+        const patient_conversionData = [];
+        for (let i = 1; i <= patient_conversion.length; i++) {
+            patient_conversionData.push({s_no: i,...patient_conversion[i-1]});
+        };
+
         const columns=[
             {   title: 'S. No',
-                key: 'sno',
-                dataIndex:'sno',
-                render: (item, record) => <span> {i++}</span>,
-                export:(item,record,index)=>index+1,
+                key: 's_no',
+                dataIndex:'s_no',
                 width: 50
             },{
                 title:'Date',
@@ -135,7 +139,7 @@ export default class Patient_Conversion extends React.Component{
                         <Statistic title="Total Conversions" value={this.state.distinct_patients} />
                     </Col>
                 </Row>
-                <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.patient_conversion}/>
+                <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={patient_conversionData}/>
             </div>
         )
     }

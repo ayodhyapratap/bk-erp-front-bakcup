@@ -78,13 +78,16 @@ export default class AppointmentForEachPatientGroup extends React.Component {
         });
     };
     render() {
-        let i=1;
+        const {appointmentGroup} =this.state;
+        const appointmentGroupData = [];
+        for (let i = 1; i <= appointmentGroup.length; i++) {
+            appointmentGroupData.push({s_no: i,...appointmentGroup[i-1]});
+        }
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
-            export:(item,record,index)=>index+1,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Patient Group',
@@ -148,12 +151,12 @@ export default class AppointmentForEachPatientGroup extends React.Component {
             <Row>
                 <Col span={12} offset={6}>
                     <Spin size="large" spinning={this.state.loading}>
-                        {this.state.appointmentGroup.length>0?
+                        {appointmentGroupData.length>0?
                         <PieChart width={800} height={400} >
                             <Pie
                                 activeIndex={this.state.activeIndex}
                                 activeShape={renderActiveShape}
-                                data={this.state.appointmentGroup}
+                                data={appointmentGroupData}
                                 cx={300}
                                 dataKey="count"
                                 cy={200}
@@ -162,7 +165,7 @@ export default class AppointmentForEachPatientGroup extends React.Component {
                                 fill="#8884d8"
                                 onMouseEnter={this.onPieEnter}>
                                 {
-                                    this.state.appointmentGroup.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                    appointmentGroupData.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
                                 }
                             </Pie>
                         {/*<Tooltip/>*/}
@@ -173,7 +176,7 @@ export default class AppointmentForEachPatientGroup extends React.Component {
 
 
             <Divider><Statistic title="Total" value={this.state.total} /></Divider>
-            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.appointmentGroup}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={appointmentGroupData}/>
 
         </div>
     }

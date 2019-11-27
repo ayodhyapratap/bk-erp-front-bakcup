@@ -69,7 +69,14 @@ export default class ReasonsForCancellations extends React.Component {
     }
 
     render() {
-        console.log("startApp",this.props.startDate)
+
+        const {appointmentReports} =this.state;
+        const appointmentReportsData = [];
+        for (let i = 1; i <= appointmentReports.length; i++) {
+            appointmentReportsData.push({s_no: i,...appointmentReports[i-1]});
+        };
+
+
         const columns = [{
             title: 'Date',
             key: 'date',
@@ -147,7 +154,7 @@ export default class ReasonsForCancellations extends React.Component {
             <h2>Reasons For Cancellations
             </h2>
             <CustomizedTable loading={this.state.loading} columns={columns} size={'small'}
-                             dataSource={this.state.appointmentReports}/>
+                             dataSource={appointmentReportsData}/>
 
         </div>
     }

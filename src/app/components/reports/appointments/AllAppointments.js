@@ -77,9 +77,9 @@ export default class AllAppointments extends React.Component {
 
         const {appointmentReports} =this.state;
         const appointmentReportsData = [];
-        for (let i = 1; i < appointmentReports.length; i++) {
-            appointmentReportsData.push({key: i,...appointmentReports[i]});
-        }
+        for (let i = 1; i <= appointmentReports.length; i++) {
+            appointmentReportsData.push({key: i,...appointmentReports[i-1]});
+        };
 
         const columns = [{
             title: 'S. No',

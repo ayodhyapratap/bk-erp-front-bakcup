@@ -14,7 +14,9 @@ export default class TotalAmountDue extends React.Component {
             loading: true,
             appointmentCategory:[],
             activeIndex:0,
+            appointmentReports:[],
         }
+
         this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
     }
 
@@ -65,11 +67,17 @@ export default class TotalAmountDue extends React.Component {
     };
     render() {
         let that=this;
-        let i=1;
+
+        const {appointmentReports} =this.state;
+        const appointmentReportsData = [];
+        for (let i = 1; i <= appointmentReports.length; i++) {
+            appointmentReportsData.push({s_no: i,...appointmentReports[i-1]});
+        };
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            render: (item, record) => <span> {i++}</span>,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Invoice Date',
@@ -124,13 +132,13 @@ export default class TotalAmountDue extends React.Component {
                     loading={this.state.loading}
                     columns={columns}
                     pagination={false}
-                    dataSource={this.state.appointmentReports}/>
+                    dataSource={appointmentReportsData}/>
 
             :<Table
                     loading={that.props.loading}
                     columns={columns}
                     pagination={false}
-                    dataSource={that.props.appointmentReports}/>
+                    dataSource={appointmentReportsData}/>
 
 
             }

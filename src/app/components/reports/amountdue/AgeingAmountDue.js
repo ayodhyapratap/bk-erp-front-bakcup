@@ -14,6 +14,7 @@ export default class AgeingAmountDue extends React.Component {
             loading: true,
             appointmentCategory:[],
             activeIndex:0,
+            appointmentReports:[]
         }
         this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
     }
@@ -73,11 +74,17 @@ export default class AgeingAmountDue extends React.Component {
     };
     render() {
         let that=this;
-        let i=1;
+
+        const {appointmentReports} =this.state;
+        const appointmentReportsData = [];
+        for (let i = 1; i <= appointmentReports.length; i++) {
+            appointmentReportsData.push({s_no: i,...appointmentReports[i-1]});
+        };
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            render: (item, record) => <span> {i++}</span>,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Date',
@@ -207,13 +214,13 @@ export default class AgeingAmountDue extends React.Component {
             {/*    /!*</Button.Group>*!/*/}
             {/*</h2>*/}
 
-            {this.state.appointmentReports?<>
+            {appointmentReportsData?<>
                 <h2>All Appointments Report (Total:{this.state.total})</h2>
                 <Table
                     loading={this.state.loading}
                     columns={columns}
                     pagination={false}
-                    dataSource={this.state.appointmentReports}/>
+                    dataSource={appointmentReportsData}/>
 
             </>:<>
                 <h2>All Appointments Report (Total:{that.props.total})</h2>
@@ -221,7 +228,7 @@ export default class AgeingAmountDue extends React.Component {
                     loading={that.props.loading}
                     columns={columns}
                     pagination={false}
-                    dataSource={that.props.appointmentReports}/>
+                    dataSource={appointmentReportsData}/>
 
 
             </>}

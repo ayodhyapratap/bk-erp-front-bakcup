@@ -13,6 +13,7 @@ export default class AmountDuePerDoctor extends React.Component {
             endDate: this.props.endDate,
             loading: true,
             activeIndex:0,
+
         }
         this.loadAppointmentEachDoctor = this.loadAppointmentEachDoctor.bind(this);
 
@@ -74,11 +75,17 @@ export default class AmountDuePerDoctor extends React.Component {
         });
     };
     render() {
-        let i=1;
+        const {appointmentEachDoctor} =this.state;
+        const appointmentEachDoctorData = [];
+        for (let i = 1; i <= appointmentEachDoctor.length; i++) {
+            appointmentEachDoctorData.push({s_no: i,...appointmentEachDoctor[i-1]});
+        };
+
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            render: (item, record) => <span> {i++}</span>,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Doctor',
@@ -157,7 +164,7 @@ export default class AmountDuePerDoctor extends React.Component {
                         <Pie
                             activeIndex={this.state.activeIndex}
                             activeShape={renderActiveShape}
-                            data={this.state.appointmentEachDoctor}
+                            data={appointmentEachDoctorData}
                             cx={300}
                             dataKey="count"
                             cy={200}
@@ -166,7 +173,7 @@ export default class AmountDuePerDoctor extends React.Component {
                             fill="#8884d8"
                             onMouseEnter={this.onPieEnter}>
                             {
-                                this.state.appointmentEachDoctor.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                appointmentEachDoctorData.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
                             }
                         </Pie>
                         {/*<Tooltip/>*/}
@@ -174,7 +181,7 @@ export default class AmountDuePerDoctor extends React.Component {
                 </Col>
             </Row>
             <Divider><Statistic title="Total" value={this.state.total} /></Divider>
-            <Table loading={this.state.loading} columns={columns} pagination={false} dataSource={this.state.appointmentEachDoctor}/>
+            <Table loading={this.state.loading} columns={columns} pagination={false} dataSource={appointmentEachDoctorData}/>
 
 
         </div>

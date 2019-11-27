@@ -78,13 +78,16 @@ export default class AppointmentForEachPatientDoctor extends React.Component {
         });
     };
     render() {
-        let i=1;
+        const {appointmentEachDoctor} =this.state;
+        const appointmentEachDoctorData = [];
+        for (let i = 1; i <= appointmentEachDoctor.length; i++) {
+            appointmentEachDoctorData.push({s_no: i,...appointmentEachDoctor[i-1]});
+        }
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
-            export:(item,record,index)=>index+1,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Doctor',
@@ -141,7 +144,7 @@ export default class AppointmentForEachPatientDoctor extends React.Component {
                 </g>
             );
         };
-        var totalAppointment = this.state.appointmentEachDoctor.reduce(function(prev, cur) {
+        var totalAppointment = appointmentEachDoctorData.reduce(function(prev, cur) {
             return prev + cur.count;
         }, 0);
         return <div>
@@ -151,12 +154,12 @@ export default class AppointmentForEachPatientDoctor extends React.Component {
             <Row>
                 <Col span={12} offset={6}>
                     <Spin size="large" spinning={this.state.loading}>
-                        {this.state.appointmentEachDoctor.length>0?
+                        {appointmentEachDoctorData.length>0?
                             <PieChart width={800} height={400} >
                                 <Pie
                                     activeIndex={this.state.activeIndex}
                                     activeShape={renderActiveShape}
-                                    data={this.state.appointmentEachDoctor}
+                                    data={appointmentEachDoctorData}
                                     cx={300}
                                     dataKey="count"
                                     cy={200}
@@ -165,7 +168,7 @@ export default class AppointmentForEachPatientDoctor extends React.Component {
                                     fill="#8884d8"
                                     onMouseEnter={this.onPieEnter}>
                                     {
-                                        this.state.appointmentEachDoctor.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                        appointmentEachDoctorData.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
                                     }
                             </Pie>
                                 {/*<Tooltip/>*/}
@@ -174,7 +177,7 @@ export default class AppointmentForEachPatientDoctor extends React.Component {
                 </Col>
             </Row>
             <Divider><Statistic title="Total" value={totalAppointment} /></Divider>
-            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.appointmentEachDoctor}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={appointmentEachDoctorData}/>
 
 
         </div>

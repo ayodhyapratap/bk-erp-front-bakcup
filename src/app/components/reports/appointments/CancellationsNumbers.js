@@ -77,13 +77,16 @@ export default class CancellationsNumbers extends React.Component {
         });
     };
     render() {
-        let i=1;
+        const {appointmentCancel} =this.state;
+        const appointmentCancelData = [];
+        for (let i = 1; i <= appointmentCancel.length; i++) {
+            appointmentCancelData.push({s_no: i,...appointmentCancel[i-1]});
+        };
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
-            export:(item,record,index)=>index+1,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Appointment Status',
@@ -132,7 +135,7 @@ export default class CancellationsNumbers extends React.Component {
             );
         };
 
-        var appointmentTotal = this.state.appointmentCancel.reduce(function(prev, cur) {
+        var appointmentTotal = appointmentCancelData.reduce(function(prev, cur) {
             return prev + cur.count;
         }, 0);
 
@@ -143,11 +146,11 @@ export default class CancellationsNumbers extends React.Component {
             <Row>
                 <Col span={12} offset={6}>
                     <Spin size="large" spinning={this.state.loading}>
-                        {this.state.appointmentCancel.length>0 && appointmentTotal?
+                        {appointmentCancelData.length>0 && appointmentTotal?
                         <PieChart width={800} height={400} >
                             <Pie
                                 label={renderActiveShape}
-                                data={this.state.appointmentCancel}
+                                data={appointmentCancelData}
                                 cx={300}
                                 dataKey="count"
                                 cy={200}
@@ -155,7 +158,7 @@ export default class CancellationsNumbers extends React.Component {
                                 outerRadius={80}
                                 fill="#8884d8">
                                 {
-                                    this.state.appointmentCancel.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                    appointmentCancelData.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
                                 }
                             </Pie>
                             {/*<Tooltip/>*/}
@@ -166,7 +169,7 @@ export default class CancellationsNumbers extends React.Component {
             <Divider><Statistic title="Total" value={appointmentTotal} /></Divider>
 
             <CustomizedTable loading={this.state.loading} columns={columns}
-                             dataSource={this.state.appointmentCancel}/>
+                             dataSource={appointmentCancelData}/>
 
         </div>
     }

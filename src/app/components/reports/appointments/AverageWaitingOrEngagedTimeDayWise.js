@@ -72,13 +72,16 @@ export default class AverageWaitingOrEngagedTimeDayWise extends React.Component 
     };
 
     render() {
-        let i=1;
+        const {appointmentDayWait} =this.state;
+        const appointmentDayWaitData = [];
+        for (let i = 1; i <= appointmentDayWait.length; i++) {
+            appointmentDayWaitData.push({s_no: i,...appointmentDayWait[i-1]});
+        };
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
-            export:(item,record,index)=>index+1,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Appointment Time Day',
@@ -128,7 +131,7 @@ export default class AverageWaitingOrEngagedTimeDayWise extends React.Component 
             <h2>Average Waiting/engaged Time Day Wise
             </h2>
             <CustomizedTable loading={this.state.loading} columns={columns}
-                             dataSource={this.state.appointmentDayWait}/>
+                             dataSource={appointmentDayWaitData}/>
 
         </div>
     }

@@ -70,13 +70,17 @@ export default class MonthlyAppointmentCount extends React.Component {
     };
 
     render() {
-        let i=1;
+        const {appointmentMonthly} =this.state;
+        const appointmentMonthlyData = [];
+        for (let i = 1; i <= appointmentMonthly.length; i++) {
+            appointmentMonthlyData.push({s_no: i,...appointmentMonthly[i-1]});
+        };
+
+
         const columns = [{
             title: 'S. No',
-            key: 'sno',
-            dataIndex:'sno',
-            render: (item, record) => <span> {i++}</span>,
-            export:(item,record,index)=>index+1,
+            key: 's_no',
+            dataIndex:'s_no',
             width: 50
         },{
             title: 'Month',
@@ -101,8 +105,8 @@ export default class MonthlyAppointmentCount extends React.Component {
             <h2>Monthly Appointment Count
             </h2>
              <Spin size="large" spinning={this.state.loading}>
-                 {this.state.appointmentMonthly.length>0?
-                 <ComposedChart width={1000} height={400} data={[...this.state.appointmentMonthly].reverse()}
+                 {appointmentMonthlyData.length>0?
+                 <ComposedChart width={1000} height={400} data={[...appointmentMonthlyData].reverse()}
                                margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
 
@@ -117,7 +121,7 @@ export default class MonthlyAppointmentCount extends React.Component {
               </Spin>
 
             <Divider><Statistic title="Total" value={this.state.total} /></Divider>
-            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.appointmentMonthly}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={appointmentMonthlyData}/>
 
         </div>
     }
