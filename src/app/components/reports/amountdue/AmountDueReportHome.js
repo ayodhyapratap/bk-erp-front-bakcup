@@ -6,7 +6,7 @@ import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {
     AGEING_AMOUNT_DUE,
     AMOUNT_DUE_PER_DOCTOR,
-    AMOUNT_DUE_PER_PROCEDURE,
+    AMOUNT_DUE_PER_PROCEDURE, NEW_PATIENTS,
     TOTAL_AMOUNT_DUE, UNSETTLED_INVOICE
 } from "../../../constants/dataKeys";
 import TotalAmountDue from "./TotalAmountDue";
@@ -15,6 +15,7 @@ import AmountDuePerDoctor from "./AmountDuePerDoctor";
 import AmountDuePerProcedure from "./AmountDuePerProcedure";
 import UnsettledInvoice from "./UnsettledInvoice";
 import AppointmentForEachDoctor from "../appointments/AppointmentForEachDoctor";
+import {loadDoctors} from "../../../utils/clinicUtils";
 
 
 export default class AmountDueReportHome extends React.Component {
@@ -25,16 +26,16 @@ export default class AmountDueReportHome extends React.Component {
             endDate: this.props.endDate,
             sidePanelColSpan: 4,
             patientGroup:[],
-            type:'all',
+            practiceDoctors:[],
+            type: 'ALL',
             loading:true,
             advancedOptionShow: true,
 
-        }
-        this.loadNewPatient = this.loadNewPatient.bind(this);
+        };
+        loadDoctors(this);
         this.loadPatientGroup = this.loadPatientGroup.bind(this);
     }
     componentDidMount() {
-        this.loadNewPatient();
         this.loadPatientGroup();
 
     }
@@ -62,31 +63,6 @@ export default class AmountDueReportHome extends React.Component {
 
         }
         getAPI(interpolate(PATIENT_GROUPS,[this.props.active_practiceId]),successFn ,errorFn)
-    }
-    loadNewPatient() {
-        let that = this;
-
-        let successFn = function (data) {
-            that.setState({
-                report: data.results,
-                total:data.count,
-                loading: false
-            });
-        };
-        let errorFn = function () {
-            that.setState({
-                loading: false
-            })
-        };
-        let apiParams={
-            type:this.state.type,
-        }
-        if(this.state.startDate){
-            apiParams.from_date=this.state.startDate.format('YYYY-MM-DD');
-            apiParams.to_date= this.state.endDate.format('YYYY-MM-DD');
-        }
-
-        getAPI(interpolate("PATIENTS_REPORTS", [this.props.active_practiceId]), successFn, errorFn,apiParams);
     }
 
     onChangeHandle = (type, value) => {
@@ -125,8 +101,9 @@ export default class AmountDueReportHome extends React.Component {
                         {this.state.type==TOTAL_AMOUNT_DUE?<TotalAmountDue {...this.state} {...this.props}/>:null}
                         {this.state.type==AGEING_AMOUNT_DUE?<AgeingAmountDue {...this.state} {...this.props}/>:null}
                         {this.state.type==AMOUNT_DUE_PER_DOCTOR?<AmountDuePerDoctor {...this.state} {...this.props}/>:null}
-                        {this.state.type==AMOUNT_DUE_PER_PROCEDURE?<AmountDuePerProcedure {...this.state} {...this.props}/>:null}
-                        {this.state.type==UNSETTLED_INVOICE?<UnsettledInvoice {...this.state} {...this.props}/>:null}
+
+                        {/*{this.state.type==AMOUNT_DUE_PER_PROCEDURE?<AmountDuePerProcedure {...this.state} {...this.props}/>:null}*/}
+                        {/*{this.state.type==UNSETTLED_INVOICE?<UnsettledInvoice {...this.state} {...this.props}/>:null}*/}
 
                     </Col>
                     <Col span={this.state.sidePanelColSpan}>
@@ -147,17 +124,32 @@ export default class AmountDueReportHome extends React.Component {
 
                         <br/>
                         <br/>
+                        {this.state.type == TOTAL_AMOUNT_DUE || this.state.type == AGEING_AMOUNT_DUE?<>
+
                         {this.state.advancedOptionShow?<>
                             <a href={'#'} onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options</a>
                             <Col> <br/>
-                                <h4>Patient Groups</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Patient Groups"
-                                        onChange={(value)=>this.handleChangeOption('patient_groups',value)}>
-                                    {this.state.patientGroup.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
+                                {this.state.type != AGEING_AMOUNT_DUE ?<>
+                                    <h4>Patient Groups</h4>
+                                    <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Patient Groups"
+                                            onChange={(value)=>this.handleChangeOption('patient_groups',value)}>
+                                        {this.state.patientGroup.map((item) => <Select.Option value={item.id}>
+                                            {item.name}</Select.Option>)}
+                                    </Select>
+                                    <br/>
+                                    <br/>
+                                    </>:null}
+                                <h4>Doctors</h4>
+                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
+                                        onChange={(value) => this.handleChangeOption('doctors', value)}>
+                                    {this.state.practiceDoctors.map((item) => <Select.Option value={item.id}>
+                                        {item.user.first_name}</Select.Option>)}
                                 </Select>
+
                             </Col>
                         </>:<a href={'#'} onClick={(value)=>this.advancedOption(true)}>Show Advanced Options</a>}
+
+                        </>:null}
 
 
                     </Col>

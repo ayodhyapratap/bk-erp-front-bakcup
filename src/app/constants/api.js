@@ -150,6 +150,9 @@ export const PAYMENT_REPORTS = 'xyz';
 /** Income Reports**/
 export const INCOME_REPORTS = "invoice/invoice_reports";
 
+/** Amount Due Reports **/
+export const AMOUNT_DUE_REPORTS ='invoice/amount_due/';
+
 export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/';
 export const EXPENSE_REPORT = 'clinics/%s/expense_report/';
 export const INVOICE_REPORTS = 'clinics/%s/invoice_report/';
