@@ -100,20 +100,17 @@ export default class AgeingAmountDue extends React.Component {
             dataIndex:'365',
             key:'365',
             render:(item =><span>{item.toFixed(2)}</span>)
-        }
-        ,{
+        },{
             title:'Total (INR)',
             key:'total',
             render:(item,record)=><span>{(record['0_29'] + record['30_59'] + record['60_89'] +record['89_364'] + record['365']).toFixed(2)}</span>
-        }
-        ];
-
+        }];
 
         return <div>
 
                 <h2>Ageing Amount Due </h2>
 
-                <Table loading={loading} columns={columns} pagination={false}  dataSource={report}/>
+                <Table  title={() => 'Details'} loading={loading} columns={columns} pagination={false}  dataSource={report}/>
         </div>
     }
 }
