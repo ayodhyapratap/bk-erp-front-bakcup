@@ -72,7 +72,7 @@ class Offers extends React.Component {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-                <Popconfirm title="Are you sure delete this prescription?" onConfirm={() => that.deleteObject(record)}
+                <Popconfirm title="Are you sure delete this Offer?" onConfirm={() => that.deleteObject(record)}
                             okText="Yes" cancelText="No">
                     <a>
                         Delete

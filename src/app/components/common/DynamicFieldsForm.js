@@ -402,7 +402,7 @@ class DynamicFieldsForm extends React.Component {
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
                                              extra={field.extra}>
                                 {getFieldDecorator(field.key, {...that.fieldDecorators(field, that.state.formData)})(
-                                    <Select mode="multiple" placeholder={field.placeholder}
+                                    <Select mode="multiple" placeholder={field.placeholder} showSearch={field.showSearch?field.showSearch:null}
                                             disabled={field.disabled ? field.disabled : that.state.disabled}>
                                         {field.options.map((option) => <Select.Option
                                             value={option.value}>{option.label}</Select.Option>)}
