@@ -1,5 +1,5 @@
 import React from "react";
-import {Col, Divider, Row, Statistic, Table} from "antd";
+import {Card, Col, Divider, Row, Statistic, Table} from "antd";
 import {AMOUNT_DUE_REPORTS, APPOINTMENT_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {Cell, Pie, PieChart, Sector} from "recharts";
@@ -64,7 +64,20 @@ export default class AgeingAmountDue extends React.Component {
 
     render() {
         const {report ,loading} =this.state;
-
+        let zero_twenty_nine=0;
+        let thirty_fifty_nine=0;
+        let sixty_eighty_nine=0;
+        let eighty_nine_three_sixty_four=0;
+        let three_sixty_five=0;
+        let total_amount=0;
+        report.map(function (item) {
+            zero_twenty_nine +=item['0_29'];
+            thirty_fifty_nine += item['30_59'];
+            sixty_eighty_nine += item['60_89'];
+            eighty_nine_three_sixty_four += item['89_364'];
+            three_sixty_five += item['365'];
+            total_amount= zero_twenty_nine + thirty_fifty_nine + sixty_eighty_nine + eighty_nine_three_sixty_four +three_sixty_five;
+        });
         const columns = [{
             title: 'S. No',
             key: 's_no',
@@ -109,8 +122,42 @@ export default class AgeingAmountDue extends React.Component {
         return <div>
 
                 <h2>Ageing Amount Due </h2>
+                <Row>
+                    <Col span={22} offset={1}>
 
-                <Table  title={() => 'Details'} loading={loading} columns={columns} pagination={false}  dataSource={report}/>
+                        <p style={{textAlign:"center", marginTop:40}}>*Unpaid Invoice Amount.</p>
+
+                        <Card title={"Summary"} bordered={false} type={'inner'}>
+                            <Row>
+                                <Col span={4}>
+                                    <Statistic title="for 0-29 days (INR)" value={zero_twenty_nine.toFixed(2)} />
+                                </Col>
+                                <Col span={4}>
+                                    <Statistic title="for 30-59 days (INR)" value={thirty_fifty_nine.toFixed(2)} />
+                                </Col>
+                                <Col span={4}>
+                                    <Statistic title="for 60-89 days (INR)" value={sixty_eighty_nine.toFixed(2)} />
+                                </Col>
+                                <Col span={4}>
+                                    <Statistic title="for 89-364 days (INR)" value={eighty_nine_three_sixty_four.toFixed(2)} />
+                                </Col>
+                                <Col span={4}>
+                                    <Statistic title="for more than 364 days (INR)" value={three_sixty_five.toFixed(2)} />
+                                </Col>
+                                <Col span={4}>
+                                    <Statistic title="Total (INR)" value={total_amount.toFixed(2)} />
+                                </Col>
+                            </Row>
+                        </Card>
+                    </Col>
+                </Row>
+            <Row gutter={16}>
+                <p style={{textAlign:"center", marginTop:40}}>*Unpaid Invoice Amount.</p>
+
+                <Card title={"Summary"} bordered={false} type={'inner'} bodyStyle={{padding:0}}>
+                    <Table loading={loading} columns={columns} pagination={false}  dataSource={report}/>
+                </Card>
+            </Row>
         </div>
     }
 }
