@@ -45,7 +45,7 @@ export default class PromoCode extends React.Component{
     deleteObject =(record) =>{
         let that = this;
         let reqData ={
-            id:record.id,
+            // id:record.id,
             is_active:false
         };
         let successFn = function (data) {

@@ -1,5 +1,5 @@
 import React from "react";
-import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
+import {AMOUNT_DUE_REPORTS, PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import {Col, Divider, Row, Statistic, Table} from "antd";
 import {Pie, PieChart, Sector,Cell} from "recharts";
@@ -8,79 +8,65 @@ export default class AmountDuePerProcedure extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            appointmentEachDoctor: [],
+            report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: true,
             activeIndex:0,
 
         }
-        this.loadAppointmentEachDoctor = this.loadAppointmentEachDoctor.bind(this);
+        this.loadReport = this.loadReport.bind(this);
 
     }
     componentDidMount() {
-        this.loadAppointmentEachDoctor();
+        this.loadReport();
     }
 
     componentWillReceiveProps(newProps) {
         let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.categories!=newProps.categories
-            ||this.props.doctors!=newProps.doctors ||this.props.exclude_cancelled!=newProps.exclude_cancelled)
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate || this.props.doctors != newProps.doctors)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
             },function(){
-                that.loadAppointmentEachDoctor();
+                that.loadReport();
             })
 
     }
+    loadReport(){
+        let that =this;
+        that.setState({
+            loading:true,
+        });
 
-    loadAppointmentEachDoctor = () => {
-        let that = this;
         let successFn = function (data) {
             that.setState({
-                appointmentEachDoctor: data,
-                loading: false
-            });
-
+                report:data,
+                loading:false,
+            })
         };
         let errorFn = function () {
             that.setState({
-                loading: false
+                loading:false
             })
         };
-
         let apiParams={
-            type:that.props.type,
-            practice:that.props.active_practiceId,
+            type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            exclude_cancelled:this.props.exclude_cancelled?true:false,
         };
-        // if (this.props.exclude_cancelled){
-        //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
-        // }
-        if(this.props.categories){
-            apiParams.categories=this.props.categories.toString();
-        }
-        if(this.props.doctors){
-            apiParams.doctors=this.props.doctors.toString();
+
+        if (this.props.doctors) {
+            apiParams.doctors = this.props.doctors.toString();
         }
 
-        getAPI(PATIENT_APPOINTMENTS_REPORTS,  successFn, errorFn, apiParams);
+        getAPI(AMOUNT_DUE_REPORTS, successFn ,errorFn,apiParams);
     };
-    onPieEnter=(data, index)=>{
-        this.setState({
-            activeIndex: index,
-        });
-    };
+
     render() {
 
-        const {appointmentEachDoctor} =this.state;
-        const appointmentEachDoctorData = [];
-        for (let i = 1; i <= appointmentEachDoctor.length; i++) {
-            appointmentEachDoctorData.push({s_no: i,...appointmentEachDoctor[i-1]});
-        };
+        const {report ,loading} =this.state;
+
 
         const columns = [{
             title: 'S. No',
@@ -164,7 +150,7 @@ export default class AmountDuePerProcedure extends React.Component {
                         <Pie
                             activeIndex={this.state.activeIndex}
                             activeShape={renderActiveShape}
-                            data={appointmentEachDoctorData}
+                            data={report}
                             cx={300}
                             dataKey="count"
                             cy={200}
@@ -173,7 +159,7 @@ export default class AmountDuePerProcedure extends React.Component {
                             fill="#8884d8"
                             onMouseEnter={this.onPieEnter}>
                             {
-                                appointmentEachDoctorData.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                report.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
                             }
                         </Pie>
                         {/*<Tooltip/>*/}
@@ -181,7 +167,7 @@ export default class AmountDuePerProcedure extends React.Component {
                 </Col>
             </Row>
             <Divider><Statistic title="Total" value={this.state.total} /></Divider>
-            <Table loading={this.state.loading} columns={columns} pagination={false} dataSource={appointmentEachDoctorData}/>
+            <Table loading={loading} columns={columns} pagination={false} dataSource={report}/>
 
 
         </div>

@@ -332,8 +332,8 @@ export const EMR_RELATED_REPORT = [
 export const AMOUNT_DUE_RELATED_REPORT = [
     {name: 'Ageing Amount Due', value: AGEING_AMOUNT_DUE},
     {name: 'Amount Due Per Doctor', value: AMOUNT_DUE_PER_DOCTOR},
-    {name: 'Amount Due Per Procedure', value: AMOUNT_DUE_PER_PROCEDURE},
-    {name: 'Unsettled Invoice', value: UNSETTLED_INVOICE},
+    // {name: 'Amount Due Per Procedure', value: AMOUNT_DUE_PER_PROCEDURE},
+    // {name: 'Unsettled Invoice', value: UNSETTLED_INVOICE},
 ];
 
 export const BLOOD_GROUPS = [

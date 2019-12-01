@@ -1,108 +1,96 @@
 import React from "react";
-import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
+import {AMOUNT_DUE_REPORTS, PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
-import {Col, Divider, Row, Statistic, Table} from "antd";
+import {Col, Divider, Empty, Row, Spin, Statistic, Table} from "antd";
 import {Pie, PieChart, Sector,Cell} from "recharts";
 
 export default class AmountDuePerDoctor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            appointmentEachDoctor: [],
+            reportEachDoctor: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: true,
             activeIndex:0,
 
-        }
-        this.loadAppointmentEachDoctor = this.loadAppointmentEachDoctor.bind(this);
+        };
+        this.loadReport = this.loadReport.bind(this);
 
     }
     componentDidMount() {
-        this.loadAppointmentEachDoctor();
+        this.loadReport();
     }
 
     componentWillReceiveProps(newProps) {
         let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.categories!=newProps.categories
-            ||this.props.doctors!=newProps.doctors ||this.props.exclude_cancelled!=newProps.exclude_cancelled)
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
             },function(){
-                that.loadAppointmentEachDoctor();
+                that.loadReport();
             })
 
     }
+    loadReport(){
+        let that =this;
+        that.setState({
+            loading:true,
+        });
 
-    loadAppointmentEachDoctor = () => {
-        let that = this;
         let successFn = function (data) {
             that.setState({
-                appointmentEachDoctor: data,
-                loading: false
-            });
-
+                reportEachDoctor:data,
+                loading:false,
+            })
         };
         let errorFn = function () {
             that.setState({
-                loading: false
+                loading:false
             })
         };
-
         let apiParams={
-            type:that.props.type,
-            practice:that.props.active_practiceId,
+            type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            exclude_cancelled:this.props.exclude_cancelled?true:false,
         };
-        // if (this.props.exclude_cancelled){
-        //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
-        // }
-        if(this.props.categories){
-            apiParams.categories=this.props.categories.toString();
-        }
-        if(this.props.doctors){
-            apiParams.doctors=this.props.doctors.toString();
-        }
 
-        getAPI(PATIENT_APPOINTMENTS_REPORTS,  successFn, errorFn, apiParams);
+        getAPI(AMOUNT_DUE_REPORTS, successFn ,errorFn,apiParams);
     };
+
     onPieEnter=(data, index)=>{
         this.setState({
             activeIndex: index,
         });
     };
     render() {
-        const {appointmentEachDoctor} =this.state;
-        const appointmentEachDoctorData = [];
-        for (let i = 1; i <= appointmentEachDoctor.length; i++) {
-            appointmentEachDoctorData.push({s_no: i,...appointmentEachDoctor[i-1]});
-        };
-
-
+        const {reportEachDoctor,loading} = this.state;
         const columns = [{
             title: 'S. No',
             key: 's_no',
             dataIndex:'s_no',
-            width: 50
+            width: 50,
+            render:(item,record,index)=><span>{index+1}</span>
         },{
             title: 'Doctor',
             key:'doctor',
-            dataIndex:'doctor',
+            dataIndex:'doctor_name',
         },{
             title:'Invoiced (INR)',
-            key:'invoiced_amount',
-            dataIndex:'',
+            key:'invoiced',
+            dataIndex:'invoiced',
+            render:(item)=>(item.toFixed(2))
         },{
             title:'Received (INR)',
             key:'received_amount',
-            dataIndex:'',
+            dataIndex:'received_amount',
+            render:(item ,record)=><span>{(record.invoiced - record.amount_due).toFixed(2) }</span>
         },{
             title:'Total Amount Due (INR)',
-            key:'count',
-            dataIndex:'count',
+            key:'amount_due',
+            dataIndex:'amount_due',
+            render:(item)=>(item.toFixed(2))
 
         }];
         const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -143,7 +131,7 @@ export default class AmountDuePerDoctor extends React.Component {
                     />
                     <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
                     <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
-                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.doctor+','+ payload.count}</text>
+                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.doctor_name+', '+ 'INR ' + payload.invoiced.toFixed(2)}</text>
                     <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
                         {`(Rate ${(percent * 100).toFixed(2)}%)`}
                     </text>
@@ -151,7 +139,7 @@ export default class AmountDuePerDoctor extends React.Component {
             );
         };
         return <div>
-            <h2>Appointment For Each Patient Doctor
+            <h2>Amount Due Per Doctor
                 {/*<Button.Group style={{float: 'right'}}>*/}
                 {/*<Button><Icon type="mail"/> Mail</Button>*/}
                 {/*<Button><Icon type="printer"/> Print</Button>*/}
@@ -160,28 +148,30 @@ export default class AmountDuePerDoctor extends React.Component {
 
             <Row>
                 <Col span={12} offset={6}>
-                    <PieChart width={800} height={400} >
-                        <Pie
-                            activeIndex={this.state.activeIndex}
-                            activeShape={renderActiveShape}
-                            data={appointmentEachDoctorData}
-                            cx={300}
-                            dataKey="count"
-                            cy={200}
-                            innerRadius={60}
-                            outerRadius={80}
-                            fill="#8884d8"
-                            onMouseEnter={this.onPieEnter}>
-                            {
-                                appointmentEachDoctorData.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
-                            }
-                        </Pie>
-                        {/*<Tooltip/>*/}
-                    </PieChart>
+                    <Spin size="large" spinning={loading}>
+                        {reportEachDoctor.length>0?
+                            <PieChart width={800} height={400} >
+                                <Pie
+                                    activeIndex={this.state.activeIndex}
+                                    activeShape={renderActiveShape}
+                                    data={reportEachDoctor}
+                                    cx={300}
+                                    dataKey="amount_due"
+                                    cy={200}
+                                    innerRadius={60}
+                                    outerRadius={80}
+                                    fill="#8884d8"
+                                    onMouseEnter={this.onPieEnter}>
+                                    {
+                                        reportEachDoctor.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                    }
+                                </Pie>
+                                {/*<Tooltip/>*/}
+                            </PieChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+                    </Spin>
                 </Col>
             </Row>
-            <Divider><Statistic title="Total" value={this.state.total} /></Divider>
-            <Table loading={this.state.loading} columns={columns} pagination={false} dataSource={appointmentEachDoctorData}/>
+            <Table loading={loading} columns={columns} pagination={false} dataSource={reportEachDoctor}/>
 
 
         </div>

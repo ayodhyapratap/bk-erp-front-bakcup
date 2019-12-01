@@ -87,10 +87,10 @@ export const APPOINTMENT_FOR_PATIENT_CONVERSION='CONVERSION_REPORT';
 
 /*Amount Due Reports*/
 export const TOTAL_AMOUNT_DUE='ALL';
-export const AGEING_AMOUNT_DUE='a';
-export const AMOUNT_DUE_PER_DOCTOR='b';
-export const AMOUNT_DUE_PER_PROCEDURE='c';
-export const UNSETTLED_INVOICE='d';
+export const AGEING_AMOUNT_DUE='AGEING';
+export const AMOUNT_DUE_PER_DOCTOR='DOCTOR';
+// export const AMOUNT_DUE_PER_PROCEDURE='c';
+// export const UNSETTLED_INVOICE='d';
 
 
 /*EMR Reports*/
