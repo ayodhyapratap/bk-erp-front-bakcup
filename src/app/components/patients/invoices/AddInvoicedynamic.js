@@ -1,12 +1,12 @@
 import React from "react";
 import {
-    Affix,
+    Affix, Badge,
     Button,
     Card,
     Col,
     DatePicker,
     Dropdown,
-    Form,
+    Form, Icon,
     Input,
     InputNumber,
     List,
@@ -16,11 +16,12 @@ import {
     Spin,
     Table,
     Tabs,
-    Tag
+    Tag, Typography
 } from "antd";
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {CURRENCY_TYPE, DRUG, INVENTORY, PRESCRIPTIONS, PROCEDURES} from "../../../constants/hardData";
 import {
+    CHECK_PROMO_CODE,
     CREATE_OR_EDIT_INVOICES,
     INVENTORY_ITEM_API, OFFERS,
     PROCEDURE_CATEGORY,
@@ -31,11 +32,12 @@ import {
 } from "../../../constants/api";
 import moment from "moment";
 import {loadDoctors} from "../../../utils/clinicUtils";
+import {set} from "react-ga";
 
 const {Search} = Input;
 const {MonthPicker} = DatePicker;
 const TabPane = Tabs.TabPane;
-
+const {Text} = Typography;
 let tableFormFields = {
     _id: null,
     quantity: 0,
@@ -63,6 +65,9 @@ class Addinvoicedynamic extends React.Component {
             offers: [],
             loading: true,
             taxes_list: [],
+            promoCode: '',
+            appliedPromoCodeDiscount: null,
+            promoCodeCheckLoading: false
 
         }
 
@@ -137,7 +142,7 @@ class Addinvoicedynamic extends React.Component {
                     selectedDoctor: proc.doctor_data,
                     _id: id,
                     item_type: INVENTORY,
-                    selectOption : !!proc.offers
+                    selectOption: !!proc.offers
                 });
                 that.changeNetPrice(id, proc.discount)
             });
@@ -372,6 +377,7 @@ class Addinvoicedynamic extends React.Component {
                     // saveLoading: true
                 });
                 let reqData = {
+                    promo_code : that.state.promoCode,
                     practice: that.props.active_practiceId,
                     patient: that.props.match.params.id,
                     unit: null,
@@ -604,10 +610,65 @@ class Addinvoicedynamic extends React.Component {
                     retail_price: 0
                 })
             }
+            that.checkPromoCode();
         }, 1000);
 
     };
+    applyPromoCodeDiscounts = (discountValue) => {
+        let that = this;
+        const {setFieldsValue, getFieldsValue} = that.props.form;
+        let newTableValues = [];
+        let values = getFieldsValue();
+        let initialDiscount = discountValue;
+        let valueToSet = {};
+        that.state.tableFormValues.forEach(function (tableObj) {
+            let totalTaxAmount = 0;
+            let initialDiscountType = 'INR';
+            let discountApplied = 0;
+            let offer = null;
+            let selectOption = tableObj.selectOption || tableObj.selectOption == false ? tableObj.selectOption : false;
+            values.taxes[tableObj._id].forEach(function (taxid) {
+                that.state.taxes_list.forEach(function (taxObj) {
+                    if (taxObj.id == taxid)
+                        totalTaxAmount += taxObj.tax_value;
+                })
+            });
 
+            let total = values.unit[tableObj._id] * (values.unit_cost[tableObj._id] ? values.unit_cost[tableObj._id] : 0);
+
+            if (initialDiscountType == 'INR' && initialDiscount) {
+                if (total > initialDiscount) {
+                    total -= initialDiscount;
+                    discountApplied = initialDiscount;
+                    initialDiscount = 0;
+
+                } else {
+                    initialDiscount -= total;
+                    discountApplied = total;
+                    total = 0;
+                }
+            }
+
+            total *= (1 + totalTaxAmount * 0.01);
+            let totalWithoutTaxWithDiscount = total / values.unit[tableObj._id];
+
+            newTableValues.push({
+                ...tableObj,
+                total_unit_cost: totalWithoutTaxWithDiscount,
+                total: total,
+                selectOption: selectOption,
+                discount: initialDiscount,
+                discount_type: initialDiscountType,
+                offers: offer
+            })
+            valueToSet[`discount[${tableObj._id}]`] = discountApplied.toFixed(2);
+            valueToSet[`discount_type[${tableObj._id}]`] = initialDiscountType;
+        });
+        that.setState({
+            tableFormValues: newTableValues
+        });
+        setFieldsValue(valueToSet);
+    }
     loadLoyaltyDiscount = () => {
         let that = this;
         let successFn = function (data) {
@@ -691,7 +752,69 @@ class Addinvoicedynamic extends React.Component {
         });
 
     }
+    enterPromoCode = (e) => {
+        this.setState({
+            promoCode: e.target.value
+        })
+    }
+    calculateGrandTotalWithoutDiscount = () => {
+        let grandTotal = 0;
+        let that = this;
+        const {getFieldsValue} = this.props.form;
+        let values = getFieldsValue();
+        this.state.tableFormValues.forEach(function (tableObj) {
+            let totalTaxAmount = 0;
+            values.taxes[tableObj._id].forEach(function (taxid) {
+                that.state.taxes_list.forEach(function (taxObj) {
+                    if (taxObj.id == taxid)
+                        totalTaxAmount += taxObj.tax_value;
+                })
+            });
+            let total = values.unit[tableObj._id] * (values.unit_cost[tableObj._id] ? values.unit_cost[tableObj._id] : 0);
+            total *= (1 + totalTaxAmount * 0.01);
+            grandTotal += total
+        });
+        return grandTotal;
+    };
+    checkPromoCode = (e) => {
+        let that = this;
+        that.setState({
+            promoCodeCheckLoading: true
+        })
+        let successFn = function (data) {
+            that.setState({
+                appliedPromoCodeDiscount: data.discount,
+                promoCodeCheckLoading: false
+            });
+            that.applyPromoCodeDiscounts(data.discount)
+        };
+        let errorFn = function () {
 
+            that.setState({
+                promoCodeCheckLoading: false, appliedPromoCodeDiscount: null, promoCode: ''
+            })
+        };
+        let params = {
+            promo_code: this.state.promoCode,
+            practice: this.props.active_practiceId,
+            patient: that.props.match.params.id,
+            amount: this.calculateGrandTotalWithoutDiscount()
+        };
+        if (params.promo_code)
+            getAPI(CHECK_PROMO_CODE, successFn, errorFn, params);
+        else
+            that.setState({
+                promoCodeCheckLoading: false
+            })
+    }
+    removePromoCode=()=>{
+        this.setState({
+            appliedPromoCodeDiscount: 0,
+            promoCodeCheckLoading: false,
+            promoCode:''
+        });
+        this.applyPromoCodeDiscounts(0)
+    }
     render() {
         let that = this;
         const {getFieldDecorator} = this.props.form;
@@ -876,14 +999,14 @@ class Addinvoicedynamic extends React.Component {
                         validateTrigger: ['onChange', 'onBlur'],
                     })
                     (<Select style={{width: 150}} onChange={(value) => that.changeNetPrice(record._id, value)}
-                             size={"small"}>
+                             size={"small"} disabled={this.state.appliedPromoCodeDiscount}>
                         <Select.Option value={'0'}>Custom Offer</Select.Option>
                         {that.state.offers.map(option => <Select.Option
                             value={option.discount + '#' + option.unit + '#' + option.id}>{option.code}</Select.Option>)}
                     </Select>)
                     }
                 </Form.Item> : <Form.Item
-                    extra={<a onClick={() => that.onChangeOption('selectOption', record._id)}>Choose Offer</a>}
+                    extra={<a onClick={() => that.onChangeOption('selectOption', record._id)} disabled={this.state.appliedPromoCodeDiscount}>Choose Offer</a>}
                     key={`discount[${record._id}]`}
                     {...formItemLayout}>
                     {getFieldDecorator(`discount[${record._id}]`, {
@@ -891,10 +1014,11 @@ class Addinvoicedynamic extends React.Component {
                         validateTrigger: ['onChange', 'onBlur'],
                     })(
                         <Input placeholder="discount"
+                               disabled={this.state.appliedPromoCodeDiscount}
                                addonAfter={getFieldDecorator(`discount_type[${record._id}]`, {
                                    initialValue: record.discount_type || '%',
                                })(
-                                   <Select onChange={(value) => that.changeNetPrice(record._id, value)}>
+                                   <Select onChange={(value) => that.changeNetPrice(record._id, value)} disabled={this.state.appliedPromoCodeDiscount}>
                                        {CURRENCY_TYPE.map(option => <Select.Option
                                            value={option.value}> {option.value}</Select.Option>)}
                                    </Select>
@@ -967,124 +1091,149 @@ class Addinvoicedynamic extends React.Component {
 
         return <div>
             <Spin spinning={this.state.saveLoading} tip="Saving Invoice...">
-                <Card
-                    title={this.props.editId ? "Edit Invoice (INV " + this.props.editId + ")" : "Add Invoice"}
-                    extra={<Search
-                        loading={this.state.loadingQr}
-                        value={this.state.qrValue}
-                        onChange={this.setQrValue}
-                        placeholder="Search QR Code"
-                        onSearch={this.addItemThroughQR}
-                        style={{width: 200}}
-                    />}
-                    bodyStyle={{padding: 0}}>
-                    <Row>
-                        <Col span={6}>
-                            <Tabs size="small" type="card">
-                                <TabPane tab={INVENTORY} key={INVENTORY}>
-                                    <div style={{backgroundColor: '#ddd', padding: 8}}>
-                                        <Input.Search placeholder={"Search in Inventory "}
-                                                      onChange={this.searchValues}/>
-                                    </div>
-                                    <List size={"small"}
-                                          itemLayout="horizontal"
-                                          dataSource={this.state.items ? this.state.items[INVENTORY] : []}
-                                          renderItem={item => (
-                                              <List.Item>
-                                                  <List.Item.Meta
-                                                      title={item.name + ' (' + item.total_quantity + ')'}
-                                                  />
-                                                  <Button type="primary" size="small" shape="circle"
-                                                          onClick={() => this.add({
-                                                              ...item,
-                                                              item_type: INVENTORY
-                                                          })}
-                                                          icon={"arrow-right"}/>
-                                              </List.Item>)}/>
-                                </TabPane>
-                                <TabPane tab={PRESCRIPTIONS} key={PRESCRIPTIONS}>
-                                    <List size={"small"}
-                                          itemLayout="horizontal"
-                                          dataSource={this.state.items ? this.state.items[PRESCRIPTIONS] : []}
-                                          renderItem={item => (
-                                              <List.Item>
-                                                  <List.Item.Meta
-                                                      title={item.drugs.map(drug_item => <div>
-                                                          <span>{drug_item.name}</span> {drug_item.inventory.maintain_inventory ? null :
-                                                          <Tag color="red" style={{
-                                                              float: 'right',
-                                                              lineHeight: '18px'
-                                                          }}>Not Sold</Tag>}<br/></div>)}
-                                                      description={item.doctor ?
-                                                          <Tag
-                                                              color={item.doctor ? item.doctor.calendar_colour : null}>
-                                                              <b>{"prescribed by  " + item.doctor.user.first_name} </b>
-                                                          </Tag> : null}
-                                                  />
-                                                  <Button type="primary" size="small" shape="circle"
-                                                          onClick={() => this.addPrescription({...item})}
-                                                          icon={"arrow-right"}/>
-                                              </List.Item>)}/>
-                                </TabPane>
-                                <TabPane tab={PROCEDURES} key={PROCEDURES}>
-                                    <List size={"small"}
-                                          itemLayout="horizontal"
-                                          dataSource={this.state.items ? this.state.items[PROCEDURES] : []}
-                                          renderItem={item => (
-                                              <List.Item>
-                                                  <List.Item.Meta
-                                                      title={item.name}
-                                                  />
-                                                  <Button type="primary" size="small" shape="circle"
-                                                          onClick={() => this.add({
-                                                              ...item,
-                                                              item_type: PROCEDURES
-                                                          })}
-                                                          icon={"arrow-right"}/>
-                                              </List.Item>)}/>
-                                </TabPane>
+                <Spin spinning={this.state.promoCodeCheckLoading} tip="Checking Promo Code and Discounts...">
+                    <Card
+                        title={this.props.editId ? "Edit Invoice (INV " + this.props.editId + ")" : "Add Invoice"}
+                        extra={<Search
+                            loading={this.state.loadingQr}
+                            value={this.state.qrValue}
+                            onChange={this.setQrValue}
+                            placeholder="Search QR Code"
+                            onSearch={this.addItemThroughQR}
+                            style={{width: 200}}
+                        />}
+                        bodyStyle={{padding: 0}}>
+                        <Row>
+                            <Col span={6}>
+                                <Tabs size="small" type="card">
+                                    <TabPane tab={INVENTORY} key={INVENTORY}>
+                                        <div style={{backgroundColor: '#ddd', padding: 8}}>
+                                            <Input.Search placeholder={"Search in Inventory "}
+                                                          onChange={this.searchValues}/>
+                                        </div>
+                                        <List size={"small"}
+                                              itemLayout="horizontal"
+                                              dataSource={this.state.items ? this.state.items[INVENTORY] : []}
+                                              renderItem={item => (
+                                                  <List.Item>
+                                                      <List.Item.Meta
+                                                          title={item.name + ' (' + item.total_quantity + ')'}
+                                                      />
+                                                      <Button type="primary" size="small" shape="circle"
+                                                              onClick={() => this.add({
+                                                                  ...item,
+                                                                  item_type: INVENTORY
+                                                              })}
+                                                              icon={"arrow-right"}/>
+                                                  </List.Item>)}/>
+                                    </TabPane>
+                                    <TabPane tab={PRESCRIPTIONS} key={PRESCRIPTIONS}>
+                                        <List size={"small"}
+                                              itemLayout="horizontal"
+                                              dataSource={this.state.items ? this.state.items[PRESCRIPTIONS] : []}
+                                              renderItem={item => (
+                                                  <List.Item>
+                                                      <List.Item.Meta
+                                                          title={item.drugs.map(drug_item => <div>
+                                                              <span>{drug_item.name}</span> {drug_item.inventory.maintain_inventory ? null :
+                                                              <Tag color="red" style={{
+                                                                  float: 'right',
+                                                                  lineHeight: '18px'
+                                                              }}>Not Sold</Tag>}<br/></div>)}
+                                                          description={item.doctor ?
+                                                              <Tag
+                                                                  color={item.doctor ? item.doctor.calendar_colour : null}>
+                                                                  <b>{"prescribed by  " + item.doctor.user.first_name} </b>
+                                                              </Tag> : null}
+                                                      />
+                                                      <Button type="primary" size="small" shape="circle"
+                                                              onClick={() => this.addPrescription({...item})}
+                                                              icon={"arrow-right"}/>
+                                                  </List.Item>)}/>
+                                    </TabPane>
+                                    <TabPane tab={PROCEDURES} key={PROCEDURES}>
+                                        <List size={"small"}
+                                              itemLayout="horizontal"
+                                              dataSource={this.state.items ? this.state.items[PROCEDURES] : []}
+                                              renderItem={item => (
+                                                  <List.Item>
+                                                      <List.Item.Meta
+                                                          title={item.name}
+                                                      />
+                                                      <Button type="primary" size="small" shape="circle"
+                                                              onClick={() => this.add({
+                                                                  ...item,
+                                                                  item_type: PROCEDURES
+                                                              })}
+                                                              icon={"arrow-right"}/>
+                                                  </List.Item>)}/>
+                                    </TabPane>
 
-                            </Tabs>
-                        </Col>
-                        <Col span={18}>
-                            <Form onSubmit={this.handleSubmit}>
-                                <Table pagination={false} loading={that.state.loading}
-                                       bordered={true}
-                                       dataSource={this.state.tableFormValues}
-                                       columns={consumeRow}/>
-                                {/*<List>{formItems}</List>*/}
-                                <Affix offsetBottom={0}>
-                                    <Card>
-                                        <Col span={8}>
-                                            <h3>Grand
-                                                Total: <b>{this.state.tableFormValues.reduce(function (total, item) {
-                                                    return (parseFloat(total) + (item && item.total ? item.total : 0)).toFixed(2);
-                                                }, 0)}</b></h3>
-                                        </Col>
+                                </Tabs>
+                            </Col>
+                            <Col span={18}>
+                                <Form onSubmit={this.handleSubmit}>
+                                    <Table pagination={false} loading={that.state.loading}
+                                           bordered={true}
+                                           dataSource={this.state.tableFormValues}
+                                           columns={consumeRow}/>
+                                    {/*<List>{formItems}</List>*/}
+                                    <Affix offsetBottom={0}>
+                                        <Card>
+                                            <Col span={8}>
 
-                                        <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
-                                        <DatePicker value={this.state.selectedDate}
-                                                    onChange={(value) => this.selectedDefaultDate(value)}
-                                                    format={"DD-MM-YYYY"}
-                                                    allowClear={false}/>
+                                                <h3>Grand
+                                                    Total: <b>{this.state.tableFormValues.reduce(function (total, item) {
+                                                        return (parseFloat(total) + (item && item.total ? item.total : 0)).toFixed(2);
+                                                    }, 0)}</b></h3>
+                                            </Col>
+                                            <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
+                                            <DatePicker value={this.state.selectedDate}
+                                                        onChange={(value) => this.selectedDefaultDate(value)}
+                                                        format={"DD-MM-YYYY"}
+                                                        allowClear={false}/>
 
-                                        <Form.Item {...formItemLayoutWithOutLabel}
-                                                   style={{marginBottom: 0, float: 'right'}}>
+                                            <Form.Item {...formItemLayoutWithOutLabel}
+                                                       style={{marginBottom: 0, float: 'right'}}>
 
-                                            <Button type="primary" htmlType="submit"
-                                                    style={{margin: 5}}>Save Invoice</Button>
-                                            {that.props.history ?
-                                                <Button style={{margin: 5, float: 'right'}}
-                                                        onClick={() => that.props.history.goBack()}>
-                                                    Cancel
-                                                </Button> : null}
-                                        </Form.Item>
-                                    </Card>
-                                </Affix>
-                            </Form>
-                        </Col>
-                    </Row>
-                </Card>
+                                                <Button type="primary" htmlType="submit"
+                                                        style={{margin: 5}}>Save Invoice</Button>
+                                                {that.props.history ?
+                                                    <Button style={{margin: 5, float: 'right'}}
+                                                            onClick={() => that.props.history.goBack()}>
+                                                        Cancel
+                                                    </Button> : null}
+                                            </Form.Item>
+                                        </Card>
+                                    </Affix>
+                                </Form>
+                                <Row>
+                                    <Col span={12} style={{padding: 10}}>
+
+                                        <div>
+                                            {this.state.appliedPromoCodeDiscount ? <div>
+                                                <Tag>'{this.state.promoCode}' Applied <Icon onClick={()=>this.removePromoCode()}
+                                                                                            theme="twoTone" twoToneColor="#f00"
+                                                    type={"close-circle"}/></Tag>
+                                                <Text type={"success"}><br/>Discount
+                                                    INR {this.state.appliedPromoCodeDiscount}</Text>
+                                            </div> : <div>
+                                                <Search
+                                                    enterButton="Apply"
+                                                    value={this.state.promoCode}
+                                                    placeholder="Promo Code"
+                                                    onChange={this.enterPromoCode}
+                                                    onSearch={this.checkPromoCode}
+                                                    style={{width: 200}}
+                                                />
+                                            </div>}
+                                        </div>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                    </Card>
+                </Spin>
             </Spin>
         </div>
 

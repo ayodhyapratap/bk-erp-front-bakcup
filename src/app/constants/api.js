@@ -31,6 +31,8 @@ export const OFFERS = 'clinics/%s/offers/';
 export const PAYMENT_MODES = 'clinics/%s/payment_modes/';
 export const PROCEDURE_CATEGORY = 'clinics/%s/procedure_category/';
 export const PROMO_CODE ='promocode/';
+export const SINGLE_PROMO_CODE ='promocode/%s/';
+export const CHECK_PROMO_CODE ='promocode/promo_value/';
 
 export const EMR_DIAGNOSES = 'clinics/%s/diagnoses/';
 export const EMR_COMPLAINTS = 'clinics/%s/complaints/';
