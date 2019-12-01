@@ -3,7 +3,7 @@ import {Divider, Popconfirm, Row, Table} from "antd";
 import moment from "moment";
 import AddOrEdiPromoCode from "./AddOrEdiPromoCode";
 import {getAPI, interpolate, postAPI, putAPI} from "../../../../utils/common";
-import {PROMO_CODE} from "../../../../constants/api";
+import {PROMO_CODE, UPDATE_PROMO_CODE} from "../../../../constants/api";
 
 
 export default class PromoCode extends React.Component{
@@ -43,7 +43,7 @@ export default class PromoCode extends React.Component{
     deleteObject =(record) =>{
         let that = this;
         let reqData ={
-            id:record.id,
+            // id:record.id,
             is_active:false
         };
         let successFn = function (data) {
@@ -53,7 +53,7 @@ export default class PromoCode extends React.Component{
         let errorFn = function () {
 
         };
-        putAPI(PROMO_CODE, reqData, successFn, errorFn);
+        putAPI(interpolate(UPDATE_PROMO_CODE,[record.id]), reqData, successFn, errorFn);
     };
 
 
