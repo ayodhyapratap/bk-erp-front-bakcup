@@ -1,7 +1,7 @@
 import React from "react";
 import CustomizedTable from "../../common/CustomizedTable";
 import {getAPI, interpolate} from "../../../utils/common";
-import {AGENT_WALLET, MY_AGENTS, WALLET_LEDGER} from "../../../constants/api";
+import {AGENT_WALLET, MY_AGENTS, WALLET_LEDGER, WALLET_LEDGER_SUM} from "../../../constants/api";
 import {Card, Col, DatePicker, Icon, Row, Select, Statistic, Typography} from "antd";
 import moment from "moment";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
@@ -12,6 +12,7 @@ export default class PatientWalletLedger extends React.Component {
         super(props);
         this.state = {
             ledger: [],
+            ledgerDetails:{},
             loading: false,
             walletAmount: null,
             selectedStartDate: moment().subtract(1, 'month'),
@@ -25,6 +26,7 @@ export default class PatientWalletLedger extends React.Component {
         this.loadData();
         this.loadPatientWallet();
         this.loadAgents();
+        this.loadSumData();
     }
 
     loadPatientWallet = () => {
@@ -75,15 +77,36 @@ export default class PatientWalletLedger extends React.Component {
         }
         let params = {
             page,
-            start: this.state.selectedStartDate.format(),
-            end: this.state.selectedEndDate.format(),
+            start: this.state.selectedStartDate.startOf('day').format(),
+            end: this.state.selectedEndDate.endOf('day').format(),
             agents: this.state.selectedAgents.join(',')
         }
         if (this.state.selectedAgents)
             params.agents = this.state.selectedAgents.join(',');
         getAPI(interpolate(WALLET_LEDGER, [this.props.currentPatient.id]), successFn, errorFn, params);
     }
+    loadSumData = (page = 1) => {
+        let that = this;
 
+        let successFn = function (data) {
+                that.setState({
+                    ledgerDetails: data,
+                    nextPage: data.next
+                })
+
+        }
+        let errorFn = function () {
+        }
+        let params = {
+            page,
+            start: this.state.selectedStartDate.format(),
+            end: this.state.selectedEndDate.format(),
+            agents: this.state.selectedAgents.join(',')
+        }
+        if (this.state.selectedAgents)
+            params.agents = this.state.selectedAgents.join(',');
+        getAPI(interpolate(WALLET_LEDGER_SUM, [this.props.currentPatient.id]), successFn, errorFn, params);
+    }
     loadAgents() {
         var that = this;
         let successFn = function (data) {
@@ -148,7 +171,7 @@ export default class PatientWalletLedger extends React.Component {
                 key: 'amount',
                 render: (value, record) => record.is_cancelled ?
                     <Text delete>{value.toFixed(2)}</Text> : value.toFixed(2)
-            }]
+            }];
         return <div>
             <Card title={"Wallet Ledger"}>
                 <Row gutter={16} style={{marginBottom: 10}}>
@@ -197,12 +220,12 @@ export default class PatientWalletLedger extends React.Component {
                 {this.state.walletAmount ?
                     <Row style={{textAlign: 'center', marginBottom: 10}}>
                         {/*<Col span={12}>*/}
-                        {/*    <Statistic title={"Refundable Amount"} prefix={<Icon type={"wallet"}/>}*/}
+                        {/*    <Statistic title={""} prefix={<Icon type={"wallet"}/>}*/}
                         {/*               value={this.state.walletAmount.refundable_amount}/>*/}
                         {/*</Col>*/}
                         <Col span={24}>
-                            <Statistic title={"Non Refundable Amount"} prefix={<Icon type={"wallet"}/>}
-                                       value={this.state.walletAmount.non_refundable}/>
+                            <Statistic title={"Wallet Total"} prefix={<Icon type={"wallet"}/>}
+                                       value={this.state.walletAmount.non_refundable} precision={2}/>
                         </Col>
                     </Row> : null}
                 <CustomizedTable dataSource={this.state.ledger} loading={this.state.loading} columns={columns}
@@ -211,6 +234,17 @@ export default class PatientWalletLedger extends React.Component {
                 <InfiniteFeedLoaderButton loading={this.state.loading}
                                           hidden={!this.state.nextPage}
                                           loaderFunction={() => this.loadData(this.state.nextPage)}/>
+                <Row style={{textAlign: 'center', marginBottom: 10}}>
+                    <Col span={8}>
+                        <Statistic title={"Credit"} value={this.state.ledgerDetails.credit} precision={2}/>
+                    </Col>
+                    <Col span={8}>
+                        <Statistic title={"Debit"} value={this.state.ledgerDetails.debit} precision={2}/>
+                    </Col>
+                    <Col span={8}>
+                        <Statistic title={"Profit"} value={this.state.ledgerDetails.credit-this.state.ledgerDetails.debit} precision={2}/>
+                    </Col>
+                </Row>
             </Card>
         </div>
     }

@@ -1,5 +1,5 @@
 import React from "react";
-import {Avatar, Card, Col, Empty, Icon, Tag} from "antd";
+import {Avatar, Card, Col, Empty, Icon, Row, Tag} from "antd";
 import OrgChart from 'react-orgchart';
 import 'react-orgchart/index.css';
 import {getAPI, interpolate, makeFileURL} from "../../../utils/common";
@@ -103,23 +103,27 @@ const MyNodeComponent = function ({node}) {
     return (
         <div >
             {node.user ? <>
-                <Card style={{margin: 'auto', height: 120, width: 300}} hoverable>
-                    {/*<p>{node.user ? node.user.first_name : null}</p>*/}
-                    <Meta avatar={(node.image ? <Avatar src={makeFileURL(node.image)} size={50}/> :
-                        <Avatar style={{backgroundColor: '#87d068'}} size={50}>
-                            {node.user.first_name ? node.user.first_name.charAt(0) :
-                                <Icon type="user"/>}
-                        </Avatar>)}
-                          title={node.user.first_name}
-                          description={
-                              <span>{node.is_approved ? <Tag color="#87d068">Approved</Tag> : <Tag color="#f50">Not
-                                  Approved</Tag>}<br/>{node.user.mobile}<br/>{node.user.email}</span>}/>
+                <Card style={{margin: 'auto', height: 160, width:160}} bodyStyle={{padding:5,overflow:'hidden'}} hoverable>
+                    <Row>
+                        <Col span={24}>
+                            {node.image ? <Avatar src={makeFileURL(node.image)} size={50}/> :
+                                <Avatar style={{backgroundColor: '#87d068'}} size={50}>
+                                    {node.user.first_name ? node.user.first_name.charAt(0) :
+                                        <Icon type="user"/>}
+                                </Avatar>}
+                        </Col>
+                        <Col span={24}>
+                            {node.user.first_name}
+                        </Col>
+                        <Col span={24}>
+                            <span>{node.is_approved ? <Tag color="#87d068">Approved</Tag> : <Tag color="#f50">Not
+                                Approved</Tag>}<br/>{node.user.mobile}<br/>{node.user.email}</span>
+                        </Col>
+                    </Row>
 
                 </Card>
 
             </> : null}
-
-
         </div>
     );
 };

@@ -236,6 +236,7 @@ export const GENERATE_MLM_COMMISSON = 'product_margin/generate_mlm/';
 export const AGENT_ROLES = 'role_commission/agent_roles/';
 export const AGENT_WALLET = 'patient_wallet/?patient=%s';
 export const WALLET_LEDGER = 'wallet_ledger/?patient=%s';
+export const WALLET_LEDGER_SUM = 'wallet_ledger/ledger_sum/?patient=%s';
 export const MY_AGENTS = 'patients/%s/my_agents/';
 
 /**
