@@ -43,7 +43,7 @@ class PatientTimeline extends React.Component {
     loadTimeline = () => {
         let that = this;
         let queryParams = {
-            practice: this.props.active_practiceId
+            practice_id: this.props.active_practiceId
         };
         that.setState({
             loading: true
