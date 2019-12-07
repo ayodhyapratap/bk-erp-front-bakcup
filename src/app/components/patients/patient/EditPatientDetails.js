@@ -43,8 +43,7 @@ import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 import WebCamField from "../../common/WebCamField";
 import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD, ALL, RELATION} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
-import {BLOOD_GROUPS, FAMILY_GROUPS, PATIENT_AGE, SOURCE_PLATFORM,LANGUAGE} from "../../../constants/hardData";
-
+import {BLOOD_GROUPS, FAMILY_GROUPS, PATIENT_AGE, SOURCE_PLATFORM, LANGUAGE} from "../../../constants/hardData";
 
 
 const confirm = Modal.confirm;
@@ -266,8 +265,8 @@ class EditPatientDetails extends React.Component {
                     reqData.is_age = true;
                     reqData.dob = moment().subtract(values.age, 'years').format("YYYY-MM-DD");
                 }
-                if (values.custom_id){
-                    reqData.custom_id='BK'+values.custom_id;
+                if (values.custom_id) {
+                    reqData.custom_id = 'BK' + values.custom_id;
                 }
                 let key = 'image';
                 if (reqData[key] && reqData[key].file && reqData[key].file.response)
@@ -285,10 +284,7 @@ class EditPatientDetails extends React.Component {
                     that.setState({
                         loading: false
                     });
-                    if (that.props.currentPatient)
-                        that.props.history.push('/patient/' + that.props.currentPatient.id + '/profile')
-                    else
-                        that.props.history.push('/patients/profile')
+                    that.props.history.push('/patient/' + data.id + '/profile')
                 }
                 let errorFn = function () {
                     that.setState({
@@ -381,10 +377,10 @@ class EditPatientDetails extends React.Component {
 
     };
 
-    onDeletePatient(){
-        let that=this;
+    onDeletePatient() {
+        let that = this;
         confirm({
-            title:'Are you sure delete this patient?',
+            title: 'Are you sure delete this patient?',
             okText: 'Yes',
             okType: 'danger',
             cancelText: 'No',
@@ -394,9 +390,10 @@ class EditPatientDetails extends React.Component {
 
         });
     }
-    patientDelete(){
+
+    patientDelete() {
         let that = this;
-        let id=that.state.patientDetails.id
+        let id = that.state.patientDetails.id
         let reqData = {'id': id, is_active: false}
         let successFn = function (data) {
             that.setState({
@@ -409,6 +406,7 @@ class EditPatientDetails extends React.Component {
         };
         putAPI(interpolate(PATIENT_PROFILE, [id]), reqData, successFn, errorFn)
     };
+
     // onFileEnable=(e)=>{
     //     this.setState({
     //         file_enable:!this.state.file_enable,
@@ -465,14 +463,14 @@ class EditPatientDetails extends React.Component {
             <Form onSubmit={that.handleSubmit}>
                 <Card title={<span>{that.props.currentPatient ? "Edit Profile" : "Add Patient"}&nbsp;&nbsp;<Link
                     to={"/patients/patientprintform"}>Print Patient Form</Link></span>}
-                      extra={<div> <Button style={{margin: 5}} type="primary" htmlType="submit">Save</Button>
+                      extra={<div><Button style={{margin: 5}} type="primary" htmlType="submit">Save</Button>
                           {that.props.history ?
                               <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
                                   Cancel
                               </Button> : null}
 
-                          {that.props.currentPatient ?<>
-                                  {this.state.patientDetails && this.state.patientDetails.is_approved?
+                          {that.props.currentPatient ? <>
+                                  {this.state.patientDetails && this.state.patientDetails.is_approved ?
                                       <Popover
                                           placement="leftBottom"
                                           trigger={"hover"}
@@ -482,16 +480,16 @@ class EditPatientDetails extends React.Component {
                                           // okText="Yes"
                                           // cancelText="No"
                                       >
-                                          <Button style={{margin: 5}} type={"danger"}  disabled>
+                                          <Button style={{margin: 5}} type={"danger"} disabled>
                                               Delete
                                           </Button>
-                                      </Popover>:
-                                      <Button style={{margin: 5}}  onClick={()=>that.onDeletePatient()} type={"danger"}>
+                                      </Popover> :
+                                      <Button style={{margin: 5}} onClick={() => that.onDeletePatient()} type={"danger"}>
                                           Delete
                                       </Button>
                                   }
                               </>
-                              :null}
+                              : null}
 
 
                       </div>}>
@@ -532,7 +530,7 @@ class EditPatientDetails extends React.Component {
 
                     <Form.Item label="Patient Id" {...formItemLayout}>
                         {getFieldDecorator('custom_id', {
-                            initialValue: this.state.patientDetails ? this.state.patientDetails.custom_id.replace(/\D/g,'') : ''
+                            initialValue: this.state.patientDetails ? this.state.patientDetails.custom_id.replace(/\D/g, '') : ''
                         })
                         (<Input addonBefore={"BK"} placeholder="Patient Id"/>)
                         }
@@ -570,9 +568,9 @@ class EditPatientDetails extends React.Component {
                         </Form.Item>
                     }
                     <Form.Item label={"SMS Language"} {...formItemLayout}>
-                        {getFieldDecorator('language',{initialValue:this.state.patientDetails && this.state.patientDetails.language?this.state.patientDetails.language:this.props.activePracticeData.language})
+                        {getFieldDecorator('language', {initialValue: this.state.patientDetails && this.state.patientDetails.language ? this.state.patientDetails.language : this.props.activePracticeData.language})
                         (<Select>
-                            {LANGUAGE.map((option) =><Select.Option value={option.value}>
+                            {LANGUAGE.map((option) => <Select.Option value={option.value}>
                                 {option.label}
                             </Select.Option>)}
                         </Select>)
@@ -652,7 +650,8 @@ class EditPatientDetails extends React.Component {
                         <span style={{display: 'inline-block', width: '14px', textAlign: 'center'}}/>
                         <Form.Item style={{display: 'inline-block', width: 'calc(50% - 12px)'}}>
                             {getFieldDecorator("attendee", {initialValue: this.state.patientDetails ? this.state.patientDetails.attendee : ''})
-                            (<Input disabled={ this.state.patientDetails && this.state.patientDetails.attendee ?false:this.state.relation_text}/>)
+                            (<Input
+                                disabled={this.state.patientDetails && this.state.patientDetails.attendee ? false : this.state.relation_text}/>)
                             }
                         </Form.Item>
                     </Form.Item>

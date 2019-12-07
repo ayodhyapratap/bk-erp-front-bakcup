@@ -92,14 +92,14 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
             let randId = Math.random().toFixed(7);
             return {
                 addNotes: {...prevState.addNotes, [randId]: !!item.default_notes},
-                tableFormValues: [...prevState.tableFormValues, {
+                tableFormValues: [{
                     ...item,
                     _id: randId,
-                }]
+                },...prevState.tableFormValues]
             }
         }, function () {
-            if (that.bottomPoint)
-                that.bottomPoint.scrollIntoView({behavior: 'smooth'});
+            // if (that.bottomPoint)
+            //     that.bottomPoint.scrollIntoView({behavior: 'smooth'});
         });
     };
 

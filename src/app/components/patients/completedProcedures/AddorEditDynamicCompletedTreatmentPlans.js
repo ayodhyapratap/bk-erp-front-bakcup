@@ -92,14 +92,14 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
             let randId = Math.random().toFixed(7);
             return {
                 addNotes: {...prevState.addNotes, [randId]: !!item.default_notes},
-                tableFormValues: [...prevState.tableFormValues, {
+                tableFormValues: [{
                     ...item,
                     _id: randId,
-                }]
+                }, ...prevState.tableFormValues]
             }
         }, function () {
-            if (that.bottomPoint)
-                that.bottomPoint.scrollIntoView({behavior: 'smooth'});
+            // if (that.bottomPoint)
+            //     that.bottomPoint.scrollIntoView({behavior: 'smooth'});
         });
     };
 
@@ -244,7 +244,7 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
             key: 'name',
             render: (name, record) => <span>
                 <b>{name}</b><br/>
-                {this.state.addNotes[record._id] || this.props.editId?
+                {this.state.addNotes[record._id] || this.props.editId ?
                     <Form.Item
                         key={`default_notes[${record._id}]`}
                         {...formItemLayout}>
@@ -358,7 +358,8 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
                                                 allowClear={false}/>
                                     <Form.Item {...formItemLayoutWithOutLabel}
                                                style={{marginBottom: 0, float: 'right'}}>
-                                        <Button type="primary" htmlType="submit" style={{margin: 5}}>Save Treatment Plan</Button>
+                                        <Button type="primary" htmlType="submit" style={{margin: 5}}>Save Treatment
+                                            Plan</Button>
                                         {that.props.history ?
                                             <Button style={{margin: 5, float: 'right'}}
                                                     onClick={() => that.props.history.goBack()}>
@@ -376,7 +377,7 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
                         <Affix offsetTop={0}>
                             <div style={{backgroundColor: '#ddd', padding: 8}}>
                                 <Input.Search placeholder={"Search in plans ..."}
-                                              onChange={e => this.searchValues( e.target.value)}/>
+                                              onChange={e => this.searchValues(e.target.value)}/>
                             </div>
                             <List size={"small"}
                                   style={{maxHeight: '100vh', overflowX: 'scroll'}}

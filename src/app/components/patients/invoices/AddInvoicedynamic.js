@@ -233,8 +233,13 @@ class Addinvoicedynamic extends React.Component {
         };
         let errorFn = function () {
         };
-
-        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
+        let paramsApi = {
+            practice: this.props.active_practiceId,
+        }
+        if (this.state.searchItem) {
+            paramsApi.name = this.state.searchItem;
+        }
+        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn, paramsApi);
     }
 
     loadPrescriptions() {
@@ -249,7 +254,13 @@ class Addinvoicedynamic extends React.Component {
         };
         let errorFn = function () {
         };
-        getAPI(interpolate(UNPAID_PRESCRIPTIONS, [that.props.match.params.id]), successFn, errorFn);
+        let paramsApi = {
+            practice: this.props.active_practiceId,
+        }
+        if (this.state.searchItem) {
+            paramsApi.item_name = this.state.searchItem;
+        }
+        getAPI(interpolate(UNPAID_PRESCRIPTIONS, [that.props.match.params.id]), successFn, errorFn,paramsApi);
     }
 
     loadTaxes() {
@@ -377,7 +388,7 @@ class Addinvoicedynamic extends React.Component {
                     // saveLoading: true
                 });
                 let reqData = {
-                    promo_code : that.state.promoCode,
+                    promo_code: that.state.promoCode,
                     practice: that.props.active_practiceId,
                     patient: that.props.match.params.id,
                     unit: null,
@@ -529,12 +540,18 @@ class Addinvoicedynamic extends React.Component {
             qrValue: value
         })
     }
-    searchValues = (e) => {
+    searchValues = (e, type) => {
+        let that = this;
         let value = e.target.value;
         this.setState({
             searchItem: value,
         }, function () {
-            this.loadInventoryItemList();
+            if (type == INVENTORY)
+                that.loadInventoryItemList();
+            else if (type == PRESCRIPTIONS)
+                that.loadPrescriptions();
+            else if (type == PROCEDURES)
+                that.loadProcedures();
         })
 
     }
@@ -807,14 +824,15 @@ class Addinvoicedynamic extends React.Component {
                 promoCodeCheckLoading: false
             })
     }
-    removePromoCode=()=>{
+    removePromoCode = () => {
         this.setState({
             appliedPromoCodeDiscount: 0,
             promoCodeCheckLoading: false,
-            promoCode:''
+            promoCode: ''
         });
         this.applyPromoCodeDiscounts(0)
     }
+
     render() {
         let that = this;
         const {getFieldDecorator} = this.props.form;
@@ -1006,7 +1024,8 @@ class Addinvoicedynamic extends React.Component {
                     </Select>)
                     }
                 </Form.Item> : <Form.Item
-                    extra={<a onClick={() => that.onChangeOption('selectOption', record._id)} disabled={this.state.appliedPromoCodeDiscount}>Choose Offer</a>}
+                    extra={<a onClick={() => that.onChangeOption('selectOption', record._id)}
+                              disabled={this.state.appliedPromoCodeDiscount}>Choose Offer</a>}
                     key={`discount[${record._id}]`}
                     {...formItemLayout}>
                     {getFieldDecorator(`discount[${record._id}]`, {
@@ -1018,7 +1037,8 @@ class Addinvoicedynamic extends React.Component {
                                addonAfter={getFieldDecorator(`discount_type[${record._id}]`, {
                                    initialValue: record.discount_type || '%',
                                })(
-                                   <Select onChange={(value) => that.changeNetPrice(record._id, value)} disabled={this.state.appliedPromoCodeDiscount}>
+                                   <Select onChange={(value) => that.changeNetPrice(record._id, value)}
+                                           disabled={this.state.appliedPromoCodeDiscount}>
                                        {CURRENCY_TYPE.map(option => <Select.Option
                                            value={option.value}> {option.value}</Select.Option>)}
                                    </Select>
@@ -1108,8 +1128,8 @@ class Addinvoicedynamic extends React.Component {
                                 <Tabs size="small" type="card">
                                     <TabPane tab={INVENTORY} key={INVENTORY}>
                                         <div style={{backgroundColor: '#ddd', padding: 8}}>
-                                            <Input.Search placeholder={"Search in Inventory "}
-                                                          onChange={this.searchValues}/>
+                                            <Input.Search placeholder={"Search in " + INVENTORY}
+                                                          onChange={(value) => this.searchValues(value, INVENTORY)}/>
                                         </div>
                                         <List size={"small"}
                                               itemLayout="horizontal"
@@ -1128,6 +1148,10 @@ class Addinvoicedynamic extends React.Component {
                                                   </List.Item>)}/>
                                     </TabPane>
                                     <TabPane tab={PRESCRIPTIONS} key={PRESCRIPTIONS}>
+                                        {/*<div style={{backgroundColor: '#ddd', padding: 8}}>*/}
+                                        {/*    <Input.Search placeholder={"Search in " + PRESCRIPTIONS}*/}
+                                        {/*                  onChange={(value) => this.searchValues(value, PRESCRIPTIONS)}/>*/}
+                                        {/*</div>*/}
                                         <List size={"small"}
                                               itemLayout="horizontal"
                                               dataSource={this.state.items ? this.state.items[PRESCRIPTIONS] : []}
@@ -1152,6 +1176,10 @@ class Addinvoicedynamic extends React.Component {
                                                   </List.Item>)}/>
                                     </TabPane>
                                     <TabPane tab={PROCEDURES} key={PROCEDURES}>
+                                        <div style={{backgroundColor: '#ddd', padding: 8}}>
+                                            <Input.Search placeholder={"Search in " + PROCEDURES}
+                                                          onChange={(value) => this.searchValues(value, PROCEDURES)}/>
+                                        </div>
                                         <List size={"small"}
                                               itemLayout="horizontal"
                                               dataSource={this.state.items ? this.state.items[PROCEDURES] : []}
@@ -1212,8 +1240,9 @@ class Addinvoicedynamic extends React.Component {
 
                                         <div>
                                             {this.state.appliedPromoCodeDiscount ? <div>
-                                                <Tag>'{this.state.promoCode}' Applied <Icon onClick={()=>this.removePromoCode()}
-                                                                                            theme="twoTone" twoToneColor="#f00"
+                                                <Tag>'{this.state.promoCode}' Applied <Icon
+                                                    onClick={() => this.removePromoCode()}
+                                                    theme="twoTone" twoToneColor="#f00"
                                                     type={"close-circle"}/></Tag>
                                                 <Text type={"success"}><br/>Discount
                                                     INR {this.state.appliedPromoCodeDiscount}</Text>

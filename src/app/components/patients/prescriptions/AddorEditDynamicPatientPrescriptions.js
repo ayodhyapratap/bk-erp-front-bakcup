@@ -184,10 +184,10 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             let randId = Math.random().toFixed(7);
             return {
                 addedDrugs: {...prevState.addedDrugs, [item.id]: true},
-                formDrugList: [...prevState.formDrugList, {
+                formDrugList: [ {
                     ...item,
                     _id: randId,
-                }]
+                },...prevState.formDrugList]
             }
         });
 
