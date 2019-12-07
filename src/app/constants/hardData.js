@@ -63,8 +63,6 @@ import {
     ALL_INVOICE_RETURN,
     DAILY_WISE_INVOICE, MONTHLY_WISE_INCOME, RETURN_ITEMS
 } from "../constants/dataKeys";
-import number from "less/lib/less/functions/number";
-
 
 export const PAYMENT_TYPES = [
     {label: 'cash', value: 'cash'},
@@ -178,7 +176,7 @@ export const LOGO_INCLUDE = [
     {title: 'No', value: false}
 ];
 export const PATIENT_DETAILS_LIST = [
-    {value: 'Exclude Mediacal History'},
+    {value: 'Exclude Medical History'},
     {value: 'Exclude Patient Number'},
     {value: 'Exclude address'},
     {value: 'Exclude Blood Group'}
@@ -567,11 +565,6 @@ export const CURRENCY_TYPE = [
     {label: 'Rupees', value: 'INR'}
 ];
 
-export const LANGUAGE = [
-    {label:'English',value:'ENGLISH'},
-    {label:'Hindi',value:'HINDI'},
-    // {label:'Urdu',value:'URDU'},
-];
 
 export const ROUTES_TO_HIDE_PATIENT_SIDE_PANEL = [
     '/patients/profile/add',
@@ -612,3 +605,8 @@ export const PROMO_CODE_SMS_TAG_OPTIONS = [
         label: "MIN PURCHASE",
         value: "{{MIN_PURCHASE}}"
     }];
+export const BLOOD_GROUP_CONFIG_PARAM = 'config_blood_group';
+export const PATIENT_SOURCE_CONFIG_PARAM = 'config_source';
+export const SMS_LANGUAGE_CONFIG_PARAM = 'config_sms_language';
+export const FAMILY_RELATION_CONFIG_PARAM = 'config_family_relation';
+export const GENDER_CONFIG_PARAM = 'config_gender';

@@ -23,7 +23,7 @@ class AgentRoles extends React.Component {
             loading: true,
             agentRoles: [],
             practiceList: [],
-            approved:null
+            approved: null
 
         };
         this.loadData = this.loadData.bind(this);
@@ -55,12 +55,23 @@ class AgentRoles extends React.Component {
             loading: true
         })
         let successFn = function (data) {
-            that.setState({
-                data: data.results,
-                total: data.count,
-                nextPage: data.next,
-                loading: false
-            })
+            if (data.current == 1) {
+                that.setState({
+                    data: data.results,
+                    total: data.count,
+                    nextPage: data.next,
+                    loading: false
+                })
+            } else {
+                that.setState(function (prevState) {
+                    return {
+                        data: [...prevState.data,...data.results],
+                        total: data.count,
+                        nextPage: data.next,
+                        loading: false
+                    }
+                })
+            }
         };
         let errorFn = function () {
             that.setState({
@@ -121,7 +132,7 @@ class AgentRoles extends React.Component {
 
         let reqData = {'id': record.id, is_approved: true};
         let successFn = function (data) {
-            displayMessage(SUCCESS_MSG_TYPE, "Agent Approved Successfully!")
+            displayMessage(SUCCESS_MSG_TYPE, "Agent Approved Successfully!");
             that.setState(function (prevState) {
                 let agentList = [];
                 prevState.data.forEach(function (agent) {
@@ -182,44 +193,44 @@ class AgentRoles extends React.Component {
             dataIndex: 'sno',
             render: (item, record) => <span> {i++}</span>,
             export: (item, record, index) => index + 1,
-        },{
+        }, {
             title: 'Name',
             dataIndex: 'user.first_name',
             key: 'name',
             render: (value, record) => <Link to={"/patient/" + record.id + "/profile"}>{value}</Link>,
-            export:(item,record)=>(record.user.first_name),
+            export: (item, record) => (record.user.first_name),
         }, {
             title: 'Email',
             dataIndex: 'user.email',
             key: 'email',
-            export:(item,record)=>(record.user.email),
+            export: (item, record) => (record.user.email),
         }, {
             title: 'Mobile',
             dataIndex: 'user.mobile',
             key: 'mobile',
-            export:(item,record)=>(record.user.mobile),
+            export: (item, record) => (record.user.mobile),
         }, {
             title: 'Referrer',
             dataIndex: 'user.referer_data.referer.first_name',
             key: 'referrer',
             render: (value, record) => (value && record.user.referer_data.patient ?
                 <Link to={"/patient/" + record.user.referer_data.patient + "/profile"}>{value}</Link> : '--'),
-            export:(item,record)=>(record.user.referer?record.user.referer_data.referer.first_name:'--'),
+            export: (item, record) => (record.user.referer ? record.user.referer_data.referer.first_name : '--'),
         }, {
             title: 'Role',
             dataIndex: 'role_data.name',
             key: 'role_data',
-            export:(item,record)=>(record.role_data.name),
+            export: (item, record) => (record.role_data.name),
         }, {
             title: 'Aadhar',
             dataIndex: 'aadhar_id',
             key: 'aadhar_id',
-            export:(value)=>(value),
+            export: (value) => (value),
         }, {
             title: 'Document',
             dataIndex: 'aadhar_upload',
             key: 'aadhar_upload',
-            hideExport:true,
+            hideExport: true,
             render: (value) => (value ? <a target="_blank" href={makeFileURL(value)}>Open Document</a> : '--')
         }, {
             title: 'Status',
@@ -238,7 +249,7 @@ class AgentRoles extends React.Component {
         }, {
             title: 'Action',
             key: 'action',
-            hideExport:true,
+            hideExport: true,
             render: (text, record) => (
                 <span>
               <a onClick={() => this.editObject(record)}>  Edit</a>

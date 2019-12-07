@@ -201,15 +201,19 @@ class PatientProfile extends React.Component {
 
                     <Col span={12}>
                         <PatientRow label="Patient Name" value={patient.user.first_name}/>
-                        <PatientRow label="Patient ID" value={patient.custom_id?patient.custom_id:patient.id}/>
+                        <PatientRow label="Patient ID" value={patient.custom_id ? patient.custom_id : patient.id}/>
                         {patient && patient.role ?
                             <PatientRow label={"Advisor Role"} value={patient.role_data.name}/> : null}
                         <PatientRow label="Gender" value={patient.gender}/>
-                        {patient.is_age?
-                            <PatientRow label="Age" value={patient.dob?moment().diff(this.props.currentPatient.dob,'years'):null}/>
+                        {patient.is_age ?
+                            <PatientRow label="Age"
+                                        value={patient.dob ? moment().diff(this.props.currentPatient.dob, 'years') : null}/>
                             :
                             <PatientRow label="Date of Birth" value={patient.dob}/>
                         }
+                        <PatientRow label="Referer"
+                                    value={patient.user.referer_data ? <Link
+                                        to={"/patient/" + patient.user.referer_data.patient + "/profile"}>{patient.user.referer_data.referer.first_name}</Link> : "--"}/>
                         <Divider>Contact Details</Divider>
                         <PatientRow label="Email"
                                     value={that.props.activePracticePermissions.PatientEmailId ? patient.user.email : hideEmail(patient.user.email)}/>
@@ -230,7 +234,7 @@ class PatientProfile extends React.Component {
                         <Divider>Medical History</Divider>
                         {patient.medical_history_data ?
                             patient.medical_history_data.map((item, index) =>
-                                <Tag color={'#'+intToRGB(hashCode(item.name))}>{item.name}</Tag>) : null}
+                                <Tag color={'#' + intToRGB(hashCode(item.name))}>{item.name}</Tag>) : null}
                         {/*<List size="small" loading={this.state.loading} dataSource={patient.medical_history_data}*/}
                         {/*      renderItem={(item) =>*/}
                         {/*          <List.Item>{item.name}</List.Item>}/>}*/}

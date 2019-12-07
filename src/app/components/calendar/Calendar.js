@@ -47,7 +47,7 @@ import {
     WAITING_STATUS
 } from "../../constants/hardData";
 
-const localizer = momentLocalizer(moment)
+const localizer = momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(BigCalendar)
 const {Content} = Layout;
 const confirm = Modal.confirm;

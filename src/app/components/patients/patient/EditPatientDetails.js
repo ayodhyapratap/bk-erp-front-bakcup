@@ -43,7 +43,19 @@ import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 import WebCamField from "../../common/WebCamField";
 import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD, ALL, RELATION} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
-import {BLOOD_GROUPS, FAMILY_GROUPS, PATIENT_AGE, SOURCE_PLATFORM, LANGUAGE} from "../../../constants/hardData";
+import {
+    BLOOD_GROUPS,
+    FAMILY_GROUPS,
+    PATIENT_AGE,
+    SOURCE_PLATFORM,
+    LANGUAGE,
+    BLOOD_GROUP_CONFIG_PARAM,
+    PATIENT_SOURCE_CONFIG_PARAM,
+    SMS_LANGUAGE_CONFIG_PARAM,
+    FAMILY_RELATION_CONFIG_PARAM,
+    GENDER_CONFIG_PARAM
+} from "../../../constants/hardData";
+import {loadConfigParameters} from "../../../utils/clinicUtils";
 
 
 const confirm = Modal.confirm;
@@ -70,7 +82,12 @@ class EditPatientDetails extends React.Component {
             file_count: 10,
             file_enable: true,
             relation_text: true,
-            loading: false
+            loading: false,
+            [BLOOD_GROUP_CONFIG_PARAM]: [],
+            [PATIENT_SOURCE_CONFIG_PARAM]: [],
+            [SMS_LANGUAGE_CONFIG_PARAM]: [],
+            [FAMILY_RELATION_CONFIG_PARAM]: [],
+            [GENDER_CONFIG_PARAM]: []
             // patientDetails:{},
 
         }
@@ -98,7 +115,7 @@ class EditPatientDetails extends React.Component {
         if (this.props.currentPatient) {
             this.loadPatientData(this.props.currentPatient.id);
         }
-
+        loadConfigParameters(this, [BLOOD_GROUP_CONFIG_PARAM, PATIENT_SOURCE_CONFIG_PARAM, SMS_LANGUAGE_CONFIG_PARAM, FAMILY_RELATION_CONFIG_PARAM, GENDER_CONFIG_PARAM])
     }
 
     getCountry() {
@@ -570,8 +587,8 @@ class EditPatientDetails extends React.Component {
                     <Form.Item label={"SMS Language"} {...formItemLayout}>
                         {getFieldDecorator('language', {initialValue: this.state.patientDetails && this.state.patientDetails.language ? this.state.patientDetails.language : this.props.activePracticeData.language})
                         (<Select>
-                            {LANGUAGE.map((option) => <Select.Option value={option.value}>
-                                {option.label}
+                            {this.state[SMS_LANGUAGE_CONFIG_PARAM].map((option) => <Select.Option value={option}>
+                                {option}
                             </Select.Option>)}
                         </Select>)
                         }
@@ -585,9 +602,9 @@ class EditPatientDetails extends React.Component {
                     <Form.Item label="Gender" {...formItemLayout}>
                         {getFieldDecorator('gender', {initialValue: this.state.patientDetails ? this.state.patientDetails.gender : null})
                         (<Select placeholder={"Select Gender"}>
-                            <Option value="male">Male</Option>
-                            <Option value="female">Female</Option>
-                            <Option value="other">Other</Option>
+                            {this.state[GENDER_CONFIG_PARAM].map((option) => <Select.Option value={option.value}>
+                                {option.label}
+                            </Select.Option>)}
                         </Select>)
                         }
                     </Form.Item>
@@ -625,8 +642,8 @@ class EditPatientDetails extends React.Component {
                     <Form.Item label="Blood Group" {...formItemLayout}>
                         {getFieldDecorator("blood_group", {initialValue: this.state.patientDetails ? this.state.patientDetails.blood_group : ''})
                         (<Select placeholder="Blood Group">
-                            {BLOOD_GROUPS.map((option) => <Select.Option
-                                value={option.value}>{option.name}</Select.Option>)}
+                            {this.state[BLOOD_GROUP_CONFIG_PARAM].map((option) => <Select.Option
+                                value={option}>{option}</Select.Option>)}
                         </Select>)
                         }
                     </Form.Item>
@@ -642,7 +659,7 @@ class EditPatientDetails extends React.Component {
                             {getFieldDecorator("family_relation", {initialValue: this.state.patientDetails && this.state.patientDetails.family_relation != null ? this.state.patientDetails.family_relation : RELATION})
                             (<Select onChange={(value) => this.handleRelation(value)}>
                                 <Select.Option value={''}>{RELATION}</Select.Option>
-                                {FAMILY_GROUPS.map((option) => <Select.Option
+                                {this.state[FAMILY_RELATION_CONFIG_PARAM].map((option) => <Select.Option
                                     value={option.value}>{option.name}</Select.Option>)}
                             </Select>)
                             }

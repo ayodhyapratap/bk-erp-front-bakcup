@@ -4,6 +4,7 @@ import {BACKEND_BASE_URL} from "../config/connect";
  * API Connection URLs
  * */
 export const API_URL = BACKEND_BASE_URL + '/erp-api';
+export const CONFIG_API = 'users/config/';
 export const FILE_UPLOAD_API = 'blogImage/';
 export const FILE_UPLOAD_BASE64 = 'blogImage/create_with_base64/';
 export const LOGIN_SEND_OTP = 'staff_login/send_otp/';
@@ -235,7 +236,7 @@ export const GENERATE_MLM_COMMISSON = 'product_margin/generate_mlm/';
 export const AGENT_ROLES = 'role_commission/agent_roles/';
 export const AGENT_WALLET = 'patient_wallet/?patient=%s';
 export const WALLET_LEDGER = 'wallet_ledger/?patient=%s';
-
+export const MY_AGENTS = 'patients/%s/my_agents/';
 
 /**
  * PDFs Links

@@ -11,7 +11,8 @@ import {
 import {ALL_PRACTICE, EXTRA_DATA} from "../../../../constants/api";
 import {displayMessage, getAPI} from "../../../../utils/common";
 import {Redirect} from 'react-router-dom'
-import {LANGUAGE} from "../../../../constants/hardData";
+import {LANGUAGE, SMS_LANGUAGE_CONFIG_PARAM} from "../../../../constants/hardData";
+import {loadConfigParameters} from "../../../../utils/clinicUtils";
 
 
 class AddPracticeDetails extends React.Component {
@@ -22,6 +23,7 @@ class AddPracticeDetails extends React.Component {
             redirect: false,
             specialisations: null,
             countries: null,
+            [SMS_LANGUAGE_CONFIG_PARAM]: []
         }
         this.changeRedirect = this.changeRedirect.bind(this);
     }
@@ -43,6 +45,7 @@ class AddPracticeDetails extends React.Component {
         let errorFn = function () {
         };
         getAPI(EXTRA_DATA, successFn, errorFn);
+        loadConfigParameters(this, [SMS_LANGUAGE_CONFIG_PARAM]);
     }
 
     changeRedirect() {
@@ -123,14 +126,16 @@ class AddPracticeDetails extends React.Component {
             key: "email",
             placeholder: "Practice Email",
             type: EMAIL_FIELD
-        },{
-            label:"SMS Language",
-            key:"language",
-            placeholder:'SMS Language',
-            initialValue:this.props.activePracticeData.language?this.props.activePracticeData.language:[],
-            type:SELECT_FIELD,
-            options:LANGUAGE,
-        },  {
+        }, {
+            label: "SMS Language",
+            key: "language",
+            placeholder: 'SMS Language',
+            initialValue: this.props.activePracticeData.language ? this.props.activePracticeData.language : [],
+            type: SELECT_FIELD,
+            options: this.state[SMS_LANGUAGE_CONFIG_PARAM].map(item => {
+                return {label: item, value: item}
+            }),
+        }, {
             label: "Practice Website",
             key: "website",
             placeholder: "Practice Website",
@@ -153,13 +158,13 @@ class AddPracticeDetails extends React.Component {
             type: INPUT_FIELD,
             required: true
         },
-        {
-            label: "Return Prefix",
-            placeholder: "DEL/RET/",
-            key: "return_prefix",
-            type: INPUT_FIELD,
-            required: true
-        }];
+            {
+                label: "Return Prefix",
+                placeholder: "DEL/RET/",
+                key: "return_prefix",
+                type: INPUT_FIELD,
+                required: true
+            }];
 
         const formProp = {
             successFn: function (data) {
