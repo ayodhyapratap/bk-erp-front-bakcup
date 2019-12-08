@@ -212,7 +212,7 @@ class PatientProfile extends React.Component {
                             <PatientRow label="Date of Birth" value={patient.dob}/>
                         }
                         <PatientRow label="Referer"
-                                    value={patient.user.referer_data ? <Link
+                                    value={patient.user.referer_data.referer ? <Link
                                         to={"/patient/" + patient.user.referer_data.patient + "/profile"}>{patient.user.referer_data.referer.first_name}</Link> : "--"}/>
                         <Divider>Contact Details</Divider>
                         <PatientRow label="Email"
