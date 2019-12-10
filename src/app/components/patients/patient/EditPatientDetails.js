@@ -308,7 +308,7 @@ class EditPatientDetails extends React.Component {
                         loading: false
                     })
                 }
-                // reqData = removeEmpty(reqData);
+                reqData = removeEmpty(reqData);
 
                 if (that.props.currentPatient) {
                     putAPI(interpolate(PATIENT_PROFILE, [that.props.currentPatient.id]), reqData, successFn, errorFn);
