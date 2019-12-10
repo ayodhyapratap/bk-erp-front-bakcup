@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Divider, Icon, Input, Modal, Table, Tabs} from "antd";
+import {Button, Card, Divider, Icon, Input, Modal, Table, Tabs, Tag, Tooltip as AntTooltip} from "antd";
 import {Link, Route, Switch} from "react-router-dom";
 import {VITAL_SIGN_PDF, VITAL_SIGNS_API} from "../../../constants/api";
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
@@ -498,10 +498,11 @@ class PatientVitalSign extends React.Component {
                           bodyStyle={{padding: 0}}>
                         <Table columns={columns}
                                pagination={false}
-                               dataSource={[vitalsign]}/>
+                               dataSource={[vitalsign]}
+                               footer={() => VitalSignFooter(vitalsign)}/>
                     </Card>
                 </div>)}
-                <InfiniteFeedLoaderButton loaderFunction={() => this.loadInvoices(that.state.next)}
+                <InfiniteFeedLoaderButton loaderFunction={() => this.loadVitalsigns(that.state.next)}
                                           loading={this.state.loading}
                                           hidden={!this.state.next}/>
             </div>
@@ -515,4 +516,21 @@ export default PatientVitalSign;
 function CustomizedTooltip(value, name, props) {
     console.log(value, name, props);
     return ["formatted value", "formatted name"]
+}
+function VitalSignFooter(presc) {
+    if (presc) {
+console.log(presc)
+        return <div>
+            {presc.doctor ? <Tag color={presc.doctor ? presc.doctor.calendar_colour : null}>
+                <b>{"prescribed by  " + presc.doctor.user.first_name} </b>
+            </Tag> : null}
+
+            {presc.practice_data ? <Tag style={{float: 'right'}}>
+                <AntTooltip title="Practice Name">
+                    <b>{presc.practice_data.name} </b>
+                </AntTooltip>
+            </Tag> : null}
+        </div>
+    }
+    return null
 }
