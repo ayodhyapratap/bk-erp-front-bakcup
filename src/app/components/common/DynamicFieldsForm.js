@@ -46,8 +46,6 @@ import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {displayMessage, getAPI, makeFileURL, makeURL, postAPI, putAPI} from "../../utils/common";
 import moment from "moment";
 import SwatchesPicker from 'react-color/lib/Swatches';
-// import ReactQuill from 'react-quill';
-// import 'react-quill/dist/quill.snow.css';
 import {EXTRA_DATA, FILE_UPLOAD_API, FILE_UPLOAD_BASE64} from "../../constants/api";
 import WebCamField from "./WebCamField";
 import {Editor} from 'react-draft-wysiwyg';

@@ -1,18 +1,25 @@
 import React from "react";
-import {Button, Card, Divider, Icon, Input, Modal, Table, Tabs, Tag, Tooltip as AntTooltip} from "antd";
+import {Button, Card, Divider, Icon, Modal, Table, Tabs, Tag, Tooltip as AntTooltip} from "antd";
 import {Link, Route, Switch} from "react-router-dom";
 import {VITAL_SIGN_PDF, VITAL_SIGNS_API} from "../../../constants/api";
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
 import moment from 'moment';
 import CustomizedTable from "../../common/CustomizedTable";
 import AddorEditPatientVitalSigns from "./AddorEditPatientVitalSigns";
-import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis,ResponsiveContainer,ComposedChart} from 'recharts';
+import {
+    CartesianGrid,
+    Legend,
+    Line,
+    Tooltip,
+    XAxis,
+    YAxis,
+    ResponsiveContainer,
+    ComposedChart,
+} from 'recharts';
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 
-const {Meta} = Card;
-const Search = Input.Search;
 const confirm = Modal.confirm;
 
 class PatientVitalSign extends React.Component {
@@ -517,9 +524,10 @@ function CustomizedTooltip(value, name, props) {
     console.log(value, name, props);
     return ["formatted value", "formatted name"]
 }
+
 function VitalSignFooter(presc) {
     if (presc) {
-console.log(presc)
+        console.log(presc)
         return <div>
             {presc.doctor ? <Tag color={presc.doctor ? presc.doctor.calendar_colour : null}>
                 <b>{"prescribed by  " + presc.doctor.user.first_name} </b>

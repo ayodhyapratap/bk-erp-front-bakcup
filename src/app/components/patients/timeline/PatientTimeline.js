@@ -16,12 +16,42 @@ import {ERROR_MSG_TYPE, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 
 const Step = Steps.Step;
 
+const checkboxOption = [{
+    label: <span style={{width: '100%'}}>Appointment</span>,
+    value: 'appointments'
+}, {
+    label: <span style={{width: '100%'}}>Report Manual</span>,
+    value: 'vital_signs'
+}, {
+    label: <span style={{width: '100%'}}>Clinic Notes</span>,
+    value: 'clinic_notes'
+}, {
+    label: <span style={{width: '100%'}}>Treatment Plans</span>,
+    value: 'treatment_plans'
+}, {
+    label: <span style={{width: '100%'}}>Procedures</span>,
+    value: 'procedures'
+}, {
+    label: <span style={{width: '100%'}}>Files</span>,
+    value: 'files'
+}, {
+    label: <span style={{width: '100%'}}>Prescriptions</span>,
+    value: 'prescriptions'
+}, {
+    label: <span style={{width: '100%'}}>Invoices</span>,
+    value: 'invoices'
+}, {
+    label: <span style={{width: '100%'}}>Payments</span>,
+    value: 'payments'
+}];
 
 class PatientTimeline extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             filterParams: ['appointments', 'vital_signs', 'clinic_notes', 'treatment_plans', 'procedures', 'files', 'prescriptions', 'invoices', 'payments'],
+            checkAllFilters: true,
+            selectedFiltersIntermediate: false,
             timelineData: [],
             checkedTimelineCards: []
         }
@@ -34,12 +64,23 @@ class PatientTimeline extends React.Component {
     changeFilters = (value) => {
         let that = this;
         this.setState({
-            filterParams: value
+            filterParams: value,
+            selectedFiltersIntermediate: !!value.length && value.length < checkboxOption.length,
+            checkAllFilters: value.length === checkboxOption.length,
         }, function () {
             that.loadTimeline()
         })
     }
-
+    onCheckAllFiltersChange = e => {
+        let that = this;
+        this.setState({
+            filterParams: e.target.checked ? checkboxOption.map(item => item.value) : [],
+            selectedFiltersIntermediate: false,
+            checkAllFilters: e.target.checked,
+        }, function () {
+            that.loadTimeline()
+        });
+    };
     loadTimeline = () => {
         let that = this;
         let queryParams = {
@@ -166,36 +207,9 @@ class PatientTimeline extends React.Component {
     }
 
     render() {
-        console.log("timeline",this.state.timelineData);
+        console.log("timeline", this.state.timelineData);
         let that = this;
-        let checkboxOption = [{
-            label: <span style={{width: '100%'}}>Appointment</span>,
-            value: 'appointments'
-        }, {
-            label: <span style={{width: '100%'}}>Report Manual</span>,
-            value: 'vital_signs'
-        }, {
-            label: <span style={{width: '100%'}}>Clinic Notes</span>,
-            value: 'clinic_notes'
-        }, {
-            label: <span style={{width: '100%'}}>Treatment Plans</span>,
-            value: 'treatment_plans'
-        }, {
-            label: <span style={{width: '100%'}}>Procedures</span>,
-            value: 'procedures'
-        }, {
-            label: <span style={{width: '100%'}}>Files</span>,
-            value: 'files'
-        }, {
-            label: <span style={{width: '100%'}}>Prescriptions</span>,
-            value: 'prescriptions'
-        }, {
-            label: <span style={{width: '100%'}}>Invoices</span>,
-            value: 'invoices'
-        }, {
-            label: <span style={{width: '100%'}}>Payments</span>,
-            value: 'payments'
-        }];
+
 
         return <Card title="Timeline"
                      extra={<Button.Group>
@@ -205,6 +219,13 @@ class PatientTimeline extends React.Component {
             <Spin spinning={this.state.loading}>
                 <Row>
                     <Col span={4}>
+                        <Checkbox
+                            indeterminate={this.state.selectedFiltersIntermediate}
+                            onChange={this.onCheckAllFiltersChange}
+                            checked={this.state.checkAllFilters}>
+                            <b>Select all</b>
+                        </Checkbox>
+                        <br/>
                         <Checkbox.Group
                             size={"large"}
                             value={this.state.filterParams}
@@ -406,7 +427,7 @@ timelineVitalSignCard(item) {
         dataIndex: 'created_at',
         key: 'name',
         render: created_at => <span>{moment(created_at).format('hh:mm A')}</span>,
-    },{
+    }, {
         title: 'Temp(F)',
         key: 'temperature',
         render: (text, record) => (
@@ -423,8 +444,8 @@ timelineVitalSignCard(item) {
     }, {
         title: 'SYS/DIA mmhg',
         key: 'address',
-        render: (text, record) => (<>{record.blood_pressure_up?
-            <span> {record.blood_pressure_up}/{record.blood_pressure_down}<br/>,{record.position}</span>:null}
+        render: (text, record) => (<>{record.blood_pressure_up ?
+                <span> {record.blood_pressure_up}/{record.blood_pressure_down}<br/>,{record.position}</span> : null}
             </>
         )
     }, {
@@ -452,8 +473,8 @@ timelineVitalSignCard(item) {
     return <Card hoverable
                  bodyStyle={{backgroundColor: (item.checkedTimelineCards[item.type] && item.checkedTimelineCards[item.type][item.id] ? '#B5EEFF' : 'initial')}}>
         <h2><Icon type="heart"/> Report Manual Recorded<Checkbox size="large" style={{float: 'right'}}
-                                                              checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
-                                                              onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
+                                                                 checked={(item.checkedTimelineCards[item.type] ? item.checkedTimelineCards[item.type][item.id] : false)}
+                                                                 onChange={(e) => item.toggleTimelineCheckbox(item.type, item.id, e.target.checked)}/>
             {item.practice_data ? <Tag style={{float: 'right'}}>
                 <Tooltip title="Practice Name">
                     <b>{item.practice_data.name} </b>
