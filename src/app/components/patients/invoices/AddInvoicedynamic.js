@@ -159,54 +159,55 @@ class Addinvoicedynamic extends React.Component {
 
     loadInventoryItemList() {
         let that = this;
+        let searchString = this.state.searchItem;
         let successFn = function (reqData) {
             let data = reqData.results;
             let drugItems = [];
             let equipmentItems = [];
             let supplesItems = [];
-
-            that.setState(function (prevState) {
-                    let stocks = {...prevState.stocks};
-                    let itemBatches = {};
-                    data.forEach(function (item) {
-                        if (item.item_type == DRUG) {
-                            drugItems.push(item);
-                            if (stocks[item.id]) {
-                                let stock_quantity = stocks[item.id]
-                                if (item.item_type_stock && item.item_type_stock.item_stock)
-                                    item.item_type_stock.item_stock.forEach(function (stock) {
-                                        if (stock_quantity[stock.batch_number])
-                                            stock_quantity[stock.batch_number] += stock.quantity;
-                                        else
-                                            stock_quantity[stock.batch_number] += stock.quantity;
-                                    });
-                            } else {
-                                let stock_quantity = {}
-                                if (item.item_type_stock && item.item_type_stock.item_stock)
-                                    item.item_type_stock.item_stock.forEach(function (stock) {
-                                        stock_quantity[stock.batch_number] = stock.quantity
-                                    });
-                                stocks[item.id] = stock_quantity;
+            if (that.state.searchItem == searchString)
+                that.setState(function (prevState) {
+                        let stocks = {...prevState.stocks};
+                        let itemBatches = {};
+                        data.forEach(function (item) {
+                            if (item.item_type == DRUG) {
+                                drugItems.push(item);
+                                if (stocks[item.id]) {
+                                    let stock_quantity = stocks[item.id]
+                                    if (item.item_type_stock && item.item_type_stock.item_stock)
+                                        item.item_type_stock.item_stock.forEach(function (stock) {
+                                            if (stock_quantity[stock.batch_number])
+                                                stock_quantity[stock.batch_number] += stock.quantity;
+                                            else
+                                                stock_quantity[stock.batch_number] += stock.quantity;
+                                        });
+                                } else {
+                                    let stock_quantity = {}
+                                    if (item.item_type_stock && item.item_type_stock.item_stock)
+                                        item.item_type_stock.item_stock.forEach(function (stock) {
+                                            stock_quantity[stock.batch_number] = stock.quantity
+                                        });
+                                    stocks[item.id] = stock_quantity;
+                                }
+                                itemBatches[item.id] = item.item_type_stock.item_stock;
                             }
-                            itemBatches[item.id] = item.item_type_stock.item_stock;
-                        }
 
-                    });
-                    let items = that.state.items;
-                    items[INVENTORY] = drugItems;
-                    return {
-                        items: items,
-                        stocks: {...prevState.stocks, ...stocks},
-                        itemBatches: {...prevState.itemBatches, ...itemBatches},
-                        saveLoading: false,
-                        loading: false,
+                        });
+                        let items = that.state.items;
+                        items[INVENTORY] = drugItems;
+                        return {
+                            items: items,
+                            stocks: {...prevState.stocks, ...stocks},
+                            itemBatches: {...prevState.itemBatches, ...itemBatches},
+                            saveLoading: false,
+                            loading: false,
+                        }
+                    }, function () {
+                        if (that.props.editId) {
+                            that.loadEditInvoiceData();
+                        }
                     }
-                }, function () {
-                    if (that.props.editId) {
-                        that.loadEditInvoiceData();
-                    }
-                }
-            )
+                )
 
         }
         let errorFn = function () {
@@ -216,7 +217,7 @@ class Addinvoicedynamic extends React.Component {
             maintain_inventory: true,
         }
         if (this.state.searchItem) {
-            paramsApi.item_name = this.state.searchItem;
+            paramsApi.item_name = searchString;
         }
 
         getAPI(INVENTORY_ITEM_API, successFn, errorFn, paramsApi);
@@ -224,12 +225,14 @@ class Addinvoicedynamic extends React.Component {
 
     loadProcedures() {
         var that = this;
+        let searchString = this.state.searchItem;
         let successFn = function (data) {
             let items = that.state.items;
             items[PROCEDURES] = data;
-            that.setState({
-                items: items,
-            })
+            if (that.state.searchItem == searchString)
+                that.setState({
+                    items: items,
+                })
         };
         let errorFn = function () {
         };
@@ -237,20 +240,21 @@ class Addinvoicedynamic extends React.Component {
             practice: this.props.active_practiceId,
         }
         if (this.state.searchItem) {
-            paramsApi.name = this.state.searchItem;
+            paramsApi.name = searchString;
         }
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn, paramsApi);
     }
 
     loadPrescriptions() {
         var that = this;
+        let searchString = this.state.searchItem;
         let successFn = function (data) {
-
-            that.setState(function (prevState) {
-                return {
-                    items: {...prevState.items, [PRESCRIPTIONS]: data}
-                }
-            })
+            if (that.state.searchItem == searchString)
+                that.setState(function (prevState) {
+                    return {
+                        items: {...prevState.items, [PRESCRIPTIONS]: data}
+                    }
+                })
         };
         let errorFn = function () {
         };
@@ -258,9 +262,9 @@ class Addinvoicedynamic extends React.Component {
             practice: this.props.active_practiceId,
         }
         if (this.state.searchItem) {
-            paramsApi.item_name = this.state.searchItem;
+            paramsApi.item_name = searchString;
         }
-        getAPI(interpolate(UNPAID_PRESCRIPTIONS, [that.props.match.params.id]), successFn, errorFn,paramsApi);
+        getAPI(interpolate(UNPAID_PRESCRIPTIONS, [that.props.match.params.id]), successFn, errorFn, paramsApi);
     }
 
     loadTaxes() {

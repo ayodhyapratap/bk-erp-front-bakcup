@@ -94,9 +94,9 @@ class App extends Component {
     }
 
     componentDidMount() {
+        this.appointmentList(moment().subtract(1, 'days'), moment().add(5, 'days'));
         this.loadDoctors();
         loadAppointmentCategories(this);
-        this.appointmentList(moment().subtract(1, 'days'), moment().add(5, 'days'));
     }
 
     changeCalendarType = (value) => {
@@ -120,33 +120,32 @@ class App extends Component {
 
     loadDoctors() {
         let that = this;
+        that.setState({
+            doctorLoading:true
+        })
         let successFn = function (data) {
+            let doctors = [];
+            let staff = [];
+            let doctor_object = {}
             data.staff.forEach(function (usersdata) {
                 if (usersdata.role == DOCTORS_ROLE) {
-                    let doctor = that.state.practice_doctors;
-                    doctor.push(usersdata);
-                    that.setState({
-                        practice_doctors: doctor,
-                    })
+                    doctors.push(usersdata);
+                    doctor_object[usersdata.id] = usersdata;
                 } else {
-                    let doctor = that.state.practice_staff;
-                    doctor.push(usersdata);
-                    that.setState({
-                        practice_staff: doctor,
-                    })
+                    staff.push(usersdata);
                 }
             });
-            let doctor_object = {}
-            if (that.state.practice_doctors) {
-                that.state.practice_doctors.forEach(function (drug) {
-                    doctor_object[drug.id] = drug;
-                })
-            }
             that.setState({
+                practice_staff: staff,
+                practice_doctors: doctors,
                 doctors_object: doctor_object,
+                doctorLoading:false
             })
         }
         let errorFn = function () {
+            that.setState({
+                doctorLoading:false
+            })
         };
         getAPI(interpolate(PRACTICESTAFF, [this.props.active_practiceId]), successFn, errorFn);
     }
@@ -345,7 +344,7 @@ class App extends Component {
                         doctor: appointment.doctor,
                         loading: false
                     };
-                    
+
                     if (doctorsAppointmentCount['ALL']) {
                         doctorsAppointmentCount['ALL'].ALL += 1
                         if (appointment.status == CANCELLED_STATUS) {
@@ -650,7 +649,7 @@ class App extends Component {
                                                     </Button>
                                                 </Dropdown>
                                             </div> : null}
-                                        <Spin spinning={this.state.loading}>
+                                        <Spin spinning={this.state.doctorLoading}>
                                             {this.state.filterType == 'DOCTOR' ?
                                                 <Menu selectedKeys={[this.state.selectedDoctor]}
                                                       size={'small'}
@@ -797,7 +796,7 @@ class App extends Component {
                                                         timeslots={1}
                                                         truncateEvents={false}
                                                         events={this.state.showAppointments ? this.state.filteredEvent : []}
-                                                       
+
                                                         onEventDrop={this.moveEvent}
                                                         onEventResize={this.resizeEvent}
                                                         resizable
@@ -811,7 +810,9 @@ class App extends Component {
                                                         date={new Date(this.state.selectedDate.format())}
                                                         onRangeChange={this.onRangeChange}
                                                         components={{
-                                                            event: function(option){return <EventComponent {...option} {...that.props}/>} ,
+                                                            event: function (option) {
+                                                                return <EventComponent {...option} {...that.props}/>
+                                                            },
                                                             timeSlotWrapper: function (options) {
                                                                 return <TimeSlotWrapper {...options}
                                                                                         key={options.value.toString()}
@@ -855,7 +856,9 @@ class App extends Component {
                                                 date={new Date(this.state.selectedDate.format())}
                                                 onRangeChange={this.onRangeChange}
                                                 components={{
-                                                    event: function(option){return <EventComponent {...option} {...that.props}/>},
+                                                    event: function (option) {
+                                                        return <EventComponent {...option} {...that.props}/>
+                                                    },
                                                     timeSlotWrapper: function (options) {
                                                         return <TimeSlotWrapper {...options}
                                                                                 key={options.value.toString()}
