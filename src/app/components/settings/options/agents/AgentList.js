@@ -2,14 +2,17 @@ import React from "react";
 import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm, Tag, Select, Col} from "antd";
 import {
     SUCCESS_MSG_TYPE,
-    INPUT_FIELD, WARNING_MSG_TYPE,
+    INPUT_FIELD, WARNING_MSG_TYPE, NUMBER_FIELD, DATE_PICKER,
 } from "../../../../constants/dataKeys";
-import {AGENT_ROLES, ALL_PRACTICE, PATIENT_PROFILE, PATIENTS_LIST} from "../../../../constants/api"
+import {AGENT_ROLES, ALL_PRACTICE, PATIENT_PROFILE, PATIENTS_LIST, WALLET_LEDGER} from "../../../../constants/api"
 import {Link, Route, Switch} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, postAPI, putAPI, makeFileURL} from "../../../../utils/common";
 import AddOrEditAgent from "./AddOrEditAgent";
 import CustomizedTable from "../../../common/CustomizedTable";
 import InfiniteFeedLoaderButton from "../../../common/InfiniteFeedLoaderButton";
+import PatientWalletLedger from "../../../patients/wallet-ledger/PatientWalletLedger";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
+import moment from "moment";
 
 // import Col from "antd/es/grid/col";
 
@@ -23,8 +26,8 @@ class AgentRoles extends React.Component {
             loading: true,
             agentRoles: [],
             practiceList: [],
-            approved: null
-
+            approved: null,
+            showAgentData: null
         };
         this.loadData = this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
@@ -65,7 +68,7 @@ class AgentRoles extends React.Component {
             } else {
                 that.setState(function (prevState) {
                     return {
-                        data: [...prevState.data,...data.results],
+                        data: [...prevState.data, ...data.results],
                         total: data.count,
                         nextPage: data.next,
                         loading: false
@@ -111,6 +114,17 @@ class AgentRoles extends React.Component {
 
         this.props.history.push('/settings/agents/' + record.id + '/edit')
 
+    }
+
+    showWallet = (record) => {
+        this.setState({
+            showAgentData: record,
+        });
+    }
+    payAgentModal = (record) => {
+        this.setState({
+            payAgentData: record,
+        });
     }
 
     deleteObject(record) {
@@ -183,6 +197,7 @@ class AgentRoles extends React.Component {
         })
     }
 
+
     render() {
         let that = this;
         let i = 1;
@@ -252,6 +267,10 @@ class AgentRoles extends React.Component {
             hideExport: true,
             render: (text, record) => (
                 <span>
+                     <a onClick={() => this.showWallet(record)}>  Wallet</a>
+                    <Divider type="vertical"/>
+              <a onClick={() => this.payAgentModal(record)}>  Pay Out</a>
+                    <Divider type="vertical"/>
               <a onClick={() => this.editObject(record)}>  Edit</a>
                 <Divider type="vertical"/>
                     <Popconfirm title="Are you sure delete this item?"
@@ -266,6 +285,7 @@ class AgentRoles extends React.Component {
             {label: 'Pending', value: false},
             {label: 'All', value: null}
         ];
+        const PayAgentForm = Form.create()(DynamicFieldsForm);
         return <Switch>
             <Route exact path={"/settings/agents/add"}
                    render={(route) => <AddOrEditAgent  {...this.props} title={"Create Advisor"}
@@ -317,6 +337,88 @@ class AgentRoles extends React.Component {
                     <InfiniteFeedLoaderButton loading={this.state.loading}
                                               loaderFunction={() => that.loadData(that.state.nextPage)}
                                               hidden={!this.state.nextPage}/>
+                    <Modal visible={this.state.showAgentData}
+                           closable={false}
+                           centered
+                           width={1000}
+                           footer={null}
+                           style={{top: 60}}>
+                        <Button type="primary"
+                                style={{position: 'absolute', top: '-50px'}}
+                                onClick={() => this.payAgentModal(this.state.showAgentData)}>Pay Out</Button>
+                        <Button icon="close" type="danger" shape="circle"
+                                style={{position: 'absolute', top: '-50px', right: 0}}
+                                onClick={() => this.showWallet(null)}/>
+                        {this.state.showAgentData ?
+                            <PatientWalletLedger currentPatient={this.state.showAgentData}
+                                                 key={this.state.showAgentData ? this.state.showAgentData.id + this.state.payAgentData : null}/> : null}
+                    </Modal>
+                    <Modal visible={this.state.payAgentData}
+                           closable={false}
+                           centered
+                           footer={null}
+                           closeIcon={null}
+                           style={{top: 60}}>
+                        <Button icon="close" type="danger" shape="circle"
+                                style={{position: 'absolute', top: '-50px', right: 0}}
+                                onClick={() => this.payAgentModal(null)}/>
+                        {this.state.payAgentData ? <div>
+                            <h2>Pay {this.state.payAgentData.user.first_name}</h2>
+                            <PayAgentForm formProp={{
+                                method: 'post',
+                                action: WALLET_LEDGER,
+                                successFn: function () {
+                                    that.payAgentModal(null)
+                                },
+                                errorFn: function () {
+
+                                },
+                                confirm: true,
+                                confirmText: "Are you sure to pay out this advisor?"
+                            }}
+                                          fields={[{
+                                              label: 'Amount',
+                                              key: 'amount',
+                                              type: NUMBER_FIELD,
+                                              required: true,
+                                              follow: 'INR'
+                                          }, {
+                                              label: 'Date',
+                                              key: 'date',
+                                              type: DATE_PICKER,
+                                              required: true,
+                                              format: 'YYYY-MM-DD',
+                                              initialValue: moment()
+                                          }, {
+                                              label: 'Comments',
+                                              key: 'comments',
+                                              type: INPUT_FIELD,
+                                              required: true,
+                                              extra: 'Comments for this transaction'
+                                          }]} defaultValues={[{
+                                key: 'ledger_type',
+                                value: 'Payout',
+                            }, {
+                                key: 'amount_type',
+                                value: 'Non Refundable',
+                            }, {
+                                key: 'practice',
+                                value: this.props.active_practiceId
+                            }, {
+                                key: 'is_mlm',
+                                value: false
+                            }, {
+                                key: 'is_cancelled',
+                                value: false
+                            }, {
+                                key: 'patient',
+                                value: this.state.payAgentData.id
+                            }, {
+                                key: 'staff',
+                                value: this.props.user.id
+                            }]}/>
+                        </div> : null}
+                    </Modal>
                 </Card>
             </Route>
 

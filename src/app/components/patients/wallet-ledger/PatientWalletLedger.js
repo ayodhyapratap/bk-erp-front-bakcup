@@ -147,7 +147,7 @@ export default class PatientWalletLedger extends React.Component {
             title: 'Refered By',
             dataIndex: 'received_from.user.referer_data',
             key: 'received_from.user.referer_data',
-            render: (value, record) => value.referer ? <Text>{value.referer.first_name} ({value.custom_id})</Text> : '--'
+            render: (value, record) => value && value.referer ? <Text>{value.referer.first_name} ({value.custom_id})</Text> : '--'
         }, {
             title: 'Ledger Comment',
             dataIndex: 'comments',
