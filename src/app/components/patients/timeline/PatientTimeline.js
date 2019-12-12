@@ -125,7 +125,7 @@ class PatientTimeline extends React.Component {
             })
         }
         if (this.props.showAllClinic && this.props.match.params.id) {
-            delete (queryParams.practice)
+            delete (queryParams.practice_id)
         }
         getAPI(interpolate(PATIENT_TIMELINE_API, [this.props.match.params.id]), successFn, errorFn, queryParams);
     }
