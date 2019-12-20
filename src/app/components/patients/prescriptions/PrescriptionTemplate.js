@@ -63,7 +63,7 @@ class PrescriptionTemplate extends React.Component {
         var that = this;
         let successFn = function (data) {
             that.setState({
-                prescriptionTemplate: data,
+                prescriptionTemplate: data.results,
             })
         };
         let errorFn = function () {
@@ -77,7 +77,7 @@ class PrescriptionTemplate extends React.Component {
         var that = this;
         let successFn = function (data) {
             that.setState({
-                labList: data,
+                labList: data.results,
             })
         };
         let errorFn = function () {
@@ -187,27 +187,29 @@ class PrescriptionTemplate extends React.Component {
             }
             let prevLabs = [...prevState.formLabList];
             let prevAddedLabs = {...prevState.addedLabs};
-            item.labs.forEach(function (lab) {
-                let randId = Math.random().toFixed(7);
-                prevLabs.push({
-                    ...lab,
-                    _id: randId,
+            if (item.labs)
+                item.labs.forEach(function (lab) {
+                    let randId = Math.random().toFixed(7);
+                    prevLabs.push({
+                        ...lab,
+                        _id: randId,
+                    });
+                    prevAddedLabs = {...prevAddedLabs, [lab.id]: true}
                 });
-                prevAddedLabs = {...prevAddedLabs, [lab.id]: true}
-            });
 
             let prevDrugs = [...prevState.formDrugList];
             let prevAddedDrugs = {...prevState.addedDrugs};
-            item.drug.forEach(function (drugs) {
-                let randId = Math.random().toFixed(7);
-                prevDrugs.push({
-                    ...drugs,
-                    _id: randId,
-                    advice_data: item.advice_data,
-                });
-                prevAddedLabs = {...prevAddedDrugs, [drugs.id]: true}
+            if (item.drugs)
+                item.drugs.forEach(function (drugs) {
+                    let randId = Math.random().toFixed(7);
+                    prevDrugs.push({
+                        ...drugs,
+                        _id: randId,
+                        advice_data: item.advice_data,
+                    });
+                    prevAddedDrugs = {...prevAddedDrugs, [drugs.id]: true}
 
-            })
+                })
 
 
             return {

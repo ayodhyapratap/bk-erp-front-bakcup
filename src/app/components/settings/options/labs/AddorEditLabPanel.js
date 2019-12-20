@@ -26,9 +26,8 @@ class AddorEditLab extends React.Component {
     loadTests(){
         let that = this;
         let successFn = function (data) {
-            console.log("get table");
             that.setState({
-                tests: data,
+                tests: data.results,
                 loading: false
             })
             console.log(JSON.stringify(that.state.tests));
@@ -122,7 +121,6 @@ class AddorEditLab extends React.Component {
         let testKeys = Object.keys(this.state.selectedTest);
         let TotalCost =0;
          testKeys.forEach(function(key){TotalCost+=parseInt(that.state.selectedTest[key].cost)});
-        console.log("total cost",TotalCost);
         const {getFieldDecorator} = this.props.form;
         const testOption = this.state.tests.map((test) => <Select.Option value={test.id}>{test.name}</Select.Option>)
         return <Row>

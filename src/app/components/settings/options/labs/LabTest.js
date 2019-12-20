@@ -7,6 +7,7 @@ import {LABTEST_API, OFFERS, PRODUCT_MARGIN} from "../../../../constants/api";
 import {getAPI, deleteAPI, interpolate, postAPI} from "../../../../utils/common";
 import AddorEditLab from "./AddorEditLab";
 import CustomizedTable from "../../../common/CustomizedTable";
+import InfiniteFeedLoaderButton from "../../../common/InfiniteFeedLoaderButton";
 
 class LabTest extends React.Component {
     constructor(props) {
@@ -28,14 +29,23 @@ class LabTest extends React.Component {
         this.loadProductMargin();
     }
 
-    loadData() {
+    loadData(page=1) {
         var that = this;
         let successFn = function (data) {
             console.log("get table");
+            if(data.current)
             that.setState({
-                tests: data,
+                next:data.next,
+                tests: data.results,
                 loading: false
             })
+            else{
+                that.setState(function(prevState){return {
+                    next: data.next,
+                    tests: [...prevState.tests,...data.results],
+                    loading: false
+                }})
+            }
         };
         let errorFn = function () {
             that.setState({
@@ -140,7 +150,8 @@ class LabTest extends React.Component {
                             </Link>
                         </h2>
                     </Row>
-                    <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.tests}/>
+                    <CustomizedTable columns={columns} dataSource={this.state.tests} pagination={false}/>
+                    <InfiniteFeedLoaderButton loading={this.state.loading} hidden={!this.state.next} loaderFunction={()=>this.loadData(this.state.next)}/>
                 </div>
             </Route>
 

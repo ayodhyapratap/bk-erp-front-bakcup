@@ -81,7 +81,6 @@ export default class AddorEditLab extends React.Component {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 that.props.loadData();
-                console.log(data);
             },
             errorFn: function () {
 
