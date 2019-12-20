@@ -124,8 +124,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             that.setState(function (prevState) {
                 let items = {...prevState.items}
                 return {
-                    items: {...items, "Template": data},
-                    filteredItems: {...prevState.filteredItems, "Template": data}
+                    items: {...items, "Template": data.results},
+                    filteredItems: {...prevState.filteredItems, "Template": data.results}
                 }
             })
 
@@ -142,8 +142,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             that.setState(function (prevState) {
                 let items = {...prevState.items}
                 return {
-                    items: {...items, "Labs": data},
-                    filteredItems: {...prevState.filteredItems, "Labs": data}
+                    items: {...items, "Labs": data.results},
+                    filteredItems: {...prevState.filteredItems, "Labs": data.results}
                 }
             })
         };
