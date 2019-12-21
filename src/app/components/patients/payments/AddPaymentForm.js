@@ -61,7 +61,18 @@ class AddPaymentForm extends React.Component {
 
 
         }
-        this.loadInvoices();
+        let invoiceArray = [];
+        if (this.props.history && this.props.history.location.search) {
+            let pairValueArray = this.props.history.location.search.substr(1).split('&');
+            if (pairValueArray.length) {
+               pairValueArray.forEach(function(item){
+                   if((item.split('='))[0]=='invoices'){
+                       invoiceArray = ((item.split('='))[1]).split(',');
+                   }
+                })
+            }
+        }
+        this.loadInvoices(invoiceArray);
         this.loadPaymentModes();
         this.loadAvailableAdvance();
     }
@@ -116,7 +127,7 @@ class AddPaymentForm extends React.Component {
         };
         getAPI(interpolate(PAYMENT_MODES, [this.props.active_practiceId]), successFn, errorFn);
     }
-    loadInvoices = () => {
+    loadInvoices = (invoicesToLoad) => {
         let that = this;
         that.setState({
             invoiceLoading: true
@@ -129,6 +140,11 @@ class AddPaymentForm extends React.Component {
                     loadMoreInvoice: data.next
                 }
             }, function () {
+                if(invoicesToLoad){
+                    invoicesToLoad.forEach(function(id){
+                        that.addInvoiceToPayments(id)
+                    })
+                }
                 that.calculateInvoicePayments();
             })
         }
@@ -160,7 +176,7 @@ class AddPaymentForm extends React.Component {
                     addedInvoiceId: {...prevState.addedInvoiceId, [id]: true},
                     invoicePayments: {...prevState.addedInvoiceId, [id]: 0}
                 }
-            return null
+            return null;
         }, function () {
             that.calculateInvoicePayments()
         })

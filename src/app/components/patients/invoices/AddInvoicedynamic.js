@@ -459,7 +459,7 @@ class Addinvoicedynamic extends React.Component {
                     });
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
-                    let url = '/patient/' + that.props.match.params.id + '/billing/invoices';
+                    let url = '/patient/' + that.props.match.params.id + '/billing/payments/add?invoices=' + data.id;
                     that.props.history.push(url);
                 };
                 let errorFn = function () {

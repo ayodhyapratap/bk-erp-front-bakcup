@@ -253,6 +253,7 @@ class PrescriptionTemplate extends React.Component {
                     console.log("advice search", item);
                     item.dosage = values.does[item._id];
                     item.duration_type = values.duration_unit[item._id];
+                    item.duration = values.duration[item._id];
                     item.frequency = values.does_frequency[item._id];
                     if (values.instruction) {
                         item.instruction = values.instruction[item._id];
@@ -271,10 +272,11 @@ class PrescriptionTemplate extends React.Component {
                         })
                     }
                     const drugIitem = {
-                        "drug": item.id,
+                        "inventory": item.id,
                         "name": item.name,
                         "dosage": item.dosage,
                         "frequency": item.frequency,
+                        "duration": item.duration,
                         "duration_type": item.duration_type,
                         "instruction": item.instruction,
                         "before_food": item.before_food,
@@ -282,15 +284,14 @@ class PrescriptionTemplate extends React.Component {
                         "advice_data": that.state.prescriptionTemplate.advice_data,
                         "is_active": true,
                     };
-                    reqData.drug.push(drugIitem)
-                    console.log("item drug", item);
+                    reqData.drug.push(drugIitem);
                 });
                 that.state.formLabList.forEach(function (item) {
                     reqData.labs.push(item.id);
                 });
                 let successFn = function (data) {
-                    let url = '/patient/' + that.props.match.params.id + '/emr/prescriptions';
-                    that.props.history.push(url);
+                    // let url = '/patient/' + that.props.match.params.id + '/emr/prescriptions';
+                    that.props.history.goBack();
                 }
                 let errorFn = function () {
 

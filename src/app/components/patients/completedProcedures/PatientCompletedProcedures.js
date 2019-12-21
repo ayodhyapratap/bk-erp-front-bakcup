@@ -32,16 +32,12 @@ class PatientCompletedProcedures extends React.Component {
             loading: true
         }
         this.loadTreatmentPlans = this.loadTreatmentPlans.bind(this);
-        this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
         this.editTreatmentPlanData = this.editTreatmentPlanData.bind(this);
     }
 
     componentDidMount() {
-        // if (this.props.match.params.id) {
         this.loadTreatmentPlans();
-        this.loadProcedureCategory();
         this.loadProductMargin();
-        // }
     }
 
     loadProductMargin() {
@@ -109,26 +105,7 @@ class PatientCompletedProcedures extends React.Component {
         getAPI(TREATMENTPLANS_API, successFn, errorFn, apiParams)
     }
 
-    loadProcedureCategory() {
-        let that = this;
-        let successFn = function (data) {
-            that.setState({
-                procedure_category: data,
-                loading: false
-            })
-        };
-        let errorFn = function () {
-            that.setState({
-                loading: false
-            })
-
-        }
-        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn)
-    }
-
-
     editTreatmentPlanData(record) {
-        console.log("array record", record);
         this.setState({
             editTreatmentPlan: record,
         });
@@ -182,13 +159,6 @@ class PatientCompletedProcedures extends React.Component {
 
     render() {
         let that = this;
-        const procedures = {}
-        if (this.state.procedure_category) {
-            this.state.procedure_category.forEach(function (procedure) {
-                procedures[procedure.id] = (procedure.name)
-            })
-
-        }
 
         const columns = [{
             title: '',

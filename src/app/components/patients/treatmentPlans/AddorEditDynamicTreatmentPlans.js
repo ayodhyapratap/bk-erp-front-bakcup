@@ -105,12 +105,20 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
 
     loadProcedures() {
         var that = this;
+        let params = {};
+        if (this.state.searchString) {
+            params.name = this.state.searchString;
+        }
+        that.setState({
+            loadingProcedures: true
+        })
         let successFn = function (data) {
-            that.setState({
-                procedure_category: data,
-                loadingProcedures: false,
-                filteredItems: data
-            })
+            if (!params.name || that.state.searchString == params.name)
+                that.setState({
+                    // procedure_category: data.results,
+                    loadingProcedures: false,
+                    filteredItems: data.results,
+                })
         };
         let errorFn = function () {
             that.setState({
@@ -118,7 +126,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
             })
         };
 
-        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
+        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn, params);
     }
 
     selectDoctor = (doctor) => {
@@ -185,33 +193,11 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
     searchValues = (value) => {
         let that = this;
         this.setState(function (prevState) {
-            return {searchStrings: value}
+            return {searchString: value}
         }, function () {
-            that.filterValues();
+            that.loadProcedures();
         });
         return false;
-    }
-    filterValues = () => {
-        this.setState(function (prevState) {
-            let filteredItemOfGivenType = [];
-            if (prevState.procedure_category) {
-                if (prevState.searchStrings) {
-                    prevState.procedure_category.forEach(function (item) {
-                        if (item.name
-                            .toString()
-                            .toLowerCase()
-                            .includes(prevState.searchStrings.toLowerCase())) {
-                            filteredItemOfGivenType.push(item);
-                        }
-                    });
-                } else {
-                    filteredItemOfGivenType = prevState.procedure_category;
-                }
-            }
-            return {
-                filteredItems: filteredItemOfGivenType
-            }
-        });
     }
 
     render() {
@@ -383,6 +369,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                                   style={{maxHeight: '100vh', overflowX: 'scroll'}}
                                   itemLayout="horizontal"
                                   dataSource={this.state.filteredItems}
+                                  loading={this.state.loadingProcedures}
                                   renderItem={item => (
                                       <List.Item onClick={() => this.add(item)}>
                                           <List.Item.Meta

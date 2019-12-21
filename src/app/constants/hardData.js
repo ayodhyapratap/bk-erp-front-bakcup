@@ -578,6 +578,7 @@ export const ROUTES_TO_HIDE_PATIENT_SIDE_PANEL = [
     "/patient/:id/emr/workdone/edit",
     "/patient/:id/emr/prescriptions/add",
     "/patient/:id/emr/prescriptions/edit",
+    "/patient/:id/prescriptions/template/add",
     "/patient/:id/billing/invoices/add",
     "/patient/:id/billing/invoices/edit",
     "/patient/:id/billing/payments/add",
