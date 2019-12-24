@@ -366,7 +366,7 @@ function PaymentCard(payment, that) {
                  key={payment.id}
                  bodyStyle={{padding: 0}}
                  title={(payment.patient_data && !that.props.currentPatient ?
-                     <small>{payment.created_at ? moment(payment.created_at).format('lll') : null}
+                     <small>{payment.date ? moment(payment.date).format('lll') : null}
                          <Link to={"/patient/" + payment.patient_data.id + "/billing/payments"}>
                              &nbsp;&nbsp; {payment.patient_data.user.first_name} (ID: {payment.patient_data.custom_id?payment.patient_data.custom_id:payment.patient_data.id})&nbsp;
                          </Link>

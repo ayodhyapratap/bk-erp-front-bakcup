@@ -403,7 +403,7 @@ export default class CreateAppointmentForm extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn)
+        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn,{pagination:false})
     }
 
     loadTreatmentNotes() {

@@ -40,7 +40,7 @@ class Appointment extends React.Component {
     }
 
     componentDidMount() {
-        this.loadProcedureCategory();
+        // this.loadProcedureCategory();
         this.loadDoctors();
         this.loadTreatmentNotes();
         if (this.props.match.params.appointmentid) {
@@ -205,12 +205,6 @@ class Appointment extends React.Component {
 
     render() {
         let that = this;
-        const procedures = {}
-        if (this.state.procedure_category) {
-            this.state.procedure_category.forEach(function (procedure) {
-                procedures[procedure.id] = procedure.name;
-            })
-        }
         const doctors = []
         if (this.state.practice_doctors.length) {
             this.state.practice_doctors.forEach(function (doctor) {
@@ -257,9 +251,9 @@ class Appointment extends React.Component {
         }, {
             title: 'Procedure',
             key: 'procedure',
-            render: (text, record) => (
-                <span> {procedures[record.procedure]}</span>
-            )
+            // render: (text, record) => (
+            //     <span> {procedures[record.procedure]}</span>
+            // )
         }, {
             title: 'Treatment Notes',
             key: 'notes',

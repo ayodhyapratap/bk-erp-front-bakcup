@@ -228,7 +228,7 @@ class Addinvoicedynamic extends React.Component {
         let searchString = this.state.searchItem;
         let successFn = function (data) {
             let items = that.state.items;
-            items[PROCEDURES] = data;
+            items[PROCEDURES] = data.results;
             if (that.state.searchItem == searchString)
                 that.setState({
                     items: items,
