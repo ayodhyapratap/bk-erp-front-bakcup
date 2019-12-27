@@ -383,9 +383,9 @@ class Addinvoicedynamic extends React.Component {
             return {selectedPrescriptions: [...prevState.selectedPrescriptions, item.id]}
         })
     }
-    handleSubmit = (e) => {
+    handleSubmit = (goBack) => {
         let that = this;
-        e.preventDefault();
+        // e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 that.setState({
@@ -459,8 +459,12 @@ class Addinvoicedynamic extends React.Component {
                     });
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
-                    let url = '/patient/' + that.props.match.params.id + '/billing/payments/add?invoices=' + data.id;
-                    that.props.history.push(url);
+                    if(goBack){
+                        that.props.history.goBack()
+                    }else {
+                        let url = '/patient/' + that.props.match.params.id + '/billing/payments/add?invoices=' + data.id;
+                        that.props.history.push(url);
+                    }
                 };
                 let errorFn = function () {
                     that.setState({
@@ -1204,7 +1208,7 @@ class Addinvoicedynamic extends React.Component {
                                 </Tabs>
                             </Col>
                             <Col span={18}>
-                                <Form onSubmit={this.handleSubmit}>
+                                <Form >
                                     <Table pagination={false} loading={that.state.loading}
                                            bordered={true}
                                            dataSource={this.state.tableFormValues}
@@ -1228,8 +1232,10 @@ class Addinvoicedynamic extends React.Component {
                                             <Form.Item {...formItemLayoutWithOutLabel}
                                                        style={{marginBottom: 0, float: 'right'}}>
 
-                                                <Button type="primary" htmlType="submit"
+                                                <Button type="primary" htmlType="submit" onClick={()=>this.handleSubmit(true)}
                                                         style={{margin: 5}}>Save Invoice</Button>
+                                                <Button type="primary" htmlType="submit" onClick={()=>this.handleSubmit(false)}
+                                                        style={{margin: 5}}>Save & Create Payment</Button>
                                                 {that.props.history ?
                                                     <Button style={{margin: 5, float: 'right'}}
                                                             onClick={() => that.props.history.goBack()}>
