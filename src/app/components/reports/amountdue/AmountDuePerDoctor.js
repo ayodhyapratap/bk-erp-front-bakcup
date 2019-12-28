@@ -1,8 +1,9 @@
 import React from "react";
 import {AMOUNT_DUE_REPORTS, PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
-import {Col, Divider, Empty, Row, Spin, Statistic, Table} from "antd";
+import {Col, Divider, Empty, Row, Select, Spin, Statistic, Table} from "antd";
 import {Pie, PieChart, Sector,Cell} from "recharts";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class AmountDuePerDoctor extends React.Component {
     constructor(props) {
@@ -13,13 +14,14 @@ export default class AmountDuePerDoctor extends React.Component {
             endDate: this.props.endDate,
             loading: true,
             activeIndex:0,
-
+            mailingUsersList: []
         };
         this.loadReport = this.loadReport.bind(this);
 
     }
     componentDidMount() {
         this.loadReport();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -64,6 +66,15 @@ export default class AmountDuePerDoctor extends React.Component {
             activeIndex: index,
         });
     };
+    sendMail = (mailTo) => {
+        let apiParams={
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            type:this.props.type,
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(AMOUNT_DUE_REPORTS, apiParams)
+    }
     render() {
         const {reportEachDoctor,loading} = this.state;
         const columns = [{
@@ -140,10 +151,14 @@ export default class AmountDuePerDoctor extends React.Component {
         };
         return <div>
             <h2>Amount Due Per Doctor
-                {/*<Button.Group style={{float: 'right'}}>*/}
-                {/*<Button><Icon type="mail"/> Mail</Button>*/}
-                {/*<Button><Icon type="printer"/> Print</Button>*/}
-                {/*</Button.Group>*/}
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                    {this.state.mailingUsersList.map(item => <Select.Option
+                        value={item.email}>{item.name}</Select.Option>)}
+                </Select>
+                    </p>
+            </span>
             </h2>
 
             <Row>

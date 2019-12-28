@@ -28,8 +28,8 @@ import CancellationsNumbers from "./CancellationsNumbers";
 import DailyAppointmentCount from "./DailyAppointmentCount";
 import MonthlyAppointmentCount from './MonthlyAppointmentCount'
 import ReasonsForCancellations from "./ReasonsForCancellations";
-import { loadDoctors } from "../../../utils/clinicUtils";
-import Patient_Conversion from "./Patient_Conversion";
+import {loadDoctors, loadMailingUserListForReportsMail} from "../../../utils/clinicUtils";
+import Patient_Conversion from "./PatientConversion";
 
 
 export default class AppointmentsReportHome extends React.Component {
@@ -46,16 +46,14 @@ export default class AppointmentsReportHome extends React.Component {
             appointmentCategory:[],
             categories:'',
             practiceDoctors:[],
-
-
         };
         this.loadAppointmentCategory = this.loadAppointmentCategory.bind(this);
-        loadDoctors(this);
+
 
     }
     componentDidMount() {
         this.loadAppointmentCategory();
-
+        loadDoctors(this);
     }
     componentWillReceiveProps(newProps) {
         let that = this;
@@ -123,7 +121,7 @@ export default class AppointmentsReportHome extends React.Component {
                        {this.state.type == ALL_APPOINTMENT?
                            <AllAppointments type={ALL_APPOINTMENT} {...this.state} {...this.props}/>:null}
                        {this.state.type == APPOINTMENT_FOR_EACH_CATEGORY?
-                           <AppointmentByCategory {...this.state} />:null}
+                           <AppointmentByCategory {...this.state} {...this.props} />:null}
 
                        {this.state.type == APPOINTMENT_FOR_EACH_DOCTOR?<AppointmentForEachDoctor {...this.state} {...this.props}/>:null}
                        {this.state.type == APPOINTMENT_FOR_EACH_PATIENT_GROUP?<AppointmentForEachPatientGroup {...this.state} {...this.props}/>:null}
@@ -145,7 +143,7 @@ export default class AppointmentsReportHome extends React.Component {
                             <p><br/></p>
                             <h2>Related Reports</h2>
                             {APPOINTMENT_RELATED_REPORT.map((item) => <Radio.Button
-                                style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                style={{width: '100%', backgroundColor: 'transparent'}}
                                 value={item.value}>
                                 {item.name}
                             </Radio.Button>)}

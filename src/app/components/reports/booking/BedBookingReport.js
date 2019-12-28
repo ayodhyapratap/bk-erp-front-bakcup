@@ -26,8 +26,8 @@ export default class BedBookingReport extends React.Component {
 
     componentWillReceiveProps(newProps) {
         let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.bed_packages!=newProps.bed_packages ||this.props.payment_status!=newProps.payment_status
-            ||this.props.type!=newProps.type)
+        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate || this.props.bed_packages != newProps.bed_packages || this.props.payment_status != newProps.payment_status
+            || this.props.type != newProps.type)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
@@ -84,53 +84,58 @@ export default class BedBookingReport extends React.Component {
 
     render() {
         let that = this;
-        let i=1;
+        let i = 1;
         const columns = [{
             title: 'S. No',
             key: 'sno',
             render: (item, record) => <span> {i++}</span>,
-            export:(item,record)=>{i++},
+            export: (item, record) => {
+                i++
+            },
             width: 50
+        }, {
+            title: 'Patient Name',
+            key: 'patient',
+            dataIndex: 'patient',
+            render:(patient)=>patient ? <span>{patient.user.first_name}&nbsp;({patient.custom_id})</span> : null
         },{
             title: 'Package Name',
             key: 'name',
             dataIndex: 'bed_package.name'
-        },
-            {
-                title: 'Medicine Package',
-                key: 'medicine',
-                dataIndex: 'medicines',
-                render: (text, record) => <span>{text.map((item) =>
-                    <Tag>{item.name}</Tag>
-                )}</span>
-            },
-            {
-                title: 'From ',
-                key: 'from_date',
-                render: (text, record) => (
-                    <span>
+        }, {
+            title: 'Medicine Package',
+            key: 'medicine',
+            dataIndex: 'medicines',
+            render: (text, record) => <span>{text.map((item) =>
+                <Tag>{item.name}</Tag>
+            )}</span>
+        }, {
+            title: 'From ',
+            key: 'from_date',
+            render: (text, record) => (
+                <span>
                 {moment(record.from_date).format('LL')}
                   </span>
-                ),
-            }, {
-                title: 'To ',
-                key: 'to_date',
-                render: (text, record) => (
-                    <span>
+            ),
+        }, {
+            title: 'To ',
+            key: 'to_date',
+            render: (text, record) => (
+                <span>
                 {moment(record.to_date).format('LL')}
                   </span>
-                ),
-            }, {
-                title: 'Seat/Bed Type',
-                key: 'seat_type',
-                dataIndex: 'seat_type'
+            ),
+        }, {
+            title: 'Seat/Bed Type',
+            key: 'seat_type',
+            dataIndex: 'seat_type'
 
-            }, {
-                title: 'Seat Number',
-                key: 'seat_no',
-                dataIndex: 'seat_no'
+        }, {
+            title: 'Seat Number',
+            key: 'seat_no',
+            dataIndex: 'seat_no'
 
-            },
+        },
             // {
             //     title:'No Of Room',
             //     key:'room',
@@ -151,7 +156,7 @@ export default class BedBookingReport extends React.Component {
             }];
         return <div><h2>Seat/Bed Booking Report
         </h2>
-            <CustomizedTable pagination={false} loading={this.state.loading} columns={columns} size={'small'}
+            <CustomizedTable hideReport={true} pagination={false} columns={columns}
                              dataSource={this.state.bedBookingReports}/>
             <InfiniteFeedLoaderButton
                 loaderFunction={() => this.loadBedBookingReport(this.state.nextReport)}

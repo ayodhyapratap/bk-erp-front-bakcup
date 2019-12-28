@@ -3,8 +3,9 @@ import {getAPI} from "../../../utils/common";
 import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import CustomizedTable from "../../common/CustomizedTable";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
-import {Col, Row, Statistic} from "antd";
-export default class Patient_Conversion extends React.Component{
+import {Col, Row, Select, Statistic} from "antd";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
+export default class PatientConversion extends React.Component{
     constructor(props){
         super(props);
         this.state = {
@@ -14,11 +15,13 @@ export default class Patient_Conversion extends React.Component{
             endDate: this.props.endDate,
             loading: false,
             activeIndex:0,
+            mailingUsersList: []
         };
         this.loadPatientConversion = this.loadPatientConversion.bind(this);
     }
     componentDidMount() {
         this.loadPatientConversion();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -52,8 +55,8 @@ export default class Patient_Conversion extends React.Component{
             })
         };
         let apiParams={
-            type:that.props.type,
-            practice:that.props.active_practiceId,
+            type:this.props.type,
+            practice:this.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             exclude_cancelled:this.props.exclude_cancelled?true:false,
@@ -68,7 +71,26 @@ export default class Patient_Conversion extends React.Component{
         getAPI(PATIENT_APPOINTMENTS_REPORTS,  successFn, errorFn, apiParams);
 
     }
-
+    sendMail = (mailTo) => {
+        let apiParams={
+            type:this.props.type,
+            practice:this.props.active_practiceId,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            exclude_cancelled:this.props.exclude_cancelled?true:false,
+        };
+        // if (this.props.exclude_cancelled){
+        //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
+        // }
+        if(this.props.categories){
+            apiParams.categories=this.props.categories.toString();
+        }
+        if(this.props.doctors){
+            apiParams.doctors=this.props.doctors.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(PATIENT_APPOINTMENTS_REPORTS, apiParams)
+    }
     render() {
         let that =this;
 
@@ -133,13 +155,22 @@ export default class Patient_Conversion extends React.Component{
             }
         ];
         return(<div>
-                <h2>Patient Conversion</h2>
+                <h2>Patient Conversion
+                    <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                    {this.state.mailingUsersList.map(item => <Select.Option
+                        value={item.email}>{item.name}</Select.Option>)}
+                </Select>
+                    </p>
+            </span>
+                </h2>
                 <Row>
                     <Col span={12} offset={6} style={{textAlign:"center"}}>
                         <Statistic title="Total Conversions" value={this.state.distinct_patients} />
                     </Col>
                 </Row>
-                <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={patient_conversionData}/>
+                <CustomizedTable hideReport={true} loading={this.state.loading} columns={columns}  dataSource={patient_conversionData}/>
             </div>
         )
     }

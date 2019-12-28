@@ -1,9 +1,10 @@
 import React from "react";
-import {Table} from "antd";
-import {MEMBERSHIP_REPORTS} from "../../../constants/api";
+import {Select, Table} from "antd";
+import {MEMBERSHIP_REPORTS, PATIENTS_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class ExpiringMembership extends React.Component {
     constructor(props) {
@@ -13,13 +14,14 @@ export default class ExpiringMembership extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: false,
-
+            mailingUsersList: []
         }
         this.loadExpireMembership = this.loadExpireMembership.bind(this);
     }
 
     componentDidMount() {
         this.loadExpireMembership();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -55,6 +57,15 @@ export default class ExpiringMembership extends React.Component {
             type:this.props.type,
         };
         getAPI(MEMBERSHIP_REPORTS,  successFn, errorFn,apiParams);
+    }
+    sendMail = (mailTo) => {
+        let apiParams={
+            from_date: this.props.startDate.format('YYYY-MM-DD'),
+            to_date: this.props.endDate.format('YYYY-MM-DD'),
+            type:this.props.type,
+        };
+        apiParams.mail_to = mailTo;
+        sendReportMail(MEMBERSHIP_REPORTS, apiParams)
     }
     render() {
         let that=this;
@@ -102,10 +113,20 @@ export default class ExpiringMembership extends React.Component {
         }];
 
         return <div>
-            <h2>Expiring Membership </h2>
+            <h2>Expiring Membership
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                    {this.state.mailingUsersList.map(item => <Select.Option
+                        value={item.email}>{item.name}</Select.Option>)}
+                </Select>
+                    </p>
+            </span>
+            </h2>
             <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
+                hideReport={true}
                 dataSource={reportData}/>
 
 

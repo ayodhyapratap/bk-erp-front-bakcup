@@ -1,9 +1,8 @@
 import React from "react";
-import {Col, Divider, Row, Statistic, Table} from "antd";
-import {APPOINTMENT_REPORTS} from "../../../constants/api";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import {Cell, Pie, PieChart, Sector} from "recharts";
-import moment from "moment"
+import {Select, Table} from "antd";
+import {AMOUNT_DUE_REPORTS, APPOINTMENT_REPORTS} from "../../../constants/api";
+import {getAPI, interpolate} from "../../../utils/common";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class TotalAmountDue extends React.Component {
     constructor(props) {
@@ -15,12 +14,14 @@ export default class TotalAmountDue extends React.Component {
             appointmentCategory:[],
             activeIndex:0,
             appointmentReports:[],
+            mailingUsersList: []
         }
         this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
     }
 
     componentDidMount() {
         this.loadAppointmentReport();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -64,6 +65,18 @@ export default class TotalAmountDue extends React.Component {
             activeIndex: index,
         });
     };
+    sendMail = (mailTo) => {
+        let apiParams={
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            type:this.props.type,
+        }
+        if (this.props.patient_groups){
+            apiParams.groups=this.props.patient_groups.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId]), apiParams)
+    }
     render() {
         const {appointmentReports} =this.state;
         const appointmentReportsData = [];
@@ -99,7 +112,16 @@ export default class TotalAmountDue extends React.Component {
         }];
 
         return <div>
-            <h2>Unsettled Invoices</h2>
+            <h2>Unsettled Invoices
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                    {this.state.mailingUsersList.map(item => <Select.Option
+                        value={item.email}>{item.name}</Select.Option>)}
+                </Select>
+                    </p>
+            </span>
+            </h2>
             <Table
                 loading={this.state.loading}
                 columns={columns}

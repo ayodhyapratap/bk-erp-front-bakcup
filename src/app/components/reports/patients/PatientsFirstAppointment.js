@@ -1,9 +1,10 @@
 import React from "react";
-import {FIRST_APPOINTMENT_REPORTS} from "../../../constants/api";
+import {FIRST_APPOINTMENT_REPORTS, PATIENTS_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment from "moment";
-import {Col, Row, Statistic, Table} from "antd";
+import {Col, Row, Select, Statistic, Table} from "antd";
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class PatientsFirstAppointment extends React.Component {
     constructor(props) {
@@ -13,13 +14,14 @@ export default class PatientsFirstAppointment extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: false,
-
+            mailingUsersList: []
         }
         this.loadFirstAppointment = this.loadFirstAppointment.bind(this);
     }
 
     componentDidMount() {
         this.loadFirstAppointment();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -55,6 +57,14 @@ export default class PatientsFirstAppointment extends React.Component {
         }
         getAPI(FIRST_APPOINTMENT_REPORTS, successFn, errorFn,apiParams);
     }
+    sendMail = (mailTo) => {
+        let apiParams={
+            from_date: this.props.startDate.format('YYYY-MM-DD'),
+            to_date: this.props.endDate.format('YYYY-MM-DD'),
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(FIRST_APPOINTMENT_REPORTS, apiParams)
+    }
     render() {
         let that=this;
         const {report} =this.state;
@@ -89,7 +99,16 @@ export default class PatientsFirstAppointment extends React.Component {
         }];
 
         return <div>
-            <h2>Patients First AppointmentReport</h2>
+            <h2>Patients First AppointmentReport
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                    {this.state.mailingUsersList.map(item => <Select.Option
+                        value={item.email}>{item.name}</Select.Option>)}
+                </Select>
+                    </p>
+            </span>
+            </h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
                     <Statistic title="Total Patients" value={this.state.report.length} />
@@ -98,6 +117,7 @@ export default class PatientsFirstAppointment extends React.Component {
             </Row>
 
             <CustomizedTable
+                hideReport={true}
                 loading={this.state.loading}
                 columns={columns}
                 dataSource={reportData}/>

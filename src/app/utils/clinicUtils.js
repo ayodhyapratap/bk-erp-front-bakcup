@@ -1,5 +1,5 @@
 import React from 'react';
-import {CONFIG_API, PRACTICESTAFF} from "../constants/api";
+import {CONFIG_API, MAILING_USERS_LIST, PRACTICESTAFF} from "../constants/api";
 import {getAPI, interpolate} from "./common";
 import {DOCTORS_ROLE} from "../constants/dataKeys";
 import {Link} from "react-router-dom";
@@ -90,4 +90,26 @@ export const loadConfigParameters = function (that, params = []) {
     };
     let parameters = params.join(',');
     getAPI(CONFIG_API, successFn, errorFn, {parameters});
+}
+
+export const loadMailingUserListForReportsMail = function (that) {
+    let successFn = function (data) {
+        that.setState({
+            mailingUsersList: data
+        })
+    }
+    let errorFn = function () {
+
+    }
+    getAPI(MAILING_USERS_LIST, successFn, errorFn)
+}
+
+export const sendReportMail = function(url,params){
+    let successFn = function (data){
+
+    }
+    let errorFn = function (){
+
+    }
+    getAPI(url,successFn,errorFn,params);
 }

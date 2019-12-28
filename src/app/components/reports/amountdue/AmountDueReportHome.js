@@ -2,19 +2,15 @@ import React from "react";
 import {Button, Card, Col, Radio, Row,Select} from "antd";
 import {PATIENT_GROUPS, PATIENTS_REPORTS} from "../../../constants/api";
 import {AMOUNT_DUE_RELATED_REPORT} from "../../../constants/hardData";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
+import {getAPI, interpolate} from "../../../utils/common";
 import {
     AGEING_AMOUNT_DUE,
     AMOUNT_DUE_PER_DOCTOR,
-    AMOUNT_DUE_PER_PROCEDURE, NEW_PATIENTS,
-    TOTAL_AMOUNT_DUE, UNSETTLED_INVOICE
+    TOTAL_AMOUNT_DUE
 } from "../../../constants/dataKeys";
 import TotalAmountDue from "./TotalAmountDue";
 import AgeingAmountDue from "./AgeingAmountDue";
 import AmountDuePerDoctor from "./AmountDuePerDoctor";
-import AmountDuePerProcedure from "./AmountDuePerProcedure";
-import UnsettledInvoice from "./UnsettledInvoice";
-import AppointmentForEachDoctor from "../appointments/AppointmentForEachDoctor";
 import {loadDoctors} from "../../../utils/clinicUtils";
 
 
@@ -30,14 +26,12 @@ export default class AmountDueReportHome extends React.Component {
             type: 'ALL',
             loading:true,
             advancedOptionShow: true,
-
         };
         loadDoctors(this);
         this.loadPatientGroup = this.loadPatientGroup.bind(this);
     }
     componentDidMount() {
         this.loadPatientGroup();
-
     }
 
     componentWillReceiveProps(newProps) {
@@ -116,7 +110,7 @@ export default class AmountDueReportHome extends React.Component {
                             <p><br/></p>
                             <h2>Related Reports</h2>
                             {AMOUNT_DUE_RELATED_REPORT.map((item) => <Radio.Button
-                                style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                style={{width: '100%', backgroundColor: 'transparent'}}
                                 value={item.value}>
                                 {item.name}
                             </Radio.Button>)}
