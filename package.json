@@ -37,7 +37,8 @@
     "react-webcam": "^1.1.1",
     "react-youtube": "^7.9.0",
     "recharts": "^1.7.0",
-    "source-map-explorer": "^2.1.0"
+    "source-map-explorer": "^2.1.0",
+    "lodash": "latest"
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",

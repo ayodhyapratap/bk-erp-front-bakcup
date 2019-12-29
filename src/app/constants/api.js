@@ -4,6 +4,7 @@ import {BACKEND_BASE_URL} from "../config/connect";
  * API Connection URLs
  * */
 export const API_URL = BACKEND_BASE_URL + '/erp-api';
+export const CONFIG_API = 'users/config/';
 export const FILE_UPLOAD_API = 'blogImage/';
 export const FILE_UPLOAD_BASE64 = 'blogImage/create_with_base64/';
 export const LOGIN_SEND_OTP = 'staff_login/send_otp/';
@@ -31,7 +32,8 @@ export const OFFERS = 'clinics/%s/offers/';
 export const PAYMENT_MODES = 'clinics/%s/payment_modes/';
 export const PROCEDURE_CATEGORY = 'clinics/%s/procedure_category/';
 export const PROMO_CODE ='promocode/';
-export const UPDATE_PROMO_CODE ='promocode/%s/';
+export const SINGLE_PROMO_CODE ='promocode/%s/';
+export const CHECK_PROMO_CODE ='promocode/promo_value/';
 
 export const EMR_DIAGNOSES = 'clinics/%s/diagnoses/';
 export const EMR_COMPLAINTS = 'clinics/%s/complaints/';
@@ -151,6 +153,10 @@ export const PAYMENT_REPORTS = 'xyz';
 /** Income Reports**/
 export const INCOME_REPORTS = "invoice/invoice_reports";
 
+/** Return Invoice**/
+
+export const RETURN_INVOICE_REPORTS ="return/return_reports/";
+
 /** Amount Due Reports **/
 export const AMOUNT_DUE_REPORTS ='invoice/amount_due/';
 
@@ -166,6 +172,8 @@ export const PRINT_PREVIEW_RENDER = 'patients/print/';
 export const MEMBERSHIP_API = 'clinics/%s/membership/';
 export const BED_BOOKING_REPORTS = 'clinics/seat_booking_report';
 export const ACCEPT_PAYMENT = 'clinics/payment/';
+
+export const MAILING_USERS_LIST = '/users/reports_mail/';
 /**
  * Blogs API
  * */
@@ -234,7 +242,8 @@ export const GENERATE_MLM_COMMISSON = 'product_margin/generate_mlm/';
 export const AGENT_ROLES = 'role_commission/agent_roles/';
 export const AGENT_WALLET = 'patient_wallet/?patient=%s';
 export const WALLET_LEDGER = 'wallet_ledger/?patient=%s';
-
+export const WALLET_LEDGER_SUM = 'wallet_ledger/ledger_sum/?patient=%s';
+export const MY_AGENTS = 'patients/%s/my_agents/';
 
 /**
  * PDFs Links

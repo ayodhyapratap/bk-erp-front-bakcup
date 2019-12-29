@@ -33,7 +33,6 @@ class ReportsHome extends React.Component {
     }
 
     reportsDateRange(dateString) {
-        console.log(dateString);
         this.setState({
             startDate: moment(dateString[0], 'DD/MM/YYYY'),
             endDate: moment(dateString[1], 'DD/MM/YYYY'),
@@ -41,6 +40,7 @@ class ReportsHome extends React.Component {
     }
 
     render() {
+
         let that = this;
         return <Layout>
             <ReportsHeader reportsDateRange={this.reportsDateRange} {...this.props}/>

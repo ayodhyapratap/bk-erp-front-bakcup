@@ -1,9 +1,10 @@
 import React from "react";
-import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
-import {getAPI} from "../../../utils/common";
-import {Col, Divider, Empty, Row, Spin, Statistic, Table} from "antd";
+import {APPOINTMENT_REPORTS, PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
+import {getAPI, interpolate} from "../../../utils/common";
+import {Col, Divider, Empty, Row, Select, Spin, Statistic, Table} from "antd";
 import {Pie, PieChart, Sector,Cell} from "recharts";
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class AppointmentForEachPatientDoctor extends React.Component {
     constructor(props) {
@@ -14,12 +15,14 @@ export default class AppointmentForEachPatientDoctor extends React.Component {
             endDate: this.props.endDate,
             loading: false,
             activeIndex:0,
+            mailingUsersList: []
         }
         this.loadAppointmentEachDoctor = this.loadAppointmentEachDoctor.bind(this);
 
     }
     componentDidMount() {
         this.loadAppointmentEachDoctor();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -77,6 +80,26 @@ export default class AppointmentForEachPatientDoctor extends React.Component {
             activeIndex: index,
         });
     };
+    sendMail = (mailTo) => {
+        let apiParams={
+            type:this.props.type,
+            practice:this.props.active_practiceId,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            exclude_cancelled:this.props.exclude_cancelled?true:false,
+        };
+        // if (this.props.exclude_cancelled){
+        //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
+        // }
+        if(this.props.categories){
+            apiParams.categories=this.props.categories.toString();
+        }
+        if(this.props.doctors){
+            apiParams.doctors=this.props.doctors.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(PATIENT_APPOINTMENTS_REPORTS, apiParams)
+    }
     render() {
         const {appointmentEachDoctor} =this.state;
         const appointmentEachDoctorData = [];
@@ -149,6 +172,14 @@ export default class AppointmentForEachPatientDoctor extends React.Component {
         }, 0);
         return <div>
             <h2>Appointment For Each Patient Doctor
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                    {this.state.mailingUsersList.map(item => <Select.Option
+                        value={item.email}>{item.name}</Select.Option>)}
+                </Select>
+                    </p>
+            </span>
             </h2>
 
             <Row>
@@ -177,7 +208,7 @@ export default class AppointmentForEachPatientDoctor extends React.Component {
                 </Col>
             </Row>
             <Divider><Statistic title="Total" value={totalAppointment} /></Divider>
-            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={appointmentEachDoctorData}/>
+            <CustomizedTable  hideReport={true} loading={this.state.loading} columns={columns}  dataSource={appointmentEachDoctorData}/>
 
 
         </div>

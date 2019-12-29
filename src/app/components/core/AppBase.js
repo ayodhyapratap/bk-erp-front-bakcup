@@ -19,7 +19,6 @@ import PermissionDenied from "../common/errors/PermissionDenied";
 import SuggestionBox from "./SuggestionBox";
 import ErrorBoundary from "../../../crashHandling/ErrorBoundary";
 import MeetingBooking from "../conference/meeting/MeetingBooking";
-import AlternateMedicineHome from "../alternateMedicine/AlternateMedicineHome";
 
 const {TextArea} = Input;
 

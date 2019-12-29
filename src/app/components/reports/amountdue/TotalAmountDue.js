@@ -1,9 +1,10 @@
 import React from "react";
-import {Col, Divider, Row, Statistic, Table} from "antd";
+import {Col, Divider, Row, Select, Statistic, Table} from "antd";
 import {AMOUNT_DUE, AMOUNT_DUE_REPORTS, APPOINTMENT_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {Cell, Pie, PieChart, Sector} from "recharts";
 import moment from "moment"
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class TotalAmountDue extends React.Component {
     constructor(props) {
@@ -13,11 +14,13 @@ export default class TotalAmountDue extends React.Component {
             endDate: this.props.endDate,
             loading: true,
             report:[],
+            mailingUsersList: []
         };
     }
 
     componentDidMount() {
         this.loadReport();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -62,7 +65,21 @@ export default class TotalAmountDue extends React.Component {
 
         getAPI(AMOUNT_DUE_REPORTS, successFn ,errorFn,apiParams);
     };
-
+    sendMail = (mailTo) => {
+        let apiParams={
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            type:this.props.type,
+        }
+        if (this.props.patient_groups){
+            apiParams.groups=this.props.patient_groups.toString();
+        }
+        if (this.props.doctors) {
+            apiParams.doctors = this.props.doctors.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(AMOUNT_DUE_REPORTS, apiParams)
+    }
 
     render() {
         const {report,loading} =this.state;
@@ -119,7 +136,15 @@ export default class TotalAmountDue extends React.Component {
             return prev + cur.amount_due;
         }, 0);
         return <div>
-
+            <h2>Total Amount Due <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                    {this.state.mailingUsersList.map(item => <Select.Option
+                        value={item.email}>{item.name}</Select.Option>)}
+                </Select>
+                    </p>
+            </span>
+            </h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
                     <Statistic title="Amount Due For Listed Invoices(INR)" value={totalAmount.toFixed(2)} />

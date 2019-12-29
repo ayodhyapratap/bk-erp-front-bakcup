@@ -13,7 +13,8 @@ import {
 import {PRACTICE} from "../../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
 import {Redirect} from 'react-router-dom'
-import {LANGUAGE} from "../../../../constants/hardData";
+import {LANGUAGE, SMS_LANGUAGE_CONFIG_PARAM} from "../../../../constants/hardData";
+import {loadConfigParameters} from "../../../../utils/clinicUtils";
 
 
 class EditPracticeDetail extends React.Component {
@@ -22,6 +23,7 @@ class EditPracticeDetail extends React.Component {
         this.state = {
             practiceDetail: null,
             countries: null,
+            [SMS_LANGUAGE_CONFIG_PARAM]: []
         };
         this.changeRedirect = this.changeRedirect.bind(this);
 
@@ -46,7 +48,7 @@ class EditPracticeDetail extends React.Component {
         let errorFn = function () {
         };
         getAPI(interpolate(PRACTICE, [this.props.practiceId]), successFn, errorFn);
-
+        loadConfigParameters(this, [SMS_LANGUAGE_CONFIG_PARAM])
     }
 
 
@@ -65,115 +67,117 @@ class EditPracticeDetail extends React.Component {
                 key: "logo",
                 type: SINGLE_IMAGE_UPLOAD_FIELD,
                 initialValue: this.state.practiceDetail.logo,
-                allowWebcam : false
+                allowWebcam: false
             }, {
                 label: "Practice Name",
                 key: "name",
                 required: true,
-                placeholder:"Practice Name",
+                placeholder: "Practice Name",
                 initialValue: this.state.practiceDetail.name,
                 type: INPUT_FIELD
             }, {
                 label: "Practice Tagline",
                 key: "tagline",
-                placeholder:"Practice Tagline",
+                placeholder: "Practice Tagline",
                 required: true,
                 initialValue: this.state.practiceDetail.tagline,
                 type: INPUT_FIELD
             }, {
                 label: "Practice Specialisation",
                 key: "specialisation",
-                placeholder:"Practice Specialisation",
+                placeholder: "Practice Specialisation",
                 initialValue: this.state.practiceDetail.specialisation,
                 type: INPUT_FIELD,
                 // options: specialisationsOptions
             }, {
                 label: "Practice Street Address",
                 key: "address",
-                placeholder:"Practice Street Address",
+                placeholder: "Practice Street Address",
                 initialValue: this.state.practiceDetail.address,
                 type: INPUT_FIELD
             }, {
                 label: "Practice locality",
                 initialValue: this.state.practiceDetail.locality,
                 key: "locality",
-                placeholder:"Practice Locality",
+                placeholder: "Practice Locality",
                 type: INPUT_FIELD
             }, {
                 label: "Practice City",
                 initialValue: this.state.practiceDetail.City,
-                placeholder:"Practice City",
+                placeholder: "Practice City",
                 key: "city",
                 type: INPUT_FIELD,
                 //     options: [{label: "Hello", value: "1"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
             }, {
                 label: "Practice state",
                 key: "state",
-                placeholder:"Practice State",
+                placeholder: "Practice State",
                 initialValue: this.state.practiceDetail.state,
                 type: INPUT_FIELD,
                 // options: [{label: "Hello", value: "1"}, {label: "New", value: "13"}, {label: "World", value: "14"}]
             }, {
                 label: "Practice Country",
                 key: "country",
-                placeholder:"Practice Country",
+                placeholder: "Practice Country",
                 initialValue: this.state.practiceDetail.country,
                 type: INPUT_FIELD,
             }, {
                 label: "Practice PINCODE",
                 key: "pincode",
-                placeholder:"Practice PINCODE",
+                placeholder: "Practice PINCODE",
                 initialValue: this.state.practiceDetail.pincode,
                 type: INPUT_FIELD
             }, {
                 label: "Practice Contact Number",
                 key: "contact",
-                placeholder:"Practice Contact Number",
+                placeholder: "Practice Contact Number",
                 initialValue: this.state.practiceDetail.contact,
                 type: INPUT_FIELD
             }, {
                 label: "Practice Email",
                 key: "email",
-                placeholder:"Practice Email",
+                placeholder: "Practice Email",
                 initialValue: this.state.practiceDetail.email,
                 type: EMAIL_FIELD
-            },{
-                label:"SMS Language",
-                key:"language",
-                placeholder:'SMS Language',
-                initialValue:this.state.practiceDetail && this.state.practiceDetail.language?this.state.practiceDetail.language:this.props.activePracticeData.language,
-                type:SELECT_FIELD,
-                options:LANGUAGE,
+            }, {
+                label: "SMS Language",
+                key: "language",
+                placeholder: 'SMS Language',
+                initialValue: this.state.practiceDetail && this.state.practiceDetail.language ? this.state.practiceDetail.language : this.props.activePracticeData.language,
+                type: SELECT_FIELD,
+                options: this.state[SMS_LANGUAGE_CONFIG_PARAM].map(item => {
+                    return {label: item, value: item}
+                }),
             }, {
                 label: "Practice website",
                 key: "website",
-                placeholder:"Practice Website",
+                placeholder: "Practice Website",
                 initialValue: this.state.practiceDetail.website,
                 type: INPUT_FIELD
             }, {
                 label: "GSTIN",
                 initialValue: this.state.practiceDetail.gstin,
-                placeholder:"GSTIN",
+                placeholder: "GSTIN",
                 key: "gstin",
                 type: INPUT_FIELD
-            },{
+            }, {
                 label: "Invoice Prefix",
                 initialValue: this.state.practiceDetail.invoice_prefix,
-                placeholder:"DEL/INV/",
+                placeholder: "DEL/INV/",
                 key: "invoice_prefix",
                 type: INPUT_FIELD,
-                required:true
-            },{
+                required: true
+            }, {
                 label: "Payment Prefix",
                 initialValue: this.state.practiceDetail.payment_prefix,
-                placeholder:"DEL/RCPT/",
+                placeholder: "DEL/RCPT/",
                 key: "payment_prefix",
                 type: INPUT_FIELD,
-                required:true
-            },{
+                required: true
+            }, {
                 label: "Return Prefix",
                 placeholder: "DEL/RET/",
-                initialValue:this.state.practiceDetail.return_prefix,
+                initialValue: this.state.practiceDetail.return_prefix,
                 key: "return_prefix",
                 type: INPUT_FIELD,
                 required: true

@@ -2,7 +2,7 @@ import React from "react";
 import {Card, Tabs, Row, Icon} from 'antd';
 import Offers from "./Offers";
 import Membership from "./Membership";
-import PromoCode from "../promo-code/PromoCode";
+import PromoCode from "./promo-code/PromoCode";
 
 const TabPane = Tabs.TabPane;
 

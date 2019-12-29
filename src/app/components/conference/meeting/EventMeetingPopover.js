@@ -38,35 +38,42 @@ export default class EventMeetingPopover extends React.Component {
     openWindowLink = (link) => {
         window.open(link)
     }
+
     copyToClipBoard(meeting) {
-        let text = meeting.registration_url +"\nPassword: "+meeting.password
-        navigator.clipboard.writeText(text);
-        displayMessage(SUCCESS_MSG_TYPE,"Meeting URL & Password copied to clipboard")
+
+        navigator.clipboard.writeText(meeting);
+        displayMessage(SUCCESS_MSG_TYPE, "Meeting URL & Password copied to clipboard")
     }
+
     render() {
+        if (!this.state.meeting) {
+            return <Result
+                status="warning"
+                title="Meeting Not Found"
+
+            />
+        }
         let that = this;
-        return <div style={{width: '300px', minHeight: '200px',overflowY:'scroll',overflowX:'hidden'}}>
+        let directMeetingLink = "https://us04web.zoom.us/wc/join/" + that.state.meeting.meeting_id + "?" + (that.state.meeting.join_url.split('?'))['1'];
+        return <div style={{width: '300px', minHeight: '200px', overflowY: 'scroll', overflowX: 'hidden'}}>
             <Spin spinning={this.state.loading}>
-                {this.state.meeting ?
-                    <div>
-                        <h4>{this.state.meeting.name}</h4>
-                        <Popconfirm
-                            title="Are you sure to start this meeting?"
-                            onConfirm={() => that.openWindowLink(that.state.meeting.start_url)}
-                            okText="Yes"
-                            cancelText="No">
-                            <a>Admin Meeting Start Link</a>
-                        </Popconfirm>
-                        <Divider style={{margin: 0}}>Invite Link</Divider>
-                        <p>{this.state.meeting.registration_url}<br/>Password: {this.state.meeting.password}</p>
-
-                        <Button size="small" onClick={()=>this.copyToClipBoard(this.state.meeting)} block shape={"round"}>Copy Invite Link</Button>
-                        <p>{this.state.meeting.purpose}</p>
-                    </div> : <Result
-                        status="warning"
-                        title="Meeting Not Found"
-
-                    />}
+                <div>
+                    <h4>{this.state.meeting.name}</h4>
+                    <Popconfirm
+                        title="Are you sure to start this meeting?"
+                        onConfirm={() => that.openWindowLink(that.state.meeting.start_url)}
+                        okText="Yes"
+                        cancelText="No">
+                        <a>Admin Meeting Start Link</a>
+                    </Popconfirm>
+                    <Divider style={{margin: 0}}>Invite Link</Divider>
+                    <p>{directMeetingLink}<br/>Password: {this.state.meeting.password}</p>
+                    <Button size="small"
+                            onClick={() => this.copyToClipBoard(directMeetingLink + "\nPassword: " + this.state.meeting.password)}
+                            block shape={"round"}>Copy
+                        Invite Link</Button>
+                    <p>{this.state.meeting.purpose}</p>
+                </div>
             </Spin>
         </div>
     }

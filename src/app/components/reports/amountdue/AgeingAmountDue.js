@@ -1,9 +1,10 @@
 import React from "react";
-import {Card, Col, Divider, Row, Statistic, Table} from "antd";
-import {AMOUNT_DUE_REPORTS, APPOINTMENT_REPORTS} from "../../../constants/api";
+import {Card, Col, Divider, Row, Select, Statistic, Table} from "antd";
+import {AMOUNT_DUE_REPORTS, APPOINTMENT_REPORTS, PATIENTS_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {Cell, Pie, PieChart, Sector} from "recharts";
 import moment from "moment"
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class AgeingAmountDue extends React.Component {
     constructor(props) {
@@ -12,13 +13,15 @@ export default class AgeingAmountDue extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: true,
-            report:[]
+            report:[],
+            mailingUsersList: []
         };
         this.loadReport = this.loadReport.bind(this);
 
     }
     componentDidMount() {
         this.loadReport();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -61,7 +64,18 @@ export default class AgeingAmountDue extends React.Component {
 
         getAPI(AMOUNT_DUE_REPORTS, successFn ,errorFn,apiParams);
     };
-
+    sendMail = (mailTo) => {
+        let apiParams={
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            type:this.props.type,
+        }
+        if (this.props.doctors) {
+            apiParams.doctors = this.props.doctors.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(AMOUNT_DUE_REPORTS, apiParams)
+    }
     render() {
         const {report ,loading} =this.state;
         let zero_twenty_nine=0;
@@ -121,7 +135,15 @@ export default class AgeingAmountDue extends React.Component {
 
         return <div>
 
-                <h2>Ageing Amount Due </h2>
+                <h2>Ageing Amount Due <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                    {this.state.mailingUsersList.map(item => <Select.Option
+                        value={item.email}>{item.name}</Select.Option>)}
+                </Select>
+                    </p>
+            </span>
+                </h2>
                 <Row>
                     <Col span={22} offset={1}>
 

@@ -6,3 +6,12 @@
 .patientIdHighlight{
     font-weight: bolder;
 }
+
+.ant-checkbox-wrapper,.ant-checkbox-wrapper + .ant-checkbox-wrapper{
+    display: block;
+    margin-left: 0px;
+}
+
+.mar-b-10{
+    margin-bottom: 10px;
+}

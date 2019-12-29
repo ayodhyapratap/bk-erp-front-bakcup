@@ -1,5 +1,19 @@
 import React from "react";
-import {Avatar, Button, Drawer, Icon, Layout, Tooltip, Dropdown, Tag, Switch, Statistic, Popover, List} from "antd";
+import {
+    Avatar,
+    Button,
+    Drawer,
+    Icon,
+    Layout,
+    Tooltip,
+    Dropdown,
+    Tag,
+    Switch,
+    Statistic,
+    Popover,
+    List,
+    Modal
+} from "antd";
 import PatientSelection from "./PatientSelection";
 import {Link} from "react-router-dom";
 import {hashCode, intToRGB, patientSettingMenu} from "../../utils/clinicUtils";
@@ -136,22 +150,21 @@ class PatientHeader extends React.Component {
                     </Link> : null}
 
             </div>
-            <Drawer
-                title="Select Patient"
+            <Modal
                 width={1300}
-                placement="left"
-                onClose={() =>
-                    this.props.togglePatientListModal(false)
-                }
                 maskClosable={false}
+                centered
+                footer={null}
+                closable={false}
                 visible={this.props.listModalVisible}
                 style={{
-                    height: 'calc(100%)',
-                    overflow: 'auto',
-                    paddingBottom: 53,
+                    height: 'calc(100vh - 120px)',
                 }}>
+                <Button icon="close" type="danger" shape="circle" style={{position: 'absolute', top: '-50px', right: 0}}
+                        onClick={() =>
+                            this.props.togglePatientListModal(false)}/>
                 <PatientSelection {...this.props}/>
-            </Drawer>
+            </Modal>
         </Header>
     }
 }

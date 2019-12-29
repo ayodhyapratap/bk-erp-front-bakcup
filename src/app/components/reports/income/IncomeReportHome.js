@@ -43,9 +43,9 @@ export default class IncomeReportHome extends React.Component {
             practiceDoctors: [],
             patientGroup: [],
             vendorOption: [],
-            taxes_list:[],
-            productItems:[],
-            treatment_data:[],
+            taxes_list: [],
+            productItems: [],
+            treatment_data: [],
         };
         loadDoctors(this);
         this.loadPatientGroup = this.loadPatientGroup.bind(this);
@@ -60,19 +60,20 @@ export default class IncomeReportHome extends React.Component {
         this.loadProductItem();
         this.loadTreatments();
     }
-    
-    loadProductItem(){
-        let that=this;
-        let successFn =function (data) {
+
+    loadProductItem() {
+        let that = this;
+        let successFn = function (data) {
             that.setState({
-                productItems:data,
+                productItems: data,
             });
         };
-        let errorFn=function () {
+        let errorFn = function () {
 
         }
-        getAPI(PRODUCTS_API,successFn ,errorFn,{practice:this.props.active_practiceId})
+        getAPI(PRODUCTS_API, successFn, errorFn, {practice: this.props.active_practiceId})
     }
+
     loadPatientGroup() {
         let that = this;
         let successFn = function (data) {
@@ -108,7 +109,7 @@ export default class IncomeReportHome extends React.Component {
         };
         let errorFn = function () {
         };
-        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
+        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn, {pagination: false});
 
     }
 
@@ -145,9 +146,9 @@ export default class IncomeReportHome extends React.Component {
     render() {
         return <div>
             <h2>Income Report <Button type="primary" shape="round"
-                                        icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
-                                        style={{float: "right"}}
-                                        onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
+                                      icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
+                                      style={{float: "right"}}
+                                      onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
             </h2>
             <Card>
                 <Row gutter={16}>
@@ -156,26 +157,26 @@ export default class IncomeReportHome extends React.Component {
                         {this.state.type == ALL_PAYMENTS ?
                             <AllInvoices {...this.props} {...this.state}/> : null}
 
-                        {this.state.type==DAILY_INCOME?
+                        {this.state.type == DAILY_INCOME ?
                             <DailyInvoicedIncome {...this.props} {...this.state}/> : null}
 
-                        {this.state.type ==MONTHLY_INCOME?
-                            <MonthlyInvoicedIncome {...this.props} {...this.state}/>:null}
+                        {this.state.type == MONTHLY_INCOME ?
+                            <MonthlyInvoicedIncome {...this.props} {...this.state}/> : null}
 
-                        {this.state.type ==TAXED_INCOME?
-                            <TaxedInvoicedIncome {...this.props} {...this.state}/>:null}
+                        {this.state.type == TAXED_INCOME ?
+                            <TaxedInvoicedIncome {...this.props} {...this.state}/> : null}
 
                         {this.state.type == DOCTOR_EACH_INCOME ?
-                            <InvoicedIncomeForEachDoctor {...this.props} {...this.state}/>:null}
+                            <InvoicedIncomeForEachDoctor {...this.props} {...this.state}/> : null}
 
-                        {this.state.type ==PROCEDURE_INCOME?
-                            <InvoicedIncomeForEachProcedure {...this.props} {...this.state}/>:null}
+                        {this.state.type == PROCEDURE_INCOME ?
+                            <InvoicedIncomeForEachProcedure {...this.props} {...this.state}/> : null}
 
-                        {this.state.type ==PATIENT_GROUPS_INCOME?
-                            <InvoicedIncomeForEachPatientGroup {...this.props} {...this.state}/>:null}
+                        {this.state.type == PATIENT_GROUPS_INCOME ?
+                            <InvoicedIncomeForEachPatientGroup {...this.props} {...this.state}/> : null}
 
-                        {this.state.type == PRODUCT_INCOME?
-                            <InvoicedIncomeForEachProduct {...this.props} {...this.state}/>:null}
+                        {this.state.type == PRODUCT_INCOME ?
+                            <InvoicedIncomeForEachProduct {...this.props} {...this.state}/> : null}
 
 
                     </Col>
@@ -206,7 +207,7 @@ export default class IncomeReportHome extends React.Component {
                             <Col> <br/><br/>
                                 <h4>Show income from</h4>
                                 <Radio.Group style={{width: '100%', display: "inline-grid"}}
-                                                onChange={(e) => this.handleChangeOption('income_type', e.target.value)}>
+                                             onChange={(e) => this.handleChangeOption('income_type', e.target.value)}>
                                     {/*<Row>*/}
                                     {SCHEDULE_OF_INVOICES.map((item) => <Radio
                                         value={item.value}> {item.label}</Radio>)}
@@ -231,7 +232,7 @@ export default class IncomeReportHome extends React.Component {
                                 <br/>
                                 <br/>
                                 <h4>Discount</h4>
-                                <Select style={{minWidth: '200px'}}  placeholder="Select Discount"
+                                <Select style={{minWidth: '200px'}} placeholder="Select Discount"
                                         onChange={(value) => this.handleChangeOption('discount', value)}>
                                     {DISCOUNT.map((item) => <Select.Option value={item.value}>
                                         {item.label}</Select.Option>)}
@@ -240,7 +241,7 @@ export default class IncomeReportHome extends React.Component {
                                 <br/>
                                 <h4>Product</h4>
                                 <Select style={{minWidth: '200px'}} mode={"multiple"} placeholder={"Select Products"}
-                                        onChange={(value)=>this.handleChangeOption('products',value)}>
+                                        onChange={(value) => this.handleChangeOption('products', value)}>
                                     {this.state.productItems.map((item) => <Select.Option value={item.id}>
                                         {item.name}</Select.Option>)}
                                 </Select>
@@ -248,7 +249,7 @@ export default class IncomeReportHome extends React.Component {
                                 <br/>
                                 <h4>Treatments</h4>
                                 <Select style={{minWidth: '200px'}} mode={"multiple"} placeholder={"Select Treatments"}
-                                        onChange={(value)=>this.handleChangeOption('treatments',value)}>
+                                        onChange={(value) => this.handleChangeOption('treatments', value)}>
                                     {this.state.treatment_data.map((item) => <Select.Option value={item.id}>
                                         {item.name}</Select.Option>)}
                                 </Select>

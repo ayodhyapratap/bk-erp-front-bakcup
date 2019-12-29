@@ -1,5 +1,5 @@
 .loginLayout{
-  min-height:100vh;
+  min-height:100vh !important;
 }
 .login-form-button{
   width:100%;

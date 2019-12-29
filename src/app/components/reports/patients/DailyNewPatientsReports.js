@@ -1,10 +1,11 @@
 import React from "react";
-import {Statistic, Divider, Table, Spin, Empty} from "antd"
-import {PATIENTS_REPORTS} from "../../../constants/api";
+import {Statistic, Divider, Table, Spin, Empty, Select} from "antd"
+import {PATIENT_APPOINTMENTS_REPORTS, PATIENTS_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Label, Legend, ComposedChart} from 'recharts';
 import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class DailyNewPatientReports extends React.Component {
     constructor(props) {
@@ -14,12 +15,13 @@ export default class DailyNewPatientReports extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: false,
-
+            mailingUsersList: []
         }
         this.loadDailyNewPatients = this.loadDailyNewPatients.bind(this);
     }
     componentDidMount() {
         this.loadDailyNewPatients();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -64,6 +66,21 @@ export default class DailyNewPatientReports extends React.Component {
         }
         getAPI(PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }
+    sendMail = (mailTo) => {
+        let apiParams={
+            from_date: this.props.startDate.format('YYYY-MM-DD'),
+            to_date: this.props.endDate.format('YYYY-MM-DD'),
+            type:this.props.type,
+        }
+        if (this.props.patient_groups){
+            apiParams.groups=this.props.patient_groups.toString();
+        }
+        if (this.props.blood_group){
+            apiParams.blood_group=this.props.blood_group;
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(PATIENTS_REPORTS, apiParams)
+    }
     render() {
         const {report} =this.state;
         const reportData = [];
@@ -101,7 +118,16 @@ export default class DailyNewPatientReports extends React.Component {
         });
 
         return <div>
-            <h2>Daily New Patients Report</h2>
+            <h2>Daily New Patients Report
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                    {this.state.mailingUsersList.map(item => <Select.Option
+                        value={item.email}>{item.name}</Select.Option>)}
+                </Select>
+                    </p>
+            </span>
+            </h2>
             <Spin size="large" spinning={this.state.loading}>
                 {reportData.length>0?
                 <LineChart width={1000} height={300} data={[...reportData].reverse()}
@@ -123,6 +149,7 @@ export default class DailyNewPatientReports extends React.Component {
 
             <Divider><Statistic title="Total Patients" value={this.state.total} /></Divider>
             <CustomizedTable
+                hideReport={true}
                 loading={this.state.loading}
                 columns={columns}
                 dataSource={reportData}/>

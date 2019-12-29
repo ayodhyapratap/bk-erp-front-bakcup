@@ -1,10 +1,11 @@
 import React from "react";
-import {Divider, Statistic, Spin,Empty} from "antd";
+import {Divider, Statistic, Spin, Empty, Select} from "antd";
 import {PATIENTS_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment, {relativeTimeThreshold} from "moment"
 import {ComposedChart, Line, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend}  from 'recharts';
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class MonthlyNewPatients extends React.Component {
     constructor(props) {
@@ -14,12 +15,13 @@ export default class MonthlyNewPatients extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: false,
-
+            mailingUsersList: []
         }
         this.loadMonthlyPatients = this.loadMonthlyPatients.bind(this);
     }
     componentDidMount() {
         this.loadMonthlyPatients();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -61,6 +63,18 @@ export default class MonthlyNewPatients extends React.Component {
         };
         getAPI(PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }
+    sendMail = (mailTo) => {
+        let apiParams={
+            from_date: this.props.startDate.format('YYYY-MM-DD'),
+            to_date: this.props.endDate.format('YYYY-MM-DD'),
+            type:this.props.type,
+        }
+        if (this.props.patient_groups){
+            apiParams.groups=this.props.patient_groups.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(PATIENTS_REPORTS, apiParams)
+    }
     render() {
         const {report} =this.state;
         const reportData = [];
@@ -99,7 +113,16 @@ export default class MonthlyNewPatients extends React.Component {
             return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value}</text>;
         };
         return <div>
-            <h2>Monthly New Patients Report</h2>
+            <h2>Monthly New Patients Report
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                    {this.state.mailingUsersList.map(item => <Select.Option
+                        value={item.email}>{item.name}</Select.Option>)}
+                </Select>
+                    </p>
+            </span>
+            </h2>
             <Spin size="large" spinning={this.state.loading}>
                 {reportData.length>0?
                 <ComposedChart width={1000} height={400} data={[...reportData].reverse()}
@@ -118,6 +141,7 @@ export default class MonthlyNewPatients extends React.Component {
 
             <Divider><Statistic title="Total Patients" value={this.state.total} /></Divider>
             <CustomizedTable
+                hideReport={true}
                 loading={this.state.loading}
                 columns={columns}
                 dataSource={reportData}/>

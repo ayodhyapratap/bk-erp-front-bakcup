@@ -56,18 +56,14 @@ class PatientInvoices extends React.Component {
             taxes_list: null,
             editInvoice: null,
             loading: true,
-            returnIncoiceVisible:false,
-            editIncoiceVisible:false,
-            cancelIncoiceVisible:false,
-
-
+            returnIncoiceVisible: false,
+            editIncoiceVisible: false,
+            cancelIncoiceVisible: false,
         }
         this.loadInvoices = this.loadInvoices.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
         this.loadProcedureCategory = this.loadProcedureCategory.bind(this);
         this.loadTaxes = this.loadTaxes.bind(this);
-        // this.editInvoiceData = this.editInvoiceData.bind(this);
-
     }
 
     componentDidMount() {
@@ -76,7 +72,7 @@ class PatientInvoices extends React.Component {
 
     loadInvoices(page = 1) {
         let that = this;
-        if (that.props.refreshWallet && page==1){
+        if (that.props.refreshWallet && page == 1) {
             that.props.refreshWallet();
         }
         that.setState({
@@ -161,7 +157,6 @@ class PatientInvoices extends React.Component {
     }
 
 
-
     loadPDF = (id) => {
         let that = this;
         let successFn = function (data) {
@@ -175,17 +170,14 @@ class PatientInvoices extends React.Component {
     }
 
 
-
-
-
-    returnModelOpen=(record) =>{
+    returnModelOpen = (record) => {
         let that = this;
-        let created_time=moment().diff(record.created_at,'minutes');
-        if(created_time >OTP_DELAY_TIME){
+        let created_time = moment().diff(record.created_at, 'minutes');
+        if (created_time > OTP_DELAY_TIME) {
             that.setState({
                 returnIncoiceVisible: true,
                 editIncoiceVisible: false,
-                cancelIncoiceVisible:false,
+                cancelIncoiceVisible: false,
                 editInvoice: record,
             });
 
@@ -204,7 +196,7 @@ class PatientInvoices extends React.Component {
 
             };
             postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
-        }else{
+        } else {
             this.setState({
                 editInvoice: record,
             }, function () {
@@ -214,15 +206,15 @@ class PatientInvoices extends React.Component {
     };
 
 
-    editModelOpen(record){
+    editModelOpen(record) {
         let that = this;
-        let created_time=moment().diff(record.created_at,'minutes');
+        let created_time = moment().diff(record.created_at, 'minutes');
 
-        if(created_time >OTP_DELAY_TIME){
+        if (created_time > OTP_DELAY_TIME) {
             that.setState({
                 editIncoiceVisible: true,
-                cancelIncoiceVisible:false,
-                returnIncoiceVisible:false,
+                cancelIncoiceVisible: false,
+                returnIncoiceVisible: false,
                 editInvoice: record,
             });
 
@@ -242,7 +234,7 @@ class PatientInvoices extends React.Component {
             };
             postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
 
-        }else{
+        } else {
             this.setState({
                 editInvoice: record,
             }, function () {
@@ -253,17 +245,16 @@ class PatientInvoices extends React.Component {
     };
 
 
-
     cancelModalOpen = (record) => {
         let that = this;
-        let created_time=moment().diff(record.created_at,'minutes');
+        let created_time = moment().diff(record.created_at, 'minutes');
 
-        if(created_time >OTP_DELAY_TIME){
+        if (created_time > OTP_DELAY_TIME) {
 
             that.setState({
                 cancelIncoiceVisible: true,
                 editIncoiceVisible: false,
-                returnIncoiceVisible:false,
+                returnIncoiceVisible: false,
                 editInvoice: record
             });
 
@@ -283,10 +274,11 @@ class PatientInvoices extends React.Component {
             };
             postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
 
-        }else{
+        } else {
             that.deleteInvoice(record.patient, record.id)
         }
     };
+
     deleteInvoice(patient, invoice) {
         let that = this;
         let reqData = {patient: patient, is_cancelled: true};
@@ -298,6 +290,7 @@ class PatientInvoices extends React.Component {
         }
         putAPI(interpolate(SINGLE_INVOICES_API, [invoice]), reqData, successFn, errorFn);
     }
+
     editInvoiceClose = () => {
         this.setState({
             editIncoiceVisible: false
@@ -313,6 +306,7 @@ class PatientInvoices extends React.Component {
             cancelIncoiceVisible: false
         })
     };
+
     render() {
         let that = this;
         const drugs = {}
@@ -339,12 +333,12 @@ class PatientInvoices extends React.Component {
         if (this.props.match.params.id) {
             return <div>
                 <Switch>
-                    <Route  path='/patient/:id/billing/invoices/add'
+                    <Route path='/patient/:id/billing/invoices/add'
                            render={(route) => <AddInvoicedynamic  {...route} {...this.props}
-                                                                 loadData={this.loadInvoices}/>}/>
-                    <Route  path='/patient/:id/billing/invoices/edit'
+                                                                  loadData={this.loadInvoices}/>}/>
+                    <Route path='/patient/:id/billing/invoices/edit'
                            render={(route) => (
-                               this.state.editInvoice?
+                               this.state.editInvoice ?
                                    <AddInvoicedynamic {...this.state} {...route} {...this.props}
                                                       editId={this.state.editInvoice.id}
                                                       loadData={this.loadInvoices}/> :
@@ -352,10 +346,10 @@ class PatientInvoices extends React.Component {
                            )}/>
                     <Route path='/patient/:id/billing/invoices/return'
                            render={(route) => (
-                               this.state.editInvoice?
+                               this.state.editInvoice ?
                                    <AddReturnInvoice {...this.state} {...route}
-                                                  editId={this.state.editInvoice.id}
-                                                  loadData={this.loadInvoices}/> :
+                                                     editId={this.state.editInvoice.id}
+                                                     loadData={this.loadInvoices}/> :
                                    <Redirect to={"/patient/" + this.props.match.params.id + "/billing/invoices"}/>
                            )}/>
                     <Route>
@@ -462,7 +456,7 @@ function InvoiceCard(invoice, that) {
         title={<small>{invoice.date ? moment(invoice.date).format('ll') : null}
             {that.state.currentPatient ? null : <span>
             <Link to={"/patient/" + (invoice.patient_data ? invoice.patient_data.id : null) + "/billing/invoices"}>
-                &nbsp;&nbsp; {invoice.patient_data ? invoice.patient_data.user.first_name : null} (ID: {invoice.patient_data && invoice.patient_data.custom_id? invoice.patient_data.custom_id :invoice.patient_data.id })&nbsp;
+                &nbsp;&nbsp; {invoice.patient_data ? invoice.patient_data.user.first_name : null} (ID: {invoice.patient_data && invoice.patient_data.custom_id ? invoice.patient_data.custom_id : invoice.patient_data.id})&nbsp;
             </Link>, {invoice.patient_data ? invoice.patient_data.gender : null}</span>}
         </small>}
         extra={<Dropdown.Button
@@ -472,7 +466,7 @@ function InvoiceCard(invoice, that) {
                 <Menu.Item key="1">
                     {/* onClick={() => that.editInvoiceData(invoice)} disabled={!that.props.match.params.id}> */}
                     <Link
-                        to={"/patient/" + (invoice.patient_data ? invoice.patient_data.id : null) + "/billing/payments/add"}>
+                        to={"/patient/" + (invoice.patient_data ? invoice.patient_data.id : null) + "/billing/payments/add?invoices=" + invoice.id}>
                         <Icon type="dollar"/>
                         &nbsp;
                         Pay
@@ -485,9 +479,9 @@ function InvoiceCard(invoice, that) {
                     Edit
                 </Menu.Item>
                 <Menu.Item key="5" onClick={() => that.returnModelOpen(invoice)}
-                          disabled={(invoice.practice != that.props.active_practiceId) || invoice.is_cancelled}>
-                   <Icon type="redo"/>
-                   Return
+                           disabled={(invoice.practice != that.props.active_practiceId) || invoice.is_cancelled}>
+                    <Icon type="redo"/>
+                    Return
                 </Menu.Item>
                 <Menu.Item key="3" onClick={() => that.cancelModalOpen(invoice)}
                            disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>
@@ -540,14 +534,14 @@ function InvoiceCard(invoice, that) {
         </Row>
 
 
+        {that.state.cancelIncoiceVisible && that.state.otpSent &&
+        <CancelReturnModal {...that.state} invoice={invoice} cancelInvoiceClose={that.cancelInvoiceClose}{...that.props}
+                           loadInvoices={that.loadInvoices}/>}
 
-
-
-
-        {that.state.cancelIncoiceVisible && that.state.otpSent && <CancelReturnModal {...that.state} invoice={invoice} cancelInvoiceClose={that.cancelInvoiceClose}{...that.props} loadInvoices={that.loadInvoices} />}
-
-        {that.state.editIncoiceVisible && that.state.otpSent && <EditReturnModal {...that.state} invoice={invoice} editInvoiceClose={that.editInvoiceClose} {...that.props} />}
-        {that.state.returnIncoiceVisible && that.state.otpSent && <InvoiceReturnModal {...that.state} invoice={invoice} returnInvoiceClose={that.returnInvoiceClose} {...that.props} />}
+        {that.state.editIncoiceVisible && that.state.otpSent &&
+        <EditReturnModal {...that.state} invoice={invoice} editInvoiceClose={that.editInvoiceClose} {...that.props} />}
+        {that.state.returnIncoiceVisible && that.state.otpSent && <InvoiceReturnModal {...that.state} invoice={invoice}
+                                                                                      returnInvoiceClose={that.returnInvoiceClose} {...that.props} />}
 
     </Card>
 }

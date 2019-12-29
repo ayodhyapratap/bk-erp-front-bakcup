@@ -5,6 +5,7 @@ import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Button, Card, Checkbox, Divider, Form, Icon, Popconfirm, Table} from "antd";
 import {DOCTORS_ROLE} from "../../../constants/dataKeys";
 import {
+    ALL_APPOINTMENT_API,
     APPOINTMENT_API,
     APPOINTMENT_REPORTS,
     EMR_TREATMENTNOTES,
@@ -39,7 +40,7 @@ class Appointment extends React.Component {
     }
 
     componentDidMount() {
-        this.loadProcedureCategory();
+        // this.loadProcedureCategory();
         this.loadDoctors();
         this.loadTreatmentNotes();
         if (this.props.match.params.appointmentid) {
@@ -88,7 +89,7 @@ class Appointment extends React.Component {
             // appointmentArray.push(data);
             // console.log("AppointmentArray",JSON.stringify(appointmentArray));
             that.setState({
-                appointments: appointmentArray.data,
+                appointments: data,
                 loading: false,
 
             });
@@ -104,7 +105,7 @@ class Appointment extends React.Component {
 
 
         }
-        getAPI(interpolate(APPOINTMENT_REPORTS, [this.props.active_practiceId]), successFn, errorFn, this.props.match.params.id ? {"patient": this.props.match.params.id} : {});
+        getAPI(interpolate(ALL_APPOINTMENT_API, [this.props.active_practiceId]), successFn, errorFn, this.props.match.params.id ? {"patient": this.props.match.params.id,practice:this.props.active_practiceId} : {practice:this.props.active_practiceId});
 
     }
 
@@ -204,12 +205,6 @@ class Appointment extends React.Component {
 
     render() {
         let that = this;
-        const procedures = {}
-        if (this.state.procedure_category) {
-            this.state.procedure_category.forEach(function (procedure) {
-                procedures[procedure.id] = procedure.name;
-            })
-        }
         const doctors = []
         if (this.state.practice_doctors.length) {
             this.state.practice_doctors.forEach(function (doctor) {
@@ -256,9 +251,9 @@ class Appointment extends React.Component {
         }, {
             title: 'Procedure',
             key: 'procedure',
-            render: (text, record) => (
-                <span> {procedures[record.procedure]}</span>
-            )
+            // render: (text, record) => (
+            //     <span> {procedures[record.procedure]}</span>
+            // )
         }, {
             title: 'Treatment Notes',
             key: 'notes',
@@ -311,6 +306,7 @@ class Appointment extends React.Component {
                 </Link> : null}>
 
                 <Table loading={this.state.loading} columns={columns} scroll={{x: 1300}}
+                       pagination={false}
                        dataSource={this.state.appointments}/>
 
 
@@ -322,6 +318,7 @@ class Appointment extends React.Component {
                     <Icon type="plus"/>&nbsp;Add Appointment</Button>
             </Link> : null}>
             <Table loading={this.state.loading} columns={columns} scroll={{x: 1300}}
+                   pagination={false}
                    dataSource={this.state.appointments}/>
 
 

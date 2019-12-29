@@ -40,6 +40,7 @@ import {getAllPermissions, loggedInUserPractices} from "../../../../utils/auth";
 import moment from "moment";
 import DoctorTiming from "./DoctorTiming";
 import {DAY_KEYS} from "../../../../constants/hardData";
+import CustomizedTable from "../../../common/CustomizedTable";
 
 const {Column, ColumnGroup} = Table;
 const TabPane = Tabs.TabPane;
@@ -198,9 +199,9 @@ class PracticeDetails extends React.Component {
             let staff = [];
             data.staff.forEach(function (usersdata) {
                 if (usersdata.role == DOCTORS_ROLE) {
-                    doctor.push(usersdata);
+                    doctor.push({...usersdata.user,...usersdata});
                 } else {
-                    staff.push(usersdata);
+                    staff.push({...usersdata.user,...usersdata});
                 }
             })
             that.setState({
@@ -229,9 +230,9 @@ class PracticeDetails extends React.Component {
             let staff = [];
             data.staff.forEach(function (usersdata) {
                 if (usersdata.role == DOCTORS_ROLE) {
-                    doctor.push(usersdata);
+                    doctor.push({...usersdata.user,...usersdata});
                 } else {
-                    staff.push(usersdata);
+                    staff.push({...usersdata.user,...usersdata});
                 }
             })
             that.setState({
@@ -359,16 +360,16 @@ class PracticeDetails extends React.Component {
         let that = this;
         const doctorColumns = [{
             title: "Name",
-            dataIndex: "user.first_name",
-            key: "name",
+            dataIndex: 'first_name',
+            key: "first_name",
         }, {
             title: "Email",
-            dataIndex: "user.email",
+            dataIndex: "email",
             key: "email",
             render: (value, record) => (record.user && record.user.is_active ? record.user.email : value)
         }, {
             title: "Mobile",
-            dataIndex: "user.mobile",
+            dataIndex: "mobile",
             key: "mobile",
         }, {
             title: "Registration Number",
@@ -412,16 +413,16 @@ class PracticeDetails extends React.Component {
 
         const staffColumns = [{
             title: "Name",
-            dataIndex: "user.first_name",
+            dataIndex: "first_name",
             key: "name",
         }, {
             title: "Email",
-            dataIndex: "user.email",
+            dataIndex: "email",
             key: "email",
             render: (value, record) => (record.user && record.user.is_active ? record.user.email : value)
         }, {
             title: "Mobile",
-            dataIndex: "user.mobile",
+            dataIndex: "mobile",
             key: "mobile",
         }, {
             title: "Enable Staff",
@@ -577,11 +578,11 @@ class PracticeDetails extends React.Component {
                                     </Link>
                                 </h2>
 
-                                <Table loading={this.state.loading} pagination={false} columns={doctorColumns}
+                                <CustomizedTable loading={this.state.loading} pagination={false} columns={doctorColumns}
                                        dataSource={this.state.practice_doctors}/>
                                 <Divider/>
                                 <h2>Staff </h2>
-                                <Table loading={this.state.loading} pagination={false} columns={staffColumns}
+                                <CustomizedTable loading={this.state.loading} pagination={false} columns={staffColumns}
                                        dataSource={this.state.practice_staff}/>
                             </TabPane>
                             <TabPane tab={<span><Icon type="team"/>Staff Notification</span>} key="#notification">

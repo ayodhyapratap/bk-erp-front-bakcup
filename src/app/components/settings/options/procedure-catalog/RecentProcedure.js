@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Icon, Tabs, Divider, Tag, Row, Table, Popconfirm} from "antd";
+import {Button, Card, Icon, Tabs, Divider, Tag, Row, Table, Popconfirm, Input} from "antd";
 import {PROCEDURE_CATEGORY} from "../../../../constants/api"
 import {Route, Link, Switch} from "react-router-dom";
 import {getAPI, interpolate, postAPI} from "../../../../utils/common";
@@ -9,6 +9,7 @@ import CustomizedTable from "../../../common/CustomizedTable";
 import AddProcedure from "./AddProcedure";
 import AddorEditProcedure from "./AddorEditProcedure";
 import {Redirect} from "react-router";
+import InfiniteFeedLoaderButton from "../../../common/InfiniteFeedLoaderButton";
 
 
 const {Column, ColumnGroup} = Table;
@@ -30,18 +31,34 @@ class RecentProcedure extends React.Component {
         this.loadProcedures();
     }
 
-    loadProcedures() {
+    loadProcedures(page = 1) {
         var that = this;
+        let params = {
+            page
+        }
+        if (this.state.searchString) {
+            params.name = this.state.searchString
+        }
         let successFn = function (data) {
-            that.setState({
-                procedure_category: data,
-                loading: false
-            })
+            if (data.current == 1 && that.state.searchString == params.name)
+                that.setState({
+                    procedure_category: data.results,
+                    next: data.next,
+                    loading: false
+                })
+            else
+                that.setState(function (prevState) {
+                    return {
+                        procedure_category: [...prevState.procedure_category, ...data.results],
+                        next: data.next,
+                        loading: false
+                    }
+                })
         };
         let errorFn = function () {
         };
 
-        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
+        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn, params);
     }
 
 
@@ -76,6 +93,13 @@ class RecentProcedure extends React.Component {
 
     }
 
+    changeSearchValue = (value) => {
+        this.setState({
+            searchString: value
+        }, function () {
+            this.loadProcedures();
+        })
+    }
 
     render() {
         let that = this;
@@ -148,8 +172,18 @@ class RecentProcedure extends React.Component {
                         </Link>
                     </h2>
                     <Card>
-                        <CustomizedTable columns={columns} loading={this.state.loading}
-                                         dataSource={this.state.procedure_category}/>
+                        <div className="row mar-b-10">
+                            <div className="col-md-12">
+                                <Input onChange={(e) => this.changeSearchValue(e.target.value)}
+                                       value={this.state.searchString} style={{width: 200}}
+                                       placeholder="Search Procedure..."/>
+                            </div>
+                        </div>
+                        <Table columns={columns}
+                               pagination={false}
+                               dataSource={this.state.procedure_category}/>
+                        <InfiniteFeedLoaderButton loading={this.state.loading} hidden={!this.state.next}
+                                                  loaderFunction={() => this.loadProcedures(this.state.next)}/>
 
                     </Card>
                 </Row>

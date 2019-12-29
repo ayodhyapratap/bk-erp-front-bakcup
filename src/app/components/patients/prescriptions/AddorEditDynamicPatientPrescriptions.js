@@ -124,8 +124,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             that.setState(function (prevState) {
                 let items = {...prevState.items}
                 return {
-                    items: {...items, "Template": data},
-                    filteredItems: {...prevState.filteredItems, "Template": data}
+                    items: {...items, "Template": data.results},
+                    filteredItems: {...prevState.filteredItems, "Template": data.results}
                 }
             })
 
@@ -142,8 +142,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             that.setState(function (prevState) {
                 let items = {...prevState.items}
                 return {
-                    items: {...items, "Labs": data},
-                    filteredItems: {...prevState.filteredItems, "Labs": data}
+                    items: {...items, "Labs": data.results},
+                    filteredItems: {...prevState.filteredItems, "Labs": data.results}
                 }
             })
         };
@@ -155,14 +155,16 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
 
     loadDrugList(page = 1) {
         let that = this;
+        let searchString = that.state.searchStrings.Drugs;
         let successFn = function (data) {
-            that.setState(function (prevState) {
-                let items = {...prevState.items}
-                return {
-                    items: {...items, "Drugs": data.results},
-                    filteredItems: {...prevState.filteredItems, "Drugs": data.results}
-                }
-            })
+            if (searchString == that.state.searchStrings.Drugs)
+                that.setState(function (prevState) {
+                    let items = {...prevState.items}
+                    return {
+                        items: {...items, "Drugs": data.results},
+                        filteredItems: {...prevState.filteredItems, "Drugs": data.results}
+                    }
+                })
         }
         let errorFn = function () {
 
@@ -172,8 +174,8 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             item_type: DRUG,
             page: page
         };
-        if (that.state.searchStrings.Drugs) {
-            params.item_name = that.state.searchStrings.Drugs
+        if (searchString) {
+            params.item_name = searchString
         }
         getAPI(INVENTORY_ITEM_API, successFn, errorFn, params);
     }
@@ -184,10 +186,10 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             let randId = Math.random().toFixed(7);
             return {
                 addedDrugs: {...prevState.addedDrugs, [item.id]: true},
-                formDrugList: [...prevState.formDrugList, {
+                formDrugList: [{
                     ...item,
                     _id: randId,
-                }]
+                }, ...prevState.formDrugList]
             }
         });
 

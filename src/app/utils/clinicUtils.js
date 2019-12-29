@@ -1,5 +1,5 @@
 import React from 'react';
-import {PRACTICESTAFF} from "../constants/api";
+import {CONFIG_API, MAILING_USERS_LIST, PRACTICESTAFF} from "../constants/api";
 import {getAPI, interpolate} from "./common";
 import {DOCTORS_ROLE} from "../constants/dataKeys";
 import {Link} from "react-router-dom";
@@ -13,7 +13,7 @@ export const loadDoctors = function (that) {
 
             if (usersdata.role.indexOf(parseInt(DOCTORS_ROLE)) > -1 || usersdata.role.indexOf(DOCTORS_ROLE) > -1) {
                 doctor.push(usersdata);
-                if (that.props.user.id==usersdata.user.id) {
+                if (that.props.user.id == usersdata.user.id) {
                     selectedDoctor = usersdata;
                 }
             }
@@ -77,4 +77,39 @@ export const intToRGB = function (i) {
         .toUpperCase();
 
     return "00000".substring(0, 6 - c.length) + c;
+}
+
+export const loadConfigParameters = function (that, params = []) {
+    let successFn = function (data) {
+        that.setState({
+            ...data
+        });
+    };
+    let errorFn = function () {
+
+    };
+    let parameters = params.join(',');
+    getAPI(CONFIG_API, successFn, errorFn, {parameters});
+}
+
+export const loadMailingUserListForReportsMail = function (that) {
+    let successFn = function (data) {
+        that.setState({
+            mailingUsersList: data
+        })
+    }
+    let errorFn = function () {
+
+    }
+    getAPI(MAILING_USERS_LIST, successFn, errorFn)
+}
+
+export const sendReportMail = function(url,params){
+    let successFn = function (data){
+
+    }
+    let errorFn = function (){
+
+    }
+    getAPI(url,successFn,errorFn,params);
 }

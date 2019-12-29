@@ -46,8 +46,6 @@ import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 import {displayMessage, getAPI, makeFileURL, makeURL, postAPI, putAPI} from "../../utils/common";
 import moment from "moment";
 import SwatchesPicker from 'react-color/lib/Swatches';
-// import ReactQuill from 'react-quill';
-// import 'react-quill/dist/quill.snow.css';
 import {EXTRA_DATA, FILE_UPLOAD_API, FILE_UPLOAD_BASE64} from "../../constants/api";
 import WebCamField from "./WebCamField";
 import {Editor} from 'react-draft-wysiwyg';
@@ -203,8 +201,20 @@ class DynamicFieldsForm extends React.Component {
                 if (that.state.formProp.beforeSend) {
                     values = that.state.formProp.beforeSend(values);
                 }
-                console.log("Fields in the form", values);
-                that.submitForm(values);
+                if (that.state.formProp.confirm) {
+                    Modal.confirm({
+                        title: that.state.formProp.confirmText || "Are you sure to submit?",
+                        onOk: function () {
+                            that.submitForm(values);
+                        },
+                        onCancel: function () {
+
+                        }
+                    })
+                } else {
+                    that.submitForm(values);
+                }
+
             }
         });
     }
@@ -402,7 +412,8 @@ class DynamicFieldsForm extends React.Component {
                             return <FormItem key={field.key} {...formItemLayout} label={field.label}
                                              extra={field.extra}>
                                 {getFieldDecorator(field.key, {...that.fieldDecorators(field, that.state.formData)})(
-                                    <Select mode="multiple" placeholder={field.placeholder} showSearch={field.showSearch?field.showSearch:null}
+                                    <Select mode="multiple" placeholder={field.placeholder}
+                                            showSearch={field.showSearch ? field.showSearch : null}
                                             disabled={field.disabled ? field.disabled : that.state.disabled}>
                                         {field.options.map((option) => <Select.Option
                                             value={option.value}>{option.label}</Select.Option>)}
@@ -456,7 +467,10 @@ class DynamicFieldsForm extends React.Component {
                             return <FormItem key={field.key} label={field.label} {...formItemLayout}
                                              extra={field.extra}>
                                 {getFieldDecorator(field.key,
-                                    {initialValue: field.initialValue ? moment(field.initialValue) : null,  rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],})(
+                                    {
+                                        initialValue: field.initialValue ? moment(field.initialValue) : null,
+                                        rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],
+                                    })(
                                     <DatePicker format={field.format}/>
                                 )}
                             </FormItem>;
@@ -533,7 +547,7 @@ class DynamicFieldsForm extends React.Component {
                             return <div>
                                 <FormItem key={field.key} label={field.label}  {...formItemLayout} extra={field.extra}>
                                     {getFieldDecorator(field.key, {
-                                        initialValue: (field.initialValue && field.initialValue.length ? field.initialValue :''),
+                                        initialValue: (field.initialValue && field.initialValue.length ? field.initialValue : ''),
                                         rules: []
                                     })(
                                         <div style={{border: '1px solid #eee'}}>
@@ -727,8 +741,8 @@ class DynamicFieldsForm extends React.Component {
 
 
                         case LABEL_FIELD :
-                            return  <FormItem key={field.key} {...formItemLayout} label={field.label}
-                                              extra={field.extra}>
+                            return <FormItem key={field.key} {...formItemLayout} label={field.label}
+                                             extra={field.extra}>
 
                                 {field.follow ? <span className="ant-form-text">{field.follow}</span> : null}
 

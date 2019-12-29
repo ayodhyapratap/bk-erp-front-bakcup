@@ -92,25 +92,33 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
             let randId = Math.random().toFixed(7);
             return {
                 addNotes: {...prevState.addNotes, [randId]: !!item.default_notes},
-                tableFormValues: [...prevState.tableFormValues, {
+                tableFormValues: [{
                     ...item,
                     _id: randId,
-                }]
+                }, ...prevState.tableFormValues]
             }
         }, function () {
-            if (that.bottomPoint)
-                that.bottomPoint.scrollIntoView({behavior: 'smooth'});
+            // if (that.bottomPoint)
+            //     that.bottomPoint.scrollIntoView({behavior: 'smooth'});
         });
     };
 
     loadProcedures() {
         var that = this;
+        let params = {};
+        if (this.state.searchString) {
+            params.name = this.state.searchString;
+        }
+        that.setState({
+            loadingProcedures: true
+        })
         let successFn = function (data) {
-            that.setState({
-                procedure_category: data,
-                loadingProcedures: false,
-                filteredItems: data
-            })
+            if (!params.name || that.state.searchString == params.name)
+                that.setState({
+                    // procedure_category: data.results,
+                    loadingProcedures: false,
+                    filteredItems: data.results,
+                })
         };
         let errorFn = function () {
             that.setState({
@@ -118,7 +126,7 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
             })
         };
 
-        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
+        getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn, params);
     }
 
     selectDoctor = (doctor) => {
@@ -186,33 +194,11 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
     searchValues = (value) => {
         let that = this;
         this.setState(function (prevState) {
-            return {searchStrings: value}
+            return {searchString: value}
         }, function () {
-            that.filterValues();
+            that.loadProcedures();
         });
         return false;
-    }
-    filterValues = () => {
-        this.setState(function (prevState) {
-            let filteredItemOfGivenType = [];
-            if (prevState.procedure_category) {
-                if (prevState.searchStrings) {
-                    prevState.procedure_category.forEach(function (item) {
-                        if (item.name
-                            .toString()
-                            .toLowerCase()
-                            .includes(prevState.searchStrings.toLowerCase())) {
-                            filteredItemOfGivenType.push(item);
-                        }
-                    });
-                } else {
-                    filteredItemOfGivenType = prevState.procedure_category;
-                }
-            }
-            return {
-                filteredItems: filteredItemOfGivenType
-            }
-        });
     }
 
     render() {
@@ -244,7 +230,7 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
             key: 'name',
             render: (name, record) => <span>
                 <b>{name}</b><br/>
-                {this.state.addNotes[record._id] || this.props.editId?
+                {this.state.addNotes[record._id] || this.props.editId ?
                     <Form.Item
                         key={`default_notes[${record._id}]`}
                         {...formItemLayout}>
@@ -358,7 +344,8 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
                                                 allowClear={false}/>
                                     <Form.Item {...formItemLayoutWithOutLabel}
                                                style={{marginBottom: 0, float: 'right'}}>
-                                        <Button type="primary" htmlType="submit" style={{margin: 5}}>Save Treatment Plan</Button>
+                                        <Button type="primary" htmlType="submit" style={{margin: 5}}>Save Treatment
+                                            Plan</Button>
                                         {that.props.history ?
                                             <Button style={{margin: 5, float: 'right'}}
                                                     onClick={() => that.props.history.goBack()}>
@@ -376,9 +363,10 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
                         <Affix offsetTop={0}>
                             <div style={{backgroundColor: '#ddd', padding: 8}}>
                                 <Input.Search placeholder={"Search in plans ..."}
-                                              onChange={e => this.searchValues( e.target.value)}/>
+                                              onChange={e => this.searchValues(e.target.value)}/>
                             </div>
                             <List size={"small"}
+                                  loading={this.state.loadingProcedures}
                                   style={{maxHeight: '100vh', overflowX: 'scroll'}}
                                   itemLayout="horizontal"
                                   dataSource={this.state.filteredItems}
