@@ -53,6 +53,7 @@ export default class AgeingAmountDue extends React.Component {
             })
         };
         let apiParams={
+            practice:this.props.active_practiceId,
             type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -66,6 +67,7 @@ export default class AgeingAmountDue extends React.Component {
     };
     sendMail = (mailTo) => {
         let apiParams={
+            practice:this.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             type:this.props.type,

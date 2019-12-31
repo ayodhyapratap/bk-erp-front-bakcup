@@ -39,16 +39,11 @@ import {
     removeEmpty
 } from "../../../utils/common";
 import moment from 'moment';
-import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 import WebCamField from "../../common/WebCamField";
 import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD, ALL, RELATION} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
 import {
-    BLOOD_GROUPS,
-    FAMILY_GROUPS,
     PATIENT_AGE,
-    SOURCE_PLATFORM,
-    LANGUAGE,
     BLOOD_GROUP_CONFIG_PARAM,
     PATIENT_SOURCE_CONFIG_PARAM,
     SMS_LANGUAGE_CONFIG_PARAM,
@@ -59,7 +54,6 @@ import {loadConfigParameters} from "../../../utils/clinicUtils";
 
 
 const confirm = Modal.confirm;
-const {Option} = Select;
 
 
 class EditPatientDetails extends React.Component {
@@ -282,8 +276,8 @@ class EditPatientDetails extends React.Component {
                     reqData.is_age = true;
                     reqData.dob = moment().subtract(values.age, 'years').format("YYYY-MM-DD");
                 }
-                if (values.custom_id) {
-                    reqData.custom_id = 'BK' + values.custom_id;
+                if (values.custom_id == "BK") {
+                    reqData.custom_id = null;
                 }
                 let key = 'image';
                 if (reqData[key] && reqData[key].file && reqData[key].file.response)
@@ -549,7 +543,9 @@ class EditPatientDetails extends React.Component {
                         {getFieldDecorator('custom_id', {
                             initialValue: this.state.patientDetails ? this.state.patientDetails.custom_id.replace(/\D/g, '') : ''
                         })
-                        (<Input addonBefore={"BK"} placeholder="Patient Id"/>)
+                        (<InputNumber formatter={value => `BK${value}`}
+                                      style={{width: '100%'}}
+                                      parser={value => value.replace('BK', '')} placeholder="Patient Id"/>)
                         }
                     </Form.Item>
 

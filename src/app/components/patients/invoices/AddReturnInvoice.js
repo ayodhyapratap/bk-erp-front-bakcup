@@ -704,7 +704,9 @@ class AddReturnInvoice extends React.Component {
                                          placeholder="units" size={'small'}
                                          disabled={!(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number])}/>
                         )}
+                        <span className="ant-form-text">Items: {record.unit}</span>
                     </Form.Item>
+
                     : <Form.Item
                         key={`unit[${record._id}]`}
                         {...formItemLayout}>
@@ -715,6 +717,7 @@ class AddReturnInvoice extends React.Component {
                             <InputNumber min={0} max={record.unit} placeholder="unit" size={'small'}
                                          onChange={this.calculateReturnCashAvailable}/>
                         )}
+                        <span className="ant-form-text">Items: {record.unit}</span>
                     </Form.Item>
             )
         }, {

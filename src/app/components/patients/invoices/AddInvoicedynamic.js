@@ -1,10 +1,10 @@
 import React from "react";
 import {
-    Affix, Badge,
+    Affix,
     Button,
     Card,
     Col,
-    DatePicker,
+    DatePicker, Divider,
     Dropdown,
     Form, Icon,
     Input,
@@ -32,10 +32,8 @@ import {
 } from "../../../constants/api";
 import moment from "moment";
 import {loadDoctors} from "../../../utils/clinicUtils";
-import {set} from "react-ga";
 
 const {Search} = Input;
-const {MonthPicker} = DatePicker;
 const TabPane = Tabs.TabPane;
 const {Text} = Typography;
 let tableFormFields = {
@@ -68,7 +66,6 @@ class Addinvoicedynamic extends React.Component {
             promoCode: '',
             appliedPromoCodeDiscount: null,
             promoCodeCheckLoading: false
-
         }
 
     }
@@ -151,20 +148,20 @@ class Addinvoicedynamic extends React.Component {
                 tableFormValues: tableValues,
                 selectedDate: moment(invoice.date).isValid() ? moment(invoice.date) : null,
                 stocks: stocks,
-
             }
         })
 
     };
 
-    loadInventoryItemList() {
+    loadInventoryItemList(page = 1) {
         let that = this;
         let searchString = this.state.searchItem;
+        that.setState({
+            loadingInventory: true
+        })
         let successFn = function (reqData) {
             let data = reqData.results;
             let drugItems = [];
-            let equipmentItems = [];
-            let supplesItems = [];
             if (that.state.searchItem == searchString)
                 that.setState(function (prevState) {
                         let stocks = {...prevState.stocks};
@@ -193,14 +190,13 @@ class Addinvoicedynamic extends React.Component {
                             }
 
                         });
-                        let items = that.state.items;
-                        items[INVENTORY] = drugItems;
+                        let items = prevState.items;
+                        items[INVENTORY] = {...reqData, results: drugItems};
                         return {
                             items: items,
                             stocks: {...prevState.stocks, ...stocks},
                             itemBatches: {...prevState.itemBatches, ...itemBatches},
-                            saveLoading: false,
-                            loading: false,
+                            loadingInventory: false,
                         }
                     }, function () {
                         if (that.props.editId) {
@@ -211,10 +207,14 @@ class Addinvoicedynamic extends React.Component {
 
         }
         let errorFn = function () {
+            that.setState({
+                loadingInventory: false
+            })
         }
         let paramsApi = {
             practice: this.props.active_practiceId,
             maintain_inventory: true,
+            page
         }
         if (this.state.searchItem) {
             paramsApi.item_name = searchString;
@@ -223,12 +223,12 @@ class Addinvoicedynamic extends React.Component {
         getAPI(INVENTORY_ITEM_API, successFn, errorFn, paramsApi);
     }
 
-    loadProcedures() {
+    loadProcedures(page = 1) {
         var that = this;
         let searchString = this.state.searchItem;
         let successFn = function (data) {
             let items = that.state.items;
-            items[PROCEDURES] = data.results;
+            items[PROCEDURES] = data;
             if (that.state.searchItem == searchString)
                 that.setState({
                     items: items,
@@ -238,6 +238,7 @@ class Addinvoicedynamic extends React.Component {
         };
         let paramsApi = {
             practice: this.props.active_practiceId,
+            page
         }
         if (this.state.searchItem) {
             paramsApi.name = searchString;
@@ -246,7 +247,7 @@ class Addinvoicedynamic extends React.Component {
     }
 
     loadPrescriptions() {
-        var that = this;
+        let that = this;
         let searchString = this.state.searchItem;
         let successFn = function (data) {
             if (that.state.searchItem == searchString)
@@ -268,7 +269,7 @@ class Addinvoicedynamic extends React.Component {
     }
 
     loadTaxes() {
-        var that = this;
+        let that = this;
         let successFn = function (data) {
             that.setState({
                 taxes_list: data,
@@ -339,10 +340,10 @@ class Addinvoicedynamic extends React.Component {
             });
             return {
                 tableFormValues: finalTableFormValues,
-                // selectedDoctor:doctor,
             }
         })
     }
+
     selectedDate = (dateValue, id, type) => {
         this.setState(function (prevState) {
             let finalTableFormValues = [];
@@ -358,6 +359,7 @@ class Addinvoicedynamic extends React.Component {
             }
         })
     }
+
     selectBatch = (batch, id, type) => {
         this.setState(function (prevState) {
             let finalTableFormValues = [];
@@ -385,7 +387,6 @@ class Addinvoicedynamic extends React.Component {
     }
     handleSubmit = (goBack) => {
         let that = this;
-        // e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 that.setState({
@@ -459,9 +460,9 @@ class Addinvoicedynamic extends React.Component {
                     });
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
-                    if(goBack){
+                    if (goBack) {
                         that.props.history.goBack()
-                    }else {
+                    } else {
                         let url = '/patient/' + that.props.match.params.id + '/billing/payments/add?invoices=' + data.id;
                         that.props.history.push(url);
                     }
@@ -867,8 +868,6 @@ class Addinvoicedynamic extends React.Component {
                 sm: {span: 24},
             },
         };
-
-
         getFieldDecorator('keys', {initialValue: []});
         let consumeRow = [{
             title: 'Item Name',
@@ -1080,23 +1079,6 @@ class Addinvoicedynamic extends React.Component {
             width: 80,
             align: 'right',
             dataIndex: 'total_unit_cost',
-            // render: (item, record) => <Form.Item
-            //     key={`total_unit_cost[${record._id}]`}
-            //     {...formItemLayout}>
-            //     {getFieldDecorator(`total_unit_cost[${record._id}]`, {
-            //         validateTrigger: ['onChange', 'onBlur'],
-            //         initialValue: record.item_type == INVENTORY ? record.retail_with_tax : record.cost_with_tax,
-            //         rules: [{
-            //             required: true,
-            //             message: "This field is required.",
-            //         }],
-            //     })(
-            //         <InputNumber min={0} placeholder="Unit Cost" size={'small'}
-            //                      onChange={() => that.changeNetPrice(record._id)}/>
-            //     )}
-            // </Form.Item>
-            // render: (item, record) => item ? item.toFixed(2) : null
-            // render: (item, record) => ((record.item_type == INVENTORY) && record.total_unit_cost) ? record.total_unit_cost.toFixed(2) :record.cost_with_tax ?record.cost_with_tax.toFixed(2) :record.retail_with_tax.toFixed(2),
             render: (item, record) =>
                 <span>{item ? item.toFixed(2) : '0.00'}</span>,
         }, {
@@ -1141,7 +1123,8 @@ class Addinvoicedynamic extends React.Component {
                                         </div>
                                         <List size={"small"}
                                               itemLayout="horizontal"
-                                              dataSource={this.state.items ? this.state.items[INVENTORY] : []}
+                                              loading={this.state.loadingInventory}
+                                              dataSource={this.state.items && this.state.items[INVENTORY] ? this.state.items[INVENTORY].results : []}
                                               renderItem={item => (
                                                   <List.Item>
                                                       <List.Item.Meta
@@ -1154,12 +1137,21 @@ class Addinvoicedynamic extends React.Component {
                                                               })}
                                                               icon={"arrow-right"}/>
                                                   </List.Item>)}/>
+                                        {this.state.items && this.state.items[INVENTORY] ?
+                                            <div style={{textAlign: 'center'}}>
+                                                <a style={{margin: 5}}
+                                                   disabled={!this.state.items[INVENTORY].previous}
+                                                   onClick={() => this.loadInventoryItemList(this.state.items[INVENTORY].previous)}>
+                                                    <Icon type="left"/>Previous
+                                                </a>
+                                                <Divider type={"vertical"}/>
+                                                <a style={{margin: 5}} disabled={!this.state.items[INVENTORY].next}
+                                                   onClick={() => this.loadInventoryItemList(this.state.items[INVENTORY].next)}>
+                                                    Next<Icon type="right"/>
+                                                </a>
+                                            </div> : null}
                                     </TabPane>
                                     <TabPane tab={PRESCRIPTIONS} key={PRESCRIPTIONS}>
-                                        {/*<div style={{backgroundColor: '#ddd', padding: 8}}>*/}
-                                        {/*    <Input.Search placeholder={"Search in " + PRESCRIPTIONS}*/}
-                                        {/*                  onChange={(value) => this.searchValues(value, PRESCRIPTIONS)}/>*/}
-                                        {/*</div>*/}
                                         <List size={"small"}
                                               itemLayout="horizontal"
                                               dataSource={this.state.items ? this.state.items[PRESCRIPTIONS] : []}
@@ -1190,7 +1182,7 @@ class Addinvoicedynamic extends React.Component {
                                         </div>
                                         <List size={"small"}
                                               itemLayout="horizontal"
-                                              dataSource={this.state.items ? this.state.items[PROCEDURES] : []}
+                                              dataSource={this.state.items && this.state.items[PROCEDURES] ? this.state.items[PROCEDURES].results : []}
                                               renderItem={item => (
                                                   <List.Item>
                                                       <List.Item.Meta
@@ -1203,17 +1195,29 @@ class Addinvoicedynamic extends React.Component {
                                                               })}
                                                               icon={"arrow-right"}/>
                                                   </List.Item>)}/>
+                                        {this.state.items && this.state.items[PROCEDURES] ?
+                                            <div style={{textAlign: 'center'}}>
+                                                <a style={{margin: 5}}
+                                                   disabled={!this.state.items[PROCEDURES].previous}
+                                                   onClick={() => this.loadProcedures(this.state.items[PROCEDURES].previous)}>
+                                                    <Icon type="left"/>Previous
+                                                </a>
+                                                <Divider type={"vertical"}/>
+                                                <a style={{margin: 5}} disabled={!this.state.items[PROCEDURES].next}
+                                                   onClick={() => this.loadProcedures(this.state.items[PROCEDURES].next)}>
+                                                    Next<Icon type="right"/>
+                                                </a>
+                                            </div> : null}
                                     </TabPane>
 
                                 </Tabs>
                             </Col>
                             <Col span={18}>
-                                <Form >
+                                <Form>
                                     <Table pagination={false} loading={that.state.loading}
                                            bordered={true}
                                            dataSource={this.state.tableFormValues}
                                            columns={consumeRow}/>
-                                    {/*<List>{formItems}</List>*/}
                                     <Affix offsetBottom={0}>
                                         <Card>
                                             <Col span={8}>
@@ -1232,9 +1236,11 @@ class Addinvoicedynamic extends React.Component {
                                             <Form.Item {...formItemLayoutWithOutLabel}
                                                        style={{marginBottom: 0, float: 'right'}}>
 
-                                                <Button type="primary" htmlType="submit" onClick={()=>this.handleSubmit(true)}
+                                                <Button type="primary" htmlType="submit"
+                                                        onClick={() => this.handleSubmit(true)}
                                                         style={{margin: 5}}>Save Invoice</Button>
-                                                <Button type="primary" htmlType="submit" onClick={()=>this.handleSubmit(false)}
+                                                <Button type="primary" htmlType="submit"
+                                                        onClick={() => this.handleSubmit(false)}
                                                         style={{margin: 5}}>Save & Create Payment</Button>
                                                 {that.props.history ?
                                                     <Button style={{margin: 5, float: 'right'}}
