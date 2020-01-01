@@ -127,7 +127,7 @@ export default class InvoiceReturnForEachProcedure extends React.Component{
 
 
 
-        const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+        const COLORS = ['#00C49F','#0088FE',  '#FFBB28', '#FF8042'];
         const renderActiveShape = (props) => {
             const RADIAN = Math.PI / 180;
             const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
@@ -207,12 +207,12 @@ export default class InvoiceReturnForEachProcedure extends React.Component{
                     <Col span={12} offset={6}>
                         <Spin size="large" spinning={loading}>
                             {report.length>0?
-                                <PieChart width={800} height={400} >
+                                <PieChart width={1000} height={400} >
                                     <Pie
                                         activeIndex={activeIndex}
                                         activeShape={renderActiveShape}
                                         data={report}
-                                        cx={300}
+                                        cx={400}
                                         dataKey="cost"
                                         cy={200}
                                         innerRadius={60}

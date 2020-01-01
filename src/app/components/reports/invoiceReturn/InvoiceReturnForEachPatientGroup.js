@@ -130,7 +130,7 @@ export default class InvoiceReturnForEachPatientGroup extends React.Component{
 
         let {report, loading, activeIndex } =this.state;
 
-        const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+        const COLORS = ['#00C49F', '#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
         const renderActiveShape = (props) => {
             const RADIAN = Math.PI / 180;
             const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
