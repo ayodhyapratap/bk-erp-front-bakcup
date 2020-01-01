@@ -5,7 +5,7 @@ import {
     Button,
     Card,
     Col,
-    DatePicker,
+    DatePicker, Divider,
     Form,
     Icon,
     Input,
@@ -53,7 +53,7 @@ class AddOrConsumeStock extends React.Component {
             supplierList: [],
             customSupplier: false,
             qrValue: '',
-            loading:true,
+            loading: true,
         }
         this.loadSupplierList = this.loadSupplierList.bind(this);
     }
@@ -96,31 +96,16 @@ class AddOrConsumeStock extends React.Component {
     loadItemsList = (type, page = 1) => {
         let that = this;
         let successFn = function (recData) {
-            let data = recData.results;
-            if (recData.current == 1) {
-                that.setState(function (prevState) {
-                    return {
-                        items: {
-                            ...prevState.items,
-                            [type]: data,
-                        },
-                        loading:false,
-
-                    }
-
-                });
-            } else {
-                that.setState(function (prevState) {
-                    return {
-                        items: {
-                            ...prevState.items,
-                            [type]: [...prevState.items[type], ...data],
-                        },
-                        loading:false,
-                    }
-                });
-            }
-
+            let data = recData;
+            that.setState(function (prevState) {
+                return {
+                    items: {
+                        ...prevState.items,
+                        [type]: {...prevState.items[type], ...data},
+                    },
+                    loading: false,
+                }
+            });
         }
         let errorFn = function () {
         }
@@ -155,7 +140,7 @@ class AddOrConsumeStock extends React.Component {
                     ...tableFormFields,
                     ...item,
                     _id: randId,
-                },...prevState.tableFormValues]
+                }, ...prevState.tableFormValues]
             }
         });
     };
@@ -163,7 +148,7 @@ class AddOrConsumeStock extends React.Component {
     handleSubmit = (e) => {
         let that = this;
         this.setState({
-            loading:true,
+            loading: true,
         });
         if (e.keyCode == 13) {
             return false;
@@ -195,7 +180,7 @@ class AddOrConsumeStock extends React.Component {
                         } else if (values.supplier_name) {
                             itemObject.supplier_name = values.supplier_name;
                         }
-                    }else if (that.state.classType == CONSUME_STOCK) {
+                    } else if (that.state.classType == CONSUME_STOCK) {
                         itemObject.type_of_consumption = values.type_of_consumption;
                     }
                     reqData.push(itemObject);
@@ -203,8 +188,7 @@ class AddOrConsumeStock extends React.Component {
                 reqData.date = moment(values.date).isValid() ? moment(values.date).format() : null;
                 if (that.state.customSupplier) {
                     reqData.supplier_name = values.supplier_name;
-                }
-                else {
+                } else {
                     reqData.supplier = values.supplier;
                 }
                 let successFn = function (data) {
@@ -215,7 +199,7 @@ class AddOrConsumeStock extends React.Component {
                 };
                 let errorFn = function () {
                     that.setState({
-                        loading:false,
+                        loading: false,
                     });
                 };
                 postAPI(BULK_STOCK_ENTRY, reqData, successFn, errorFn);
@@ -273,7 +257,7 @@ class AddOrConsumeStock extends React.Component {
     }
     storeValue = (type, id, value) => {
         let that = this;
-       this.setState(function (prevState) {
+        this.setState(function (prevState) {
             return {tempValues: {...prevState.tempValues, [type.toString() + id.toString()]: value}}
         });
         if (type == 'batch') {
@@ -540,7 +524,7 @@ class AddOrConsumeStock extends React.Component {
         }]);
         return <div>
             <Spin spinning={this.state.loading}>
-                <Card  title={this.state.classType + " Stock"} extra={
+                <Card title={this.state.classType + " Stock"} extra={
                     <Search
                         loading={this.state.loadingQr}
                         value={this.state.qrValue}
@@ -554,15 +538,13 @@ class AddOrConsumeStock extends React.Component {
                             <Tabs size="small" type="card">
                                 {INVENTORY_ITEM_TYPE.map(itemType => <TabPane tab={itemType.label} key={itemType.value}>
                                     <div style={{backgroundColor: '#ddd', padding: 8}}>
-
-
                                         <Input.Search key={itemType.label}
                                                       placeholder={"Search in " + itemType.label + "..."}
                                                       onSearch={value => this.searchValues(itemType.label, value)}/>
                                     </div>
                                     <List size={"small"}
                                           itemLayout="horizontal"
-                                          dataSource={this.state.items ? this.state.items[itemType.value] : []}
+                                          dataSource={this.state.items && this.state.items[itemType.value] ? this.state.items[itemType.value].results : []}
                                           renderItem={item => (
                                               <List.Item>
                                                   <List.Item.Meta
@@ -572,6 +554,19 @@ class AddOrConsumeStock extends React.Component {
                                                   <Button type="primary" size="small" shape="circle"
                                                           onClick={() => this.add(item)} icon={"arrow-right"}/>
                                               </List.Item>)}/>
+                                    {this.state.items && this.state.items[itemType.value] ?
+                                        <div style={{textAlign: 'center'}}>
+                                            <a style={{margin: 5}}
+                                               disabled={!this.state.items[itemType.value].previous}
+                                               onClick={() => this.loadItemsList(itemType.value, this.state.items[itemType.value].previous)}>
+                                                <Icon type="left"/>Previous
+                                            </a>
+                                            <Divider type={"vertical"}/>
+                                            <a style={{margin: 5}} disabled={!this.state.items[itemType.value].next}
+                                               onClick={() => this.loadItemsList(itemType.value, this.state.items[itemType.value].previous)}>
+                                                Next<Icon type="right"/>
+                                            </a>
+                                        </div> : null}
                                 </TabPane>)}
                             </Tabs>
                         </Col>
@@ -590,7 +585,7 @@ class AddOrConsumeStock extends React.Component {
                                                 {getFieldDecorator(`type_of_consumption`, {
                                                     validateTrigger: ['onChange', 'onBlur'],
                                                     rules: [{
-                                                        required:true,
+                                                        required: true,
                                                         message: "This field is required.",
                                                     }],
                                                 })(

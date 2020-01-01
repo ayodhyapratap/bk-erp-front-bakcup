@@ -52,6 +52,7 @@ export default class TotalAmountDue extends React.Component {
             })
         };
         let apiParams={
+            practice:this.props.active_practiceId,
             type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -67,6 +68,7 @@ export default class TotalAmountDue extends React.Component {
     };
     sendMail = (mailTo) => {
         let apiParams={
+            practice:this.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             type:this.props.type,
@@ -107,6 +109,10 @@ export default class TotalAmountDue extends React.Component {
             dataIndex: 'first_name',
             key: 'first_name',
         },{
+            title: 'Patient ID',
+            dataIndex: 'custom_id',
+            key: 'custom_id',
+        },{
             title:'Doctor Name',
             dataIndex:'doctor_name',
             key:'doctor_name'
@@ -120,14 +126,6 @@ export default class TotalAmountDue extends React.Component {
             dataIndex: 'amount_due',
             key: 'amount_due',
             render:(item)=>(item.toFixed(2))
-        }, {
-            title: 'Mobile No.',
-            dataIndex: 'mobile',
-            key: 'mobile',
-        },{
-            title:'SMS last Send On',
-            key:'sms',
-            dataIndex:'sms',
         }];
 
 
