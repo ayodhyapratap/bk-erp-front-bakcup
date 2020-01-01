@@ -1,13 +1,13 @@
 import React from "react";
-import {Cell, Pie, PieChart, Sector} from "recharts";
-import * as _ from "lodash";
-import {Col, Divider, Empty, Row, Spin, Statistic} from "antd";
-import CustomizedTable from "../../common/CustomizedTable";
 import {getAPI} from "../../../utils/common";
 import {RETURN_INVOICE_REPORTS} from "../../../constants/api";
-export default class InvoiceReturnForEachProduct extends React.Component{
+import {Col, Divider, Empty, Row, Spin, Statistic} from "antd";
+import {Cell, Pie, PieChart, Sector} from "recharts";
+import CustomizedTable from "../../common/CustomizedTable";
+import * as _ from "lodash";
+export default class InvoiceReturnForEachPatientGroup extends React.Component{
     constructor(props){
-        super(props);
+        super(props)
         this.state={
             report: [],
             startDate: this.props.startDate,
@@ -15,33 +15,35 @@ export default class InvoiceReturnForEachProduct extends React.Component{
             loading: false,
             activeIndex:0
         }
-
-        this.loadEachProductInvoiceReturn = this.loadEachProductInvoiceReturn.bind(this);
+        this.loadEachPatientGroupInvoiceReturn = this.loadEachPatientGroupInvoiceReturn.bind(this);
     }
+
+
     componentDidMount() {
-        this.loadEachProductInvoiceReturn();
+        this.loadEachPatientGroupInvoiceReturn();
 
     }
 
     componentWillReceiveProps (newProps) {
         let that = this;
-        if (this.props.startDate != newProps.startDate ||
-            this.props.endDate != newProps.endDate ||
-            this.props.patient_groups != newProps.patient_groups ||
-            this.props.doctors != newProps.doctors ||
-            this.props.income_type != newProps.income_type ||
-            this.props.taxes != newProps.taxes ||
-            this.props.discount != newProps.discount ||
-            this.props.products != newProps.products ||
-            this.props.treatments != newProps.treatments ||
-            this.props.exclude_cancelled != newProps.exclude_cancelled
+        let {startDate, endDate, patient_groups, doctors, income_type, taxes, discount, products, treatments, exclude_cancelled} =this.props;
+        if (startDate != newProps.startDate ||
+            endDate != newProps.endDate ||
+            patient_groups != newProps.patient_groups ||
+            doctors != newProps.doctors ||
+            income_type != newProps.income_type ||
+            taxes != newProps.taxes ||
+            discount != newProps.discount ||
+            products != newProps.products ||
+            treatments != newProps.treatments ||
+            exclude_cancelled != newProps.exclude_cancelled
 
         )
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
             },function(){
-                that.loadEachProductInvoiceReturn();
+                that.loadEachPatientGroupInvoiceReturn();
             })
 
     }
@@ -61,8 +63,7 @@ export default class InvoiceReturnForEachProduct extends React.Component{
 
 
 
-
-    loadEachProductInvoiceReturn = () =>{
+    loadEachPatientGroupInvoiceReturn = () =>{
         let that = this;
         this.startLoading();
         let {startDate, endDate} = this.state;
@@ -124,9 +125,10 @@ export default class InvoiceReturnForEachProduct extends React.Component{
         });
     };
 
+
     render() {
 
-        let {loading, report, activeIndex} =this.state;
+        let {report, loading, activeIndex } =this.state;
 
         const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
         const renderActiveShape = (props) => {
@@ -167,21 +169,23 @@ export default class InvoiceReturnForEachProduct extends React.Component{
                     <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
                     <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
                     <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.name+','+ payload.cost.toFixed(2)}</text>
+
                     <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
                         {`(Rate ${(percent * 100).toFixed(2)}%)`}
                     </text>
                 </g>
             );
         };
+
+
         let totalAmount = report.reduce(function(prev, cur) {
             return prev + cur.cost;
         }, 0);
 
 
-
         const columns = [
             {
-                title:'Name',
+                title:'Patient Group',
                 key:'name',
                 dataIndex:'name',
             },{
@@ -201,10 +205,9 @@ export default class InvoiceReturnForEachProduct extends React.Component{
                 render:(item, record)=><span>{_.get(record,'cost',0).toFixed(2)}</span>
             }
         ];
-
-        return(<div>
-                <h2>Return Invoice For Each Products</h2>
-
+        return(
+            <div>
+                <h2>Return Invoice For Each Patient Groups</h2>
                 <Row>
                     <Col span={12} offset={6}>
                         <Spin size="large" spinning={loading}>
@@ -232,9 +235,10 @@ export default class InvoiceReturnForEachProduct extends React.Component{
                         </Spin>
                     </Col>
                 </Row>
+
                 <Divider><Statistic title="Total" value={totalAmount.toFixed(2)} /></Divider>
                 <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={report}/>
             </div>
-        );
+        )
     }
 }

@@ -201,7 +201,7 @@ export default class InvoiceReturnForEachProcedure extends React.Component{
             }
         ];
         return(<div>
-                <h2>Return Invoice For Each Procedure</h2>
+                <h2>Return Invoice For Each Procedures</h2>
 
                 <Row>
                     <Col span={12} offset={6}>

@@ -35,6 +35,7 @@ export default class PaymentsReportHome extends React.Component {
             patientGroup: [],
             vendorOption: [],
             taxes_list:[],
+
         };
         loadDoctors(this);
         this.loadPatientGroup = this.loadPatientGroup.bind(this);

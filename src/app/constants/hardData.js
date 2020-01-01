@@ -65,7 +65,10 @@ import {
     MONTHLY_WISE_INCOME,
     RETURN_ITEMS,
     RETURN_INVOICE_FOR_EACH_PROCEDURE,
-    RETURN_INVOICE_FOR_EACH_DOCTOR, RETURN_INVOICE_FOR_EACH_PRODUCT
+    RETURN_INVOICE_FOR_EACH_DOCTOR,
+    RETURN_INVOICE_FOR_EACH_PRODUCT,
+    RETURN_INVOICE_FOR_EACH_PATIENT_GROUPS,
+    RETURN_INVOICE_FOR_EACH_TAX, MONTHLY_WISE_RETURN_INVOICE, DAILY_WISE_RETURN_INVOICE
 } from "../constants/dataKeys";
 
 export const PAYMENT_TYPES = [
@@ -413,12 +416,13 @@ export const INCOME_RELATED_REPORT = [
 /* Invoiced Report */
 export const INVOICE_RELATED_REPORT = [
     // {name:"All Returned Invoices" ,value:ALL_INVOICE_RETURN},
-    {name: "Monthly wise Return Count & Revenue", value: DAILY_WISE_INVOICE},
-    {name: "Day wise Return Count & Revenue", value: MONTHLY_WISE_INCOME},
-    {name: "Return Items Count, item wise", value: RETURN_ITEMS},
+    {name: "Day wise Return Invoice", value: DAILY_WISE_RETURN_INVOICE},
+    {name: "Monthly wise Return Invoice", value: MONTHLY_WISE_RETURN_INVOICE},
+    {name: "Return Invoice For Each Tax", value: RETURN_INVOICE_FOR_EACH_TAX},
     {name: "Return Invoice For Each Procedure", value: RETURN_INVOICE_FOR_EACH_PROCEDURE},
     {name: "Return Invoice For Each Product", value: RETURN_INVOICE_FOR_EACH_PRODUCT},
     {name: "Return Invoice For Each Doctor", value: RETURN_INVOICE_FOR_EACH_DOCTOR},
+    {name: "Return Invoice For Each Patient Groups", value: RETURN_INVOICE_FOR_EACH_PATIENT_GROUPS},
 ];
 
 

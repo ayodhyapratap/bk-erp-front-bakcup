@@ -2,20 +2,24 @@ import React from "react";
 import {Button, Card, Checkbox, Col, Radio, Row, Select} from "antd";
 import {
     ALL,
-    ALL_INVOICE_RETURN,
-    DAILY_WISE_INVOICE,
-    MONTHLY_WISE_INCOME, RETURN_INVOICE_FOR_EACH_PROCEDURE, RETURN_INVOICE_FOR_EACH_PRODUCT, RETURN_ITEMS,
+    ALL_INVOICE_RETURN,DAILY_WISE_RETURN_INVOICE, MONTHLY_WISE_RETURN_INVOICE,
+    RETURN_INVOICE_FOR_EACH_DOCTOR, RETURN_INVOICE_FOR_EACH_PATIENT_GROUPS,
+    RETURN_INVOICE_FOR_EACH_PROCEDURE,
+    RETURN_INVOICE_FOR_EACH_PRODUCT, RETURN_INVOICE_FOR_EACH_TAX,
+
 } from "../../../constants/dataKeys";
 import {DISCOUNT, INCOME_TYPE, INVOICE_RELATED_REPORT} from "../../../constants/hardData";
 import AllReturnedInvoice from "./AllReturnedInvoice";
-import DayWiseReturn from "./DayWiseReturn";
-import MonthlyWiseReturn from "./MonthlyWiseReturn";
-import ReturnItemCount from "./ReturnItemCount";
+import MonthlyWiseReturnInvoice from "./MonthlyWiseReturnInvoice";
 import {loadDoctors} from "../../../utils/clinicUtils";
 import {getAPI, interpolate} from "../../../utils/common";
 import {PATIENT_GROUPS, PROCEDURE_CATEGORY, PRODUCTS_API, TAXES} from "../../../constants/api";
 import InvoiceReturnForEachProcedure from "./InvoiceReturnForEachProcedure";
 import InvoiceReturnForEachProduct from "./InvoiceReturnForEachProduct";
+import InvoiceReturnForEachDoctor from "./InvoiceReturnForEachDoctor";
+import InvoiceReturnForEachPatientGroup from "./InvoiceReturnForEachPatientGroup";
+import InvoiceReturnForEachTax from "./InvoiceReturnForEachTax";
+import DailyWiseReturnInvoice from "./DailyWiseReturnInvoice"
 export default class InvoiceReturnHome extends React.Component{
     constructor(props){
         super(props);
@@ -127,17 +131,28 @@ export default class InvoiceReturnHome extends React.Component{
     render() {
         return<div>
             <h2>Return Invoice Report <Button type="primary" shape="round"
-                                         icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
-                                         style={{float: "right"}}
-                                         onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
+                                              icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
+                                              style={{float: "right"}}
+                                              onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
             </h2>
             <Card>
                 <Row gutter={16}>
                     <Col span={(24 - this.state.sidePanelColSpan)}>
                         {this.state.type == ALL_INVOICE_RETURN ?
 
-                            <AllReturnedInvoice {...this.props} {...this.state} /> : null}
+                            <AllReturnedInvoice {...this.props} {...this.state} /> : null
+                        }
 
+
+                        {this.state.type == DAILY_WISE_RETURN_INVOICE ?
+
+                            <DailyWiseReturnInvoice  {...this.props} {...this.state} /> : null
+                        }
+
+                        {this.state.type == MONTHLY_WISE_RETURN_INVOICE?
+
+                            <MonthlyWiseReturnInvoice {...this.props} {...this.state}  />:null
+                        }
                         {this.state.type == RETURN_INVOICE_FOR_EACH_PROCEDURE?
 
                             <InvoiceReturnForEachProcedure {...this.props} {...this.state}/>:null
@@ -146,15 +161,25 @@ export default class InvoiceReturnHome extends React.Component{
                         {this.state.type ==RETURN_INVOICE_FOR_EACH_PRODUCT?
 
                             <InvoiceReturnForEachProduct {...this.props} {...this.state}/>:null
+                        }
+
+                        {this.state.type == RETURN_INVOICE_FOR_EACH_DOCTOR?
+
+                            <InvoiceReturnForEachDoctor {...this.state} {...this.props}/>:null
 
                         }
-                        {this.state.type == DAILY_WISE_INVOICE ?
-                            <DayWiseReturn  {...this.props} {...this.state} /> : null}
+                        {this.state.type == RETURN_INVOICE_FOR_EACH_PATIENT_GROUPS?
 
-                        {this.state.type ==MONTHLY_WISE_INCOME?
-                            <MonthlyWiseReturn {...this.props} {...this.state}  />:null}
-                        {this.state.type== RETURN_ITEMS?
-                            <ReturnItemCount {...this.props} {...this.state}/>:null}
+                            <InvoiceReturnForEachPatientGroup {...this.state} {...this.props}/>:null
+                        }
+
+                        {this.state.type == RETURN_INVOICE_FOR_EACH_TAX?
+
+                            <InvoiceReturnForEachTax {...this.state} {...this.props}/>:null
+                        }
+
+
+
 
                     </Col>
                     <Col span={this.state.sidePanelColSpan}>
