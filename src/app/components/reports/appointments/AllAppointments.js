@@ -1,12 +1,12 @@
 import React from "react";
-import {Col, Divider, Row, Select, Statistic, Table} from "antd";
+import {Col, Divider, Row, Select, Statistic, Table,Modal} from "antd";
 import {APPOINTMENT_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {Cell, Pie, PieChart, Sector} from "recharts";
 import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
-
+const { confirm } = Modal;
 export default class AllAppointments extends React.Component {
     constructor(props) {
         super(props);
@@ -59,6 +59,7 @@ export default class AllAppointments extends React.Component {
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             exclude_cancelled: this.props.exclude_cancelled ? true : false,
+            practice:that.props.active_practiceId
         };
         // if (this.props.exclude_cancelled){
         //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
@@ -96,7 +97,24 @@ export default class AllAppointments extends React.Component {
         }
         apiParams.mail_to = mailTo;
         sendReportMail(interpolate(APPOINTMENT_REPORTS, [that.props.active_practiceId]), apiParams)
-    }
+    };
+
+    showConfirmMail = (mailTo)=>{
+        let that = this;
+        confirm({
+            title: 'Are you sure send mail?',
+            content: 'Email Id :'+ mailTo,
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                that.sendMail(mailTo);
+            },
+            onCancel() {
+                console.log('Cancel',mailTo);
+            },
+        });
+    };
 
     render() {
 
@@ -205,7 +223,7 @@ export default class AllAppointments extends React.Component {
             <h2>All Appointments Report
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
-                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                <Select onChange={(e) => this.showConfirmMail(e)} style={{width: 200}}>
                     {this.state.mailingUsersList.map(item => <Select.Option
                         value={item.email}>{item.name}</Select.Option>)}
                 </Select>

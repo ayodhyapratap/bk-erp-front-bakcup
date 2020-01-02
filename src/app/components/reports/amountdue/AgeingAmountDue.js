@@ -1,10 +1,9 @@
 import React from "react";
-import {Card, Col, Divider, Row, Select, Statistic, Table} from "antd";
-import {AMOUNT_DUE_REPORTS, APPOINTMENT_REPORTS, PATIENTS_REPORTS} from "../../../constants/api";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import {Cell, Pie, PieChart, Sector} from "recharts";
-import moment from "moment"
+import {Card, Col, Modal, Row, Select, Statistic, Table} from "antd";
+import {AMOUNT_DUE_REPORTS} from "../../../constants/api";
+import {getAPI} from "../../../utils/common";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
+const { confirm } = Modal;
 
 export default class AgeingAmountDue extends React.Component {
     constructor(props) {
@@ -77,7 +76,25 @@ export default class AgeingAmountDue extends React.Component {
         }
         apiParams.mail_to = mailTo;
         sendReportMail(AMOUNT_DUE_REPORTS, apiParams)
-    }
+    };
+
+    showConfirmMail = (mailTo)=>{
+        let that = this;
+        confirm({
+            title: 'Are you sure send mail?',
+            content: 'Email Id :'+ mailTo,
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                that.sendMail(mailTo);
+            },
+            onCancel() {
+                console.log('Cancel',mailTo);
+            },
+        });
+    };
+
     render() {
         const {report ,loading} =this.state;
         let zero_twenty_nine=0;
@@ -139,7 +156,7 @@ export default class AgeingAmountDue extends React.Component {
 
                 <h2>Ageing Amount Due <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
-                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                <Select onChange={(e) => this.showConfirmMail(e)} style={{width: 200}}>
                     {this.state.mailingUsersList.map(item => <Select.Option
                         value={item.email}>{item.name}</Select.Option>)}
                 </Select>

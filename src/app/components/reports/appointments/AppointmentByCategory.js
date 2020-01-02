@@ -1,11 +1,11 @@
 import React from "react";
-import {Col, Divider, Row, Empty, Spin, Select} from "antd";
-import {APPOINTMENT_REPORTS, PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
+import {Col, Divider, Row, Empty, Spin, Select, Modal} from "antd";
+import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {Cell, Pie, PieChart, Sector} from "recharts";
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
-
+const { confirm } = Modal;
 export default class AppointmentByCategory extends React.Component {
     constructor(props) {
         super(props);
@@ -102,6 +102,26 @@ export default class AppointmentByCategory extends React.Component {
         apiParams.mail_to = mailTo;
         sendReportMail(PATIENT_APPOINTMENTS_REPORTS, apiParams)
     }
+
+
+
+    showConfirmMail = (mailTo)=>{
+        let that = this;
+        confirm({
+            title: 'Are you sure send mail?',
+            content: 'Email Id :'+ mailTo,
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                that.sendMail(mailTo);
+            },
+            onCancel() {
+                console.log('Cancel',mailTo);
+            },
+        });
+    };
+
     render() {
 
         const {appointmentCategory} =this.state;
@@ -178,7 +198,7 @@ export default class AppointmentByCategory extends React.Component {
             <h2>Appointment By Category
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
-                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                <Select onChange={(e) => this.showConfirmMail(e)} style={{width: 200}}>
                     {this.state.mailingUsersList.map(item => <Select.Option
                         value={item.email}>{item.name}</Select.Option>)}
                 </Select>

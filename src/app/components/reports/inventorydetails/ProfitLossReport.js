@@ -1,5 +1,5 @@
 import React from "react";
-import {Table,Divider,Statistic} from "antd";
+import {Table, Divider, Statistic, Spin, Empty} from "antd";
 import {INVENTORY_RETAILS_REPORT} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import moment from "moment";
@@ -39,8 +39,14 @@ export default class ProfitLossReport extends React.Component {
             loading:true,
         });
         let successFn = function (data) {
+            let modifiedData = [];
+            data.forEach(function(row){
+                let newRow = {...row};
+                newRow.profit = (row.total - row.cost - row.tax).toFixed(2);
+                modifiedData.push(newRow);
+            })
             that.setState({
-                inventoryReports:data,
+                inventoryReports:modifiedData,
                 loading: false
             });
 
@@ -169,32 +175,30 @@ export default class ProfitLossReport extends React.Component {
         }];
 
         const renderCustomBarLabel = ({ payload, x, y, width, height, value }) => {
-            return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value.toFixed(2)}</text>;
+            return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value}</text>;
         };
         return <div>
-            {/*<h2>Monthly Appointment Count*/}
-            {/*    /!*<Button.Group style={{float: 'right'}}>*!/*/}
-            {/*    /!*<Button><Icon type="mail"/> Mail</Button>*!/*/}
-            {/*    /!*<Button><Icon type="printer"/> Print</Button>*!/*/}
-            {/*    /!*</Button.Group>*!/*/}
-            {/*</h2>*/}
+            <h2>Profit Loss</h2>
+            <Spin size="large" spinning={this.state.loading}>
+                {inventoryReportsData.length>0?
+                    <ComposedChart width={1000} height={400} data={inventoryReportsData}
+                                   margin={{top: 20, right: 20, bottom: 20, left: 20}}>
 
-            <ComposedChart width={1000} height={400} data={inventoryReportsData}
-                           margin={{top: 20, right: 20, bottom: 20, left: 20}}>
+                        <XAxis dataKey="date" tickFormatter={(value) => {
+                            return moment(value).format('DD MMM')
+                        }}
+                               label= {{value:"Data Range", offset:0, margin:{top:10}, position:"insideBottom"}} />
+                        {/*</XAxis>*/}
 
-                <XAxis dataKey="date" tickFormatter={(value) => {
-                    return moment(value).format('DD MMM')
-                }}
-                       label= {{value:"Data Range", offset:0, margin:{top:10}, position:"insideBottom"}} />
-                {/*</XAxis>*/}
+                        <YAxis label={{ value: 'Sales Profit', angle: -90, position: 'insideLeft' }} />
+                        <YAxis />
+                        <Tooltip />
+                        {/*<Legend />*/}
+                        <Bar dataKey='profit' barSize={35} fill='#0059b3' stroke="#0059b3" label={renderCustomBarLabel}/>
+                    </ComposedChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
 
-                <YAxis label={{ value: 'Sales Profit', angle: -90, position: 'insideLeft' }} />
-                <YAxis />
-                <Tooltip />
-                {/*<Legend />*/}
-                <Bar dataKey='tax' barSize={35} fill='#0059b3' stroke="#0059b3" label={renderCustomBarLabel}/>
-            </ComposedChart>
 
+            </Spin>
             <Table loading={this.state.loading} columns={SummaryColumns} pagination={false} dataSource={inventorySummary}/>
 
             <Table loading={this.state.loading} columns={DetailColumns} pagination={false} dataSource={inventoryReportsData}/>

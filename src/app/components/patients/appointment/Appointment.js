@@ -217,7 +217,7 @@ class Appointment extends React.Component {
                 treatmentNotes[treatmentNote.id] = treatmentNote.name
             })
         }
-        const categories = {1: "fast", 2: "Full Stomach", 3: "No Liquids"}
+        // const categories = {1: "fast", 2: "Full Stomach", 3: "No Liquids"}
         const columns = [{
             title: 'Schedule Time',
             key: 'name',
@@ -264,7 +264,7 @@ class Appointment extends React.Component {
             title: 'Category',
             key: 'category',
             render: (text, record) => (
-                <span> {categories[record.category]}</span>
+                <span> {record.category?record.category_data.name:'--'}</span>
             )
         }, {
             title: 'NotifyByEmail',
