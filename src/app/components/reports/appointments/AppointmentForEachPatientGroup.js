@@ -1,11 +1,11 @@
 import React from "react";
-import {Divider, Statistic, Table, Row, Col, Spin, Empty, Select} from "antd";
+import {Divider, Statistic, Table, Row, Col, Spin, Empty, Select, Modal} from "antd";
 import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import {PieChart, Tooltip, Pie, Sector, Cell} from 'recharts';
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
-
+const { confirm } = Modal;
 
 export default class AppointmentForEachPatientGroup extends React.Component {
     constructor(props) {
@@ -100,6 +100,23 @@ export default class AppointmentForEachPatientGroup extends React.Component {
         apiParams.mail_to = mailTo;
         sendReportMail(PATIENT_APPOINTMENTS_REPORTS, apiParams)
     }
+
+    showConfirmMail = (mailTo)=>{
+        let that = this;
+        confirm({
+            title: 'Are you sure send mail?',
+            content: 'Email Id :'+ mailTo,
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                that.sendMail(mailTo);
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
+    };
     render() {
         const {appointmentGroup} =this.state;
         const appointmentGroupData = [];
@@ -172,7 +189,7 @@ export default class AppointmentForEachPatientGroup extends React.Component {
             <h2>Appointment For Each Patient Group
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
-                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                <Select onChange={(e) => this.showConfirmMail(e)} style={{width: 200}}>
                     {this.state.mailingUsersList.map(item => <Select.Option
                         value={item.email}>{item.name}</Select.Option>)}
                 </Select>

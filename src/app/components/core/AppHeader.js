@@ -29,19 +29,21 @@ class AppHeader extends React.Component {
     }
 
     searchPatient = (value) => {
-        let that=this;
-        this.setState({
-            searchPatientString: value
+        let that = this;
+        this.setState(function (prevState) {
+            return {
+                searchPatientString: value
+            }
         });
         let successFn = function (data) {
             that.setState(function (prevState) {
-                if(prevState.searchPatientString == value)
+                if (prevState.searchPatientString == value)
                     if (data.current > 1) {
                         return {
                             patientListData: [...prevState.patientListData, ...data.results],
 
                         }
-                    }else {
+                    } else {
                         return {
                             patientListData: [...data.results],
 
@@ -51,58 +53,58 @@ class AppHeader extends React.Component {
         };
         let errorFn = function (data) {
             that.setState({
-                searchPatientString:null,
+                searchPatientString: null,
             })
         };
-        if (value){
+        if (value) {
             getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
         }
 
     };
 
-    setUserCredentials(email,password) {
+    setUserCredentials(email, password) {
         let that = this;
         let msg = startLoadingMessage("Waiting for authentication from server...");
         sessionStorage.removeItem('token');
         let reqData = {
-            email:email ,
+            email: email,
             password: password
         };
         let successFn = function (data) {
             if (data.success) {
                 stopLoadingMessage(msg, SUCCESS_MSG_TYPE, " Authentication Successfully!!");
                 sessionStorage.setItem("token", data.token);
-            }if (sessionStorage.getItem('token')){
-                window.open('/task/');
             }
-            else {
-                stopLoadingMessage(msg, ERROR_MSG_TYPE,"Authentication failed. User not found.");
+            if (sessionStorage.getItem('token')) {
+                window.open('/task/');
+            } else {
+                stopLoadingMessage(msg, ERROR_MSG_TYPE, "Authentication failed. User not found.");
             }
 
         };
         let errorFn = function () {
 
         };
-        if (sessionStorage.getItem('token') ==null){
+        if (sessionStorage.getItem('token') == null) {
             postOuterAPI(CREDENTIALS, reqData, successFn, errorFn);
         }
 
     };
 
-    switchPortal=()=>{
-        let  that=this;
-        let successFn=function (data) {
-            if (data){
-                that.setUserCredentials(data.login,data.password);
+    switchPortal = () => {
+        let that = this;
+        let successFn = function (data) {
+            if (data) {
+                that.setUserCredentials(data.login, data.password);
                 // that.setUserCredentials(data.email,data.password);
             }
 
         };
-        let errorFn=function () {
-            displayMessage(ERROR_MSG_TYPE,"Something went wrong.");
+        let errorFn = function () {
+            displayMessage(ERROR_MSG_TYPE, "Something went wrong.");
         };
 
-        getAPI(interpolate(SAVE_CREDENTIALS,[that.props.user.id]),successFn,errorFn);
+        getAPI(interpolate(SAVE_CREDENTIALS, [that.props.user.id]), successFn, errorFn);
     };
 
 
@@ -110,7 +112,7 @@ class AppHeader extends React.Component {
         if (event) {
             this.props.history.push("/patient/" + event + "/profile");
             this.setState({
-                searchPatientString:null,
+                searchPatientString: null,
             })
             let that = this;
             let successFn = function (data) {
@@ -135,7 +137,7 @@ class AppHeader extends React.Component {
                 </Menu.Item>
                 <Menu.Divider/>
                 <Menu.Item key={"website"} onClick={this.switchPortal}>
-                        <small>Switch to Tasks ></small>
+                    <small>Switch to Tasks ></small>
                 </Menu.Item>
                 <Menu.Divider/>
                 <Menu.Item key="logout">
@@ -172,7 +174,7 @@ class AppHeader extends React.Component {
                                                 <Icon type="user"/>}
                                         </Avatar>)}
 
-                                    title={option.user.first_name + " (" + (option.custom_id?option.custom_id:option.user.id) + ")"}
+                                    title={option.user.first_name + " (" + (option.custom_id ? option.custom_id : option.user.id) + ")"}
                                     description={that.props.activePracticePermissions.PatientPhoneNumber ? option.user.mobile : hideMobile(option.user.mobile)}
                                 />
                             </List.Item>

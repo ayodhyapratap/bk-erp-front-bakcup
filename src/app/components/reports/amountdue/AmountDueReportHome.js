@@ -18,13 +18,10 @@ export default class AmountDueReportHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            startDate: this.props.startDate,
-            endDate: this.props.endDate,
             sidePanelColSpan: 4,
             patientGroup:[],
             practiceDoctors:[],
             type: 'ALL',
-            loading:true,
             advancedOptionShow: true,
         };
         loadDoctors(this);
@@ -34,18 +31,6 @@ export default class AmountDueReportHome extends React.Component {
         this.loadPatientGroup();
     }
 
-    componentWillReceiveProps(newProps) {
-        let that = this;
-        if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
-            this.setState({
-                startDate: newProps.startDate,
-                endDate: newProps.endDate
-            }, function () {
-                // if (this.state.type==NEW_PATIENTS){
-                //     this.loadNewPatient();
-                // }
-            })
-    }
     loadPatientGroup(){
         let that=this;
         let successFn =function (data) {
@@ -82,25 +67,28 @@ export default class AmountDueReportHome extends React.Component {
         })
     };
     render() {
+        let {type, sidePanelColSpan, advancedOptionShow, patientGroup, practiceDoctors} = this.state;
         return <div>
             <h2>Amount Due Report <Button type="primary" shape="round"
-                                        icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
+                                        icon={sidePanelColSpan ? "double-right" : "double-left"}
                                         style={{float: "right"}}
-                                        onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
+                                        onClick={() => this.changeSidePanelSize(sidePanelColSpan)}>Panel</Button>
             </h2>
             <Card>
                 <Row gutter={16}>
-                    <Col span={(24 - this.state.sidePanelColSpan)}>
+                    <Col span={(24 - sidePanelColSpan)}>
 
-                        {this.state.type==TOTAL_AMOUNT_DUE?<TotalAmountDue {...this.state} {...this.props}/>:null}
-                        {this.state.type==AGEING_AMOUNT_DUE?<AgeingAmountDue {...this.state} {...this.props}/>:null}
-                        {this.state.type==AMOUNT_DUE_PER_DOCTOR?<AmountDuePerDoctor {...this.state} {...this.props}/>:null}
+                        {type==TOTAL_AMOUNT_DUE ? <TotalAmountDue {...this.state} {...this.props}/>:null}
+
+                        {type==AGEING_AMOUNT_DUE ? <AgeingAmountDue {...this.state} {...this.props}/>:null}
+
+                        {type==AMOUNT_DUE_PER_DOCTOR ? <AmountDuePerDoctor {...this.state} {...this.props}/>:null}
 
                         {/*{this.state.type==AMOUNT_DUE_PER_PROCEDURE?<AmountDuePerProcedure {...this.state} {...this.props}/>:null}*/}
                         {/*{this.state.type==UNSETTLED_INVOICE?<UnsettledInvoice {...this.state} {...this.props}/>:null}*/}
 
                     </Col>
-                    <Col span={this.state.sidePanelColSpan}>
+                    <Col span={sidePanelColSpan}>
                         <Radio.Group buttonStyle="solid" defaultValue={TOTAL_AMOUNT_DUE} onChange={(value)=>this.onChangeHandle('type',value)}>
                             <h2>Patients</h2>
                             <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
@@ -120,14 +108,14 @@ export default class AmountDueReportHome extends React.Component {
                         <br/>
                         {this.state.type == TOTAL_AMOUNT_DUE || this.state.type == AGEING_AMOUNT_DUE?<>
 
-                        {this.state.advancedOptionShow?<>
+                        {advancedOptionShow?<>
                             <a href={'#'} onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options</a>
                             <Col> <br/>
                                 {this.state.type != AGEING_AMOUNT_DUE ?<>
                                     <h4>Patient Groups</h4>
                                     <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Patient Groups"
                                             onChange={(value)=>this.handleChangeOption('patient_groups',value)}>
-                                        {this.state.patientGroup.map((item) => <Select.Option value={item.id}>
+                                        {patientGroup.map((item) => <Select.Option value={item.id}>
                                             {item.name}</Select.Option>)}
                                     </Select>
                                     <br/>
@@ -136,7 +124,7 @@ export default class AmountDueReportHome extends React.Component {
                                 <h4>Doctors</h4>
                                 <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
                                         onChange={(value) => this.handleChangeOption('doctors', value)}>
-                                    {this.state.practiceDoctors.map((item) => <Select.Option value={item.id}>
+                                    {practiceDoctors.map((item) => <Select.Option value={item.id}>
                                         {item.user.first_name}</Select.Option>)}
                                 </Select>
 

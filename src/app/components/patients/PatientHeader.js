@@ -2,7 +2,6 @@ import React from "react";
 import {
     Avatar,
     Button,
-    Drawer,
     Icon,
     Layout,
     Tooltip,
@@ -17,10 +16,9 @@ import {
 import PatientSelection from "./PatientSelection";
 import {Link} from "react-router-dom";
 import {hashCode, intToRGB, patientSettingMenu} from "../../utils/clinicUtils";
-import {getAPI, interpolate, makeFileURL} from "../../utils/common";
-import {AGENT_WALLET, PATIENT_PENDING_AMOUNT} from "../../constants/api";
+import {makeFileURL} from "../../utils/common";
 
-const {Header, Content, Sider} = Layout;
+const {Header} = Layout;
 
 
 class PatientHeader extends React.Component {

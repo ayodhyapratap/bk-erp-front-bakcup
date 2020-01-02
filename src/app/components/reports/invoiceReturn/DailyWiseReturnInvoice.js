@@ -1,5 +1,5 @@
 import React from "react";
-import {Bar, ComposedChart, Tooltip, XAxis, YAxis} from "recharts";
+import {Bar, ComposedChart, LabelList, Tooltip, XAxis, YAxis} from "recharts";
 import moment from "moment";
 import {Empty, Spin} from "antd";
 import CustomizedTable from "../../common/CustomizedTable";
@@ -159,7 +159,12 @@ export default class DailyWiseReturnInvoice extends React.Component{
 
 
 
-
+        const renderCustomBarLabel = ({ payload, x, y, width, height, value }) => {
+            return (<text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>
+                {/*{value.toFixed(2)}*/}
+                hello
+            </text>);
+        };
 
         return (
             <div>
@@ -177,7 +182,9 @@ export default class DailyWiseReturnInvoice extends React.Component{
                             <YAxis label={{ value: 'Return Invoice(INR)', angle: -90, position: 'insideLeft' }} />
                             <Tooltip />
                             {/*<Legend />*/}
-                            <Bar dataKey='cost' barSize={35} fill='#0059b3' stroke="#0059b3" />
+                            <Bar dataKey='cost' barSize={35} fill='#0059b3' stroke="#0059b3">
+                                <LabelList dataKey={'cost'} />
+                            </Bar>
                         </ComposedChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
                 </Spin>
 
