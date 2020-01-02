@@ -1,5 +1,19 @@
 import React from "react";
-import {Button, Card, Col, Divider, InputNumber, List, Popconfirm, Row, Select, DatePicker, Spin} from 'antd';
+import {
+    Button,
+    Card,
+    Col,
+    Divider,
+    InputNumber,
+    List,
+    Popconfirm,
+    Row,
+    Select,
+    DatePicker,
+    Spin,
+    Input,
+    Form
+} from 'antd';
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {
     ACCEPT_PAYMENT,
@@ -84,11 +98,9 @@ class AddPaymentForm extends React.Component {
         let totalPayingAmount = 0;
         this.setState(function (prevState) {
             editPayment.forEach(function (inv) {
-                console.log("Item", inv);
                 addedInvoicesId[inv.invoice] = true;
                 addedInvoice.push({...inv, ...inv.invoice_data});
                 totalPayingAmount += inv.pay_amount + inv.pay_amount_wallet;
-
             }, function () {
                 that.calculateInvoicePayments();
                 that.setPaymentAmount(totalPayingAmount);
@@ -98,8 +110,6 @@ class AddPaymentForm extends React.Component {
                 addedInvoiceId: addedInvoicesId,
             }
         });
-
-
     };
     loadAvailableAdvance = () => {
         let that = this;
@@ -256,6 +266,11 @@ class AddPaymentForm extends React.Component {
             selectedPaymentMode: e
         })
     };
+    changeNotes = (e) => {
+        this.setState({
+            notes: e
+        })
+    };
     selectedDate = (value) => {
         let that = this;
         that.setState({
@@ -276,6 +291,7 @@ class AddPaymentForm extends React.Component {
             "bank": "",
             "number": 0,
             "is_active": true,
+            notes: that.state.notes,
             "is_cancelled": false,
             "practice": that.props.active_practiceId,
             "patient": that.props.match.params.id,
@@ -506,6 +522,9 @@ class AddPaymentForm extends React.Component {
 
                                 </Col>
                                 <Col span={12}>
+                                    <Input.TextArea row={2} placeholder="Notes..." size={'small'} onChange={(value)=>this.changeNotes(value)}>
+                                        {this.state.notes}
+                                    </Input.TextArea>
                                     <Select style={{width: '100%'}} value={this.state.selectedPaymentMode}
                                             onChange={this.changeSelectedPaymentMode}>
                                         {this.state.paymentModes.map(mode => <Select.Option value={mode.id}

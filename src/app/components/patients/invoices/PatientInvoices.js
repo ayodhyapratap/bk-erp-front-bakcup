@@ -421,7 +421,10 @@ function invoiceFooter(presc) {
                     <b>{presc.practice.name} </b>
                 </Tooltip>
             </Tag> : null}
+            {presc.notes ? <p>Notes: {presc.notes}</p> : null}
         </p>
+
+
     }
     return null
 }
@@ -523,13 +526,14 @@ function InvoiceCard(invoice, that) {
                             tax_value: 0,
                             total: invoice.total
                         }]}
-                        footer={() => invoiceFooter({practice: invoice.practice_data})}/> :
+                        footer={() => invoiceFooter({practice: invoice.practice_data, notes: invoice.notes})}/> :
                     <Table
                         bordered={true}
                         pagination={false}
                         columns={columns}
                         dataSource={[...tableObjects, ...invoice.inventory, ...invoice.procedure]}
-                        footer={() => invoiceFooter({practice: invoice.practice_data})}/>}
+                        footer={() => invoiceFooter({practice: invoice.practice_data, notes: invoice.notes})}/>}
+
             </Col>
         </Row>
 

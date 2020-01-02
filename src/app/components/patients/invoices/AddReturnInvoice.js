@@ -355,13 +355,14 @@ class AddReturnInvoice extends React.Component {
                     invoice: this.props.editInvoice.id,
                     procedure: [],
                     inventory: [],
+                    notes: values.notes,
                     patient: that.props.match.params.id,
                     staff: this.props.editInvoice.staff_data ? this.props.editInvoice.staff_data.id : null,
                     prescription: that.state.selectedPrescriptions,
                     date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
                     with_tax: this.state.return_with_tax ? true : false,
                     cash_return: values.cash_return,
-                    advance_value : this.state.returnCashAvailable - values.cash_return || 0
+                    advance_value : this.state.returnCashAvailable - values.cash_return || 0,
                 };
                 that.state.tableFormValues.forEach(function (item) {
                     item.unit = values.unit[item._id];
@@ -788,6 +789,7 @@ class AddReturnInvoice extends React.Component {
                                             <Card>
                                                 <Row gutter={16}>
                                                     <Col span={6}>
+
                                                         <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
                                                         <DatePicker value={this.state.selectedDate}
                                                                     disabled
@@ -802,7 +804,7 @@ class AddReturnInvoice extends React.Component {
                                                         </Checkbox>
                                                     </Col>
                                                     <Col span={8}>
-                                                        <Form.Item label={"Returned Cash "}>
+                                                        <Form.Item label={"Returned Cash "} >
                                                             {getFieldDecorator('cash_return',
                                                             )
                                                             (<InputNumber min={0} max={this.state.returnCashAvailable}
@@ -812,6 +814,17 @@ class AddReturnInvoice extends React.Component {
                                                         </Form.Item>
                                                     </Col>
                                                     <Col span={10}>
+                                                        <Form.Item
+                                                            label={"Notes"}
+                                                            key={`notes`}
+                                                            >
+                                                            {getFieldDecorator(`notes`, {
+                                                                initialValue: this.state.tableFormValues.notes,
+                                                                validateTrigger: ['onChange', 'onBlur'],
+                                                            })(
+                                                                <Input.TextArea row={2} placeholder="Notes..." size={'small'} style={{width:'100%'}}/>
+                                                            )}
+                                                        </Form.Item>
                                                         <Form.Item {...formItemLayoutWithOutLabel}
                                                                    style={{marginBottom: 0, float: 'right'}}>
                                                             <Button type="primary" htmlType="submit"

@@ -14,7 +14,7 @@ import {
     Upload,
     Popconfirm,
     InputNumber,
-    Popover,
+    Popover, Row, Col,
 } from "antd";
 import {
     FILE_UPLOAD_API,
@@ -81,8 +81,8 @@ class EditPatientDetails extends React.Component {
             [PATIENT_SOURCE_CONFIG_PARAM]: [],
             [SMS_LANGUAGE_CONFIG_PARAM]: [],
             [FAMILY_RELATION_CONFIG_PARAM]: [],
-            [GENDER_CONFIG_PARAM]: []
-            // patientDetails:{},
+            [GENDER_CONFIG_PARAM]: [],
+            number:{}
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -265,6 +265,7 @@ class EditPatientDetails extends React.Component {
 
 
                 };
+
                 if (values.anniversary) {
                     reqData.anniversary = moment(values.anniversary).format("YYYY-MM-DD");
                 }
@@ -276,8 +277,10 @@ class EditPatientDetails extends React.Component {
                     reqData.is_age = true;
                     reqData.dob = moment().subtract(values.age, 'years').format("YYYY-MM-DD");
                 }
-                if (values.custom_id == "BK") {
+                if (!values.custom_id) {
                     reqData.custom_id = null;
+                } else {
+                    reqData.custom_id = values.custom_id_pre + values.custom_id;
                 }
                 let key = 'image';
                 if (reqData[key] && reqData[key].file && reqData[key].file.response)
@@ -287,6 +290,7 @@ class EditPatientDetails extends React.Component {
                 delete reqData.referer_code;
                 delete reqData.mobile;
                 delete reqData.age;
+                delete reqData.custom_id_pre;
                 that.setState({
                     loading: true
                 });
@@ -418,12 +422,14 @@ class EditPatientDetails extends React.Component {
         putAPI(interpolate(PATIENT_PROFILE, [id]), reqData, successFn, errorFn)
     };
 
-    // onFileEnable=(e)=>{
-    //     this.setState({
-    //         file_enable:!this.state.file_enable,
-    //     })
-    // }
-
+    handleNumberChange = value => {
+        this.setState({
+            number: {
+                ...numberValidation(value),
+                value,
+            },
+        });
+    }
     render() {
         let that = this;
         const {getFieldDecorator} = this.props.form;
@@ -470,6 +476,8 @@ class EditPatientDetails extends React.Component {
                 }
             },
         };
+        const tips =
+            'Only numbers are allowed.';
         return (
             <Form onSubmit={that.handleSubmit}>
                 <Card title={<span>{that.props.currentPatient ? "Edit Profile" : "Add Patient"}&nbsp;&nbsp;<Link
@@ -538,17 +546,41 @@ class EditPatientDetails extends React.Component {
                         (<Input placeholder="Patient Name"/>)
                         }
                     </Form.Item>
+                    <Row>
+                        <Col span={8}>
+                            <Form.Item label="Patient Id"
+                                       labelCol={{span: 18}}
+                                       wrapperCol={{span: 6}}
+                            >
+                                {getFieldDecorator('custom_id_pre', {
+                                    initialValue: this.state.patientDetails && this.state.patientDetails.is_agent ? 'AD' : 'BK'
+                                })
+                                (<Select>
+                                    <Select.Option value="BK">BK</Select.Option>
+                                    <Select.Option value="AD">AD</Select.Option>
+                                </Select>)
+                                }
+                            </Form.Item>
+                        </Col>
+                        <Col span={16}>
+                            <Form.Item labelCol={{span: 0}}
+                                       wrapperCol={{span: 18}}
+                                       validateStatus={this.state.number.validateStatus}
+                                       help={this.state.number.errorMsg || tips}
+                            >
+                                {getFieldDecorator('custom_id', {
+                                    initialValue: this.state.patientDetails ? this.state.patientDetails.custom_id.replace(/\D/g, '') : ''
+                                })
+                                (<InputNumber
 
-                    <Form.Item label="Patient Id" {...formItemLayout}>
-                        {getFieldDecorator('custom_id', {
-                            initialValue: this.state.patientDetails ? this.state.patientDetails.custom_id.replace(/\D/g, '') : ''
-                        })
-                        (<InputNumber formatter={value => `BK${value}`}
-                                      style={{width: '100%'}}
-                                      parser={value => value.replace('BK', '')} placeholder="Patient Id"/>)
-                        }
-                    </Form.Item>
-
+                                    style={{width: '100%'}}
+                                    placeholder="Patient Id"
+                                    onChange={this.handleNumberChange}
+                                />)
+                                }
+                            </Form.Item>
+                        </Col>
+                    </Row>
 
                     {this.state.source && this.state.source == INPUT_FIELD ?
                         <Form.Item key={'source_extra'} label={"Source"}  {...formItemLayout}>
@@ -861,3 +893,16 @@ class EditPatientDetails extends React.Component {
 }
 
 export default Form.create()(EditPatientDetails);
+
+function numberValidation(number) {
+    if (isNaN(number)) {
+        return {
+            validateStatus: 'error',
+            errorMsg: 'Patient ID can only be numerical value.',
+        };
+    }
+    return {
+        validateStatus: 'success',
+        errorMsg: null,
+    };
+}

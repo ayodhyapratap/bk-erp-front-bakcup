@@ -113,6 +113,7 @@ class AddOrConsumeStock extends React.Component {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
             item_type: type,
+            page
         }
         if (that.state.searchStrings[type]) {
             params.item_name = that.state.searchStrings[type]
@@ -563,7 +564,7 @@ class AddOrConsumeStock extends React.Component {
                                             </a>
                                             <Divider type={"vertical"}/>
                                             <a style={{margin: 5}} disabled={!this.state.items[itemType.value].next}
-                                               onClick={() => this.loadItemsList(itemType.value, this.state.items[itemType.value].previous)}>
+                                               onClick={() => this.loadItemsList(itemType.value, this.state.items[itemType.value].next)}>
                                                 Next<Icon type="right"/>
                                             </a>
                                         </div> : null}

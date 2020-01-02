@@ -342,6 +342,7 @@ function invoiceFooter(presc) {
                     <b>{presc.practice_data.name} </b>
                 </Tooltip>
             </Tag> : null}
+            {presc.notes ? <p>Notes: {presc.notes}</p> : null}
         </p>
     }
     return null

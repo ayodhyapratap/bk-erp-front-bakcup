@@ -61,7 +61,7 @@ class Addinvoicedynamic extends React.Component {
             selectedDoctor: {},
             tempValues: {},
             offers: [],
-            loading: true,
+            loading: false,
             taxes_list: [],
             promoCode: '',
             appliedPromoCodeDiscount: null,
@@ -148,6 +148,7 @@ class Addinvoicedynamic extends React.Component {
                 tableFormValues: tableValues,
                 selectedDate: moment(invoice.date).isValid() ? moment(invoice.date) : null,
                 stocks: stocks,
+                notes:invoice.notes
             }
         })
 
@@ -404,6 +405,7 @@ class Addinvoicedynamic extends React.Component {
                     procedure: [],
                     inventory: [],
                     prescription: that.state.selectedPrescriptions,
+                    notes: values.notes,
                     date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
                 };
                 that.state.tableFormValues.forEach(function (item) {
@@ -1221,11 +1223,22 @@ class Addinvoicedynamic extends React.Component {
                                     <Affix offsetBottom={0}>
                                         <Card>
                                             <Col span={8}>
-
+                                                <Form.Item
+                                                    label={"Notes"}
+                                                    key={`notes`}
+                                                    {...formItemLayout}>
+                                                    {getFieldDecorator(`notes`, {
+                                                        initialValue: this.state.notes,
+                                                        validateTrigger: ['onChange', 'onBlur'],
+                                                    })(
+                                                        <Input.TextArea row={2} placeholder="unit" size={'small'}/>
+                                                    )}
+                                                </Form.Item>
                                                 <h3>Grand
                                                     Total: <b>{this.state.tableFormValues.reduce(function (total, item) {
                                                         return (parseFloat(total) + (item && item.total ? item.total : 0)).toFixed(2);
-                                                    }, 0)}</b></h3>
+                                                    }, 0)}</b>
+                                                </h3>
                                             </Col>
                                             <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
                                             <DatePicker value={this.state.selectedDate}
