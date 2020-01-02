@@ -1,6 +1,21 @@
 import React from "react";
-import {Button, Card, Col, Icon, List, Modal, Radio, Row, Checkbox, Menu, Dropdown, Input, Popconfirm} from "antd";
-import {getAPI, postAPI, putAPI, interpolate, makeFileURL,displayMessage} from "../../../utils/common";
+import {
+    Button,
+    Card,
+    Col,
+    Icon,
+    List,
+    Modal,
+    Radio,
+    Row,
+    Checkbox,
+    Menu,
+    Dropdown,
+    Input,
+    Popconfirm,
+    Affix, Tag
+} from "antd";
+import {getAPI, postAPI, putAPI, interpolate, makeFileURL, displayMessage} from "../../../utils/common";
 import {
     ALL_PATIENT_FILES,
     EMR_FILETAGS,
@@ -37,7 +52,7 @@ class PatientFiles extends React.Component {
             medicalCertificate: [],
             visible: false,
             filesData: {},
-            mailedfiles:[]
+            mailedfiles: []
         };
         this.loadData = this.loadData.bind(this);
         this.loadMedicalCertificate = this.loadMedicalCertificate.bind(this);
@@ -56,17 +71,32 @@ class PatientFiles extends React.Component {
         })
         let successFn = function (data) {
             that.setState(function (prevState) {
+                let lastPatient = null;
                 if (data.current == 1) {
+                    let newData = data.results.map(file => {
+                        if (moment(file.created_at).format('YYYYMMDD') != moment(lastPatient).format('YYYYMMDD')) {
+                            lastPatient = moment(file.created_at);
+                            return {...file, newDate: true}
+                        }
+                        return {...file, newDate: false}
+                    });
                     return {
-                        files: [...data.results],
+                        files: newData,
                         total: data.count,
-                        loadMoreFiles:data.next,
+                        loadMoreFiles: data.next,
                         loading: false,
                     }
                 } else {
+                    let newData = data.results.map(file => {
+                        if (moment(file.created_at).format('YYYYMMDD') != moment(lastPatient).format('YYYYMMDD')) {
+                            lastPatient = moment(file.created_at);
+                            return {...file, newDate: true}
+                        }
+                        return {...file, newDate: false}
+                    });
                     return {
-                        files: [...prevState.files, ...data.results],
-                        loadMoreFiles:data.next,
+                        files: [...prevState.files, ...newData],
+                        loadMoreFiles: data.next,
                         loading: false
                     }
                 }
@@ -121,6 +151,7 @@ class PatientFiles extends React.Component {
         });
         let successFn = function (data) {
             if (data.current == 1) {
+
                 that.setState({
                     total: data.count,
                     medicalCertificate: data.results,
@@ -147,55 +178,57 @@ class PatientFiles extends React.Component {
         // }
         let errorFn = function () {
             that.setState({
-                loading:false
+                loading: false
             })
 
         }
-        if(this.props.currentPatient){
-            getAPI(interpolate(MEDICAL_CERTIFICATE_API, [this.props.active_practiceId,this.props.currentPatient.id ,page]), successFn, errorFn);
-        }if(this.props.showAllClinic && this.props.currentPatient){
-            getAPI(interpolate(ALL_MEDICAL_CERITICATE_API ,[this.props.currentPatient.id ,page]), successFn, errorFn);
-        }else{
-            getAPI(interpolate(ALL_MEDICAL_CERITICATE_API ,[this.props.active_practiceId ,page]), successFn, errorFn);
+        if (this.props.currentPatient) {
+            getAPI(interpolate(MEDICAL_CERTIFICATE_API, [this.props.active_practiceId, this.props.currentPatient.id, page]), successFn, errorFn);
+        }
+        if (this.props.showAllClinic && this.props.currentPatient) {
+            getAPI(interpolate(ALL_MEDICAL_CERITICATE_API, [this.props.currentPatient.id, page]), successFn, errorFn);
+        } else {
+            getAPI(interpolate(ALL_MEDICAL_CERITICATE_API, [this.props.active_practiceId, page]), successFn, errorFn);
         }
 
     }
 
-    loadMailedFiles=(page = 1)=>{
-        let that =this;
+    loadMailedFiles = (page = 1) => {
+        let that = this;
         let successFn = function (data) {
             that.setState(function (prevState) {
                 if (data.current == 1) {
                     return {
                         files: [...data.results],
                         total: data.count,
-                        loadMoreFiles:data.next,
+                        loadMoreFiles: data.next,
                         loading: false,
                     }
                 } else {
                     return {
                         files: [...prevState.files, ...data.results],
-                        loadMoreFiles:data.next,
+                        loadMoreFiles: data.next,
                         loading: false
                     }
                 }
 
             })
         }
-        let errorFn=function(){
+        let errorFn = function () {
 
         }
         let params = {
-            mailed:true,
-            page:page,
-            practice : this.props.active_practiceId,
+            mailed: true,
+            page: page,
+            practice: this.props.active_practiceId,
         }
-        if(this.props.currentPatient){
-          params.patient = this.props.currentPatient.id;
-        }if(this.props.showAllClinic && this.props.currentPatient){
+        if (this.props.currentPatient) {
+            params.patient = this.props.currentPatient.id;
+        }
+        if (this.props.showAllClinic && this.props.currentPatient) {
             delete (params.practice)
         }
-        getAPI(PATIENT_MAILEDFILES, successFn,errorFn,params);
+        getAPI(PATIENT_MAILEDFILES, successFn, errorFn, params);
     }
 
     triggerAddModal(option) {
@@ -261,6 +294,7 @@ class PatientFiles extends React.Component {
             that.loadData();
         })
     }
+
     deleteMedicalCertificate(item) {
         let that = this;
         let reqData = {
@@ -278,17 +312,18 @@ class PatientFiles extends React.Component {
         };
         postAPI(interpolate(MEDICAL_CERTIFICATE_API, [that.props.active_practiceId]), reqData, successFn, errorFn);
     }
-    deleteFile(item){
-        let that= this;
-        let reqData={
-            id:item.id,
-            patient:item.patient,
-            is_active:false
+
+    deleteFile(item) {
+        let that = this;
+        let reqData = {
+            id: item.id,
+            patient: item.patient,
+            is_active: false
         }
-        let successFn =function(data){
-                that.loadData();
+        let successFn = function (data) {
+            that.loadData();
         }
-        let errorFn = function(){
+        let errorFn = function () {
             displayMessage(ERROR_MSG_TYPE, "Please Select Patient.")
 
         }
@@ -367,36 +402,37 @@ class PatientFiles extends React.Component {
         );
         const defaultFields = [{key: 'is_active', value: true}, {
             key: 'patient',
-            value: this.props.currentPatient ?this.props.currentPatient.id:null
+            value: this.props.currentPatient ? this.props.currentPatient.id : null
         }, {key: 'practice', value: this.props.active_practiceId}]
 
 
         if (this.props.match.params.id) {
             return <Card title="Files"
-                     extra={<Button.Group>
-                           <Link to={"/patient/" + this.props.match.params.id + "/emr/create-medicalCertificate"}> <Button
-                                type="primary">
-                                <Icon type="plus"/>&nbsp;Add Medical Certificate</Button> </Link>
+                         extra={<Button.Group>
+                             <Link to={"/patient/" + this.props.match.params.id + "/emr/create-medicalCertificate"}>
+                                 <Button
+                                     type="primary">
+                                     <Icon type="plus"/>&nbsp;Add Medical Certificate</Button> </Link>
 
-                            <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft">
-                                <Button><Icon type="plus"/>AddFile/remove</Button>
-                            </Dropdown>
+                             <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft">
+                                 <Button><Icon type="plus"/>AddFile/remove</Button>
+                             </Dropdown>
 
-                            <Button onClick={() => this.triggerAddModal(true)}><Icon type="plus"/>Add</Button>
-                        </Button.Group>}>
+                             <Button onClick={() => this.triggerAddModal(true)}><Icon type="plus"/>Add</Button>
+                         </Button.Group>}>
                 <Row gutter={8}>
                     <Col span={6}
-                        style={{
-                            height: 'calc(100vh - 55px)',
-                            overflow: 'auto',
-                            paddingRight: '10px',
-                            // backgroundColor: '#e3e5e6',
-                            borderRight: '1px solid #ccc'
-                        }}>
+                         style={{
+                             height: 'calc(100vh - 55px)',
+                             overflow: 'auto',
+                             paddingRight: '10px',
+                             // backgroundColor: '#e3e5e6',
+                             borderRight: '1px solid #ccc'
+                         }}>
                         <Radio.Group buttonStyle="solid" defaultValue="all" onChange={this.filterTags}>
                             <h2>Uploaded Files</h2>
                             <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                        value={null}>
+                                          value={null}>
                                 All Files</Radio.Button>
                             {this.state.tags.map(tag => <Radio.Button
                                 key={tag.id}
@@ -404,7 +440,8 @@ class PatientFiles extends React.Component {
                                 {tag.name}
                             </Radio.Button>)}
 
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="">
+                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                          value="">
                                 Untagged Files
                             </Radio.Button>
                             <p><br/></p>
@@ -413,67 +450,85 @@ class PatientFiles extends React.Component {
 
                         <Radio.Group buttonStyle="solid" defaultValue="">
                             <h2>Generated Files</h2>
-                            <Radio.Button key="0" style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="a" onClick={() =>this.loadMailedFiles()}>
+                            <Radio.Button key="0" style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                          value="a" onClick={() => this.loadMailedFiles()}>
                                 Emailed Files
                             </Radio.Button>
 
                             <Radio.Button key="1" style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                        onClick={()=>this.loadMedicalCertificate()}>
+                                          onClick={() => this.loadMedicalCertificate()}>
                                 Medical Leave Certificate </Radio.Button>
                         </Radio.Group>
                     </Col>
                     <Col span={18}>
-                        <List loading={this.state.loading}
-                            grid={{gutter: 16, column: 3}}
-                            dataSource={this.state.files}
-                            renderItem={item => (
-                                <List.Item style={{textAlign: 'center'}} key={item.id}>
-                                    <div
-                                        // onClick={() => this.showModal(item)}
-                                        style={{
-                                            width: '100%',
-                                            height: '150px',
-                                            border: '1px solid #bbb',
-                                            // background: '#fff url("' + makeFileURL(item.file_type) + '") no-repeat center center',
-                                            backgroundSize: 'cover',
-                                            padding: 'auto',
-                                            overflow: 'hidden'
+                        <Row>
+                            {this.state.files.map(item => (
+                                <>
+                                    {item.newDate ? <Col span={24}>
+                                        <Affix top={20} offsetTop={30}><h2 style={{
+                                            marginLeft: '10px',
+                                            padding: '5px',
+                                            backgroundImage: 'linear-gradient(to right, #ddd , white)',
+                                            borderRadius: '4px'
+                                        }}>{moment(item.created_at).format('LL')}</h2></Affix>
+                                    </Col> : null}
+                                    <Col span={8}>
+                                        <div
+                                            // onClick={() => this.showModal(item)}
+                                            style={{
+                                                width: '100%',
+                                                height: '150px',
+                                                border: '1px solid #bbb',
+                                                // background: '#fff url("' + makeFileURL(item.file_type) + '") no-repeat center center',
+                                                backgroundSize: 'cover',
+                                                padding: 'auto',
+                                                overflow: 'hidden'
 
-                                        }}>
-                                        <Checkbox key={item.id}
-                                                    disabled={(item.practice != this.props.active_practiceId)}
-                                                    style={{
-                                                        margin: 10,
-                                                        position: 'absolute',
-                                                        top: 5,
-                                                        left: 5,
-                                                        boxShadow: '0 0px 5px #000 '
-                                                    }}
-                                                    onChange={(e) => that.filesCompleteToggle(item.id, e.target.checked)}
-                                                    checked={that.state.selectedFiles[item.id]}/>
+                                            }}>
+                                            <Checkbox key={item.id}
+                                                      disabled={(item.practice != this.props.active_practiceId)}
+                                                      style={{
+                                                          margin: 10,
+                                                          position: 'absolute',
+                                                          top: 5,
+                                                          left: 5,
+                                                          boxShadow: '0 0px 5px #000 '
+                                                      }}
+                                                      onChange={(e) => that.filesCompleteToggle(item.id, e.target.checked)}
+                                                      checked={that.state.selectedFiles[item.id]}/>
 
-                                        <ModalImage style={{border: "3px solid red"}}
-                                            // small={makeFileURL(this.state.filesData.file_type)}
-                                                    large={makeFileURL(item.file_type)}
-                                                    small={makeFileURL(item.file_type)}
-                                                    alt={<Button type="danger" onClick={() => this.deleteFile(item)}>
-                                                        <Icon type="delete"/></Button>}
-                                        />
-                                    </div>
-                                </List.Item>
-
-
-                            )}
-                        />
-                        <InfiniteFeedLoaderButton loaderFunction={() => this.loadData(that.state.loadMoreFiles)}
-                                                loading={this.state.loading}
-                                                hidden={!this.state.loadMoreFiles}/>
+                                            <ModalImage style={{border: "3px solid red"}}
+                                                // small={makeFileURL(this.state.filesData.file_type)}
+                                                        large={makeFileURL(item.file_type)}
+                                                        small={makeFileURL(item.file_type)}
+                                                        alt={<Button type="danger"
+                                                                     onClick={() => this.deleteFile(item)}>
+                                                            <Icon type="delete"/></Button>}
+                                            />
+                                        </div>
+                                        <Card bodyStyle={{padding: 3}} style={{marginBottom: 15}}>
+                                                <h4>
+                                                <b>{item.patient_data.user.first_name}&nbsp;({item.patient_data.custom_id})</b>
+                                            </h4>
+                                            <Tag><b>{item.practice_data.name}</b></Tag>
+                                        </Card>
+                                    </Col>
+                                </>
+                            ))}
+                        </Row>
+                        <Row>
+                            <Col span={24}>
+                                <InfiniteFeedLoaderButton loaderFunction={() => this.loadData(that.state.loadMoreFiles)}
+                                                          loading={this.state.loading}
+                                                          hidden={!this.state.loadMoreFiles}/>
+                            </Col>
+                        </Row>
                         <Card title="Medical Certificate">
                             <List loading={this.state.loading}
-                                grid={{gutter: 16, column: 3}}
-                                dataSource={this.state.medicalCertificate}
-                                renderItem={item => (
-                                    <Card style={{width: 600}}
+                                  grid={{gutter: 16, column: 3}}
+                                  dataSource={this.state.medicalCertificate}
+                                  renderItem={item => (
+                                      <Card style={{width: 600}}
                                             actions={[<p>{"Issued on : " + item.date}</p>,
                                                 <a onClick={() => this.loadPDF(item.id)}><Icon type="printer"/></a>,
                                                 <Popconfirm title="Are you sure delete this item?"
@@ -482,16 +537,17 @@ class PatientFiles extends React.Component {
                                                     <Icon type="delete"/>
                                                 </Popconfirm>
                                             ]}>
-                                        <Meta title={"Medical Leave #" + "" + item.id}
+                                          <Meta title={"Medical Leave #" + "" + item.id}
                                                 description={"Excused From :" + item.excused_duty_from + " till " + item.excused_duty_to}>
 
-                                        </Meta>
-                                    </Card>
-                                )}
+                                          </Meta>
+                                      </Card>
+                                  )}
                             />
-                             <InfiniteFeedLoaderButton loaderFunction={() => this.loadData(that.state.loadMoreCertificate)}
-                                                loading={this.state.loading}
-                                                hidden={!this.state.loadMoreCertificate}/>
+                            <InfiniteFeedLoaderButton
+                                loaderFunction={() => this.loadData(that.state.loadMoreCertificate)}
+                                loading={this.state.loading}
+                                hidden={!this.state.loadMoreCertificate}/>
                         </Card>
 
 
@@ -499,151 +555,174 @@ class PatientFiles extends React.Component {
 
                 </Row>
                 <Modal visible={this.state.showAddModal}
-                    onCancel={() => this.triggerAddModal(false)}
-                    footer={null}>
+                       onCancel={() => this.triggerAddModal(false)}
+                       footer={null}>
                     <PatientFilesForm title="Add Files"
-                                    fields={fields}
-                                    defaultValues={defaultFields}
-                                    formProp={formProps}/>
+                                      fields={fields}
+                                      defaultValues={defaultFields}
+                                      formProp={formProps}/>
                 </Modal>
             </Card>
-        }else{
+        } else {
             return <Card title="Files"
-                     extra={<Button.Group>
-                        <Button type={"primary"} style={{marginRight:"10px"}} onClick={() => this.props.togglePatientListModal(true)}>
-                            <Icon type="plus"/>&nbsp; Add Medical Certificate
-                        </Button>
+                         extra={<Button.Group>
+                             <Button type={"primary"} style={{marginRight: "10px"}}
+                                     onClick={() => this.props.togglePatientListModal(true)}>
+                                 <Icon type="plus"/>&nbsp; Add Medical Certificate
+                             </Button>
 
-                        <Button type={"primary"} style={{marginRight:"10px"}} onClick={() => this.props.togglePatientListModal(true)}>
-                            <Icon type="plus"/> &nbsp; AddFile/remove
-                        </Button>
+                             <Button type={"primary"} style={{marginRight: "10px"}}
+                                     onClick={() => this.props.togglePatientListModal(true)}>
+                                 <Icon type="plus"/> &nbsp; AddFile/remove
+                             </Button>
 
-                        <Button type={"primary"} style={{marginRight:"10px"}} onClick={() => this.props.togglePatientListModal(true)}>
-                            <Icon type="plus"/> &nbsp; Add
-                        </Button>
-                     </Button.Group>}>
-            <Row gutter={8}>
-                <Col span={6}
-                     style={{
-                         height: 'calc(100vh - 55px)',
-                         overflow: 'auto',
-                         paddingRight: '10px',
-                         // backgroundColor: '#e3e5e6',
-                         borderRight: '1px solid #ccc'
-                     }}>
-                    <Radio.Group buttonStyle="solid" defaultValue="all" onChange={this.filterTags}>
-                        <h2>Uploaded Files</h2>
-                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                      value={null}>
-                            All Files</Radio.Button>
-                        {this.state.tags.map(tag => <Radio.Button
-                            key={tag.id}
-                            style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={tag.id}>
-                            {tag.name}
-                        </Radio.Button>)}
+                             <Button type={"primary"} style={{marginRight: "10px"}}
+                                     onClick={() => this.props.togglePatientListModal(true)}>
+                                 <Icon type="plus"/> &nbsp; Add
+                             </Button>
+                         </Button.Group>}>
+                <Row gutter={8}>
+                    <Col span={6}
+                         style={{
+                             height: 'calc(100vh - 55px)',
+                             overflow: 'auto',
+                             paddingRight: '10px',
+                             // backgroundColor: '#e3e5e6',
+                             borderRight: '1px solid #ccc'
+                         }}>
+                        <Radio.Group buttonStyle="solid" defaultValue="all" onChange={this.filterTags}>
+                            <h2>Uploaded Files</h2>
+                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                          value={null}>
+                                All Files</Radio.Button>
+                            {this.state.tags.map(tag => <Radio.Button
+                                key={tag.id}
+                                style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={tag.id}>
+                                {tag.name}
+                            </Radio.Button>)}
 
-                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="">
-                            Untagged Files
-                        </Radio.Button>
-                        <p><br/></p>
+                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                          value="">
+                                Untagged Files
+                            </Radio.Button>
+                            <p><br/></p>
 
-                    </Radio.Group>
+                        </Radio.Group>
 
-                    <Radio.Group buttonStyle="solid" defaultValue="">
-                        <h2>Generated Files</h2>
-                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="b" onClick={() => this.loadMailedFiles()}>
-                            Emailed Files
-                        </Radio.Button>
+                        <Radio.Group buttonStyle="solid" defaultValue="">
+                            <h2>Generated Files</h2>
+                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                          value="b" onClick={() => this.loadMailedFiles()}>
+                                Emailed Files
+                            </Radio.Button>
 
-                        <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                      onClick={()=>this.loadMedicalCertificate()} value=''>
-                            Medical Leave Certificate </Radio.Button>
-                    </Radio.Group>
-                </Col>
-                <Col span={18}>
-                    <List loading={this.state.loading}
-                          grid={{gutter: 16, column: 3}}
-                          dataSource={this.state.files}
-                          renderItem={item => (
-                              <List.Item style={{textAlign: 'center'}} key={item.id}>
-                                  <div
-                                      // onClick={() => this.showModal(item)}
-                                      style={{
-                                          width: '100%',
-                                          height: '150px',
-                                          border: '1px solid #bbb',
-                                          // background: '#fff url("' + makeFileURL(item.file_type) + '") no-repeat center center',
-                                          backgroundSize: 'cover',
-                                          padding: 'auto',
-                                          overflow: 'hidden'
+                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                          onClick={() => this.loadMedicalCertificate()} value=''>
+                                Medical Leave Certificate </Radio.Button>
+                        </Radio.Group>
+                    </Col>
+                    <Col span={18}>
+                        <Row>
+                            {this.state.files.map(item => (
+                                <>
+                                    {item.newDate ? <Col span={24}>
+                                        <Affix top={20} offsetTop={30}><h2 style={{
+                                            marginLeft: '10px',
+                                            padding: '5px',
+                                            backgroundImage: 'linear-gradient(to right, #ddd , white)',
+                                            borderRadius: '4px'
+                                        }}>{moment(item.created_at).format('LL')}</h2></Affix>
+                                    </Col> : null}
+                                    <Col span={8}>
+                                        <div
+                                            // onClick={() => this.showModal(item)}
+                                            style={{
+                                                width: '100%',
+                                                height: '150px',
+                                                border: '1px solid #bbb',
+                                                // background: '#fff url("' + makeFileURL(item.file_type) + '") no-repeat center center',
+                                                backgroundSize: 'cover',
+                                                padding: 'auto',
+                                                overflow: 'hidden'
 
-                                      }}>
-                                      <Checkbox key={item.id}
-                                                disabled={(item.practice != this.props.active_practiceId)}
-                                                style={{
-                                                    margin: 10,
-                                                    position: 'absolute',
-                                                    top: 5,
-                                                    left: 5,
-                                                    boxShadow: '0 0px 5px #000 '
-                                                }}
-                                                onChange={(e) => that.filesCompleteToggle(item.id, e.target.checked)}
-                                                checked={that.state.selectedFiles[item.id]}/>
-                                      <ModalImage style={{border: "3px solid red"}}
-                                          // small={makeFileURL(this.state.filesData.file_type)}
-                                                  large={makeFileURL(item.file_type)}
-                                                  small={makeFileURL(item.file_type)}
-                                                  alt={<Button type="danger" onClick={() => this.deleteFile(item)}>
-                                                      <Icon type="delete"/></Button>}
-                                      />
-                                  </div>
-                              </List.Item>
+                                            }}>
+                                            <Checkbox key={item.id}
+                                                      disabled={(item.practice != this.props.active_practiceId)}
+                                                      style={{
+                                                          margin: 10,
+                                                          position: 'absolute',
+                                                          top: 5,
+                                                          left: 5,
+                                                          boxShadow: '0 0px 5px #000 '
+                                                      }}
+                                                      onChange={(e) => that.filesCompleteToggle(item.id, e.target.checked)}
+                                                      checked={that.state.selectedFiles[item.id]}/>
+                                            <ModalImage style={{border: "3px solid red"}}
+                                                // small={makeFileURL(this.state.filesData.file_type)}
+                                                        large={makeFileURL(item.file_type)}
+                                                        small={makeFileURL(item.file_type)}
+                                                        alt={<Button type="danger"
+                                                                     onClick={() => this.deleteFile(item)}>
+                                                            <Icon type="delete"/></Button>}
+                                            />
+                                        </div>
+                                        <Card bodyStyle={{padding: 3}} style={{marginBottom: 15}}>
+                                            <Link to={"/patient/" + item.patient_data.id + "/emr/files/"}><h4>
+                                                <b>{item.patient_data.user.first_name}&nbsp;({item.patient_data.custom_id})</b>
+                                            </h4></Link>
+                                            <Tag><b>{item.practice_data.name}</b></Tag>
+                                        </Card>
+                                    </Col>
+                                </>
+                            ))}
+                        </Row>
+                        <Row>
+                            <Col span={24}>
+                                <InfiniteFeedLoaderButton loaderFunction={() => this.loadData(that.state.loadMoreFiles)}
+                                                          loading={this.state.loading}
+                                                          hidden={!this.state.loadMoreFiles}/>
+                            </Col>
+                        </Row>
+                        <Card title="Medical Certificate">
+                            <List loading={this.state.loading}
+                                  grid={{gutter: 16, column: 3}}
+                                  dataSource={this.state.medicalCertificate}
+                                  renderItem={item => (
+                                      <Card style={{width: 600}}
+                                            actions={[<p>{"Issued on : " + item.date}</p>,
+                                                <a onClick={() => this.loadPDF(item.id)}><Icon type="printer"/></a>,
+                                                <Popconfirm title="Are you sure delete this item?"
+                                                            onConfirm={() => this.deleteMedicalCertificate(item)}
+                                                            okText="Yes" cancelText="No">
+                                                    <Icon type="delete"/>
+                                                </Popconfirm>
+                                            ]}>
+                                          <Meta title={"Medical Leave #" + "" + item.id}
+                                                description={"Excused From :" + item.excused_duty_from + " till " + item.excused_duty_to}>
+
+                                          </Meta>
+                                      </Card>
+                                  )}
+                            />
+                            <InfiniteFeedLoaderButton
+                                loaderFunction={() => this.loadMedicalCertificate(that.state.loadMoreCertificate)}
+                                loading={this.state.loading}
+                                hidden={!this.state.loadMoreCertificate}/>
+                        </Card>
 
 
-                          )}
-                    />
-                   <InfiniteFeedLoaderButton loaderFunction={() => this.loadData(that.state.loadMoreFiles)}
-                                    loading={this.state.loading}
-                                    hidden={!this.state.loadMoreFiles}/>
-                    <Card title="Medical Certificate">
-                        <List loading={this.state.loading}
-                              grid={{gutter: 16, column: 3}}
-                              dataSource={this.state.medicalCertificate}
-                              renderItem={item => (
-                                  <Card style={{width: 600}}
-                                        actions={[<p>{"Issued on : " + item.date}</p>,
-                                            <a onClick={() => this.loadPDF(item.id)}><Icon type="printer"/></a>,
-                                            <Popconfirm title="Are you sure delete this item?"
-                                                        onConfirm={() => this.deleteMedicalCertificate(item)}
-                                                        okText="Yes" cancelText="No">
-                                                <Icon type="delete"/>
-                                            </Popconfirm>
-                                        ]}>
-                                      <Meta title={"Medical Leave #" + "" + item.id}
-                                            description={"Excused From :" + item.excused_duty_from + " till " + item.excused_duty_to}>
+                    </Col>
 
-                                      </Meta>
-                                  </Card>
-                              )}
-                        />
-                        <InfiniteFeedLoaderButton loaderFunction={() => this.loadMedicalCertificate(that.state.loadMoreCertificate)}
-                                              loading={this.state.loading}
-                                              hidden={!this.state.loadMoreCertificate}/>
-                    </Card>
-
-
-                </Col>
-
-            </Row>
-            <Modal visible={this.state.showAddModal}
-                   onCancel={() => this.triggerAddModal(false)}
-                   footer={null}>
-                <PatientFilesForm title="Add Files"
-                                  fields={fields}
-                                  defaultValues={defaultFields}
-                                  formProp={formProps}/>
-            </Modal>
-        </Card>
+                </Row>
+                <Modal visible={this.state.showAddModal}
+                       onCancel={() => this.triggerAddModal(false)}
+                       footer={null}>
+                    <PatientFilesForm title="Add Files"
+                                      fields={fields}
+                                      defaultValues={defaultFields}
+                                      formProp={formProps}/>
+                </Modal>
+            </Card>
         }
 
     }

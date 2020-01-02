@@ -15,6 +15,7 @@ import {hideMobile} from "../../utils/permissionUtils";
 import axios from "axios";
 import {getAuthToken} from "../../utils/auth";
 import {ERROR_MSG_TYPE, SUCCESS_MSG_TYPE} from "../../constants/dataKeys";
+import {CUSTOM_STRING_SEPERATOR} from "../../constants/hardData";
 
 const {Header} = Layout;
 
@@ -38,17 +39,10 @@ class AppHeader extends React.Component {
         let successFn = function (data) {
             that.setState(function (prevState) {
                 if (prevState.searchPatientString == value)
-                    if (data.current > 1) {
-                        return {
-                            patientListData: [...prevState.patientListData, ...data.results],
-
-                        }
-                    } else {
-                        return {
-                            patientListData: [...data.results],
-
-                        }
+                    return {
+                        patientListData: [...data.results],
                     }
+                return {}
             })
         };
         let errorFn = function (data) {
@@ -110,21 +104,10 @@ class AppHeader extends React.Component {
 
     handlePatientSelect = (event) => {
         if (event) {
-            this.props.history.push("/patient/" + event + "/profile");
+            this.props.history.push("/patient/" + event.replace(CUSTOM_STRING_SEPERATOR,'') + "/profile");
             this.setState({
                 searchPatientString: null,
-            })
-            let that = this;
-            let successFn = function (data) {
-                that.setState({
-                    patientDetails: data
-
-                });
-                // console.log("event",that.state.patientDetails);
-            };
-            let errorFn = function () {
-            };
-            getAPI(interpolate(PATIENT_PROFILE, [event]), successFn, errorFn);
+            });
         }
     }
 
@@ -165,7 +148,7 @@ class AppHeader extends React.Component {
                                   filterOption={false}
                                   onSelect={this.handlePatientSelect}>
                         {this.state.patientListData.map((option) => <AutoComplete.Option
-                            value={option.id.toString()}>
+                            value={option.id.toString() + CUSTOM_STRING_SEPERATOR}>
                             <List.Item style={{padding: 0}}>
                                 <List.Item.Meta
                                     avatar={(option.image ? <Avatar src={makeFileURL(option.image)}/> :
@@ -173,7 +156,6 @@ class AppHeader extends React.Component {
                                             {option.user.first_name ? option.user.first_name.charAt(0) :
                                                 <Icon type="user"/>}
                                         </Avatar>)}
-
                                     title={option.user.first_name + " (" + (option.custom_id ? option.custom_id : option.user.id) + ")"}
                                     description={that.props.activePracticePermissions.PatientPhoneNumber ? option.user.mobile : hideMobile(option.user.mobile)}
                                 />
