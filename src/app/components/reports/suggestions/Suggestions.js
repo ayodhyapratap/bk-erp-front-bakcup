@@ -1,10 +1,11 @@
 import React from "react";
-import {Col, Divider, Row, Statistic, Table} from "antd";
-import {EMR_REPORTS, SUGGESTIONS} from "../../../constants/api";
-import {getAPI,  interpolate} from "../../../utils/common";
+import {Col, Row, Select, Statistic} from "antd";
+import {SUGGESTIONS} from "../../../constants/api";
+import {displayMessage, getAPI} from "../../../utils/common";
 import moment from "moment"
-import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
+import {MAIL_SEND_MSG, SUCCESS} from "../../../constants/messages";
 
 export default class Suggestions extends React.Component {
     constructor(props) {
@@ -14,12 +15,14 @@ export default class Suggestions extends React.Component {
             endDate: this.props.endDate,
             loading: false,
             report:[],
+            mailingUsersList: []
         }
         this.loadSuggestionsReport = this.loadSuggestionsReport.bind(this);
     }
 
     componentDidMount() {
         this.loadSuggestionsReport();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -60,6 +63,23 @@ export default class Suggestions extends React.Component {
         }
         getAPI(SUGGESTIONS,  successFn, errorFn, apiParams);
     };
+
+
+    sendMail = (mailTo) => {
+        let that = this;
+        let errorMsg =true;
+        let successMsg =true;
+        let apiParams={
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+        };
+        if(this.props.status){
+            apiParams.status=this.props.status.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(SUGGESTIONS, apiParams, successMsg, errorMsg)
+    };
+
 
     render() {
         const {report} =this.state;
@@ -103,19 +123,30 @@ export default class Suggestions extends React.Component {
             key:'description',
             dataIndex:'description',
         }];
-        return <div>
-            <Row>
-                <Col span={12} offset={6} style={{textAlign:"center"}}>
-                    <Statistic title="Total Suggestions" value={reportData.length} />
-                    <br/>
-                </Col>
-            </Row>
+        return (
+            <div>
+                <h2>All Suggestions
+                     <span style={{float: 'right'}}>
+                        <p><small>E-Mail To:&nbsp;</small>
+                            <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                                {this.state.mailingUsersList.map(item => <Select.Option
+                                    value={item.email}>{item.name}</Select.Option>)}
+                            </Select>
+                        </p>
+                    </span>
+                </h2>
+                <Row>
+                    <Col span={12} offset={6} style={{textAlign:"center"}}>
+                        <Statistic title="Total Suggestions" value={reportData.length} />
+                        <br/>
+                    </Col>
+                </Row>
 
-            <CustomizedTable
-                loading={this.state.loading}
+                <CustomizedTable
+                    loading={this.state.loading}
                 columns={columns}
                 dataSource={reportData}/>
 
-        </div>
+        </div>)
     }
 }
