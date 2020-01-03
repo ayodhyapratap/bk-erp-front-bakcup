@@ -1,10 +1,10 @@
 import React from "react";
-import {Statistic, Divider, Table, Empty, Spin, Col,Row} from "antd"
-import {EMR_REPORTS, EXPENSE_REPORT_API,} from "../../../constants/api";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import {Cell, LineChart, Pie, PieChart, Sector} from "recharts";
-import moment from "moment";
+import {Statistic, Divider, Empty, Spin, Col, Row, Select} from "antd"
+import {EXPENSE_REPORT_API,} from "../../../constants/api";
+import {getAPI} from "../../../utils/common";
+import {Cell, Pie, PieChart, Sector} from "recharts";
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class ExpensesForEachType extends React.Component {
     constructor(props) {
@@ -14,12 +14,14 @@ export default class ExpensesForEachType extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: false,
+            mailingUsersList: []
 
         }
         this.loadExpenseEachType = this.loadExpenseEachType.bind(this);
     }
     componentDidMount() {
         this.loadExpenseEachType();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -64,6 +66,28 @@ export default class ExpensesForEachType extends React.Component {
         }
         getAPI(EXPENSE_REPORT_API , successFn, errorFn, apiParams);
     }
+
+
+    sendMail = (mailTo) => {
+        let that = this;
+        let apiParams = {
+            type:that.props.type,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            practice:that.props.active_practiceId,
+        };
+
+        if(this.props.payment_mode){
+            apiParams.payment_mode=this.props.payment_mode.toString();
+        }
+        if(this.props.expense_type){
+            apiParams.expense_type=this.props.expense_type.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(EXPENSE_REPORT_API, apiParams)
+    };
+
+
     render() {
         let that=this;
         let i = 1;
@@ -126,7 +150,16 @@ export default class ExpensesForEachType extends React.Component {
         }, 0);
 
         return <div>
-            <h2>Expenses By Type</h2>
+            <h2>Expenses Type
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
+            </h2>
             <Row>
                 <Col span={12} offset={6}>
                     <Spin size="large" spinning={this.state.loading}>

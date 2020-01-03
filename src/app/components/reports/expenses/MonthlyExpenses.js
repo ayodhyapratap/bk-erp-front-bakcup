@@ -1,10 +1,11 @@
 import React from "react";
-import {Statistic, Divider, Table, Empty, Spin} from "antd"
-import {EMR_REPORTS, EXPENSE_REPORT_API,} from "../../../constants/api";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import {ComposedChart, Line, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart} from 'recharts';
+import {Statistic, Divider, Empty, Spin, Select, Modal} from "antd"
+import {EXPENSE_REPORT_API,} from "../../../constants/api";
+import {getAPI} from "../../../utils/common";
+import {ComposedChart, Bar, XAxis, YAxis,Tooltip} from 'recharts';
 import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class MonthlyExpenses extends React.Component {
     constructor(props) {
@@ -14,12 +15,14 @@ export default class MonthlyExpenses extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: false,
+            mailingUsersList: []
 
         }
         this.loadMonthlyExpense = this.loadMonthlyExpense.bind(this);
     }
     componentDidMount() {
         this.loadMonthlyExpense();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -64,6 +67,27 @@ export default class MonthlyExpenses extends React.Component {
         }
         getAPI(EXPENSE_REPORT_API , successFn, errorFn, apiParams);
     }
+
+    sendMail = (mailTo) => {
+        let that = this;
+        let apiParams = {
+            type:that.props.type,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            practice:that.props.active_practiceId,
+        };
+
+        if(this.props.payment_mode){
+            apiParams.payment_mode=this.props.payment_mode.toString();
+        }
+        if(this.props.expense_type){
+            apiParams.expense_type=this.props.expense_type.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(EXPENSE_REPORT_API, apiParams)
+    };
+
+
     render() {
         let that=this;
         let i = 1;
@@ -97,7 +121,16 @@ export default class MonthlyExpenses extends React.Component {
             return prev + cur.total;
         }, 0);
         return <div>
-            <h2>Monthly Expense</h2>
+            <h2>Monthly Expense
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
+            </h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.report.length>0?
                     <ComposedChart width={1000} height={400} data={[...this.state.report].reverse()}

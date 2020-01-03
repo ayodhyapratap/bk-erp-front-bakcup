@@ -1,9 +1,10 @@
 import React from "react";
-import {Button, Card, Col, Icon, Radio, Row, Statistic, Table} from "antd";
-import {EXPENSE_REPORT_API,EXPENSE_PAYMENT_MODE_API} from "../../../constants/api";
-import {getAPI } from "../../../utils/common";
+import {Col, Row, Select, Statistic} from "antd";
+import {EXPENSE_PAYMENT_MODE_API} from "../../../constants/api";
+import {getAPI} from "../../../utils/common";
 import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class ExpensesReport extends React.Component {
     constructor(props) {
@@ -12,12 +13,14 @@ export default class ExpensesReport extends React.Component {
             report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: false
+            loading: false,
+            mailingUsersList: []
         }
         this.ExpenseReport = this.ExpenseReport.bind(this);
     }
-    componentDidMount() {
-        this.ExpenseReport();
+    componentDidMount =async ()=>{
+        await this.ExpenseReport();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -33,7 +36,7 @@ export default class ExpensesReport extends React.Component {
 
     }
 
-    ExpenseReport() {
+    ExpenseReport =async ()=> {
         let that = this;
         this.setState({
             loading: true
@@ -50,9 +53,9 @@ export default class ExpensesReport extends React.Component {
             })
         };
         let apiParams={
-            practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
+            practice:that.props.active_practiceId,
         };
         if(this.props.payment_mode){
             apiParams.payment_mode=this.props.payment_mode.toString();
@@ -62,6 +65,25 @@ export default class ExpensesReport extends React.Component {
         }
         getAPI(EXPENSE_PAYMENT_MODE_API , successFn, errorFn, apiParams);
     }
+
+
+    sendMail = (mailTo) => {
+        let that = this;
+        let apiParams = {
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            practice:that.props.active_practiceId,
+        };
+
+        if(this.props.payment_mode){
+            apiParams.payment_mode=this.props.payment_mode.toString();
+        }
+        if(this.props.expense_type){
+            apiParams.expense_type=this.props.expense_type.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(EXPENSE_PAYMENT_MODE_API, apiParams)
+    };
 
 
     render() {
@@ -112,6 +134,14 @@ export default class ExpensesReport extends React.Component {
         }, 0);
         return <div>
             <h2>Expenses Report
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
             </h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
