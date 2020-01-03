@@ -193,7 +193,7 @@ export default class IncomeReportHome extends React.Component {
                             <p><br/></p>
                             <h2>Related Reports</h2>
                             {INCOME_RELATED_REPORT.map((item) => <Radio.Button
-                                style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                style={{width: '100%', backgroundColor: 'transparent'}}
                                 value={item.value}>
                                 {item.name}
                             </Radio.Button>)}

@@ -1,10 +1,11 @@
 import React from "react";
-import {Empty, Spin} from "antd"
+import {Empty, Select, Spin} from "antd"
 import {INCOME_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
-import {LineChart, Line, XAxis, YAxis,Bar, CartesianGrid, Tooltip, Label, Legend, ComposedChart} from 'recharts';
+import {XAxis, YAxis,Bar, Tooltip, ComposedChart} from 'recharts';
 import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class DailyInvoicedIncome extends React.Component {
     constructor(props) {
@@ -14,12 +15,14 @@ export default class DailyInvoicedIncome extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: false,
+            mailingUsersList: []
 
         }
         this.loadDailyIncome = this.loadDailyIncome.bind(this);
     }
     componentDidMount() {
         this.loadDailyIncome();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -81,6 +84,43 @@ export default class DailyInvoicedIncome extends React.Component {
         }
         getAPI(INCOME_REPORTS , successFn, errorFn, apiParams);
     }
+
+    sendMail = (mailTo) => {
+        let that = this;
+        let apiParams = {
+            practice:that.props.active_practiceId,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            type:that.props.type,
+            is_cancelled:this.props.is_cancelled ? true : false,
+        };
+
+        if (that.props.income_type){
+            apiParams.income_type= that.props.income_type;
+        }
+        if(that.props.discount){
+            apiParams.discount=that.props.discount;
+        }
+        if(this.props.patient_groups){
+            apiParams.groups=this.props.patient_groups.toString();
+        }
+        if(this.props.products){
+            apiParams.products=this.props.products.toString();
+        }
+        if(this.props.doctors){
+            apiParams.doctors=this.props.doctors.toString();
+        }
+        if(this.props.taxes){
+            apiParams.taxes=this.props.taxes.toString();
+        }
+        if(this.props.treatments){
+            apiParams.treatments=this.props.treatments.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(INCOME_REPORTS, apiParams)
+    };
+
+
     render() {
         let that=this;
         let i = 1;
@@ -132,7 +172,16 @@ export default class DailyInvoicedIncome extends React.Component {
             return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value.toFixed(2)}</text>;
         };
         return <div>
-            <h2>Daily Invoiced Income </h2>
+            <h2>Daily Invoiced Income
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
+            </h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.report.length>0?
                     <ComposedChart width={1000} height={400} data={this.state.report}

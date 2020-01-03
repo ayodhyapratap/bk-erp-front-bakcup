@@ -1,22 +1,10 @@
 import React from "react";
-import {Col, Divider, Empty, Row, Spin, Statistic} from "antd"
+import {Col, Divider, Empty, Row, Select, Spin, Statistic} from "antd"
 import {INCOME_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
-import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    Bar,
-    CartesianGrid,
-    Tooltip,
-    Label,
-    Legend,
-    ComposedChart,
-    Sector, PieChart, Pie, Cell
-} from 'recharts';
-import moment from "moment";
+import {Sector, PieChart, Pie, Cell} from 'recharts';
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class InvoicedIncomeForEachProcedure extends React.Component {
     constructor(props) {
@@ -26,13 +14,15 @@ export default class InvoicedIncomeForEachProcedure extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: false,
-            activeIndex:0
+            activeIndex:0,
+            mailingUsersList: []
 
         }
         this.loadEachProcedureIncome = this.loadEachProcedureIncome.bind(this);
     }
     componentDidMount() {
         this.loadEachProcedureIncome();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -99,6 +89,43 @@ export default class InvoicedIncomeForEachProcedure extends React.Component {
             activeIndex: index,
         });
     };
+
+    sendMail = (mailTo) => {
+        let that = this;
+        let apiParams = {
+            practice:that.props.active_practiceId,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            type:that.props.type,
+            is_cancelled:this.props.is_cancelled ? true : false,
+        };
+
+        if (that.props.income_type){
+            apiParams.income_type= that.props.income_type;
+        }
+        if(that.props.discount){
+            apiParams.discount=that.props.discount;
+        }
+        if(this.props.patient_groups){
+            apiParams.groups=this.props.patient_groups.toString();
+        }
+        if(this.props.products){
+            apiParams.products=this.props.products.toString();
+        }
+        if(this.props.doctors){
+            apiParams.doctors=this.props.doctors.toString();
+        }
+        if(this.props.taxes){
+            apiParams.taxes=this.props.taxes.toString();
+        }
+        if(this.props.treatments){
+            apiParams.treatments=this.props.treatments.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(INCOME_REPORTS, apiParams)
+    };
+
+
     render() {
         let i=1;
         const columns = [{
@@ -189,6 +216,14 @@ export default class InvoicedIncomeForEachProcedure extends React.Component {
         }, 0);
         return <div>
             <h2>Income For Each Procedure
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
             </h2>
 
             <Row>

@@ -1,9 +1,10 @@
 import React from "react";
-import {Table, Tag} from "antd";
+import {Select, Table, Tag} from "antd";
 import {INCOME_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class AllInvoices extends React.Component {
     constructor(props) {
@@ -14,12 +15,14 @@ export default class AllInvoices extends React.Component {
             endDate: this.props.endDate,
             loading: false,
             invoiceReports:[],
+            mailingUsersList: []
         };
         this.loadInvoices = this.loadInvoices.bind(this);
         // this.loadPatientList = this.loadPatientList.bind(this);
     }
     componentDidMount() {
         this.loadInvoices();
+        loadMailingUserListForReportsMail(this);
         // this.loadPatientList();
     }
 
@@ -104,6 +107,42 @@ export default class AllInvoices extends React.Component {
     //     };
     //     getAPI(PATIENTS_LIST,successFn,errorFn);
     // }
+
+
+    sendMail = (mailTo) => {
+        let that = this;
+        let apiParams = {
+            practice:that.props.active_practiceId,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            type:that.props.type,
+            is_cancelled:this.props.is_cancelled ? true : false,
+        };
+
+        if (that.props.income_type){
+            apiParams.income_type= that.props.income_type;
+        }
+        if(that.props.discount){
+            apiParams.discount=that.props.discount;
+        }
+        if(this.props.patient_groups){
+            apiParams.groups=this.props.patient_groups.toString();
+        }
+        if(this.props.products){
+            apiParams.products=this.props.products.toString();
+        }
+        if(this.props.doctors){
+            apiParams.doctors=this.props.doctors.toString();
+        }
+        if(this.props.taxes){
+            apiParams.taxes=this.props.taxes.toString();
+        }
+        if(this.props.treatments){
+            apiParams.treatments=this.props.treatments.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(INCOME_REPORTS, apiParams)
+    };
 
     render() {
         let that = this;
@@ -261,7 +300,16 @@ export default class AllInvoices extends React.Component {
 
 
         return <div>
-            <h2>All Invoices</h2>
+            <h2>All Invoices
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
+            </h2>
 
             <Table loading={this.state.loading} columns={SummaryColumns} pagination={false} dataSource={inventorySummary}/>
 
