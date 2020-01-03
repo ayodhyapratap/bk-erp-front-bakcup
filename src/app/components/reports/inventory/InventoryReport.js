@@ -1,10 +1,10 @@
 import React from "react";
-import {Button, Card, Row, Table, Tag,Form, Input,Select ,Checkbox,Col} from "antd";
-import {BILL_SUPPLIER,SUPPLIER_API} from "../../../constants/api";
-import {getAPI,interpolate, displayMessage} from "../../../utils/common";
-import CustomizedTable from "../../common/CustomizedTable";
+import {Button, Card, Table,Form, Input,Select ,Checkbox} from "antd";
+import {BILL_SUPPLIER, SUPPLIER_API} from "../../../constants/api";
+import {getAPI,interpolate} from "../../../utils/common";
 import ReportInnerTable from "../../reports/inventory/ReportInnerTable"
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 class InventoryReport extends React.Component {
     constructor(props) {
@@ -18,6 +18,7 @@ class InventoryReport extends React.Component {
             supplierList: [],
             inventory:true,
             invoice:true,
+            mailingUsersList: []
         }
         this.loadBillSupplier = this.loadBillSupplier.bind(this);
         this.loadSupplierList = this.loadSupplierList.bind(this);
@@ -26,6 +27,8 @@ class InventoryReport extends React.Component {
     componentDidMount() {
         this.loadBillSupplier();
         this.loadSupplierList();
+        loadMailingUserListForReportsMail(this);
+
     }
     componentWillReceiveProps(newProps) {
         let that = this;
@@ -61,7 +64,7 @@ class InventoryReport extends React.Component {
             })
 
         }
-       
+
         let errorFn = function () {
             that.setState({
                 loading: false
@@ -86,7 +89,29 @@ class InventoryReport extends React.Component {
         }
         getAPI(BILL_SUPPLIER, successFn, errorFn,apiParams);
     }
-   
+
+    sendMail = (mailTo) => {
+        let that=this;
+        let apiParams = {
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD')
+        }
+        if(that.state.bill_number) {
+            apiParams.bill_number = that.state.bill_number;
+        }
+        if(that.state.supplier) {
+            apiParams.supplier = that.state.supplier.toString();
+        }
+        if(that.state.invoice) {
+            apiParams.invoice = 1;
+        }
+        if(that.state.inventory){
+            apiParams.inventory = 1;
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(BILL_SUPPLIER, apiParams)
+    }
+
     expandIcon(props) {
         return <Button onClick={e => props.onExpand(props.record, e)}>
             view detail
@@ -151,8 +176,17 @@ class InventoryReport extends React.Component {
             dataIndex: 'supplier_data.name'
         }];
         return <div>
-            <h2>Inventory Report</h2>
-            <Card bodyStyle={{padding:0}} 
+            <h2>Inventory Report
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
+            </h2>
+            <Card bodyStyle={{padding:0}}
                 extra={<div>
                     <Form layout="inline" onSubmit={this.handleSubmit}>
                     <Form.Item label="Invoice">
@@ -176,7 +210,7 @@ class InventoryReport extends React.Component {
                         </Form.Item>
                         <Form.Item key="supplier"  label="Supplier" >
                         {getFieldDecorator("supplier", {initialValue: this.state.supplierList?this.state.supplierList.name:null},
-                            {rules: [{ required: true, message: 'This field required!' }], 
+                            {rules: [{ required: true, message: 'This field required!' }],
                             onChange:this.handleChange, }
                         )(
                            <Select placeholder="Supplier" style={{minWidth:150}} mode="multiple">

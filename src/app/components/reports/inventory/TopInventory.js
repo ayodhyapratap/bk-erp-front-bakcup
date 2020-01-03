@@ -1,10 +1,11 @@
 import React from "react";
-import {Empty, Spin} from "antd"
+import {Empty, Select, Spin} from "antd"
 import {INVENTORY_REPORT_API,} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
-import {LineChart, Line, XAxis, YAxis,Bar, CartesianGrid, Tooltip, Label, Legend, ComposedChart} from 'recharts';
+import {XAxis, YAxis,Bar,Tooltip, ComposedChart} from 'recharts';
 import CustomizedTable from "../../common/CustomizedTable";
 import {TYPE_OF_CONSUMPTION} from "../../../constants/hardData";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class TopInventory extends React.Component {
     constructor(props) {
@@ -15,12 +16,14 @@ export default class TopInventory extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: false,
+            mailingUsersList: []
 
         }
         this.loadDailyInventory = this.loadDailyInventory.bind(this);
     }
     componentDidMount() {
         this.loadDailyInventory();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -65,6 +68,24 @@ export default class TopInventory extends React.Component {
         }
         getAPI(INVENTORY_REPORT_API , successFn, errorFn, apiParams);
     }
+
+    sendMail = (mailTo) => {
+        let that=this;
+        let apiParams={
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            type:that.props.type,
+        };
+        if(this.props.consume){
+            apiParams.consume=this.props.consume.toString();
+        }
+        if(this.props.product_item){
+            apiParams.product=this.props.product_item;
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(INVENTORY_REPORT_API, apiParams)
+    }
+
     render() {
         let that=this;
 
@@ -122,7 +143,16 @@ export default class TopInventory extends React.Component {
             return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value}</text>;
         };
         return <div>
-            <h2>Top Inventory</h2>
+            <h2>Top Inventory
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
+            </h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.reportTotal.length>0?
                     <ComposedChart width={1000} height={400} data={this.state.reportTotal}
