@@ -1,8 +1,8 @@
 import React from "react";
-import {Button, Card, Col, Icon, Radio, Row, Select} from "antd";
+import {Button, Card, Col, Radio, Row, Select} from "antd";
 import {BED_BOOKING_RELATED_REPORT, OPD_IPD, PAYMENT_STATUS} from "../../../constants/hardData";
 import {
-    ALL, ALL_INVENTORY,
+    ALL,
     BED_BOOKING_PACKAGE_COUNT,
     DAILY_BOOKING_COUNT,
     MEDICINE_USAGE_COUNT,
@@ -101,7 +101,7 @@ export default class BedBookingHome extends React.Component {
                             <p><br/></p>
                             <h2>Related Reports</h2>
                             {BED_BOOKING_RELATED_REPORT.map((item) => <Radio.Button
-                                style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                                style={{width: '100%', backgroundColor: 'transparent'}}
                                 value={item.value}>
                                 {item.name}
                             </Radio.Button>)}

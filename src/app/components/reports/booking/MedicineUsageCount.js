@@ -1,9 +1,11 @@
 import React from "react";
-import {Col, Divider, Empty, Row,Spin, Statistic} from "antd";
+import {Col, Divider, Empty, Modal, Row, Select, Spin, Statistic} from "antd";
 import {BED_BOOKING_REPORTS, BED_PACKAGES} from "../../../constants/api";
-import {getAPI} from "../../../utils/common";
+import {getAPI, interpolate} from "../../../utils/common";
 import CustomizedTable from "../../common/CustomizedTable";
 import {Cell,Pie, PieChart, Sector} from "recharts";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
+const { confirm } = Modal;
 
 export default class MedicineUsageCount extends React.Component {
     constructor(props) {
@@ -15,6 +17,7 @@ export default class MedicineUsageCount extends React.Component {
             bedBookingReports: [],
             packages: [],
             activeIndex:0,
+            mailingUsersList: []
 
         };
         this.loadBedBookingReport = this.loadBedBookingReport.bind(this);
@@ -23,6 +26,7 @@ export default class MedicineUsageCount extends React.Component {
 
     componentDidMount() {
         this.loadBedBookingReport();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -77,6 +81,29 @@ export default class MedicineUsageCount extends React.Component {
             activeIndex: index,
         });
     };
+
+    sendMail = (mailTo) => {
+        let that = this;
+        let apiParams = {
+            practice: this.props.active_practiceId,
+            report_type:this.props.report_type,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+        };
+
+        if (this.props.payment_status) {
+            apiParams.payment_status = this.props.payment_status
+        }
+        if (this.props.type) {
+            apiParams.type = this.props.type
+        }
+        if (this.props.bed_packages) {
+            apiParams.bed_packages = this.props.bed_packages.join(',');
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(BED_BOOKING_REPORTS,  apiParams)
+    };
+
     render() {
         let i=1;
         const columns = [{
@@ -147,6 +174,14 @@ export default class MedicineUsageCount extends React.Component {
 
         return <div>
             <h2>Medicine Usage Count
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
             </h2>
             <Row>
                 <Col span={12} offset={6}>
