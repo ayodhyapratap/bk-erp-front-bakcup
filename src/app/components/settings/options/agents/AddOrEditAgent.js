@@ -123,10 +123,8 @@ class AddOrEditAgent extends React.Component {
                     is_approved: true,
                     practice: this.props.active_practiceId
                 };
-                if (this.props.editAgentData) {
+                if (this.props.editAgentData || !reqData.referal) {
                     delete reqData.referal;
-
-
                 }
                 if (!this.state.userDetails) {
                     reqData.user.first_name = values.first_name;
@@ -316,7 +314,6 @@ class AddOrEditAgent extends React.Component {
                         {getFieldDecorator("aadhar_upload",{initialValue: that.props.editAgentData && that.props.editAgentData.aadhar_upload ? that.props.editAgentData.aadhar_upload : null,
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                             valuePropName: "aadhar_upload",
-
                         })(
                             <Upload {...singleUploadprops}>
                                 <Button>

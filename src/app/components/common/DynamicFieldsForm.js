@@ -619,7 +619,7 @@ class DynamicFieldsForm extends React.Component {
                                 },
                             };
                             return <Form.Item key={field.key} {...formItemLayout} label={field.label}>
-                                {getFieldDecorator(field.key, {valuePropName: field.key,})(
+                                {getFieldDecorator(field.key, that.fieldDecorators(field, that.state.formData), {valuePropName: field.key,})(
                                     <Upload {...singleUploadprops}>
                                         <Button>
                                             <Icon type="upload"/> Select File

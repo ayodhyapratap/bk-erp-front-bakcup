@@ -1,9 +1,9 @@
-import {Form, Icon, Input, Button, Modal,Divider} from 'antd';
+import {Form, Icon, Input, Button, Modal, Divider} from 'antd';
 import React from 'react';
 import 'antd/dist/antd.css';
 import {EMAIL, PASSWORD, PHONE, OTP} from "../../../constants/formLabels";
 import {Redirect} from 'react-router';
-import{Link, Route, Switch} from "react-router-dom";
+import {Link, Route, Switch} from "react-router-dom";
 import {displayMessage, makeURL, postOuterAPI} from "../../../utils/common";
 import {RESET_PASSWORD_MAIL} from "../../../constants/api";
 
@@ -79,54 +79,44 @@ class LoginForm extends React.Component {
         if (this.state.redirect)
             return <Redirect to={this.state.redirect}/>
         return (
-            <Form onSubmit={this.handleSubmit} className="login-form">
-                <FormItem>
-                    {getFieldDecorator('email', {
-                        rules: [{required: true, message: 'Please input your username!'}],
-                    })(
-                        <Input size="large" prefix={<Icon type="phone" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                               placeholder="Mobile Number"/>
-                    )}
-                </FormItem>
-                <FormItem>
-                    {getFieldDecorator('password', {
-                        rules: [{required: true, message: 'Please input your Password!'}],
-                    })(
-                        <Input size="large" prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                               type="password"
-                               placeholder="Password"/>
-                    )}
-                </FormItem>
-               {/*<Divider style={{margin:'0px'}}>OR</Divider>
-                <FormItem>
-                    {getFieldDecorator('phone', {
-                        rules: [{required: true, message: 'Please input your Phone No!'}],
-                    })(
-                        <Input size="large" prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                               type="text"
-                               placeholder="Phone"/>
-                    )}
-                </FormItem>*/}
-                <FormItem>
-                    <a style={{float: 'right'}} type="primary" onClick={this.showResetModal}>
-                        Forgot Password ?
-                    </a>
-                    <Button size="large" loading={this.state.changePassLoading} type="primary" htmlType="submit"
-                            className="login-form-button">
-                        Log in
-                    </Button>
-                </FormItem>
+            <>
+                <Form onSubmit={this.handleSubmit} className="login-form">
+                    <FormItem>
+                        {getFieldDecorator('email', {
+                            rules: [{required: true, message: 'Please input your username!'}],
+                        })(
+                            <Input size="large" prefix={<Icon type="phone" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                                   placeholder="Mobile Number"/>
+                        )}
+                    </FormItem>
+                    <FormItem>
+                        {getFieldDecorator('password', {
+                            rules: [{required: true, message: 'Please input your Password!'}],
+                        })(
+                            <Input size="large" prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                                   type="password"
+                                   placeholder="Password"/>
+                        )}
+                    </FormItem>
+                    <FormItem>
+                        <a style={{float: 'right'}} type="primary" onClick={this.showResetModal}>
+                            Forgot Password ?
+                        </a>
+                        <Button size="large" loading={this.state.changePassLoading} type="primary" htmlType="submit"
+                                className="login-form-button">
+                            Log in
+                        </Button>
+                    </FormItem>
+                </Form>
                 <Divider>OR</Divider>
-                    <h4>
-                        <Link to={"/loginwithphone"}> <Button size="large"  type="primary" htmlType="submit"
+                <h4>
+                    <Link to={"/loginwithphone"}>
+                        <Button size="large" type="primary"
                                 className="login-form-button">Log in with phone</Button>
 
-                        </Link>
-                    </h4>
+                    </Link>
+                </h4>
                 <Divider/>
-
-
-
                 <Modal
                     title="Email to Reset Password"
                     visible={this.state.resetModalVisible}
@@ -141,7 +131,7 @@ class LoginForm extends React.Component {
                     />
                 </Modal>
                 {this.props.redirect == true && <Redirect push to="/"/>}
-            </Form>
+            </>
         );
     }
 }

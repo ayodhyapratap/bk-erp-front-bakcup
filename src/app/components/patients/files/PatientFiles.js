@@ -358,7 +358,8 @@ class PatientFiles extends React.Component {
         const fields = [{
             key: 'file_type',
             label: 'File',
-            type: SINGLE_IMAGE_UPLOAD_FIELD
+            type: SINGLE_IMAGE_UPLOAD_FIELD,
+            required:true
         }, {
             key: 'file_tags',
             label: 'Tags',

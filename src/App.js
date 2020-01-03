@@ -22,7 +22,11 @@ class App extends Component {
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
     }
-
+    componentDidUpdate(prevProps) {
+        if (this.props.location.pathname !== prevProps.location.pathname) {
+            ReactGA.pageview(window.location.pathname + window.location.search);
+        }
+    }
     login(data, withOtp = true) {
         let that = this;
         let successFn = function () {
@@ -53,7 +57,7 @@ class App extends Component {
     }
 
     render() {
-        ReactGA.pageview(window.location.pathname + window.location.search);
+
         return <Layout>
             {this.state.production ? null : <Affix>
                 <Alert

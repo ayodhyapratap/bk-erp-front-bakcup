@@ -72,7 +72,9 @@ export default class DailySummaryReport extends React.Component {
                     paidAmount: 0,
 
                 }
-                let paidAmountForPaymentMode = {...prevState.paidAmountForPaymentMode};
+                let paidAmountForPaymentMode = {};
+                if (data.current > 1)
+                    paidAmountForPaymentMode = {...prevState.paidAmountForPaymentMode};
                 if (data.results.length)
                     data.results.forEach(function (resultRow) {
                         resultRow.inventory.forEach(function (inventory) {
