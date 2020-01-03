@@ -1,6 +1,6 @@
 import React from "react";
 import {Select, Table} from "antd";
-import {AMOUNT_DUE_REPORTS, APPOINTMENT_REPORTS} from "../../../constants/api";
+import {APPOINTMENT_REPORTS} from "../../../constants/api";
 import {getAPI, interpolate} from "../../../utils/common";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 

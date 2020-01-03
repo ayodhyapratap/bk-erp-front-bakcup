@@ -1,10 +1,9 @@
 import React from "react";
 import {AMOUNT_DUE_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
-import {Col, Empty, Modal, Row, Select, Spin, Table} from "antd";
+import {Col, Empty,  Row, Select, Spin, Table} from "antd";
 import {Pie, PieChart, Sector,Cell} from "recharts";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
-const { confirm } = Modal;
 
 export default class AmountDuePerDoctor extends React.Component {
     constructor(props) {
@@ -79,22 +78,6 @@ export default class AmountDuePerDoctor extends React.Component {
         sendReportMail(AMOUNT_DUE_REPORTS, apiParams)
     };
 
-    showConfirmMail = (mailTo)=>{
-        let that = this;
-        confirm({
-            title: 'Are you sure send mail?',
-            content: 'Email Id :'+ mailTo,
-            okText: 'Yes',
-            okType: 'danger',
-            cancelText: 'No',
-            onOk() {
-                that.sendMail(mailTo);
-            },
-            onCancel() {
-                console.log('Cancel',mailTo);
-            },
-        });
-    };
     render() {
         const {reportEachDoctor,loading} = this.state;
         const columns = [{
@@ -173,7 +156,7 @@ export default class AmountDuePerDoctor extends React.Component {
             <h2>Amount Due Per Doctor
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
-                <Select onChange={(e) => this.showConfirmMail(e)} style={{width: 200}}>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
                     {this.state.mailingUsersList.map(item => <Select.Option
                         value={item.email}>{item.name}</Select.Option>)}
                 </Select>
