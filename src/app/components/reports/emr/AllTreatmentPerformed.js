@@ -1,10 +1,10 @@
 import React from "react";
-import {Col, Divider, Row, Statistic, Table} from "antd";
+import {Col, Row, Select, Statistic} from "antd";
 import {EMR_REPORTS} from "../../../constants/api";
 import {getAPI,  interpolate} from "../../../utils/common";
 import moment from "moment"
-import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class AllTreatmentPerformed extends React.Component {
     constructor(props) {
@@ -14,12 +14,14 @@ export default class AllTreatmentPerformed extends React.Component {
             endDate: this.props.endDate,
             loading: false,
             treatmentPerformed:[],
+            mailingUsersList: []
         }
         this.loadTreatmentsReport = this.loadTreatmentsReport.bind(this);
     }
 
     componentDidMount() {
         this.loadTreatmentsReport();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -63,6 +65,28 @@ export default class AllTreatmentPerformed extends React.Component {
         getAPI(interpolate(EMR_REPORTS, [that.props.active_practiceId]), successFn, errorFn, apiParams);
     };
 
+    sendMail = (mailTo) => {
+        let that = this;
+        let apiParams = {
+            type: that.props.type,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+        };
+
+        if (this.props.payment_status) {
+            apiParams.payment_status = this.props.payment_status
+        }
+        if (this.props.type) {
+            apiParams.type = this.props.type
+        }
+        if (this.props.bed_packages) {
+            apiParams.bed_packages = this.props.bed_packages.join(',');
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(interpolate(EMR_REPORTS, [that.props.active_practiceId]), apiParams)
+    };
+
+
     render() {
         let that=this;
         let i=1;
@@ -97,19 +121,30 @@ export default class AllTreatmentPerformed extends React.Component {
         var totalTreatments = this.state.treatmentPerformed.reduce(function(prev, cur) {
                  return prev + cur.quantity;
              }, 0);
-        return <div>
-            <Row>
-                <Col span={12} offset={6} style={{textAlign:"center"}}>
-                    <Statistic title="Total Treatments" value={totalTreatments} />
-                    <br/>
-                </Col>
-            </Row>
+        return (
+            <div>
+                <h2>All Treatments Performed
+                     <span style={{float: 'right'}}>
+                        <p><small>E-Mail To:&nbsp;</small>
+                            <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                                {this.state.mailingUsersList.map(item => <Select.Option
+                                    value={item.email}>{item.name}</Select.Option>)}
+                            </Select>
+                        </p>
+                    </span>
+                </h2>
+                <Row>
+                    <Col span={12} offset={6} style={{textAlign:"center"}}>
+                        <Statistic title="Total Treatments" value={totalTreatments} />
+                        <br/>
+                    </Col>
+                </Row>
 
-            <CustomizedTable
-                loading={this.state.loading}
-                columns={columns}
-                dataSource={this.state.treatmentPerformed}/>
+                <CustomizedTable
+                    loading={this.state.loading}
+                    columns={columns}
+                    dataSource={this.state.treatmentPerformed}/>
 
-        </div>
+            </div>)
     }
 }

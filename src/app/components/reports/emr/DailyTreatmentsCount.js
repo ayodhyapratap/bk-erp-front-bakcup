@@ -1,10 +1,12 @@
 import React from "react";
-import {Statistic, Divider, Table, Empty, Spin} from "antd"
+import {Statistic, Divider, Empty, Spin, Select} from "antd"
 import {EMR_REPORTS, } from "../../../constants/api";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Label, Legend, ComposedChart} from 'recharts';
+import {getAPI, interpolate} from "../../../utils/common";
+import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip} from 'recharts';
 import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
+
 
 export default class DailyTreatmentsCount extends React.Component {
     constructor(props) {
@@ -14,12 +16,14 @@ export default class DailyTreatmentsCount extends React.Component {
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: false,
+            mailingUsersList: []
 
         }
         this.loadDailyTreatments = this.loadDailyTreatments.bind(this);
     }
     componentDidMount() {
         this.loadDailyTreatments();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -61,6 +65,30 @@ export default class DailyTreatmentsCount extends React.Component {
         }
         getAPI(interpolate(EMR_REPORTS, [that.props.active_practiceId]), successFn, errorFn, apiParams);
     }
+
+
+    sendMail = (mailTo) => {
+        let that = this;
+        let apiParams = {
+            type: that.props.type,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+        };
+
+        if (this.props.payment_status) {
+            apiParams.payment_status = this.props.payment_status
+        }
+        if (this.props.type) {
+            apiParams.type = this.props.type
+        }
+        if (this.props.bed_packages) {
+            apiParams.bed_packages = this.props.bed_packages.join(',');
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(interpolate(EMR_REPORTS, [that.props.active_practiceId]), apiParams)
+    };
+
+
     render() {
         let that=this;
         let i = 1;
@@ -95,7 +123,16 @@ export default class DailyTreatmentsCount extends React.Component {
         });
 
         return <div>
-            <h2>Daily Treatments Count</h2>
+            <h2>Daily Treatments Count
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
+            </h2>
             <Spin size="large" spinning={this.state.loading}>
                 {this.state.report.length>0?
                 <LineChart width={1000} height={300} data={[...this.state.report].reverse()}

@@ -1,10 +1,10 @@
 import React from "react";
-import {Col, Divider, Empty, Row, Spin, Statistic, Table} from "antd";
-import {EMR_REPORTS, PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import {Cell, ComposedChart, Pie, PieChart, Sector} from "recharts";
+import {Col, Empty, Row, Select, Spin} from "antd";
+import {EMR_REPORTS} from "../../../constants/api";
+import {getAPI, interpolate} from "../../../utils/common";
+import {Cell, Pie, PieChart, Sector} from "recharts";
 import CustomizedTable from "../../common/CustomizedTable";
-import moment from "moment";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class TreatmentForEachCategory extends React.Component {
     constructor(props) {
@@ -15,12 +15,14 @@ export default class TreatmentForEachCategory extends React.Component {
             loading: false,
             treatmentCategory:[],
             activeIndex:0,
+            mailingUsersList: []
         }
         this.loadTreatmentWithCategory = this.loadTreatmentWithCategory.bind(this);
     }
 
     componentDidMount() {
         this.loadTreatmentWithCategory();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -68,6 +70,29 @@ export default class TreatmentForEachCategory extends React.Component {
             activeIndex: index,
         });
     };
+
+    sendMail = (mailTo) => {
+        let that = this;
+        let apiParams = {
+            type: that.props.type,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+        };
+
+        if (this.props.payment_status) {
+            apiParams.payment_status = this.props.payment_status
+        }
+        if (this.props.type) {
+            apiParams.type = this.props.type
+        }
+        if (this.props.bed_packages) {
+            apiParams.bed_packages = this.props.bed_packages.join(',');
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(interpolate(EMR_REPORTS, [that.props.active_practiceId]), apiParams)
+    };
+
+
     render() {
 
         let i=1;
@@ -138,6 +163,14 @@ export default class TreatmentForEachCategory extends React.Component {
 
         return <div>
             <h2>Treatments By Category
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
             </h2>
 
             <Row>
