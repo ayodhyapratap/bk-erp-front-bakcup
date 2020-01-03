@@ -1,11 +1,10 @@
 import React from "react";
 import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
+import {getAPI} from "../../../utils/common";
 import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 import {Modal, Select} from "antd";
-const { confirm } = Modal;
 export default class ReasonsForCancellations extends React.Component {
     constructor(props) {
         super(props);
@@ -94,22 +93,6 @@ export default class ReasonsForCancellations extends React.Component {
         sendReportMail(PATIENT_APPOINTMENTS_REPORTS, apiParams)
     }
 
-    showConfirmMail = (mailTo)=>{
-        let that = this;
-        confirm({
-            title: 'Are you sure send mail?',
-            content: 'Email Id :'+ mailTo,
-            okText: 'Yes',
-            okType: 'danger',
-            cancelText: 'No',
-            onOk() {
-                that.sendMail(mailTo);
-            },
-            onCancel() {
-                console.log('Cancel');
-            },
-        });
-    };
     render() {
 
         const {appointmentReports} =this.state;
@@ -196,7 +179,7 @@ export default class ReasonsForCancellations extends React.Component {
             <h2>Reasons For Cancellations
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
-                <Select onChange={(e) => this.showConfirmMail(e)} style={{width: 200}}>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
                     {this.state.mailingUsersList.map(item => <Select.Option
                         value={item.email}>{item.name}</Select.Option>)}
                 </Select>

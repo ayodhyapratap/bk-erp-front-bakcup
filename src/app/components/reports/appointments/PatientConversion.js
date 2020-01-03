@@ -3,9 +3,8 @@ import {getAPI} from "../../../utils/common";
 import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import CustomizedTable from "../../common/CustomizedTable";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
-import {Col, Modal, Row, Select, Statistic} from "antd";
+import {Col, Row, Select, Statistic} from "antd";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
-const { confirm } = Modal;
 
 export default class PatientConversion extends React.Component{
     constructor(props){
@@ -94,23 +93,6 @@ export default class PatientConversion extends React.Component{
         sendReportMail(PATIENT_APPOINTMENTS_REPORTS, apiParams)
     }
 
-    showConfirmMail = (mailTo)=>{
-        let that = this;
-        confirm({
-            title: 'Are you sure send mail?',
-            content: 'Email Id :'+ mailTo,
-            okText: 'Yes',
-            okType: 'danger',
-            cancelText: 'No',
-            onOk() {
-                that.sendMail(mailTo);
-            },
-            onCancel() {
-                console.log('Cancel');
-            },
-        });
-    };
-
     render() {
         let that =this;
 
@@ -178,7 +160,7 @@ export default class PatientConversion extends React.Component{
                 <h2>Patient Conversion
                     <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
-                <Select onChange={(e) => this.showConfirmMail(e)} style={{width: 200}}>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
                     {this.state.mailingUsersList.map(item => <Select.Option
                         value={item.email}>{item.name}</Select.Option>)}
                 </Select>

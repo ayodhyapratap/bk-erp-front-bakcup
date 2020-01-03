@@ -1,11 +1,11 @@
 import React from "react";
-import {APPOINTMENT_REPORTS, PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
-import {getAPI, interpolate} from "../../../utils/common";
-import {Col, Divider, Empty, Modal, Row, Select, Spin, Statistic, Table} from "antd";
+import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
+import {getAPI} from "../../../utils/common";
+import {Col, Divider, Empty, Row, Select, Spin, Statistic, Table} from "antd";
 import {Pie, PieChart, Sector,Cell} from "recharts";
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
-const { confirm } = Modal;
+
 
 export default class AppointmentForEachPatientDoctor extends React.Component {
     constructor(props) {
@@ -102,22 +102,6 @@ export default class AppointmentForEachPatientDoctor extends React.Component {
         sendReportMail(PATIENT_APPOINTMENTS_REPORTS, apiParams)
     };
 
-    showConfirmMail = (mailTo)=>{
-        let that = this;
-        confirm({
-            title: 'Are you sure send mail?',
-            content: 'Email Id :'+ mailTo,
-            okText: 'Yes',
-            okType: 'danger',
-            cancelText: 'No',
-            onOk() {
-                that.sendMail(mailTo);
-            },
-            onCancel() {
-                console.log('Cancel');
-            },
-        });
-    };
     render() {
         const {appointmentEachDoctor} =this.state;
         const appointmentEachDoctorData = [];
@@ -192,7 +176,7 @@ export default class AppointmentForEachPatientDoctor extends React.Component {
             <h2>Appointment For Each Patient Doctor
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
-                <Select onChange={(e) => this.showConfirmMail(e)} style={{width: 200}}>
+                <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
                     {this.state.mailingUsersList.map(item => <Select.Option
                         value={item.email}>{item.name}</Select.Option>)}
                 </Select>
