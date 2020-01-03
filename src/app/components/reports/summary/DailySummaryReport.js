@@ -1,20 +1,14 @@
 import React from "react";
 import {
-    Alert,
-    Button,
     Card,
     Col,
-    Divider,
-    Descriptions,
     Row,
-    Spin,
-    Statistic,
     Table, Tag, Select, Typography, List
 } from "antd";
 import {getAPI} from "../../../utils/common";
 import {INVOICES_API} from "../../../constants/api";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
-import {loadDoctors} from "../../../utils/clinicUtils";
+import {loadDoctors, loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 const {Text} = Typography;
 export default class DailySummaryReport extends React.Component {
@@ -26,7 +20,8 @@ export default class DailySummaryReport extends React.Component {
             loading: false,
             dailySummary: [],
             practiceDoctors: [],
-            paidAmountForPaymentMode: {}
+            paidAmountForPaymentMode: {},
+            mailingUsersList:[],
 
         }
         this.loadDailySummary = this.loadDailySummary.bind(this);
@@ -35,6 +30,7 @@ export default class DailySummaryReport extends React.Component {
 
     componentDidMount() {
         this.loadDailySummary();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -164,6 +160,18 @@ export default class DailySummaryReport extends React.Component {
         });
     }
 
+    sendMail = (mailTo) => {
+        let apiParams = {
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            practice: this.props.active_practiceId
+        };
+        if (this.state.doctors) {
+            apiParams.doctor = this.state.doctors.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(INVOICES_API, apiParams)
+    }
 
     render() {
         let that = this;
@@ -359,12 +367,20 @@ export default class DailySummaryReport extends React.Component {
             <Card
                 bodyStyle={{padding: 0}}
                 extra={<>
-                    <span>Doctors :</span>
+                    <span>Doctors :&nbsp;</span>
                     <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
                             onChange={(value) => this.filterReport('doctors', value)}>
                         {this.state.practiceDoctors.map((item) => <Select.Option key={item.id} value={item.id}>
                             {item.user.first_name}</Select.Option>)}
-                    </Select></>
+                    </Select>&nbsp;&nbsp;
+
+                    <span>E-Mail To:&nbsp;
+                            <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                                {this.state.mailingUsersList.map(item => <Select.Option
+                                    value={item.email}>{item.name}</Select.Option>)}
+                            </Select>
+                    </span>
+                </>
                 }>
 
                 <Table bordered={true}
