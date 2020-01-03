@@ -1,10 +1,11 @@
 import React from "react";
 import {Bar, ComposedChart, LabelList, Tooltip, XAxis, YAxis} from "recharts";
 import moment from "moment";
-import {Empty, Spin} from "antd";
+import {Empty, Select, Spin} from "antd";
 import CustomizedTable from "../../common/CustomizedTable";
 import {getAPI} from "../../../utils/common";
 import {RETURN_INVOICE_REPORTS} from "../../../constants/api";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class DailyWiseReturnInvoice extends React.Component{
     constructor(props){
@@ -14,6 +15,7 @@ export default class DailyWiseReturnInvoice extends React.Component{
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: false,
+            mailingUsersList: []
         }
 
         this.loadDailyInvoiceReturn = this.loadDailyInvoiceReturn.bind(this);
@@ -22,6 +24,7 @@ export default class DailyWiseReturnInvoice extends React.Component{
 
     componentDidMount() {
         this.loadDailyInvoiceReturn();
+        loadMailingUserListForReportsMail(this);
 
     }
 
@@ -119,6 +122,49 @@ export default class DailyWiseReturnInvoice extends React.Component{
         getAPI(RETURN_INVOICE_REPORTS ,successFn, errorFn, apiParams)
     };
 
+    sendMail = (mailTo) => {
+        let {startDate, endDate} = this.state;
+        let {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
+        let apiParams = {
+            practice:active_practiceId,
+            type:type,
+            start: startDate.format('YYYY-MM-DD'),
+            end: endDate.format('YYYY-MM-DD'),
+            is_cancelled: exclude_cancelled ? true : false,
+        };
+
+        if (patient_groups){
+            apiParams.groups = patient_groups.toString()
+        }
+
+        if (doctors){
+            apiParams.doctors = doctors.toString();
+        }
+
+        if (income_type) {
+            apiParams.income_type = income_type;
+        }
+
+        if (treatments){
+            apiParams.treatments = treatments.toString()
+        }
+
+        if (discount){
+            apiParams.discount = discount
+        }
+        if (taxes){
+            apiParams.taxes = taxes.toString()
+        }
+
+        if (products){
+            apiParams.products = products.toString()
+        }
+
+        apiParams.mail_to = mailTo;
+        sendReportMail(RETURN_INVOICE_REPORTS, apiParams)
+    }
+
+
     render() {
 
         let {report, loading} =this.state;
@@ -168,7 +214,16 @@ export default class DailyWiseReturnInvoice extends React.Component{
 
         return (
             <div>
-                <h2>Daily wise Return Invoice</h2>
+                <h2>Daily wise Return Invoice
+                    <span style={{float: 'right'}}>
+                        <p><small>E-Mail To:&nbsp;</small>
+                            <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                                {this.state.mailingUsersList.map(item => <Select.Option
+                                    value={item.email}>{item.name}</Select.Option>)}
+                            </Select>
+                        </p>
+                    </span>
+                </h2>
 
                 <Spin size="large" spinning={loading}>
                     {reportData.length>0?

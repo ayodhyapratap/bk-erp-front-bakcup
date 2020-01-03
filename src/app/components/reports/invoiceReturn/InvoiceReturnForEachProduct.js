@@ -1,10 +1,11 @@
 import React from "react";
 import {Cell, Pie, PieChart, Sector} from "recharts";
 import * as _ from "lodash";
-import {Col, Divider, Empty, Row, Spin, Statistic} from "antd";
+import {Col, Divider, Empty, Row, Select, Spin, Statistic} from "antd";
 import CustomizedTable from "../../common/CustomizedTable";
 import {getAPI} from "../../../utils/common";
 import {RETURN_INVOICE_REPORTS} from "../../../constants/api";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 export default class InvoiceReturnForEachProduct extends React.Component{
     constructor(props){
         super(props);
@@ -13,13 +14,15 @@ export default class InvoiceReturnForEachProduct extends React.Component{
             startDate: this.props.startDate,
             endDate: this.props.endDate,
             loading: false,
-            activeIndex:0
+            activeIndex:0,
+            mailingUsersList: []
         }
 
         this.loadEachProductInvoiceReturn = this.loadEachProductInvoiceReturn.bind(this);
     }
     componentDidMount() {
         this.loadEachProductInvoiceReturn();
+        loadMailingUserListForReportsMail(this);
 
     }
 
@@ -117,6 +120,47 @@ export default class InvoiceReturnForEachProduct extends React.Component{
         getAPI(RETURN_INVOICE_REPORTS ,successFn, errorFn, apiParams)
     };
 
+    sendMail = (mailTo) => {
+        let {startDate, endDate} = this.state;
+        let {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
+        let apiParams = {
+            practice:active_practiceId,
+            type:type,
+            start: startDate.format('YYYY-MM-DD'),
+            end: endDate.format('YYYY-MM-DD'),
+            is_cancelled: exclude_cancelled ? true : false,
+        };
+
+        if (patient_groups){
+            apiParams.groups = patient_groups.toString()
+        }
+
+        if (doctors){
+            apiParams.doctors = doctors.toString();
+        }
+
+        if (income_type) {
+            apiParams.income_type = income_type;
+        }
+
+        if (treatments){
+            apiParams.treatments = treatments.toString()
+        }
+
+        if (discount){
+            apiParams.discount = discount
+        }
+        if (taxes){
+            apiParams.taxes = taxes.toString()
+        }
+
+        if (products){
+            apiParams.products = products.toString()
+        }
+
+        apiParams.mail_to = mailTo;
+        sendReportMail(RETURN_INVOICE_REPORTS, apiParams)
+    }
 
     onPieEnter=(data, index)=>{
         this.setState({
@@ -203,7 +247,16 @@ export default class InvoiceReturnForEachProduct extends React.Component{
         ];
 
         return(<div>
-                <h2>Return Invoice For Each Products</h2>
+                <h2>Return Invoice For Each Products
+                    <span style={{float: 'right'}}>
+                        <p><small>E-Mail To:&nbsp;</small>
+                            <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                                {this.state.mailingUsersList.map(item => <Select.Option
+                                    value={item.email}>{item.name}</Select.Option>)}
+                            </Select>
+                        </p>
+                    </span>
+                </h2>
 
                 <Row>
                     <Col span={12} offset={6}>
