@@ -1,9 +1,10 @@
 import React from "react";
-import {Col, Divider, Row, Statistic, Table} from "antd";
+import {Col, Divider, Row, Select, Statistic, Table} from "antd";
 import {PAYMENT_REPORTS} from "../../../constants/api";
 import {getAPI, interpolate} from "../../../utils/common";
 import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class PaymentSettlementPerDoctor extends React.Component {
     constructor(props) {
@@ -13,12 +14,14 @@ export default class PaymentSettlementPerDoctor extends React.Component {
             endDate: this.props.endDate,
             loading: false,
             report: [],
+            mailingUsersList: []
         };
         this.loadPaymentsReport = this.loadPaymentsReport.bind(this);
     }
 
     componentDidMount() {
         this.loadPaymentsReport();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -75,6 +78,22 @@ export default class PaymentSettlementPerDoctor extends React.Component {
         getAPI(interpolate(PAYMENT_REPORTS, [that.props.active_practiceId]), successFn, errorFn, apiParams);
     };
 
+    sendMail = (mailTo) => {
+        let that = this
+        let {startDate, endDate} = this.state;
+        let {active_practiceId, type} = this.props;
+        let apiParams = {
+            practice:active_practiceId,
+            type:type,
+            start: startDate.format('YYYY-MM-DD'),
+            end: endDate.format('YYYY-MM-DD'),
+        };
+
+
+        apiParams.mail_to = mailTo;
+        sendReportMail(interpolate(PAYMENT_REPORTS, [that.props.active_practiceId]), apiParams);
+    };
+
     render() {
         let that = this;
         let i = 1;
@@ -88,7 +107,16 @@ export default class PaymentSettlementPerDoctor extends React.Component {
         }];
 
         return <div>
-            <h2>Payment Settlement Per Doctor</h2>
+            <h2>Payment Settlement Per Doctor
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
+            </h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign: "center"}}>
                     {/*<Statistic title="Total Appointments" value={this.state.total}/>*/}
