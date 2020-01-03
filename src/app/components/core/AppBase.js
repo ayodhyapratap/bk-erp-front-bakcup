@@ -1,16 +1,11 @@
 import React from "react";
 import {Route, Switch} from "react-router-dom";
 import AppHeader from "./AppHeader";
-import {Layout, Spin, Button, Input} from "antd";
+import {Layout, Spin, Button} from "antd";
+import loadable from '@loadable/component';
 import AppSider from "./AppSider";
 import {loadUserDetails, loggedInactivePractice, loggedInUserPractices, setCurrentPractice} from "../../utils/auth";
-import SettingsDash from "../settings/SettingsDash"
-import Calendar from "../calendar/Calendar";
-import PatientHome from "../patients/PatientHome";
 import Error404 from "../common/errors/Error404";
-import ReportsHome from "../reports/ReportsHome";
-import WebAdminHome from "../webAdmin/WebAdminHome";
-import InventoryHome from "../inventory/InventoryHome";
 import Profile from "../auth/Profile";
 import PrintPatientForm from "../patients/patient/PrintPatientForm";
 import CreateAppointment from "../calendar/CreateAppointment";
@@ -18,9 +13,14 @@ import BlockCalendar from "../calendar/BlockCalendar";
 import PermissionDenied from "../common/errors/PermissionDenied";
 import SuggestionBox from "./SuggestionBox";
 import ErrorBoundary from "../../../crashHandling/ErrorBoundary";
-import MeetingBooking from "../conference/meeting/MeetingBooking";
 
-const {TextArea} = Input;
+const Calendar = loadable(() => import('../calendar/Calendar'));
+const ReportsHome = loadable(() => import('../reports/ReportsHome'));
+const WebAdminHome = loadable(() => import('../webAdmin/WebAdminHome'));
+const InventoryHome = loadable(() => import('../inventory/InventoryHome'));
+const MeetingBooking = loadable(() => import('../conference/meeting/MeetingBooking'));
+const SettingsDash = loadable(() => import('../settings/SettingsDash'));
+const PatientHome = loadable(() => import('../patients/PatientHome'));
 
 class AppBase extends React.Component {
     constructor(props) {
@@ -133,7 +133,6 @@ class AppBase extends React.Component {
     };
 
 
-
     render() {
         let that = this;
         if (this.state.loadingPermissions) {
@@ -213,9 +212,11 @@ class AppBase extends React.Component {
                                                  {...this.props}
                                                  {...route} key={that.state.active_practiceId}/>}/>
 
-                                    <Route path="/meeting-booking" render={(route)=>(this.state.activePracticePermissions.ViewMeeting || this.state.allowAllPermissions?
-                                        <MeetingBooking  {...this.state} {...this.props} {...route}
-                                                         key={that.state.active_practiceId}/>:<PermissionDenied/>)}/>
+                                    <Route path="/meeting-booking"
+                                           render={(route) => (this.state.activePracticePermissions.ViewMeeting || this.state.allowAllPermissions ?
+                                               <MeetingBooking  {...this.state} {...this.props} {...route}
+                                                                key={that.state.active_practiceId}/> :
+                                               <PermissionDenied/>)}/>
                                     {/*<Route path="/alternate-medicine" render={(route)=>(this.state.activePracticePermissions.ManageMedicineConversion || this.state.allowAllPermissions?*/}
                                     {/*    <AlternateMedicineHome  {...this.state} {...this.props} {...route}*/}
                                     {/*                     key={that.state.active_practiceId}/>:<PermissionDenied/>)}/>*/}
@@ -227,19 +228,15 @@ class AppBase extends React.Component {
                                                                                            key={that.state.active_practiceId}/>}/> : null}
 
 
-
-
-
                                     <Route path="/" render={(route) => <PatientHome {...this.state}
                                                                                     {...this.props}
                                                                                     {...route}
                                                                                     key={that.state.active_practiceId}/>}/>
 
 
-
                                     <Route component={Error404}/>
 
-                                 </Switch>
+                                </Switch>
                                 {/*<AppFooter/>*/}
                             </Layout>
                         </Layout>

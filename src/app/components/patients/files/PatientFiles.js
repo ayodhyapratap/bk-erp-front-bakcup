@@ -511,7 +511,7 @@ class PatientFiles extends React.Component {
                                                 <h4>
                                                 <b>{item.patient_data.user.first_name}&nbsp;({item.patient_data.custom_id})</b>
                                             </h4>
-                                            <Tag><b>{item.practice_data.name}</b></Tag>
+                                            <Tag><b>{item.practice_data ? item.practice_data.name : '--'}</b></Tag>
                                         </Card>
                                     </Col>
                                 </>
@@ -671,7 +671,7 @@ class PatientFiles extends React.Component {
                                             <Link to={"/patient/" + item.patient_data.id + "/emr/files/"}><h4>
                                                 <b>{item.patient_data.user.first_name}&nbsp;({item.patient_data.custom_id})</b>
                                             </h4></Link>
-                                            <Tag><b>{item.practice_data.name}</b></Tag>
+                                            <Tag><b>{item.practice_data ? item.practice_data.name : '--'}</b></Tag>
                                         </Card>
                                     </Col>
                                 </>

@@ -1,4 +1,4 @@
-import {Button, Card, Divider, Icon, Popconfirm, Row, Col, Select, DatePicker} from "antd";
+import {Button, Card, Divider, Icon, Popconfirm, Row, Col, Select, DatePicker, Table} from "antd";
 import React from "react";
 import {getAPI, interpolate, postAPI} from "../../../utils/common";
 import {EXPENSE_TYPE, EXPENSES_API, PAYMENT_MODES, SINGLE_EXPENSES_API} from "../../../constants/api";
@@ -6,7 +6,6 @@ import {Route, Switch} from "react-router";
 import AddExpenses from "./AddExpenses";
 import {Link} from "react-router-dom";
 import moment from "moment";
-import CustomizedTable from "../../common/CustomizedTable";
 import PermissionDenied from "../../common/errors/PermissionDenied";
 
 export default class ExpensesList extends React.Component {
@@ -225,9 +224,8 @@ export default class ExpensesList extends React.Component {
                                         onChange={(value) => this.changeExpenseFilters('selectedEndDate', value)}/>
                         </Col>
                     </Row>
-                    <CustomizedTable loading={this.state.loading} dataSource={this.state.expenses}
-                                     columns={expenseColoumns}
-                                     hideReport={!that.props.activePracticePermissions.ExportExpenses}/>
+                    <Table loading={this.state.loading} dataSource={this.state.expenses}
+                                     columns={expenseColoumns}/>
                 </Card>
             </Switch>
         </div>

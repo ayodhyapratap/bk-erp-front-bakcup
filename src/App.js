@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
+import loadable from '@loadable/component';
 import {Affix, Alert, Layout} from "antd";
 import {Route, Switch} from "react-router-dom";
 import {loggedInUser, logInUser, logInUserWithOtp, logOutUser,} from "./app/utils/auth";
-import AppBase from "./app/components/core/AppBase";
-import Auth from "./app/components/auth/Auth";
 import ReactGA from 'react-ga';
-import CONFIG from "./app.config";
+
+const Auth = loadable(() => import('./app/components/auth/Auth'));
+const AppBase = loadable(() => import('./app/components/core/AppBase'));
 
 class App extends Component {
     constructor(props) {
@@ -22,11 +23,7 @@ class App extends Component {
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
     }
-    componentDidUpdate(prevProps) {
-        if (this.props.location.pathname !== prevProps.location.pathname) {
-            ReactGA.pageview(window.location.pathname + window.location.search);
-        }
-    }
+
     login(data, withOtp = true) {
         let that = this;
         let successFn = function () {
@@ -57,7 +54,7 @@ class App extends Component {
     }
 
     render() {
-
+        ReactGA.pageview(window.location.pathname + window.location.search);
         return <Layout>
             {this.state.production ? null : <Affix>
                 <Alert
