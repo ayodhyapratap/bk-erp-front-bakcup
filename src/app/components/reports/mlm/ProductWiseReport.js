@@ -1,9 +1,10 @@
 import React from "react";
-import {Button, Card, Col, Icon, Radio, Row, Statistic, Table} from "antd";
+import {Col, Row, Select} from "antd";
 import {MLM_Reports} from "../../../constants/api";
 import {getAPI } from "../../../utils/common";
 import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class ProductWiseReport extends React.Component {
     constructor(props) {
@@ -12,12 +13,14 @@ export default class ProductWiseReport extends React.Component {
             report: [],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: false
+            loading: false,
+            mailingUsersList: []
         }
         this.loadMlmReport = this.loadMlmReport.bind(this);
     }
     componentDidMount() {
         this.loadMlmReport();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -59,6 +62,19 @@ export default class ProductWiseReport extends React.Component {
         getAPI(MLM_Reports , successFn, errorFn, apiParams);
     }
 
+    sendMail = (mailTo) => {
+        let that = this;
+        let apiParams={
+            practice:that.props.active_practiceId,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+        };
+        if(this.props.agents){
+            apiParams.agents=this.props.agents.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(MLM_Reports, apiParams)
+    };
 
     render() {
         const {report} =this.state;
@@ -111,6 +127,15 @@ export default class ProductWiseReport extends React.Component {
         // }, 0);
         return <div>
             <h2>MLM Report
+
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
             </h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>

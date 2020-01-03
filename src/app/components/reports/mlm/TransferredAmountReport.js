@@ -1,11 +1,12 @@
 import React from "react";
-import {Button, Card, Col, Empty, Icon, Radio, Row, Spin, Statistic, Table, Typography} from "antd";
+import {Col, Empty, Row, Select, Spin, Typography} from "antd";
 import {MLM_Reports} from "../../../constants/api";
 import {getAPI } from "../../../utils/common";
 import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
 import {Cell, Pie, PieChart, Sector} from "recharts";
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 const {Text} = Typography;
 
 export default class TransferredAmountReport extends React.Component {
@@ -18,11 +19,13 @@ export default class TransferredAmountReport extends React.Component {
             endDate: this.props.endDate,
             loading: false,
             activeIndex:0,
+            mailingUsersList: []
         }
         this.loadMlmReport = this.loadMlmReport.bind(this);
     }
     componentDidMount() {
         this.loadMlmReport();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -71,6 +74,25 @@ export default class TransferredAmountReport extends React.Component {
             activeIndex: index,
         });
     };
+
+
+
+    sendMail = (mailTo) => {
+        let that = this;
+        let apiParams={
+            practice:that.props.active_practiceId,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            type:'TRANSFER',
+        };
+        if(this.props.agents){
+            apiParams.agents=this.props.agents.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(MLM_Reports, apiParams)
+    };
+
+
     render() {
         let that =this;
         const {report} =this.state;
@@ -184,6 +206,16 @@ export default class TransferredAmountReport extends React.Component {
             return prev + cur.total;
         }, 0);
         return <div>
+            <h2>ALl MLM
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
+            </h2>
             <Row>
                 <Col span={12} offset={6}>
                     <Spin  size="large" spinning={this.state.loading}>
