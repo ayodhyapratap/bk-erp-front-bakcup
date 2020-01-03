@@ -75,6 +75,7 @@ export const BLOCK_CALENDAR = 'appointment/block_calendar/';
 export const APPOINTMENT_SCHEDULE = 'appointment/?practice=%s';
 
 export const PATIENT_NOTES = 'patients/patient_notes/?patient=%s&practice=%s';
+
 export const LABPANEL_API = 'clinics/%s/labpanel/';
 export const PATIENT_TIMELINE_API = 'patients/%s/combine_patient_report/';
 export const PATIENT_TIMELINE_PDF = 'patients/%s/timeline_pdf/';
@@ -286,3 +287,6 @@ export const SINGLE_MEETING = 'meetings/%s/';
 
 /** Alternate Medicine Conversion **/
 export const ALTERNATE_MEDICINE = 'conversion/';
+
+
+export const PATIENT_CALL_NOTES = 'patients/patient_notes_call/?patient=%s';
