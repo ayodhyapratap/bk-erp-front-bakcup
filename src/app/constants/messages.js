@@ -36,3 +36,6 @@ export const PASS_UPPER = 'Password must have atleast 1 uppercase letter';
 export const PASS_LOWER = 'Password must have atleast 1 lowercase letter';
 export const PASS_DIGIT = 'Password must contain atleast 1 digit';
 export const PASS_SPEC =  'Password must have atleast 1 special character';
+
+export const MAIL_SEND_MSG ="Mail Sent Successfully";
+export const MAIL_SEND_ERROR_MSG ="No data available for mailing";

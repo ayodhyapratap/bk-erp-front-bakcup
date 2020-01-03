@@ -1,10 +1,11 @@
 import React from 'react';
 import {CONFIG_API, MAILING_USERS_LIST, PRACTICESTAFF} from "../constants/api";
-import {getAPI, interpolate} from "./common";
-import {DOCTORS_ROLE} from "../constants/dataKeys";
+import {displayMessage, getAPI, interpolate} from "./common";
+import {DOCTORS_ROLE, ERROR_MSG_TYPE} from "../constants/dataKeys";
 import {Link} from "react-router-dom";
-import {Menu} from 'antd';
-
+import {Menu, Modal} from 'antd';
+import {MAIL_SEND_ERROR_MSG, MAIL_SEND_MSG, SUCCESS} from "../constants/messages";
+const { confirm } = Modal;
 export const loadDoctors = function (that) {
     let successFn = function (data) {
         let doctor = [];
@@ -104,12 +105,33 @@ export const loadMailingUserListForReportsMail = function (that) {
     getAPI(MAILING_USERS_LIST, successFn, errorFn)
 }
 
-export const sendReportMail = function(url,params){
-    let successFn = function (data){
+export const sendReportMail = function(url,params,successMsg, errorMsg){
+console.log("msg",url,successMsg,errorMsg)
+    confirm({
+        title: 'Are you sure send mail?',
+        content: 'Email Id :'+ params.mail_to,
+        okText: 'Yes',
+        okType: 'danger',
+        cancelText: 'No',
+        onOk() {
+            let successFn = function (data){
+                if (successMsg){
+                    displayMessage(SUCCESS,MAIL_SEND_MSG + "to" +params.mail_to)
+                }
 
-    }
-    let errorFn = function (){
+            }
+            let errorFn = function (){
+                if (errorMsg){
+                    displayMessage(ERROR_MSG_TYPE,MAIL_SEND_ERROR_MSG)
+                }
 
-    }
-    getAPI(url,successFn,errorFn,params);
+
+            }
+            getAPI(url,successFn,errorFn,params);
+        },
+        onCancel() {
+        },
+    });
+
+
 }
