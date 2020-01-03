@@ -1,9 +1,10 @@
 import React from "react";
-import {Table, Divider, Statistic, Spin, Empty} from "antd";
+import {Table, Spin, Empty, Select} from "antd";
 import {INVENTORY_RETAILS_REPORT} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import moment from "moment";
-import {ComposedChart, Line, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart} from 'recharts';
+import {ComposedChart,Bar, XAxis, YAxis, Tooltip,} from 'recharts';
+import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class ProfitLossReport extends React.Component {
     constructor(props) {
@@ -12,12 +13,14 @@ export default class ProfitLossReport extends React.Component {
             inventoryReports:[],
             startDate: this.props.startDate,
             endDate: this.props.endDate,
-            loading: false
+            loading: false,
+            mailingUsersList: []
         }
         this.loadInventoryRetails = this.loadInventoryRetails.bind(this);
     }
     componentDidMount() {
         this.loadInventoryRetails();
+        loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -78,6 +81,35 @@ export default class ProfitLossReport extends React.Component {
         }
 
         getAPI(INVENTORY_RETAILS_REPORT,  successFn, errorFn, apiParams);
+    };
+
+
+
+
+    sendMail = (mailTo) => {
+        let that = this;
+        let apiParams={
+            practice:that.props.active_practiceId,
+            start: this.state.startDate.format('YYYY-MM-DD'),
+            end: this.state.endDate.format('YYYY-MM-DD'),
+        }
+        if(this.props.patient_groups){
+            apiParams.groups=this.props.patient_groups.toString();
+        }
+        if(this.props.products){
+            apiParams.products=this.props.products.toString();
+        }
+        if(this.props.doctors){
+            apiParams.doctors=this.props.doctors.toString();
+        }
+        if(this.props.manufacturers){
+            apiParams.manufacturers=this.props.manufacturers.toString();
+        }
+        if(this.props.suppliers){
+            apiParams.suppliers=this.props.suppliers.toString();
+        }
+        apiParams.mail_to = mailTo;
+        sendReportMail(INVENTORY_RETAILS_REPORT, apiParams)
     };
 
     render() {
@@ -178,7 +210,16 @@ export default class ProfitLossReport extends React.Component {
             return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value}</text>;
         };
         return <div>
-            <h2>Profit Loss</h2>
+            <h2>Profit Loss
+                <span style={{float: 'right'}}>
+                    <p><small>E-Mail To:&nbsp;</small>
+                        <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
+                            {this.state.mailingUsersList.map(item => <Select.Option
+                                value={item.email}>{item.name}</Select.Option>)}
+                        </Select>
+                    </p>
+                </span>
+            </h2>
             <Spin size="large" spinning={this.state.loading}>
                 {inventoryReportsData.length>0?
                     <ComposedChart width={1000} height={400} data={inventoryReportsData}
