@@ -629,3 +629,5 @@ export const INCOME_TYPE = [
     {label: "Services", value: "SERVICES"},
     {label: "Products", value: "PRODUCTS"},
 ];
+
+export const PDF_FILE_EXTENSION = 'pdf';

@@ -241,14 +241,11 @@ export const validatePassword = function (rule, value, callback) {
     }
     if (value == value.toLowerCase() && value.length != 0) {
         return (PASS_UPPER);
-    }
-    else if (value == value.toUpperCase() && value.length != 0) {
+    } else if (value == value.toUpperCase() && value.length != 0) {
         return (PASS_LOWER);
-    }
-    else if (value.search(/[0-9]/) < 0 && value.length != 0) {
+    } else if (value.search(/[0-9]/) < 0 && value.length != 0) {
         return (PASS_DIGIT);
-    }
-    else if (!(/^[a-zA-Z0-9 ]*$/.test(value) == true && value.length != 0)) {
+    } else if (!(/^[a-zA-Z0-9 ]*$/.test(value) == true && value.length != 0)) {
     } else {
         return (PASS_SPEC);
     }
@@ -266,9 +263,19 @@ export const getCommonSettings = function (type) {
 }
 
 export const removeEmpty = (obj) => {
-  Object.keys(obj).forEach(k =>
-    (obj[k] && typeof obj[k] === 'object') && removeEmpty(obj[k]) ||
-    (!obj[k] && obj[k] !== undefined) && delete obj[k]
-  );
-  return obj;
+    Object.keys(obj).forEach(k =>
+        (obj[k] && typeof obj[k] === 'object') && removeEmpty(obj[k]) ||
+        (!obj[k] && obj[k] !== undefined) && delete obj[k]
+    );
+    return obj;
 };
+
+export const fildFileExtension = function (path) {
+    if(!path)
+        return null;
+    let name = path.split('.');
+    if (name.length) {
+        return name[name.length - 1]
+    }
+    return null;
+}

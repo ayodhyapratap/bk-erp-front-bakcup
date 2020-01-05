@@ -522,7 +522,7 @@ class AddPaymentForm extends React.Component {
 
                                 </Col>
                                 <Col span={12}>
-                                    <Input.TextArea row={2} placeholder="Notes..." size={'small'} onChange={(value)=>this.changeNotes(value)}>
+                                    <Input.TextArea row={2} placeholder="Notes..." size={'small'} onChange={(e)=>this.changeNotes(e.target.value)}>
                                         {this.state.notes}
                                     </Input.TextArea>
                                     <Select style={{width: '100%'}} value={this.state.selectedPaymentMode}

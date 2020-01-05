@@ -40,15 +40,12 @@ import {
 import CalendarRightPanel from "./CalendarRightPanel";
 import {
     CANCELLED_STATUS,
-    CHECKOUT_STATUS,
     DAY_KEYS,
-    ENGAGED_STATUS,
     SCHEDULE_STATUS,
-    WAITING_STATUS
 } from "../../constants/hardData";
 
 const localizer = momentLocalizer(moment);
-const DragAndDropCalendar = withDragAndDrop(BigCalendar)
+const DragAndDropCalendar = withDragAndDrop(BigCalendar);
 const {Content} = Layout;
 const confirm = Modal.confirm;
 
