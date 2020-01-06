@@ -321,7 +321,7 @@ class PracticeDetails extends React.Component {
                     "name": permission.name,
                     "codename": permission.codename,
                     "is_active": !!value,
-                    "practice": that.props.active_practiceId,
+                    // "practice": that.props.active_practiceId,
                     "staff": that.state.currentUser
                 };
                 if (that.state.editPermissions[permission.codename]) {

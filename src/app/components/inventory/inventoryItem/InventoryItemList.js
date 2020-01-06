@@ -1,7 +1,12 @@
 import React from "react";
-import {Button, Card, Col, Divider, Icon, Input, Modal, Popconfirm, Radio, Row, Spin, Table, Tag} from "antd";
+import {Button, Card, Col, Divider, Icon, Input, Modal, Popconfirm, Radio, Row, Select, Spin, Table, Tag} from "antd";
 import {getAPI, interpolate, putAPI, startLoadingMessage, stopLoadingMessage} from "../../../utils/common";
-import {INVENTORY_ITEM_API, SINGLE_INVENTORY_ITEM_API, INVENTORY_ITEM_EXPORT} from "../../../constants/api";
+import {
+    INVENTORY_ITEM_API,
+    SINGLE_INVENTORY_ITEM_API,
+    INVENTORY_ITEM_EXPORT,
+    PRODUCT_MARGIN
+} from "../../../constants/api";
 import {Link, Route, Switch} from "react-router-dom";
 import AddorEditInventoryItem from "./AddorEditInventoryItem";
 import AddOrConsumeStock from "./AddOrConsumeStock"
@@ -27,7 +32,8 @@ export default class InventoryItemList extends React.Component {
             itemTypeFilter: "ALL",
             itemStockFilter: "ALL",
             loading: true,
-            nextItemPage: null
+            nextItemPage: null,
+            productMargin:[]
         }
         this.loadData = this.loadData.bind(this);
         this.showAddOrConsumeModal = this.showAddOrConsumeModal.bind(this);
@@ -40,8 +46,20 @@ export default class InventoryItemList extends React.Component {
 
     componentDidMount() {
         this.loadData();
+        this.loadProductMargin();
     }
+    loadProductMargin=() =>{
+        let that = this;
+        let successFn = function (data) {
+            that.setState({
+                productMargin: data
+            })
+        }
+        let errorFn = function () {
 
+        }
+        getAPI(PRODUCT_MARGIN, successFn, errorFn);
+    }
     loadData(page = 1) {
         let that = this;
         that.setState({
@@ -89,6 +107,9 @@ export default class InventoryItemList extends React.Component {
         }
         if (that.state.filterItemCode) {
             reqParams.code = that.state.filterItemCode
+        }
+        if (that.state.filterMLM) {
+            reqParams.margin = that.state.filterMLM
         }
         getAPI(INVENTORY_ITEM_API, successFn, errorFn, reqParams);
     }
@@ -167,6 +188,9 @@ export default class InventoryItemList extends React.Component {
         if (that.state.filterItemCode) {
             reqParams.code = that.state.filterItemCode
         }
+        if (that.state.filterMLM) {
+            reqParams.margin = that.state.filterMLM
+        }
         getAPI(INVENTORY_ITEM_EXPORT, successFn, errorFn, reqParams);
     }
 
@@ -198,6 +222,9 @@ export default class InventoryItemList extends React.Component {
         }
         if (that.state.filterItemCode) {
             reqParams.code = that.state.filterItemCode
+        }
+        if (that.state.filterMLM) {
+            reqParams.margin = that.state.filterMLM
         }
         getAPI(INVENTORY_ITEM_EXPORT, successFn, errorFn, reqParams);
     }
@@ -399,7 +426,7 @@ export default class InventoryItemList extends React.Component {
                             <Col span={4}>
                                 <Input style={{width: '100%'}} value={this.state.filterItemName}
                                        allowClear={true}
-                                       // disabled={this.state.loading}
+                                       disabled={this.state.loading}
                                        placeholder={"Item Name"}
                                        onChange={(e) => this.changeInventoryFilters('filterItemName', e.target.value)}/>
                             </Col>
@@ -409,9 +436,20 @@ export default class InventoryItemList extends React.Component {
                             <Col span={4}>
                                 <Input style={{width: '100%'}} value={this.state.filterItemCode}
                                        allowClear={true}
-                                       // disabled={this.state.loading}
+                                       disabled={this.state.loading}
                                        placeholder={"HSN Number"}
                                        onChange={(e) => this.changeInventoryFilters('filterItemCode', e.target.value)}/>
+                            </Col>
+                            <Col span={2} style={{textAlign: "right"}}>
+                                <b> MLM</b>
+                            </Col>
+                            <Col span={4}>
+                                <Select style={{width: '100%'}} value={this.state.filterMLM} allowClear={true}
+                                    disabled={this.state.loading}
+                                        placeholder={"MLM Margin"}
+                                        onChange={(e) => this.changeInventoryFilters('filterMLM', e)}>
+                                    {this.state.productMargin.map(item=><Select.Option value={item.id}>{item.name}</Select.Option>)}
+                                </Select>
                             </Col>
                             {/*<Col span={8}>*/}
                             {/*    <Button type={"primary"} onClick={()=>this.loadData()}> Filter Items</Button>*/}

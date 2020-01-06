@@ -104,7 +104,7 @@ class AppHeader extends React.Component {
 
     handlePatientSelect = (event) => {
         if (event) {
-            this.props.history.push("/patient/" + event.replace(CUSTOM_STRING_SEPERATOR,'') + "/profile");
+            this.props.history.push("/patient/" + event.replace(CUSTOM_STRING_SEPERATOR, '') + "/profile");
             this.setState({
                 searchPatientString: null,
             });
@@ -141,6 +141,8 @@ class AppHeader extends React.Component {
                 <Menu.Item key="5">
                     <AutoComplete placeholder="Patient Name"
                                   showSearch
+                                  dropdownMatchSelectWidth={false}
+                                  dropdownStyle={{width: 400}}
                                   onSearch={this.searchPatient}
                                   defaultActiveFirstOption={false}
                                   showArrow={false}
@@ -156,9 +158,10 @@ class AppHeader extends React.Component {
                                             {option.user.first_name ? option.user.first_name.charAt(0) :
                                                 <Icon type="user"/>}
                                         </Avatar>)}
-                                    title={option.user.first_name + " (" + (option.custom_id ? option.custom_id : option.user.id) + ")"}
+                                    title={option.user.first_name}
                                     description={that.props.activePracticePermissions.PatientPhoneNumber ? option.user.mobile : hideMobile(option.user.mobile)}
                                 />
+                                <div>{option.custom_id ? option.custom_id : option.user.id}</div>
                             </List.Item>
                         </AutoComplete.Option>)}
                     </AutoComplete>
