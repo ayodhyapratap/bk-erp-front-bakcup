@@ -44,6 +44,7 @@ import ModalImage from "react-modal-image";
 import {ERROR_MSG_TYPE, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import moment from "moment";
 import {PDF_FILE_EXTENSION} from "../../../constants/hardData";
+import * as _ from "lodash";
 
 class PatientFiles extends React.Component {
     constructor(props) {
@@ -370,6 +371,32 @@ class PatientFiles extends React.Component {
         })
     }
 
+    updateFormValue =(type,value)=>{
+        this.setState({
+            [type]: value
+        })
+    };
+    mailModalOpen =() =>{
+        this.setState({
+            visibleMail:true
+        })
+    };
+
+    mailModalClose =() =>{
+        this.setState({
+            visibleMail:false
+        })
+    };
+
+
+    sendFiles =()=>{
+        this.mailModalOpen()
+        this.setState({
+            mail_to:_.get(this.props.currentPatient,'user.email')
+        })
+
+    };
+
     render() {
         let that = this;
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
@@ -437,6 +464,10 @@ class PatientFiles extends React.Component {
                          </Dropdown>
 
                          <Button onClick={() => this.triggerAddModal(true)}><Icon type="plus"/>Add</Button>
+                         <Button  style={{marginRight: "10px"}}
+                                  onClick={() => that.sendFiles()}>
+                             <Icon type="mail"/> &nbsp; Send to patient
+                         </Button>
                      </Button.Group> : <Button.Group>
                          <Button type={"primary"} style={{marginRight: "10px"}}
                                  onClick={() => this.props.togglePatientListModal(true)}>
@@ -561,6 +592,7 @@ class PatientFiles extends React.Component {
                                                       loading={this.state.loading}
                                                       hidden={!this.state.loadMoreFiles}/>
                         </Col>
+
                     </Row>
                     <Card title="Medical Certificate">
                         <List loading={this.state.loading}
@@ -587,12 +619,33 @@ class PatientFiles extends React.Component {
                             loaderFunction={() => this.loadData(that.state.loadMoreCertificate)}
                             loading={this.state.loading}
                             hidden={!this.state.loadMoreCertificate}/>
+
+
+
                     </Card>
 
 
                 </Col>
 
             </Row>
+            <Modal
+                title={null}
+                visible={this.state.visibleMail}
+                onOk={this.sendMailToPatient}
+                onCancel={this.mailModalClose}
+                footer={[
+                    <Button key="back" onClick={this.mailModalClose}>
+                        Cancel
+                    </Button>,
+                    <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                        Send
+                    </Button>,
+                ]}
+            >
+                <p>Send Timeline To {_.get(this.props.currentPatient,'user.first_name')} ?</p>
+                <Input value={this.state.mail_to} placeholder={"Email"}
+                       onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+            </Modal>
             <Modal visible={this.state.showAddModal}
                    onCancel={() => this.triggerAddModal(false)}
                    footer={null}>

@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Checkbox, Divider, Icon, Table, Popconfirm, Menu, Dropdown, Tag, Tooltip,} from "antd";
+import {Button, Card, Checkbox, Divider, Icon, Table, Popconfirm, Menu, Dropdown, Tag, Tooltip, Input,} from "antd";
 import {getAPI, interpolate, putAPI, postAPI, displayMessage} from "../../../utils/common";
 import {
     PROCEDURE_CATEGORY,
@@ -15,6 +15,8 @@ import AddorEditDynamicCompletedTreatmentPlans from "./AddorEditDynamicCompleted
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import {Modal} from "antd";
+import * as _ from "lodash";
+import {sendMail} from "../../../utils/clinicUtils";
 
 const confirm = Modal.confirm;
 
@@ -156,6 +158,41 @@ class PatientCompletedProcedures extends React.Component {
         }
         getAPI(interpolate(TREATMENTPLANS_PDF, [id]), successFn, errorFn);
     }
+    updateFormValue =(type,value)=>{
+        this.setState({
+            [type]: value
+        })
+    };
+    mailModalOpen =() =>{
+        this.setState({
+            visibleMail:true
+        })
+    };
+
+    mailModalClose =() =>{
+        this.setState({
+            visibleMail:false
+        })
+    };
+
+    sendPatientMail =(treatment)=>{
+        this.mailModalOpen()
+        this.setState({
+            patientName:_.get(treatment,'patient.user.first_name'),
+            treatmentId:_.get(treatment,'id'),
+            mail_to:_.get(treatment,'patient.user.email')
+        })
+
+    };
+
+    sendMailToPatient =()=>{
+        let {mail_to ,treatmentId } = this.state;
+        let apiParams ={
+            mail_to:mail_to,
+        }
+        sendMail(interpolate(TREATMENTPLANS_PDF,[treatmentId]),apiParams)
+        this.mailModalClose();
+    }
 
     render() {
         let that = this;
@@ -238,6 +275,14 @@ class PatientCompletedProcedures extends React.Component {
                                                             Patient Timeline
                                                         </Link>
                                                     </Menu.Item>
+
+                                                    <Menu.Divider/>
+                                                    <Menu.Item key={'4'}>
+                                                        <a onClick={() => this.sendPatientMail(treatment)}><Icon
+                                                            type="mail"/> Send mail to patient
+                                                        </a>
+                                                    </Menu.Item>
+
                                                 </Menu>}>
                                                 <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
                                             </Dropdown.Button>
@@ -254,6 +299,24 @@ class PatientCompletedProcedures extends React.Component {
                             <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
                                                       loading={this.state.loading}
                                                       hidden={!this.state.next}/>
+                            <Modal
+                                title={null}
+                                visible={this.state.visibleMail}
+                                onOk={this.sendMailToPatient}
+                                onCancel={this.mailModalClose}
+                                footer={[
+                                    <Button key="back" onClick={this.mailModalClose}>
+                                        Cancel
+                                    </Button>,
+                                    <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                                        Send
+                                    </Button>,
+                                ]}
+                            >
+                                <p>Send complete procedure To {this.state.patientName} ?</p>
+                                <Input value={this.state.mail_to} placeholder={"Email"}
+                                       onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                            </Modal>
                         </div>
                     </Route>
                 </Switch>
@@ -303,6 +366,13 @@ class PatientCompletedProcedures extends React.Component {
                                                 Patient Timeline
                                             </Link>
                                         </Menu.Item>
+
+                                        <Menu.Divider/>
+                                        <Menu.Item key={'4'}>
+                                            <a onClick={() => this.sendPatientMail(treatment)}><Icon
+                                                type="mail"/> Send mail to patient
+                                            </a>
+                                        </Menu.Item>
                                     </Menu>}>
                                     <Icon type="printer"/>
                                 </Dropdown.Button>
@@ -320,6 +390,25 @@ class PatientCompletedProcedures extends React.Component {
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
                                           loading={this.state.loading}
                                           hidden={!this.state.next}/>
+
+                <Modal
+                    title={null}
+                    visible={this.state.visibleMail}
+                    onOk={this.sendMailToPatient}
+                    onCancel={this.mailModalClose}
+                    footer={[
+                        <Button key="back" onClick={this.mailModalClose}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                            Send
+                        </Button>,
+                    ]}
+                >
+                    <p>Send Treatment Notes To {this.state.patientName} ?</p>
+                    <Input value={this.state.mail_to} placeholder={"Email"}
+                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                </Modal>
             </div>
         }
 

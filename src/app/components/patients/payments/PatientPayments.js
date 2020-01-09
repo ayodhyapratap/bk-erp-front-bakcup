@@ -24,7 +24,7 @@ import {
     SINGLE_PAYMENT_API,
     CANCELINVOICE_VERIFY_OTP,
     CANCELINVOICE_GENERATE_OTP,
-    CANCELINVOICE_RESENT_OTP
+    CANCELINVOICE_RESENT_OTP, TREATMENTPLANS_PDF
 } from "../../../constants/api";
 import moment from "moment";
 import {Link, Redirect} from "react-router-dom";
@@ -37,6 +37,8 @@ import {Modal} from "antd/lib/index";
 import EditPaymentModal from "../payments/EditPaymentModal";
 import InvoiceReturnModal from "../invoices/InvoiceReturnModal";
 import CancelPaymentModal from "./CancelPaymentModal";
+import * as _ from "lodash";
+import {sendMail} from "../../../utils/clinicUtils";
 
 const confirm = Modal.confirm;
 
@@ -117,6 +119,42 @@ class PatientPayments extends React.Component {
         getAPI(interpolate(PAYMENT_PDF, [id]), successFn, errorFn);
     };
 
+    updateFormValue =(type,value)=>{
+        this.setState({
+            [type]: value
+        })
+    };
+
+    mailModalOpen =() =>{
+        this.setState({
+            visibleMail:true
+        })
+    };
+
+    mailModalClose =() =>{
+        this.setState({
+            visibleMail:false
+        })
+    };
+
+    sendPatientMail =(payment)=>{
+        this.mailModalOpen()
+        this.setState({
+            patientName:_.get(payment,'patient_data.user.first_name'),
+            paymentId:_.get(payment,'id'),
+            mail_to:_.get(payment,'patient_data.user.email')
+        })
+
+    };
+
+    sendMailToPatient =()=>{
+        let {mail_to ,paymentId } = this.state;
+        let apiParams ={
+            mail_to:mail_to,
+        }
+        sendMail(interpolate(PAYMENT_PDF,[paymentId]),apiParams)
+        this.mailModalClose();
+    }
 
 
 
@@ -312,6 +350,24 @@ class PatientPayments extends React.Component {
                         </div>
                     </Route>
                 </Switch>
+                <Modal
+                    title={null}
+                    visible={this.state.visibleMail}
+                    onOk={this.sendMailToPatient}
+                    onCancel={this.mailModalClose}
+                    footer={[
+                        <Button key="back" onClick={this.mailModalClose}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                            Send
+                        </Button>,
+                    ]}
+                >
+                    <p>Send Payment To {this.state.patientName} ?</p>
+                    <Input value={that.state.mail_to} placeholder={"Email"}
+                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                </Modal>
             </div>
         } else {
             return <div>
@@ -332,7 +388,24 @@ class PatientPayments extends React.Component {
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadPayments(that.state.next)}
                                           loading={this.state.loading}
                                           hidden={!this.state.next}/>
-
+                <Modal
+                    title={null}
+                    visible={this.state.visibleMail}
+                    onOk={this.sendMailToPatient}
+                    onCancel={this.mailModalClose}
+                    footer={[
+                        <Button key="back" onClick={this.mailModalClose}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                            Send
+                        </Button>,
+                    ]}
+                >
+                    <p>Send Payment To {this.state.patientName} ?</p>
+                    <Input value={that.state.mail_to} placeholder={"Email"}
+                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                </Modal>
             </div>
         }
 
@@ -350,7 +423,7 @@ const columns = [{
     title: 'Amount Paid',
     key: 'pay_amount',
     dataIndex: 'pay_amount',
-    render: value => value.toFixed(2),
+    render: value => value?value.toFixed(2):0,
 }];
 
 function PaymentCard(payment, that) {
@@ -393,10 +466,20 @@ function PaymentCard(payment, that) {
                                  Patient Timeline
                              </Link>
                          </Menu.Item>
+
+                         <Menu.Divider/>
+                         <Menu.Item key={'4'}>
+                             <a onClick={() => that.sendPatientMail(payment)}><Icon
+                                 type="mail"/> Send mail to patient
+                             </a>
+                         </Menu.Item>
+
                      </Menu>}>
                      <a onClick={() => that.loadPDF(payment.id)}><Icon
                          type="printer"/></a>
                  </Dropdown.Button>}>
+
+
         <Row gutter={8}>
             <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4} style={{padding: 10}}>
                 {payment.is_cancelled ?

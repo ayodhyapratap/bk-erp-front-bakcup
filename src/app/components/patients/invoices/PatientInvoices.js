@@ -28,7 +28,7 @@ import {
     TAXES,
     CANCELINVOICE_GENERATE_OTP,
     CANCELINVOICE_VERIFY_OTP,
-    CANCELINVOICE_RESENT_OTP,
+    CANCELINVOICE_RESENT_OTP, PAYMENT_PDF,
 } from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
@@ -41,6 +41,8 @@ import AddReturnInvoice from "./AddReturnInvoice";
 import InvoiceReturnModal from "./InvoiceReturnModal";
 import EditReturnModal from "./EditReturnModal";
 import CancelReturnModal from "./CancelReturnModal";
+import * as _ from "lodash";
+import {sendMail} from "../../../utils/clinicUtils";
 
 const confirm = Modal.confirm;
 
@@ -307,6 +309,46 @@ class PatientInvoices extends React.Component {
         })
     };
 
+
+    updateFormValue =(type,value)=>{
+        this.setState({
+            [type]: value
+        })
+    };
+
+    mailModalOpen =() =>{
+        this.setState({
+            visibleMail:true
+        })
+    };
+
+    mailModalClose =() =>{
+        this.setState({
+            visibleMail:false
+        })
+    };
+
+    sendPatientMail =(invoice)=>{
+        this.mailModalOpen()
+        this.setState({
+            patientName:_.get(invoice,'patient_data.user.first_name'),
+            paymentId:_.get(invoice,'id'),
+            mail_to:_.get(invoice,'patient_data.user.email')
+        })
+
+    };
+
+    sendMailToPatient =()=>{
+        let {mail_to ,paymentId } = this.state;
+        let apiParams ={
+            mail_to:mail_to,
+        }
+        sendMail(interpolate(INVOICE_PDF_API,[paymentId]),apiParams)
+        this.mailModalClose();
+    }
+
+
+
     render() {
         let that = this;
         const drugs = {}
@@ -381,6 +423,24 @@ class PatientInvoices extends React.Component {
                         </div>
                     </Route>
                 </Switch>
+                <Modal
+                    title={null}
+                    visible={this.state.visibleMail}
+                    onOk={this.sendMailToPatient}
+                    onCancel={this.mailModalClose}
+                    footer={[
+                        <Button key="back" onClick={this.mailModalClose}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                            Send
+                        </Button>,
+                    ]}
+                >
+                    <p>Send Invoice To {this.state.patientName} ?</p>
+                    <Input value={that.state.mail_to} placeholder={"Email"}
+                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                </Modal>
             </div>
         } else {
             return <div>
@@ -402,6 +462,25 @@ class PatientInvoices extends React.Component {
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadInvoices(this.state.loadMoreInvoice)}
                                           loading={this.state.loading}
                                           hidden={!this.state.loadMoreInvoice}/>
+
+                <Modal
+                    title={null}
+                    visible={this.state.visibleMail}
+                    onOk={this.sendMailToPatient}
+                    onCancel={this.mailModalClose}
+                    footer={[
+                        <Button key="back" onClick={this.mailModalClose}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                            Send
+                        </Button>,
+                    ]}
+                >
+                    <p>Send invoice To {this.state.patientName} ?</p>
+                    <Input value={that.state.mail_to} placeholder={"Email"}
+                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                </Modal>
             </div>
         }
 
@@ -497,6 +576,13 @@ function InvoiceCard(invoice, that) {
                         <Icon type="clock-circle"/>
                         Patient Timeline
                     </Link>
+                </Menu.Item>
+
+                <Menu.Divider/>
+                <Menu.Item key={'5'}>
+                    <a onClick={() => that.sendPatientMail(invoice)}><Icon
+                        type="mail"/> Send mail to patient
+                    </a>
                 </Menu.Item>
             </Menu>}>
             <a onClick={() => that.loadPDF(invoice.id)}><Icon

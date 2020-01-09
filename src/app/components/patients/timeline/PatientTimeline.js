@@ -1,5 +1,21 @@
 import React from "react";
-import {Button, Card, Icon, Steps, Timeline, Row, Col, Checkbox, Spin, Tag, Table, Affix, Tooltip} from "antd";
+import {
+    Button,
+    Card,
+    Icon,
+    Steps,
+    Timeline,
+    Row,
+    Col,
+    Checkbox,
+    Spin,
+    Tag,
+    Table,
+    Affix,
+    Tooltip,
+    Input,
+    Modal
+} from "antd";
 import {
     getAPI,
     interpolate,
@@ -8,11 +24,13 @@ import {
     startLoadingMessage,
     stopLoadingMessage
 } from "../../../utils/common";
-import {PATIENT_TIMELINE_API, PATIENT_TIMELINE_PDF} from "../../../constants/api";
+import {PATIENT_TIMELINE_API, PATIENT_TIMELINE_PDF, TREATMENTPLANS_PDF} from "../../../constants/api";
 import {CUSTOM_STRING_SEPERATOR} from "../../../constants/hardData";
 import moment from "moment";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import {ERROR_MSG_TYPE, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import * as _ from "lodash";
+import {sendMail} from "../../../utils/clinicUtils";
 
 const Step = Steps.Step;
 
@@ -206,14 +224,65 @@ class PatientTimeline extends React.Component {
         postAPI(interpolate(PATIENT_TIMELINE_PDF, [this.props.match.params.id]), reqObj, successFn, errorFn);
     }
 
+    updateFormValue =(type,value)=>{
+        this.setState({
+            [type]: value
+        })
+    };
+    mailModalOpen =() =>{
+        this.setState({
+            visibleMail:true
+        })
+    };
+
+    mailModalClose =() =>{
+        this.setState({
+            visibleMail:false
+        })
+    };
+
+
+    sendCaseSheet =()=>{
+        this.mailModalOpen()
+        this.setState({
+            mail_to:_.get(this.props.currentPatient,'user.email')
+        })
+
+    };
+    sendMailToPatient =()=>{
+        let that =this;
+        let {mail_to  } = this.state;
+
+        let reqObj = {
+            mail_to:mail_to,
+            practice: that.props.active_practiceId,
+            timeline: []
+        }
+        let keys = Object.keys(this.state.checkedTimelineCards);
+        keys.forEach(function (key) {
+            reqObj.timeline.push({
+                type: key,
+                id: Object.keys(that.state.checkedTimelineCards[key])
+            })
+        });
+
+        let successFn =function(data){
+
+        }
+        let errorFn = function(data){
+
+        }
+        postAPI(interpolate(PATIENT_TIMELINE_PDF,[this.props.match.params.id]),reqObj, successFn ,errorFn)
+        this.mailModalClose();
+    }
     render() {
-        console.log("timeline", this.state.timelineData);
         let that = this;
+        let {timelineData} =this.state
 
 
         return <Card title="Timeline"
                      extra={<Button.Group>
-                         <Button>Email Case Sheet</Button>
+                         <Button onClick={() => this.sendCaseSheet(this.state.timelineData)}><Icon type="mail"/> Case Sheet</Button>
                          <Button type="primary" onClick={() => this.printCaseSheet()}>Print Case Sheet</Button>
                      </Button.Group>}>
             <Spin spinning={this.state.loading}>
@@ -253,6 +322,25 @@ class PatientTimeline extends React.Component {
                                     toggleTimelineCheckbox: that.toggleTimelineCheckbox
                                 })}</Timeline.Item>)}
                         </Timeline>
+
+                        <Modal
+                            title={null}
+                            visible={this.state.visibleMail}
+                            onOk={this.sendMailToPatient}
+                            onCancel={this.mailModalClose}
+                            footer={[
+                                <Button key="back" onClick={this.mailModalClose}>
+                                    Cancel
+                                </Button>,
+                                <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                                    Send
+                                </Button>,
+                            ]}
+                        >
+                            <p>Send Timeline To {_.get(this.props.currentPatient,'user.first_name')} ?</p>
+                            <Input value={this.state.mail_to} placeholder={"Email"}
+                                   onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                        </Modal>
                     </Col>
                 </Row>
             </Spin>

@@ -168,7 +168,7 @@ class Addinvoicedynamic extends React.Component {
                         let stocks = {...prevState.stocks};
                         let itemBatches = {};
                         data.forEach(function (item) {
-                            if (item.item_type == DRUG) {
+                            // if (item.item_type == DRUG) {
                                 drugItems.push(item);
                                 if (stocks[item.id]) {
                                     let stock_quantity = stocks[item.id]
@@ -188,7 +188,7 @@ class Addinvoicedynamic extends React.Component {
                                     stocks[item.id] = stock_quantity;
                                 }
                                 itemBatches[item.id] = item.item_type_stock.item_stock;
-                            }
+                            // }
 
                         });
                         let items = prevState.items;
