@@ -84,7 +84,7 @@ export default class ExpensesReport extends React.Component {
             apiParams.expense_type=this.props.expense_type.toString();
         }
         apiParams.mail_to = mailTo;
-        sendReportMail(EXPENSE_PAYMENT_MODE_API, apiParams, successMsg, errorMsgwwwwwwwwwwwwwwsssqqq)
+        sendReportMail(EXPENSE_PAYMENT_MODE_API, apiParams, successMsg, errorMsg)
     };
 
 
