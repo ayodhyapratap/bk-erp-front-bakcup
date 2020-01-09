@@ -516,6 +516,7 @@ export default class CreateAppointmentForm extends React.Component {
                     });
                     if (that.props.history) {
                         that.props.history.goBack();
+                        that.props.history.replace('/patients/appointments');
                     }
 
                     if (that.props.loadData)

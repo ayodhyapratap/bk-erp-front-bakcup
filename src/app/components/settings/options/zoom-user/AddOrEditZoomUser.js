@@ -75,6 +75,9 @@ export default class AddOrEditZoomUser extends React.Component{
                         redirect: true
                     });
                     that.props.loadData();
+                    if (that.props.history){
+                        that.props.history.replace("/settings/zoom-user");
+                    }
                 },
                 errorFn: function () {
 
@@ -93,6 +96,9 @@ export default class AddOrEditZoomUser extends React.Component{
                     redirect: true
                 });
                 that.props.loadData();
+                if (that.props.history){
+                    that.props.history.replace("/settings/zoom-user");
+                }
             },
             errorFn: function () {
 

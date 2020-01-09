@@ -214,19 +214,12 @@ class BedBookingForm extends React.Component {
                     rest_diseases: values.rest_diseases ? values.rest_diseases.join(',') : null,
                     report_upload: values.file && values.file.file.response ? values.file.file.response.image_path : null
                 };
-                // delete reqData.medicines;
-                //
-                // if (values.medicines){
-                //     values.medicines.forEach(function (item) {
-                //         let medicines={medicineId:item};
-                //     })
-                //
-                // }
 
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Saved Successfully!!");
                     if (that.props.history){
                         that.props.history.goBack();
+                        that.props.history.replace('/patient/'+ that.props.match.params.id +'/booking')
                     }
                     if (that.props.loadData) {
                         that.props.loadData();

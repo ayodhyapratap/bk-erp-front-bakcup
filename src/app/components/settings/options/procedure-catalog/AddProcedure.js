@@ -135,7 +135,9 @@ class AddProcedure extends React.Component {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, 'success');
                 that.changeRedirect();
-
+                if (that.props.history){
+                    that.props.history.replace("/settings/procedures");
+                }
             },
             errorFn: function () {
 

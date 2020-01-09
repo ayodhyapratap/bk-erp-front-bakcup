@@ -116,7 +116,10 @@ export default class AddPost extends React.Component {
                         redirect: true
                     });
                     that.props.loadData();
-                    console.log(data);
+                    if (that.props.history){
+                        that.props.history.replace('/web/blog');
+                    }
+
                 },
                 errorFn: function () {
 
@@ -132,13 +135,14 @@ export default class AddPost extends React.Component {
             successFn:function(data){
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.setState({
-                        redirect: true
-                    });
-                    that.props.loadData();
-                console.log(data);
+                    redirect: true
+                });
+                that.props.loadData();
+                if (that.props.history){
+                    that.props.history.replace('/web/blog');
+                };
             },
             errorFn:function(data){
-                console.log(data);
             },
             action:  BLOG_POST,
             method: "post",

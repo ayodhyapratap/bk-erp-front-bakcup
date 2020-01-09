@@ -145,10 +145,12 @@ class AddPrescription extends React.Component {
         // }
         const formProp = {
             successFn: function (data) {
-                console.log(data);
+                // console.log(data);
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 that.props.loadData();
-
+                if (that.props.history){
+                    that.props.history.replace("/settings/prescriptions");
+                }
             },
             errorFn: function () {
 
@@ -160,7 +162,7 @@ class AddPrescription extends React.Component {
         }
         const TestFormLayout = Form.create({
             onValuesChange: function (props, changedValues, allValues) {
-                console.log(changedValues, allValues);
+                // console.log(changedValues, allValues);
                 that.setState(function (prevState) {
                     return {editPrescreption: {...prevState.editPrescreption, ...changedValues}}
                 });

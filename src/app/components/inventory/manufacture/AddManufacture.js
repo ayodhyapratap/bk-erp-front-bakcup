@@ -55,8 +55,7 @@ export default class AddManufacture extends React.Component {
 
 
     render() {
-        console.log('props',this.state);
-        
+
         let that = this;
         const fields = [{
             label: "Name",
@@ -78,7 +77,9 @@ export default class AddManufacture extends React.Component {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     that.props.loadData();
-                    console.log(data);
+                    if (that.props.history){
+                        that.props.history.replace("/inventory/manufacture");
+                    }
                 },
                 errorFn: function () {
 
@@ -94,8 +95,9 @@ export default class AddManufacture extends React.Component {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.props.loadData();
-
-                console.log(data);
+                if (that.props.history){
+                    that.props.history.replace("/inventory/manufacture");
+                }
             },
             errorFn: function () {
 

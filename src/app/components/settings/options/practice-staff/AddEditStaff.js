@@ -128,12 +128,14 @@ class AddEditStaff extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-                console.log("all data", data);
                 that.setState({
                     redirect: true
 
                 });
                 that.props.loadData();
+                if (that.props.history){
+                    that.props.history.replace("/settings/clinics-staff");
+                }
             },
             errorFn: function () {
 
@@ -151,6 +153,9 @@ class AddEditStaff extends React.Component {
                         redirect: true,
                     });
                     that.props.loadData();
+                    if (that.props.history){
+                        that.props.history.replace("/settings/clinics-staff");
+                    }
                 },
                 errorFn: function () {
 

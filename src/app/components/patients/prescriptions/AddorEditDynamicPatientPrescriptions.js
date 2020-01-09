@@ -342,7 +342,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         "is_active": true,
                     };
                     reqData.drugs.push(drugItem);
-                    console.log("item drug", item);
+                    // console.log("item drug", item);
                 });
                 that.state.formLabList.forEach(function (item) {
                     reqData.labs.push(item.id);
@@ -351,14 +351,14 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                     if (that.props.loadData)
                         that.props.loadData();
                     let url = '/patient/' + that.props.match.params.id + '/emr/prescriptions';
-                    that.props.history.push(url);
+                    that.props.history.replace(url);
                 }
                 let errorFn = function () {
 
                 }
                 postAPI(interpolate(PRESCRIPTIONS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
             } else {
-                console.log(err);
+                // console.log(err);
             }
         });
     }

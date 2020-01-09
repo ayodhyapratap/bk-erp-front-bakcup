@@ -423,7 +423,7 @@ class AddReturnInvoice extends React.Component {
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
                     let url = '/patient/' + that.props.match.params.id + '/billing/invoices';
-                    that.props.history.push(url);
+                    that.props.history.replace(url);
                 }
                 let errorFn = function () {
                     that.setState({

@@ -389,7 +389,7 @@ class AddPaymentForm extends React.Component {
             });
             // if (that.props.loadData)
             that.props.loadData();
-            that.props.history.push("/patient/" + that.props.match.params.id + "/billing/payments")
+            that.props.history.replace("/patient/" + that.props.match.params.id + "/billing/payments")
         };
         let errorFn = function () {
             that.setState({

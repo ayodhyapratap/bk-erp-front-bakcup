@@ -127,7 +127,7 @@ class AddOrConsumeStock extends React.Component {
                 if (formValue._id != k)
                     newTableFormValues.push(formValue);
             });
-            console.log(prevState.tableFormValues, k);
+            // console.log(prevState.tableFormValues, k);
             return {
                 tableFormValues: newTableFormValues
             }
@@ -196,7 +196,7 @@ class AddOrConsumeStock extends React.Component {
 
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
-                    that.props.history.push('/inventory');
+                    that.props.history.replace('/inventory');
                 };
                 let errorFn = function () {
                     that.setState({

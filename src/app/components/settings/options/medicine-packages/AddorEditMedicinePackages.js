@@ -91,7 +91,7 @@ export default class AddorEditMedicinePackages extends React.Component {
                 displayMessage(SUCCESS_MSG_TYPE, "Package Saved Successfully");
                 if (that.props.loadData)
                     that.props.loadData();
-                that.props.history.push('/settings/medicine-packages');
+                that.props.history.replace('/settings/medicine-packages');
             }, errorFn: function () {
 
             }

@@ -125,8 +125,13 @@ class AddorEditPatientVitalSigns extends React.Component {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success")
-                    if (that.props.loadData)
+                    if (that.props.loadData){
                         that.props.loadData();
+                    }
+                    if (that.props.history){
+                        that.props.history.replace('/patient/'+ that.props.match.params.id +'/emr/vitalsigns')
+                    }
+
                 },
                 errorFn: function () {
 
@@ -139,8 +144,12 @@ class AddorEditPatientVitalSigns extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
-                if (that.props.loadData)
+                if (that.props.loadData) {
                     that.props.loadData();
+                }
+                if (that.props.history){
+                    that.props.history.replace('/patient/'+ that.props.match.params.id +'/emr/vitalsigns')
+                }
             },
             errorFn: function () {
 

@@ -78,9 +78,11 @@ export default class AddLandingPageVideo extends React.Component {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
-                    console.log(data);
                     that.props.loadData();
                     that.changeRedirect();
+                    if (that.props.history){
+                        that.props.history.replace('/web/landingpagevideo');
+                    };
                 },
                 errorFn: function () {
 
@@ -96,8 +98,10 @@ export default class AddLandingPageVideo extends React.Component {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.props.loadData();
-                console.log(data);
                 that.changeRedirect();
+                if (that.props.history){
+                    that.props.history.replace('/web/landingpagevideo');
+                };
             }
             ,
             errorFn: function () {

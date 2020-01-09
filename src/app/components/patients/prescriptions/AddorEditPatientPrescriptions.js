@@ -108,7 +108,9 @@ class AddorEditPatientPrescriptions extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-                console.log(data);
+                if (this.props.history){
+                    this.props.history.replace('/patient/' + this.props.match.params.id + '/emr/prescriptions')
+                }
             },
             errorFn: function () {
             },

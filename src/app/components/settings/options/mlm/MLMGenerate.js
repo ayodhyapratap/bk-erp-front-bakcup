@@ -80,7 +80,7 @@ class MLMGenerate extends React.Component {
             })
 
         }
-        
+
         getAPI(AGENT_ROLES, successFn, errorFn);
     }
 
@@ -146,7 +146,9 @@ class MLMGenerate extends React.Component {
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, data.details);
                     that.props.loadData();
-                    that.props.history.goBack();
+                    if (that.props.history){
+                        that.props.history.replace("/settings/mlm");
+                    }
                 };
                 let errorFn = function () {
                 };
@@ -262,7 +264,7 @@ class MLMGenerate extends React.Component {
                 </Form>
                 {this.state.redirect&&    <Redirect to='/settings/mlm' />}
             </Card>
-            
+
         );
     }
 }

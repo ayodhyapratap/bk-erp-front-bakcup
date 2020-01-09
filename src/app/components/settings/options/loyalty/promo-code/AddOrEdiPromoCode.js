@@ -51,6 +51,9 @@ class AddOrEdiPromoCode extends React.Component {
                     displayMessage(SUCCESS_MSG_TYPE, "Successfully Created!")
                     that.props.form.resetFields();
                     that.props.loadData();
+                    if (that.props.history){
+                        that.props.history.replace("/settings/loyalty");
+                    }
                 };
                 let errorFn = function () {
 

@@ -61,7 +61,7 @@ class AddorEditPrescriptionForm extends React.Component {
         let that = this;
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                console.log(values);
+                // console.log(values);
             }
             let reqData = {
                 ...values,
@@ -77,7 +77,7 @@ class AddorEditPrescriptionForm extends React.Component {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 that.props.loadData();
                 let url = '/settings/prescriptions';
-                that.props.history.push(url);
+                that.props.history.replace(url);
             }
             let errorFn = function () {
 

@@ -73,7 +73,6 @@ export default class AddVendor extends React.Component {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     that.props.loadData();
-                    console.log(data);
                 },
                 errorFn: function () {
 
@@ -88,7 +87,9 @@ export default class AddVendor extends React.Component {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.props.loadData();
-                console.log(data);
+                if (that.props.history){
+                    that.props.history.replace("/inventory/vendor");
+                }
             },
             errorFn: function () {
 

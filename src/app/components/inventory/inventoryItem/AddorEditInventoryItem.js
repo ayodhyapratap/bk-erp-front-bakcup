@@ -200,11 +200,9 @@ class AddorEditInventoryItem extends React.Component {
                 let successFn = function (data) {
                     that.setState({
                         redirect: true,
-
-
                     });
                     that.props.loadData();
-
+                    that.props.history.replace('/inventory');
                 };
                 let errorFn = function () {
 

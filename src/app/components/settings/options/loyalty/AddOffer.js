@@ -63,7 +63,9 @@ class AddOffer extends React.Component {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 if (that.props.loadData)
                     that.props.loadData();
-
+                if (that.props.history){
+                    that.props.history.replace("/settings/loyalty");
+                }
             },
             errorFn: function () {
 

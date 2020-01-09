@@ -68,7 +68,7 @@ class EditProcedure extends React.Component {
     loadProcedures(id) {
         var that = this;
         var url = `${interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId])}`;
-        console.log("url", url);
+
         let successFn = function (data) {
             console.log("get table", data);
             that.setState({
@@ -159,7 +159,9 @@ class EditProcedure extends React.Component {
                 displayMessage(SUCCESS_MSG_TYPE, 'success');
                 that.changeRedirect();
                 that.props.loadProcedures();
-
+                if (that.props.history){
+                    that.props.history.replace("/settings/procedures");
+                }
             },
             errorFn: function () {
 

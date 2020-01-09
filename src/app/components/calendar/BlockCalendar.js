@@ -96,7 +96,9 @@ class BlockCalendar extends React.Component {
         });
 
         let successFn =function(data){
-
+            if (that.props.history){
+                that.props.history.replace('/calendar');
+            }
         };
         let errorFn=function(){
 

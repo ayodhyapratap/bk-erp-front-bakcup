@@ -112,6 +112,9 @@ export default class AddDisease extends React.Component {
                         redirect: true
                     });
                     that.props.loadData();
+                    if (that.props.history){
+                        that.props.history.replace('/web/disease');
+                    };
                 },
                 errorFn: function () {
 
@@ -127,9 +130,12 @@ export default class AddDisease extends React.Component {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.setState({
-                        redirect: true
-                    });
-                    that.props.loadData();
+                    redirect: true
+                });
+                that.props.loadData();
+                if (that.props.history){
+                    that.props.history.replace('/web/disease');
+                };
             },
             errorFn: function () {
 

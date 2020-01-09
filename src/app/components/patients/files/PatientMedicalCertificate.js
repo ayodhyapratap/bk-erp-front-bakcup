@@ -72,7 +72,6 @@ class PatientMedicalCertificate extends React.Component {
         });
     }
     onChangeHandle = (e) => {
-        console.log("handlechanged",e);
         this.setState({
             value: e.target.value,
         });
@@ -122,7 +121,7 @@ class PatientMedicalCertificate extends React.Component {
         let that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            
+
             if(values.excused_duty || values.fit_light_duty || values.proof_attendance){
                 if (!err) {
                     let reqData = {
@@ -148,7 +147,7 @@ class PatientMedicalCertificate extends React.Component {
                     delete reqData.group;
                     let successFn = function (data) {
                         displayMessage(SUCCESS_MSG_TYPE, "Medical Certificate Generated.");
-                        that.props.history.push('/patient/' + that.props.match.params.id + '/emr/files');
+                        that.props.history.replace('/patient/' + that.props.match.params.id + '/emr/files');
                     }
                     let errorFn = function () {
                         that.setState({});
@@ -158,7 +157,7 @@ class PatientMedicalCertificate extends React.Component {
             }else{
                displayMessage(ERROR_MSG_TYPE,"Please select at least one of the above options");
             }
-           
+
         });
     }
 

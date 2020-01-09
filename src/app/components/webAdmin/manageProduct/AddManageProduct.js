@@ -81,6 +81,9 @@ export default class AddManageProduct extends React.Component {
                         redirect: true
                     });
                     that.props.loadData();
+                    if (that.props.history){
+                        that.props.history.replace('/web/manageproduct');
+                    };
                 },
                 errorFn: function () {
 
@@ -93,12 +96,14 @@ export default class AddManageProduct extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         const formProp = {
             successFn: function (data) {
-                console.log("formaDta",data);
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.setState({
-                        redirect: true
-                    });
-                    that.props.loadData();
+                    redirect: true
+                });
+                that.props.loadData();
+                if (that.props.history){
+                    that.props.history.replace('/web/manageproduct');
+                };
             },
             errorFn: function () {
 
