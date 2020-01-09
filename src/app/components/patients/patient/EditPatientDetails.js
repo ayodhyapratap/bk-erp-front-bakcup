@@ -299,7 +299,7 @@ class EditPatientDetails extends React.Component {
                     that.setState({
                         loading: false
                     });
-                    that.props.history.push('/patient/' + data.id + '/profile')
+                    that.props.history.replace('/patient/' + data.id + '/profile')
                 }
                 let errorFn = function () {
                     that.setState({
