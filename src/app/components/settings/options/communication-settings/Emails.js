@@ -110,12 +110,14 @@ class Emails extends React.Component {
             key: "send_on_day_of_appointment_time",
             initialValue: this.state.data && moment(this.state.data.send_on_day_of_appointment_time).isValid() ? moment(this.state.data.send_on_day_of_appointment_time) : null,
             type: TIME_PICKER
-        }, {
-            key: "appointment_cancellation_email_text",
-            initialValue: this.state.data ? this.state.data.appointment_cancellation_email_text : '',
-            type: MAIL_TEMPLATE_FIELD,
-            options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS,
-        }, {
+        },
+        //     {
+        //     key: "appointment_cancellation_email_text",
+        //     initialValue: this.state.data ? this.state.data.appointment_cancellation_email_text : '',
+        //     type: MAIL_TEMPLATE_FIELD,
+        //     options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS,
+        // },
+            {
             type: DIVIDER_FIELD
         }, {
             key: "followup_reminder_email",

@@ -112,7 +112,7 @@ class AddOrEdiPromoCode extends React.Component {
                     <Form.Item label={"Expiry Date"} {...formItemLayout} key={'expiry_date'}>
 
                         {getFieldDecorator('expiry_date', {initialValue: moment()})
-                        (<DatePicker format="YYYY/MM/DD"/>)
+                        (<DatePicker format="YYYY/MM/DD" allowClear={false}/>)
                         }
                     </Form.Item>
 

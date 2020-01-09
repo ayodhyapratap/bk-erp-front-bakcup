@@ -590,7 +590,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                 </Dropdown>
                                 <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
                                 <DatePicker value={this.state.selectedDate}
-                                            onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}/>
+                                            onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"} allowClear={false}/>
 
                                 <Button type="primary" htmlType="submit" style={{margin: 5, float: 'right'}}>
                                     Save

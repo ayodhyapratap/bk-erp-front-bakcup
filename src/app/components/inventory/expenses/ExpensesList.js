@@ -213,6 +213,7 @@ export default class ExpensesList extends React.Component {
                         <Col span={4}>
                             <DatePicker value={this.state.selectedStartDate}
                                         disabled={this.state.loading}
+                                        allowClear={false}
                                         onChange={(value) => this.changeExpenseFilters('selectedStartDate', value)}/>
                         </Col>
                         <Col span={2} style={{textAlign: "right"}}>
@@ -221,6 +222,7 @@ export default class ExpensesList extends React.Component {
                         <Col span={4}>
                             <DatePicker value={this.state.selectedEndDate}
                                         disabled={this.state.loading}
+                                        allowClear={false}
                                         onChange={(value) => this.changeExpenseFilters('selectedEndDate', value)}/>
                         </Col>
                     </Row>

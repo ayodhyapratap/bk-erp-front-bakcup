@@ -446,7 +446,7 @@ class AddOrConsumeStock extends React.Component {
                         }],
                         initialValue: moment(new Date())
                     })(
-                        <MonthPicker/>
+                        <MonthPicker allowClear={false}/>
                     )}
                 </Form.Item>
             }, {
@@ -669,7 +669,7 @@ class AddOrConsumeStock extends React.Component {
                                                         }],
                                                         initialValue: moment(),
                                                     })(
-                                                        <DatePicker/>
+                                                        <DatePicker allowClear={false}/>
                                                     )}
                                                 </Form.Item>
 

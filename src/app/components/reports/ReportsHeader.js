@@ -99,6 +99,7 @@ export default class ReportsHeader extends React.Component {
                 </li>
                 <li style={{display: 'inline', float: 'right'}}>
                     <RangePicker
+                        allowClear={false}
                         onChange={(date, dateString) => that.props.reportsDateRange(dateString)}
                         defaultValue={[moment(), moment()]}
                         format={dateFormat}

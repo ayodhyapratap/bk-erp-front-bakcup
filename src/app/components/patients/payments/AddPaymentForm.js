@@ -576,7 +576,7 @@ class AddPaymentForm extends React.Component {
                                             <br/>
                                             <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
                                             <DatePicker style={{width: 150}} defaultValue={moment()}
-                                                        onChange={(value) => that.selectedDate(value)}/>
+                                                        onChange={(value) => that.selectedDate(value)} allowClear={false}/>
                                         </Col>
                                     </Row>
                                 </Col>
