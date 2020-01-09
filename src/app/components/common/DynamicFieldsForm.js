@@ -86,12 +86,10 @@ class DynamicFieldsForm extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        // console.log("Recieved New Props in Dynamic Form", nextProps);
     }
 
     fieldDecorators = (field, formData) => {
         let urlInitialValues = this.state.urlInitialValues;
-        // console.log(urlInitialValues);
         if (field.type == MULTI_SELECT_FIELD) {
             return {
                 initialValue: formData[field.key] ? formData[field.key] : (urlInitialValues[field.key] ? urlInitialValues[field.key] : formData[field.key]),
@@ -471,7 +469,7 @@ class DynamicFieldsForm extends React.Component {
                                         initialValue: field.initialValue ? moment(field.initialValue) : null,
                                         rules: [{required: field.required, message: REQUIRED_FIELD_MESSAGE}],
                                     })(
-                                    <DatePicker format={field.format}/>
+                                    <DatePicker format={field.format} allowClear={false}/>
                                 )}
                             </FormItem>;
                         case DATE_TIME_PICKER:
@@ -609,7 +607,6 @@ class DynamicFieldsForm extends React.Component {
                                 },
                                 onChange(info) {
                                     if (info.file.status !== 'uploading') {
-                                        console.log(info.file, info.fileList);
                                     }
                                     if (info.file.status === 'done') {
                                         message.success(`${info.file.name} file uploaded successfully`);
@@ -655,7 +652,7 @@ class DynamicFieldsForm extends React.Component {
                                 },
                                 onChange(info) {
                                     if (info.file.status !== 'uploading') {
-                                        console.log(info.file, info.fileList);
+                                        // console.log(info.file, info.fileList);
                                     }
                                     if (info.file.status === 'done') {
                                         message.success(`${info.file.name} file uploaded successfully`);

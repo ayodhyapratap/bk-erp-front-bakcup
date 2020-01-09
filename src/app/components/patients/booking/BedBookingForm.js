@@ -528,7 +528,7 @@ class BedBookingForm extends React.Component {
                                         rules: [{required: true, message: 'Input From Date!'}],
                                     })
                                     (<DatePicker onChange={(value) => that.checkBedStatus('from_date', value)}
-                                                 format={'DD-MM-YYYY'}/>)
+                                                 format={'DD-MM-YYYY'} allowClear={false}/>)
                                     }
                                 </Form.Item>
                                 <Form.Item label="Book To" {...formItemLayout}>
