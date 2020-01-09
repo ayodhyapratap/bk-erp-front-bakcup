@@ -42,7 +42,6 @@ class PatientCommunicationSetting extends React.Component {
                 loading: false
             })
         };
-        console.log("props", that.props.match.params.id);
         getAPI(interpolate(PATIENT_PROFILE, [that.props.match.params.id]), successFn, errorFn);
     }
 
@@ -152,7 +151,7 @@ class PatientCommunicationSetting extends React.Component {
                     extra={<Button type="primary" htmlType="submit" loading={this.state.saving}>
                         <Icon type="save"/> Save Communication Setting
                     </Button>}>
-                    
+
                     <Form.Item {...formItemLayout} key={'sms_enable'}> <label>
                         <span className="ant-form-text">{'Enable SMS the patient'} : </span>
                         {getFieldDecorator('sms_enable', {initialValue: this.state.patientProfile ? this.state.patientProfile.sms_enable : false})
@@ -189,8 +188,8 @@ class PatientCommunicationSetting extends React.Component {
                     <Form.Item {...formItemLayout} key={'medicine_till'}> <label>
                         <span
                             className="ant-form-text"> {"Medicine Till Date"} : </span>
-                            {getFieldDecorator('medicine_till', {initialValue: this.state.patientProfile && this.state.patientProfile.medicine_till? moment(this.state.patientProfile.medicine_till) : null})
-                                (<DatePicker/>
+                            {getFieldDecorator('medicine_till', {initialValue: this.state.patientProfile && this.state.patientProfile.medicine_till? moment(this.state.patientProfile.medicine_till) : moment()})
+                                (<DatePicker allowClear={false} format={'YYYY-MM-DD'}/>
                             )}
                         </label>
                     </Form.Item>
@@ -198,8 +197,8 @@ class PatientCommunicationSetting extends React.Component {
                     <Form.Item {...formItemLayout} key={'medicine_till'}> <label>
                         <span
                             className="ant-form-text"> {"Next follow-up To"} : </span>
-                        {getFieldDecorator('follow_up_date', {initialValue: this.state.patientProfile && this.state.patientProfile.follow_up_date ? moment(this.state.patientProfile.follow_up_date) : null})
-                        (<DatePicker/>
+                        {getFieldDecorator('follow_up_date', {initialValue: this.state.patientProfile && this.state.patientProfile.follow_up_date ? moment(this.state.patientProfile.follow_up_date) : moment()})
+                        (<DatePicker allowClear={false} format={'YYYY-MM-DD'}/>
                         )}
                     </label>
                     </Form.Item>

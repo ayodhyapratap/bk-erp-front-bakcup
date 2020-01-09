@@ -33,7 +33,6 @@ export default class BookingHome extends React.Component {
             loading: true
         })
         let successFn = function (data) {
-            console.log(data);
             if (data.current == 1)
                 that.setState({
                     bedBookingReports: data.results,
@@ -56,8 +55,8 @@ export default class BookingHome extends React.Component {
             })
         };
         getAPI(interpolate(BED_BOOKING_REPORTS, [this.props.active_practiceId]), successFn, errorFn, {
-            page: page,
-            patients: this.state.patient.id
+            patients: this.state.patient.id,
+            page: page
         });
     }
 
