@@ -23,7 +23,6 @@ export default class EventPatientPopover extends React.Component {
     }
 
     componentDidMount() {
-        console.log(this.props);
         if (this.props.appointmentId) {
             this.loadAppointmentDetails();
         } else {
@@ -109,7 +108,7 @@ export default class EventPatientPopover extends React.Component {
                                 }
                             </Col>
                             <Col span={16}>
-                                <Link to={"/patient/" + this.state.appointment.patient.id + "/profile"}>
+                                <Link to={"/patient/" + this.state.appointment.patient.id + "/profile"} target="_blank">
                                     <h3>{this.state.appointment.patient.user.first_name}
                                         <br/>
                                         <small>

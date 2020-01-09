@@ -3,7 +3,7 @@ import {CONFIG_API, MAILING_USERS_LIST, PRACTICESTAFF} from "../constants/api";
 import {displayMessage, getAPI, interpolate} from "./common";
 import {DOCTORS_ROLE, ERROR_MSG_TYPE} from "../constants/dataKeys";
 import {Link} from "react-router-dom";
-import {Menu, Modal} from 'antd';
+import {Form, Input, Menu, Modal} from 'antd';
 import {MAIL_SEND_ERROR_MSG, MAIL_SEND_MSG, SUCCESS} from "../constants/messages";
 const { confirm } = Modal;
 export const loadDoctors = function (that) {
@@ -106,7 +106,6 @@ export const loadMailingUserListForReportsMail = function (that) {
 }
 
 export const sendReportMail = function(url,params,successMsg, errorMsg){
-console.log("msg",url,successMsg,errorMsg)
     confirm({
         title: 'Are you sure send mail?',
         content: 'Email Id :'+ params.mail_to,
@@ -133,5 +132,15 @@ console.log("msg",url,successMsg,errorMsg)
         },
     });
 
+}
 
+export const sendMail= function (url, params) {
+
+    let successFn = function (data){
+
+    };
+    let errorFn = function (){
+
+    };
+    getAPI(url,successFn,errorFn,params);
 }

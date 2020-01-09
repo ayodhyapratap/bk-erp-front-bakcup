@@ -78,6 +78,9 @@ export const PAYMENT_TYPES = [
     {label: 'netbanking', value: 'netbanking'},
     {label: 'unknown', value: 'unknown'},
 ]
+
+export const PAYMENT_OFFLINE_MODE='Cash';
+
 export const DISEASE_TYPES = [
     {label: 'Kidney Disease', value: 'Kidney Disease'},
     {label: 'Cancer Disease', value: 'Cancer Disease'},
