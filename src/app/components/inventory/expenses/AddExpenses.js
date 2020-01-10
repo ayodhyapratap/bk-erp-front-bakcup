@@ -47,11 +47,9 @@ export default class AddExpenses extends React.Component {
     loadPaymentModes() {
         var that = this;
         let successFn = function (data) {
-            console.log("get table");
             that.setState({
                 paymentModes: data,
             })
-            console.log("payment mode", that.state.paymentModes);
         };
         let errorFn = function () {
         };
@@ -74,7 +72,6 @@ export default class AddExpenses extends React.Component {
     loadExpensetypes() {
         var that = this;
         let successFn = function (data) {
-            console.log("get table");
             that.setState({
                 expense_types: data,
             })
@@ -87,7 +84,6 @@ export default class AddExpenses extends React.Component {
     loadVendors() {
         var that = this;
         let successFn = function (data) {
-            console.log("get table");
             that.setState({
                 vendors: data,
             })
@@ -174,6 +170,9 @@ export default class AddExpenses extends React.Component {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     that.props.loadData();
                     that.changeRedirect();
+                    if (that.props.history){
+                        that.props.history.replace("/inventory/expenses");
+                    }
                 },
                 errorFn: function () {
 
@@ -190,7 +189,9 @@ export default class AddExpenses extends React.Component {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.props.loadData();
                 that.changeRedirect();
-                console.log(data);
+                if (that.props.history){
+                    that.props.history.replace("/inventory/expenses");
+                }
             },
             errorFn: function () {
 

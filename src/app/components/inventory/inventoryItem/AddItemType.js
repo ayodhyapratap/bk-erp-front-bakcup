@@ -108,7 +108,9 @@ export default class AddItemType extends React.Component {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
-                    console.log(data);
+                    if (this.props.history){
+                        this.props.history.replace("/inventory");
+                    }
                 },
                 errorFn: function () {
 
@@ -121,8 +123,9 @@ export default class AddItemType extends React.Component {
         const formProp = {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
-
-                console.log(data);
+                if (that.props.history){
+                    that.props.history.replace("/inventory");
+                }
             },
             errorFn: function () {
 

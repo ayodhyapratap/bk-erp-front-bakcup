@@ -27,10 +27,16 @@ import CreateAppointmentForm from "./CreateAppointmentForm";
 
 
 class CreateAppointment extends React.Component {
+    constructor(props){
+        super(props);
+        this.state={
+
+        }
+    }
     render() {
+
         const formProp = {
             successFn: function (data) {
-                console.log(data);
                 displayMessage(SUCCESS_MSG_TYPE, "success")
 
             },
@@ -38,7 +44,7 @@ class CreateAppointment extends React.Component {
 
             },
             onFieldsDataChange: function (data) {
-                console.log(data);
+                // console.log(data);
             },
             action: ALL_APPOINTMENT_API,
             method: "post",

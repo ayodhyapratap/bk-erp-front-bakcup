@@ -236,10 +236,15 @@ class AddClinicNotesDynamic extends React.Component {
                 if (that.state.editClinicNotes)
                     reqData.id = that.state.editClinicNotes.id;
                 let successFn = function (data) {
-                    if (that.props.loadData)
+                    if (that.props.loadData){
                         that.props.loadData();
-                    that.props.history.push('/patient/' + that.props.match.params.id + '/emr/clinicnotes/');
-                }
+                    }
+
+                    if (that.props.history){
+                        that.props.history.replace('/patient/' + that.props.match.params.id + '/emr/clinicnotes/');
+                    }
+
+                };
                 let errorFn = function () {
 
                 }

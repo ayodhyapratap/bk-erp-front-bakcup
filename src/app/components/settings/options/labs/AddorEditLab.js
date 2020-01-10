@@ -81,6 +81,9 @@ export default class AddorEditLab extends React.Component {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 that.props.loadData();
+                if (that.props.history){
+                    that.props.history.replace("/settings/labs");
+                }
             },
             errorFn: function () {
 

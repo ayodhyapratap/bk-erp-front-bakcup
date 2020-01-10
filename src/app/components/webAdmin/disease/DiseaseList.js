@@ -5,12 +5,13 @@ import {BLOG_DISEASE, SINGLE_DISEASE} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddDisease from "./AddDisease";
 import {Link} from "react-router-dom";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class DiseaseList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            disease: null,
+            disease: [],
             loading:true
         };
         this.loadDiseases = this.loadDiseases.bind(this);
@@ -21,22 +22,36 @@ export default class DiseaseList extends React.Component {
         this.loadDiseases();
     }
 
-    loadDiseases() {
+    loadDiseases =(page=1)=> {
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                disease: data,
-                loading:false
+            that.setState(function (prevState) {
+                if (data.current == 1){
+                    return{
+                        disease:[...data.results],
+                        next:data.next,
+                        loading:false,
+                    }
+                }
+                return {
+                    disease:[...prevState.disease, ...data.results],
+                    next:data.next,
+                    loading:false,
+                }
             })
-        }
+        };
         let errorFn = function () {
             that.setState({
                 loading:false
             })
 
-        }
-        getAPI(BLOG_DISEASE, successFn, errorFn);
-    }
+        };
+        let apiParams={
+            page:page,
+        };
+
+        getAPI(BLOG_DISEASE, successFn, errorFn, apiParams);
+    };
 
     deleteObject(record) {
         let that = this;
@@ -52,7 +67,7 @@ export default class DiseaseList extends React.Component {
 
     render() {
         let that = this;
-        let coloumns = [{
+        let columns = [{
             title: 'Disease Name',
             dataIndex: 'disease_name',
             key: 'disease_name'
@@ -80,8 +95,11 @@ export default class DiseaseList extends React.Component {
                    render={(route) => <AddDisease{...this.state} {...route} loadData={this.loadDiseases}/>}/>
             <Card title="Disease"
                   extra={<Link to={"/web/disease/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <Table loading={this.state.loading} columns={coloumns} dataSource={this.state.disease}/>
+                <Table loading={this.state.loading} pagination={false} columns={columns} dataSource={this.state.disease}/>
 
+                <InfiniteFeedLoaderButton loaderFunction={()=>this.loadDiseases(this.state.next)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.next}/>
             </Card>
         </Switch>
         </div>

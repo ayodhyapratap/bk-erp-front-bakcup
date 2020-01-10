@@ -137,11 +137,13 @@ class AddOrEditAgent extends React.Component {
                     that.setState({
                         saving: false
                     });
-                    if (that.props.loadData)
+                    if (that.props.loadData){
                         that.props.loadData();
-                    if (that.props.history)
-                        that.props.history.goBack();
+                    }
 
+                    if (that.props.history){
+                        that.props.history.replace("/settings/agents");
+                    }
                     if (data) {
                         displayMessage(SUCCESS_MSG_TYPE, "Agent Created Successfully");
                     }

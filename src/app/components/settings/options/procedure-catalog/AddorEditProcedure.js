@@ -136,7 +136,7 @@ class AddorEditProcedure extends React.Component {
                     displayMessage(SUCCESS_MSG_TYPE, 'Procedure Updated Successfully!!');
                     if (that.props.loadData)
                         that.props.loadData();
-                    that.props.history.push("settings/procedures");
+                    that.props.history.replace("settings/procedures");
                 }
                 let errorFn = function () {
 

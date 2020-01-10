@@ -51,6 +51,9 @@ class AddOrEdiPromoCode extends React.Component {
                     displayMessage(SUCCESS_MSG_TYPE, "Successfully Created!")
                     that.props.form.resetFields();
                     that.props.loadData();
+                    if (that.props.history){
+                        that.props.history.replace("/settings/loyalty");
+                    }
                 };
                 let errorFn = function () {
 
@@ -112,7 +115,7 @@ class AddOrEdiPromoCode extends React.Component {
                     <Form.Item label={"Expiry Date"} {...formItemLayout} key={'expiry_date'}>
 
                         {getFieldDecorator('expiry_date', {initialValue: moment()})
-                        (<DatePicker format="YYYY/MM/DD"/>)
+                        (<DatePicker format="YYYY/MM/DD" allowClear={false}/>)
                         }
                     </Form.Item>
 

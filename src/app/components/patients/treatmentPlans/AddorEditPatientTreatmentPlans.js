@@ -75,7 +75,7 @@ class AddorEditPatientTreatmentPlans extends React.Component {
             that.setState({
                 productMargin: data
             })
-            console.log("log", that.state.productMargin);
+            // console.log("log", that.state.productMargin);
         }
         let errorFn = function () {
 
@@ -155,7 +155,11 @@ class AddorEditPatientTreatmentPlans extends React.Component {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 that.loadTreatmentPlans();
-                console.log(data);
+                // console.log(data);
+                if (that.props.history){
+                    that.props.history.replace('/patient/' + that.props.match.params.id + '/emr/plans');
+                }
+
             },
             errorFn: function () {
 

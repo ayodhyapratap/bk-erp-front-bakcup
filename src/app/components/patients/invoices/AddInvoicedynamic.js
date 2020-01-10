@@ -466,7 +466,7 @@ class Addinvoicedynamic extends React.Component {
                         that.props.history.goBack()
                     } else {
                         let url = '/patient/' + that.props.match.params.id + '/billing/payments/add?invoices=' + data.id;
-                        that.props.history.push(url);
+                        that.props.history.replace(url);
                     }
                 };
                 let errorFn = function () {

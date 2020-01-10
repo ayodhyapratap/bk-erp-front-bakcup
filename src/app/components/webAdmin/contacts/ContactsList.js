@@ -5,12 +5,13 @@ import {BLOG_CONTACTUS, SINGLE_CONTACT} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import {Link} from "react-router-dom";
 import AddContacts from "./AddContacts";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class ContactsList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            contacts: null,
+            contacts: [],
             loading:true
         };
         this.loadData = this.loadData.bind(this);
@@ -21,18 +22,33 @@ export default class ContactsList extends React.Component {
         this.loadData();
     }
 
-    loadData() {
+    loadData =(page = 1)=> {
         let that = this;
         let successFn = function (data) {
+            that.setState(function (prevState) {
+                if (data.current == 1){
+                    return{
+                        contacts: [...data.results],
+                        next:data.next,
+                        loading:false
+                    }
+                }
+                return {
+                    contacts: [...prevState.contacts, ...data.results],
+                    next:data.next,
+                    loading:false
+                }
+            })
+        };
+        let errorFn = function () {
             that.setState({
-                contacts: data,
                 loading:false
             })
+        };
+        let apiParams={
+            page:page,
         }
-        let errorFn = function () {
-
-        }
-        getAPI(BLOG_CONTACTUS, successFn, errorFn);
+        getAPI(BLOG_CONTACTUS, successFn, errorFn, apiParams);
     }
 
     deleteObject(record) {
@@ -49,7 +65,7 @@ export default class ContactsList extends React.Component {
 
     render() {
         let that = this;
-        let coloumns = [{
+        let columns = [{
             title: 'Rank',
             dataIndex: 'contact_rank',
             key: 'rank'
@@ -86,7 +102,11 @@ export default class ContactsList extends React.Component {
                    render={(route) => <AddContacts {...this.state} {...route} loadData={this.loadData}/>}/>
             <Card title="Contacts"
                   extra={<Link to={"/web/contact/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <Table loading={this.state.loading} dataSource={this.state.contacts} columns={coloumns}/>
+                <Table loading={this.state.loading} dataSource={this.state.contacts} columns={columns} pagination={false}/>
+
+                <InfiniteFeedLoaderButton loaderFunction={()=>this.loadData(this.state.next)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.next}/>
             </Card>
         </Switch>
         </div>

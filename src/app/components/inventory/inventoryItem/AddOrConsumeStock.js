@@ -127,7 +127,7 @@ class AddOrConsumeStock extends React.Component {
                 if (formValue._id != k)
                     newTableFormValues.push(formValue);
             });
-            console.log(prevState.tableFormValues, k);
+            // console.log(prevState.tableFormValues, k);
             return {
                 tableFormValues: newTableFormValues
             }
@@ -196,7 +196,7 @@ class AddOrConsumeStock extends React.Component {
 
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
-                    that.props.history.push('/inventory');
+                    that.props.history.replace('/inventory');
                 };
                 let errorFn = function () {
                     that.setState({
@@ -446,7 +446,7 @@ class AddOrConsumeStock extends React.Component {
                         }],
                         initialValue: moment(new Date())
                     })(
-                        <MonthPicker/>
+                        <MonthPicker allowClear={false}/>
                     )}
                 </Form.Item>
             }, {
@@ -549,9 +549,9 @@ class AddOrConsumeStock extends React.Component {
                                           renderItem={item => (
                                               <List.Item>
                                                   <List.Item.Meta
-                                                      title={item.name}
+                                                      title={item.name+" ("+item.total_quantity+")"}
                                                       description={item.item_type_stock.item_stock && item.item_type_stock.item_stock.map((stock) =>
-                                                          <span>#{stock.batch_number}({stock.quantity})<br/></span>)}/>
+                                                          <span>#{stock.batch_number}<br/></span>)}/>
                                                   <Button type="primary" size="small" shape="circle"
                                                           onClick={() => this.add(item)} icon={"arrow-right"}/>
                                               </List.Item>)}/>
@@ -669,7 +669,7 @@ class AddOrConsumeStock extends React.Component {
                                                         }],
                                                         initialValue: moment(),
                                                     })(
-                                                        <DatePicker/>
+                                                        <DatePicker allowClear={false}/>
                                                     )}
                                                 </Form.Item>
 

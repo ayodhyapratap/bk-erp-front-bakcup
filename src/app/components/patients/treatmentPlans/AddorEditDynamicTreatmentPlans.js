@@ -64,7 +64,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
 
     calculateItem = (_id) => {
         const {getFieldsValue} = this.props.form;
-        console.log(getFieldsValue());
+        // console.log(getFieldsValue());
         this.setState(function (prevState) {
             let newtableFormValues = [...prevState.tableFormValues];
             newtableFormValues.forEach(function (item) {
@@ -144,7 +144,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
+                // console.log('Received values of form: ', values);
                 let reqData = {
                     treatment_plans: [],
                     patient: that.props.match.params.id,
@@ -156,7 +156,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                     reqData.id = that.props.editTreatmentPlan.id
                 }
                 that.state.tableFormValues.forEach(function (item) {
-                    console.log(item);
+                    // console.log(item);
                     item.quantity = values.quantity[item._id];
                     item.cost = values.cost[item._id];
                     item.discount = values.discount[item._id];
@@ -181,7 +181,7 @@ class AddorEditDynamicTreatmentPlans extends React.Component {
                     if(that.props.loadData)
                         that.props.loadData();
                     let url = '/patient/' + that.props.match.params.id + '/emr/plans';
-                    that.props.history.push(url);
+                    that.props.history.replace(url);
                 }
                 let errorFn = function () {
 

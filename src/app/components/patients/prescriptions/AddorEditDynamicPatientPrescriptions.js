@@ -342,7 +342,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         "is_active": true,
                     };
                     reqData.drugs.push(drugItem);
-                    console.log("item drug", item);
+                    // console.log("item drug", item);
                 });
                 that.state.formLabList.forEach(function (item) {
                     reqData.labs.push(item.id);
@@ -351,14 +351,14 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                     if (that.props.loadData)
                         that.props.loadData();
                     let url = '/patient/' + that.props.match.params.id + '/emr/prescriptions';
-                    that.props.history.push(url);
+                    that.props.history.replace(url);
                 }
                 let errorFn = function () {
 
                 }
                 postAPI(interpolate(PRESCRIPTIONS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
             } else {
-                console.log(err);
+                // console.log(err);
             }
         });
     }
@@ -590,7 +590,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                 </Dropdown>
                                 <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
                                 <DatePicker value={this.state.selectedDate}
-                                            onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}/>
+                                            onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"} allowClear={false}/>
 
                                 <Button type="primary" htmlType="submit" style={{margin: 5, float: 'right'}}>
                                     Save

@@ -7,6 +7,7 @@ import {MANAGE_PRODUCT, MANAGE_SINGLE_PRODUCT} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import {Redirect, Link} from "react-router-dom";
 import AddManageProduct from "./AddManageProduct"
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class ManageProductList extends React.Component{
 	constructor(props){
@@ -23,25 +24,35 @@ export default class ManageProductList extends React.Component{
         this.loadData();
     }
 
-    loadData() {
+    loadData =(page=1)=> {
         let that = this;
         let successFn = function (data) {
-        	console.log("data a",data);
-            that.setState({
-                productData: data,
-                loading:false
+            that.setState(function (prevState) {
+                if (data.current ==1 ){
+                    return{
+                        productData: [...data.results],
+                        next:data.next,
+                        loading:false
+                    }
+                }
+                return {
+                    productData: [...prevState.productData,...data.results],
+                    next:data.next,
+                    loading:false
+                }
             })
-        }
+        };
         let errorFn = function () {
             that.setState({
                 loading:false
             })
 
-        }
-
-        getAPI(MANAGE_PRODUCT, successFn, errorFn);
-
-    }
+        };
+        let apiParams ={
+            page:page,
+        };
+        getAPI(MANAGE_PRODUCT, successFn, errorFn, apiParams);
+    };
 
     deleteObject(record) {
         let that = this;
@@ -57,7 +68,7 @@ export default class ManageProductList extends React.Component{
 
     render() {
         let that = this;
-        let coloumns = [{
+        let columns = [{
             title: 'Name',
             dataIndex: 'title',
             key: 'title'
@@ -92,7 +103,11 @@ export default class ManageProductList extends React.Component{
 	                   render={(route) => <AddManageProduct loadData={this.loadData} {...this.state} {...route}/>}/>
 	            <Card title="Products" extra={<Link to={"/web/manageproduct/add"}> <Button type="primary"><Icon
 	                type="plus"/> Add</Button></Link>}>
-	                <Table loading={this.state.loading} dataSource={this.state.productData} columns={coloumns}/>
+	                <Table loading={this.state.loading} pagination={false} dataSource={this.state.productData} columns={columns}/>
+
+                    <InfiniteFeedLoaderButton loaderFunction={()=>this.loadData(this.state.next)}
+                                              loading={this.state.loading}
+                                              hidden={!this.state.next}/>
 	            </Card>
 	        </Switch>
         </div>

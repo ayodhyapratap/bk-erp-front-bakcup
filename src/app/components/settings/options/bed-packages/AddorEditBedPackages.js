@@ -112,7 +112,7 @@ export default class AddorEditBedPackages extends React.Component {
                 displayMessage(SUCCESS_MSG_TYPE, "Package Saved Successfully");
                 if (that.props.loadData)
                     that.props.loadData();
-                that.props.history.push('/settings/bed-packages');
+                that.props.history.replace('/settings/bed-packages');
             }, errorFn: function () {
 
             }

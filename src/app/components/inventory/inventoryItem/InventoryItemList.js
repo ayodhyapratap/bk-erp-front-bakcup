@@ -426,7 +426,7 @@ export default class InventoryItemList extends React.Component {
                             <Col span={4}>
                                 <Input style={{width: '100%'}} value={this.state.filterItemName}
                                        allowClear={true}
-                                       disabled={this.state.loading}
+                                       // disabled={this.state.loading}
                                        placeholder={"Item Name"}
                                        onChange={(e) => this.changeInventoryFilters('filterItemName', e.target.value)}/>
                             </Col>
@@ -436,7 +436,7 @@ export default class InventoryItemList extends React.Component {
                             <Col span={4}>
                                 <Input style={{width: '100%'}} value={this.state.filterItemCode}
                                        allowClear={true}
-                                       disabled={this.state.loading}
+                                       // disabled={this.state.loading}
                                        placeholder={"HSN Number"}
                                        onChange={(e) => this.changeInventoryFilters('filterItemCode', e.target.value)}/>
                             </Col>
@@ -445,7 +445,7 @@ export default class InventoryItemList extends React.Component {
                             </Col>
                             <Col span={4}>
                                 <Select style={{width: '100%'}} value={this.state.filterMLM} allowClear={true}
-                                    disabled={this.state.loading}
+                                    // disabled={this.state.loading}
                                         placeholder={"MLM Margin"}
                                         onChange={(e) => this.changeInventoryFilters('filterMLM', e)}>
                                     {this.state.productMargin.map(item=><Select.Option value={item.id}>{item.name}</Select.Option>)}

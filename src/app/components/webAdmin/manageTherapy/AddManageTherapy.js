@@ -37,7 +37,7 @@ export default class AddManageTherapy extends React.Component {
         getAPI(interpolate(MANAGE_SINGLE_THERAPY, [this.props.match.params.id]), successFn, errorFn);
 
     }
-   
+
     changeRedirect() {
         var redirectVar = this.state.redirect;
         this.setState({
@@ -75,6 +75,9 @@ export default class AddManageTherapy extends React.Component {
                         redirect: true
                     });
                     that.props.loadData();
+                    if (that.props.history){
+                        that.props.history.replace('/web/managetherapy');
+                    };
                 },
                 errorFn: function () {
 
@@ -89,9 +92,12 @@ export default class AddManageTherapy extends React.Component {
             successFn: function (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.setState({
-                        redirect: true
-                    });
-                    that.props.loadData();
+                    redirect: true
+                });
+                that.props.loadData();
+                if (that.props.history){
+                    that.props.history.replace('/web/managetherapy');
+                };
             },
             errorFn: function () {
 

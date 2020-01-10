@@ -72,9 +72,11 @@ export default class AddFacility extends React.Component {
             editformProp = {
                 successFn: function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
-                    console.log(data);
                     that.props.loadData();
                     that.changeRedirect();
+                    if (that.props.history){
+                        that.props.history.replace('/web/facilities');
+                    };
 
                 },
                 errorFn: function () {
@@ -92,7 +94,9 @@ export default class AddFacility extends React.Component {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.props.loadData();
                 that.changeRedirect();
-                console.log(data);
+                if (that.props.history){
+                    that.props.history.replace('/web/facilities');
+                };
             },
             errorFn: function () {
 

@@ -43,6 +43,8 @@ import {
     DAY_KEYS,
     SCHEDULE_STATUS,
 } from "../../constants/hardData";
+import CreateAppointment from "./CreateAppointment";
+import PermissionDenied from "../common/errors/PermissionDenied";
 
 const localizer = momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
@@ -286,7 +288,7 @@ class App extends Component {
                 putAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
             },
             onCancel() {
-                console.log('Cancel');
+                // console.log('Cancel');
             },
         });
     }
@@ -601,7 +603,8 @@ class App extends Component {
 
     render() {
         let that = this;
-        let startTime = null;
+        let {startTime} =this.state;
+        // let startTime = null;
         let endTime = null;
         if (this.state.calendarTimings) {
             // console.log(new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss')));
@@ -615,7 +618,20 @@ class App extends Component {
                 <div style={{padding: '5px'}}>
                     <Switch>
 
+                        <Route exact path="/calendar/create-appointment"
+                               render={(route) => (this.props.activePracticePermissions.AddAppointment || this.props.allowAllPermissions ?
+                                   <CreateAppointment {...this.state} {...this.props} {...route}
+                                                      startTime={this.state.startTime}/> :
+                                   <PermissionDenied/>)}/>
+
+                        <Route exact path="/calendar/:appointmentid/edit-appointment"
+                               render={(route) => (this.props.activePracticePermissions.EditAppointment || this.props.allowAllPermissions ?
+                                   <CreateAppointment {...this.state} {...this.props} {...route}
+                                                      startTime={this.state.startTime}/> :
+                                   <PermissionDenied/>)}/>
+
                         <Route>
+
                             <div style={{backgroundColor: '#fff', padding: '5px 10px'}}>
                                 <Row gutter={16}>
                                     <Col span={3}>
@@ -788,7 +804,7 @@ class App extends Component {
                                                         key={'APPOINTMENTS'}
                                                         defaultDate={new Date()}
                                                         localizer={localizer}
-                                                        defaultView="week"
+                                                        defaultView="day"
                                                         step={10}
                                                         timeslots={1}
                                                         truncateEvents={false}
@@ -835,7 +851,7 @@ class App extends Component {
                                                 key={'AVAILABILITY'}
                                                 defaultDate={new Date()}
                                                 localizer={localizer}
-                                                defaultView="week"
+                                                defaultView="day"
                                                 step={10}
                                                 timeslots={1}
                                                 truncateEvents={false}
@@ -872,6 +888,7 @@ class App extends Component {
                                 </Row>
                             </div>
                         </Route>
+
                     </Switch>
                 </div>
             </Content>

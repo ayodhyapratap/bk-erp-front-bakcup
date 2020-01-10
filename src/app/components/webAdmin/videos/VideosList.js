@@ -1,4 +1,4 @@
-import {Avatar, Button, Card, Icon, List, Popconfirm} from "antd";
+import {Avatar, Button, Card, Divider, Icon, List, Popconfirm} from "antd";
 import React from "react";
 import {getAPI, interpolate, patchAPI, postAPI} from "../../../utils/common";
 import {BLOG_POST, BLOG_VIDEOS, SINGLE_CONTACT, SINGLE_VIDEO} from "../../../constants/api";
@@ -6,6 +6,7 @@ import {Route, Switch} from "react-router";
 import {Link} from "react-router-dom";
 import AddVideo from "./AddVideo";
 import YouTube from 'react-youtube';
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class VideosList extends React.Component {
     constructor(props) {
@@ -22,22 +23,35 @@ export default class VideosList extends React.Component {
         this.loadData();
     }
 
-    loadData() {
+    loadData = (page = 1)=> {
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                videos: data,
-                loading: false
+            that.setState(function (prevState) {
+                if (data.current ==1){
+                    return{
+                        videos: [...data.results],
+                        next:data.next,
+                        loading: false
+                    }
+                }
+                return {
+                    videos: [...prevState.videos,...data.results],
+                    next:data.next,
+                    loading: false
+                }
             })
-        }
+        };
         let errorFn = function () {
             that.setState({
                 loading: false
             })
 
-        }
-        getAPI(BLOG_VIDEOS, successFn, errorFn);
-    }
+        };
+        let apiParams={
+            page:page
+        };
+        getAPI(BLOG_VIDEOS, successFn, errorFn, apiParams);
+    };
 
     deleteObject(record) {
         let that = this;
@@ -92,6 +106,11 @@ export default class VideosList extends React.Component {
                                       title={item.name}
                                   />
                               </List.Item>}/>
+
+                          <Divider/>
+                        <InfiniteFeedLoaderButton loaderFunction={()=>this.loadData(this.state.next)}
+                                                  loading={this.state.loading}
+                                                  hidden={!this.state.next}/>
                     </Card>
                 </Route>
             </Switch>

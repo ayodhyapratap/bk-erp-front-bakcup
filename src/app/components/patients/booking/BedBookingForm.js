@@ -214,20 +214,16 @@ class BedBookingForm extends React.Component {
                     rest_diseases: values.rest_diseases ? values.rest_diseases.join(',') : null,
                     report_upload: values.file && values.file.file.response ? values.file.file.response.image_path : null
                 };
-                // delete reqData.medicines;
-                //
-                // if (values.medicines){
-                //     values.medicines.forEach(function (item) {
-                //         let medicines={medicineId:item};
-                //     })
-                //
-                // }
 
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Saved Successfully!!");
-                    that.props.history.goBack();
-                    if (that.props.loadData)
+                    if (that.props.history){
+                        that.props.history.goBack();
+                        that.props.history.replace('/patient/'+ that.props.match.params.id +'/booking')
+                    }
+                    if (that.props.loadData) {
                         that.props.loadData();
+                    }
                 };
                 let errorFn = function () {
 
@@ -525,7 +521,7 @@ class BedBookingForm extends React.Component {
                                         rules: [{required: true, message: 'Input From Date!'}],
                                     })
                                     (<DatePicker onChange={(value) => that.checkBedStatus('from_date', value)}
-                                                 format={'DD-MM-YYYY'}/>)
+                                                 format={'DD-MM-YYYY'} allowClear={false}/>)
                                     }
                                 </Form.Item>
                                 <Form.Item label="Book To" {...formItemLayout}>

@@ -71,6 +71,7 @@ export default class CreateAppointmentForm extends React.Component {
             },
             procedureObjectsById: {},
             // appointmentList:[],
+            startTime:this.props.startTime,
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -203,7 +204,6 @@ export default class CreateAppointmentForm extends React.Component {
             });
     }
     setBlockedTiming = (type, value) => {
-        console.log("Onchange",value)
         let that = this;
         if (type) {
             this.setState(function (prevState) {
@@ -515,8 +515,11 @@ export default class CreateAppointmentForm extends React.Component {
                     that.setState({
                         saving: false
                     });
-                    if (that.props.history)
+                    if (that.props.history) {
                         that.props.history.goBack();
+                        that.props.history.replace('/patients/appointments');
+                    }
+
                     if (that.props.loadData)
                         that.props.loadData();
                     if (data) {
@@ -630,10 +633,10 @@ export default class CreateAppointmentForm extends React.Component {
                     <FormItem key="schedule_at" label="Appointment Schedule" {...formItemLayout}>
                         {getFieldDecorator("schedule_at",
                             {
-                                initialValue: appointmentTime ? moment(appointmentTime) : null,
+                                initialValue: appointmentTime ? moment(appointmentTime) : moment(this.props.startTime),
                                 rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                             })(
-                            <DatePicker format="YYYY/MM/DD HH:mm" showTime
+                            <DatePicker  showTime={{use12Hours: true}} format="YYYY/MM/DD hh:mm a"  allowClear={false}
                                         onChange={(value) => this.setBlockedTiming("schedule_at", value)}/>
                         )}
                         {this.state.practiceOutsideAvailableTiming ?
@@ -661,27 +664,27 @@ export default class CreateAppointmentForm extends React.Component {
                                         {that.state.appointmentList.map((item) =><li style={{border: '1px solid #bbb', marginLeft: "13px",padding:" 0.01em 14px"}}><span style={{width: 'calc(100% - 60px)'}}><b>{moment(item.schedule_at).format("LT")}</b>&nbsp;{item.patient.user.first_name}</span>
                                         &nbsp;<b>with</b> &nbsp;{item.doctor_data.user.first_name}
                                         </li>)}
-                                            
+
                                         </ul>
                                     </div>
-                                    
+
                                 :null}
                             </Col>
                         </Row>
-                       
+
                         </span>
                         {this.state.appointmentList && this.state.appointmentList.length>0 ?<>
-                                
+
                                 <Alert message="Selected time slot have assigned someone else !! please select another slot." type="warning"
-                                   showIcon/> 
+                                   showIcon/>
                                 {/* <div style={{backgroundColor:"#fffbe6"}}>
                                     <p style={{color:red ,padding:"7px"}}><Icon type="exclamation-circle" theme="twoTone" twoToneColor="#faad14" /> </p>
                                 </div> */}
-                            
-                              </>      
+
+                              </>
                         :null}
                     </FormItem>
-                    
+
 
                     {that.state.patientDetails ?
                         <FormItem key="id" value={this.state.patientDetails.id} {...formPatients}>

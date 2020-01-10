@@ -22,6 +22,7 @@ import {
 } from "../../constants/hardData";
 import EventPatientPopover from "./EventPatientPopover";
 import { tag } from "postcss-selector-parser";
+import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 
 class BlockCalendar extends React.Component {
     constructor(props) {
@@ -95,18 +96,20 @@ class BlockCalendar extends React.Component {
         });
 
         let successFn =function(data){
-
+            if (that.props.history){
+                that.props.history.replace('/calendar');
+            }
         };
         let errorFn=function(){
 
         };
         postAPI(BLOCK_CALENDAR,reqData,successFn,errorFn)
     };
-   
+
     render(){
         let that = this;
         const {getFieldDecorator} = this.props.form;
- 
+
         const formItemLayout = ({
             labelCol: {span: 6},
             wrapperCol: {span: 4},
@@ -131,14 +134,14 @@ class BlockCalendar extends React.Component {
                     <Col span={18}>
                         <Form onSubmit={this.handleSubmit}>
                             <Form.Item label="Block From" {...formItemLayout}>
-                                {getFieldDecorator('block_from',{initialValue:moment()})
-                                (<DatePicker  showTime onChange={(value)=>this.changeParamsForBlockedAppointments('block_from',value)}/>)
+                                {getFieldDecorator('block_from',{initialValue:moment(),rules: [{ required: true, message: REQUIRED_FIELD_MESSAGE }]})
+                                (<DatePicker  showTime={{use12Hours: true}} format="YYYY-MM-DD hh:mm a" allowClear={false}  onChange={(value)=>this.changeParamsForBlockedAppointments('block_from',value)}/>)
                             }
                             </Form.Item>
 
                             <Form.Item label="Block To" {...formItemLayout}>
-                                {getFieldDecorator('block_to',{initialValue:moment()})
-                                (<DatePicker  showTime onChange={(value)=>this.changeParamsForBlockedAppointments('block_to',value)}/>)
+                                {getFieldDecorator('block_to',{initialValue:moment(),rules: [{ required: true, message: REQUIRED_FIELD_MESSAGE }],})
+                                (<DatePicker  showTime={{ use12Hours: true }} format="YYYY-MM-DD hh:mm a" allowClear={false} onChange={(value)=>this.changeParamsForBlockedAppointments('block_to',value)}/>)
                             }
                             </Form.Item>
 
@@ -150,9 +153,9 @@ class BlockCalendar extends React.Component {
 
                             <Form.Item label="Doctor" {...formItemLayout}>
                                 {getFieldDecorator('doctor', {initialValue:6})
-                                (<Select placeholder="Docto List"  onChange={(value) => this.changeParamsForBlockedAppointments("doctor", value)}>
+                                (<Select placeholder="Doctor List"  onChange={(value) => this.changeParamsForBlockedAppointments("doctor", value)}>
                                     {this.state.practiceDoctors.map((option) => <Select.Option
-                                    value={option.id}>{option.user.first_name}</Select.Option>)}
+                                    value={option.id} key={option.id}>{option.user.first_name}</Select.Option>)}
                                 </Select>)
 
                                 }
@@ -170,7 +173,7 @@ class BlockCalendar extends React.Component {
 
                         </Form>
                     </Col>
-                
+
                     <Col span={6}>
                         <List
                             size={'small'}
@@ -195,7 +198,7 @@ class BlockCalendar extends React.Component {
                             }/>
                     </Col>
                 </Row>
-               
+
             </Card>
 
         )

@@ -398,7 +398,7 @@ class AddPaymentForm extends React.Component {
             });
             // if (that.props.loadData)
             that.props.loadData();
-            that.props.history.push("/patient/" + that.props.match.params.id + "/billing/payments")
+            that.props.history.replace("/patient/" + that.props.match.params.id + "/billing/payments")
         };
         let errorFn = function () {
             that.setState({
@@ -599,7 +599,7 @@ class AddPaymentForm extends React.Component {
                                             <br/>
                                             <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
                                             <DatePicker style={{width: 150}} defaultValue={moment()}
-                                                        onChange={(value) => that.selectedDate(value)}/>
+                                                        onChange={(value) => that.selectedDate(value)} allowClear={false}/>
                                         </Col>
                                     </Row>
                                 </Col>

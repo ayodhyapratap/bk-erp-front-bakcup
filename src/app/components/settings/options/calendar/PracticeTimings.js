@@ -211,7 +211,7 @@ class PracticeTimings extends React.Component {
                                                 initialValue: that.state.timings && that.state.timings.first_start_time ? moment(that.state.timings.first_start_time, "HH:mm") : null,
                                                 rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                             })(
-                                                <TimePicker format={"HH:mm"}/>
+                                                <TimePicker format={"HH:mm"} allowClear={false}/>
                                             )}
                                         </Form.Item>
                                     </Col>
@@ -223,7 +223,7 @@ class PracticeTimings extends React.Component {
                                                     initialValue: that.state.timings && that.state.timings.first_end_time ? moment(that.state.timings.first_end_time, "HH:mm") : null,
                                                     rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                                 })(
-                                                    <TimePicker format={"HH:mm"}/>
+                                                    <TimePicker format={"HH:mm"} allowClear={false}/>
                                                 )}
                                             </Form.Item>
                                         </Col>
@@ -234,7 +234,7 @@ class PracticeTimings extends React.Component {
                                                     initialValue: that.state.timings && that.state.timings.second_start_time ? moment(that.state.timings.second_start_time, "HH:mm") : null,
                                                     rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                                 })(
-                                                    <TimePicker format={"HH:mm"}/>
+                                                    <TimePicker format={"HH:mm"} allowClear={false}/>
                                                 )}
                                             </Form.Item>
                                         </Col>
@@ -247,7 +247,7 @@ class PracticeTimings extends React.Component {
                                                 initialValue: that.state.timings && that.state.timings.second_end_time ? moment(that.state.timings.second_end_time, "HH:mm") : null,
                                                 rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                             })(
-                                                <TimePicker format={"HH:mm"}/>
+                                                <TimePicker format={"HH:mm"} allowClear={false}/>
                                             )}
                                         </Form.Item>
                                     </Col>
@@ -298,7 +298,7 @@ class PracticeTimings extends React.Component {
                                                         initialValue: that.state.timings && that.state.timings[`first_start_time_${dayKey}`] ? moment(that.state.timings[`first_start_time_${dayKey}`], "HH:mm") : null,
                                                         rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                                     })(
-                                                        <TimePicker format={"HH:mm"}/>
+                                                        <TimePicker format={"HH:mm"} allowClear={false}/>
                                                     )}
                                                 </Form.Item>
                                             </Col>
@@ -310,7 +310,7 @@ class PracticeTimings extends React.Component {
                                                             initialValue: that.state.timings && that.state.timings[`first_end_time_${dayKey}`] ? moment(that.state.timings[`first_end_time_${dayKey}`], "HH:mm") : null,
                                                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                                         })(
-                                                            <TimePicker format={"HH:mm"}/>
+                                                            <TimePicker format={"HH:mm"} allowClear={false}/>
                                                         )}
                                                     </Form.Item>
                                                 </Col>
@@ -321,7 +321,7 @@ class PracticeTimings extends React.Component {
                                                             initialValue: that.state.timings && that.state.timings[`second_start_time_${dayKey}`] ? moment(that.state.timings[`second_start_time_${dayKey}`], "HH:mm") : null,
                                                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                                         })(
-                                                            <TimePicker format={"HH:mm"}/>
+                                                            <TimePicker format={"HH:mm"} allowClear={false}/>
                                                         )}
                                                     </Form.Item>
                                                 </Col>
@@ -333,7 +333,7 @@ class PracticeTimings extends React.Component {
                                                         initialValue: that.state.timings && that.state.timings[`second_end_time_${dayKey}`] ? moment(that.state.timings[`second_end_time_${dayKey}`], "HH:mm") : null,
                                                         rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                                     })(
-                                                        <TimePicker format={"HH:mm"}/>
+                                                        <TimePicker format={"HH:mm"} allowClear={false}/>
                                                     )}
                                                 </Form.Item>
                                             </Col>
