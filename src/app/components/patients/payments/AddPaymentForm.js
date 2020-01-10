@@ -79,10 +79,10 @@ class AddPaymentForm extends React.Component {
         if (this.props.history && this.props.history.location.search) {
             let pairValueArray = this.props.history.location.search.substr(1).split('&');
             if (pairValueArray.length) {
-               pairValueArray.forEach(function(item){
-                   if((item.split('='))[0]=='invoices'){
-                       invoiceArray = ((item.split('='))[1]).split(',');
-                   }
+                pairValueArray.forEach(function (item) {
+                    if ((item.split('='))[0] == 'invoices') {
+                        invoiceArray = ((item.split('='))[1]).split(',');
+                    }
                 })
             }
         }
@@ -150,8 +150,8 @@ class AddPaymentForm extends React.Component {
                     loadMoreInvoice: data.next
                 }
             }, function () {
-                if(invoicesToLoad){
-                    invoicesToLoad.forEach(function(id){
+                if (invoicesToLoad) {
+                    invoicesToLoad.forEach(function (id) {
                         that.addInvoiceToPayments(id)
                     })
                 }
@@ -315,6 +315,10 @@ class AddPaymentForm extends React.Component {
                 if (availableAdvancePayments.advance_value < maxConsumeAmount) {
                     maxConsumeAmount = availableAdvancePayments.advance_value;
                 }
+                if(maxConsumeAmount<0){
+                    maxConsumeAmount = 0;
+                }
+                let i = 0;
                 while (totalAmountPayingFromAdvance && invoices.length > consumedInvoices) {
                     if (invoicePayments[invoices[consumedInvoices]] && maxConsumeAmount > invoicePayments[invoices[consumedInvoices]]) {
                         availableAdvancePayments.advance_value -= invoicePayments[invoices[consumedInvoices]];
@@ -339,6 +343,10 @@ class AddPaymentForm extends React.Component {
                         totalAmountPayingFromAdvance -= maxConsumeAmount;
                         availableAdvancePayments.advance_value -= maxConsumeAmount;
                     }
+                    if (!availableAdvancePayments.advance_value) {
+                        availableAdvancePayments.is_advance = false;
+                    }
+                    console.log(i++);
                 }
                 reqData.push(availableAdvancePayments);
             });
@@ -361,6 +369,7 @@ class AddPaymentForm extends React.Component {
             newPayment.bank = "RazorPay";
             newPayment.number = that.state.receivedPayIdFromRazorPay;
         }
+        console.log(reqData);
         let successFn = function (data) {
             that.setState({
                 loading: false
@@ -374,7 +383,7 @@ class AddPaymentForm extends React.Component {
                 loading: false
             });
         };
-        postAPI(BULK_PAYMENT_API, reqData, successFn, errorFn)
+        // postAPI(BULK_PAYMENT_API, reqData, successFn, errorFn)
     };
 
     paymentHandler(inv, patientObj, cost,) {
@@ -522,7 +531,8 @@ class AddPaymentForm extends React.Component {
 
                                 </Col>
                                 <Col span={12}>
-                                    <Input.TextArea row={2} placeholder="Notes..." size={'small'} onChange={(e)=>this.changeNotes(e.target.value)}>
+                                    <Input.TextArea row={2} placeholder="Notes..." size={'small'}
+                                                    onChange={(e) => this.changeNotes(e.target.value)}>
                                         {this.state.notes}
                                     </Input.TextArea>
                                     <Select style={{width: '100%'}} value={this.state.selectedPaymentMode}
@@ -550,7 +560,9 @@ class AddPaymentForm extends React.Component {
                                     <Popconfirm
                                         title={"Are you sure to take payment of INR " + this.state.totalPayingAmount + "?"}
                                         onConfirm={() => this.paymentHandler(this.state.addedInvoice.map(inv => inv.invoice_id).join(', '), this.props.currentPatient, this.state.totalPayingAmount)}>
-                                        <Button type={'primary'} style={{margin: 5}} disabled={that.props.editPayment && that.props.editPayment.invoices}>Pay Online & Save Payments</Button>
+                                        <Button type={'primary'} style={{margin: 5}}
+                                                disabled={that.props.editPayment && that.props.editPayment.invoices}>Pay
+                                            Online & Save Payments</Button>
                                     </Popconfirm>
                                     <Popconfirm
                                         title={"Are you sure to take payment of INR " + this.state.totalPayingAmount + "?"}

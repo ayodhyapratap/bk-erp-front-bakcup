@@ -350,7 +350,7 @@ const columns = [{
     title: 'Amount Paid',
     key: 'pay_amount',
     dataIndex: 'pay_amount',
-    render: value => value.toFixed(2),
+    render: value => value ? value.toFixed(2) : ''
 }];
 
 function PaymentCard(payment, that) {
