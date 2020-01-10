@@ -6,6 +6,7 @@ import {Route, Switch} from "react-router";
 import AddSEO from "./AddSEO";
 import {Link} from "react-router-dom";
 import AddPost from "../blog/AddPost";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class SEOList extends React.Component{
     constructor(props){
@@ -19,26 +20,39 @@ export default class SEOList extends React.Component{
     componentDidMount(){
         this.loadData();
     }
-    loadData(){
+    loadData =(page=1)=>{
         let that =this;
         let successFn = function (data) {
-            that.setState({
-                pageSEO:data,
-                loading:false
+            that.setState(function (prevState) {
+                if (data.current ==1){
+                    return{
+                        pageSEO:[...data.results],
+                        next:data.next,
+                        loading:false
+                    }
+                }
+                return {
+                    pageSEO:[...prevState.pageSEO,...data.results],
+                    next:data.next,
+                    loading:false
+                }
             })
-        }
+        };
         let errorFn = function () {
             that.setState({
                 loading:false
             })
 
-        }
-        getAPI(BLOG_PAGE_SEO ,successFn, errorFn);
-    }
-  
+        };
+        let apiParams ={
+            page:page
+        };
+        getAPI(BLOG_PAGE_SEO ,successFn, errorFn, apiParams);
+    };
+
     render(){
         let that = this;
-        let coloumns = [{
+        let columns = [{
             title: 'Name',
             dataIndex: 'name',
             key: 'name'
@@ -68,10 +82,15 @@ export default class SEOList extends React.Component{
                    render={(route) => <AddSEO {...this.state} {...route} loadData={this.loadData}/>}/>
                 <Route exact path='/web/pageseo/edit/:id'
                    render={(route) => <AddSEO loadData={this.loadData} {...this.state} {...route}/>}/>
-     
+
                 <Card title="Pages SEO"   extra={<Link to={"/web/pageseo/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <Table loading={this.state.loading} dataSource={this.state.pageSEO} columns={coloumns}/>
-            </Card>
+                    <Table loading={this.state.loading} dataSource={this.state.pageSEO} columns={columns} pagination={false}/>
+
+                    <InfiniteFeedLoaderButton loaderFunction={()=>this.loadData(this.state.next)}
+                                              loading={this.state.loading}
+                                              hidden={!this.state.next}/>
+
+                </Card>
         </Switch>
         </div>
     }

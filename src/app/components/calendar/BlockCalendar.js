@@ -153,9 +153,9 @@ class BlockCalendar extends React.Component {
 
                             <Form.Item label="Doctor" {...formItemLayout}>
                                 {getFieldDecorator('doctor', {initialValue:6})
-                                (<Select placeholder="Docto List"  onChange={(value) => this.changeParamsForBlockedAppointments("doctor", value)}>
+                                (<Select placeholder="Doctor List"  onChange={(value) => this.changeParamsForBlockedAppointments("doctor", value)}>
                                     {this.state.practiceDoctors.map((option) => <Select.Option
-                                    value={option.id}>{option.user.first_name}</Select.Option>)}
+                                    value={option.id} key={option.id}>{option.user.first_name}</Select.Option>)}
                                 </Select>)
 
                                 }

@@ -6,6 +6,7 @@ import {Route, Switch} from "react-router";
 import AddPost from "./AddPost";
 import {Link} from "react-router-dom";
 import moment from "moment";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class DiseaseList extends React.Component {
     constructor(props) {
@@ -22,21 +23,34 @@ export default class DiseaseList extends React.Component {
         this.loadData();
     }
 
-    loadData() {
+    loadData = (page = 1 )=> {
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                post: data,
-                loading:false
+            that.setState(function (prevState) {
+                if (data.current ==1){
+                    return{
+                        post:[...data.results],
+                        next:data.next,
+                        loading:false,
+                    }
+                }
+                return {
+                    post:[...prevState.post, ...data.results],
+                    next: data.next,
+                    loading:false,
+                }
             })
-        }
+        };
         let errorFn = function () {
             that.setState({
                 loading:false
             })
 
+        };
+        let apiParams={
+            page:page,
         }
-        getAPI(BLOG_POST, successFn, errorFn);
+        getAPI(BLOG_POST, successFn, errorFn, apiParams);
     }
 
     deleteObject(record) {
@@ -53,7 +67,7 @@ export default class DiseaseList extends React.Component {
 
     render() {
         let that = this;
-        let coloumns = [{
+        let columns = [{
             title: 'Blog Title',
             dataIndex: 'title',
             key: 'post_title'
@@ -65,7 +79,7 @@ export default class DiseaseList extends React.Component {
                 return moment(text).format('lll');
             },
             render:(value ,record)=><span>{record.posted_on?<span>{moment(record.posted_on).format("lll")}</span>:null}</span>
-            
+
         }, {
             title: 'Actions',
             render: (item) => {
@@ -86,7 +100,11 @@ export default class DiseaseList extends React.Component {
                    render={(route) => <AddPost {...this.state} {...route} loadData={this.loadData}/>}/>
             <Card title="Blogs"
                   extra={<Link to={"/web/blog/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <Table loading={this.state.loading} dataSource={this.state.post} columns={coloumns}/>
+                <Table loading={this.state.loading} dataSource={this.state.post} pagination={false} columns={columns}/>
+
+                <InfiniteFeedLoaderButton loaderFunction={()=>this.loadData(this.state.next)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.next}/>
             </Card>
         </Switch>
         </div>

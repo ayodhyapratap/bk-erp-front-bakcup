@@ -38,7 +38,7 @@ class CreateAppointment extends React.Component {
 
             },
             onFieldsDataChange: function (data) {
-                console.log(data);
+                // console.log(data);
             },
             action: ALL_APPOINTMENT_API,
             method: "post",

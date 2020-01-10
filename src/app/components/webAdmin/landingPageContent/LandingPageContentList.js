@@ -1,4 +1,4 @@
-import {Avatar, Button, Card, Icon, List, Popconfirm} from "antd";
+import {Avatar, Button, Card, Divider, Icon, List, Popconfirm} from "antd";
 import React from "react";
 import {getAPI, interpolate, patchAPI, postAPI, makeFileURL} from "../../../utils/common";
 import {
@@ -11,6 +11,7 @@ import {
 import {Route, Switch} from "react-router";
 import {Link} from "react-router-dom";
 import AddLandingPageContent from "./AddLandingPageContent";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class LandingPageContentList extends React.Component{
     constructor(props){
@@ -25,22 +26,35 @@ export default class LandingPageContentList extends React.Component{
     componentDidMount(){
         this.loadData();
     }
-    loadData(){
+    loadData =(page =1)=>{
         let that =this;
         let successFn = function (data) {
-            that.setState({
-                pageContent:data,
-                loading:false
+            that.setState(function (prevState) {
+                if (data.current == 1 ){
+                    return{
+                        pageContent:[...data.results],
+                        next:data.next,
+                        loading:false
+                    }
+                }
+                return {
+                    pageContent:[...prevState.pageContent, ...data.results],
+                    next:data.next,
+                    loading:false
+                }
             })
-        }
+        };
         let errorFn = function () {
           that.setState({
             loading:false
           })
 
-        }
-        getAPI(LANDING_PAGE_CONTENT ,successFn, errorFn);
-    }
+        };
+        let  apiParams ={
+            page:page
+        };
+        getAPI(LANDING_PAGE_CONTENT ,successFn, errorFn, apiParams);
+    };
     deleteObject(record) {
         let that = this;
         let reqData = {};
@@ -75,9 +89,13 @@ export default class LandingPageContentList extends React.Component{
                               title={item.title}
                               description={<div dangerouslySetInnerHTML={{ __html: item.content }}/>}
 
-                              
+
                           />
                       </List.Item>}/>
+                <Divider/>
+                <InfiniteFeedLoaderButton loaderFunction={()=>this.loadData(this.state.next)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.next}/>
             </Card>
         </Switch>
         </div>

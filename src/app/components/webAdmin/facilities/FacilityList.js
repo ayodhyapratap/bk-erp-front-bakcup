@@ -7,6 +7,7 @@ import {
 import {Route, Switch} from "react-router";
 import AddFacility from "./AddFacility";
 import {Link} from "react-router-dom";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class FacilityList extends React.Component {
     constructor(props) {
@@ -22,22 +23,35 @@ export default class FacilityList extends React.Component {
         this.loadData();
     }
 
-    loadData() {
+    loadData =(page =1) => {
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                facility: data,
-                loading:false
+            that.setState(function (prevState) {
+                if (data.current == 1){
+                    return{
+                        facility: [...data.results],
+                        next:data.next,
+                        loading:false
+                    }
+                }
+                return {
+                    facility: [...prevState.facility, ...data.results],
+                    next:data.next,
+                    loading:false
+                }
             })
-        }
+        };
         let errorFn = function () {
             that.setState({
                 loading:false
             })
 
-        }
-        getAPI(BLOG_FACILITY, successFn, errorFn);
-    }
+        };
+        let apiParams ={
+            page:page,
+        };
+        getAPI(BLOG_FACILITY, successFn, errorFn, apiParams);
+    };
 
     deleteObject(record) {
         let that = this;
@@ -53,7 +67,7 @@ export default class FacilityList extends React.Component {
 
     render() {
         let that = this;
-        let coloumns = [{
+        let columns = [{
             title: 'Name',
             dataIndex: 'name',
             key: 'name'
@@ -77,7 +91,11 @@ export default class FacilityList extends React.Component {
                    render={(route) => <AddFacility loadData={this.loadData} {...this.state} {...route}/>}/>
             <Card title="Facilities" extra={<Link to={"/web/facilities/add"}> <Button type="primary"><Icon
                 type="plus"/> Add</Button></Link>}>
-                <Table loading={this.state.loading} dataSource={this.state.facility} columns={coloumns}/>
+                <Table loading={this.state.loading} pagination={false} dataSource={this.state.facility} columns={columns}/>
+
+                <InfiniteFeedLoaderButton loaderFunction={()=>this.loadData(this.state.next)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.next}/>
             </Card>
         </Switch>
         </div>

@@ -83,7 +83,7 @@ export default class AddPost extends React.Component {
         },{
             label: "Posted On",
             key: "posted_on",
-            initialValue:this.state.editBlogData && this.state.editBlogData.posted_on?moment(this.state.editBlogData.posted_on):'',
+            initialValue:this.state.editBlogData && this.state.editBlogData.posted_on?moment(this.state.editBlogData.posted_on):moment(),
             type: DATE_PICKER
 
         },{

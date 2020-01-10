@@ -6,6 +6,7 @@ import {Route, Switch} from "react-router";
 import {Link} from "react-router-dom";
 import AddEvent from "./AddEvent";
 import moment from "moment";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class DiseaseList extends React.Component {
     constructor(props) {
@@ -22,22 +23,35 @@ export default class DiseaseList extends React.Component {
         this.loadData();
     }
 
-    loadData() {
+    loadData =(page =1 )=> {
         let that = this;
         let successFn = function (data) {
-            that.setState({
-                events: data,
-                loading:false
+            that.setState(function (prevState) {
+                if (data.current == 1){
+                    return{
+                        events: [...data.results],
+                        next:data.next,
+                        loading:false
+                    }
+                }
+                return {
+                    events: [...prevState.events, ...data.results],
+                    next:data.next,
+                    loading:false
+                }
             })
-        }
+        };
         let errorFn = function () {
             that.setState({
                 loading:false
             })
 
-        }
-        getAPI(BLOG_EVENTS, successFn, errorFn);
-    }
+        };
+        let apiParams ={
+            page:page,
+        };
+        getAPI(BLOG_EVENTS, successFn, errorFn, apiParams);
+    };
 
     deleteObject(record) {
         let that = this;
@@ -53,7 +67,7 @@ export default class DiseaseList extends React.Component {
 
     render() {
         let that = this;
-        let coloumns = [{
+        let columns = [{
             title: 'Event Title',
             dataIndex: 'title',
             key: 'event_title'
@@ -84,7 +98,11 @@ export default class DiseaseList extends React.Component {
                    render={(route) => <AddEvent {...this.state} loadData={this.loadData} {...route}/>}/>
             <Card title="Events"
                   extra={<Link to={"/web/event/add"}><Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <Table loading={this.state.loading} dataSource={this.state.events} columns={coloumns}/>
+                <Table loading={this.state.loading} pagination={false} dataSource={this.state.events} columns={columns}/>
+
+                <InfiniteFeedLoaderButton loaderFunction={()=>this.loadData(this.state.next)}
+                                          loading={this.state.loading}
+                                          hidden={!this.state.next}/>
             </Card>
         </Switch>
         </div>

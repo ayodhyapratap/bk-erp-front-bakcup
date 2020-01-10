@@ -286,13 +286,14 @@ class App extends Component {
                 putAPI(interpolate(APPOINTMENT_API, [event.id]), changedEvent, successFn, errorFn);
             },
             onCancel() {
-                console.log('Cancel');
+                // console.log('Cancel');
             },
         });
     }
 
 
     onSelectSlot(value) {
+        console.log("DoubleClick",value);
         let time = moment(value.start).format();
         if (value.action == "doubleClick") {
             this.setState({
@@ -616,6 +617,7 @@ class App extends Component {
                     <Switch>
 
                         <Route>
+
                             <div style={{backgroundColor: '#fff', padding: '5px 10px'}}>
                                 <Row gutter={16}>
                                     <Col span={3}>
@@ -788,7 +790,7 @@ class App extends Component {
                                                         key={'APPOINTMENTS'}
                                                         defaultDate={new Date()}
                                                         localizer={localizer}
-                                                        defaultView="week"
+                                                        defaultView="day"
                                                         step={10}
                                                         timeslots={1}
                                                         truncateEvents={false}
@@ -835,7 +837,7 @@ class App extends Component {
                                                 key={'AVAILABILITY'}
                                                 defaultDate={new Date()}
                                                 localizer={localizer}
-                                                defaultView="week"
+                                                defaultView="day"
                                                 step={10}
                                                 timeslots={1}
                                                 truncateEvents={false}

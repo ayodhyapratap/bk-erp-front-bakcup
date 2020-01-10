@@ -71,6 +71,7 @@ export default class CreateAppointmentForm extends React.Component {
             },
             procedureObjectsById: {},
             // appointmentList:[],
+            startTime:this.props.startTime,
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
