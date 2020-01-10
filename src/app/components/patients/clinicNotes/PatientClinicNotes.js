@@ -1,4 +1,20 @@
-import {Button, Card, Checkbox, Divider, Icon, Table, Dropdown, Menu, Col, Row, Tag, Spin, Tooltip, Avatar} from "antd";
+import {
+    Button,
+    Card,
+    Checkbox,
+    Divider,
+    Icon,
+    Table,
+    Dropdown,
+    Menu,
+    Col,
+    Row,
+    Tag,
+    Spin,
+    Tooltip,
+    Avatar,
+    Form, Input
+} from "antd";
 import React from "react";
 import {getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {INVOICES_API, PATIENT_CLINIC_NOTES_API, CLINIC_NOTES_PDF} from "../../../constants/api";
@@ -11,7 +27,8 @@ import AddClinicNotesDynamic from "./AddClinicNotesDynamic";
 import {Modal} from "antd/lib/index";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
-
+import {sendMail} from  "../../../utils/clinicUtils";
+import * as _ from 'lodash'
 const confirm = Modal.confirm;
 
 class PatientClinicNotes extends React.Component {
@@ -23,6 +40,7 @@ class PatientClinicNotes extends React.Component {
             clinicNotes: [],
             editClinicNotes: null,
             loading: true,
+            mail_to:null,
 
         }
         this.loadClinicNotes = this.loadClinicNotes.bind(this);
@@ -119,7 +137,45 @@ class PatientClinicNotes extends React.Component {
         getAPI(interpolate(CLINIC_NOTES_PDF, [id]), successFn, errorFn);
     }
 
+    updateFormValue =(type,value)=>{
+        this.setState({
+            [type]: value
+        })
+    };
+
+    mailModalOpen =() =>{
+        this.setState({
+            visibleMail:true
+        })
+    };
+
+    mailModalClose =() =>{
+        this.setState({
+            visibleMail:false
+        })
+    };
+
+    sendPatientMail =(clinicalNotes)=>{
+        this.mailModalOpen()
+        this.setState({
+            patientName:_.get(clinicalNotes,'patient.user.first_name'),
+            clinicId:_.get(clinicalNotes,'id'),
+            mail_to:_.get(clinicalNotes,'patient.user.email')
+        })
+
+    };
+
+    sendMailToPatient =()=>{
+        let {mail_to ,clinicId } = this.state;
+        let apiParams ={
+            mail_to:mail_to,
+        }
+        sendMail(interpolate(CLINIC_NOTES_PDF,[clinicId]),apiParams)
+        this.mailModalClose();
+    }
+
     render() {
+
         let that = this;
         const columns = [{
             title: 'Time',
@@ -217,6 +273,12 @@ class PatientClinicNotes extends React.Component {
                                             Patient Timeline
                                         </Link>
                                     </Menu.Item>
+                                    <Menu.Divider/>
+                                    <Menu.Item key={'4'}>
+                                        <a onClick={() => this.sendPatientMail(clinicNote)}><Icon
+                                            type="mail"/> Send mail to patient
+                                        </a>
+                                    </Menu.Item>
                                 </Menu>}>
                                 <a onClick={() => this.loadPDF(clinicNote.id)}><Icon
                                     type="printer"/>
@@ -224,6 +286,24 @@ class PatientClinicNotes extends React.Component {
 
                             </Dropdown.Button>}>
 
+                            <Modal
+                                title={null}
+                                visible={this.state.visibleMail}
+                                onOk={this.sendMailToPatient}
+                                onCancel={this.mailModalClose}
+                                footer={[
+                                    <Button key="back" onClick={this.mailModalClose}>
+                                        Cancel
+                                    </Button>,
+                                    <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                                        Send
+                                    </Button>,
+                                ]}
+                            >
+                                <p>Send Clinical Notes To {_.get(clinicNote,'patient.user.first_name')} ?</p>
+                                <Input value={this.state.mail_to} placeholder={"Email"}
+                                       onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                            </Modal>
 
                             <Row>
                                 <Col span={6}>
@@ -315,6 +395,8 @@ class PatientClinicNotes extends React.Component {
                         <InfiniteFeedLoaderButton loaderFunction={() => this.loadClinicNotes(that.state.next)}
                                                   loading={this.state.loading}
                                                   hidden={!this.state.next}/>
+
+
                     </div>
                 </Route>
             </Switch>
@@ -355,6 +437,13 @@ class PatientClinicNotes extends React.Component {
                                     Patient Timeline
                                 </Link>
                             </Menu.Item>
+
+                            <Menu.Divider/>
+                            <Menu.Item key={'4'}>
+                                <a onClick={() => this.sendPatientMail(clinicNote)}><Icon
+                                    type="mail"/> Send mail to patient
+                                </a>
+                            </Menu.Item>
                         </Menu>}>
                         <a onClick={() => this.loadPDF(clinicNote.id)}><Icon
                             type="printer"/></a>
@@ -367,6 +456,8 @@ class PatientClinicNotes extends React.Component {
                             <span>, {clinicNote.patient.gender}</span>
                         </small>
                     </div>}>
+
+
                     <Row>
                         <Col span={6}>
                             <h3>Complaints</h3>
@@ -450,6 +541,7 @@ class PatientClinicNotes extends React.Component {
                             </Tooltip>
                         </Tag> : null}
                     </div>
+
                 </Card>)}
                 <Spin spinning={this.state.loading}>
                     <Row/>
@@ -457,6 +549,25 @@ class PatientClinicNotes extends React.Component {
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadClinicNotes(that.state.next)}
                                           loading={this.state.loading}
                                           hidden={!this.state.next}/>
+
+                <Modal
+                    title={null}
+                    visible={this.state.visibleMail}
+                    onOk={this.sendMailToPatient}
+                    onCancel={this.mailModalClose}
+                    footer={[
+                        <Button key="back" onClick={this.mailModalClose}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                            Send
+                        </Button>,
+                    ]}
+                >
+                    <p>Send Clinical Notes To {that.state.patientName} ?</p>
+                    <Input value={this.state.mail_to} placeholder={"Email"}
+                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                </Modal>
             </div>
         }
 

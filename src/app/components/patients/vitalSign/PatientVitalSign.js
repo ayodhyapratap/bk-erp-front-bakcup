@@ -1,7 +1,7 @@
 import React from "react";
-import {Button, Card, Divider, Icon, Modal, Table, Tabs, Tag, Tooltip as AntTooltip} from "antd";
+import {Button, Card, Divider, Icon, Input, Modal, Table, Tabs, Tag, Tooltip as AntTooltip} from "antd";
 import {Link, Route, Switch} from "react-router-dom";
-import {VITAL_SIGN_PDF, VITAL_SIGNS_API} from "../../../constants/api";
+import {CLINIC_NOTES_PDF, VITAL_SIGN_PDF, VITAL_SIGNS_API} from "../../../constants/api";
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
 import moment from 'moment';
 import CustomizedTable from "../../common/CustomizedTable";
@@ -19,6 +19,8 @@ import {
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import * as _ from "lodash";
+import {sendMail} from "../../../utils/clinicUtils";
 
 const confirm = Modal.confirm;
 
@@ -123,8 +125,44 @@ class PatientVitalSign extends React.Component {
         getAPI(interpolate(VITAL_SIGN_PDF, [id]), successFn, errorFn);
     }
 
+    updateFormValue =(type,value)=>{
+        this.setState({
+            [type]: value
+        })
+    };
+
+    mailModalOpen =() =>{
+        this.setState({
+            visibleMail:true
+        })
+    };
+
+    mailModalClose =() =>{
+        this.setState({
+            visibleMail:false
+        })
+    };
+    sendPatientMail =(record)=>{
+        this.mailModalOpen()
+        this.setState({
+            patientName:_.get(record,'patient_data.user.first_name'),
+            reportManualId:_.get(record,'id'),
+            mail_to:_.get(record,'patient_data.user.email')
+        })
+
+    };
+    sendMailToPatient =()=>{
+        let {mail_to ,reportManualId } = this.state;
+        let apiParams ={
+            mail_to:mail_to,
+        }
+        sendMail(interpolate(VITAL_SIGN_PDF,[reportManualId]),apiParams)
+        this.mailModalClose();
+    }
+
     render() {
         let that = this;
+        let{vitalsign} =this.state;
         const columns = [{
             title: 'Date',
             dataIndex: 'date',
@@ -184,6 +222,10 @@ class PatientVitalSign extends React.Component {
                     <Divider type="vertical"/>
                     <a onClick={() => that.deleteVitalSign(record)}
                        disabled={(record.practice != that.props.active_practiceId)}>Delete</a>
+
+                    <Divider type="vertical"/>
+                    <a onClick={() => that.sendPatientMail(record)}
+                       >Send to patient</a>
                 </span>
             ),
         }];
@@ -477,7 +519,24 @@ class PatientVitalSign extends React.Component {
                                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadInvoices(that.state.next)}
                                                           loading={this.state.loading}
                                                           hidden={!this.state.next}/>
-
+                                <Modal
+                                    title={null}
+                                    visible={this.state.visibleMail}
+                                    onOk={this.sendMailToPatient}
+                                    onCancel={this.mailModalClose}
+                                    footer={[
+                                        <Button key="back" onClick={this.mailModalClose}>
+                                            Cancel
+                                        </Button>,
+                                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                                            Send
+                                        </Button>,
+                                    ]}
+                                >
+                                    <p>Send Report Manual To {this.state.patientName} ?</p>
+                                    <Input value={this.state.mail_to} placeholder={"Email"}
+                                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                                </Modal>
                             </Tabs.TabPane>
 
                         </Tabs>
@@ -512,6 +571,25 @@ class PatientVitalSign extends React.Component {
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadVitalsigns(that.state.next)}
                                           loading={this.state.loading}
                                           hidden={!this.state.next}/>
+
+                <Modal
+                    title={null}
+                    visible={this.state.visibleMail}
+                    onOk={this.sendMailToPatient}
+                    onCancel={this.mailModalClose}
+                    footer={[
+                        <Button key="back" onClick={this.mailModalClose}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                            Send
+                        </Button>,
+                    ]}
+                >
+                    <p>Send Report Manual  To {this.state.patientName} ?</p>
+                    <Input value={this.state.mail_to} placeholder={"Email"}
+                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                </Modal>
             </div>
         }
     }

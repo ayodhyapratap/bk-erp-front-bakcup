@@ -69,6 +69,8 @@ export default class ExpensesReport extends React.Component {
 
     sendMail = (mailTo) => {
         let that = this;
+        let errorMsg =true;
+        let successMsg =true;
         let apiParams = {
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -82,7 +84,7 @@ export default class ExpensesReport extends React.Component {
             apiParams.expense_type=this.props.expense_type.toString();
         }
         apiParams.mail_to = mailTo;
-        sendReportMail(EXPENSE_PAYMENT_MODE_API, apiParams)
+        sendReportMail(EXPENSE_PAYMENT_MODE_API, apiParams, successMsg, errorMsg)
     };
 
 

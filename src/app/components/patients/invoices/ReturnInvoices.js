@@ -29,7 +29,7 @@ import {
     SINGLE_RETURN_API,
     CANCELINVOICE_GENERATE_OTP,
     CANCELINVOICE_RESENT_OTP,
-    CANCELINVOICE_VERIFY_OTP
+    CANCELINVOICE_VERIFY_OTP, INVOICE_PDF_API
 } from "../../../constants/api";
 import moment from "moment";
 import {Route, Switch} from "react-router";
@@ -37,6 +37,8 @@ import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {Link, Redirect} from "react-router-dom";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import {SUCCESS_MSG_TYPE, OTP_DELAY_TIME} from "../../../constants/dataKeys";
+import * as _ from "lodash";
+import {sendMail} from "../../../utils/clinicUtils";
 
 class ReturnInvoices extends React.Component {
     constructor(props) {
@@ -148,7 +150,7 @@ class ReturnInvoices extends React.Component {
 
     }
 
-   
+
 
     loadPDF = (id) => {
         let that = this;
@@ -163,12 +165,48 @@ class ReturnInvoices extends React.Component {
     }
 
 
+    updateFormValue =(type,value)=>{
+        this.setState({
+            [type]: value
+        })
+    };
+
+    mailModalOpen =() =>{
+        this.setState({
+            visibleMail:true
+        })
+    };
+
+    mailModalClose =() =>{
+        this.setState({
+            visibleMail:false
+        })
+    };
+
+    sendPatientMail =(invoice)=>{
+        this.mailModalOpen()
+        this.setState({
+            patientName:_.get(invoice,'patient_data.user.first_name'),
+            paymentId:_.get(invoice,'id'),
+            mail_to:_.get(invoice,'patient_data.user.email')
+        })
+
+    };
+
+    sendMailToPatient =()=>{
+        let {mail_to ,paymentId } = this.state;
+        let apiParams ={
+            mail_to:mail_to,
+        }
+        sendMail(interpolate(RETURN_INVOICE_PDF_API,[paymentId]),apiParams)
+        this.mailModalClose();
+    }
     cancelModalOpen = (record) => {
         let that = this;
         let created_time=moment().diff(record.created_at,'minutes');
 
         if(created_time >OTP_DELAY_TIME){
-                            
+
             that.setState({
                 cancelReturnIncoiceVisible: true,
                 editReturnInvoice: record
@@ -301,6 +339,25 @@ class ReturnInvoices extends React.Component {
                         </div>
                     </Route>
                 </Switch>
+
+                <Modal
+                    title={null}
+                    visible={this.state.visibleMail}
+                    onOk={this.sendMailToPatient}
+                    onCancel={this.mailModalClose}
+                    footer={[
+                        <Button key="back" onClick={this.mailModalClose}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                            Send
+                        </Button>,
+                    ]}
+                >
+                    <p>Send invoice To {this.state.patientName} ?</p>
+                    <Input value={that.state.mail_to} placeholder={"Email"}
+                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                </Modal>
             </div>
         } else {
             return <div>
@@ -323,6 +380,25 @@ class ReturnInvoices extends React.Component {
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadInvoices(this.state.loadMoreInvoice)}
                                           loading={this.state.loading}
                                           hidden={!this.state.loadMoreInvoice}/>
+
+                <Modal
+                    title={null}
+                    visible={this.state.visibleMail}
+                    onOk={this.sendMailToPatient}
+                    onCancel={this.mailModalClose}
+                    footer={[
+                        <Button key="back" onClick={this.mailModalClose}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                            Send
+                        </Button>,
+                    ]}
+                >
+                    <p>Send invoice To {this.state.patientName} ?</p>
+                    <Input value={that.state.mail_to} placeholder={"Email"}
+                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                </Modal>
             </div>
         }
 
@@ -350,7 +426,7 @@ function invoiceFooter(presc) {
 
 function InvoiceCard(invoice, that) {
     const {getFieldDecorator} = that.props.form;
-   
+
     return <Card
         key={invoice.id}
         style={{marginTop: 10}}
@@ -371,6 +447,12 @@ function InvoiceCard(invoice, that) {
                     <Icon type="delete"/>
                     Cancel
                 </Menu.Item>
+                <Menu.Divider/>
+                <Menu.Item key={'2'}>
+                    <a onClick={() => that.sendPatientMail(invoice)}><Icon
+                        type="mail"/> Send mail to patient
+                    </a>
+                </Menu.Item>
             </Menu>}>
             <a onClick={() => that.loadPDF(invoice.id)}><Icon
                 type="printer"/></a>
@@ -385,7 +467,7 @@ function InvoiceCard(invoice, that) {
                            suffix={"/ " + (invoice.return_value ? invoice.return_value.toFixed(2):0)}/>
             </Col>
             <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
-               
+
                     <Table
                         bordered={true}
                         pagination={false}
@@ -426,7 +508,7 @@ function InvoiceCard(invoice, that) {
         </Modal>
 
 
-       
+
     </Card>
 }
 

@@ -25,7 +25,7 @@ import {
 } from "../../../constants/api";
 import {SUCCESS_MSG_TYPE, WARNING_MSG_TYPE} from "../../../constants/dataKeys";
 import moment from "moment";
-import {PROCEDURES} from "../../../constants/hardData";
+import {PAYMENT_OFFLINE_MODE, PROCEDURES} from "../../../constants/hardData";
 import {RAZORPAY_KEY} from "../../../config/connect";
 
 class AddPaymentForm extends React.Component {
@@ -45,7 +45,8 @@ class AddPaymentForm extends React.Component {
             availableAdvance: null,
             advanceToBeSent: 0,
             selectDate: moment(),
-            loading: false
+            loading: false,
+            paymentModeOffline:false
         }
         this.loadEditPyament = this.loadEditPyament.bind(this);
     }
@@ -128,10 +129,17 @@ class AddPaymentForm extends React.Component {
     loadPaymentModes = () => {
         var that = this;
         let successFn = function (data) {
-            that.setState({
-                paymentModes: data,
-                selectedPaymentMode: data.length ? data[0].id : null
-            })
+            if (data.length) {
+                if (data[0].mode ==PAYMENT_OFFLINE_MODE ){
+                    that.setState({
+                        paymentModeOffline:true
+                    })
+                }
+                that.setState({
+                    paymentModes: data,
+                    selectedPaymentMode: data[0].id
+                })
+            }
         };
         let errorFn = function () {
         };
@@ -262,6 +270,20 @@ class AddPaymentForm extends React.Component {
         })
     }
     changeSelectedPaymentMode = (e) => {
+        let {paymentModes} =this.state;
+        paymentModes.forEach((item)=>{
+           if (item.id == e){
+               if (item.mode == PAYMENT_OFFLINE_MODE){
+                   this.setState({
+                       paymentModeOffline:true,
+                   })
+               }else {
+                   this.setState({
+                       paymentModeOffline:false,
+                   })
+               }
+           }
+        });
         this.setState({
             selectedPaymentMode: e
         })
@@ -506,6 +528,7 @@ class AddPaymentForm extends React.Component {
                             <Row gutter={16} style={{marginTop: '20px'}}>
                                 <Col span={12}>
                                     <Row>
+
                                         <Col span={12}>
                                             <h3>Amount From Advance :<br/>
                                                 <small>Available: {this.state.availableAdvance ? this.state.availableAdvance.max_allowed : 0} INR</small>
@@ -531,6 +554,7 @@ class AddPaymentForm extends React.Component {
 
                                 </Col>
                                 <Col span={12}>
+<<<<<<< HEAD
                                     <Input.TextArea row={2} placeholder="Notes..." size={'small'}
                                                     onChange={(e) => this.changeNotes(e.target.value)}>
                                         {this.state.notes}
@@ -542,6 +566,33 @@ class AddPaymentForm extends React.Component {
                                             {mode.mode}
                                         </Select.Option>)}
                                     </Select>
+=======
+                                    <Row>
+                                        <Col span={10}>
+                                            <h3>Payment Mode :</h3>
+
+                                        </Col>
+                                        <Col span={12}>
+                                            <Select style={{width: '100%'}} value={this.state.selectedPaymentMode}
+                                                    onChange={this.changeSelectedPaymentMode}>
+                                                {this.state.paymentModes.map(mode => <Select.Option value={mode.id}
+                                                                                                    key={mode.id}>
+                                                    {mode.mode}
+
+                                                </Select.Option>)}
+                                            </Select>
+                                            <br/>
+                                            <br/>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col span={24}>
+                                            <Input.TextArea row={2} placeholder="Notes..." size={'small'} onChange={(e)=>this.changeNotes(e.target.value)}>
+                                                {this.state.notes}
+                                            </Input.TextArea>
+                                        </Col>
+                                    </Row>
+>>>>>>> bb0715e14ed495353b217458c6c6de9a4a322e45
 
                                     <Row>
                                         <Col span={6}>
@@ -553,17 +604,16 @@ class AddPaymentForm extends React.Component {
                                     </Row>
                                 </Col>
 
-
                             </Row>
                             <Row>
                                 <Col span={24} style={{align: 'center'}}>
+
                                     <Popconfirm
                                         title={"Are you sure to take payment of INR " + this.state.totalPayingAmount + "?"}
                                         onConfirm={() => this.paymentHandler(this.state.addedInvoice.map(inv => inv.invoice_id).join(', '), this.props.currentPatient, this.state.totalPayingAmount)}>
-                                        <Button type={'primary'} style={{margin: 5}}
-                                                disabled={that.props.editPayment && that.props.editPayment.invoices}>Pay
-                                            Online & Save Payments</Button>
+                                        <Button type={'primary'} style={{margin: 5}} disabled={that.props.editPayment && that.props.editPayment.invoices || that.state.paymentModeOffline}>Pay Online & Save Payments</Button>
                                     </Popconfirm>
+
                                     <Popconfirm
                                         title={"Are you sure to take payment of INR " + this.state.totalPayingAmount + "?"}
                                         onConfirm={this.handleSubmit}>

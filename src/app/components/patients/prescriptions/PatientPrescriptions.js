@@ -5,7 +5,7 @@ import {
     Card,
     Icon,
     Tag, Menu,
-    Dropdown, Modal, Tooltip, Spin, Row
+    Dropdown, Modal, Tooltip, Spin, Row, Input
 } from "antd";
 import {Link} from "react-router-dom";
 import {
@@ -13,7 +13,7 @@ import {
     DRUG_CATALOG,
     PATIENT_PROFILE,
     PATIENTS_LIST,
-    PRESCRIPTION_PDF
+    PRESCRIPTION_PDF, TREATMENTPLANS_PDF
 } from "../../../constants/api";
 import {getAPI, interpolate, displayMessage, postAPI, putAPI} from "../../../utils/common";
 import moment from "moment";
@@ -21,6 +21,8 @@ import {Redirect, Switch, Route} from "react-router";
 import AddorEditDynamicPatientPrescriptions from "./AddorEditDynamicPatientPrescriptions";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {BACKEND_BASE_URL} from "../../../config/connect";
+import * as _ from "lodash";
+import {sendMail} from "../../../utils/clinicUtils";
 
 const confirm = Modal.confirm;
 
@@ -143,6 +145,44 @@ class PatientPrescriptions extends React.Component {
     }
 
 
+    updateFormValue =(type,value)=>{
+        this.setState({
+            [type]: value
+        })
+    };
+    mailModalOpen =() =>{
+        this.setState({
+            visibleMail:true
+        })
+    };
+
+    mailModalClose =() =>{
+        this.setState({
+            visibleMail:false
+        })
+    };
+
+    sendPatientMail =(presc)=>{
+        this.mailModalOpen()
+        this.setState({
+            patientName:_.get(presc,'patient.user.first_name'),
+            prescriptionId:_.get(presc,'id'),
+            mail_to:_.get(presc,'patient.user.email')
+        })
+
+    };
+
+    sendMailToPatient =()=>{
+        let {mail_to ,prescriptionId } = this.state;
+        let apiParams ={
+            mail_to:mail_to,
+        }
+        sendMail(interpolate(TREATMENTPLANS_PDF,[prescriptionId]),apiParams)
+        this.mailModalClose();
+    }
+
+
+
     render() {
         const drugs = {}
         if (this.state.drug_catalog) {
@@ -218,6 +258,9 @@ class PatientPrescriptions extends React.Component {
                                               <Icon type="delete"/>
                                               Delete
                                           </Menu.Item>
+
+
+
                                           <Menu.Divider/>
                                           <Menu.Item key="3">
                                               <Link to={"/patient/" + presc.patient + "/emr/timeline"}>
@@ -226,9 +269,38 @@ class PatientPrescriptions extends React.Component {
                                                   Patient Timeline
                                               </Link>
                                           </Menu.Item>
+
+                                          <Menu.Divider/>
+                                          <Menu.Item key={'4'}>
+                                              <a onClick={() => this.sendPatientMail(presc)}><Icon
+                                                  type="mail"/> Send mail to patient
+                                              </a>
+                                          </Menu.Item>
+
                                       </Menu>}>
                                       <a onClick={() => this.loadPDF(presc.id)}><Icon type="printer"/></a>
                                   </Dropdown.Button>}>
+
+                                <Modal
+                                    title={null}
+                                    visible={this.state.visibleMail}
+                                    onOk={this.sendMailToPatient}
+                                    onCancel={this.mailModalClose}
+                                    footer={[
+                                        <Button key="back" onClick={this.mailModalClose}>
+                                            Cancel
+                                        </Button>,
+                                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                                            Send
+                                        </Button>,
+                                    ]}
+                                >
+                                    <p>Send Prescription  To {this.state.patientName} ?</p>
+                                    <Input value={this.state.mail_to} placeholder={"Email"}
+                                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                                </Modal>
+
+
                                 <Table columns={columns} dataSource={presc.drugs} pagination={false}
                                        footer={() => prescriptonFooter(presc)}
                                        key={presc.id}/>
@@ -288,6 +360,13 @@ class PatientPrescriptions extends React.Component {
                                           Patient Timeline
                                       </Link>
                                   </Menu.Item>
+
+                                  <Menu.Divider/>
+                                  <Menu.Item key={'4'}>
+                                      <a onClick={() => this.sendPatientMail(presc)}><Icon
+                                          type="mail"/> Send mail to patient
+                                      </a>
+                                  </Menu.Item>
                               </Menu>}>
                               <a onClick={() => this.loadPDF(presc.id)}><Icon type="printer"/></a>
                           </Dropdown.Button>}>
@@ -302,6 +381,25 @@ class PatientPrescriptions extends React.Component {
                 <InfiniteFeedLoaderButton loading={this.state.loading}
                                           loaderFunction={() => this.loadPrescriptions(this.state.nextPrescriptionPage)}
                                           hidden={!this.state.nextPrescriptionPage}/>
+
+                <Modal
+                    title={null}
+                    visible={this.state.visibleMail}
+                    onOk={this.sendMailToPatient}
+                    onCancel={this.mailModalClose}
+                    footer={[
+                        <Button key="back" onClick={this.mailModalClose}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                            Send
+                        </Button>,
+                    ]}
+                >
+                    <p>Send Prescription To {this.state.patientName} ?</p>
+                    <Input value={this.state.mail_to} placeholder={"Email"}
+                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                </Modal>
             </div>
         }
 

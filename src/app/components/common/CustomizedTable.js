@@ -1,8 +1,12 @@
 import React from "react";
-import {Button, Col, Icon, Input, Row, Table, Tag} from "antd";
+import {Button, Col, Icon, Input, Modal, Row, Table, Tag} from "antd";
 import {exportToExcel, exportToPDF} from "../../utils/export";
 import moment from "moment";
 import Highlighter from 'react-highlight-words';
+import * as _ from "lodash";
+import {interpolate} from "../../utils/common";
+import {CLINIC_NOTES_PDF} from "../../constants/api";
+import {sendMail} from "../../utils/clinicUtils";
 
 export default class CustomizedTable extends React.Component {
     constructor(props) {
@@ -64,6 +68,7 @@ export default class CustomizedTable extends React.Component {
         });
         exportToExcel(excelColumns, dataArrayForExcel, "Export" + moment());
     }
+
 
     getColumnSearchProps = dataIndex => ({
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
@@ -139,6 +144,7 @@ export default class CustomizedTable extends React.Component {
                                 type="file-excel"/> Excel</Button>
                             <Button disabled={this.state.loading} type="primary" onClick={this.pdfExport}><Icon
                                 type="file-pdf"/> PDF</Button>
+
                         </Button.Group>
                     </Col>
                 </Row>}
@@ -153,6 +159,8 @@ export default class CustomizedTable extends React.Component {
                         return <Tag>Showing <b>{range[0]}</b> to <b>{range[1]}</b> of <b>{total}</b> items</Tag>
                     }
                 }} {...this.state} columns={columns}/>
+
+
             </Row>
         </div>
     }

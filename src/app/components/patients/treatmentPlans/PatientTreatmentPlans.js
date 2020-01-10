@@ -1,7 +1,8 @@
 import React from "react";
-import {Checkbox, Table, Button, Card, Icon, Tag, Menu, Dropdown, Modal, Spin, Tooltip} from "antd";
+import {Checkbox, Table, Button, Card, Icon, Tag, Menu, Dropdown, Modal, Spin, Tooltip, Input} from "antd";
 import {Link} from "react-router-dom";
 import {
+    CLINIC_NOTES_PDF,
     PROCEDURE_CATEGORY,
     TREATMENTPLANS_API,
     TREATMENTPLANS_MARK_COMPLETE_API,
@@ -14,6 +15,8 @@ import AddorEditDynamicTreatmentPlans from "./AddorEditDynamicTreatmentPlans";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
+import * as _ from "lodash";
+import {sendMail} from "../../../utils/clinicUtils";
 
 const confirm = Modal.confirm;
 
@@ -183,6 +186,42 @@ class PatientTreatmentPlans extends React.Component {
         getAPI(interpolate(TREATMENTPLANS_PDF, [id]), successFn, errorFn);
     }
 
+    updateFormValue =(type,value)=>{
+        this.setState({
+            [type]: value
+        })
+    };
+    mailModalOpen =() =>{
+        this.setState({
+            visibleMail:true
+        })
+    };
+
+    mailModalClose =() =>{
+        this.setState({
+            visibleMail:false
+        })
+    };
+
+    sendPatientMail =(treatment)=>{
+        this.mailModalOpen()
+        this.setState({
+            patientName:_.get(treatment,'patient.user.first_name'),
+            treatmentId:_.get(treatment,'id'),
+            mail_to:_.get(treatment,'patient.user.email')
+        })
+
+    };
+
+    sendMailToPatient =()=>{
+        let {mail_to ,treatmentId } = this.state;
+        let apiParams ={
+            mail_to:mail_to,
+        }
+        sendMail(interpolate(TREATMENTPLANS_PDF,[treatmentId]),apiParams)
+        this.mailModalClose();
+    }
+
     render() {
         let that = this;
 
@@ -272,9 +311,17 @@ class PatientTreatmentPlans extends React.Component {
                                                         Patient Timeline
                                                     </Link>
                                                 </Menu.Item>
+
+                                                <Menu.Divider/>
+                                                <Menu.Item key={'4'}>
+                                                    <a onClick={() => this.sendPatientMail(treatment)}><Icon
+                                                        type="mail"/> Send mail to patient
+                                                    </a>
+                                                </Menu.Item>
                                             </Menu>}>
                                             <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
                                         </Dropdown.Button>
+
                                     </h4>
 
                                 </div>
@@ -289,6 +336,24 @@ class PatientTreatmentPlans extends React.Component {
                     <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
                                               loading={this.state.loading}
                                               hidden={!this.state.next}/>
+                    <Modal
+                        title={null}
+                        visible={this.state.visibleMail}
+                        onOk={this.sendMailToPatient}
+                        onCancel={this.mailModalClose}
+                        footer={[
+                            <Button key="back" onClick={this.mailModalClose}>
+                                Cancel
+                            </Button>,
+                            <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                                Send
+                            </Button>,
+                        ]}
+                    >
+                        <p>Send Treatment  To {this.state.patientName} ?</p>
+                        <Input value={this.state.mail_to} placeholder={"Email"}
+                               onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                    </Modal>
                 </div>
             </Switch>
 
@@ -312,12 +377,12 @@ class PatientTreatmentPlans extends React.Component {
                                                                         key={treatment.id}
                                                                         style={{marginTop: 15}}>
                             <div style={{padding: 16}}>
-                                <h4>{treatment.date ? moment(treatment.date).format('ll') : null} 
+                                <h4>{treatment.date ? moment(treatment.date).format('ll') : null}
                                 <Link to={"/patient/" + treatment.patient.id + "/emr/plans"}>
                                     &nbsp;&nbsp; {treatment.patient.user?treatment.patient.user.first_name:null} (ID: {treatment.patient.custom_id?treatment.patient.custom_id:treatment.patient.id})&nbsp;
                                 </Link>
                                 <span>, {treatment.patient.gender}</span>
-                                    
+
                                     <Dropdown.Button
                                         size={"small"}
                                         style={{float: 'right'}}
@@ -327,7 +392,7 @@ class PatientTreatmentPlans extends React.Component {
                                                     <Icon type="edit"/>
                                                     &nbsp;
                                                     Edit
-                                                </Link> 
+                                                </Link>
                                             </Menu.Item>
                                             <Menu.Item key="2" onClick={() => that.deleteTreatmentPlans(treatment)}
                                                        disabled={(treatment.practice && treatment.practice.id != this.props.active_practiceId)}>
@@ -342,6 +407,14 @@ class PatientTreatmentPlans extends React.Component {
                                                     Patient Timeline
                                                 </Link>
                                             </Menu.Item>
+
+                                            <Menu.Divider/>
+                                            <Menu.Item key={'4'}>
+                                                <a onClick={() => this.sendPatientMail(treatment)}><Icon
+                                                    type="mail"/> Send mail to patient
+                                                </a>
+                                            </Menu.Item>
+
                                         </Menu>}>
                                         <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
                                     </Dropdown.Button>
@@ -360,6 +433,24 @@ class PatientTreatmentPlans extends React.Component {
                 <InfiniteFeedLoaderButton loaderFunction={() => this.loadTreatmentPlans(that.state.next)}
                                           loading={this.state.loading}
                                           hidden={!this.state.next}/>
+                <Modal
+                    title={null}
+                    visible={this.state.visibleMail}
+                    onOk={this.sendMailToPatient}
+                    onCancel={this.mailModalClose}
+                    footer={[
+                        <Button key="back" onClick={this.mailModalClose}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                            Send
+                        </Button>,
+                    ]}
+                >
+                    <p>Send Treatment To {this.state.patientName} ?</p>
+                    <Input value={this.state.mail_to} placeholder={"Email"}
+                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                </Modal>
             </div>
         }
 
