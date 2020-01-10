@@ -135,6 +135,7 @@ class AppBase extends React.Component {
 
     render() {
         let that = this;
+
         if (this.state.loadingPermissions) {
             return <Spin spinning={this.state.loadingPermissions} tip={"Loading Permissions...."}>
                 <div style={{width: '100vw', height: '100vh'}}/>
@@ -167,17 +168,7 @@ class AppBase extends React.Component {
                                                                                             {...route}
                                                                                             key={that.state.active_practiceId}/>}/>
                                         : null}
-                                    <Route exact path="/calendar/create-appointment"
-                                           render={(route) => (this.state.activePracticePermissions.AddAppointment || this.state.allowAllPermissions ?
-                                               <CreateAppointment {...this.state}{...this.props} {...route}
-                                                                  startTime={this.state.startTime}/> :
-                                               <PermissionDenied/>)}/>
 
-                                    <Route exact path="/calendar/:appointmentid/edit-appointment"
-                                           render={(route) => (this.state.activePracticePermissions.EditAppointment || this.state.allowAllPermissions ?
-                                               <CreateAppointment {...this.state}{...this.props} {...route}
-                                                                  startTime={this.state.startTime}/> :
-                                               <PermissionDenied/>)}/>
                                     <Route exact path="/calendar/blockcalendar"
                                            render={(route) => (that.state.activePracticePermissions.BlockCalendar || that.state.allowAllPermissions ?
                                                <BlockCalendar {...this.state} {...this.props} {...route}/> :

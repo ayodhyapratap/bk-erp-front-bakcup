@@ -633,7 +633,7 @@ export default class CreateAppointmentForm extends React.Component {
                     <FormItem key="schedule_at" label="Appointment Schedule" {...formItemLayout}>
                         {getFieldDecorator("schedule_at",
                             {
-                                initialValue: appointmentTime ? moment(appointmentTime) : null,
+                                initialValue: appointmentTime ? moment(appointmentTime) : moment(this.props.startTime),
                                 rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                             })(
                             <DatePicker  showTime={{use12Hours: true}} format="YYYY/MM/DD hh:mm a"  allowClear={false}

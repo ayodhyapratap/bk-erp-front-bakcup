@@ -43,6 +43,8 @@ import {
     DAY_KEYS,
     SCHEDULE_STATUS,
 } from "../../constants/hardData";
+import CreateAppointment from "./CreateAppointment";
+import PermissionDenied from "../common/errors/PermissionDenied";
 
 const localizer = momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
@@ -293,7 +295,6 @@ class App extends Component {
 
 
     onSelectSlot(value) {
-        console.log("DoubleClick",value);
         let time = moment(value.start).format();
         if (value.action == "doubleClick") {
             this.setState({
@@ -602,7 +603,8 @@ class App extends Component {
 
     render() {
         let that = this;
-        let startTime = null;
+        let {startTime} =this.state;
+        // let startTime = null;
         let endTime = null;
         if (this.state.calendarTimings) {
             // console.log(new Date(new moment(this.state.calendarTimings.start_time, 'HH:mm:ss')));
@@ -615,6 +617,18 @@ class App extends Component {
         return (<Content className="main-container">
                 <div style={{padding: '5px'}}>
                     <Switch>
+
+                        <Route exact path="/calendar/create-appointment"
+                               render={(route) => (this.props.activePracticePermissions.AddAppointment || this.props.allowAllPermissions ?
+                                   <CreateAppointment {...this.state} {...this.props} {...route}
+                                                      startTime={this.state.startTime}/> :
+                                   <PermissionDenied/>)}/>
+
+                        <Route exact path="/calendar/:appointmentid/edit-appointment"
+                               render={(route) => (this.props.activePracticePermissions.EditAppointment || this.props.allowAllPermissions ?
+                                   <CreateAppointment {...this.state} {...this.props} {...route}
+                                                      startTime={this.state.startTime}/> :
+                                   <PermissionDenied/>)}/>
 
                         <Route>
 
@@ -874,6 +888,7 @@ class App extends Component {
                                 </Row>
                             </div>
                         </Route>
+
                     </Switch>
                 </div>
             </Content>
