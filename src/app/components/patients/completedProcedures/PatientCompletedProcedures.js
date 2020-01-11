@@ -374,7 +374,7 @@ class PatientCompletedProcedures extends React.Component {
                                             </a>
                                         </Menu.Item>
                                     </Menu>}>
-                                    <Icon type="printer"/>
+                                    <a onClick={() => this.loadPDF(treatment.id)}><Icon type="printer"/></a>
                                 </Dropdown.Button>
                             </h4>
 
