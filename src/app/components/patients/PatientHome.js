@@ -263,6 +263,7 @@ class PatientHome extends React.Component {
                                        render={(route) => (that.props.activePracticePermissions.ViewPatient || that.props.allowAllPermissions ?
                                            <PatientProfile {...this.state}
                                                            key={this.state.currentPatient}
+                                                           refreshWallet={this.refreshWallet}
                                                            setCurrentPatient={this.setCurrentPatient} {...this.props} {...route}/> :
                                            <PermissionDenied/>)}/>
                                 <Route exact path='/patient/:id/profile/edit'
@@ -446,7 +447,7 @@ class PatientHome extends React.Component {
                                     : null}
                                 <Route path='/patient/:id/billing/invoices'
                                        render={(route) => (that.props.activePracticePermissions.PatientInvoices || that.allowAllPermissions ?
-                                           <PatientInvoices refreshWallet={this.refreshWallet}
+                                           <PatientInvoices {...that.state} refreshWallet={this.refreshWallet}
                                                             key={this.state.currentPatient ? this.state.currentPatient.id : null} {...this.props} {...this.state} {...route}/> :
                                            <PermissionDenied/>)}/>
 

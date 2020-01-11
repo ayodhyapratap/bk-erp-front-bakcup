@@ -31,7 +31,7 @@ class PatientProfile extends React.Component {
 
     componentDidMount() {
         if (this.state.currentPatient) {
-            this.loadProfile();
+            this.loadProfile(false);
             this.loadMedicalMembership();
         }
     }
@@ -49,18 +49,21 @@ class PatientProfile extends React.Component {
             this.setState({
                 currentPatient: newProps.currentPatient,
             }, function () {
-                that.loadProfile();
+                that.loadProfile(false);
             })
         }
     }
 
-    loadProfile() {
+    loadProfile(refreshHeader = true) {
         let that = this;
         let successFn = function (data) {
             that.setState({
                 patientProfile: data,
                 loading: false
             });
+            if (that.props.refreshWallet && refreshHeader) {
+                that.props.refreshWallet();
+            }
         };
         let errorFn = function () {
             that.setState({
