@@ -460,7 +460,7 @@ class PatientFiles extends React.Component {
                                  <Icon type="plus"/>&nbsp;Add Medical Certificate</Button> </Link>
 
                          <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft">
-                             <Button><Icon type="plus"/>AddFile/remove</Button>
+                             <Button><Icon type="plus"/>Add/Remove File Tags</Button>
                          </Dropdown>
 
                          <Button onClick={() => this.triggerAddModal(true)}><Icon type="plus"/>Add</Button>
@@ -476,7 +476,7 @@ class PatientFiles extends React.Component {
 
                          <Button type={"primary"} style={{marginRight: "10px"}}
                                  onClick={() => this.props.togglePatientListModal(true)}>
-                             <Icon type="plus"/> &nbsp; AddFile/remove
+                             <Icon type="plus"/> &nbsp;Add/Remove File Tags
                          </Button>
 
                          <Button type={"primary"} style={{marginRight: "10px"}}
