@@ -23,7 +23,7 @@ export default class CalendarRightPanel extends React.Component {
             todaysFilteredAppointments: [],
             todaysAppointmentOverview: {},
             todaysAppointmentFilter: 'ALL',
-            selectedDate: moment()
+            selectedDate: this.props.selectedDate
         }
         this.todaysAppointments = this.todaysAppointments.bind(this);
     }

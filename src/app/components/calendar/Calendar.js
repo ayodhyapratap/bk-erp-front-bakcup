@@ -93,7 +93,7 @@ class App extends Component {
     }
 
     componentDidMount() {
-        this.appointmentList(moment().subtract(1, 'days'), moment().add(5, 'days'));
+        this.appointmentList(moment().startOf('day'), moment().endOf('day'));
         this.loadDoctors();
         loadAppointmentCategories(this);
     }
@@ -120,7 +120,7 @@ class App extends Component {
     loadDoctors() {
         let that = this;
         that.setState({
-            doctorLoading:true
+            doctorLoading: true
         })
         let successFn = function (data) {
             let doctors = [];
@@ -138,12 +138,12 @@ class App extends Component {
                 practice_staff: staff,
                 practice_doctors: doctors,
                 doctors_object: doctor_object,
-                doctorLoading:false
+                doctorLoading: false
             })
         }
         let errorFn = function () {
             that.setState({
-                doctorLoading:false
+                doctorLoading: false
             })
         };
         getAPI(interpolate(PRACTICESTAFF, [this.props.active_practiceId]), successFn, errorFn);
@@ -603,7 +603,7 @@ class App extends Component {
 
     render() {
         let that = this;
-        let {startTime} =this.state;
+        let {startTime} = this.state;
         // let startTime = null;
         let endTime = null;
         if (this.state.calendarTimings) {
@@ -842,7 +842,8 @@ class App extends Component {
                                             </Col>
                                             <Col span={5}>
                                                 <CalendarRightPanel {...this.props} {...this.state}
-                                                                    key={moment(this.state.selectedDate).toISOString()}/>
+                                                                    selectedDate={this.state.selectedDate}
+                                                                    key={moment(this.state.selectedDate).format('l')}/>
                                             </Col>
                                         </div>
                                         :
