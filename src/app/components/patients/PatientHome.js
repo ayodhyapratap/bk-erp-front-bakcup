@@ -24,7 +24,7 @@ import PatientLedgers from "./ledgers/PatientLedgers";
 import {Switch} from "react-router-dom";
 import PrescriptionTemplate from "./prescriptions/PrescriptionTemplate";
 import {displayMessage, getAPI, getCommonSettings, interpolate, saveCommonSettings} from "../../utils/common";
-import {AGENT_WALLET, PATIENT_PENDING_AMOUNT, PATIENT_PROFILE} from "../../constants/api";
+import {AGENT_WALLET, PATIENT_PENDING_AMOUNT, PATIENT_PROFILE, PATIENTS_MEMBERSHIP_API} from "../../constants/api";
 import {ERROR_MSG_TYPE} from "../../constants/dataKeys";
 import PatientMerge from "./merge/PatientMerge";
 import PatientRequiredNoticeCard from "./PatientRequiredNoticeCard";
@@ -63,6 +63,7 @@ class PatientHome extends React.Component {
         }
         this.loadPatientPendingAmount();
         this.loadPatientWallet();
+        this.loadMembership();
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
@@ -194,9 +195,24 @@ class PatientHome extends React.Component {
         }
     };
 
+    loadMembership = () => {
+        let that = this;
+        if (this.state.currentPatient && this.state.currentPatient.id) {
+            let successFn = function (data) {
+                that.setState({
+                    MedicalMembership: data.length ? data[data.length - 1] : null,
+                })
+            };
+            let errorFn = function () {
+            };
+            getAPI(interpolate(PATIENTS_MEMBERSHIP_API, [that.state.currentPatient.id]), successFn, errorFn);
+        }
+    };
+
     refreshWallet = () => {
         this.loadPatientWallet();
         this.loadPatientPendingAmount();
+        this.loadMembership();
     };
 
     render() {
@@ -233,7 +249,9 @@ class PatientHome extends React.Component {
                                                        to={"/patient/" + this.state.currentPatient.id + "/profile"}/> :
                                                    <PatientProfile {...this.state}
                                                                    key={this.state.currentPatient}
-                                                                   setCurrentPatient={this.setCurrentPatient} {...this.props}/>)}/>
+                                                                   setCurrentPatient={this.setCurrentPatient}
+                                                                   refreshWallet={this.refreshWallet}
+                                                                   {...this.props}/>)}/>
                                     : null}
 
                                 <Route exact path='/patients/profile/add'

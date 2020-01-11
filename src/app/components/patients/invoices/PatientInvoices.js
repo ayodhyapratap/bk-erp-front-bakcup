@@ -108,6 +108,7 @@ class PatientInvoices extends React.Component {
         let apiParams = {
             page: page,
             practice: this.props.active_practiceId,
+            summary: true
         };
         if (this.props.match.params.id) {
             apiParams.patient = this.props.match.params.id;

@@ -24,13 +24,12 @@ const {Header} = Layout;
 class PatientHeader extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-
-        };
+        this.state = {};
     }
+
     componentDidMount() {
-        let that=this;
-        if (that.props.refreshWallet){
+        let that = this;
+        if (that.props.refreshWallet) {
             that.props.refreshWallet();
         }
     }
@@ -38,15 +37,14 @@ class PatientHeader extends React.Component {
 
     render() {
         let that = this;
-        return <Header className="header" style={{background: '#e4e4e4',padding:'0px 20px'}}>
+        return <Header className="header" style={{background: '#e4e4e4', padding: '0px 20px'}}>
             <div>
                 {this.props.currentPatient ?
                     <div style={{display: 'inline'}}>
                         <div style={{display: 'inline', textSize: '15px'}}>
                             <Tooltip title="Switch Back to All Patients">
                                 <Button onClick={() => this.props.setCurrentPatient(null)} type="primary" ghost>
-                                    <Icon type="solution"/> &nbsp;
-                                    Back
+                                    <Icon type="arrow-left"/>
                                 </Button>
                             </Tooltip>
                         </div>
@@ -63,15 +61,36 @@ class PatientHeader extends React.Component {
                             <small><i><b> [ID: {that.props.currentPatient.custom_id ? that.props.currentPatient.custom_id : that.props.currentPatient.id}]</b></i></small>
 
                         </a>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        {this.props.MedicalMembership ?
+                            <Popover placement="rightTop"
+                                     title="Patient Membership"
+                                     content={<div><p><strong>Membership Code : </strong>
+                                         <span>{this.props.MedicalMembership.membership_code}</span></p>
+                                         <p><strong>Start Date : </strong>
+                                             <span>{this.props.MedicalMembership.medical_from}</span></p>
+                                         <p><strong>Valid Till : </strong>
+                                             <span>{this.props.MedicalMembership.medical_to}</span></p></div>}>
+                                <div style={{
+                                    display: 'inline',
+                                    // float: 'left',
+                                    maxWidth: 50,
+                                    // position: 'absolute',
+                                    // paddingLeft: 173,
+                                    // margin: '12px 15px',
+                                    fontSize: 30,
+                                    lineHeight: "40px"
+                                }}>
+                                    <Icon type="crown" theme="twoTone" twoToneColor={"#FFBA3A"}/>
+                                </div>
+                            </Popover> : null}
                         <Popover placement="topLeft" title={"Medical History"}
                                  content={<div
                                      style={{width: 250}}>{that.props.currentPatient.medical_history_data ? that.props.currentPatient.medical_history_data.map((item, index) =>
                                      <Tag color={'#' + intToRGB(hashCode(item.name))}>{item.name}</Tag>) : null}</div>}>
 
                             {that.props.currentPatient.medical_history_data ? that.props.currentPatient.medical_history_data.map((item, index) =>
-                                index > 1 ? index == 2 &&
-                                    <Tag>+{that.props.currentPatient.medical_history_data.length - 2}</Tag> :
+                                index > 0 ? index == 1 &&
+                                    <Tag>+{that.props.currentPatient.medical_history_data.length - 1}</Tag> :
                                     <Tag color={'#' + intToRGB(hashCode(item.name))}>{item.name}</Tag>) : null}
 
                         </Popover>
@@ -82,9 +101,9 @@ class PatientHeader extends React.Component {
                             checkedChildren={"All Clinics"}
                             unCheckedChildren={"Current Clinic"}
                         />
-                        {this.props.pendingAmount?<>
-                            <Button style={{marginLeft:'20px'}} type="primary" size={"small"}>
-                                <Link to={'/patient/'+ this.props.currentPatient.id +'/billing/payments/add'}> Pay Now!</Link>
+                        {this.props.pendingAmount ? <>
+                            <Button style={{marginLeft: '20px'}} type="primary" size={"small"}>
+                                <Link to={'/patient/' + this.props.currentPatient.id + '/billing/payments/add'}>Pay!</Link>
                             </Button>
                             <Popover placement="rightTop"
                                      content={<List size="small" dataSource={this.props.pendingAmount.practice_data}
@@ -97,18 +116,20 @@ class PatientHeader extends React.Component {
                                     float: 'left',
                                     maxWidth: 200,
                                     position: 'absolute',
-                                    margin: '0px 15px',
+                                    margin: '5px 15px',
                                     zIndex: 5
                                 }}>
-                                    <Statistic title="Total Pending Amount" value={this.props.pendingAmount.grand_total}
-                                    valueStyle={{
-                                    color: this.props.pendingAmount.grand_total > 0 ? '#cf1322' : 'initial',
-                                    fontWeight: 500 }}
-                                    precision={2}/>
+                                    <Statistic title="Amount Due" value={this.props.pendingAmount.grand_total}
+                                               valueStyle={{
+                                                   color: this.props.pendingAmount.grand_total > 0 ? '#cf1322' : 'initial',
+                                                   fontWeight: 500,
+                                                   fontSize:20
+                                               }}
+                                               precision={2}/>
 
                                 </div>
                             </Popover>
-                            </>: null}
+                        </> : null}
 
                         {this.props.walletAmount && this.props.walletAmount.length ?
                             <Popover placement="rightTop"
@@ -122,12 +143,16 @@ class PatientHeader extends React.Component {
                                     float: 'left',
                                     maxWidth: 400,
                                     position: 'absolute',
-                                    paddingLeft: 173,
-                                    margin: '12px 15px'
+                                    paddingLeft: 150,
+                                    margin: '20px 15px'
                                 }}>
                                     <Statistic tile={"wallet"}
                                                value={this.props.walletAmount[0].refundable_amount + this.props.walletAmount[0].non_refundable}
-                                               prefix={<Icon type="wallet"/>}/>
+                                               precision={2}
+                                               valueStyle={{
+                                                   fontSize:20
+                                               }}
+                                               prefix={<Icon type="wallet" twoToneColor={"#a2711c"}/>}/>
                                 </div>
                             </Popover> : null}
                     </div> :

@@ -405,7 +405,7 @@ class AddPaymentForm extends React.Component {
                 loading: false
             });
         };
-        // postAPI(BULK_PAYMENT_API, reqData, successFn, errorFn)
+         postAPI(BULK_PAYMENT_API, reqData, successFn, errorFn)
     };
 
     paymentHandler(inv, patientObj, cost,) {
@@ -554,19 +554,6 @@ class AddPaymentForm extends React.Component {
 
                                 </Col>
                                 <Col span={12}>
-<<<<<<< HEAD
-                                    <Input.TextArea row={2} placeholder="Notes..." size={'small'}
-                                                    onChange={(e) => this.changeNotes(e.target.value)}>
-                                        {this.state.notes}
-                                    </Input.TextArea>
-                                    <Select style={{width: '100%'}} value={this.state.selectedPaymentMode}
-                                            onChange={this.changeSelectedPaymentMode}>
-                                        {this.state.paymentModes.map(mode => <Select.Option value={mode.id}
-                                                                                            key={mode.id}>
-                                            {mode.mode}
-                                        </Select.Option>)}
-                                    </Select>
-=======
                                     <Row>
                                         <Col span={10}>
                                             <h3>Payment Mode :</h3>
@@ -592,7 +579,6 @@ class AddPaymentForm extends React.Component {
                                             </Input.TextArea>
                                         </Col>
                                     </Row>
->>>>>>> bb0715e14ed495353b217458c6c6de9a4a322e45
 
                                     <Row>
                                         <Col span={6}>

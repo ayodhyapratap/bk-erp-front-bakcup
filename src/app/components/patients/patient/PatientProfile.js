@@ -33,7 +33,6 @@ class PatientProfile extends React.Component {
         if (this.state.currentPatient) {
             this.loadProfile();
             this.loadMedicalMembership();
-
         }
     }
 
@@ -113,6 +112,9 @@ class PatientProfile extends React.Component {
         let successFn = function (data) {
             that.loadProfile();
             that.loadMedicalMembership();
+            if (that.props.refreshWallet) {
+                that.props.refreshWallet();
+            }
         }
         let errorFn = function () {
 
