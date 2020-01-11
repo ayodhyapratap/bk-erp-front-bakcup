@@ -489,8 +489,11 @@ class App extends Component {
         }
     }
     onSelectedDateChange = (e) => {
+        let that = this;
         this.setState({
             selectedDate: moment(e)
+        },function(){
+            that.appointmentList(moment(e).startOf('day'),moment(e).endOf('day'));
         });
     }
     setFilterType = (e) => {
