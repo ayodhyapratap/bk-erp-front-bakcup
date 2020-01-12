@@ -38,7 +38,8 @@ import moment from "moment";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 
 const {Meta} = Card;
-
+const InputGroup = Input.Group;
+let id = 1;
 class BedBookingForm extends React.Component {
     constructor(props) {
         super(props);
@@ -199,9 +200,15 @@ class BedBookingForm extends React.Component {
             loading: true
         })
         let that = this;
+        let details=[];
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
+                const { label, value } = values;
+
+                label.map((key,i)=>
+                    details.push({'key':key, 'value': value[i]})
+                );
                 let reqData = {
                     ...values,
                     to_date: moment(values.to_date).format('YYYY-MM-DD'),
@@ -212,8 +219,12 @@ class BedBookingForm extends React.Component {
                     total_tax: this.state.tax,
                     patient: this.state.patientDetails.id,
                     rest_diseases: values.rest_diseases ? values.rest_diseases.join(',') : null,
-                    report_upload: values.file && values.file.file.response ? values.file.file.response.image_path : null
+                    report_upload: values.file && values.file.file.response ? values.file.file.response.image_path : null,
+                    details:details
                 };
+                delete reqData.label;
+                delete reqData.value;
+                delete reqData.keys;
 
                 let successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Saved Successfully!!");
@@ -343,7 +354,31 @@ class BedBookingForm extends React.Component {
             return {choosePkg:newTableValue}
         });
     }
+
+    addNewFields =()=>{
+        const { form } = this.props;
+        const keys = form.getFieldValue('keys');
+        const nextKeys = keys.concat(id++);
+        form.setFieldsValue({
+            keys: nextKeys,
+        });
+    };
+
+    removeNewOptionField = (k) => {
+        const {form} = this.props;
+        const keys = form.getFieldValue('keys');
+        if (keys.length === 1) {
+            return;
+        }
+
+        form.setFieldsValue({
+            keys: keys.filter(key => key !== k),
+        });
+    };
+
     render() {
+
+
         const BOOKING_TYPE = [
             {
                 value: 'NORMAL',
@@ -357,7 +392,7 @@ class BedBookingForm extends React.Component {
         ];
 
         let that = this;
-        const {getFieldDecorator} = this.props.form;
+        const {getFieldDecorator, getFieldValue} = this.props.form;
         const formItemLayout = ({
             labelCol: {
                 xs: {span: 24},
@@ -446,12 +481,53 @@ class BedBookingForm extends React.Component {
                 }
             },
         };
+
+
+
+        getFieldDecorator('keys', {initialValue: [0]});
+        const keys = getFieldValue('keys');
+
+        const chooseOption = keys.map((k, index) =>(
+            <Row key={k}>
+                <Col span={8}>
+                    <Form.Item label="">
+                        {getFieldDecorator(`label[${k}]`)
+                        (<Input  placeholder={"name"}/>)
+                        }
+                    </Form.Item>
+
+                </Col>
+
+                <Col span={8}>
+                    <Form.Item label="">
+                        {getFieldDecorator(`value[${k}]`)
+                        (<Input  placeholder={"value"}/>)
+                        }
+                    </Form.Item>
+
+                </Col>
+                <Col span={8}>
+                    {index ? (
+                        <Button onClick={() => this.removeNewOptionField(k)} size={"small"} type={"danger"}
+                                style={{margin: 5}} icon={'close'} shape={'circle'}/>
+                    ):null}
+
+                    {index == keys.length - 1 ?
+                        <Button type="dashed" style={{marginTop: '3px'}} onClick={this.addNewFields}>
+                            <Icon type="plus" /> Add field
+                        </Button>
+                        : null
+                    }
+                </Col>
+
+            </Row>
+        ));
         return <div>
             <Card title={"Book a Seat/Bed"}>
                 <Form>
                     <Row>
                         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                            <div>
+                            <div style={{paddingRight:'10px'}}>
 
                                 {this.state.patientDetails ? <Form.Item key="id"
                                                                         value={this.state.patientDetails ? this.state.patientDetails.id : ''} {...formPatients}>
@@ -597,75 +673,91 @@ class BedBookingForm extends React.Component {
                                     </Form.Item>
                                 </Col>  */}
 
+
+                                <Divider>Patient Details</Divider>
+                                <Form.Item label="Creatinine Level" {...formItemLayout}>
+                                    {getFieldDecorator('creatinine', {
+                                        // rules: [{required: true, message: 'this field required'}],
+                                    })
+                                    (<Input/>)
+                                    }
+                                </Form.Item>
+                                <Form.Item label="Urea Level" {...formItemLayout}>
+                                    {getFieldDecorator('urea_level', {
+                                        // rules: [{required: true, message: 'this field required'}],
+                                    })
+                                    (<Input/>)
+                                    }
+                                </Form.Item>
+                                <Form.Item label="Currently on Dialysis?" {...formItemLayout}>
+                                    {getFieldDecorator('dialysis', {
+                                        // rules: [{required: true, message: 'this field required'}],
+                                    })
+                                    (<Select showSearch
+                                             filterOption={(input, option) =>
+                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                             }>
+                                        <Select.Option
+                                            value={true}>YES</Select.Option>
+                                        <Select.Option
+                                            value={false}>NO</Select.Option>
+                                    </Select>)
+                                    }
+                                </Form.Item>
+                                <Form.Item label="Diseases" {...formItemLayout}>
+                                    {getFieldDecorator('other_diseases', {
+                                        // rules: [{required: true, message: 'this field required'}],
+                                    })
+                                    (<Select showSearch mode={"multiple"}
+                                             filterOption={(input, option) =>
+                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                             }>
+                                        {this.state.diseases.map(item => <Select.Option
+                                            value={item.id}>{item.name}</Select.Option>)}
+                                    </Select>)
+                                    }
+                                </Form.Item>
+                                <Form.Item label="Other Diseases" {...formItemLayout}>
+                                    {getFieldDecorator('rest_diseases', {
+                                        // rules: [{required: true, message: 'this field required'}],
+                                    })
+                                    (<Select mode={"tags"}>
+
+                                    </Select>)
+                                    }
+                                </Form.Item>
+                                <Form.Item label="Upload Report" {...formItemLayout}>
+                                    {getFieldDecorator('file', {
+                                        // rules: [{required: true, message: 'this field required'}],
+                                    })
+                                    (<Upload {...singleUploadprops}>
+                                        <Button>
+                                            <Icon type="upload"/> Select File
+                                        </Button>
+
+                                    </Upload>)
+                                    }
+                                </Form.Item>
                             </div>
+
                         </Col>
                         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                            <Divider>Patient Details</Divider>
-                            <Form.Item label="Creatinine Level" {...formItemLayout}>
-                                {getFieldDecorator('creatinine', {
-                                    // rules: [{required: true, message: 'this field required'}],
-                                })
-                                (<Input/>)
-                                }
-                            </Form.Item>
-                            <Form.Item label="Urea Level" {...formItemLayout}>
-                                {getFieldDecorator('urea_level', {
-                                    // rules: [{required: true, message: 'this field required'}],
-                                })
-                                (<Input/>)
-                                }
-                            </Form.Item>
-                            <Form.Item label="Currently on Dialysis?" {...formItemLayout}>
-                                {getFieldDecorator('dialysis', {
-                                    // rules: [{required: true, message: 'this field required'}],
-                                })
-                                (<Select showSearch
-                                         filterOption={(input, option) =>
-                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                         }>
-                                    <Select.Option
-                                        value={true}>YES</Select.Option>
-                                    <Select.Option
-                                        value={false}>NO</Select.Option>
-                                </Select>)
-                                }
-                            </Form.Item>
-                            <Form.Item label="Diseases" {...formItemLayout}>
-                                {getFieldDecorator('other_diseases', {
-                                    // rules: [{required: true, message: 'this field required'}],
-                                })
-                                (<Select showSearch mode={"multiple"}
-                                         filterOption={(input, option) =>
-                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                         }>
-                                    {this.state.diseases.map(item => <Select.Option
-                                        value={item.id}>{item.name}</Select.Option>)}
-                                </Select>)
-                                }
-                            </Form.Item>
-                            <Form.Item label="Other Diseases" {...formItemLayout}>
-                                {getFieldDecorator('rest_diseases', {
-                                    // rules: [{required: true, message: 'this field required'}],
-                                })
-                                (<Select mode={"tags"}>
-
-                                </Select>)
-                                }
-                            </Form.Item>
-                            <Form.Item label="Upload Report" {...formItemLayout}>
-                                {getFieldDecorator('file', {
-                                    // rules: [{required: true, message: 'this field required'}],
-                                })
-                                (<Upload {...singleUploadprops}>
-                                    <Button>
-                                        <Icon type="upload"/> Select File
-                                    </Button>
-
-                                </Upload>)
-                                }
-                            </Form.Item>
+                            <Divider>Item Details</Divider>
                             <Table pagination={false} columns={columns} size={'small'}
                                    dataSource={this.state.choosePkg}/>
+
+                            <Divider>Extra Details</Divider>
+                            <Card>
+
+                                {chooseOption}
+                                {/*<Col span={8}>*/}
+                                {/*    <Button type="dashed" style={{marginTop:'3px'}} onClick={this.addNewFields}>*/}
+                                {/*        <Icon type="plus" /> Add field*/}
+                                {/*    </Button>*/}
+
+                                {/*</Col>*/}
+                            </Card>
+
 
                         </Col>
                         <Col span={24}>
