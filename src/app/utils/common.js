@@ -128,7 +128,7 @@ export const getAPI = function (URL, successFn, errorFn, params = {}) {
         if (data.detail)
             displayMessage(SUCCESS_MSG_TYPE, data.detail)
     }).catch(function (error) {
-        console.log("Error aa rhi ", error);
+        // console.log("Error aa rhi ", error);
         handleErrorResponse(error);
         errorFn();
     });
