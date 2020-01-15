@@ -605,13 +605,13 @@ class EditPatientDetails extends React.Component {
                                 Source</a>
                         </Form.Item>
                     }
-                    {this.state.patientDetails ? null :
+                    {/*{this.state.patientDetails ? null :*/}
                         <Form.Item label="Referral Code" {...formItemLayout}>
-                            {getFieldDecorator('referal', {initialValue: this.state.patientDetails ? this.state.patientDetails.user.referer_code : ''})
+                            {getFieldDecorator('referal', {initialValue: that.state.patientDetails && that.state.patientDetails.user.referer_data.referer ? that.state.patientDetails.user.referer_data.referer.referer_code : "",})
                             (<Input placeholder="Referral Code"/>)
                             }
                         </Form.Item>
-                    }
+                    {/*}*/}
                     <Form.Item label={"SMS Language"} {...formItemLayout}>
                         {getFieldDecorator('language', {initialValue: this.state.patientDetails && this.state.patientDetails.language ? this.state.patientDetails.language : this.props.activePracticeData.language})
                         (<Select>
