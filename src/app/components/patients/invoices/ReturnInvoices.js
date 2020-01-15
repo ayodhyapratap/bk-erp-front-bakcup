@@ -39,7 +39,10 @@ import {BACKEND_BASE_URL} from "../../../config/connect";
 import {SUCCESS_MSG_TYPE, OTP_DELAY_TIME} from "../../../constants/dataKeys";
 import * as _ from "lodash";
 import {sendMail} from "../../../utils/clinicUtils";
+import { REQUIRED_FIELD_MESSAGE } from "../../../constants/messages";
 
+
+const { TextArea } = Input;
 class ReturnInvoices extends React.Component {
     constructor(props) {
         super(props);
@@ -52,6 +55,7 @@ class ReturnInvoices extends React.Component {
             taxes_list: null,
             loading: true,
             cancelReturnIncoiceVisible:false,
+            otpField:false,
         }
         this.loadReturnInvoices = this.loadReturnInvoices.bind(this);
         this.loadDrugCatalog = this.loadDrugCatalog.bind(this);
@@ -61,7 +65,9 @@ class ReturnInvoices extends React.Component {
     }
 
     componentDidMount() {
-        this.loadReturnInvoices();
+        let that =this
+        that.loadReturnInvoices();
+       
     }
 
     loadReturnInvoices(page = 1) {
@@ -201,15 +207,19 @@ class ReturnInvoices extends React.Component {
         sendMail(interpolate(RETURN_INVOICE_PDF_API,[paymentId]),apiParams)
         this.mailModalClose();
     }
+
     cancelModalOpen = (record) => {
         let that = this;
         let created_time=moment().diff(record.created_at,'minutes');
-
-        if(created_time >OTP_DELAY_TIME){
-
+            if(created_time>OTP_DELAY_TIME){
+                that.setState({
+                    otpField:true
+                })
+            }
             that.setState({
                 cancelReturnIncoiceVisible: true,
-                editReturnInvoice: record
+                editReturnInvoice: record,
+                patientId:record.patient
             });
             let reqData = {
                 practice: this.props.active_practiceId,
@@ -225,10 +235,9 @@ class ReturnInvoices extends React.Component {
             let errorFn = function () {
 
             };
-            postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
-        }else{
-            that.deleteReturnInvoice(record.patient, record.id);
-        }
+            if(created_time >OTP_DELAY_TIME){
+                postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+            }
     };
 
 
@@ -250,6 +259,7 @@ class ReturnInvoices extends React.Component {
     }
     handleSubmitCancelReturnInvoice = (e) => {
         let that = this;
+        let created_time=moment().diff(that.state.editReturnInvoice.created_at,'minutes');
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -257,26 +267,36 @@ class ReturnInvoices extends React.Component {
                     ...values,
                     practice: this.props.active_practiceId,
                 }
+
                 let successFn = function (data) {
                     that.setState({
                         cancelReturnIncoiceVisible: false,
+                        otpField:false,
                     });
-                    that.deleteReturnInvoice(that.state.patientId, that.state.returnInvoiceId)
+                    that.deleteReturnInvoice(that.state.patientId, that.state.returnInvoiceId, values.cancel_note)
                 };
                 let errorFn = function () {
 
                 };
-                postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
+                if(created_time >OTP_DELAY_TIME){
+                    postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
+                }else{
+                    that.deleteReturnInvoice(that.state.patientId, that.state.editReturnInvoice.id, values.cancel_note)
+                }
             }
         });
     }
     // deleteReturnInvoice(patient ,returnInvoiceId)
-    deleteReturnInvoice(patient ,returnInvoiceId) {
+    deleteReturnInvoice(patient ,returnInvoiceId ,cancel_note) {
         let that = this;
-        let reqData = {patient: patient, is_cancelled: true};
+        let reqData = {patient: patient, 
+            is_cancelled: true,
+            cancel_note:cancel_note
+        };
         let successFn = function (data) {
             displayMessage(SUCCESS_MSG_TYPE, "Return Invoice cancelled successfully")
             that.loadReturnInvoices();
+            that.cancelReturnInvoiceClose();
         }
         let errorFn = function () {
         }
@@ -305,6 +325,7 @@ class ReturnInvoices extends React.Component {
                 taxesdata[tax.id] = tax.name;
             })
         }
+        const {getFieldDecorator} = that.props.form;
 
         if (this.props.match.params.id) {
             return <div>
@@ -358,6 +379,46 @@ class ReturnInvoices extends React.Component {
                     <Input value={that.state.mail_to} placeholder={"Email"}
                            onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
                 </Modal>
+
+                <Modal
+                    visible={that.state.cancelReturnIncoiceVisible}
+                    title="Cancel Return Invoice"
+                    footer={null}
+                    onOk={that.handleSubmitCancelReturnInvoice}
+                    onCancel={that.cancelReturnInvoiceClose}>
+                    <Form>
+                        <Form.Item key="cancel_notes">
+                            {getFieldDecorator('cancel_note',{
+                                rules:[{required:true, message:REQUIRED_FIELD_MESSAGE}],
+                            })(
+                                <TextArea placeholder="cancel notes"/>
+                            )}
+                        </Form.Item>
+                        {that.state.otpField &&
+                            <Form.Item>
+                                {getFieldDecorator('otp', {
+                                    rules: [{required: true, message: 'Please input Otp!'}],
+                                })(
+                                    <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                                        placeholder="Otp"
+                                    />,
+                                )}
+                            </Form.Item>
+                        }
+                        <Form.Item>
+                            {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
+                                Resend Otp ?
+                            </a> : null}
+                            <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitCancelReturnInvoice}>
+                                Submit
+                            </Button>&nbsp;
+                            <Button size="small" onClick={that.cancelReturnInvoiceClose}>
+                                Close
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Modal>
+
             </div>
         } else {
             return <div>
@@ -399,6 +460,46 @@ class ReturnInvoices extends React.Component {
                     <Input value={that.state.mail_to} placeholder={"Email"}
                            onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
                 </Modal>
+
+                <Modal
+                    visible={that.state.cancelReturnIncoiceVisible}
+                    title="Cancel Return Invoice"
+                    footer={null}
+                    onOk={that.handleSubmitCancelReturnInvoice}
+                    onCancel={that.cancelReturnInvoiceClose}>
+                    <Form>
+                        <Form.Item key="cancel_notes">
+                            {getFieldDecorator('cancel_note',{
+                                rules:[{required:true, message:REQUIRED_FIELD_MESSAGE}],
+                            })(
+                                <TextArea placeholder="cancel notes"/>
+                            )}
+                        </Form.Item>
+                        {that.state.otpField &&
+                            <Form.Item>
+                                {getFieldDecorator('otp', {
+                                    rules: [{required: true, message: 'Please input Otp!'}],
+                                })(
+                                    <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                                        placeholder="Otp"
+                                    />,
+                                )}
+                            </Form.Item>
+                        }
+                        <Form.Item>
+                            {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
+                                Resend Otp ?
+                            </a> : null}
+                            <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitCancelReturnInvoice}>
+                                Submit
+                            </Button>&nbsp;
+                            <Button size="small" onClick={that.cancelReturnInvoiceClose}>
+                                Close
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Modal>
+
             </div>
         }
 
@@ -425,7 +526,7 @@ function invoiceFooter(presc) {
 }
 
 function InvoiceCard(invoice, that) {
-    const {getFieldDecorator} = that.props.form;
+    
 
     return <Card
         key={invoice.id}
@@ -477,36 +578,7 @@ function InvoiceCard(invoice, that) {
             </Col>
         </Row>
 
-        <Modal
-            visible={(that.state.cancelReturnIncoiceVisible && that.state.editReturnInvoice && that.state.editReturnInvoice.id == invoice.id)}
-            title="Cancel Return Invoice"
-            footer={null}
-            onOk={that.handleSubmitCancelReturnInvoice}
-            onCancel={that.cancelReturnInvoiceClose}>
-            <Form>
-                <Form.Item>
-                    {getFieldDecorator('otp', {
-                        rules: [{required: true, message: 'Please input Otp!'}],
-                    })(
-                        <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                               placeholder="Otp"
-                        />,
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
-                        Resend Otp ?
-                    </a> : null}
-                    <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitCancelReturnInvoice}>
-                        Submit
-                    </Button>&nbsp;
-                    <Button size="small" onClick={that.cancelReturnInvoiceClose}>
-                        Close
-                    </Button>
-                </Form.Item>
-            </Form>
-        </Modal>
-
+        
 
 
     </Card>
