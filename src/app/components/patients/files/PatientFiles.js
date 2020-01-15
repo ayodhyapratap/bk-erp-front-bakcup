@@ -62,7 +62,8 @@ class PatientFiles extends React.Component {
             medicalCertificate: [],
             visible: false,
             filesData: {},
-            mailedfiles: []
+            mailedfiles: [],
+            visibleTag:false,
         };
         this.loadData = this.loadData.bind(this);
         this.loadMedicalCertificate = this.loadMedicalCertificate.bind(this);
@@ -286,7 +287,8 @@ class PatientFiles extends React.Component {
         };
         let successFn = function () {
             that.setState({
-                selectedFiles: {}
+                selectedFiles: {},
+                visibleTag:false,
             })
             that.loadData()
         }
@@ -397,6 +399,13 @@ class PatientFiles extends React.Component {
 
     };
 
+    handleVisibleChange =()=>{
+        console.log("sdad")
+        this.setState({
+            visibleTag: !this.state.visibleTag, 
+        });
+      };
+
     render() {
         let that = this;
         const PatientFilesForm = Form.create()(DynamicFieldsForm);
@@ -459,7 +468,7 @@ class PatientFiles extends React.Component {
                                  type="primary">
                                  <Icon type="plus"/>&nbsp;Add Medical Certificate</Button> </Link>
 
-                         <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft">
+                         <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft" onVisibleChange={that.handleVisibleChange} visible={that.state.visibleTag}>
                              <Button><Icon type="plus"/>Add/Remove File Tags</Button>
                          </Dropdown>
 
@@ -474,7 +483,8 @@ class PatientFiles extends React.Component {
                              <Icon type="plus"/>&nbsp; Add Medical Certificate
                          </Button>
 
-                         <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft">
+                         <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft" onVisibleChange={that.handleVisibleChange} visible={that.state.visibleTag}>
+                
                              <Button><Icon type="plus"/>Add/Remove File Tags</Button>
                          </Dropdown>
 
