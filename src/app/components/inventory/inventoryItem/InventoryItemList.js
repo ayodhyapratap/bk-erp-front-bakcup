@@ -33,7 +33,7 @@ export default class InventoryItemList extends React.Component {
             itemStockFilter: "ALL",
             loading: true,
             nextItemPage: null,
-            productMargin:[]
+            productMargin: []
         }
         this.loadData = this.loadData.bind(this);
         this.showAddOrConsumeModal = this.showAddOrConsumeModal.bind(this);
@@ -48,7 +48,8 @@ export default class InventoryItemList extends React.Component {
         this.loadData();
         this.loadProductMargin();
     }
-    loadProductMargin=() =>{
+
+    loadProductMargin = () => {
         let that = this;
         let successFn = function (data) {
             that.setState({
@@ -60,6 +61,7 @@ export default class InventoryItemList extends React.Component {
         }
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
+
     loadData(page = 1) {
         let that = this;
         that.setState({
@@ -93,8 +95,8 @@ export default class InventoryItemList extends React.Component {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
             page: page,
-            sort:ASCENDING_ORDER,
-            on:'total_quantity',
+            sort: ASCENDING_ORDER,
+            on: 'total_quantity',
         };
         if (that.state.itemTypeFilter != 'ALL') {
             reqParams.item_type = that.state.itemTypeFilter
@@ -152,9 +154,9 @@ export default class InventoryItemList extends React.Component {
     }
     changeInventoryFilters = (key, value) => {
         let that = this;
-        that.setState( {
+        that.setState({
             [key]: value
-        },function () {
+        }, function () {
             that.loadData();
         })
     }
@@ -173,8 +175,8 @@ export default class InventoryItemList extends React.Component {
         let reqParams = {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
-            sort:ASCENDING_ORDER,
-            on:'total_quantity',
+            sort: ASCENDING_ORDER,
+            on: 'total_quantity',
         };
         if (that.state.itemTypeFilter != 'ALL') {
             reqParams.item_type = that.state.itemTypeFilter
@@ -208,8 +210,8 @@ export default class InventoryItemList extends React.Component {
         let reqParams = {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
-            sort:ASCENDING_ORDER,
-            on:'total_quantity',
+            sort: ASCENDING_ORDER,
+            on: 'total_quantity',
         };
         if (that.state.itemTypeFilter != 'ALL') {
             reqParams.item_type = that.state.itemTypeFilter
@@ -334,6 +336,15 @@ export default class InventoryItemList extends React.Component {
                 <span> {record.manufacturer_data ? record.manufacturer_data.name : ''}</span>
             )
         }, {
+            title: 'Stock Cost (INR)',
+            key: 'stock_cost',
+            // export: function (text, record) {
+            //     return record.manufacturer_data ? record.manufacturer_data.name : '';
+            // },
+            render: (text, record) => (
+                <span> {record.item_type_stock && record.item_type_stock.item_stock ? record.item_type_stock.item_stock.reduce((a, b) => a + (b.unit_cost * b.quantity), 0) : ''}</span>
+            )
+        }, {
             title: 'Actions',
             render: (item) => {
                 return <div>
@@ -387,10 +398,12 @@ export default class InventoryItemList extends React.Component {
                                   type="plus"/> Add Item</Button></Link>
 
                               <Link to="/inventory/add-stock"> <Button
-                                  disabled={!that.props.activePracticePermissions.AddInventoryStock && !that.props.allowAllPermissions} type="primary">Add
+                                  disabled={!that.props.activePracticePermissions.AddInventoryStock && !that.props.allowAllPermissions}
+                                  type="primary">Add
                                   Stock</Button></Link>
                               <Link to="/inventory/consume-stock"><Button
-                                  disabled={!that.props.activePracticePermissions.ConsumeInventoryStock && !that.props.allowAllPermissions} type="primary">Consume
+                                  disabled={!that.props.activePracticePermissions.ConsumeInventoryStock && !that.props.allowAllPermissions}
+                                  type="primary">Consume
                                   Stock</Button></Link>
                           </Button.Group>}>
                         <Row>
@@ -426,7 +439,7 @@ export default class InventoryItemList extends React.Component {
                             <Col span={4}>
                                 <Input style={{width: '100%'}} value={this.state.filterItemName}
                                        allowClear={true}
-                                       // disabled={this.state.loading}
+                                    // disabled={this.state.loading}
                                        placeholder={"Item Name"}
                                        onChange={(e) => this.changeInventoryFilters('filterItemName', e.target.value)}/>
                             </Col>
@@ -436,7 +449,7 @@ export default class InventoryItemList extends React.Component {
                             <Col span={4}>
                                 <Input style={{width: '100%'}} value={this.state.filterItemCode}
                                        allowClear={true}
-                                       // disabled={this.state.loading}
+                                    // disabled={this.state.loading}
                                        placeholder={"HSN Number"}
                                        onChange={(e) => this.changeInventoryFilters('filterItemCode', e.target.value)}/>
                             </Col>
@@ -448,7 +461,8 @@ export default class InventoryItemList extends React.Component {
                                     // disabled={this.state.loading}
                                         placeholder={"MLM Margin"}
                                         onChange={(e) => this.changeInventoryFilters('filterMLM', e)}>
-                                    {this.state.productMargin.map(item=><Select.Option value={item.id}>{item.name}</Select.Option>)}
+                                    {this.state.productMargin.map(item => <Select.Option
+                                        value={item.id}>{item.name}</Select.Option>)}
                                 </Select>
                             </Col>
                             {/*<Col span={8}>*/}
@@ -462,7 +476,7 @@ export default class InventoryItemList extends React.Component {
                             <Table bordered={true}
                                    pagination={false}
                                    hideReport={true}
-                                   dataSource={this.state.inventoryItems.sort((a,b) =>parseInt(b.total_quantity) -parseInt(a.total_quantity))}
+                                   dataSource={this.state.inventoryItems.sort((a, b) => parseInt(b.total_quantity) - parseInt(a.total_quantity))}
                                    columns={columns}/>
                             <Spin spinning={this.state.loading}>
                                 <Row/>
