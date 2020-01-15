@@ -123,9 +123,9 @@ class AddOrEditAgent extends React.Component {
                     is_approved: true,
                     practice: this.props.active_practiceId
                 };
-                if (this.props.editAgentData || !reqData.referal) {
-                    delete reqData.referal;
-                }
+                // if (this.props.editAgentData || !reqData.referal) {
+                //     delete reqData.referal;
+                // }
                 if (!this.state.userDetails) {
                     reqData.user.first_name = values.first_name;
                     reqData.user.email = values.email;
