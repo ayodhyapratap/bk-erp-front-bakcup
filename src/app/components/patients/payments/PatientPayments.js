@@ -51,13 +51,13 @@ class PatientPayments extends React.Component {
             loading: true,
             otpSent: false,
             editPaymentVisible: false,
-            editPayment:null,
+            editPayment: null,
         }
 
     }
 
     componentDidMount() {
-        let that=this;
+        let that = this;
         this.loadPayments();
 
     }
@@ -65,7 +65,7 @@ class PatientPayments extends React.Component {
 
     loadPayments = (page = 1) => {
         let that = this;
-        if (that.props.refreshWallet && page==1){
+        if (that.props.refreshWallet && page == 1) {
             that.props.refreshWallet();
         }
         this.setState({
@@ -106,7 +106,6 @@ class PatientPayments extends React.Component {
     };
 
 
-
     loadPDF = (id) => {
         let that = this;
         let successFn = function (data) {
@@ -119,54 +118,53 @@ class PatientPayments extends React.Component {
         getAPI(interpolate(PAYMENT_PDF, [id]), successFn, errorFn);
     };
 
-    updateFormValue =(type,value)=>{
+    updateFormValue = (type, value) => {
         this.setState({
             [type]: value
         })
     };
 
-    mailModalOpen =() =>{
+    mailModalOpen = () => {
         this.setState({
-            visibleMail:true
+            visibleMail: true
         })
     };
 
-    mailModalClose =() =>{
+    mailModalClose = () => {
         this.setState({
-            visibleMail:false
+            visibleMail: false
         })
     };
 
-    sendPatientMail =(payment)=>{
+    sendPatientMail = (payment) => {
         this.mailModalOpen()
         this.setState({
-            patientName:_.get(payment,'patient_data.user.first_name'),
-            paymentId:_.get(payment,'id'),
-            mail_to:_.get(payment,'patient_data.user.email')
+            patientName: _.get(payment, 'patient_data.user.first_name'),
+            paymentId: _.get(payment, 'id'),
+            mail_to: _.get(payment, 'patient_data.user.email')
         })
 
     };
 
-    sendMailToPatient =()=>{
-        let {mail_to ,paymentId } = this.state;
-        let apiParams ={
-            mail_to:mail_to,
+    sendMailToPatient = () => {
+        let {mail_to, paymentId} = this.state;
+        let apiParams = {
+            mail_to: mail_to,
         }
-        sendMail(interpolate(PAYMENT_PDF,[paymentId]),apiParams)
+        sendMail(interpolate(PAYMENT_PDF, [paymentId]), apiParams)
         this.mailModalClose();
     }
-
 
 
     editModelOpen = (record) => {
         let that = this;
 
-        let created_time=moment().diff(record.created_at,'minutes');
+        let created_time = moment().diff(record.created_at, 'minutes');
 
-        if(created_time >OTP_DELAY_TIME){
+        if (created_time > OTP_DELAY_TIME) {
             that.setState({
                 editPaymentVisible: true,
-                cancelPaymentVisible:false,
+                cancelPaymentVisible: false,
                 editPayment: record,
             });
             let reqData = {
@@ -185,10 +183,10 @@ class PatientPayments extends React.Component {
             };
 
             postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
-        }else{
+        } else {
             that.setState({
-                editPayment:record,
-            },function () {
+                editPayment: record,
+            }, function () {
                 that.props.history.push("/patient/" + record.patient + "/billing/payments/edit")
             });
         }
@@ -246,12 +244,12 @@ class PatientPayments extends React.Component {
 
     cancelModalOpen = (record) => {
         let that = this;
-        let created_time=moment().diff(record.created_at,'minutes');
+        let created_time = moment().diff(record.created_at, 'minutes');
 
-        if(created_time >OTP_DELAY_TIME){
+        if (created_time > OTP_DELAY_TIME) {
 
             that.setState({
-                editPaymentVisible:false,
+                editPaymentVisible: false,
                 cancelPaymentVisible: true,
                 editPayment: record,
             });
@@ -271,7 +269,7 @@ class PatientPayments extends React.Component {
             };
 
             postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
-        }else{
+        } else {
             that.deletePayment(record.patient, record.id)
         }
     };
@@ -288,8 +286,6 @@ class PatientPayments extends React.Component {
         putAPI(interpolate(SINGLE_PAYMENT_API, [payment]), reqData, successFn, errorFn);
 
     }
-
-
 
 
     editPaymentClose = () => {
@@ -359,14 +355,14 @@ class PatientPayments extends React.Component {
                         <Button key="back" onClick={this.mailModalClose}>
                             Cancel
                         </Button>,
-                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                        <Button key="submit" type="primary" onClick={this.sendMailToPatient}>
                             Send
                         </Button>,
                     ]}
                 >
                     <p>Send Payment To {this.state.patientName} ?</p>
                     <Input value={that.state.mail_to} placeholder={"Email"}
-                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                           onChange={(e) => that.updateFormValue('mail_to', e.target.value)}/>
                 </Modal>
             </div>
         } else {
@@ -397,14 +393,14 @@ class PatientPayments extends React.Component {
                         <Button key="back" onClick={this.mailModalClose}>
                             Cancel
                         </Button>,
-                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                        <Button key="submit" type="primary" onClick={this.sendMailToPatient}>
                             Send
                         </Button>,
                     ]}
                 >
                     <p>Send Payment To {this.state.patientName} ?</p>
                     <Input value={that.state.mail_to} placeholder={"Email"}
-                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                           onChange={(e) => that.updateFormValue('mail_to', e.target.value)}/>
                 </Modal>
             </div>
         }
@@ -423,16 +419,16 @@ const columns = [{
     title: 'Amount Paid',
     key: 'pay_amount',
     dataIndex: 'pay_amount',
-    render: value => value?value.toFixed(2):0,
+    render: value => value ? value.toFixed(2) : 0,
 }];
 
 function PaymentCard(payment, that) {
     const {getFieldDecorator} = that.props.form;
     let advancePay = [];
-    if(payment.is_advance){
+    if (payment.is_advance) {
         advancePay.push({
-            invoice_id:"Advance Payment",
-            pay_amount : payment.advance_value
+            invoice_id: "Advance Payment",
+            pay_amount: payment.advance_value
         })
     }
     return <Card style={{marginTop: 10}}
@@ -441,7 +437,7 @@ function PaymentCard(payment, that) {
                  title={(payment.patient_data && !that.props.currentPatient ?
                      <small>{payment.date ? moment(payment.date).format('lll') : null}
                          <Link to={"/patient/" + payment.patient_data.id + "/billing/payments"}>
-                             &nbsp;&nbsp; {payment.patient_data.user.first_name} (ID: {payment.patient_data.custom_id?payment.patient_data.custom_id:payment.patient_data.id})&nbsp;
+                             &nbsp;&nbsp; {payment.patient_data.user.first_name} (ID: {payment.patient_data.custom_id ? payment.patient_data.custom_id : payment.patient_data.id})&nbsp;
                          </Link>
                          <span>, {payment.patient_data.gender}</span></small>
                      : <small>{payment.created_at ? moment(payment.created_at).format('lll') : null}</small>)}
@@ -491,14 +487,18 @@ function PaymentCard(payment, that) {
 
                 <Table columns={columns}
                        pagination={false}
-                       footer={() => PaymentFooter({practice: payment.practice_data,notes:payment.notes})}
-                       dataSource={[...payment.invoices,...advancePay]} rowKey={payment.id}/>
+                       footer={() => PaymentFooter({practice: payment.practice_data, notes: payment.notes})}
+                       dataSource={[...payment.invoices, ...advancePay]} rowKey={payment.id}/>
             </Col>
         </Row>
 
-        {that.state.editPaymentVisible && that.state.otpSent && <EditPaymentModal {...that.state} payment={payment} editPaymentClose={that.editPaymentClose} editPaymentData={that.editPaymentData} {...that.props} />}
+        {that.state.editPaymentVisible && that.state.otpSent &&
+        <EditPaymentModal {...that.state} payment={payment} editPaymentClose={that.editPaymentClose}
+                          editPaymentData={that.editPaymentData} {...that.props} />}
 
-        {that.state.cancelPaymentVisible && that.state.otpSent && <CancelPaymentModal {...that.state} payment={payment} cancelPaymentClose={that.cancelPaymentClose} {...that.props} loadPayments={that.loadPayments} />}
+        {that.state.cancelPaymentVisible && that.state.otpSent && <CancelPaymentModal {...that.state} payment={payment}
+                                                                                      cancelPaymentClose={that.cancelPaymentClose} {...that.props}
+                                                                                      loadPayments={that.loadPayments}/>}
 
     </Card>
 }

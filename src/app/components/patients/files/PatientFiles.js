@@ -70,7 +70,7 @@ class PatientFiles extends React.Component {
 
     componentWillMount() {
         this.loadData();
-        // this.loadTags();
+        this.loadTags();
         this.loadMedicalCertificate();
     }
 

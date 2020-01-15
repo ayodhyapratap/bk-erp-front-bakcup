@@ -293,10 +293,10 @@ class AddOrEditAgent extends React.Component {
                             {this.state.editAgentData ? null :
                                 <FormItem key="referal" label="Referer Code"  {...formItemLayout}>
                                     {getFieldDecorator("referal", {
-                                        initialValue: that.props.editAgentData ? that.props.editAgentData.user.referer : null,
+                                        initialValue: that.props.editAgentData && that.props.editAgentData.user.referer_data.referer ? that.props.editAgentData.user.referer_data.referer.referer_code : null,
 
                                     })(
-                                        <Input placeholder="Referer Code" disabled={that.props.editAgentData?true:false}/>
+                                        <Input placeholder="Referer Code" />
                                     )}
                                 </FormItem>}
 

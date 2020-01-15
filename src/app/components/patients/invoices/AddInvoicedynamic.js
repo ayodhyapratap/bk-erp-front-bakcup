@@ -302,6 +302,7 @@ class Addinvoicedynamic extends React.Component {
                 item = {
                     ...item,
                     id: undefined,
+                    unit:1,
                     unit_cost: item.cost,
                     procedure: item.id,
                     selectedDoctor: prevState.selectedDoctor ? prevState.selectedDoctor : null,
@@ -317,12 +318,17 @@ class Addinvoicedynamic extends React.Component {
                     selectedDoctor: prevState.selectedDoctor ? prevState.selectedDoctor : null,
                 }
             }
+            let membershipDiscount = 0;
+            if(this.props.MedicalMembership){
+                membershipDiscount = this.props.MedicalMembership.medical_membership.benefit;
+            }
             return {
                 tableFormValues: [{
                     ...tableFormFields,
                     ...item,
                     id: undefined,
                     _id: randId,
+                    discount:membershipDiscount
                 }, ...prevState.tableFormValues]
             }
         });
@@ -962,7 +968,7 @@ class Addinvoicedynamic extends React.Component {
                         {...formItemLayout}>
                         {getFieldDecorator(`unit[${record._id}]`, {
                             validateTrigger: ['onChange', 'onBlur'],
-                            initialValue: record.unit || 1,
+                            initialValue: record.unit || 0,
                             rules: [{
                                 required: true,
                                 message: "This field is required.",
@@ -979,7 +985,7 @@ class Addinvoicedynamic extends React.Component {
                         key={`unit[${record._id}]`}
                         {...formItemLayout}>
                         {getFieldDecorator(`unit[${record._id}]`, {
-                            initialValue: record.unit || 1,
+                            initialValue: record.unit || 0,
                             validateTrigger: ['onChange', 'onBlur'],
                             rules: [{
                                 required: true,
