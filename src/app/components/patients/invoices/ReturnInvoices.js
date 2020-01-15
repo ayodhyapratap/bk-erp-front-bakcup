@@ -520,6 +520,7 @@ function invoiceFooter(presc) {
                 </Tooltip>
             </Tag> : null}
             {presc.notes ? <p>Notes: {presc.notes}</p> : null}
+            {presc.cancel_note ? <p>Cancel Notes: {presc.cancel_note}</p> : null}
         </p>
     }
     return null

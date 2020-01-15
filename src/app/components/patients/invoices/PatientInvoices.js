@@ -510,6 +510,7 @@ function invoiceFooter(presc) {
                 </Tooltip>
             </Tag> : null}
             {presc.notes ? <p>Notes: {presc.notes}</p> : null}
+            {presc.cancel_note ? <p>Cancel Notes: {presc.cancel_note}</p> : null}
         </p>
 
 
@@ -621,13 +622,13 @@ function InvoiceCard(invoice, that) {
                             tax_value: 0,
                             total: invoice.total
                         }]}
-                        footer={() => invoiceFooter({practice: invoice.practice_data, notes: invoice.notes})}/> :
+                        footer={() => invoiceFooter({practice: invoice.practice_data, notes: invoice.notes, cancel_note : invoice.cancel_note})}/> :
                     <Table
                         bordered={true}
                         pagination={false}
                         columns={columns}
                         dataSource={[...tableObjects, ...invoice.inventory, ...invoice.procedure]}
-                        footer={() => invoiceFooter({practice: invoice.practice_data, notes: invoice.notes})}/>}
+                        footer={() => invoiceFooter({practice: invoice.practice_data, notes: invoice.notes, cancel_note : invoice.cancel_note})}/>}
 
             </Col>
         </Row>

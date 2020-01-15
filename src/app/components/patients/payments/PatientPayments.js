@@ -496,7 +496,7 @@ function PaymentCard(payment, that) {
 
                 <Table columns={columns}
                        pagination={false}
-                       footer={() => PaymentFooter({practice: payment.practice_data, notes: payment.notes})}
+                       footer={() => PaymentFooter({practice: payment.practice_data, notes: payment.notes, cancel_note : payment.cancel_note})}
                        dataSource={[...payment.invoices, ...advancePay]} rowKey={payment.id}/>
             </Col>
         </Row>
@@ -523,6 +523,7 @@ function PaymentFooter(presc) {
                 </Tooltip>
             </Tag> : null}
             {presc.notes ? <p>Notes: {presc.notes}</p> : null}
+            {presc.cancel_note ? <p>Cancel Notes: {presc.cancel_note}</p> : null}
         </p>
     }
     return null
