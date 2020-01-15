@@ -10,7 +10,7 @@
 /coverage
 
 # production
-/src/app.config.js
+./src/app.config.js
 # misc
 .DS_Store
 .env.local

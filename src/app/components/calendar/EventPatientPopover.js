@@ -132,13 +132,13 @@ export default class EventPatientPopover extends React.Component {
                             <div>
                                 {appointment.status == SCHEDULE_STATUS ?
                                     <span style={{width: '70px', float: 'right'}}>
-                    <a onClick={() => that.changeAppointmentStatus(appointment.id, SCHEDULE_STATUS, WAITING_STATUS)} disabled={that.props.activePracticePermissions.ChangeAppointmentStatus}> Check In</a></span> : null}
+                    <a onClick={() => that.changeAppointmentStatus(appointment.id, SCHEDULE_STATUS, WAITING_STATUS)} disabled={!that.props.activePracticePermissions.ChangeAppointmentStatus}> Check In</a></span> : null}
                                 {appointment.status == WAITING_STATUS ?
                                     <span style={{width: '70px', float: 'right'}}>
-                    <a onClick={() => that.changeAppointmentStatus(appointment.id, WAITING_STATUS, ENGAGED_STATUS)} disabled={that.props.activePracticePermissions.ChangeAppointmentStatus}> Engage</a></span> : null}
+                    <a onClick={() => that.changeAppointmentStatus(appointment.id, WAITING_STATUS, ENGAGED_STATUS)} disabled={!that.props.activePracticePermissions.ChangeAppointmentStatus}> Engage</a></span> : null}
                                 {appointment.status == ENGAGED_STATUS ?
                                     <span style={{width: '70px', float: 'right'}}>
-                    <a onClick={() => that.changeAppointmentStatus(appointment.id, ENGAGED_STATUS, CHECKOUT_STATUS)} disabled={that.props.activePracticePermissions.ChangeAppointmentStatus}> Check Out</a></span> : null}
+                    <a onClick={() => that.changeAppointmentStatus(appointment.id, ENGAGED_STATUS, CHECKOUT_STATUS)} disabled={!that.props.activePracticePermissions.ChangeAppointmentStatus}> Check Out</a></span> : null}
                                 {appointment.status == CHECKOUT_STATUS ?
                                     <span style={{width: '70px', float: 'right'}}>
                     <small>Checked Out</small></span> : null}

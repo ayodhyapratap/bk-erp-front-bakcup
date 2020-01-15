@@ -72,6 +72,7 @@ class EditReturnModal extends React.Component {
                 footer={null}
                 onOk={that.handleSubmitEditInvoice}
                 onCancel={that.props.editInvoiceClose}
+                
             >
                 <Form>
                     <Form.Item>

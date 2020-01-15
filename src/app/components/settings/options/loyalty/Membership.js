@@ -1,7 +1,7 @@
 import React from "react";
 import {Divider, Popconfirm, Row} from 'antd';
 import CustomizedTable from "../../../common/CustomizedTable";
-import {getAPI, interpolate, postAPI} from "../../../../utils/common";
+import {getAPI, interpolate, postAPI, putAPI} from "../../../../utils/common";
 import {MEMBERSHIP_API, OFFERS} from "../../../../constants/api";
 import AddMembership from "./AddMembership";
 
@@ -27,19 +27,21 @@ export default class Membership extends React.Component {
         let errorFn = function () {
 
         }
-        getAPI(interpolate(MEMBERSHIP_API, [this.props.active_practiceId]), successFn, errorFn);
+        getAPI(MEMBERSHIP_API, successFn, errorFn);
     }
 
     deleteObject(record) {
         let that = this;
-        let reqData = record;
-        reqData.is_active = false;
+        let reqData = {
+            is_active:false,
+            id:record.id,
+        };
         let successFn = function (data) {
             that.loadData();
         }
         let errorFn = function () {
         }
-        postAPI(interpolate(MEMBERSHIP_API, [this.props.active_practiceId]), reqData, successFn, errorFn);
+        postAPI(MEMBERSHIP_API, reqData, successFn, errorFn);
     }
 
     render() {

@@ -160,7 +160,7 @@ class PatientPayments extends React.Component {
         let that = this;
 
         let created_time = moment().diff(record.created_at, 'minutes');
-
+        console.log("otp",created_time);
         if (created_time > OTP_DELAY_TIME) {
             that.setState({
                 editPaymentVisible: true,
@@ -245,9 +245,8 @@ class PatientPayments extends React.Component {
     cancelModalOpen = (record) => {
         let that = this;
         let created_time = moment().diff(record.created_at, 'minutes');
-
-        if (created_time > OTP_DELAY_TIME) {
-
+        console.log("otp",created_time,OTP_DELAY_TIME, record);
+        console.log(created_time>OTP_DELAY_TIME)
             that.setState({
                 editPaymentVisible: false,
                 cancelPaymentVisible: true,
@@ -267,11 +266,9 @@ class PatientPayments extends React.Component {
             let errorFn = function () {
 
             };
-
-            postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
-        } else {
-            that.deletePayment(record.patient, record.id)
-        }
+            if (created_time > OTP_DELAY_TIME) {
+                postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+            } 
     };
 
     deletePayment(patient, payment) {
@@ -364,6 +361,12 @@ class PatientPayments extends React.Component {
                     <Input value={that.state.mail_to} placeholder={"Email"}
                            onChange={(e) => that.updateFormValue('mail_to', e.target.value)}/>
                 </Modal>
+
+                {that.state.cancelPaymentVisible ? 
+                    <CancelPaymentModal {...that.state} key={"cancel_payment"}
+                                        cancelPaymentClose={that.cancelPaymentClose}
+                                        loadPayments={that.loadPayments}/>:null}
+
             </div>
         } else {
             return <div>
@@ -402,6 +405,12 @@ class PatientPayments extends React.Component {
                     <Input value={that.state.mail_to} placeholder={"Email"}
                            onChange={(e) => that.updateFormValue('mail_to', e.target.value)}/>
                 </Modal>
+
+                {that.state.cancelPaymentVisible ? 
+                    <CancelPaymentModal {...that.state} key={'cancel_payment'}
+                                        cancelPaymentClose={that.cancelPaymentClose}
+                                        loadPayments={that.loadPayments}/>:null}
+
             </div>
         }
 
@@ -431,7 +440,7 @@ function PaymentCard(payment, that) {
             pay_amount: payment.advance_value
         })
     }
-    return <Card style={{marginTop: 10}}
+    return <Card style={{marginTop: 10}} 
                  key={payment.id}
                  bodyStyle={{padding: 0}}
                  title={(payment.patient_data && !that.props.currentPatient ?
@@ -494,11 +503,10 @@ function PaymentCard(payment, that) {
 
         {that.state.editPaymentVisible && that.state.otpSent &&
         <EditPaymentModal {...that.state} payment={payment} editPaymentClose={that.editPaymentClose}
+        key={payment.id}
                           editPaymentData={that.editPaymentData} {...that.props} />}
 
-        {that.state.cancelPaymentVisible && that.state.otpSent && <CancelPaymentModal {...that.state} payment={payment}
-                                                                                      cancelPaymentClose={that.cancelPaymentClose} {...that.props}
-                                                                                      loadPayments={that.loadPayments}/>}
+        
 
     </Card>
 }

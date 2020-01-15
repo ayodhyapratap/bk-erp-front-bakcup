@@ -175,8 +175,8 @@ class PatientInvoices extends React.Component {
 
     returnModelOpen = (record) => {
         let that = this;
-        let created_time = moment().diff(record.created_at, 'minutes');
-        if (created_time > OTP_DELAY_TIME) {
+        // let created_time = moment().diff(record.created_at, 'minutes');
+        // if (created_time > OTP_DELAY_TIME) {
             that.setState({
                 returnIncoiceVisible: true,
                 editIncoiceVisible: false,
@@ -199,13 +199,13 @@ class PatientInvoices extends React.Component {
 
             };
             postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
-        } else {
-            this.setState({
-                editInvoice: record,
-            }, function () {
-                that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/return/")
-            });
-        }
+        // } else {
+        //     this.setState({
+        //         editInvoice: record,
+        //     }, function () {
+        //         that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/return/")
+        //     });
+        // }
     };
 
 
@@ -213,7 +213,7 @@ class PatientInvoices extends React.Component {
         let that = this;
         let created_time = moment().diff(record.created_at, 'minutes');
 
-        if (created_time > OTP_DELAY_TIME) {
+        
             that.setState({
                 editIncoiceVisible: true,
                 cancelIncoiceVisible: false,
@@ -235,15 +235,10 @@ class PatientInvoices extends React.Component {
             let errorFn = function () {
 
             };
-            postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+            if (created_time > OTP_DELAY_TIME) {
+                postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
 
-        } else {
-            this.setState({
-                editInvoice: record,
-            }, function () {
-                that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/edit/")
-            });
-        }
+            } 
 
     };
 
@@ -252,7 +247,7 @@ class PatientInvoices extends React.Component {
         let that = this;
         let created_time = moment().diff(record.created_at, 'minutes');
 
-        if (created_time > OTP_DELAY_TIME) {
+        
 
             that.setState({
                 cancelIncoiceVisible: true,
@@ -275,11 +270,10 @@ class PatientInvoices extends React.Component {
             let errorFn = function () {
 
             };
-            postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
+            if (created_time > OTP_DELAY_TIME) {
+                postAPI(CANCELINVOICE_GENERATE_OTP, reqData, successFn, errorFn);
 
-        } else {
-            that.deleteInvoice(record.patient, record.id)
-        }
+            } 
     };
 
     deleteInvoice(patient, invoice) {
@@ -442,6 +436,14 @@ class PatientInvoices extends React.Component {
                     <Input value={that.state.mail_to} placeholder={"Email"}
                            onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
                 </Modal>
+
+                {that.state.cancelIncoiceVisible ?
+                            <CancelReturnModal key="cancelInvoice1" {...that.state} cancelInvoiceClose={that.cancelInvoiceClose}
+                           loadInvoices={that.loadInvoices}/>
+                           :null
+                }
+
+
             </div>
         } else {
             return <div>
@@ -482,6 +484,12 @@ class PatientInvoices extends React.Component {
                     <Input value={that.state.mail_to} placeholder={"Email"}
                            onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
                 </Modal>
+
+                {that.state.cancelIncoiceVisible ?
+                            <CancelReturnModal key="cancelInvoice2" {...that.state} cancelInvoiceClose={that.cancelInvoiceClose}
+                           loadInvoices={that.loadInvoices}/>
+                           :null
+                }
             </div>
         }
 
@@ -625,13 +633,12 @@ function InvoiceCard(invoice, that) {
         </Row>
 
 
-        {that.state.cancelIncoiceVisible && that.state.otpSent &&
-        <CancelReturnModal {...that.state} invoice={invoice} cancelInvoiceClose={that.cancelInvoiceClose}{...that.props}
-                           loadInvoices={that.loadInvoices}/>}
+        
 
         {that.state.editIncoiceVisible && that.state.otpSent &&
-        <EditReturnModal {...that.state} invoice={invoice} editInvoiceClose={that.editInvoiceClose} {...that.props} />}
-        {that.state.returnIncoiceVisible && that.state.otpSent && <InvoiceReturnModal {...that.state} invoice={invoice}
+        <EditReturnModal key="editInvoice" {...that.state} invoice={invoice} editInvoiceClose={that.editInvoiceClose} {...that.props} />}
+
+        {that.state.returnIncoiceVisible && that.state.otpSent && <InvoiceReturnModal key="returnInvoice" {...that.state} invoice={invoice}
                                                                                       returnInvoiceClose={that.returnInvoiceClose} {...that.props} />}
 
     </Card>

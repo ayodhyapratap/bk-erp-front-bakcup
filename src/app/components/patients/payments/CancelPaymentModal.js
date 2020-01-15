@@ -6,15 +6,31 @@ import {
     SINGLE_INVOICES_API, SINGLE_PAYMENT_API
 } from "../../../constants/api";
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
-import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
+import {SUCCESS_MSG_TYPE, OTP_DELAY_TIME} from "../../../constants/dataKeys";
+import { REQUIRED_FIELD_MESSAGE } from "../../../constants/messages";
+import moment from "moment";
+
+const TextArea =Input;
 class CancelPaymentModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             cancelPaymentVisible: this.props.cancelPaymentVisible,
             otpSent:this.props.otpSent,
+            otpField:false,
 
         };
+    }
+
+    componentDidMount(){
+        let that =this;
+        let created_time = moment().diff(that.props.editPayment.created_at, 'minutes');
+        if (created_time > OTP_DELAY_TIME) {
+            that.setState({
+                otpField:true,
+            })
+        }
+
     }
 
 
@@ -31,23 +47,34 @@ class CancelPaymentModal extends React.Component {
                     that.setState({
                         cancelPaymentVisible: false,
                     });
-                    that.deletePayment(that.props.patientId, that.props.paymentId);
-                    that.props.cancelPaymentClose();
+                    that.deletePayment(that.props.editPayment.patient_data , that.props.editPayment.id, values.cancel_note);
+        
                 };
                 let errorFn = function () {
 
                 };
-                postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
+                if(that.state.otpField){
+                    postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
+                }else{
+                    that.deletePayment(that.props.editPayment.patient_data, that.props.editPayment.id, values.cancel_note);
+                }
+                
             }
         });
     }
 
 
 
-    deletePayment(patient, payment) {
+    deletePayment(patient, payment , cancel_note) {
         let that = this;
-        let reqData = {patient: patient, is_cancelled: true};
+        console.log("log",patient ,payment, cancel_note)
+        let reqData = {
+            patient: patient.id, 
+            is_cancelled: true,
+            cancel_note:cancel_note,
+        };
         let successFn = function (data) {
+            that.props.cancelPaymentClose();
             displayMessage(SUCCESS_MSG_TYPE, "Payment cancelled successfully")
             that.props.loadPayments();
         };
@@ -71,26 +98,39 @@ class CancelPaymentModal extends React.Component {
 
     render() {
         let that = this;
+        let {otpField} = this.state;
         const {getFieldDecorator} = that.props.form;
         return(
             <Modal
-                visible={(that.state.cancelPaymentVisible && that.props.editPayment && that.props.editPayment.id == that.props.payment.id)}
+                visible={that.state.cancelPaymentVisible}
                 title="Cancel Payment"
                 footer={null}
                 onOk={that.handleSubmitCancelPayment}
                 onCancel={that.props.cancelPaymentClose}
+
             >
                 <Form>
-                    <Form.Item>
-                        {getFieldDecorator('otp', {
-                            rules: [{required: true, message: 'Please input Otp!'}],
+                    <Form.Item key="text-area-note"> 
+                        {getFieldDecorator('cancel_note',{
+                            rules:[{required:true, message:REQUIRED_FIELD_MESSAGE}],
                         })(
-                            <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                                   placeholder="Otp"
-                            />,
+                            <TextArea placeholder="cancel notes"/>
                         )}
                     </Form.Item>
-                    <Form.Item>
+
+                    {otpField ?
+                        <Form.Item key="otp">
+                            {getFieldDecorator('otp', {
+                                rules: [{required: otpField, message: 'Please input Otp!'}],
+                            })(
+                                <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                                    placeholder="Otp"
+                                />,
+                            )}
+                        </Form.Item> :null
+                    }
+
+                    <Form.Item key="btn">
                         {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
                             Resend Otp ?
                         </a> : null}
