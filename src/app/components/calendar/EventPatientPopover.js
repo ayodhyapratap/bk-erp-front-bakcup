@@ -149,6 +149,7 @@ export default class EventPatientPopover extends React.Component {
                             </div>
                             <Divider style={{margin: 0}}/>
                             <b>Category:</b>{this.state.appointment.category_data ? this.state.appointment.category_data.name : null}
+                            <p>{this.state.appointment.first_appointment?<span>This is Patient's first apppointment</span> :''}</p>
                         </Row>
                         <Divider style={{margin: 0}}/>
                         <Row style={{textAlign: 'right'}}>
