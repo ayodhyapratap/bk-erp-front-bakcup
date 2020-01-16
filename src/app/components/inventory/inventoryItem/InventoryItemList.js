@@ -33,7 +33,9 @@ export default class InventoryItemList extends React.Component {
             itemStockFilter: "ALL",
             loading: true,
             nextItemPage: null,
-            productMargin:[]
+            productMargin:[],
+            inventoryModal:false,
+            inventoryItemObj:null
         }
         this.loadData = this.loadData.bind(this);
         this.showAddOrConsumeModal = this.showAddOrConsumeModal.bind(this);
@@ -228,6 +230,20 @@ export default class InventoryItemList extends React.Component {
         }
         getAPI(INVENTORY_ITEM_EXPORT, successFn, errorFn, reqParams);
     }
+    inventoryItemModalOpen =(item)=>{
+        this.setState({
+            inventoryModal:true,
+            inventoryItemObj:item
+        })
+    }
+
+    inventoryItemModalClose =()=>{
+        this.setState({
+            inventoryModal:false,
+        })
+    }
+
+
 
     render() {
         const taxesdata = {};
@@ -253,7 +269,7 @@ export default class InventoryItemList extends React.Component {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            // render: (value,record) => <span>{record.inventory_item.name}</span>
+            render: (value,record) => <a onClick={()=>this.inventoryItemModalOpen(record)}><span>{record.name}</span></a>
         }, {
             title: 'HSN',
             dataIndex: 'code',
@@ -349,6 +365,34 @@ export default class InventoryItemList extends React.Component {
                 </div>
             }
         }];
+
+        const inventoryItemColumn =[
+            {
+                title:'S.No',
+                key:'s_no',
+                render:(item , record ,index)=><span>{index+1}</span>
+            },
+            {
+                title:'Batch Number',
+                dataIndex:'batch_number',
+                key:"batch_number",
+            },
+            {
+                title:'Quantity',
+                dataIndex:'quantity',
+                key:'quantity',
+
+            },
+            {
+                title:'Stock Cost(INR)',
+                key:'stock_cost',
+                render:(item, record) =><span>{record.quantity * record.unit_cost}</span>
+            },{
+                title:'Expiry Date',
+                key:'expiry_date',
+                render:(item, record)=><span>{record.expiry_date}</span>
+            }
+        ] 
         return <div>
             <Switch>
                 <Route path="/inventory/add"
@@ -480,6 +524,17 @@ export default class InventoryItemList extends React.Component {
                             <AddOrConsumeStock showAddOrConsumeModal={this.showAddOrConsumeModal}
                                                itemId={this.state.itemId}
                                                actionType={this.state.actionType}/>
+                        </Modal>
+
+                        <Modal 
+                            title={this.state.inventoryItemObj?this.state.inventoryItemObj.name + ' ' + 'Details':''}
+                            visible={this.state.inventoryModal}
+                            onCancel={this.inventoryItemModalClose}
+                            footer={null}
+                        >
+                            <Table dataSource={this.state.inventoryItemObj?this.state.inventoryItemObj.item_type_stock.item_stock:[]}
+                               columns={inventoryItemColumn} pagination={false} 
+                            />
                         </Modal>
                     </Card>
                 </Route>
