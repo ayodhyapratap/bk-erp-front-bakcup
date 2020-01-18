@@ -82,6 +82,10 @@ export default class BedPackages extends React.Component {
             dataIndex: 'tatkal_price',
             key: 'tatkal_price',
             render: (value, record) => (<p>{(record.tatkal_price + record.tatkal_tax_value).toFixed(2)}</p>)
+        },{
+            title:'Description',
+            dataIndex:'description',
+            key:'description'
         }, {
             title: 'Action',
             key: 'action',

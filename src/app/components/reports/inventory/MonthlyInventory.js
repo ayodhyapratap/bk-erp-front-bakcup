@@ -57,6 +57,7 @@ export default class MonthlyInventory extends React.Component {
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             type:that.props.type,
+            practice:that.props.active_practiceId,
         };
         if(this.props.consume){
             apiParams.consume=this.props.consume.toString();
