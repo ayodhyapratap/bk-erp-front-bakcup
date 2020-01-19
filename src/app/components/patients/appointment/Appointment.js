@@ -15,6 +15,7 @@ import {
 import {getAPI, interpolate, putAPI} from "../../../utils/common";
 import moment from 'moment';
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
+import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 
 class Appointment extends React.Component {
@@ -78,22 +79,32 @@ class Appointment extends React.Component {
 
     }
 
-    loadAllAppointments() {
-        let that = this;
+    loadAllAppointments(page = 1 ) {
+        let that = this; 
         this.setState({
             loading: true,
         })
         let successFn = function (data) {
-            // console.log("DataKya h",data);
-            let appointmentArray = data;
-            // appointmentArray.push(data);
-            // console.log("AppointmentArray",JSON.stringify(appointmentArray));
-            that.setState({
-                appointments: data,
-                loading: false,
+            if (data.current == 1) {
+                that.setState({
+                    appointments: data.results,
+                    total: data.count,
+                    loadMoreAppointment: data.next,
+                    loading: false,
+    
+                });
+            } else {
+                that.setState(function (prevState) {
+                    return {
+                        total: data.count,
+                        appointments: [...prevState.appointments, ...data.results],
+                        loading: false,
+                        loadMoreAppointment: data.next
+                    }
+                })
+            }
 
-            });
-            // console.log("appointment", JSON.stringify(that.state.appointments));
+           
 
         }
 
@@ -105,7 +116,16 @@ class Appointment extends React.Component {
 
 
         }
-        getAPI(interpolate(ALL_APPOINTMENT_API, [this.props.active_practiceId]), successFn, errorFn, this.props.match.params.id ? {"patient": this.props.match.params.id,practice:this.props.active_practiceId} : {practice:this.props.active_practiceId});
+        let apiParams={
+            practice:this.props.active_practiceId,
+            pagination:true,
+            page: page
+        }
+        if(this.props.match.params.id){
+            apiParams.patient=this.props.match.params.id;
+        }
+
+        getAPI(ALL_APPOINTMENT_API, successFn, errorFn ,apiParams);
 
     }
 
@@ -308,6 +328,11 @@ class Appointment extends React.Component {
                 <Table loading={this.state.loading} columns={columns} scroll={{x: 1300}}
                        pagination={false}
                        dataSource={this.state.appointments}/>
+                       
+                <InfiniteFeedLoaderButton
+                        loaderFunction={() => this.loadAllAppointments(this.state.loadMoreAppointment)}
+                        loading={this.state.loading}
+                        hidden={!this.state.loadMoreAppointment}/>
 
 
             </Card>
@@ -320,6 +345,11 @@ class Appointment extends React.Component {
             <Table loading={this.state.loading} columns={columns} scroll={{x: 1300}}
                    pagination={false}
                    dataSource={this.state.appointments}/>
+
+            <InfiniteFeedLoaderButton
+                        loaderFunction={() => this.loadAllAppointments(this.state.loadMoreAppointment)}
+                        loading={this.state.loading}
+                        hidden={!this.state.loadMoreAppointment}/>
 
 
         </Card>
