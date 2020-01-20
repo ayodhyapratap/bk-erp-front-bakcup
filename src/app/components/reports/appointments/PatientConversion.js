@@ -5,6 +5,7 @@ import CustomizedTable from "../../common/CustomizedTable";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
 import {Col, Row, Select, Statistic} from "antd";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
+import moment from "moment";
 
 export default class PatientConversion extends React.Component{
     constructor(props){
@@ -111,7 +112,6 @@ export default class PatientConversion extends React.Component{
                 title:'Date',
                 key:'date',
                 dataIndex:'date'
-
             },{
                 title: 'Patient Id',
                 key: 'custom_id',
@@ -124,7 +124,6 @@ export default class PatientConversion extends React.Component{
                 title:'Gender',
                 key:'gender',
                 dataIndex:'gender',
-
             },{
                 title:'Contact Number',
                 key:'mobile',
@@ -145,6 +144,19 @@ export default class PatientConversion extends React.Component{
                 title:'Source',
                 key:'source',
                 dataIndex:'source',
+            },{
+                title:'Appointment',
+                key:'appointment',
+                dataIndex:'appointment',
+                render:(value)=><span>{moment(value).format('DD MMM YYYY HH:mm')}</span>
+            },{
+                title:'Appointment Status',
+                key:'status',
+                dataIndex:'status',
+            },{
+                title:'Doctor',
+                key:'doctor',
+                dataIndex:'doctor',
             },{
                 title:'Last Patient Note',
                 key:'last_note',

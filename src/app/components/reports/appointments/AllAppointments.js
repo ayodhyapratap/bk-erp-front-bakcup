@@ -136,7 +136,29 @@ export default class AllAppointments extends React.Component {
                 moment(record.schedule_at).format('HH:mm')
             ),
 
+        },{
+            title: 'Patient',
+            dataIndex: 'patient',
+            key: 'patient_name',
+            render: (item, record) => <span>{item.user.first_name}</span>,
+            export: (item, record) => (item.user.first_name),
+        },{
+            title: 'Patient Id',
+            dataIndex: 'patient',
+            key: 'patient_name',
+            render: (item, record) => <span>{item.custom_id}</span>,
+            export: (item, record) => (item.custom_id),
         }, {
+            title: 'Current Status',
+            key: 'status',
+            dataIndex: 'status',
+        }, {
+            title: 'Doctor',
+            dataIndex: 'doctor',
+            key: 'address',
+            render: (text, record) => <span>{record.doctor_data ? record.doctor_data.user.first_name : null}</span>,
+            export: (item, record) => (record.doctor_data ? record.doctor_data.user.first_name : null),
+        },  {
             title: 'Check-in At',
             dataIndex: 'waiting',
             key: 'waiting',
@@ -177,22 +199,6 @@ export default class AllAppointments extends React.Component {
                   </span>
             ),
             export: (item, record) => (record.checkout ? moment(record.checkout).format('lll') : ''),
-        }, {
-            title: 'Patient',
-            dataIndex: 'patient',
-            key: 'patient_name',
-            render: (item, record) => <span>{item.user.first_name}</span>,
-            export: (item, record) => (item.user.first_name),
-        }, {
-            title: 'Current Status',
-            key: 'status',
-            dataIndex: 'status',
-        }, {
-            title: 'Doctor',
-            dataIndex: 'doctor',
-            key: 'address',
-            render: (text, record) => <span>{record.doctor_data ? record.doctor_data.user.first_name : null}</span>,
-            export: (item, record) => (record.doctor_data ? record.doctor_data.user.first_name : null),
         }, {
             title: 'Category',
             dataIndex: 'category',
