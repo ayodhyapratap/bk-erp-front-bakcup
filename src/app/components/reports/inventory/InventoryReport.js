@@ -73,7 +73,8 @@ class InventoryReport extends React.Component {
         let apiParams = {
             page:page,
             start: this.state.startDate.format('YYYY-MM-DD'),
-            end: this.state.endDate.format('YYYY-MM-DD')
+            end: this.state.endDate.format('YYYY-MM-DD'),
+            practice:that.props.active_practiceId,
         }
         if(that.state.bill_number) {
             apiParams.bill_number = that.state.bill_number;

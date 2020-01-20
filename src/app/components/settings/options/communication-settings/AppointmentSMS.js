@@ -194,7 +194,7 @@ class AppointmentSMS extends React.Component {
             }, {
                 key: "promo_code_text",
                 placeholder: "Promo Code  SMS Text",
-                initialValue: this.state.data ? this.state.data.payment_sms_text : null,
+                initialValue: this.state.data ? this.state.data.promo_code_text : null,
                 minRows: 4,
                 type: SMS_FIELD,
                 options: PROMO_CODE_SMS_TAG_OPTIONS

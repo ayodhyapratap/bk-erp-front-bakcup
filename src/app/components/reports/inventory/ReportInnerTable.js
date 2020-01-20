@@ -1,7 +1,7 @@
 import React from "react";
 import {Table} from "antd";
 import {STOCK_ENTRY} from "../../../constants/api";
-import {getAPI,makeFileURL} from "../../../utils/common";
+import {getAPI,makeFileURL, interpolate} from "../../../utils/common";
 
 
 export default class ReportInnerTable extends React.Component {
@@ -25,7 +25,7 @@ export default class ReportInnerTable extends React.Component {
         });
         let successFn = function (data) {
             that.setState({
-                inventoryList:data.results,
+                inventoryList:data,
                 loading:false
             })
         }
@@ -35,12 +35,12 @@ export default class ReportInnerTable extends React.Component {
             })
         }
         let params={
-            bill_number:this.props.bill_number,
+            bill_number:this.props.id,
             supplier:this.props.supplier,
             date:this.props.date
         }
-        if(this.props.bill_number || this.props.supplier){
-            getAPI(STOCK_ENTRY,successFn,errorFn,params)
+        if(this.props.id || this.props.supplier){
+            getAPI(interpolate(STOCK_ENTRY, [this.props.id]),successFn,errorFn)
         }
 
         // getAPI(STOCK_ENTRY, successFn, errorFn);
@@ -96,7 +96,7 @@ export default class ReportInnerTable extends React.Component {
         return <div>
                 <Table loading={this.state.loading} bordered={true} rowKey={(record) => record.id}
                        pagination={false}
-                 columns={columns} dataSource={this.state.inventoryList}/>
+                 columns={columns} dataSource={[this.state.inventoryList]}/>
         </div>
     }
 }

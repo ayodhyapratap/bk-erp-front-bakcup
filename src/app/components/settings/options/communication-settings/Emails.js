@@ -61,7 +61,7 @@ class Emails extends React.Component {
         },{
             label:'Clinic Logo',
             key:'clinic_logo',
-            // initialValue: this.state.data ? this.state.data.clinic_logo : ' ',
+            initialValue: this.state.data ? this.state.data.clinic_logo : ' ',
             type:SINGLE_IMAGE_UPLOAD_FIELD
         },{
             key: "appointment_confirmation_email",

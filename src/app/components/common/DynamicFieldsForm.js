@@ -15,6 +15,7 @@ import {
     Tag,
     TimePicker,
     Upload,
+    Avatar,
 } from "antd";
 import {
     CHECKBOX_FIELD,
@@ -622,8 +623,10 @@ class DynamicFieldsForm extends React.Component {
                                             <Icon type="upload"/> Select File
                                         </Button>
                                         {field.initialValue ?
-                                            <img src={makeFileURL(field.initialValue)}
-                                                 style={{maxWidth: '100%'}}/> : null}
+                                            // <img src={makeFileURL(field.initialValue)}
+                                            //      style={{maxWidth: '100%'}}/> 
+                                            <Avatar size={64} src={makeFileURL(field.initialValue)}/>
+                                                 : null}
                                     </Upload>
                                 )}
                                 {field.allowWebcam ? <span className="ant-form-text">

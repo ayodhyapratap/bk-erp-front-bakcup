@@ -609,7 +609,7 @@ export const PROMO_CODE_SMS_TAG_OPTIONS = [
         label: "CLINIC NAME",
         value: "{{CLINIC}}"
     }, {
-        label: "CLINIC NAME",
+        label: "EXPIRY DATE",
         value: "{{EXPIRY}}"
     }, {
         label: "VALUE",
@@ -620,6 +620,9 @@ export const PROMO_CODE_SMS_TAG_OPTIONS = [
     }, {
         label: "MIN PURCHASE",
         value: "{{MIN_PURCHASE}}"
+    },{
+        label:"PROMO CODE",
+        value:"{{CODE}}"
     }];
 export const BLOOD_GROUP_CONFIG_PARAM = 'config_blood_group';
 export const PATIENT_SOURCE_CONFIG_PARAM = 'config_source';

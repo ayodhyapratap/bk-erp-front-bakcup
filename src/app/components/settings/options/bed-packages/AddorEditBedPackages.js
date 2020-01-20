@@ -7,7 +7,8 @@ import {
     NUMBER_FIELD,
     SELECT_FIELD,
     SINGLE_IMAGE_UPLOAD_FIELD,
-    SUCCESS_MSG_TYPE
+    SUCCESS_MSG_TYPE,
+    TEXT_FIELD
 } from "../../../../constants/dataKeys";
 import {displayMessage, getAPI, interpolate} from "../../../../utils/common";
 import {BED_PACKAGES, ROOM_TYPE, TAXES} from "../../../../constants/api";
@@ -104,6 +105,13 @@ export default class AddorEditBedPackages extends React.Component {
                 label: tax.name + "(" + tax.tax_value + "%)",
                 value: tax.id
             }))
+        },{
+            label:'Description',
+            key:'description',
+            initialValue:this.props.editPackage  ?this.props.editPackage.description:'',
+            type:TEXT_FIELD,
+            minRows:3,
+
         }];
         let formProps = {
             method: "post",
