@@ -88,20 +88,20 @@ class AddEditStaff extends React.Component {
                 required: true,
                 initialValue: this.state.editStaff ? this.state.editStaff.user.mobile : null,
                 type: INPUT_FIELD,
-                disabled: !!this.state.editStaff
+                // disabled: !!this.state.editStaff
             }, {
                 label: "Email Id",
                 key: "user.email",
                 placeholder:"Email Id",
                 required: true,
-                disabled: !!this.state.editStaff,
+                // disabled: !!this.state.editStaff,
                 initialValue: this.state.editStaff ? this.state.editStaff.user.email : null,
                 type: EMAIL_FIELD
             },{
                 label: "Role",
                 key: "role",
                 required: true,
-                initialValue: this.state.editStaff ? this.state.editStaff.role : null,
+                initialValue: this.state.editStaff ? [this.state.editStaff.role] : null,
                 type: SELECT_FIELD,
                 options: ROLES.map(role => ({label: role.label, value: [role.value]}))
             }, {

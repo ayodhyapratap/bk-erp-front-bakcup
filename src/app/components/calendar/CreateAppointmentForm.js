@@ -749,8 +749,7 @@ export default class CreateAppointmentForm extends React.Component {
                             <FormItem key="patient_email" label="Email Address"  {...formItemLayout}>
                                 {getFieldDecorator("patient_email", {
                                     initialValue: this.state.appointment ? this.state.appointment.patient.user.email : null,
-                                    rules: [{type: 'email', message: 'The input is not valid E-mail!'},
-                                        {required: true, message: REQUIRED_FIELD_MESSAGE}],
+                                    rules: [{type: 'email', message: 'The input is not valid E-mail!'}],
                                 })(
                                     <Input placeholder="Email Address"/>
                                 )}
