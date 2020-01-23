@@ -68,7 +68,7 @@ import {
     RETURN_INVOICE_FOR_EACH_DOCTOR,
     RETURN_INVOICE_FOR_EACH_PRODUCT,
     RETURN_INVOICE_FOR_EACH_PATIENT_GROUPS,
-    RETURN_INVOICE_FOR_EACH_TAX, MONTHLY_WISE_RETURN_INVOICE, DAILY_WISE_RETURN_INVOICE
+    RETURN_INVOICE_FOR_EACH_TAX, MONTHLY_WISE_RETURN_INVOICE, DAILY_WISE_RETURN_INVOICE, PAYMENT_UNSETTLEMENT
 } from "../constants/dataKeys";
 
 export const PAYMENT_TYPES = [
@@ -391,17 +391,18 @@ export const MLM_RELATED_REPORT = [
 
 /*Payments Reports*/
 export const PAYMENT_RELATED_REPORT = [
-    {name: 'Refund Payments', value: PAYMENT_REFUND},
-    {name: 'Payment Received From Each Patient Group', value: PATIENTS_UNSETTLED_ADVANCE},
-    {name: 'Patients With Unsettled Advance, As Of Today', value: PAYMENT_RECEIVED_PATIENT_GROUP},
+    // {name: 'Refund Payments', value: PAYMENT_REFUND},
+    {name: 'Payment Received From Each Patient Group', value: PAYMENT_RECEIVED_PATIENT_GROUP},
+    {name: 'Patients With Unsettled Advance, As Of Today', value: PATIENTS_UNSETTLED_ADVANCE},
     {name: 'Modes Of Payment', value: MODE_OF_PAYMENTS},
     {name: 'Payment Received Per Day', value: PAYMENT_RECEIVED_PER_DAY},
     {name: 'Payment Received Per Doctor', value: PAYMENT_RECEIVED_PER_DOCTOR},
     {name: 'Payment Received Per Month', value: PAYMENT_RECEIVED_PER_MONTH},
-    {name: 'Payment Settlement', value: PAYMENT_SETTLEMENT},
-    {name: 'Payment Settlement Per Doctor', value: PAYMENT_SETTLEMENT_PER_DOCTOR},
-    {name: 'Credit Notes', value: CREDIT_NOTES},
-    {name: 'Credit Amount Per Doctor', value: CREDIT_AMOUNT_PER_DOCTOR},
+    
+    // {name: 'Payment Settlement', value: PAYMENT_SETTLEMENT},
+    // {name: 'Payment Settlement Per Doctor', value: PAYMENT_SETTLEMENT_PER_DOCTOR},
+    // {name: 'Credit Notes', value: CREDIT_NOTES},
+    // {name: 'Credit Amount Per Doctor', value: CREDIT_AMOUNT_PER_DOCTOR},
 ];
 
 /*Income Reports*/
