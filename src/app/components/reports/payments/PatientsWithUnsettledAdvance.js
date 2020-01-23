@@ -27,7 +27,8 @@ export default class PatientsWithUnsettledAdvance extends React.Component {
     componentWillReceiveProps(newProps) {
         let that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate || this.props.patient_groups != newProps.patient_groups ||this.props.taxes!=newProps.taxes
-            || this.props.doctors != newProps.doctors || this.props.payment_mode != newProps.payment_mode || this.props.consume != newProps.consume || this.props.exclude_cancelled != newProps.exclude_cancelled)
+            || this.props.doctors != newProps.doctors ||this.props.payment_mode !=newProps.payment_mode||this.props.discount != newProps.discount||this.props.treatments!=newProps.treatments||
+            this.props.consume!=newProps.consume || this.props.exclude_cancelled != newProps.exclude_cancelled)
             this.setState({
                 startDate: newProps.startDate,
                 endDate: newProps.endDate
@@ -44,8 +45,7 @@ export default class PatientsWithUnsettledAdvance extends React.Component {
         });
         let successFn = function (data) {
             that.setState({
-                report: data.data,
-                total: data.total,
+                report: data,
                 loading: false
             });
         };
@@ -56,9 +56,10 @@ export default class PatientsWithUnsettledAdvance extends React.Component {
         };
         let apiParams = {
             type: that.props.type,
+            practice: that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            exclude_cancelled: this.props.exclude_cancelled ? true : false,
+            is_cancelled: this.props.exclude_cancelled ? true : false,
         };
         if (this.props.taxes){
             apiParams.taxes=this.props.taxes.toString();
@@ -74,6 +75,12 @@ export default class PatientsWithUnsettledAdvance extends React.Component {
         }
         if (this.props.consume) {
             apiParams.consume = this.props.consume.toString();
+        }
+        if (this.props.discount) {
+            apiParams.discount = this.props.discount;
+        }
+        if (this.props.treatments) {
+            apiParams.treatments = this.props.treatments.toString();
         }
         getAPI(interpolate(PAYMENT_REPORTS, [that.props.active_practiceId]), successFn, errorFn, apiParams);
     };
@@ -103,6 +110,41 @@ export default class PatientsWithUnsettledAdvance extends React.Component {
             render: (item, record) => <span> {i++}</span>,
             export:(item,record,index)=>index+1,
             width: 50
+        },{
+            title:"Date",
+            key:"date",
+            dataIndex:"date",
+            render: (text, record) => (
+                <span>
+                {moment(record.date).format('LL')}
+                  </span>
+            ),
+            export:(text,record)=> {moment(record.date).format('LL')}
+        },{
+            title:"Patient Name",
+            key:"name",
+            dataIndex:"name",
+        },{
+            title:"Patient Id",
+            key:"patient_id",
+            dataIndex:"custom_id"
+        },{
+            title:"Unsettled Advance(INR)",
+            key:"advance",
+            dataIndex:"advance",
+            render:(item, record) =><span>{record.advance?record.advance.toFixed(2):'--'}</span>,
+            export:(text,record)=> (record.advance?record.advance.toFixed(2):'--')
+        },{
+            title:"Net Advance/Due (INR)",
+            key:'net',
+            dataIndex:"net",
+            render:(item, record) =><span>{record.net?record.net.toFixed(2):'--'}</span>,
+            export:(text,record)=> (record.net?record.net.toFixed(2):'--')
+
+        },{
+            title:"Last Payment",
+            key:"last_payment",
+            dataIndex:"last_payment"
         }];
 
         return <div>
@@ -116,16 +158,11 @@ export default class PatientsWithUnsettledAdvance extends React.Component {
                     </p>
                 </span>
             </h2>
-            <Row>
-                <Col span={12} offset={6} style={{textAlign: "center"}}>
-                    {/*<Statistic title="Total Appointments" value={this.state.total}/>*/}
-                    <br/>
-                </Col>
-            </Row>
 
-            <CustomizedTable
+            <Table
                 loading={this.state.loading}
                 columns={columns}
+                pagination={false}
                 dataSource={this.state.report}/>
 
         </div>

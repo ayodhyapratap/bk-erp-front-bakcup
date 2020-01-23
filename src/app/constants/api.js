@@ -149,7 +149,7 @@ export const INVENTORY_REPORT_API = 'inventory_item/inventory_report';
 export const MLM_Reports = 'patients/mlm_report';
 export const MLM_Agent_Wallet = 'patients/agent_wallet_balance';
 /** Payment Reports**/
-export const PAYMENT_REPORTS = 'xyz';
+export const PAYMENT_REPORTS = 'payment/payment_reports/';
 
 /** Income Reports**/
 export const INCOME_REPORTS = "invoice/invoice_reports";
