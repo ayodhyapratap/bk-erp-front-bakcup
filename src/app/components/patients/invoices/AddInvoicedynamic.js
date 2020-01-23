@@ -32,6 +32,7 @@ import {
 } from "../../../constants/api";
 import moment from "moment";
 import {loadDoctors} from "../../../utils/clinicUtils";
+import {initialize} from "react-ga";
 
 const {Search} = Input;
 const TabPane = Tabs.TabPane;
@@ -669,15 +670,17 @@ class Addinvoicedynamic extends React.Component {
             });
 
             let total = values.unit[tableObj._id] * (values.unit_cost[tableObj._id] ? values.unit_cost[tableObj._id] : 0);
-
+            let discountAppliedOnProduct = 0;
             if (initialDiscountType == 'INR' && initialDiscount) {
                 if (total > initialDiscount) {
                     total -= initialDiscount;
+                    discountAppliedOnProduct = initialDiscount;
                     discountApplied = initialDiscount;
                     initialDiscount = 0;
 
                 } else {
                     initialDiscount -= total;
+                    discountAppliedOnProduct = total;
                     discountApplied = total;
                     total = 0;
                 }
@@ -691,7 +694,7 @@ class Addinvoicedynamic extends React.Component {
                 total_unit_cost: totalWithoutTaxWithDiscount,
                 total: total,
                 selectOption: selectOption,
-                discount: initialDiscount,
+                discount: discountAppliedOnProduct,
                 discount_type: initialDiscountType,
                 offers: offer
             })

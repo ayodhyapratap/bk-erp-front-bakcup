@@ -69,8 +69,8 @@ export default class PromoCode extends React.Component{
                 key:'promo_code',
             },{
                 title:'Promo Code Value',
-                dataIndex:'promo_code',
-                key:'promo_code',
+                dataIndex:'code_value',
+                key:'code_value',
             },{
                 title:'Type',
                 dataIndex:'code_type',
