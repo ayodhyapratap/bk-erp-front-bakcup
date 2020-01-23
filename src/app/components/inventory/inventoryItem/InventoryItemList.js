@@ -386,11 +386,11 @@ export default class InventoryItemList extends React.Component {
             {
                 title:'Stock Cost(INR)',
                 key:'stock_cost',
-                render:(item, record) =><span>{record.quantity * record.unit_cost}</span>
+                render:(item, record) =><span>{(record.quantity * record.unit_cost).toFixed(2)}</span>
             },{
                 title:'Expiry Date',
                 key:'expiry_date',
-                render:(item, record)=><span>{record.expiry_date}</span>
+                render:(item, record)=><span>{moment(record.expiry_date).format('DD-MM-YYYY')}</span>
             }
         ] 
         return <div>
