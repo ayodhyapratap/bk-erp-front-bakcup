@@ -79,7 +79,7 @@ export const PAYMENT_TYPES = [
     {label: 'unknown', value: 'unknown'},
 ]
 
-export const PAYMENT_OFFLINE_MODE='Cash';
+export const PAYMENT_OFFLINE_MODE = 'Cash';
 
 export const DISEASE_TYPES = [
     {label: 'Kidney Disease', value: 'Kidney Disease'},
@@ -398,7 +398,7 @@ export const PAYMENT_RELATED_REPORT = [
     {name: 'Payment Received Per Day', value: PAYMENT_RECEIVED_PER_DAY},
     {name: 'Payment Received Per Doctor', value: PAYMENT_RECEIVED_PER_DOCTOR},
     {name: 'Payment Received Per Month', value: PAYMENT_RECEIVED_PER_MONTH},
-    
+
     // {name: 'Payment Settlement', value: PAYMENT_SETTLEMENT},
     // {name: 'Payment Settlement Per Doctor', value: PAYMENT_SETTLEMENT_PER_DOCTOR},
     // {name: 'Credit Notes', value: CREDIT_NOTES},
@@ -607,6 +607,12 @@ export const PROMO_CODE_SMS_TAG_OPTIONS = [
         label: "PATIENT NAME",
         value: "{{PATIENT}}"
     }, {
+        label: "PATIENT ID",
+        value: "{{PATIENT_ID}}"
+    }, {
+        label: "CLINIC CONTACT",
+        value: "{{CLINICCONTACTNUMBER}}"
+    }, {
         label: "CLINIC NAME",
         value: "{{CLINIC}}"
     }, {
@@ -621,16 +627,41 @@ export const PROMO_CODE_SMS_TAG_OPTIONS = [
     }, {
         label: "MIN PURCHASE",
         value: "{{MIN_PURCHASE}}"
-    },{
-        label:"PROMO CODE",
-        value:"{{CODE}}"
+    }, {
+        label: "PROMO CODE",
+        value: "{{CODE}}"
+    }];
+export const PROMO_CODE_RUPEE_SMS_TAG_OPTIONS = [
+    {
+        label: "PATIENT NAME",
+        value: "{{PATIENT}}"
+    }, {
+        label: "PATIENT ID",
+        value: "{{PATIENT_ID}}"
+    }, {
+        label: "CLINIC CONTACT",
+        value: "{{CLINICCONTACTNUMBER}}"
+    }, {
+        label: "CLINIC NAME",
+        value: "{{CLINIC}}"
+    }, {
+        label: "EXPIRY DATE",
+        value: "{{EXPIRY}}"
+    }, {
+        label: "VALUE",
+        value: "{{VALUE}}"
+    }, {
+        label: "MIN PURCHASE",
+        value: "{{MIN_PURCHASE}}"
+    }, {
+        label: "PROMO CODE",
+        value: "{{CODE}}"
     }];
 export const BLOOD_GROUP_CONFIG_PARAM = 'config_blood_group';
 export const PATIENT_SOURCE_CONFIG_PARAM = 'config_source';
 export const SMS_LANGUAGE_CONFIG_PARAM = 'config_sms_language';
 export const FAMILY_RELATION_CONFIG_PARAM = 'config_family_relation';
 export const GENDER_CONFIG_PARAM = 'config_gender';
-
 
 
 export const INCOME_TYPE = [

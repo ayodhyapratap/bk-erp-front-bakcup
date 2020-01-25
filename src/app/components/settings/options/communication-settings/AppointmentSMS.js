@@ -8,7 +8,11 @@ import {
 import {COMMUNICATONS_API} from "../../../../constants/api"
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
 import {
-    APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS, LANGUAGE, PROMO_CODE_SMS_TAG_OPTIONS, SMS_LANGUAGE_CONFIG_PARAM
+    APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS,
+    LANGUAGE,
+    PROMO_CODE_RUPEE_SMS_TAG_OPTIONS,
+    PROMO_CODE_SMS_TAG_OPTIONS,
+    SMS_LANGUAGE_CONFIG_PARAM
 } from "../../../../constants/hardData";
 import moment from "moment";
 import {loadConfigParameters} from "../../../../utils/clinicUtils";
@@ -189,12 +193,25 @@ class AppointmentSMS extends React.Component {
                 key: "promo_code_text",
                 initialValue: this.state.data ? this.state.data.promo_code_text : false,
                 type: LABEL_FIELD,
-                extra: "This SMS is sent to the Patient when payment is received.",
-                follow: <b>PROMO CODE SMS TEXT</b>
+                extra: "This SMS is sent to the Patient for promo code.",
+                follow: <b>Promo Code Fixed Rupee SMS Text</b>
             }, {
+                key: "promo_code_value_text",
+                placeholder: "Promo Code Fixed Rupee SMS Text",
+                initialValue: this.state.data ? this.state.data.promo_code_value_text : null,
+                minRows: 4,
+                type: SMS_FIELD,
+                options: PROMO_CODE_RUPEE_SMS_TAG_OPTIONS
+            },{
                 key: "promo_code_text",
-                placeholder: "Promo Code  SMS Text",
-                initialValue: this.state.data ? this.state.data.promo_code_text : null,
+                initialValue: this.state.data ? this.state.data.promo_code_text : false,
+                type: LABEL_FIELD,
+                extra: "This SMS is sent to the Patient for promo code.",
+                follow: <b>Promo Code Percent Discount SMS Text</b>
+            },{
+                key: "promo_code_precent_text",
+                placeholder: "Promo Code Percent Discount SMS Text",
+                initialValue: this.state.data ? this.state.data.promo_code_precent_text : null,
                 minRows: 4,
                 type: SMS_FIELD,
                 options: PROMO_CODE_SMS_TAG_OPTIONS

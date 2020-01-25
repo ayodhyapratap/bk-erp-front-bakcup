@@ -59,13 +59,6 @@ export default class Membership extends React.Component {
             dataIndex: 'benefit',
             key: 'benefit',
         }, {
-            title: 'Opening Balance (INR)',
-            dataIndex: 'fee',
-            key: 'opening',
-            render: (item, record) => <span>
-                {record.fee + (record.fee * record.benefit / 100)}
-            </span>
-        }, {
             title: 'Validity (Months)',
             dataIndex: 'validity',
             key: 'validity'
