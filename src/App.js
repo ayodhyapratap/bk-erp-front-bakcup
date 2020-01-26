@@ -4,6 +4,7 @@ import {Affix, Alert, Layout} from "antd";
 import {Route, Switch} from "react-router-dom";
 import {loggedInUser, logInUser, logInUserWithOtp, logOutUser,} from "./app/utils/auth";
 import ReactGA from 'react-ga';
+import WebCall from "./app/components/conference/WebCall";
 
 
 const Auth = loadable(() => import('./app/components/auth/Auth'));
@@ -65,9 +66,11 @@ class App extends Component {
                 />
             </Affix>}
             <Switch>
+                <Route exact path="/webcall" render={(route)=><WebCall {...this.state} {...route}/>}/>
                 <Route exact path="/login" render={() => <Auth {...this.state} login={this.login}/>}/>
                 <Route exact path="/password-reset/:token"
                        render={(route) => <Auth {...route} {...this.state} login={this.login}/>}/>
+
                 <Route render={(route) => (this.state.user ?
                     <AppBase {...this.state} {...route} {...this.props} logout={this.logout}/> :
                     <Auth {...this.state} login={this.login}/>)}/>

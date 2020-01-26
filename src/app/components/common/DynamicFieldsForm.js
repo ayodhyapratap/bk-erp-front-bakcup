@@ -67,7 +67,7 @@ class DynamicFieldsForm extends React.Component {
         this.state = {
             fields: this.props.fields, //Fields data to create the form
             formData: {},
-            formProp: this.props.formProp,    //Form data to send on form submission
+            formProp: {authorisation: true, ...this.props.formProp},    //Form data to send on form submission
             disabled: false,
             loading: false,
             countryOptions: [],
@@ -241,10 +241,14 @@ class DynamicFieldsForm extends React.Component {
                 loading: false,
             });
         };
+        let headers = {};
+        if (!that.state.formProp.authorisation) {
+            headers.Authorization = undefined;
+        }
         if (this.props.formProp.method == "post") {
-            postAPI(this.props.formProp.action, data, successFn, errorFn);
+            postAPI(this.props.formProp.action, data, successFn, errorFn, {...headers});
         } else if (this.props.formProp.method == "put") {
-            putAPI(this.props.formProp.action, data, successFn, errorFn);
+            putAPI(this.props.formProp.action, data, successFn, errorFn, {...headers});
         }
     }
 
@@ -626,7 +630,7 @@ class DynamicFieldsForm extends React.Component {
                                             // <img src={makeFileURL(field.initialValue)}
                                             //      style={{maxWidth: '100%'}}/> 
                                             <Avatar size={64} src={makeFileURL(field.initialValue)}/>
-                                                 : null}
+                                            : null}
                                     </Upload>
                                 )}
                                 {field.allowWebcam ? <span className="ant-form-text">

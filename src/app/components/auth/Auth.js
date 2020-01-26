@@ -45,6 +45,7 @@ class Auth extends React.Component {
             },
             action: RESET_PASSWORD,
             method: "post",
+            authorisation: false
         }
         return <Layout className="loginLayout">
 
