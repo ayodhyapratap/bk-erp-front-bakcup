@@ -31,7 +31,7 @@ import MedicinePackages from "./options/medicine-packages/MedicinePackages";
 import DiseaseList from "./options/disease-list/DiseaseList";
 import AgentRolesList from "./options/agent-roles/AgentRoles";
 import AgentsList from "./options/agents/AgentList";
-import ZoomUser from "./options/zoom-user/ZoomUser";
+// import ZoomUser from "./options/zoom-user/ZoomUser";
 
 const Content = Layout.Content;
 
@@ -191,9 +191,9 @@ class SettingsDash extends React.Component {
                                render={(route) =>(this.props.activePracticePermissions.SettingsMedicinePackages || this.props.allowAllPermissions ?
                                    <MedicinePackages {...this.state} {...this.props} {...route}/>:<PermissionDenied/>)}/>
 
-                        <Route path="/settings/zoom-user"
-                               render={(route) =>(this.props.activePracticePermissions.SettingsMedicinePackages || this.props.allowAllPermissions ?
-                                   <ZoomUser {...this.state} {...this.props} {...route}/>:<PermissionDenied/>)}/>
+                        {/*<Route path="/settings/zoom-user"*/}
+                        {/*       render={(route) =>(this.props.activePracticePermissions.SettingsMedicinePackages || this.props.allowAllPermissions ?*/}
+                        {/*           <ZoomUser {...this.state} {...this.props} {...route}/>:<PermissionDenied/>)}/>*/}
 
                         {/*<Route path="/zoom-user" render={(route)=><ZoomUser  {...this.state}*/}
                         {/*                                                     {...this.props}*/}

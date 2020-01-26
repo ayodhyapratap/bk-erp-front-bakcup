@@ -16,6 +16,7 @@ class Auth extends React.Component {
     }
 
     render() {
+        let that = this;
         const LoginFormLayout = Form.create()(LoginForm);
         const PasswordResetForm = Form.create()(DynamicFieldsForm);
         const LoginWithPhoneLayout = Form.create()(LoginWithPhone);
@@ -37,11 +38,10 @@ class Auth extends React.Component {
         }];
         const formProp = {
             successFn: function (data) {
-                displayMessage(SUCCESS_MSG_TYPE, "success")
-
+                displayMessage(SUCCESS_MSG_TYPE, "Password Changed Successfully");
+                that.props.history.push("/");
             },
             errorFn: function () {
-
             },
             action: RESET_PASSWORD,
             method: "post",

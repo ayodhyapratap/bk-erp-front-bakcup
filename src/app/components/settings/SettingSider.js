@@ -35,13 +35,13 @@ class SettingSider extends React.Component {
                             <Icon type="team"/>Practice Staff
                         </Link>
                     </Menu.Item> : null}
-                    {this.props.activePracticePermissions.ZoomUser?
-                        <Menu.Item key={'35'}>
-                            <Link to="/settings/zoom-user">
-                                <Icon type={"user"}/>
-                                <span className="nav-text">Zoom User</span>
-                            </Link>
-                        </Menu.Item>:null}
+                    {/*{this.props.activePracticePermissions.ZoomUser?*/}
+                    {/*    <Menu.Item key={'35'}>*/}
+                    {/*        <Link to="/settings/zoom-user">*/}
+                    {/*            <Icon type={"user"}/>*/}
+                    {/*            <span className="nav-text">Zoom User</span>*/}
+                    {/*        </Link>*/}
+                    {/*    </Menu.Item>:null}*/}
 
                     {this.props.activePracticePermissions.SettingsAgents || this.props.allowAllPermissions?
                     <Menu.Item key="32">
