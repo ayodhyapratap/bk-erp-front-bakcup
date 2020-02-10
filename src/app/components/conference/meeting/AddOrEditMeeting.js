@@ -47,7 +47,7 @@ class AddOrEditMeeting extends React.Component {
     componentWillMount() {
         this.loadPatient();
         loadDoctors(this);
-        this.loadZoomUser();
+        // this.loadZoomUser();
         this.loadMeetingList(this.state.startSchedule, moment(this.state.startSchedule).add(this.state.duration, 'minute'));
     }
 
@@ -103,7 +103,7 @@ class AddOrEditMeeting extends React.Component {
                     let iterator_doctor = values.doctors.values();
                     let choose_doctor = [];
                     for (let doctors of iterator_doctor) {
-                        choose_doctor.push({doctor: doctors})
+                        choose_doctor.push(doctors)
                     }
                     reqData.doctors = choose_doctor;
 
@@ -113,7 +113,7 @@ class AddOrEditMeeting extends React.Component {
                     let choose_patient = [];
                     let iterator_patient = values.patients.values();
                     for (let patients of iterator_patient) {
-                        choose_patient.push({patient: patients})
+                        choose_patient.push(patients)
                     }
                     reqData.patients = choose_patient;
                 }
@@ -322,19 +322,19 @@ class AddOrEditMeeting extends React.Component {
 
                             </Form.Item>
 
-                            <Form.Item label={"Meeting User"} {...formItemLayout} key={'zoom_user'}>
-                                {getFieldDecorator('zoom_user', {
-                                    initialValue: [], rules: [{
-                                        required: true,
-                                        message: REQUIRED_FIELD_MESSAGE
-                                    }]
-                                })
-                                (<Select placeholder="Select Zoom User" style={{width: '100%'}} onChange={(value) => that.checkMeetingAvailabilty('zoomUser', value)}>
-                                    {this.state.zoom_user.map(option => (
-                                        <Select.Option key={option.id}>{option.username}</Select.Option>))}
-                                </Select>)}
+                            {/*<Form.Item label={"Meeting User"} {...formItemLayout} key={'zoom_user'}>*/}
+                            {/*    {getFieldDecorator('zoom_user', {*/}
+                            {/*        initialValue: [], rules: [{*/}
+                            {/*            required: true,*/}
+                            {/*            message: REQUIRED_FIELD_MESSAGE*/}
+                            {/*        }]*/}
+                            {/*    })*/}
+                            {/*    (<Select placeholder="Select Zoom User" style={{width: '100%'}} onChange={(value) => that.checkMeetingAvailabilty('zoomUser', value)}>*/}
+                            {/*        {this.state.zoom_user.map(option => (*/}
+                            {/*            <Select.Option key={option.id}>{option.username}</Select.Option>))}*/}
+                            {/*    </Select>)}*/}
 
-                            </Form.Item>
+                            {/*</Form.Item>*/}
 
                             <Row gutter={16}>
                                 {chooseOption}

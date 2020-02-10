@@ -354,7 +354,7 @@ class AddorEditInventoryItem extends React.Component {
 
                         <Form.Item key={"margin"} {...formItemLayout} label={"MLM Margin"}>
                             {getFieldDecorator("margin", {
-                                initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.margin : null,
+                                initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.margin : null,
                             })(
                                 <Select>
                                     {this.state.productMargin.map((option) => <Select.Option

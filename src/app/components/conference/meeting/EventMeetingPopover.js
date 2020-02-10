@@ -54,7 +54,8 @@ export default class EventMeetingPopover extends React.Component {
             />
         }
         let that = this;
-        let directMeetingLink = "https://us04web.zoom.us/wc/join/" + that.state.meeting.meeting_id + "?" + (that.state.meeting.join_url.split('?'))['1'];
+        let directMeetingLink = '';
+        // let directMeetingLink = "https://us04web.zoom.us/wc/join/" + that.state.meeting.meeting_id + "?" + (that.state.meeting.join_url.split('?'))['1'];
         return <div style={{width: '300px', minHeight: '200px', overflowY: 'scroll', overflowX: 'hidden'}}>
             <Spin spinning={this.state.loading}>
                 <div>

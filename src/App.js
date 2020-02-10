@@ -66,7 +66,7 @@ class App extends Component {
                 />
             </Affix>}
             <Switch>
-                <Route exact path="/webcall" render={(route)=><WebCall {...this.state} {...route}/>}/>
+                <Route exact path="/webcall/:meetingId" render={(route)=><WebCall {...this.state} {...route} />}/>
                 <Route exact path="/login" render={() => <Auth {...this.state} login={this.login}/>}/>
                 <Route exact path="/password-reset/:token"
                        render={(route) => <Auth {...route} {...this.state} login={this.login}/>}/>

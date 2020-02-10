@@ -503,7 +503,7 @@ class EditPatientDetails extends React.Component {
                                               Delete
                                           </Button>
                                       </Popover> :
-                                      <Button style={{margin: 5}} onClick={() => that.onDeletePatient()} type={"danger"}>
+                                      <Button style={{margin: 5}} onClick={() => that.onDeletePatient()} type={"danger"} disabled={!this.state.patientDetails}>
                                           Delete
                                       </Button>
                                   }

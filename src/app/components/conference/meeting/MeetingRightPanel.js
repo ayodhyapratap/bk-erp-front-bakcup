@@ -31,7 +31,7 @@ export default class MeetingRightPanel extends React.Component {
             })
         };
         let errorFn = function () {
-            this.setState({
+            that.setState({
                 loading:false,
             });
         };
@@ -39,9 +39,6 @@ export default class MeetingRightPanel extends React.Component {
             start: moment().startOf('day').format(),
             end: moment().endOf('day').format(),
         };
-        if (that.props.selectedZoomUser && that.props.selectedZoomUser !='ALL'){
-            params.zoom_user = that.props.selectedZoomUser;
-        }
 
         getAPI(MEETING_DETAILS, successFn, errorFn, params);
     }

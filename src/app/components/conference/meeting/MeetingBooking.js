@@ -1,4 +1,6 @@
 import React from "react";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import {Button, Card, Col, Dropdown, Icon, Menu, Row, Spin} from "antd";
 import {Route, Switch} from "react-router";
 import AddOrEditMeeting from "./AddOrEditMeeting";
@@ -35,7 +37,7 @@ export default class MeetingBooking extends React.Component {
 
     componentDidMount() {
         this.loadMeetingList();
-        this.loadZoomUser();
+        // this.loadZoomUser();
     }
 
 

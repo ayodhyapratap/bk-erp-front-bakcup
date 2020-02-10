@@ -1,43 +1,71 @@
 import React from "react";
 import io from 'socket.io-client';
-import {Alert, Input} from "antd";
+import {Alert, Button, Card, Col, Input, Row} from "antd";
+import moment from "moment";
+import {MEETING_DETAILS, SINGLE_MEETING} from "../../constants/api";
+import {getAPI, interpolate} from "../../utils/common";
 
 let signaling_socket = null;   /* our socket.io connection to our webserver */
 let local_media_stream = null; /* our own microphone / webcam */
 let peers = {};                /* keep track of our peer connections, indexed by peer_id (aka socket.io id) */
-let peer_media_elements = {};  /* keep track of our <video>/<audio> tags, indexed by peer_id */
+let peer_media_streams = {};  /* keep track of our <video>/<audio> tags, indexed by peer_id */
 let attachMediaStream = null;
 
 export default class WebCall extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            meetingDetails: {},
             SIGNALING_SERVER: "https://bk-erp.plutonic.co.in",
             USE_AUDIO: true,
             USE_VIDEO: true,
             DEFAULT_CHANNEL: 'some-global-channel-name',
             MUTE_AUDIO_BY_DEFAULT: false,
             ICE_SERVERS: [
-                {url: "stun:stun.l.google.com:19302"}
+                {
+                    url: "stun:bk-erp.plutonic.co.in:3478", username: "test01",
+                    credential: "testdriver"
+                }
             ],
-            MediaComponent: <div/>,
-            LocalMediaComponent: <div/>
+            MediaComponent: [],
+            peer_media_elements: {},
+            LocalMediaComponent: <div/>,
+            AdminComponents :{a:9}
         }
     }
 
     componentDidMount() {
+        if (this.props.match.params && this.props.match.params.meetingId) {
+            this.loadMeeting(this.props.match.params.meetingId);
+        }
         // this.init();
     }
-    changeChannel = (value)=>{
+
+    loadMeeting = (meetingId) => {
+        let that = this;
+
+        let successFn = function (data) {
+            that.setState({
+                meetingDetails: data
+            });
+            that.changeChannel(data.meeting_id);
+        }
+        let errorFn = function () {
+
+        }
+        getAPI(interpolate(SINGLE_MEETING, [meetingId]), successFn, errorFn);
+    }
+    changeChannel = (value) => {
         value = value || 'default';
         let that = this;
         this.setState({
-            DEFAULT_CHANNEL:value
-        },function(){
+            DEFAULT_CHANNEL: value,
+            peer_media_elements: {}
+        }, function () {
             signaling_socket = null;   /* our socket.io connection to our webserver */
             local_media_stream = null; /* our own microphone / webcam */
             peers = {};                /* keep track of our peer connections, indexed by peer_id (aka socket.io id) */
-            peer_media_elements = {};  /* keep track of our <video>/<audio> tags, indexed by peer_id */
+            ;  /* keep track of our <video>/<audio> tags, indexed by peer_id */
             attachMediaStream = null;
             that.init();
         })
@@ -49,38 +77,54 @@ export default class WebCall extends React.Component {
             USE_VIDEO,
             DEFAULT_CHANNEL,
             MUTE_AUDIO_BY_DEFAULT,
-            ICE_SERVERS
+            ICE_SERVERS,
+            peer_media_elements
         } = this.state;
         let that = this;
         console.log("Connecting to signaling server");
         signaling_socket = io(SIGNALING_SERVER);
         // signaling_socket = io();
-
-        signaling_socket.on('connect', function () {
+        signaling_socket.on('meeting_start', (data) => {
+            console.log('***********meeting_start',data);
+        });
+        signaling_socket.on('message', (data) => {
+            console.log('***********meeting_start',data);
+        });
+        signaling_socket.on('connect', function (socket) {
             console.log("Connected to signaling server");
+            signaling_socket.emit('meeting_start', 'world');
+            signaling_socket.send( 'world');
             that.setup_local_media(function () {
                 /* once the user has given us access to their
                  * microphone/camcorder, join the channel and start peering up */
+
                 join_chat_channel(DEFAULT_CHANNEL, {'whatever-you-want-here': 'stuff'});
             });
         });
+        signaling_socket.on('connection',function(socket){
+            signaling_socket.emit('meeting_start', 'world');
+        })
         signaling_socket.on('disconnect', function () {
             console.log("Disconnected from signaling server");
             /* Tear down all of our peer connections and remove all the
              * media divs when we disconnect */
             peer_media_elements.forEach(function (peer_id) {
-                peer_media_elements[peer_id].remove();
+                that.setState(function (prevState) {
+                    return {peer_media_elements: {...prevState.peer_media_elements, [peer_id]: undefined}}
+                })
+                // peer_media_elements[peer_id].remove();
             });
             peers.forEach(function (peer_id) {
                 peers[peer_id].close();
             });
 
             peers = {};
-            peer_media_elements = {};
+            // peer_media_elements = {};
         });
 
         function join_chat_channel(channel, userdata) {
             signaling_socket.emit('join', {"channel": channel, "userdata": userdata});
+
         }
 
         function part_chat_channel(channel) {
@@ -123,31 +167,72 @@ export default class WebCall extends React.Component {
             }
             peer_connection.onaddstream = function (event) {
                 console.log("onAddStream", event);
-                var remote_media = USE_VIDEO ? <video ref={video => { video.srcObject = event.stream }} controls/> :
-                    <audio ref={audio => { audio.srcObject = event.stream }} controls/>;
+                var remote_media = USE_VIDEO ?
+                    <Col xs={24} sm={12} md={4} lg={4} xl={3}>
+                        <Card key={peer_id} bodyStyle={{padding: 0, textAlign: 'center'}}>
+                            <video
+                                ref={video => {
+                                    video.srcObject = event.stream
+                                }}
+                                controls
+                                autoPlay
+                                style={{width: '100%'}}/>
+                            <h4>Peer: {peer_id}</h4>
+                        </Card>
+                    </Col> :
+                    <audio ref={audio => {
+                        audio.srcObject = event.stream
+                    }} controls muted/>;
                 // remote_media.srcObject = event.stream;
                 // remote_media.attr("autoplay", "autoplay");
                 // if (MUTE_AUDIO_BY_DEFAULT) {
                 //     remote_media.attr("muted", "true");
                 // }
                 // remote_media.attr("controls", "");
-                peer_media_elements[peer_id] = remote_media;
-                that.setState({
-                    MediaComponent: remote_media
-                });
+                // peer_media_elements[peer_id] = remote_media;
+                peer_media_streams[peer_id] = remote_media;
+                that.setState(function (prevState) {
+                    return {peer_media_elements: {...prevState.peer_media_elements, [peer_id]: true}}
+                })
                 // $('body').append(remote_media);
                 // attachMediaStream(remote_media[0], event.stream);
             }
 
             /* Add our local stream */
             peer_connection.addStream(local_media_stream);
+            var dc = peer_connection.createDataChannel("BackChannel");
 
+            function sendMessage(msg) {
+                let obj = {
+                    "message": msg,
+                    "timestamp": new moment().format()
+                }
+                let sendQueue = [];
+                switch (dc.readyState) {
+                    case "connecting":
+                        console.log("Connection not open; queueing: " + msg);
+                        sendQueue.push(msg);
+                        break;
+                    case "open":
+                        sendQueue.forEach((msg) => dc.send(msg));
+                        break;
+                    case "closing":
+                        console.log("Attempted to send message while closing: " + msg);
+                        break;
+                    case "closed":
+                        console.log("Error! Attempt to send while connection closed.");
+                        break;
+                }
+
+            }
+
+            sendMessage("I am new");
             /* Only one side of the peer connection should create the
              * offer, the signaling server picks one to be the offerer.
              * The other user will get a 'sessionDescription' event and will
              * create an offer, then send back an answer 'sessionDescription' to us
              */
-            if (config.should_create_offer) {
+            if (config.should_create_offer || true) {
                 console.log("Creating RTC offer to ", peer_id);
                 peer_connection.createOffer(
                     function (local_description) {
@@ -241,15 +326,16 @@ export default class WebCall extends React.Component {
         signaling_socket.on('removePeer', function (config) {
             console.log('Signaling server said to remove peer:', config);
             var peer_id = config.peer_id;
-            if (peer_media_elements[peer_id]) {
-                peer_media_elements[peer_id].remove();
-            }
+            // delete peer_media_streams[peer_id];
+            // that.setState(function (prevState) {
+            //     return {peer_media_elements: {...prevState.peer_media_elements, [peer_id]: undefined}}
+            // })
+
             if (peers[peer_id]) {
                 peers[peer_id].close();
             }
 
             delete peers[peer_id];
-            delete peer_media_elements[config.peer_id];
         });
     }
 
@@ -286,13 +372,12 @@ export default class WebCall extends React.Component {
             function (stream) { /* user accepted access to a/v */
                 console.log("Access granted to audio/video");
                 local_media_stream = stream;
-                var local_media = USE_VIDEO ? <video ref={video => { video.srcObject = stream }} controls/> :
-                    <audio ref={audio => { audio.srcObject = stream }} controls/>;
-                // local_media.attr("autoplay", "autoplay");
-                // local_media.attr("muted", "true"); /* always mute ourselves by default */
-                // local_media.attr("controls", "");
-                // $('body').append(local_media);
-                // local_media.srcObject = stream;
+                var local_media = USE_VIDEO ? <video ref={video => {
+                        video.srcObject = stream
+                    }} muted autoPlay style={{width: '100%'}}/> :
+                    <audio ref={audio => {
+                        audio.srcObject = stream
+                    }} muted/>;
                 that.setState({
                     LocalMediaComponent: local_media
                 })
@@ -309,11 +394,27 @@ export default class WebCall extends React.Component {
     }
 
     render() {
-        const {MediaComponent, LocalMediaComponent} = this.state;
-        return <div>
-            <Input onChange={(e)=>this.changeChannel(e.target.value)}/>
-            {MediaComponent}
-            {LocalMediaComponent}
+        const {LocalMediaComponent, peer_media_elements,AdminComponents} = this.state;
+        let mediaComponents = Object.keys(peer_media_elements);
+        let adminComponentsPeers = Object.keys(AdminComponents);
+        return <div style={{minHeight:'100vh'}}>
+            <Row gutter={16}>
+                <Col xs={24} sm={12} md={4} lg={4} xl={3}>
+                    <Card key={'me'} bodyStyle={{padding: 0, textAlign: 'center'}}>
+                        {LocalMediaComponent}
+                        <h4>ME</h4>
+                    </Card>
+                </Col>
+                {mediaComponents.map(key => peer_media_streams[key])}
+            </Row>
+            <Row gutter={16}>
+                {adminComponentsPeers.length?<Col xs={24} sm={24} md={24/adminComponentsPeers.length} lg={24/adminComponentsPeers.length} xl={24/adminComponentsPeers.length}>
+                    <Card><h4>ADMIN</h4></Card>
+                </Col>:<Card bodyStyle={{height:400,width:'100%',textAlign:'center',paddingTop:200}}>
+                   <h1>Waiting for Admin</h1>
+                </Card>}
+            </Row>
+
         </div>
     }
 

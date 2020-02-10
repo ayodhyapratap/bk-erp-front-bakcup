@@ -143,20 +143,7 @@ class PatientProfile extends React.Component {
             let patient = this.state.patientProfile;
             if (!patient)
                 return <Card loading={this.state.loading}/>;
-            return <Card loading={this.state.loading} title="Patient Profile"
-                         extra={<>
-                             {/*{that.props.activePracticePermissions.SettingsAgents ?*/}
-                             {/*    <Button type={"primary"} onClick={this.addAgent}><Icon type={"usergroup-add"}/>&nbsp;Add Agent</Button>:null} &nbsp;&nbsp;*/}
-                             {that.props.activePracticePermissions.EditPatient ?
-                                 <Link to={"/patient/" + this.state.currentPatient.id + "/profile/edit"}>
-                                     <Button type="primary">
-                                         <Icon type="edit"/>&nbsp;Edit Patient Profile</Button>
-                                 </Link> : null}
-
-                         </>}
-
-
-            >
+            return <Card loading={this.state.loading} title="Patient Profile">
                 <Row gutter={16}>
                     <Col span={6} style={{textAlign: 'center'}}>
                         {(patient.image ? <img src={makeFileURL(patient.image)} style={{width: '100%'}}/> :
@@ -167,6 +154,11 @@ class PatientProfile extends React.Component {
 
                         {patient.is_agent && patient.is_approved ? <Statistic title={"Referral Code"}
                                                                               value={patient.user.referer_code}/> : null}
+                        {that.props.activePracticePermissions.EditPatient ?
+                            <Link to={"/patient/" + this.state.currentPatient.id + "/profile/edit"}>
+                                <Button type="primary" style={{margin:10}} block>
+                                    <Icon type="edit"/>&nbsp;Edit Patient Profile</Button>
+                            </Link> : null}
                         <Col>
                             <Divider/>
 
