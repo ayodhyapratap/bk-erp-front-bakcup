@@ -1,9 +1,10 @@
 import React from "react";
 import io from 'socket.io-client';
-import {Alert, Button, Card, Col, Input, Row} from "antd";
+import {Button, Card, Col, Input, Row} from "antd";
 import moment from "moment";
 import {MEETING_DETAILS, SINGLE_MEETING} from "../../constants/api";
-import {getAPI, interpolate} from "../../utils/common";
+import {displayMessage, getAPI, interpolate} from "../../utils/common";
+import {ERROR_MSG_TYPE} from "../../constants/dataKeys";
 
 let signaling_socket = null;   /* our socket.io connection to our webserver */
 let local_media_stream = null; /* our own microphone / webcam */
@@ -15,6 +16,8 @@ export default class WebCall extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            adminStatus: false,
+            adminPeerKeys: {},
             meetingDetails: {},
             SIGNALING_SERVER: "https://bk-erp.plutonic.co.in",
             USE_AUDIO: true,
@@ -30,7 +33,6 @@ export default class WebCall extends React.Component {
             MediaComponent: [],
             peer_media_elements: {},
             LocalMediaComponent: <div/>,
-            AdminComponents :{a:9}
         }
     }
 
@@ -45,8 +47,15 @@ export default class WebCall extends React.Component {
         let that = this;
 
         let successFn = function (data) {
+            let admin = false;
+            data.doctors.forEach(function (doctor) {
+                if (that.props.user.id == doctor) {
+                    admin = true;
+                }
+            });
             that.setState({
-                meetingDetails: data
+                meetingDetails: data,
+                adminStatus: admin
             });
             that.changeChannel(data.meeting_id);
         }
@@ -78,22 +87,24 @@ export default class WebCall extends React.Component {
             DEFAULT_CHANNEL,
             MUTE_AUDIO_BY_DEFAULT,
             ICE_SERVERS,
-            peer_media_elements
+            peer_media_elements,
+            adminStatus
         } = this.state;
         let that = this;
         console.log("Connecting to signaling server");
         signaling_socket = io(SIGNALING_SERVER);
         // signaling_socket = io();
-        signaling_socket.on('meeting_start', (data) => {
-            console.log('***********meeting_start',data);
-        });
         signaling_socket.on('message', (data) => {
-            console.log('***********meeting_start',data);
+            that.setState(function (prevState) {
+                return {
+                    adminPeerKeys: {...prevState.adminPeerKeys, [data.admin_id]: true}
+                }
+            })
+            console.log('***********meeting_start', data);
         });
         signaling_socket.on('connect', function (socket) {
             console.log("Connected to signaling server");
-            signaling_socket.emit('meeting_start', 'world');
-            signaling_socket.send( 'world');
+
             that.setup_local_media(function () {
                 /* once the user has given us access to their
                  * microphone/camcorder, join the channel and start peering up */
@@ -101,7 +112,7 @@ export default class WebCall extends React.Component {
                 join_chat_channel(DEFAULT_CHANNEL, {'whatever-you-want-here': 'stuff'});
             });
         });
-        signaling_socket.on('connection',function(socket){
+        signaling_socket.on('connection', function (socket) {
             signaling_socket.emit('meeting_start', 'world');
         })
         signaling_socket.on('disconnect', function () {
@@ -168,28 +179,19 @@ export default class WebCall extends React.Component {
             peer_connection.onaddstream = function (event) {
                 console.log("onAddStream", event);
                 var remote_media = USE_VIDEO ?
-                    <Col xs={24} sm={12} md={4} lg={4} xl={3}>
-                        <Card key={peer_id} bodyStyle={{padding: 0, textAlign: 'center'}}>
-                            <video
-                                ref={video => {
-                                    video.srcObject = event.stream
-                                }}
-                                controls
-                                autoPlay
-                                style={{width: '100%'}}/>
-                            <h4>Peer: {peer_id}</h4>
-                        </Card>
-                    </Col> :
+
+                    <video
+                        ref={video => {
+                            video.srcObject = event.stream
+                        }}
+                        controls
+                        autoPlay
+                        style={{width: '100%'}}/>
+                    :
                     <audio ref={audio => {
                         audio.srcObject = event.stream
                     }} controls muted/>;
-                // remote_media.srcObject = event.stream;
-                // remote_media.attr("autoplay", "autoplay");
-                // if (MUTE_AUDIO_BY_DEFAULT) {
-                //     remote_media.attr("muted", "true");
-                // }
-                // remote_media.attr("controls", "");
-                // peer_media_elements[peer_id] = remote_media;
+
                 peer_media_streams[peer_id] = remote_media;
                 that.setState(function (prevState) {
                     return {peer_media_elements: {...prevState.peer_media_elements, [peer_id]: true}}
@@ -200,33 +202,6 @@ export default class WebCall extends React.Component {
 
             /* Add our local stream */
             peer_connection.addStream(local_media_stream);
-            var dc = peer_connection.createDataChannel("BackChannel");
-
-            function sendMessage(msg) {
-                let obj = {
-                    "message": msg,
-                    "timestamp": new moment().format()
-                }
-                let sendQueue = [];
-                switch (dc.readyState) {
-                    case "connecting":
-                        console.log("Connection not open; queueing: " + msg);
-                        sendQueue.push(msg);
-                        break;
-                    case "open":
-                        sendQueue.forEach((msg) => dc.send(msg));
-                        break;
-                    case "closing":
-                        console.log("Attempted to send message while closing: " + msg);
-                        break;
-                    case "closed":
-                        console.log("Error! Attempt to send while connection closed.");
-                        break;
-                }
-
-            }
-
-            sendMessage("I am new");
             /* Only one side of the peer connection should create the
              * offer, the signaling server picks one to be the offerer.
              * The other user will get a 'sessionDescription' event and will
@@ -244,7 +219,7 @@ export default class WebCall extends React.Component {
                                 console.log("Offer setLocalDescription succeeded");
                             },
                             function () {
-                                Alert("Offer setLocalDescription failed!");
+                                displayMessage(ERROR_MSG_TYPE, "Offer setLocalDescription failed!");
                             }
                         );
                     },
@@ -267,7 +242,9 @@ export default class WebCall extends React.Component {
             var peer = peers[peer_id];
             var remote_description = config.session_description;
             console.log(config.session_description);
-
+            if (adminStatus) {
+                signaling_socket.send({admin_id: config.peer_id});
+            }
             var desc = new RTCSessionDescription(remote_description);
             var stuff = peer.setRemoteDescription(desc,
                 function () {
@@ -284,7 +261,7 @@ export default class WebCall extends React.Component {
                                         console.log("Answer setLocalDescription succeeded");
                                     },
                                     function () {
-                                        Alert("Answer setLocalDescription failed!");
+                                        displayMessage(ERROR_MSG_TYPE, "Answer setLocalDescription failed!");
                                     }
                                 );
                             },
@@ -394,10 +371,10 @@ export default class WebCall extends React.Component {
     }
 
     render() {
-        const {LocalMediaComponent, peer_media_elements,AdminComponents} = this.state;
+        const {LocalMediaComponent, peer_media_elements, adminStatus, adminPeerKeys} = this.state;
         let mediaComponents = Object.keys(peer_media_elements);
-        let adminComponentsPeers = Object.keys(AdminComponents);
-        return <div style={{minHeight:'100vh'}}>
+        let adminComponentsPeers = Object.keys(adminPeerKeys);
+        return <div style={{minHeight: '100vh'}}>
             <Row gutter={16}>
                 <Col xs={24} sm={12} md={4} lg={4} xl={3}>
                     <Card key={'me'} bodyStyle={{padding: 0, textAlign: 'center'}}>
@@ -405,14 +382,38 @@ export default class WebCall extends React.Component {
                         <h4>ME</h4>
                     </Card>
                 </Col>
-                {mediaComponents.map(key => peer_media_streams[key])}
+                {adminStatus ? mediaComponents.map(key => {
+                    return adminPeerKeys[key] ? null :
+                        <Col xs={24} sm={12} md={4} lg={4} xl={3} key={key}>
+                            <Card bodyStyle={{padding: 0, textAlign: 'center'}}>
+                                {peer_media_streams[key]}
+                            </Card>
+                        </Col>
+                }) : null}
             </Row>
             <Row gutter={16}>
-                {adminComponentsPeers.length?<Col xs={24} sm={24} md={24/adminComponentsPeers.length} lg={24/adminComponentsPeers.length} xl={24/adminComponentsPeers.length}>
-                    <Card><h4>ADMIN</h4></Card>
-                </Col>:<Card bodyStyle={{height:400,width:'100%',textAlign:'center',paddingTop:200}}>
-                   <h1>Waiting for Admin</h1>
-                </Card>}
+                <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                    <Card>
+                        <Row>
+                            {adminStatus && adminComponentsPeers.length ? adminComponentsPeers.map(key => {
+                                return <Col xs={24} sm={12} md={24 / adminComponentsPeers.length}
+                                            lg={24 / adminComponentsPeers.length} xl={24 / adminComponentsPeers.length}
+                                            key={key}>
+                                    <Card bodyStyle={{padding: 0, textAlign: 'center'}}>
+                                        {peer_media_elements[key] ? peer_media_streams[key] : '' }
+                                    </Card>
+                                </Col>
+                            }) : <Card bodyStyle={{
+                                height: 400,
+                                width: '100%',
+                                textAlign: 'center',
+                                paddingTop: 200
+                            }}>
+                                <h1>Waiting for Admin</h1>
+                            </Card>}
+                        </Row>
+                    </Card>
+                </Col>
             </Row>
 
         </div>

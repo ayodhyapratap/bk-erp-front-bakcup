@@ -297,7 +297,18 @@ class AddOrEditMeeting extends React.Component {
 
                             {/*    }*/}
                             {/*</Form.Item>*/}
+                            {/*<Form.Item label={"Meeting Admins"} {...formItemLayout} key={'admins'}>*/}
+                            {/*    {getFieldDecorator('admin', {initialValue: []})*/}
+                            {/*    (<Select mode={"multiple"}*/}
+                            {/*             placeholder="Select Admins" style={{width: '100%'}}*/}
+                            {/*             showSearch onSearch={this.loadPatient} filterOption={false}>*/}
 
+                            {/*        {this.state.patientListData.map(option => (*/}
+                            {/*            <Select.Option*/}
+                            {/*                value={option.id}>{option.user.first_name} ({option.custom_id})</Select.Option>))}*/}
+                            {/*    </Select>)*/}
+                            {/*    }*/}
+                            {/*</Form.Item>*/}
                             <Form.Item label={"Patients"} {...formItemLayout} key={'patient'}>
                                 {getFieldDecorator('patients', {initialValue: []})
                                 (<Select mode={"multiple"}
