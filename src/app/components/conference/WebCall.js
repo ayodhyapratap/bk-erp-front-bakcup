@@ -17,6 +17,7 @@ export default class WebCall extends React.Component {
         super(props);
         this.state = {
             adminStatus: false,
+            userPeerKeys: {},
             adminPeerKeys: {},
             meetingDetails: {},
             SIGNALING_SERVER: "https://bk-erp.plutonic.co.in",
@@ -33,6 +34,7 @@ export default class WebCall extends React.Component {
             MediaComponent: [],
             peer_media_elements: {},
             LocalMediaComponent: <div/>,
+            focusedPeer: null
         }
     }
 
@@ -43,6 +45,11 @@ export default class WebCall extends React.Component {
         // this.init();
     }
 
+    setFocusedPeer = (key) => {
+        this.setState({
+            focusedPeer: key
+        })
+    }
     loadMeeting = (meetingId) => {
         let that = this;
 
@@ -95,12 +102,19 @@ export default class WebCall extends React.Component {
         signaling_socket = io(SIGNALING_SERVER);
         // signaling_socket = io();
         signaling_socket.on('message', (data) => {
+            console.log('***********meeting_start', data);
             that.setState(function (prevState) {
-                return {
-                    adminPeerKeys: {...prevState.adminPeerKeys, [data.admin_id]: true}
+                if (data.admin || data.is_superuser) {
+                    return {
+                        adminPeerKeys: {...prevState.adminPeerKeys, [data.peer_id]: data},
+                    }
+                } else {
+                    return {
+                        userPeerKeys: {...prevState.userPeerKeys, [data.peer_id]: data}
+                    }
                 }
             })
-            console.log('***********meeting_start', data);
+
         });
         signaling_socket.on('connect', function (socket) {
             console.log("Connected to signaling server");
@@ -112,19 +126,16 @@ export default class WebCall extends React.Component {
                 join_chat_channel(DEFAULT_CHANNEL, {'whatever-you-want-here': 'stuff'});
             });
         });
-        signaling_socket.on('connection', function (socket) {
-            signaling_socket.emit('meeting_start', 'world');
-        })
         signaling_socket.on('disconnect', function () {
             console.log("Disconnected from signaling server");
             /* Tear down all of our peer connections and remove all the
              * media divs when we disconnect */
-            peer_media_elements.forEach(function (peer_id) {
-                that.setState(function (prevState) {
-                    return {peer_media_elements: {...prevState.peer_media_elements, [peer_id]: undefined}}
-                })
-                // peer_media_elements[peer_id].remove();
-            });
+            // peer_media_elements.forEach(function (peer_id) {
+            that.setState(function (prevState) {
+                return {peer_media_elements: {}}
+            })
+            // peer_media_elements[peer_id].remove();
+            // });
             peers.forEach(function (peer_id) {
                 peers[peer_id].close();
             });
@@ -191,7 +202,7 @@ export default class WebCall extends React.Component {
                     <audio ref={audio => {
                         audio.srcObject = event.stream
                     }} controls muted/>;
-
+                local_media_stream = event.stream;
                 peer_media_streams[peer_id] = remote_media;
                 that.setState(function (prevState) {
                     return {peer_media_elements: {...prevState.peer_media_elements, [peer_id]: true}}
@@ -207,7 +218,7 @@ export default class WebCall extends React.Component {
              * The other user will get a 'sessionDescription' event and will
              * create an offer, then send back an answer 'sessionDescription' to us
              */
-            if (config.should_create_offer || true) {
+            if (config.should_create_offer) {
                 console.log("Creating RTC offer to ", peer_id);
                 peer_connection.createOffer(
                     function (local_description) {
@@ -242,9 +253,11 @@ export default class WebCall extends React.Component {
             var peer = peers[peer_id];
             var remote_description = config.session_description;
             console.log(config.session_description);
+            let userData = {...that.props.user, peer_id: config.peer_id};
             if (adminStatus) {
-                signaling_socket.send({admin_id: config.peer_id});
+                userData.admin = true;
             }
+            signaling_socket.send(userData);
             var desc = new RTCSessionDescription(remote_description);
             var stuff = peer.setRemoteDescription(desc,
                 function () {
@@ -302,16 +315,16 @@ export default class WebCall extends React.Component {
          */
         signaling_socket.on('removePeer', function (config) {
             console.log('Signaling server said to remove peer:', config);
-            var peer_id = config.peer_id;
-            // delete peer_media_streams[peer_id];
-            // that.setState(function (prevState) {
-            //     return {peer_media_elements: {...prevState.peer_media_elements, [peer_id]: undefined}}
-            // })
-
+            let peer_id = config.peer_id;
+            delete peer_media_streams[peer_id];
+            that.setState(function (prevState) {
+                let newPeers = {...prevState.peer_media_elements};
+                delete newPeers[peer_id];
+                return {peer_media_elements: {...newPeers}}
+            })
             if (peers[peer_id]) {
                 peers[peer_id].close();
             }
-
             delete peers[peer_id];
         });
     }
@@ -371,7 +384,8 @@ export default class WebCall extends React.Component {
     }
 
     render() {
-        const {LocalMediaComponent, peer_media_elements, adminStatus, adminPeerKeys} = this.state;
+        let that = this;
+        const {LocalMediaComponent, peer_media_elements, adminPeerKeys, userPeerKeys, focusedPeer} = this.state;
         let mediaComponents = Object.keys(peer_media_elements);
         let adminComponentsPeers = Object.keys(adminPeerKeys);
         return <div style={{minHeight: '100vh'}}>
@@ -382,11 +396,22 @@ export default class WebCall extends React.Component {
                         <h4>ME</h4>
                     </Card>
                 </Col>
-                {adminStatus ? mediaComponents.map(key => {
+                {adminComponentsPeers.length ? mediaComponents.map(key => {
                     return adminPeerKeys[key] ? null :
-                        <Col xs={24} sm={12} md={4} lg={4} xl={3} key={key}>
-                            <Card bodyStyle={{padding: 0, textAlign: 'center'}}>
+                        <Col xs={24}
+                             sm={12 * (focusedPeer == key ? 2 : 1)}
+                             md={4 * (focusedPeer == key ? 3 : 1)}
+                             lg={4 * (focusedPeer == key ? 3 : 1)}
+                             xl={3 * (focusedPeer == key ? 3 : 1)}
+                             key={key}>
+                            <Card bodyStyle={{padding: 0, textAlign: 'center'}}
+                                  onClick={() => that.setFocusedPeer(key)}>
                                 {peer_media_streams[key]}
+                                <h4>{userPeerKeys[key] ? userPeerKeys[key].first_name : '--'}
+                                    {focusedPeer == key ?
+                                        <Button style={{float: 'right'}} type="danger" shape="circle" icon="close"
+                                                onClick={() => that.setFocusedPeer(null)}/> : null}
+                                </h4>
                             </Card>
                         </Col>
                 }) : null}
@@ -395,12 +420,13 @@ export default class WebCall extends React.Component {
                 <Col xs={24} sm={24} md={24} lg={24} xl={24}>
                     <Card>
                         <Row>
-                            {adminStatus && adminComponentsPeers.length ? adminComponentsPeers.map(key => {
+                            {adminComponentsPeers.length ? adminComponentsPeers.map(key => {
                                 return <Col xs={24} sm={12} md={24 / adminComponentsPeers.length}
                                             lg={24 / adminComponentsPeers.length} xl={24 / adminComponentsPeers.length}
                                             key={key}>
                                     <Card bodyStyle={{padding: 0, textAlign: 'center'}}>
-                                        {peer_media_elements[key] ? peer_media_streams[key] : '' }
+                                        <h2>{adminPeerKeys[key] ? adminPeerKeys[key].first_name : '--'}</h2>
+                                        {peer_media_elements[key] ? peer_media_streams[key] : ''}
                                     </Card>
                                 </Col>
                             }) : <Card bodyStyle={{
