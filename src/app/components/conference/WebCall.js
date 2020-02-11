@@ -384,7 +384,7 @@ export default class WebCall extends React.Component {
                     </Card>
                 </Col>
                 {availablePeersIdArray.map(key => {
-                    return <Col xs={24} sm={12} md={4} lg={4} xl={3} key={key} onClick={() => this.setFocusedPeer(key)}>
+                    return <Col xs={8} sm={8} md={4} lg={4} xl={3} key={key} onClick={() => this.setFocusedPeer(key)}>
                         <Card bodyStyle={{padding: 0, textAlign: 'center'}}>{peer_media_elements[key]}
                             <h4>{meetingUserDetails[key] ? meetingUserDetails[key].first_name : '--'}</h4></Card>
                     </Col>
