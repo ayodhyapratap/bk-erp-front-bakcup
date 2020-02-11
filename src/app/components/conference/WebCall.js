@@ -3,17 +3,17 @@ import io from 'socket.io-client';
 import {SINGLE_MEETING} from "../../constants/api";
 import {displayMessage, getAPI, interpolate} from "../../utils/common";
 import {Button, Card, Col, Row} from "antd";
-import {ERROR_MSG_TYPE} from "../../constants/dataKeys";
+import {ERROR_MSG_TYPE, WARNING_MSG_TYPE} from "../../constants/dataKeys";
 
 let signaling_socket = null;   /* our socket.io connection to our webserver */
 let local_media_stream = null; /* our own microphone / webcam */
 let peers = {};                /* keep track of our peer connections, indexed by peer_id (aka socket.io id) */
 let peer_media_elements = {};  /* keep track of our <video>/<audio> tags, indexed by peer_id */
-
 export default class WebCall extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            myPeerId:null,
             is_admin: false,
             meetingDetails: {},
             SIGNALING_SERVER: "https://bk-erp.plutonic.co.in",
@@ -34,9 +34,14 @@ export default class WebCall extends React.Component {
     }
 
     setFocusedPeer = (key) => {
+        if(!this.state.is_admin){
+            displayMessage(WARNING_MSG_TYPE,"You are not allowed for this action.");
+            return false;
+        }
         this.setState({
             focusedPeer: key
         })
+        signaling_socket.send({admin:key,peer_id:'admin'});
     }
     loadMeeting = (meetingId) => {
         let that = this;
@@ -49,7 +54,7 @@ export default class WebCall extends React.Component {
             });
             that.setState({
                 meetingDetails: data,
-                adminStatus: admin
+                is_admin: admin,
             });
             that.changeChannel(data.meeting_id);
         }
@@ -74,6 +79,8 @@ export default class WebCall extends React.Component {
         signaling_socket = io(SIGNALING_SERVER);
         // signaling_socket = io();
         signaling_socket.on('message', function (data) {
+            console.log("userDetails",data);
+            console.log("admin",data.admin);
             that.setState({
                 meetingUserDetails: data
             })
@@ -207,7 +214,11 @@ export default class WebCall extends React.Component {
             let userData = {...that.props.user, peer_id: peer_id};
             if (that.state.is_admin || userData.is_superuser) {
                 userData.admin = true;
+                signaling_socket.send({admin:peer_id,peer_id:'admin'});
             }
+            that.setState({
+                myPeerId : config.peer_id
+            })
             signaling_socket.send(userData);
             var desc = new RTCSessionDescription(remote_description);
             var stuff = peer.setRemoteDescription(desc,
@@ -331,32 +342,39 @@ export default class WebCall extends React.Component {
 
     render() {
         let that = this;
-        let {localMediaComponent, availablePeers, meetingUserDetails, meetingDetails, focusedPeer} = this.state;
+        let {localMediaComponent, availablePeers, meetingUserDetails, meetingDetails, myPeerId} = this.state;
         let availablePeersIdArray = Object.keys(availablePeers);
         return <div style={{minHeight: '100vh', textAlign: 'center'}}>
             <h3>{meetingDetails.name}</h3>
             <Row type="flex" justify="center" gutter={16} style={{marginTop: 10}}>
-                {availablePeersIdArray.map(key => {
-                    if (meetingUserDetails[key] && meetingUserDetails[key].admin)
+                {meetingUserDetails.me && meetingUserDetails.me.socket  == meetingUserDetails.admin ?
+                    <Col xs={24} sm={12} md={12} lg={12} xl={12} key={myPeerId}>
+                    <Card bodyStyle={{padding: 0, textAlign: 'center'}}>
+                        {localMediaComponent}
+                        <h4>{meetingUserDetails[myPeerId] ? meetingUserDetails[myPeerId].first_name : '--'} </h4>
+                    </Card>
+                </Col>:availablePeersIdArray.map(key => {
+                    if (meetingUserDetails.admin == key)
                         return <Col xs={24} sm={12} md={12} lg={12} xl={12} key={key}>
                             <Card bodyStyle={{padding: 0, textAlign: 'center'}}>
                                 {peer_media_elements[key]}
-                                <h4>{meetingUserDetails[key] ? meetingUserDetails[key].first_name : '--'}</h4>
+                                <h4>{meetingUserDetails[key] ? meetingUserDetails[key].first_name : '--'} <Button type="danger" shape="circle" icon="close" onClick={() => this.setFocusedPeer(meetingUserDetails.me ? meetingUserDetails.me.socket : null)}
+                                                                                                                  style={{float: 'right'}}/></h4>
                             </Card>
                         </Col>;
                     return null;
                 })}
-                {focusedPeer ? <Col xs={24} sm={12} md={12} lg={12} xl={12} key={focusedPeer}>
-                        <Card bodyStyle={{padding: 0, textAlign: 'center'}}>
-                            {peer_media_elements[focusedPeer]}
-                            <h4>{meetingUserDetails[focusedPeer] ? meetingUserDetails[focusedPeer].first_name : '--'}
-                                <Button type="danger" shape="circle" icon="close" onClick={() => this.setFocusedPeer(null)}
-                                        style={{float: 'right'}}/>
-                            </h4>
-                        </Card>
-                    </Col> :
-                    null
-                }
+                {/*{focusedPeer ? <Col xs={24} sm={12} md={12} lg={12} xl={12} key={focusedPeer}>*/}
+                {/*        <Card bodyStyle={{padding: 0, textAlign: 'center'}}>*/}
+                {/*            {peer_media_elements[focusedPeer]}*/}
+                {/*            <h4>{meetingUserDetails[focusedPeer] ? meetingUserDetails[focusedPeer].first_name : '--'}*/}
+                {/*                <Button type="danger" shape="circle" icon="close" onClick={() => this.setFocusedPeer(myPeerId)}*/}
+                {/*                        style={{float: 'right'}}/>*/}
+                {/*            </h4>*/}
+                {/*        </Card>*/}
+                {/*    </Col> :*/}
+                {/*    null*/}
+                {/*}*/}
             </Row>
             <Row gutter={16} style={{marginTop: 10}} type="flex" justify="center">
                 <Col xs={24} sm={12} md={4} lg={4} xl={3}>
