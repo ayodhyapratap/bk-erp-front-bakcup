@@ -42,8 +42,8 @@ export default class WebCall extends React.Component {
         let that = this;
         let successFn = function (data) {
             let admin = false;
-            data.doctors.forEach(function (doctor) {
-                if (that.props.user.id == doctor) {
+            data.admins.forEach(function (doctor) {
+                if (that.props.user.staff && that.props.user.staff.id == doctor) {
                     admin = true;
                 }
             });
@@ -149,7 +149,8 @@ export default class WebCall extends React.Component {
                 console.log("onAddStream", event);
                 let remote_media = <video key={peer_id}
                                           ref={video => {
-                                              video.srcObject = event.stream
+                                              if (video)
+                                                  video.srcObject = event.stream
                                           }}
                                           autoPlay style={{width: '100%'}}>
 
@@ -266,13 +267,13 @@ export default class WebCall extends React.Component {
         signaling_socket.on('removePeer', function (config) {
             console.log('Signaling server said to remove peer:', config);
             var peer_id = config.peer_id;
-            if (peer_id in peer_media_elements) {
-                peer_media_elements[peer_id] = <div/>;
-            }
-            if (peer_id in peers) {
-                peers[peer_id].close();
-            }
-
+            // if (peer_id in peer_media_elements) {
+            peer_media_elements[peer_id] = <video src=""/>;
+            // }
+            // if (peer_id in peers) {
+            peers[peer_id].close();
+            // }
+            //
             delete peers[peer_id];
             delete peer_media_elements[config.peer_id];
             that.setState(function (prevState) {
@@ -312,7 +313,8 @@ export default class WebCall extends React.Component {
                 console.log("Access granted to audio/video");
                 local_media_stream = stream;
                 let local_media = <video key="me" muted autoPlay style={{width: '100%'}} ref={video => {
-                    video.srcObject = stream
+                    if (video)
+                        video.srcObject = stream
                 }}/>;
                 that.setState({
                     localMediaComponent: local_media
@@ -337,13 +339,16 @@ export default class WebCall extends React.Component {
                 {availablePeersIdArray.map(key => {
                     if (meetingUserDetails[key] && meetingUserDetails[key].admin)
                         return <Col xs={24} sm={12} md={12} lg={12} xl={12} key={key}>
-                            <Card bodyStyle={{padding: 0, textAlign: 'center'}}>{peer_media_elements[key]}
-                                <h4>{meetingUserDetails[key] ? meetingUserDetails[key].first_name : '--'}</h4></Card>
+                            <Card bodyStyle={{padding: 0, textAlign: 'center'}}>
+                                {peer_media_elements[key]}
+                                <h4>{meetingUserDetails[key] ? meetingUserDetails[key].first_name : '--'}</h4>
+                            </Card>
                         </Col>;
                     return null;
                 })}
                 {focusedPeer ? <Col xs={24} sm={12} md={12} lg={12} xl={12} key={focusedPeer}>
-                        <Card bodyStyle={{padding: 0, textAlign: 'center'}}>{peer_media_elements[focusedPeer]}
+                        <Card bodyStyle={{padding: 0, textAlign: 'center'}}>
+                            {peer_media_elements[focusedPeer]}
                             <h4>{meetingUserDetails[focusedPeer] ? meetingUserDetails[focusedPeer].first_name : '--'}
                                 <Button type="danger" shape="circle" icon="close" onClick={() => this.setFocusedPeer(null)}
                                         style={{float: 'right'}}/>

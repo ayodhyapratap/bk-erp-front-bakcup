@@ -112,7 +112,7 @@ export default class MeetingBooking extends React.Component {
 
         }
     };
-    loadMeetingList (){
+    loadMeetingList =()=>{
         let that = this;
         that.setState({
             loading: true

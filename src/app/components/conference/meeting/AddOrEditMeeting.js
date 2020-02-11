@@ -16,7 +16,7 @@ import {
     Spin
 } from "antd";
 import {getAPI, interpolate, postAPI} from "../../../utils/common";
-import {MEETING_DETAILS, MEETING_USER, MEETINGS, SEARCH_PATIENT} from "../../../constants/api";
+import {MEETING_DETAILS, MEETING_USER, MEETINGS, PRACTICESTAFF, SEARCH_PATIENT} from "../../../constants/api";
 import {loadDoctors} from "../../../utils/clinicUtils";
 import moment from "moment";
 import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
@@ -33,6 +33,7 @@ class AddOrEditMeeting extends React.Component {
             patientListData: [],
             no_of_participant: 1,
             practiceDoctors: [],
+            practiceStaff: [],
             zoom_user: [],
             add_new_user: false,
             meetingNotAllowed: true,
@@ -47,10 +48,22 @@ class AddOrEditMeeting extends React.Component {
     componentWillMount() {
         this.loadPatient();
         loadDoctors(this);
+        this.loadPracticeStaff();
         // this.loadZoomUser();
         this.loadMeetingList(this.state.startSchedule, moment(this.state.startSchedule).add(this.state.duration, 'minute'));
     }
+    loadPracticeStaff =()=>{
+        let that = this;
+        let successFn = function (data){
+            that.setState({
+                practiceStaff : data.staff
+            })
+        }
+        let errorFn = function(){
 
+        }
+        getAPI(interpolate(PRACTICESTAFF, [that.props.active_practiceId]), successFn, errorFn);
+    }
     loadPatient = (value) => {
         let that = this;
         let successFn = function (data) {
@@ -297,18 +310,17 @@ class AddOrEditMeeting extends React.Component {
 
                             {/*    }*/}
                             {/*</Form.Item>*/}
-                            {/*<Form.Item label={"Meeting Admins"} {...formItemLayout} key={'admins'}>*/}
-                            {/*    {getFieldDecorator('admin', {initialValue: []})*/}
-                            {/*    (<Select mode={"multiple"}*/}
-                            {/*             placeholder="Select Admins" style={{width: '100%'}}*/}
-                            {/*             showSearch onSearch={this.loadPatient} filterOption={false}>*/}
+                            <Form.Item label={"Meeting Admins"} {...formItemLayout} key={'admins'}>
+                                {getFieldDecorator('admins', {initialValue: []})
+                                (<Select mode={"multiple"}
+                                         placeholder="Select Admins" style={{width: '100%'}}>
 
-                            {/*        {this.state.patientListData.map(option => (*/}
-                            {/*            <Select.Option*/}
-                            {/*                value={option.id}>{option.user.first_name} ({option.custom_id})</Select.Option>))}*/}
-                            {/*    </Select>)*/}
-                            {/*    }*/}
-                            {/*</Form.Item>*/}
+                                    {this.state.practiceStaff.map(option => (
+                                        <Select.Option
+                                            value={option.id}>{option.user.first_name}</Select.Option>))}
+                                </Select>)
+                                }
+                            </Form.Item>
                             <Form.Item label={"Patients"} {...formItemLayout} key={'patient'}>
                                 {getFieldDecorator('patients', {initialValue: []})
                                 (<Select mode={"multiple"}
