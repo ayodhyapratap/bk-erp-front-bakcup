@@ -351,7 +351,7 @@ export default class WebCall extends React.Component {
                     <Col xs={24} sm={12} md={12} lg={12} xl={12} key={myPeerId}>
                     <Card bodyStyle={{padding: 0, textAlign: 'center'}}>
                         {localMediaComponent}
-                        <h4>{meetingUserDetails[myPeerId] ? meetingUserDetails[myPeerId].first_name : '--'} </h4>
+                        <h4>{meetingUserDetails[meetingUserDetails.admin] ? meetingUserDetails[meetingUserDetails.admin].first_name : '--'} </h4>
                     </Card>
                 </Col>:availablePeersIdArray.map(key => {
                     if (meetingUserDetails.admin == key)
