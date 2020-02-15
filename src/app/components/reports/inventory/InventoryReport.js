@@ -175,6 +175,10 @@ class InventoryReport extends React.Component {
             title: 'Supplier ',
             key: 'name',
             dataIndex: 'supplier_data.name'
+        }, {
+            title: 'Note',
+            key: 'remarks',
+            dataIndex: 'remarks'
         }];
         return <div>
             <h2>Inventory Report

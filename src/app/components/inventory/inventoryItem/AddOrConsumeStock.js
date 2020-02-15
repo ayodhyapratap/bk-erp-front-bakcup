@@ -158,10 +158,12 @@ class AddOrConsumeStock extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 let reqData = [];
+
                 that.state.tableFormValues.forEach(function (item) {
                     let itemObject = {
                         item_add_type: that.state.classType,
                         inventory_item: item.id,
+                        remarks : values.remarks,
                         quantity: values.quantity[item._id],
                         batch_number: values.batch[item._id],
                         date: moment(values.date).format('YYYY-MM-DD'),
@@ -644,6 +646,18 @@ class AddOrConsumeStock extends React.Component {
                                     <Card>
                                         <Row>
                                             <Col span={8}>
+                                                <Form.Item
+                                                    key={`remarks`}
+                                                    label='Notes'
+                                                    {...{
+                                                        labelCol: {span: 24},
+                                                        wrapperCol: {span: 24},
+                                                    }}>
+                                                    {getFieldDecorator(`remarks`, {
+                                                    })(
+                                                        <Input.TextArea/>
+                                                    )}
+                                                </Form.Item>
                                                 <Form.Item {...formItemLayoutWithOutLabel}>
                                                     <Button type="primary" htmlType="submit">Submit</Button>
                                                     {that.props.history ?
@@ -761,6 +775,7 @@ class AddOrConsumeStock extends React.Component {
                                                         }, 0)}</b></h3>
                                                 </Col>
                                                 : null}
+
                                         </Row>
                                     </Card>
                                 </Affix>

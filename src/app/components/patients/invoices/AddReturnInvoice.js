@@ -27,7 +27,7 @@ import {
     SEARCH_THROUGH_QR,
     TAXES,
     UNPAID_PRESCRIPTIONS,
-    INVOICE_RETURN_API
+    INVOICE_RETURN_API, SINGLE_INVOICE_API
 } from "../../../constants/api";
 import moment from "moment";
 import {loadDoctors} from "../../../utils/clinicUtils";
@@ -82,55 +82,61 @@ class AddReturnInvoice extends React.Component {
         })
     }
     loadEditInvoiceData = () => {
-        let invoice = this.props.editInvoice;
-        this.setState(function (prevState) {
-            let tableValues = [];
-            invoice.procedure.forEach(function (proc) {
-                tableValues.push({
-                    ...proc.procedure_data,
-                    ...proc,
-                    selectedDoctor: proc.doctor_data,
-                    selectedDate: moment(proc.date).isValid() ? moment(proc.date) : null,
-                    _id: Math.random().toFixed(7),
-                    item_type: PROCEDURES
-                })
-            });
-            let stocks = {...prevState.stocks};
-            invoice.inventory.forEach(function (proc) {
-
-                if (prevState.itemBatches[proc.inventory]) {
-                    if (stocks[proc.inventory]) {
-                        let stock_quantity = stocks[proc.inventory];
-                        if (stock_quantity[proc.batch_number])
-                            stock_quantity[proc.batch_number] += proc.unit;
-                        else
-                            stock_quantity[proc.batch_number] += proc.unit;
-                    } else {
-                        let stock_quantity = {};
-                        stock_quantity[proc.batch_number] = proc.unit;
-                        stocks[proc.inventory] = stock_quantity;
-                    }
-                    prevState.itemBatches[proc.inventory].forEach(function (batchObj) {
-                        if (batchObj.batch_number == proc.batch_number)
-                            proc.selectedBatch = batchObj;
-                    });
-                }
-                tableValues.push({
-                    ...proc.inventory_item_data,
-                    ...proc,
-                    selectedDoctor: proc.doctor_data,
-                    _id: Math.random().toFixed(7),
-                    item_type: INVENTORY,
-
+        let successFn = function (data) {
+            let invoice = data;
+            this.setState(function (prevState) {
+                let tableValues = [];
+                invoice.procedure.forEach(function (proc) {
+                    tableValues.push({
+                        ...proc.procedure_data,
+                        ...proc,
+                        selectedDoctor: proc.doctor_data,
+                        selectedDate: moment(proc.date).isValid() ? moment(proc.date) : null,
+                        _id: Math.random().toFixed(7),
+                        item_type: PROCEDURES
+                    })
                 });
-            });
+                let stocks = {...prevState.stocks};
+                invoice.inventory.forEach(function (proc) {
 
-            return {
-                tableFormValues: tableValues,
-                selectedDate: moment(invoice.date).isValid() ? moment(invoice.date) : null,
-                stocks: stocks
-            }
-        })
+                    if (prevState.itemBatches[proc.inventory]) {
+                        if (stocks[proc.inventory]) {
+                            let stock_quantity = stocks[proc.inventory];
+                            if (stock_quantity[proc.batch_number])
+                                stock_quantity[proc.batch_number] += proc.unit;
+                            else
+                                stock_quantity[proc.batch_number] += proc.unit;
+                        } else {
+                            let stock_quantity = {};
+                            stock_quantity[proc.batch_number] = proc.unit;
+                            stocks[proc.inventory] = stock_quantity;
+                        }
+                        prevState.itemBatches[proc.inventory].forEach(function (batchObj) {
+                            if (batchObj.batch_number == proc.batch_number)
+                                proc.selectedBatch = batchObj;
+                        });
+                    }
+                    tableValues.push({
+                        ...proc.inventory_item_data,
+                        ...proc,
+                        selectedDoctor: proc.doctor_data,
+                        _id: Math.random().toFixed(7),
+                        item_type: INVENTORY,
+
+                    });
+                });
+
+                return {
+                    tableFormValues: tableValues,
+                    selectedDate: moment(invoice.date).isValid() ? moment(invoice.date) : null,
+                    stocks: stocks
+                }
+            })
+        }
+        let errorFn = function (){
+
+        }
+        getAPI(interpolate(SINGLE_INVOICE_API,[this.props.editId]),successFn,errorFn);
     }
 
     loadInventoryItemList() {
@@ -186,6 +192,7 @@ class AddReturnInvoice extends React.Component {
         let errorFn = function () {
         }
         let paramsApi = {
+            page_size:1000,
             practice: this.props.active_practiceId,
             maintain_inventory: true,
         }

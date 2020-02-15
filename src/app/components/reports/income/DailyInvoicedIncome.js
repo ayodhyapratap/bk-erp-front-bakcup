@@ -201,6 +201,7 @@ export default class DailyInvoicedIncome extends React.Component {
             <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
+                hideReport={true}
                 dataSource={this.state.report}/>
         </div>
     }

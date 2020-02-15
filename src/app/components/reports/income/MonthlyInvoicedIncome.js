@@ -202,7 +202,7 @@ export default class MonthlyInvoicedIncome extends React.Component {
             <CustomizedTable
                 loading={this.state.loading}
                 columns={columns}
-                dataSource={this.state.report}/>
+                dataSource={this.state.report}  hideReport={true}/>
         </div>
     }
 }

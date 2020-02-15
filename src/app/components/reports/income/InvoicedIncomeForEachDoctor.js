@@ -267,7 +267,7 @@ export default class InvoicedIncomeForEachDoctor extends React.Component {
                 </Col>
             </Row>
             <Divider><Statistic title="Total" value={totalAmount.toFixed(2)} /></Divider>
-            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.report}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.report}  hideReport={true}/>
 
 
         </div>

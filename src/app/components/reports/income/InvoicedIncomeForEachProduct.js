@@ -140,10 +140,6 @@ export default class InvoicedIncomeForEachProduct extends React.Component {
             key:'name',
             dataIndex:'name',
         },{
-            title:"Quantity",
-            key:'quantity',
-            dataIndex:'product',
-        },{
             title:'Cost(INR)',
             key:'cost',
             dataIndex:"cost",
@@ -255,7 +251,7 @@ export default class InvoicedIncomeForEachProduct extends React.Component {
                 </Col>
             </Row>
             <Divider><Statistic title="Total" value={totalAmount.toFixed(2)} /></Divider>
-            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.report}/>
+            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.report} hideReport={true}/>
 
 
         </div>
