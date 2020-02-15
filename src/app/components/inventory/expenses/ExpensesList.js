@@ -1,6 +1,6 @@
 import {Button, Card, Divider, Icon, Popconfirm, Row, Col, Select, DatePicker, Table} from "antd";
 import React from "react";
-import {getAPI, interpolate, postAPI} from "../../../utils/common";
+import {getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {EXPENSE_TYPE, EXPENSES_API, PAYMENT_MODES, SINGLE_EXPENSES_API} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import AddExpenses from "./AddExpenses";
@@ -105,7 +105,8 @@ export default class ExpensesList extends React.Component {
 
     deleteObject(record, type) {
         let that = this;
-        let reqData = record;
+        let reqData = {};
+        reqData.id = record.id;
         reqData.is_active = type;
         let successFn = function (data) {
             that.loadData();
@@ -115,7 +116,7 @@ export default class ExpensesList extends React.Component {
         }
         let errorFn = function () {
         };
-        postAPI(interpolate(SINGLE_EXPENSES_API, [record.id]), reqData, successFn, errorFn)
+        putAPI(interpolate(SINGLE_EXPENSES_API, [record.id]), reqData, successFn, errorFn)
     }
 
     render() {

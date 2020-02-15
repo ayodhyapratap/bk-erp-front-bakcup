@@ -100,7 +100,7 @@ class Addinvoicedynamic extends React.Component {
         let that = this;
         let successFn = function (data) {
             let invoice = data;
-            this.setState(function (prevState) {
+            that.setState(function (prevState) {
                 let tableValues = [];
                 invoice.procedure.forEach(function (proc) {
                     let id = Math.random().toFixed(7);

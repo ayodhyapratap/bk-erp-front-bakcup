@@ -601,8 +601,8 @@ class EditPatientDetails extends React.Component {
                                 </Select.Option>)}
                             </Select>)
                             }
-                            <a onClick={() => that.setFormParams('source', INPUT_FIELD)}>Enter New
-                                Source</a>
+                            {this.props.user.is_superuser ?   <a onClick={() => that.setFormParams('source', INPUT_FIELD)}>Enter New
+                                Source</a> :null}
                         </Form.Item>
                     }
                     {/*{this.state.patientDetails ? null :*/}
@@ -652,8 +652,9 @@ class EditPatientDetails extends React.Component {
                         </Form.Item>
                         : <Form.Item label="Age" {...formItemLayout}>
                             {getFieldDecorator('age', {initialValue: this.state.patientDetails && this.state.patientDetails.dob ? moment().diff(this.state.patientDetails.dob, 'years') : null})
-                            (<InputNumber min={0} max={120} placeholder="Patient Age"/>)
+                            (<InputNumber min={0} max={120} placeholder="00"/>)
                             }
+                            <span className="ant-form-text">Years</span>
                         </Form.Item>}
 
                     <Form.Item label="Anniversary" {...formItemLayout}>
@@ -743,8 +744,8 @@ class EditPatientDetails extends React.Component {
                             })(
                                 <Input placeholder="Country"/>
                             )}
-                            <a onClick={() => that.setFormParams('country', SELECT_FIELD)}>Choose
-                                Country</a>
+                            {this.props.user.is_superuser ? <a onClick={() => that.setFormParams('country', SELECT_FIELD)}>Choose
+                                      Country</a>:null}
                         </Form.Item>
                         : <Form.Item key={"country"} {...formItemLayout} label={"Country"}>
                             {getFieldDecorator("country", {
@@ -758,8 +759,8 @@ class EditPatientDetails extends React.Component {
                                         value={option.id}>{option.name}</Select.Option>)}
                                 </Select>
                             )}
-                            <a onClick={() => that.setFormParams('country', INPUT_FIELD)}>Add New
-                                Country</a>
+                            {this.props.user.is_superuser ?    <a onClick={() => that.setFormParams('country', INPUT_FIELD)}>Add New
+                                Country</a> :null}
                         </Form.Item>
                     }
 
@@ -786,8 +787,8 @@ class EditPatientDetails extends React.Component {
                                         value={option.id}>{option.name}</Select.Option>)}
                                 </Select>
                             )}
-                            <a onClick={() => that.setFormParams('state', INPUT_FIELD)}>Add New
-                                state</a>
+                            {this.props.user.is_superuser ?  <a onClick={() => that.setFormParams('state', INPUT_FIELD)}>Add New
+                                state</a> :null}
                         </Form.Item>
                     }
                     {this.state.country == INPUT_FIELD || this.state.state == INPUT_FIELD || this.state.city && this.state.city == INPUT_FIELD ?
@@ -809,8 +810,8 @@ class EditPatientDetails extends React.Component {
                                         value={option.id}>{option.name}</Select.Option>)}
                                 </Select>
                             )}
-                            <a onClick={() => that.setFormParams('city', INPUT_FIELD)}>Add New
-                                City</a>
+                            {this.props.user.is_superuser ?  <a onClick={() => that.setFormParams('city', INPUT_FIELD)}>Add New
+                                City</a>:null}
                         </Form.Item>
                     }
 

@@ -82,9 +82,10 @@ class AddReturnInvoice extends React.Component {
         })
     }
     loadEditInvoiceData = () => {
+        let that = this;
         let successFn = function (data) {
             let invoice = data;
-            this.setState(function (prevState) {
+            that.setState(function (prevState) {
                 let tableValues = [];
                 invoice.procedure.forEach(function (proc) {
                     tableValues.push({
