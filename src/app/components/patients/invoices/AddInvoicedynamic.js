@@ -103,53 +103,70 @@ class Addinvoicedynamic extends React.Component {
             that.setState(function (prevState) {
                 let tableValues = [];
                 invoice.procedure.forEach(function (proc) {
-                    let id = Math.random().toFixed(7);
                     tableValues.push({
                         ...proc.procedure_data,
                         ...proc,
                         selectedDoctor: proc.doctor_data,
                         selectedDate: moment(proc.date).isValid() ? moment(proc.date) : null,
-                        _id: id,
+                        _id: Math.random().toFixed(7),
                         item_type: PROCEDURES
-                    });
-                    that.changeNetPrice(id, proc.discount)
+                    })
                 });
                 let stocks = {...prevState.stocks};
+                let itemBatches = {...prevState.itemBatches};
                 invoice.inventory.forEach(function (proc) {
-                    let id = Math.random().toFixed(7);
-                    if (prevState.itemBatches[proc.inventory]) {
-                        if (stocks[proc.inventory]) {
-                            let stock_quantity = stocks[proc.inventory];
-                            if (stock_quantity[proc.batch_number])
-                                stock_quantity[proc.batch_number] += proc.unit;
-                            else
-                                stock_quantity[proc.batch_number] += proc.unit;
-                        } else {
-                            let stock_quantity = {};
+
+                    // if (!itemBatches[proc.inventory]) {
+                        itemBatches[proc.inventory] = proc.inventory_item_data.item_type_stock.item_stock || [];
+                    // }
+                    if (stocks[proc.inventory]) {
+                        let stock_quantity = stocks[proc.inventory];
+                        if (proc.inventory_item_data.item_type_stock && proc.inventory_item_data.item_type_stock.item_stock)
+                            proc.inventory_item_data.item_type_stock.item_stock.forEach(function (stock) {
+                                if (stock_quantity[stock.batch_number])
+                                    stock_quantity[stock.batch_number] += stock.quantity;
+                                else
+                                    stock_quantity[stock.batch_number] = stock.quantity;
+                            });
+                    } else {
+                        let stock_quantity = {}
+                        if (proc.inventory_item_data.item_type_stock && proc.inventory_item_data.item_type_stock.item_stock)
+                            proc.inventory_item_data.item_type_stock.item_stock.forEach(function (stock) {
+                                stock_quantity[stock.batch_number] = stock.quantity
+                            });
+                        stocks[proc.inventory_item_data.id] = stock_quantity;
+                    }
+
+                    if (stocks[proc.inventory]) {
+                        let stock_quantity = stocks[proc.inventory];
+                        if (stock_quantity[proc.batch_number])
+                            stock_quantity[proc.batch_number] += proc.unit;
+                        else
                             stock_quantity[proc.batch_number] = proc.unit;
-                            stocks[proc.inventory] = stock_quantity;
-                        }
-                        prevState.itemBatches[proc.inventory].forEach(function (batchObj) {
+                    } else {
+                        let stock_quantity = {};
+                        stock_quantity[proc.batch_number] = proc.unit;
+                        stocks[proc.inventory] = stock_quantity;
+                    }
+                    if (itemBatches[proc.inventory])
+                        itemBatches[proc.inventory].forEach(function (batchObj) {
                             if (batchObj.batch_number == proc.batch_number)
                                 proc.selectedBatch = batchObj;
                         });
-                    }
                     tableValues.push({
                         ...proc.inventory_item_data,
                         ...proc,
                         selectedDoctor: proc.doctor_data,
-                        _id: id,
+                        _id: Math.random().toFixed(7),
                         item_type: INVENTORY,
-                        selectOption: !!proc.offers
-                    });
-                    that.changeNetPrice(id, proc.discount)
-                });
 
+                    });
+                });
                 return {
                     tableFormValues: tableValues,
                     selectedDate: moment(invoice.date).isValid() ? moment(invoice.date) : null,
                     stocks: stocks,
-                    notes: invoice.notes
+                    itemBatches: itemBatches
                 }
             })
         }
@@ -171,18 +188,18 @@ class Addinvoicedynamic extends React.Component {
             if (that.state.searchItem == searchString)
                 that.setState(function (prevState) {
                         let stocks = {...prevState.stocks};
-                        let itemBatches = {};
+                        let itemBatches = {...prevState.itemBatches};
                         data.forEach(function (item) {
                             // if (item.item_type == DRUG) {
                             drugItems.push(item);
                             if (stocks[item.id]) {
-                                let stock_quantity = stocks[item.id]
+                                let stock_quantity = stocks[item.id];
                                 if (item.item_type_stock && item.item_type_stock.item_stock)
                                     item.item_type_stock.item_stock.forEach(function (stock) {
                                         if (stock_quantity[stock.batch_number])
                                             stock_quantity[stock.batch_number] += stock.quantity;
                                         else
-                                            stock_quantity[stock.batch_number] += stock.quantity;
+                                            stock_quantity[stock.batch_number] = stock.quantity;
                                     });
                             } else {
                                 let stock_quantity = {}
@@ -192,8 +209,13 @@ class Addinvoicedynamic extends React.Component {
                                     });
                                 stocks[item.id] = stock_quantity;
                             }
-                            itemBatches[item.id] = item.item_type_stock.item_stock;
-                            // }
+                            if (item.item_type_stock.item_stock) {
+                                console.log(itemBatches,itemBatches[item.id],item);
+                                if (itemBatches[item.id])
+                                    itemBatches[item.id] = [...itemBatches[item.id], ...item.item_type_stock.item_stock];
+                                else
+                                    itemBatches[item.id] = [...item.item_type_stock.item_stock];
+                            }
 
                         });
                         let items = prevState.items;
@@ -1244,7 +1266,7 @@ class Addinvoicedynamic extends React.Component {
                                                         initialValue: this.state.notes,
                                                         validateTrigger: ['onChange', 'onBlur'],
                                                     })(
-                                                        <Input.TextArea row={2} placeholder="unit" size={'small'}/>
+                                                        <Input.TextArea row={2} placeholder="Notes..." size={'small'}/>
                                                     )}
                                                 </Form.Item>
                                                 <h3>Grand

@@ -67,7 +67,7 @@ class AddReturnInvoice extends React.Component {
 
     componentDidMount() {
         loadDoctors(this);
-        this.loadInventoryItemList();
+        // this.loadInventoryItemList();
         this.loadProcedures();
         this.loadPrescriptions();
         this.loadTaxes();
@@ -98,25 +98,46 @@ class AddReturnInvoice extends React.Component {
                     })
                 });
                 let stocks = {...prevState.stocks};
+                let itemBatches = {...prevState.itemBatches};
                 invoice.inventory.forEach(function (proc) {
 
-                    if (prevState.itemBatches[proc.inventory]) {
-                        if (stocks[proc.inventory]) {
-                            let stock_quantity = stocks[proc.inventory];
-                            if (stock_quantity[proc.batch_number])
-                                stock_quantity[proc.batch_number] += proc.unit;
-                            else
-                                stock_quantity[proc.batch_number] += proc.unit;
-                        } else {
-                            let stock_quantity = {};
+                    if (!itemBatches[proc.inventory]) {
+                        itemBatches[proc.inventory] = proc.inventory_item_data.item_type_stock.item_stock;
+                    }
+                    if (stocks[proc.inventory]) {
+                        let stock_quantity = stocks[proc.inventory];
+                        if (proc.inventory_item_data.item_type_stock && proc.inventory_item_data.item_type_stock.item_stock)
+                            proc.inventory_item_data.item_type_stock.item_stock.forEach(function (stock) {
+                                if (stock_quantity[stock.batch_number])
+                                    stock_quantity[stock.batch_number] += stock.quantity;
+                                else
+                                    stock_quantity[stock.batch_number] = stock.quantity;
+                            });
+                    } else {
+                        let stock_quantity = {}
+                        if (proc.inventory_item_data.item_type_stock && proc.inventory_item_data.item_type_stock.item_stock)
+                            proc.inventory_item_data.item_type_stock.item_stock.forEach(function (stock) {
+                                stock_quantity[stock.batch_number] = stock.quantity
+                            });
+                        stocks[proc.inventory_item_data.id] = stock_quantity;
+                    }
+
+                    if (stocks[proc.inventory]) {
+                        let stock_quantity = stocks[proc.inventory];
+                        if (stock_quantity[proc.batch_number])
+                            stock_quantity[proc.batch_number] += proc.unit;
+                        else
                             stock_quantity[proc.batch_number] = proc.unit;
-                            stocks[proc.inventory] = stock_quantity;
-                        }
-                        prevState.itemBatches[proc.inventory].forEach(function (batchObj) {
+                    } else {
+                        let stock_quantity = {};
+                        stock_quantity[proc.batch_number] = proc.unit;
+                        stocks[proc.inventory] = stock_quantity;
+                    }
+                    if (itemBatches[proc.inventory])
+                        itemBatches[proc.inventory].forEach(function (batchObj) {
                             if (batchObj.batch_number == proc.batch_number)
                                 proc.selectedBatch = batchObj;
                         });
-                    }
                     tableValues.push({
                         ...proc.inventory_item_data,
                         ...proc,
@@ -126,18 +147,18 @@ class AddReturnInvoice extends React.Component {
 
                     });
                 });
-
                 return {
                     tableFormValues: tableValues,
                     selectedDate: moment(invoice.date).isValid() ? moment(invoice.date) : null,
-                    stocks: stocks
+                    stocks: stocks,
+                    itemBatches: itemBatches
                 }
             })
         }
-        let errorFn = function (){
+        let errorFn = function () {
 
         }
-        getAPI(interpolate(SINGLE_INVOICE_API,[this.props.editId]),successFn,errorFn);
+        getAPI(interpolate(SINGLE_INVOICE_API, [this.props.editId]), successFn, errorFn);
     }
 
     loadInventoryItemList() {
@@ -193,7 +214,7 @@ class AddReturnInvoice extends React.Component {
         let errorFn = function () {
         }
         let paramsApi = {
-            page_size:1000,
+            page_size: 1000,
             practice: this.props.active_practiceId,
             maintain_inventory: true,
         }
@@ -370,7 +391,7 @@ class AddReturnInvoice extends React.Component {
                     date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
                     with_tax: this.state.return_with_tax ? true : false,
                     cash_return: values.cash_return,
-                    advance_value : this.state.returnCashAvailable - values.cash_return || 0,
+                    advance_value: this.state.returnCashAvailable - values.cash_return || 0,
                 };
                 that.state.tableFormValues.forEach(function (item) {
                     item.unit = values.unit[item._id];
@@ -551,7 +572,7 @@ class AddReturnInvoice extends React.Component {
         let that = this;
         this.setState({
             return_with_tax: e.target.checked
-        },function(){
+        }, function () {
             that.calculateReturnCashAvailable();
         })
     }
@@ -688,6 +709,7 @@ class AddReturnInvoice extends React.Component {
                                     </b>
                                 </a>
                             </Dropdown>
+                            {record.selectedBatch && record.selectedBatch.expiry_date && moment(record.selectedBatch.expiry_date)<moment()? <Tag color="#f50">Expired</Tag> : null}
                         </div>
                     default:
                         return null;
@@ -776,7 +798,7 @@ class AddReturnInvoice extends React.Component {
             key: 'total',
             width: 100,
             dataIndex: 'total',
-            render: (item, record) => (record.unit ? (record.total/record.unit).toFixed(2) : record.total.toFixed(2))
+            render: (item, record) => (record.unit ? (record.total / record.unit).toFixed(2) : record.total.toFixed(2))
         }]);
 
         return <div>
@@ -812,7 +834,7 @@ class AddReturnInvoice extends React.Component {
                                                         </Checkbox>
                                                     </Col>
                                                     <Col span={8}>
-                                                        <Form.Item label={"Returned Cash "} >
+                                                        <Form.Item label={"Returned Cash "}>
                                                             {getFieldDecorator('cash_return',
                                                             )
                                                             (<InputNumber min={0} max={this.state.returnCashAvailable}
@@ -825,12 +847,13 @@ class AddReturnInvoice extends React.Component {
                                                         <Form.Item
                                                             label={"Notes"}
                                                             key={`notes`}
-                                                            >
+                                                        >
                                                             {getFieldDecorator(`notes`, {
                                                                 initialValue: this.state.tableFormValues.notes,
                                                                 validateTrigger: ['onChange', 'onBlur'],
                                                             })(
-                                                                <Input.TextArea row={2} placeholder="Notes..." size={'small'} style={{width:'100%'}}/>
+                                                                <Input.TextArea row={2} placeholder="Notes..."
+                                                                                size={'small'} style={{width: '100%'}}/>
                                                             )}
                                                         </Form.Item>
                                                         <Form.Item {...formItemLayoutWithOutLabel}
