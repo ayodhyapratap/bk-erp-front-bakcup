@@ -1,11 +1,11 @@
 import React from "react";
 import {Divider,Form} from "antd";
+import moment from "moment";
+import {Redirect} from "react-router-dom";
 import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {PATIENTS_MEMBERSHIP_API,MEMBERSHIP_API} from "../../../constants/api"
 import {INPUT_FIELD,DATE_PICKER ,SUCCESS_MSG_TYPE, SELECT_FIELD} from "../../../constants/dataKeys";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
-import moment from "moment";
-import {Redirect} from "react-router-dom";
 
 export default class MedicalMembership extends React.Component{
     constructor(props) {
@@ -24,14 +24,14 @@ export default class MedicalMembership extends React.Component{
     }
 
     loadMembership(){
-        let that=this;
-        let successFn =function (data){
+        const that=this;
+        const successFn =function (data){
             that.setState({
                 Membership:data,
                 loading:false
             })
         };
-        let errorFn = function(){
+        const errorFn = function(){
             that.setState({
                 loading:false
             })
@@ -41,8 +41,9 @@ export default class MedicalMembership extends React.Component{
         }
 
     }
+
     render(){
-        let that = this;
+        const that = this;
         console.log("form state",this.state)
         const fields = [{
             label: "Type",
@@ -57,13 +58,13 @@ export default class MedicalMembership extends React.Component{
 
         }];
             const formProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Medical Membership added");
                     that.props.loadProfile();
                     that.props.loadMedicalMembership();
                     that.props.formChange();
                 },
-                errorFn: function () {
+                errorFn () {
                     
                 },
                 action: interpolate(PATIENTS_MEMBERSHIP_API, [this.props.patientId]),
@@ -72,6 +73,6 @@ export default class MedicalMembership extends React.Component{
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         const defaultValues = [{key: 'patient', value: this.props.patientId}, {key: 'practice', value: this.props.active_practiceId}]
 
-        return<TestFormLayout formProp={formProp} defaultValues={defaultValues} fields={fields}/>
+        return<TestFormLayout formProp={formProp} defaultValues={defaultValues} fields={fields} />
     }
 }

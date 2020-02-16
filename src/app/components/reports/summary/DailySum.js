@@ -30,12 +30,13 @@ export default class DailySummaryReport extends React.Component {
         this.loadDailySummary = this.loadDailySummary.bind(this);
         loadDoctors(this);
     }
+
     componentDidMount() {
         this.loadDailySummary();
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
             this.setState({
                 startDate: newProps.startDate,
@@ -46,11 +47,11 @@ export default class DailySummaryReport extends React.Component {
     }
 
     loadDailySummary(page=1) {
-        let that = this;
+        const that = this;
         that.setState({
             loading:true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState(function (prevState) {
                 if (data.current==1) {
                     return {
@@ -58,24 +59,24 @@ export default class DailySummaryReport extends React.Component {
                         dailySummary: data.results,
                         nextItemPage: data.next
                     }
-                }else{
+                }
                     return {
                         loading:false,
                         dailySummary: [...prevState.dailySummary,...data.results],
                         nextItemPage: data.next
                     }
-                }
+                
             })
 
         }
 
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams = {
-            page:page,
+        const apiParams = {
+            page,
             start:'2012-09-02',
             // start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD')
@@ -97,35 +98,48 @@ export default class DailySummaryReport extends React.Component {
 
 
     render() {
-        let that=this;
+        const that=this;
 
-        return <div><h2>Daily Summary Report
-        </h2>
-            <Card  extra={<>
+        return (
+<div><h2>Daily Summary Report
+     </h2>
+            <Card  extra={(
+<>
                 <spa>Doctors : </spa>
-                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
-                        onChange={(value)=>this.filterReport('doctors',value)}>
-                    {this.state.practiceDoctors.map((item) => <Select.Option value={item.id}>
-                        {item.user.first_name}</Select.Option>)}
-                </Select></>
-            }>
+                <Select
+                  style={{minWidth: '200px'}}
+                  mode="multiple"
+                  placeholder="Select Doctors"
+                  onChange={(value)=>this.filterReport('doctors',value)}
+                >
+                    {this.state.practiceDoctors.map((item) => (
+<Select.Option value={item.id}>
+                        {item.user.first_name}
+</Select.Option>
+))}
+                </Select>
+</>
+)}
+            >
                 {this.state.dailySummary.map(invoice => InvoiceCard(invoice, that))}
                 <Spin spinning={this.state.loading}>
-                    <Row/>
+                    <Row />
                 </Spin>
                 <InfiniteFeedLoaderButton
-                    loaderFunction={() => this.loadDailySummary(this.state.nextItemPage)}
-                    loading={this.state.loading}
-                    hidden={!this.state.nextItemPage}/>
+                  loaderFunction={() => this.loadDailySummary(this.state.nextItemPage)}
+                  loading={this.state.loading}
+                  hidden={!this.state.nextItemPage}
+                />
             </Card>
-        </div>
+</div>
+)
     }
 }
 
 function InvoiceCard(invoice, that) {
     let tableObjects = [];
     if (invoice.reservation) {
-        let medicinesPackages = invoice.reservation_data.medicines.map(item => Object.create({
+        const medicinesPackages = invoice.reservation_data.medicines.map(item => Object.create({
             ...item,
             unit: 1,
             total: item.final_price,
@@ -134,7 +148,7 @@ function InvoiceCard(invoice, that) {
             invoiceId:invoice.invoice_id,
             invoice_cost:invoice.cost,
         }));
-        let mapper = {
+        const mapper = {
             "NORMAL": {total: 'final_normal_price', tax: "normal_tax_value", unit_cost: "normal_price"},
             "TATKAL": {total: 'final_tatkal_price', tax: "tatkal_tax_value", unit_cost: "tatkal_price"}
         }
@@ -149,22 +163,23 @@ function InvoiceCard(invoice, that) {
         }, ...medicinesPackages]
     }
 
-    return <Card>
+    return (
+<Card>
         <Row gutter={8}>
             <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4} style={{padding: 10}}>
-                <Statistic title="Patient Name" value={invoice.patient_data.user.first_name}/>
-                <p>Invoice Income : <span></span></p>
+                <Statistic title="Patient Name" value={invoice.patient_data.user.first_name} />
+                <p>Invoice Income : <span /></p>
                 <p>Total Payment : <span>{invoice.total.toFixed(2)}</span></p>
-                <p>Amount Due : <span></span></p>
+                <p>Amount Due : <span /></p>
 
             </Col>
             <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
-                {invoice.type == "Membership Amount." ?
+                {invoice.type == "Membership Amount." ? (
                     <Table
-                        bordered={true}
-                        pagination={false}
-                        columns={columns}
-                        dataSource={[{
+                      bordered
+                      pagination={false}
+                      columns={columns}
+                      dataSource={[{
                             inventory: true,
                             name: "Membership",
                             unit_cost: invoice.total,
@@ -174,21 +189,25 @@ function InvoiceCard(invoice, that) {
                             total: invoice.total,
                             invoiceId:invoice.invoice_id,
                             invoice_cost:invoice.cost,
-                        }]}/> :
+                        }]}
+                    />
+                  ) : (
                     <Table
-                        bordered={true}
-                        pagination={false}
-                        columns={columns}
-                        dataSource={[...tableObjects,...invoice.inventory,...invoice.procedure]}
-                    />}
+                      bordered
+                      pagination={false}
+                      columns={columns}
+                      dataSource={[...tableObjects,...invoice.inventory,...invoice.procedure]}
+                    />
+                  )}
             </Col>
         </Row>
 
 
-    </Card>
+</Card>
+)
 }
 
-let i=1;
+const i=1;
 const columns = [{
     title: 'S. No',
     key: 'sno',

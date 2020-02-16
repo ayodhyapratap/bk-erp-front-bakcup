@@ -1,8 +1,10 @@
 import React from "react";
 import {Route} from "react-router";
 
-import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon, Row} from "antd";
+import {Redirect} from 'react-router-dom'
+import moment from 'moment';
+import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {
     CHECKBOX_FIELD,
     DATE_PICKER,
@@ -21,8 +23,6 @@ import {
     PROCEDURE_CATEGORY, TAXES, PATIENT_CLINIC_NOTES_API
 } from "../../../constants/api";
 import {getAPI, interpolate, displayMessage} from "../../../utils/common";
-import {Redirect} from 'react-router-dom'
-import moment from 'moment';
 
 
 class AddClinicNotes extends React.Component {
@@ -47,49 +47,49 @@ class AddClinicNotes extends React.Component {
     }
 
     loadDrugCatalog() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 drug_catalog: data
             })
 
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(DRUG_CATALOG, [this.props.active_practiceId]), successFn, errorFn)
     }
 
     loadProcedureCategory() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 procedure_category: data
             })
 
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     loadTaxes() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log("get table");
             that.setState({
                 taxes_list: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -133,15 +133,15 @@ class AddClinicNotes extends React.Component {
 
         let editformProp;
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        let that = this;
+        const that = this;
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 if (that.props.loadData)
                     that.props.loadData()
                 console.log(data);
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(PATIENT_CLINIC_NOTES_API, [this.props.match.params.id]),
@@ -151,21 +151,41 @@ class AddClinicNotes extends React.Component {
         if (this.state.editClinicNotes) {
             defaultValues = [{key: 'is_active', value: true}, {"key": "id", "value": this.state.editClinicNotes.id}];
         }
-        return <Row>
+        return (
+<Row>
             <Card>
-                <Route exact path='/patient/:id/emr/clinicnotes/edit'
-                       render={() => (this.state.editClinicNotes ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit Clinic notes"
-                                           changeRedirect={this.changeRedirect} formProp={formProp} fields={fields}/> :
-                           <Redirect to={'/patient/' + this.props.match.params.id + '/billing/invoices'}/>)}/>
-                <Route exact path='/patient/:id/emr/clinicnotes/add'
-                       render={() => <TestFormLayout title="Add Clinic Notes" changeRedirect={this.changeRedirect}
-                                                     formProp={formProp} fields={fields}/>}/>
+                <Route
+                  exact
+                  path='/patient/:id/emr/clinicnotes/edit'
+                  render={() => (this.state.editClinicNotes ? (
+                           <TestFormLayout
+                             defaultValues={defaultValues}
+                             title="Edit Clinic notes"
+                             changeRedirect={this.changeRedirect}
+                             formProp={formProp}
+                             fields={fields}
+                           />
+                         ) :
+                           <Redirect to={`/patient/${  this.props.match.params.id  }/billing/invoices`} />)}
+                />
+                <Route
+                  exact
+                  path='/patient/:id/emr/clinicnotes/add'
+                  render={() => (
+<TestFormLayout
+  title="Add Clinic Notes"
+  changeRedirect={this.changeRedirect}
+  formProp={formProp}
+  fields={fields}
+/>
+)}
+                />
 
 
             </Card>
-            {this.state.redirect && <Redirect to={'/patient/' + this.props.match.params.id + '/emr/clinicnotes'}/>}
-        </Row>
+            {this.state.redirect && <Redirect to={`/patient/${  this.props.match.params.id  }/emr/clinicnotes`} />}
+</Row>
+)
 
     }
 }

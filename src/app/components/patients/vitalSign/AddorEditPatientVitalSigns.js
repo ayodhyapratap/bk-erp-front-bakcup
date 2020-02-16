@@ -1,13 +1,13 @@
 import React from "react";
 import {Route} from "react-router";
 
-import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Card, Form, Row} from "antd";
+import {Redirect} from 'react-router-dom'
+import moment from "moment";
+import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {DATE_PICKER, NUMBER_FIELD, SELECT_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import {VITAL_SIGNS_API} from "../../../constants/api";
 import {displayMessage, interpolate} from "../../../utils/common";
-import {Redirect} from 'react-router-dom'
-import moment from "moment";
 
 
 class AddorEditPatientVitalSigns extends React.Component {
@@ -26,7 +26,7 @@ class AddorEditPatientVitalSigns extends React.Component {
 
 
     changeRedirect() {
-        let redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -115,25 +115,25 @@ class AddorEditPatientVitalSigns extends React.Component {
 
 
         let editformProp;
-        let defaultValues = [{key: 'patient', value: this.props.match.params.id}, {
+        const defaultValues = [{key: 'patient', value: this.props.match.params.id}, {
             key: 'practice',
             value: this.props.active_practiceId
         }];
-        let that = this;
+        const that = this;
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         if (this.state.editVitalSign) {
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success")
                     if (that.props.loadData){
                         that.props.loadData();
                     }
                     if (that.props.history){
-                        that.props.history.replace('/patient/'+ that.props.match.params.id +'/emr/vitalsigns')
+                        that.props.history.replace(`/patient/${ that.props.match.params.id }/emr/vitalsigns`)
                     }
 
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(VITAL_SIGNS_API, [this.props.match.params.id]),
@@ -142,16 +142,16 @@ class AddorEditPatientVitalSigns extends React.Component {
             defaultValues.push({"key": "id", "value": this.state.editVitalSign.id})
         }
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 if (that.props.loadData) {
                     that.props.loadData();
                 }
                 if (that.props.history){
-                    that.props.history.replace('/patient/'+ that.props.match.params.id +'/emr/vitalsigns')
+                    that.props.history.replace(`/patient/${ that.props.match.params.id }/emr/vitalsigns`)
                 }
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(VITAL_SIGNS_API, [this.props.match.params.id]),
@@ -159,24 +159,42 @@ class AddorEditPatientVitalSigns extends React.Component {
         }
 
 
-        return <Row>
+        return (
+<Row>
             <Card>
-                <Route exact path='/patient/:id/emr/vitalsigns/edit'
-                       render={() => (this.state.editVitalSign ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit Report Manual"
-                                           changeRedirect={this.changeRedirect} formProp={editformProp}
-                                           fields={fields}/> :
-                           <Redirect to='/patients/profile'/>)}/>
-                <Route exact path='/patient/:id/emr/vitalsigns/add'
-                       render={() => <TestFormLayout title="Add Report Manual"
-                                                     defaultValues={defaultValues}
-                                                     changeRedirect={this.changeRedirect}
-                                                     formProp={formProp} fields={fields}/>}/>
+                <Route
+                  exact
+                  path='/patient/:id/emr/vitalsigns/edit'
+                  render={() => (this.state.editVitalSign ? (
+                           <TestFormLayout
+                             defaultValues={defaultValues}
+                             title="Edit Report Manual"
+                             changeRedirect={this.changeRedirect}
+                             formProp={editformProp}
+                             fields={fields}
+                           />
+                         ) :
+                           <Redirect to='/patients/profile' />)}
+                />
+                <Route
+                  exact
+                  path='/patient/:id/emr/vitalsigns/add'
+                  render={() => (
+<TestFormLayout
+  title="Add Report Manual"
+  defaultValues={defaultValues}
+  changeRedirect={this.changeRedirect}
+  formProp={formProp}
+  fields={fields}
+/>
+)}
+                />
 
 
             </Card>
-            {this.state.redirect && <Redirect to={'/patient/' + this.props.match.params.id + '/emr/vitalsigns'}/>}
-        </Row>
+            {this.state.redirect && <Redirect to={`/patient/${  this.props.match.params.id  }/emr/vitalsigns`} />}
+</Row>
+)
 
     }
 }

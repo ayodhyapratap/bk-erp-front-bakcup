@@ -7,12 +7,17 @@ export default class PatientRequiredNoticeCard extends React.Component {
     }
 
     render() {
-        let that = this;
-        return <Card style={{textAlign: 'center'}}>
+        const that = this;
+        return (
+<Card style={{textAlign: 'center'}}>
             <h2> Please select patient to further continue !!</h2>
-            {this.props.togglePatientListModal ?
-                <Button type={"primary"} onClick={() => that.props.togglePatientListModal(true)}><Icon
-                    type={"user"}/> Select Patient</Button> : null}
-        </Card>
+            {this.props.togglePatientListModal ? (
+                <Button type="primary" onClick={() => that.props.togglePatientListModal(true)}><Icon
+                  type="user"
+                /> Select Patient
+                </Button>
+              ) : null}
+</Card>
+)
     }
 }

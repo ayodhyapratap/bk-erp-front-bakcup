@@ -1,6 +1,6 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Card, Form, Divider, Row,Popconfirm,Table} from "antd";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {SUCCESS_MSG_TYPE,SELECT_FIELD} from "../../../../constants/dataKeys";
 import {VITAL_SIGNS_API, EMR_VITAL_SIGNS} from "../../../../constants/api"
 import {getAPI, interpolate, displayMessage} from "../../../../utils/common";
@@ -19,25 +19,26 @@ class VitalSigns extends React.Component {
         this.loadVitalSign =this.loadVitalSign.bind(this);
 
     }
+
     componentDidMount() {
         this.loadVitalSign();
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
     }
 
     loadVitalSign(){
-        let that=this;
-        let successFn =function (data){
+        const that=this;
+        const successFn =function (data){
             that.setState({
                 vitalSign:data[data.length-1]
             })
         }
-        let errorFn = function(){
+        const errorFn = function(){
             that.setState({
 
             })
@@ -66,7 +67,7 @@ class VitalSigns extends React.Component {
             options:DEFAULT_BP_METHOD.map(BPMETHOD =>({label:BPMETHOD.label , value:BPMETHOD.value}))
         }];
 
-        let defaultValues = [{ key: 'practice', value: this.props.active_practiceId}, {
+        const defaultValues = [{ key: 'practice', value: this.props.active_practiceId}, {
             "key": "id",
             "value": this.state.vitalSign ? this.state.vitalSign.id : null,
         }];
@@ -74,19 +75,21 @@ class VitalSigns extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
     
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(EMR_VITAL_SIGNS, [this.props.active_practiceId]),
             method: "post",
         }
 
-        return <Row>
-                <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
-        </Row>
+        return (
+<Row>
+                <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields} />
+</Row>
+)
 
     }
 }

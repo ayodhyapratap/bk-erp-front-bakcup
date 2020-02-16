@@ -2,6 +2,7 @@ import {
     Form, Input, Button, Card, Table, InputNumber
 } from 'antd';
 import React from "react";
+import { Redirect } from 'react-router-dom';
 import {
     AGENT_ROLES,
     GENERATE_MLM_COMMISSON,
@@ -9,7 +10,6 @@ import {
 } from "../../../../constants/api"
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../../utils/common";
 import {SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
-import { Redirect } from 'react-router-dom';
 
 class MLMGenerate extends React.Component {
     constructor(props) {
@@ -29,7 +29,7 @@ class MLMGenerate extends React.Component {
     componentDidMount() {
         this.loadRoles();
         if (this.state.editRecord && this.state.editId) {
-            let editRecordMargins = {}
+            const editRecordMargins = {}
             this.state.editRecord.forEach(function(record){
                 editRecordMargins[record.roleId] = record;
             });
@@ -43,8 +43,8 @@ class MLMGenerate extends React.Component {
     }
 
     loadMlmData() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             data.map(function (item) {
                 if (item.id == that.props.editId) {
                     that.setState({
@@ -57,7 +57,7 @@ class MLMGenerate extends React.Component {
             })
 
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading:true
             })
@@ -67,14 +67,14 @@ class MLMGenerate extends React.Component {
     }
 
     loadRoles() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 staffRoles: data,
                 loading:false
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading:false
             })
@@ -103,7 +103,7 @@ class MLMGenerate extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        let that = this;
+        const that = this;
         this.props.form.validateFieldsAndScroll((err, values) => {
             let reqData = {};
             reqData={
@@ -143,14 +143,14 @@ class MLMGenerate extends React.Component {
 
             if (!err) {
                 that.setState({changePassLoading: true, redirect:true});
-                let successFn = function (data) {
+                const successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, data.details);
                     that.props.loadData();
                     if (that.props.history){
                         that.props.history.replace("/settings/mlm");
                     }
                 };
-                let errorFn = function () {
+                const errorFn = function () {
                 };
                 postAPI(GENERATE_MLM_COMMISSON, reqData, successFn, errorFn);
             }
@@ -158,7 +158,7 @@ class MLMGenerate extends React.Component {
     };
 
     changeRedirect(){
-        var redirectVar=this.state.redirect;
+        const redirectVar=this.state.redirect;
         this.setState({
             redirect:  !redirectVar,
         })  ;
@@ -178,14 +178,14 @@ class MLMGenerate extends React.Component {
     }
 
     setLevelCount = (e) => {
-        let that = this;
+        const that = this;
         that.setState({
             level_count: e < 5 ? e : 5
         })
     }
 
     render() {
-        let that = this
+        const that = this
         const {getFieldDecorator, getFieldValue} = this.props.form;
         const formItemLayout = {
             labelCol: {
@@ -198,65 +198,69 @@ class MLMGenerate extends React.Component {
             },
         };
         getFieldDecorator('keys', {initialValue: []});
-        let columns = [{
+        const columns = [{
             title: 'Roles',
             dataIndex: 'name',
             key: 'name'
         }];
         if (this.state.level_count)
             for (let i = 1; i <= this.state.level_count; i++) {
-                let record = {};
+                const record = {};
                 columns.push({
-                    title: 'Level ' + i,
-                    dataIndex: 'Level ' + i,
-                    key: 'Level ' + i,
-                    render: (item, record) => <Form.Item
-                        {...formItemLayout}
+                    title: `Level ${  i}`,
+                    dataIndex: `Level ${  i}`,
+                    key: `Level ${  i}`,
+                    render: (item, record) => (
+<Form.Item
+  {...formItemLayout}
                         // label={k}
-                        required={true}
-                        key={`${i}[${record.id}]`}>
+  required
+  key={`${i}[${record.id}]`}
+>
                         {getFieldDecorator(`${i}[${record.id}]`, {
                             validateTrigger: ['onChange', 'onBlur'],
                             initialValue: (this.state.editRecordMargins && this.state.editRecordMargins[record.id] ? this.state.editRecordMargins[record.id][i] : null)
                         })(
-                            <InputNumber min={0} placeholder="Percent Commission"/>
+                            <InputNumber min={0} placeholder="Percent Commission" />
                         )}
-                    </Form.Item>
+</Form.Item>
+)
                 })
             }
 
         return (
-            <Card title={"Manage MLM Commission"}>
+            <Card title="Manage MLM Commission">
                 <Form onSubmit={this.handleSubmit} className="login-form">
                     <Form.Item
-                        {...formItemLayout}
-                        label={"Margin Name"}
-                        required={true}
-                        key={`margin_name`}>
+                      {...formItemLayout}
+                      label="Margin Name"
+                      required
+                      key="margin_name"
+                    >
                         {getFieldDecorator(`margin_name`, {
                             validateTrigger: ['onChange', 'onBlur'],
                             initialValue: (this.state.margin ? this.state.margin.name : null)
                         })(
-                            <Input placeholder="Margin Type Name"/>
+                            <Input placeholder="Margin Type Name" />
                         )}
                     </Form.Item>
                     <Form.Item
-                        {...formItemLayout}
-                        label={'No of Levels'}
-                        required={false}
-                        key={`level_count`}
+                      {...formItemLayout}
+                      label="No of Levels"
+                      required={false}
+                      key="level_count"
 
                     >
                         {getFieldDecorator(`level_count`, {
                             validateTrigger: ['onChange', 'onBlur'],
                             initialValue: this.state.level_count
                         })(
-                            <InputNumber min={1} max={5} placeholder="Level Count" onChange={this.setLevelCount}/>
+                            <InputNumber min={1} max={5} placeholder="Level Count" onChange={this.setLevelCount} />
                         )}
                     </Form.Item>
-                    <Table loading={this.state.loading} bordered={true} pagination={false} columns={columns} dataSource={this.state.staffRoles}/>
+                    <Table loading={this.state.loading} bordered pagination={false} columns={columns} dataSource={this.state.staffRoles} />
                     <Form.Item>
-                        <br/>
+                        <br />
                         <Button type="primary" htmlType="submit" className="login-form-button">
                             Set MLM Commissions
                         </Button>

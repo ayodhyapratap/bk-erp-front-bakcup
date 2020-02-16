@@ -18,34 +18,34 @@ export default class Membership extends React.Component {
     }
 
     loadData = () => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 membership: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(MEMBERSHIP_API, successFn, errorFn);
     }
 
     deleteObject(record) {
-        let that = this;
-        let reqData = {
+        const that = this;
+        const reqData = {
             is_active:false,
             id:record.id,
         };
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         postAPI(MEMBERSHIP_API, reqData, successFn, errorFn);
     }
 
     render() {
-        let that = this;
+        const that = this;
         const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -66,18 +66,24 @@ export default class Membership extends React.Component {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-                <Popconfirm title="Are you sure delete this prescription?" onConfirm={() => that.deleteObject(record)}
-                            okText="Yes" cancelText="No">
+                <Popconfirm
+                  title="Are you sure delete this prescription?"
+                  onConfirm={() => that.deleteObject(record)}
+                  okText="Yes"
+                  cancelText="No"
+                >
                     <a>
                         Delete
                     </a>
                 </Popconfirm>
             ),
         }];
-        return <Row>
-            <AddMembership {...this.props} loadData={this.loadData}/>
-            <Divider/>
-            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.membership}/>
-        </Row>
+        return (
+<Row>
+            <AddMembership {...this.props} loadData={this.loadData} />
+            <Divider />
+            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.membership} />
+</Row>
+)
     }
 }

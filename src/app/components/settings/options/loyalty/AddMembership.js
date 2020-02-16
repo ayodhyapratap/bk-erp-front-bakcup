@@ -38,9 +38,9 @@ export default class AddMembership extends React.Component {
             follow: 'Months',
 
         }];
-        let that = this;
+        const that = this;
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 if (that.props.loadData)
                     that.props.loadData();
@@ -48,7 +48,7 @@ export default class AddMembership extends React.Component {
                     that.props.history.replace("/settings/loyalty");
                 }
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(MEMBERSHIP_API, [this.props.active_practiceId]),
@@ -56,8 +56,10 @@ export default class AddMembership extends React.Component {
         };
         const formDefaultValues = [{"key": "practice", "value": this.state.active_practiceId}];
         const AddForm = Form.create()(DynamicFieldsForm);
-        return <Row>
-            <AddForm fields={fields} formProp={formProp} defaultValues={formDefaultValues} {...this.props}/>
-        </Row>
+        return (
+<Row>
+            <AddForm fields={fields} formProp={formProp} defaultValues={formDefaultValues} {...this.props} />
+</Row>
+)
     }
 }

@@ -1,6 +1,7 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Col, Form, Row, Select} from "antd";
+import moment from "moment";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     SUCCESS_MSG_TYPE,
     INPUT_FIELD, SMS_FIELD, SINGLE_CHECKBOX_FIELD, TIME_PICKER, SELECT_FIELD, LABEL_FIELD
@@ -14,7 +15,6 @@ import {
     PROMO_CODE_SMS_TAG_OPTIONS,
     SMS_LANGUAGE_CONFIG_PARAM
 } from "../../../../constants/hardData";
-import moment from "moment";
 import {loadConfigParameters} from "../../../../utils/clinicUtils";
 
 
@@ -36,15 +36,15 @@ class AppointmentSMS extends React.Component {
     }
 
     loadData() {
-        var that = this;
-        let reqData = {};
-        let successFn = function (data) {
+        const that = this;
+        const reqData = {};
+        const successFn = function (data) {
             console.log("length", data.length - 1);
             that.setState({
                 data: data[data.length - 1],
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         if (that.state.language) {
             reqData.language = that.state.language;
@@ -53,14 +53,14 @@ class AppointmentSMS extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
     }
 
     handleChangeLanguage = (type, value) => {
-        let that = this;
+        const that = this;
         that.setState({
             [type]: value,
         }, function () {
@@ -69,7 +69,7 @@ class AppointmentSMS extends React.Component {
     };
 
     render() {
-        let that = this;
+        const that = this;
         const fields = [
             //     {
             //     label: "SMS Language",
@@ -250,11 +250,11 @@ class AppointmentSMS extends React.Component {
                 follow: <b>LAB ORDER REMINDER SMS</b>
             },];
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.loadData();
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(COMMUNICATONS_API, [that.props.active_practiceId]),
@@ -267,28 +267,38 @@ class AppointmentSMS extends React.Component {
         ];
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>
+        return (
+<div>
             <Row>
                 <Col span={8}>
                     <span style={{float: 'right', color: 'rgba(0, 0, 0, 0.85)'}}>SMS Language : &nbsp;</span>
                 </Col>
                 <Col span={8}>
                     <Select
-                        defaultValue={this.data && this.data.sms_language ? this.data.sms_language : that.state.language}
-                        style={{width: 220}} onChange={(value) => this.handleChangeLanguage('language', value)}>
-                        {this.state[SMS_LANGUAGE_CONFIG_PARAM].map((option) => <Select.Option value={option}>
+                      defaultValue={this.data && this.data.sms_language ? this.data.sms_language : that.state.language}
+                      style={{width: 220}}
+                      onChange={(value) => this.handleChangeLanguage('language', value)}
+                    >
+                        {this.state[SMS_LANGUAGE_CONFIG_PARAM].map((option) => (
+<Select.Option value={option}>
                             {option}
-                        </Select.Option>)}
+</Select.Option>
+))}
                     </Select>
-                    <br/>
+                    <br />
                     <span>SMS to Patients will be sent in this language</span>
                 </Col>
 
             </Row>
 
-            <TestFormLayout formProp={formProp} defaultValues={defaultValues}
-                            fields={fields} {...this.props}/>
-        </div>
+            <TestFormLayout
+              formProp={formProp}
+              defaultValues={defaultValues}
+              fields={fields}
+              {...this.props}
+            />
+</div>
+)
     }
 }
 

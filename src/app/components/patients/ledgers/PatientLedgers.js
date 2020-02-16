@@ -29,20 +29,20 @@ class PatientLedgers extends React.Component {
     }
 
     loadPatientLedger = () => {
-        let that = this;
+        const that = this;
         if (that.props.refreshWallet){
             that.props.refreshWallet();
         }
         this.setState({
             loadingLedger: true
         })
-        let successFn = function (data) {
-            let ledgerData = [];
+        const successFn = function (data) {
+            const ledgerData = [];
             let balance = 0;
             let totalCredit = 0;
             let totalDebit = 0;
             data.forEach(function (dataRow) {
-                let ledgerEntry = {
+                const ledgerEntry = {
                     date: dataRow.date,
                     type: dataRow.ledger_type
                 };
@@ -90,16 +90,16 @@ class PatientLedgers extends React.Component {
                 loadingLedger: false,
                 credit: totalCredit,
                 debit: totalDebit,
-                balance: balance,
+                balance,
                 ledger: ledgerData
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loadingLedger: false
             })
         }
-        let apiParams = {
+        const apiParams = {
             practice_id: this.props.active_practiceId
         };
         if (this.props.showAllClinic && this.props.match.params.id) {
@@ -115,12 +115,12 @@ class PatientLedgers extends React.Component {
     }
 
     loadPDF = (id) => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             if (data.report)
                 window.open(BACKEND_BASE_URL + data.report);
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         // getAPI(interpolate(INVOICE_PDF_API, [id]), successFn, errorFn);
@@ -185,33 +185,45 @@ class PatientLedgers extends React.Component {
                 align: "right",
                 render: value => value.toFixed(2)
             }];
-        return <Row>
+        return (
+<Row>
             <Card
-                title={this.state.currentPatient ? this.state.currentPatient.name + " Payment Ledger" : "Patient Ledgers"}
-                extra={<Button.Group>
-                    {/*<Button type="primary">*/}
-                    {/*    <Icon type="printer"/>Print billing summary*/}
-                    {/*</Button>*/}
-                    <Link to={"/patient/" + this.props.match.params.id + "/billing/payments"}> <Button
-                        type="primary">
-                        <Icon type="plus"/>&nbsp;Add Payment</Button>
+              title={this.state.currentPatient ? `${this.state.currentPatient.name  } Payment Ledger` : "Patient Ledgers"}
+              extra={(
+<Button.Group>
+                    {/* <Button type="primary"> */}
+                    {/*    <Icon type="printer"/>Print billing summary */}
+                    {/* </Button> */}
+                    <Link to={`/patient/${  this.props.match.params.id  }/billing/payments`}> <Button
+                      type="primary"
+                    >
+                        <Icon type="plus" />&nbsp;Add Payment
+                                                                                              </Button>
                     </Link>
 
-                    <Link to={"/patient/" + this.props.match.params.id + "/billing/invoices"}> <Button
-                        type="primary">
-                        <Icon type="plus"/>&nbsp;Add Invoice</Button>
+                    <Link to={`/patient/${  this.props.match.params.id  }/billing/invoices`}> <Button
+                      type="primary"
+                    >
+                        <Icon type="plus" />&nbsp;Add Invoice
+                                                                                              </Button>
                     </Link>&nbsp;
 
-                    {/*<Button type="primary" onClick={() => this.loadPDF()}>*/}
-                    {/*    <Icon type="printer"/>&nbsp;Print*/}
-                    {/*</Button>&nbsp;*/}
+                    {/* <Button type="primary" onClick={() => this.loadPDF()}> */}
+                    {/*    <Icon type="printer"/>&nbsp;Print */}
+                    {/* </Button>&nbsp; */}
 
-                    {/*<Button type="primary" onClick={this.submitLedgers}>*/}
-                    {/*    <Icon type="save"/>Send Payment Reminder*/}
-                    {/*</Button>*/}
-                </Button.Group>}>
-                <Table loading={this.state.loadingLedger} columns={columns}
-                       dataSource={this.state.ledger} pagination={false}/>
+                    {/* <Button type="primary" onClick={this.submitLedgers}> */}
+                    {/*    <Icon type="save"/>Send Payment Reminder */}
+                    {/* </Button> */}
+</Button.Group>
+)}
+            >
+                <Table
+                  loading={this.state.loadingLedger}
+                  columns={columns}
+                  dataSource={this.state.ledger}
+                  pagination={false}
+                />
                 <Row style={{marginTop: 20, textAlign: 'center'}}>
                     <Col span={8}>
                         <h3>Total Credit: {this.state.credit.toFixed(2)}</h3>
@@ -221,11 +233,13 @@ class PatientLedgers extends React.Component {
                     </Col>
                     <Col span={8}>
                         <h3>Total
-                            Balance: {this.state.balance < 0 ? (this.state.balance * -1).toFixed(2) + " (Advance)" : this.state.balance.toFixed(2)}</h3>
+                            Balance: {this.state.balance < 0 ? `${(this.state.balance * -1).toFixed(2)  } (Advance)` : this.state.balance.toFixed(2)}
+                        </h3>
                     </Col>
                 </Row>
             </Card>
-        </Row>
+</Row>
+)
     }
 }
 

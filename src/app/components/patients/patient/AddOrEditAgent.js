@@ -22,14 +22,14 @@ export default class AddOrEditAgent extends React.Component{
     }
 
     loadAgentRoles(){
-        let that=this;
-        let successFn =function (data){
+        const that=this;
+        const successFn =function (data){
             that.setState({
                 agentRoles:data,
                 loading:false
             })
         };
-        let errorFn = function(){
+        const errorFn = function(){
             that.setState({
                 loading:false
             })
@@ -37,8 +37,9 @@ export default class AddOrEditAgent extends React.Component{
         getAPI(AGENT_ROLES,successFn,errorFn);
 
     }
+
     render(){
-        let that = this;
+        const that = this;
         const fields = [{
             label: "Role Type",
             key: "role",
@@ -51,12 +52,12 @@ export default class AddOrEditAgent extends React.Component{
             required:true
         }];
             const formProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Agent Role added");
                     that.props.loadProfile();
 
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(PATIENT_PROFILE, [this.props.patientId]),
@@ -65,6 +66,6 @@ export default class AddOrEditAgent extends React.Component{
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         const defaultValues = [{key:'is_agent' , value:true}]
 
-        return<TestFormLayout formProp={formProp} defaultValues={defaultValues} fields={fields}/>
+        return<TestFormLayout formProp={formProp} defaultValues={defaultValues} fields={fields} />
     }
 }

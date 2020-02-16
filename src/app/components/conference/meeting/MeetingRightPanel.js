@@ -13,6 +13,7 @@ export default class MeetingRightPanel extends React.Component {
         }
 
     }
+
     componentWillReceiveProps() {
         this.loadTodayMeeting();
 
@@ -20,22 +21,22 @@ export default class MeetingRightPanel extends React.Component {
 
 
     loadTodayMeeting(){
-        let that=this;
+        const that=this;
         this.setState({
             loading:true,
         });
-        let successFn =function (data) {
+        const successFn =function (data) {
             that.setState({
                 filterMeetingList:data,
                 loading:false,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading:false,
             });
         };
-        let params={
+        const params={
             start: moment().startOf('day').format(),
             end: moment().endOf('day').format(),
         };
@@ -45,42 +46,55 @@ export default class MeetingRightPanel extends React.Component {
 
 
     render() {
-        let that = this;
+        const that = this;
         const {filterMeetingList} =this.state;
         console.log("===",filterMeetingList);
-        return <div>
+        return (
+<div>
             <Divider>
-                <a type="primary"><Icon type="left"/></a> Meeting's Schedule <a type="primary"><Icon type="right"/></a>
+                <a type="primary"><Icon type="left" /></a> Meeting's Schedule <a type="primary"><Icon type="right" /></a>
             </Divider>
 
             <Spin spinning={this.props.loading}>
-                <List dataSource={filterMeetingList}
-                      bordered
-                      renderItem={meeting => (
+                <List
+                  dataSource={filterMeetingList}
+                  bordered
+                  renderItem={meeting => (
                           <List.Item>
 
-                              <MeetingCard {...meeting}/>
+                              <MeetingCard {...meeting} />
                           </List.Item>
                       )}
                 />
             </Spin>
-        </div>
+</div>
+)
     }
 }
 
 function MeetingCard(meeting) {
 
-    return <div style={{width: '100%'}}>
+    return (
+<div style={{width: '100%'}}>
         <p style={{marginBottom: 0}}>
-            <Popover placement="right" content={<EventMeetingPopover meetingId={meeting.id}
-                                                                     key={meeting.id} />}>
+            <Popover
+              placement="right"
+              content={(
+<EventMeetingPopover
+  meetingId={meeting.id}
+  key={meeting.id}
+/>
+)}
+            >
             <span style={{width: 'calc(100% - 60px)'}}><b>{moment(meeting.start).format("LT")}</b>&nbsp;
-                {meeting.name}</span>
+                {meeting.name}
+            </span>
             </Popover>
 
 
         </p>
-    </div>;
+</div>
+);
 }
 
 

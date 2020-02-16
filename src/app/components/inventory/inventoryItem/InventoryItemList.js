@@ -1,5 +1,8 @@
 import React from "react";
 import {Button, Card, Col, Divider, Icon, Input, Modal, Popconfirm, Radio, Row, Select, Spin, Table, Tag} from "antd";
+import {Link, Route, Switch} from "react-router-dom";
+import moment from "moment";
+import Search from "antd/es/input/Search";
 import {getAPI, interpolate, putAPI, startLoadingMessage, stopLoadingMessage} from "../../../utils/common";
 import {
     INVENTORY_ITEM_API,
@@ -7,12 +10,10 @@ import {
     INVENTORY_ITEM_EXPORT,
     PRODUCT_MARGIN
 } from "../../../constants/api";
-import {Link, Route, Switch} from "react-router-dom";
 import AddorEditInventoryItem from "./AddorEditInventoryItem";
 import AddOrConsumeStock from "./AddOrConsumeStock"
 import {ADD_STOCK, CONSUME_STOCK, INVENTORY_ITEM_TYPE} from "../../../constants/hardData"
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
-import moment from "moment";
 import PermissionDenied from "../../common/errors/PermissionDenied";
 import {
     ASCENDING_ORDER,
@@ -20,13 +21,12 @@ import {
     SUCCESS_MSG_TYPE,
 } from "../../../constants/dataKeys";
 import {BACKEND_BASE_URL} from "../../../config/connect";
-import Search from "antd/es/input/Search";
 
 export default class InventoryItemList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            inventoryItems: [], //All List
+            inventoryItems: [], // All List
             inventoryItemList: [], // Filtered List
             stockModalVisibility: false,
             itemTypeFilter: "ALL",
@@ -50,25 +50,27 @@ export default class InventoryItemList extends React.Component {
         this.loadData();
         this.loadProductMargin();
     }
+
     loadProductMargin=() =>{
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 productMargin: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
+
     loadData(page = 1) {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true
         });
-        let successFn = function (recData) {
-            let data = recData.results;
+        const successFn = function (recData) {
+            const data = recData.results;
             that.setState(function (prevState) {
                 if (recData.current == 1) {
                     return {
@@ -76,25 +78,25 @@ export default class InventoryItemList extends React.Component {
                         loading: false,
                         nextItemPage: recData.next
                     }
-                } else {
+                } 
                     return {
                         inventoryItems: [...prevState.inventoryItems, ...data],
                         loading: false,
                         nextItemPage: recData.next
                     }
-                }
+                
 
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let reqParams = {
+        const reqParams = {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
-            page: page,
+            page,
             sort:ASCENDING_ORDER,
             on:'total_quantity',
         };
@@ -117,14 +119,14 @@ export default class InventoryItemList extends React.Component {
     }
 
     deleteObject(value) {
-        var that = this;
-        let reqData = {
+        const that = this;
+        const reqData = {
             is_active: false
         }
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         putAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [value]), reqData, successFn, errorFn);
 
@@ -145,15 +147,16 @@ export default class InventoryItemList extends React.Component {
     }
 
     changeFilter = (e) => {
-        let that = this;
+        const that = this;
         this.setState({
             [e.target.name]: e.target.value
         }, function () {
             that.loadData()
         })
     }
+
     changeInventoryFilters = (key, value) => {
-        let that = this;
+        const that = this;
         that.setState( {
             [key]: value
         },function () {
@@ -162,17 +165,17 @@ export default class InventoryItemList extends React.Component {
     }
 
     excelExport() {
-        let that = this;
-        let msg = startLoadingMessage("Generating Report...");
-        let successFn = function (data) {
+        const that = this;
+        const msg = startLoadingMessage("Generating Report...");
+        const successFn = function (data) {
             stopLoadingMessage(msg, SUCCESS_MSG_TYPE, "Report Generated Successfully!!");
             if (data.report_csv)
                 window.open(BACKEND_BASE_URL + data.report_csv);
         }
-        let errorFn = function () {
+        const errorFn = function () {
             stopLoadingMessage(msg, ERROR_MSG_TYPE, "Report Generation Failed!!");
         }
-        let reqParams = {
+        const reqParams = {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
             sort:ASCENDING_ORDER,
@@ -197,17 +200,17 @@ export default class InventoryItemList extends React.Component {
     }
 
     pdfExport() {
-        let that = this;
-        let msg = startLoadingMessage("Generating Report...");
-        let successFn = function (data) {
+        const that = this;
+        const msg = startLoadingMessage("Generating Report...");
+        const successFn = function (data) {
             stopLoadingMessage(msg, SUCCESS_MSG_TYPE, "Report Generated Successfully!!");
             if (data.report_pdf)
                 window.open(BACKEND_BASE_URL + data.report_pdf);
         }
-        let errorFn = function () {
+        const errorFn = function () {
             stopLoadingMessage(msg, ERROR_MSG_TYPE, "Report Generation Failed!!");
         }
-        let reqParams = {
+        const reqParams = {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
             sort:ASCENDING_ORDER,
@@ -230,6 +233,7 @@ export default class InventoryItemList extends React.Component {
         }
         getAPI(INVENTORY_ITEM_EXPORT, successFn, errorFn, reqParams);
     }
+
     inventoryItemModalOpen =(item)=>{
         this.setState({
             inventoryModal:true,
@@ -264,8 +268,8 @@ export default class InventoryItemList extends React.Component {
                 vendorData[vendor.id] = vendor.name;
             })
         }
-        let that = this;
-        let columns = [{
+        const that = this;
+        const columns = [{
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
@@ -279,16 +283,19 @@ export default class InventoryItemList extends React.Component {
             title: 'Inventory Stock',
             dataIndex: 'total_quantity',
             key: 'total_quantity',
-            render: (value, record) => <span>{value} {value <= record.re_order_level ?
-                <Tag color="#f50">Low</Tag> : null}</span>
+            render: (value, record) => (
+<span>{value} {value <= record.re_order_level ?
+                <Tag color="#f50">Low</Tag> : null}
+</span>
+)
 
         }, {
             title: 'Expired Stock',
             dataIndex: 'item_type_stock',
             key: 'expired_stock',
-            export: function (item_type_stock, record) {
+            export (item_type_stock, record) {
                 let totalStock = 0;
-                let currentDate = moment();
+                const currentDate = moment();
                 if (item_type_stock.item_stock)
                     item_type_stock.item_stock.forEach(function (stock) {
                         if (currentDate >= moment(stock.expiry_date, "YYYY-MM-DD"))
@@ -296,9 +303,9 @@ export default class InventoryItemList extends React.Component {
                     });
                 return totalStock;
             },
-            render: function (item_type_stock, record) {
+            render (item_type_stock, record) {
                 let totalStock = 0;
-                let currentDate = moment();
+                const currentDate = moment();
                 if (item_type_stock.item_stock)
                     item_type_stock.item_stock.forEach(function (stock) {
                         if (currentDate >= moment(stock.expiry_date, "YYYY-MM-DD"))
@@ -310,26 +317,32 @@ export default class InventoryItemList extends React.Component {
             title: 'Retail Price (INR)',
             dataIndex: 'retail_without_tax',
             key: 'retail_without_tax',
-            render: (value, record) => <span>{record.retail_without_tax}
-                </span>
+            render: (value, record) => (
+<span>{record.retail_without_tax}
+</span>
+)
         }, {
             title: 'Tax',
             dataIndex: 'taxes',
             key: 'taxes',
-            render: (value, record) => <span>
-                {record.taxes_data && record.taxes_data.map(tax =>
+            render: (value, record) => (
+<span>
+                {record.taxes_data && record.taxes_data.map(tax => (
                     <Tag>
-                        <small> {(tax ? tax.name + "@" + tax.tax_value + "%" : null)}</small>
+                        <small> {(tax ? `${tax.name  }@${  tax.tax_value  }%` : null)}</small>
                     </Tag>
+                  )
                 )}
-                </span>
+</span>
+)
         }, {
             title: "MLM Margin",
             dataIndex: "margin_data",
             key: "margin",
             render: (margin) => (
                 <span>{margin ? margin.name : null}
-                </span>)
+                </span>
+)
         }, {
             title: 'Item type',
             dataIndex: 'item_type',
@@ -343,7 +356,7 @@ export default class InventoryItemList extends React.Component {
         }, {
             title: 'Manufacturer',
             key: 'manufacturer',
-            export: function (text, record) {
+            export (text, record) {
                 return record.manufacturer_data ? record.manufacturer_data.name : '';
             },
             render: (text, record) => (
@@ -361,17 +374,24 @@ export default class InventoryItemList extends React.Component {
         }, {
             title: 'Actions',
             render: (item) => {
-                return <div>
-                    <Link to={"/inventory/edit/" + item.id}>Edit</Link>
-                    <Divider type="vertical"/>
+                return (
+<div>
+                    <Link to={`/inventory/edit/${  item.id}`}>Edit</Link>
+                    <Divider type="vertical" />
                     {/* <Link to={"/inventory/edit-item-type/" + item.id}>Edit stock type </Link>
                         <Divider type="vertical"/> */}
-                    {item.total_quantity == 0 ?
-                        <Popconfirm title="Are you sure delete this item?"
-                                    onConfirm={() => that.deleteObject(item.id)} okText="Yes" cancelText="No">
+                    {item.total_quantity == 0 ? (
+                        <Popconfirm
+                          title="Are you sure delete this item?"
+                          onConfirm={() => that.deleteObject(item.id)}
+                          okText="Yes"
+                          cancelText="No"
+                        >
                             <a>Delete</a>
-                        </Popconfirm> : <Tag color="red">Can Not Delete</Tag>}
-                </div>
+                        </Popconfirm>
+                      ) : <Tag color="red">Can Not Delete</Tag>}
+</div>
+)
             }
         }];
 
@@ -402,12 +422,20 @@ export default class InventoryItemList extends React.Component {
                 render:(item, record)=><span>{moment(record.expiry_date).format('DD-MM-YYYY')}</span>
             }
         ]
-        return <div>
+        return (
+<div>
             <Switch>
-                <Route path="/inventory/add"
-                       render={(route) => (that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions ?
-                           <AddorEditInventoryItem {...route} {...this.props} {...this.state}
-                                                   loadData={this.loadData}/> : <PermissionDenied/>)}/>
+                <Route
+                  path="/inventory/add"
+                  render={(route) => (that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions ? (
+                           <AddorEditInventoryItem
+                             {...route}
+                             {...this.props}
+                             {...this.state}
+                             loadData={this.loadData}
+                           />
+                         ) : <PermissionDenied />)}
+                />
 
                 {/* <Route path="/inventory/edit-item-type/:id"
                        render={(route) => <AddOrConsumeStock key={ADD_STOCK}
@@ -415,61 +443,126 @@ export default class InventoryItemList extends React.Component {
                        loadData={this.loadData}
                        {...this.state} {...route} {...this.props}/>}/> */}
 
-                <Route exact path='/inventory/edit/:id'
-                       render={(route) => (that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions ?
-                           <AddorEditInventoryItem {...this.state} {...this.props} {...route}
-                                                   loadData={this.loadData}/> : <PermissionDenied/>)}/>
+                <Route
+                  exact
+                  path='/inventory/edit/:id'
+                  render={(route) => (that.props.activePracticePermissions.AddInventoryItem || that.props.allowAllPermissions ? (
+                           <AddorEditInventoryItem
+                             {...this.state}
+                             {...this.props}
+                             {...route}
+                             loadData={this.loadData}
+                           />
+                         ) : <PermissionDenied />)}
+                />
 
-                <Route exact path='/inventory/consume-stock'
-                       render={(route) => (that.props.activePracticePermissions.AddInventoryStock || that.props.allowAllPermissions ?
-                           <AddOrConsumeStock key={CONSUME_STOCK} type={CONSUME_STOCK}
-                                              loadData={this.loadData} {...this.state} {...route} {...this.props}/> :
-                           <PermissionDenied/>)}/>
+                <Route
+                  exact
+                  path='/inventory/consume-stock'
+                  render={(route) => (that.props.activePracticePermissions.AddInventoryStock || that.props.allowAllPermissions ? (
+                           <AddOrConsumeStock
+                             key={CONSUME_STOCK}
+                             type={CONSUME_STOCK}
+                             loadData={this.loadData}
+                             {...this.state}
+                             {...route}
+                             {...this.props}
+                           />
+                         ) :
+                           <PermissionDenied />)}
+                />
 
-                <Route exact path='/inventory/add-stock'
-                       render={(route) => (that.props.activePracticePermissions.ConsumeInventoryStock || that.props.allowAllPermissions ?
-                           <AddOrConsumeStock key={ADD_STOCK} type={ADD_STOCK}
-                                              loadData={this.loadData}{...this.state} {...route} {...this.props}/> :
-                           <PermissionDenied/>)}/>
+                <Route
+                  exact
+                  path='/inventory/add-stock'
+                  render={(route) => (that.props.activePracticePermissions.ConsumeInventoryStock || that.props.allowAllPermissions ? (
+                           <AddOrConsumeStock
+                             key={ADD_STOCK}
+                             type={ADD_STOCK}
+                             loadData={this.loadData}
+                             {...this.state}
+                             {...route}
+                             {...this.props}
+                           />
+                         ) :
+                           <PermissionDenied />)}
+                />
 
                 <Route>
-                    <Card title="Inventory List"
-                          extra={<Button.Group>
-                              <Link to="/inventory/add"><Button type="primary"
-                                                                disabled={!that.props.activePracticePermissions.AddInventoryItem && !that.props.allowAllPermissions}><Icon
-                                  type="plus"/> Add Item</Button></Link>
+                    <Card
+                      title="Inventory List"
+                      extra={(
+<Button.Group>
+                              <Link to="/inventory/add"><Button
+                                type="primary"
+                                disabled={!that.props.activePracticePermissions.AddInventoryItem && !that.props.allowAllPermissions}
+                              ><Icon
+                                type="plus"
+                              /> Add Item
+                                                        </Button>
+                              </Link>
 
                               <Link to="/inventory/add-stock"> <Button
-                                  disabled={!that.props.activePracticePermissions.AddInventoryStock && !that.props.allowAllPermissions} type="primary">Add
-                                  Stock</Button></Link>
+                                disabled={!that.props.activePracticePermissions.AddInventoryStock && !that.props.allowAllPermissions}
+                                type="primary"
+                              >Add
+                                  Stock
+                                                               </Button>
+                              </Link>
                               <Link to="/inventory/consume-stock"><Button
-                                  disabled={!that.props.activePracticePermissions.ConsumeInventoryStock && !that.props.allowAllPermissions} type="primary">Consume
-                                  Stock</Button></Link>
-                          </Button.Group>}>
+                                disabled={!that.props.activePracticePermissions.ConsumeInventoryStock && !that.props.allowAllPermissions}
+                                type="primary"
+                              >Consume
+                                  Stock
+                                                                  </Button>
+                              </Link>
+</Button.Group>
+)}
+                    >
                         <Row>
-                            <Radio.Group name="itemTypeFilter" size="small" defaultValue={"ALL"} buttonStyle="solid"
-                                         onChange={this.changeFilter} style={{margin: '10px'}}>
-                                <Radio.Button value={"ALL"}>ALL</Radio.Button>
-                                {INVENTORY_ITEM_TYPE.map(item =>
+                            <Radio.Group
+                              name="itemTypeFilter"
+                              size="small"
+                              defaultValue="ALL"
+                              buttonStyle="solid"
+                              onChange={this.changeFilter}
+                              style={{margin: '10px'}}
+                            >
+                                <Radio.Button value="ALL">ALL</Radio.Button>
+                                {INVENTORY_ITEM_TYPE.map(item => (
                                     <Radio.Button value={item.value}>
                                         {item.label}
-                                    </Radio.Button>)}
+                                    </Radio.Button>
+                                  ))}
                             </Radio.Group>
-                            <Radio.Group name="itemStockFilter" size="small" defaultValue={"ALL"} buttonStyle="solid"
-                                         style={{margin: '10px', float: 'right'}} onChange={this.changeFilter}>
-                                <Radio.Button value={"ALL"}>ALL</Radio.Button>
-                                <Radio.Button value={"Low"}>Low</Radio.Button>
-                                <Radio.Button value={"Expired"}>Expired</Radio.Button>
+                            <Radio.Group
+                              name="itemStockFilter"
+                              size="small"
+                              defaultValue="ALL"
+                              buttonStyle="solid"
+                              style={{margin: '10px', float: 'right'}}
+                              onChange={this.changeFilter}
+                            >
+                                <Radio.Button value="ALL">ALL</Radio.Button>
+                                <Radio.Button value="Low">Low</Radio.Button>
+                                <Radio.Button value="Expired">Expired</Radio.Button>
                             </Radio.Group>
                         </Row>
                         <Row gutter={16} style={{marginBottom: 10}}>
                             <Col span={4}>
                                 <Button.Group size="small">
-                                    <Button disabled={this.state.loading} type="primary"
-                                            onClick={this.excelExport}><Icon
-                                        type="file-excel"/> Excel</Button>
+                                    <Button
+                                      disabled={this.state.loading}
+                                      type="primary"
+                                      onClick={this.excelExport}
+                                    ><Icon
+                                      type="file-excel"
+                                    /> Excel
+                                    </Button>
                                     <Button disabled={this.state.loading} type="primary" onClick={this.pdfExport}><Icon
-                                        type="file-pdf"/> PDF</Button>
+                                      type="file-pdf"
+                                    /> PDF
+                                    </Button>
                                 </Button.Group>
                             </Col>
 
@@ -477,79 +570,99 @@ export default class InventoryItemList extends React.Component {
                                 <b> Item Name</b>
                             </Col>
                             <Col span={4}>
-                                <Input style={{width: '100%'}} value={this.state.filterItemName}
-                                       allowClear={true}
+                                <Input
+                                  style={{width: '100%'}}
+                                  value={this.state.filterItemName}
+                                  allowClear
                                        // disabled={this.state.loading}
-                                       placeholder={"Item Name"}
-                                       onChange={(e) => this.changeInventoryFilters('filterItemName', e.target.value)}/>
+                                  placeholder="Item Name"
+                                  onChange={(e) => this.changeInventoryFilters('filterItemName', e.target.value)}
+                                />
                             </Col>
                             <Col span={2} style={{textAlign: "right"}}>
                                 <b> HSN</b>
                             </Col>
                             <Col span={4}>
-                                <Input style={{width: '100%'}} value={this.state.filterItemCode}
-                                       allowClear={true}
+                                <Input
+                                  style={{width: '100%'}}
+                                  value={this.state.filterItemCode}
+                                  allowClear
                                        // disabled={this.state.loading}
-                                       placeholder={"HSN Number"}
-                                       onChange={(e) => this.changeInventoryFilters('filterItemCode', e.target.value)}/>
+                                  placeholder="HSN Number"
+                                  onChange={(e) => this.changeInventoryFilters('filterItemCode', e.target.value)}
+                                />
                             </Col>
                             <Col span={2} style={{textAlign: "right"}}>
                                 <b> MLM</b>
                             </Col>
                             <Col span={4}>
-                                <Select style={{width: '100%'}} value={this.state.filterMLM} allowClear={true}
+                                <Select
+                                  style={{width: '100%'}}
+                                  value={this.state.filterMLM}
+                                  allowClear
                                     // disabled={this.state.loading}
-                                        placeholder={"MLM Margin"}
-                                        onChange={(e) => this.changeInventoryFilters('filterMLM', e)}>
+                                  placeholder="MLM Margin"
+                                  onChange={(e) => this.changeInventoryFilters('filterMLM', e)}
+                                >
                                     {this.state.productMargin.map(item=><Select.Option value={item.id}>{item.name}</Select.Option>)}
                                 </Select>
                             </Col>
-                            {/*<Col span={8}>*/}
-                            {/*    <Button type={"primary"} onClick={()=>this.loadData()}> Filter Items</Button>*/}
-                            {/*</Col>*/}
+                            {/* <Col span={8}> */}
+                            {/*    <Button type={"primary"} onClick={()=>this.loadData()}> Filter Items</Button> */}
+                            {/* </Col> */}
 
 
                         </Row>
 
                         <Row>
-                            <Table bordered={true}
-                                   pagination={false}
-                                   hideReport={true}
-                                   dataSource={this.state.inventoryItems.sort((a,b) =>parseInt(b.total_quantity) -parseInt(a.total_quantity))}
-                                   columns={columns}/>
+                            <Table
+                              bordered
+                              pagination={false}
+                              hideReport
+                              dataSource={this.state.inventoryItems.sort((a,b) =>parseInt(b.total_quantity) -parseInt(a.total_quantity))}
+                              columns={columns}
+                            />
                             <Spin spinning={this.state.loading}>
-                                <Row/>
+                                <Row />
                             </Spin>
                             <InfiniteFeedLoaderButton
-                                loaderFunction={() => this.loadData(this.state.nextItemPage)}
-                                loading={this.state.loading}
-                                hidden={!this.state.nextItemPage}/>
+                              loaderFunction={() => this.loadData(this.state.nextItemPage)}
+                              loading={this.state.loading}
+                              hidden={!this.state.nextItemPage}
+                            />
                         </Row>
-                        <Modal visible={this.state.stockModalVisibility}
-                               title={"Stock" + this.state.actionType}
-                               onOk={() => this.showAddOrConsumeModal(false)}
-                               onCancel={() => this.showAddOrConsumeModal(false)}
-                               footer={null}>
-                            <AddOrConsumeStock showAddOrConsumeModal={this.showAddOrConsumeModal}
-                                               itemId={this.state.itemId}
-                                               actionType={this.state.actionType}/>
+                        <Modal
+                          visible={this.state.stockModalVisibility}
+                          title={`Stock${  this.state.actionType}`}
+                          onOk={() => this.showAddOrConsumeModal(false)}
+                          onCancel={() => this.showAddOrConsumeModal(false)}
+                          footer={null}
+                        >
+                            <AddOrConsumeStock
+                              showAddOrConsumeModal={this.showAddOrConsumeModal}
+                              itemId={this.state.itemId}
+                              actionType={this.state.actionType}
+                            />
                         </Modal>
 
                         <Modal
-                            title={this.state.inventoryItemObj?this.state.inventoryItemObj.name + ' ' + 'Details':''}
-                            visible={this.state.inventoryModal}
-                            onCancel={this.inventoryItemModalClose}
-                            footer={null}
+                          title={this.state.inventoryItemObj?`${this.state.inventoryItemObj.name  } ` + `Details`:''}
+                          visible={this.state.inventoryModal}
+                          onCancel={this.inventoryItemModalClose}
+                          footer={null}
                         >
-                            <Table dataSource={this.state.inventoryItemObj?this.state.inventoryItemObj.item_type_stock.item_stock:[]}
-                               columns={inventoryItemColumn} pagination={false}
+                            <Table
+                              dataSource={this.state.inventoryItemObj?this.state.inventoryItemObj.item_type_stock.item_stock:[]}
+                              columns={inventoryItemColumn}
+                              pagination={false}
                             />
                         </Modal>
                     </Card>
                 </Route>
             </Switch>
 
-        </div>
+</div>
+)
     }
 
 

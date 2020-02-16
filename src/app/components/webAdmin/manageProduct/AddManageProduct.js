@@ -1,11 +1,11 @@
 import React from "react";
 import {Avatar, Card, Form, Row} from "antd";
+import {Route} from "react-router";
+import {Redirect} from "react-router-dom";
 import {INPUT_FIELD, QUILL_TEXT_FIELD ,SUCCESS_MSG_TYPE, SINGLE_IMAGE_UPLOAD_FIELD, NUMBER_FIELD} from "../../../constants/dataKeys";
 import {displayMessage, getAPI, interpolate, makeFileURL} from "../../../utils/common";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {MANAGE_PRODUCT, MANAGE_SINGLE_PRODUCT} from "../../../constants/api";
-import {Route} from "react-router";
-import {Redirect} from "react-router-dom";
 
 
 export default class AddManageProduct extends React.Component {
@@ -25,27 +25,28 @@ export default class AddManageProduct extends React.Component {
     }
 
     loadData() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 editProductData: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(MANAGE_SINGLE_PRODUCT, [this.props.match.params.id]), successFn, errorFn);
 
     }
+
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
     }
 
     render() {
-        let that = this;
+        const that = this;
         const fields = [{
             label: "Product Name",
             key: "title",
@@ -75,7 +76,7 @@ export default class AddManageProduct extends React.Component {
         let editformProp;
         if (this.state.editProductData) {
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                         that.setState({
                         redirect: true
@@ -85,7 +86,7 @@ export default class AddManageProduct extends React.Component {
                         that.props.history.replace('/web/manageproduct');
                     };
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(MANAGE_SINGLE_PRODUCT, [this.props.match.params.id]),
@@ -95,7 +96,7 @@ export default class AddManageProduct extends React.Component {
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.setState({
                     redirect: true
@@ -105,27 +106,46 @@ export default class AddManageProduct extends React.Component {
                     that.props.history.replace('/web/manageproduct');
                 };
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: MANAGE_PRODUCT,
             method: "post",
         }
-        let defaultValues = [];
+        const defaultValues = [];
 
-        return <Row>
+        return (
+<Row>
             <Card>
-                <Route exact path='/web/manageproduct/edit/:id'
-                       render={() => (this.props.match.params.id ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit Product"
-                                changeRedirect={this.changeRedirect} formProp={editformProp}
-                                    fields={fields}/> : <Redirect to={'web/manageproduct'}/>)}/>
-                <Route exact path='/web/manageproduct/add'
-                       render={() => <TestFormLayout title="Add Product" defaultValues={defaultValues}
-                                changeRedirect={this.changeRedirect} formProp={formProp}
-                                    fields={fields}/>}/>
+                <Route
+                  exact
+                  path='/web/manageproduct/edit/:id'
+                  render={() => (this.props.match.params.id ? (
+                           <TestFormLayout
+                             defaultValues={defaultValues}
+                             title="Edit Product"
+                             changeRedirect={this.changeRedirect}
+                             formProp={editformProp}
+                             fields={fields}
+                           />
+                         ) : <Redirect to="web/manageproduct" />)}
+                />
+                <Route
+                  exact
+                  path='/web/manageproduct/add'
+                  render={() => (
+<TestFormLayout
+  title="Add Product"
+  defaultValues={defaultValues}
+  changeRedirect={this.changeRedirect}
+  formProp={formProp}
+  fields={fields}
+/>
+)}
+                />
             </Card>
-            {this.state.redirect && <Redirect to={'/web/manageproduct'}/>}
-        </Row>
+            {this.state.redirect && <Redirect to="/web/manageproduct" />}
+</Row>
+)
     }
 }

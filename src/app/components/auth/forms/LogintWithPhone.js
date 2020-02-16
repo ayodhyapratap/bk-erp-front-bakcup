@@ -18,7 +18,7 @@ class LoginWithPhone extends React.Component {
 
 
     handleSubmit = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -37,16 +37,17 @@ class LoginWithPhone extends React.Component {
             [type]: value
         })
     }
+
     sendOTP = () => {
-        let that = this;
+        const that = this;
         if (this.state.phone) {
-            let successFn = function (data) {
+            const successFn = function (data) {
                 that.setState({
                     otpSent: true
                 });
                 displayMessage(SUCCESS_MSG_TYPE, "OTP Sent successfully!")
             }
-            let errorFn = function () {
+            const errorFn = function () {
 
             }
             if (this.state.otpSent) {
@@ -71,15 +72,17 @@ class LoginWithPhone extends React.Component {
                                 {getFieldDecorator('phone_no', {
                                     rules: [{required: true, message: 'Please input your phone!'}],
                                 })(
-                                    <Input prefix={<Icon type="phone" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                                           type="text"
-                                           placeholder="Phone"
-                                           onChange={(e) => this.setPhone('phone', e.target.value)}/>
+                                    <Input
+                                      prefix={<Icon type="phone" style={{color: 'rgba(0,0,0,.25)'}} />}
+                                      type="text"
+                                      placeholder="Phone"
+                                      onChange={(e) => this.setPhone('phone', e.target.value)}
+                                    />
                                 )}
                             </FormItem>
                         </Col>
                         <Col span={this.state.otpSent ? 0 : 6}>
-                            <Button type="primary" size={"large"} block onClick={this.sendOTP}>Send OTP</Button>
+                            <Button type="primary" size="large" block onClick={this.sendOTP}>Send OTP</Button>
                         </Col>
                     </Row>
                 </Input.Group>
@@ -88,29 +91,43 @@ class LoginWithPhone extends React.Component {
                     {getFieldDecorator('otp', {
                         rules: [{required: true, message: 'Please input otp!'}],
                     })(
-                        <Input size="large" prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                               type="text"
-                               placeholder="otp"/>
+                        <Input
+                          size="large"
+                          prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}} />}
+                          type="text"
+                          placeholder="otp"
+                        />
                     )}
                 </FormItem>
                 <FormItem>
-                    {this.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={this.sendOTP}>
+                    {this.state.otpSent ? (
+<a style={{float: 'right'}} type="primary" onClick={this.sendOTP}>
                         Resend Otp ?
-                    </a> : null}
-                    <Button size="large" type="primary" htmlType="submit"
-                            className="login-form-button">
+</a>
+) : null}
+                    <Button
+                      size="large"
+                      type="primary"
+                      htmlType="submit"
+                      className="login-form-button"
+                    >
                         Log in
                     </Button>
                 </FormItem>
 
                 <Divider>OR</Divider>
                 <h4>
-                    <Link to={"/"}> <Button size="large" type="primary" htmlType="submit"
-                                            className="login-form-button">Log in with password </Button>
+                    <Link to="/"> <Button
+                      size="large"
+                      type="primary"
+                      htmlType="submit"
+                      className="login-form-button"
+                    >Log in with password 
+                                  </Button>
 
                     </Link>
                 </h4>
-                <Divider/>
+                <Divider />
 
 
             </Form>

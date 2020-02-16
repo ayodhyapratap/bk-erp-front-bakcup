@@ -1,6 +1,6 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form} from "antd";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     CHECKBOX_FIELD,
     INPUT_FIELD,
@@ -20,15 +20,15 @@ class CancelledInvoice extends React.Component {
     }
 
     componentDidMount() {
-        var that = this;
-        let successFn = function (data) {
-            let countries = data.countries;
+        const that = this;
+        const successFn = function (data) {
+            const {countries} = data;
             that.setState({
-                countries: countries,
+                countries,
                 practiceDetail: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(PRACTICE, [this.props.active_practiceId]), successFn, errorFn);
 
@@ -52,10 +52,10 @@ class CancelledInvoice extends React.Component {
             initialValue: this.state.practiceDetail ? this.state.practiceDetail.hide_cancelled_payment : false
         }];
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "Settings Saved Successfuly!!");
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(PRACTICE, [this.props.active_practiceId]),
@@ -63,9 +63,11 @@ class CancelledInvoice extends React.Component {
         };
         const TestFormLayout = Form.create()(DynamicFieldsForm);
         const defaultValue = [{key: 'id', value: this.props.active_practiceId}];
-        return <div>
-            <TestFormLayout formProp={formProp} fields={fields} {...this.props} defaultValues={defaultValue}/>
-        </div>
+        return (
+<div>
+            <TestFormLayout formProp={formProp} fields={fields} {...this.props} defaultValues={defaultValue} />
+</div>
+)
     }
 }
 

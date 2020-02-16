@@ -15,23 +15,24 @@ class SuggestionBox extends React.Component {
 
 
     onClose = () => {
-        let that = this;
+        const that = this;
         that.props.close();
     };
+
     handleSubmit = (e) => {
         e.preventDefault();
-        let that = this;
+        const that = this;
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                let reqData = {
+                const reqData = {
                     ...values,
                 }
-                let successFn = function (data) {
+                const successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Save Your Suggestions");
                     that.props.close();
 
                 }
-                let errorFn = function () {
+                const errorFn = function () {
 
                 }
                 postAPI(SUGGESTIONS, reqData, successFn, errorFn);
@@ -41,14 +42,16 @@ class SuggestionBox extends React.Component {
     };
 
     render() {
-        let that = this;
+        const that = this;
         const {getFieldDecorator} = this.props.form;
-        return <div>
+        return (
+<div>
             <Modal
-                title="Your Suggestion"
-                width={720}
-                onClose={this.onClose}
-                visible={that.props.visible}>
+              title="Your Suggestion"
+              width={720}
+              onClose={this.onClose}
+              visible={that.props.visible}
+            >
 
                 <Form layout="vertical" onSubmit={this.handleSubmit}>
                     <Row gutter={16}>
@@ -56,7 +59,7 @@ class SuggestionBox extends React.Component {
                             <Form.Item label="Name">
                                 {getFieldDecorator('name', {
                                     rules: [{required: true, message: 'Please enter  name'}],
-                                })(<Input placeholder="Please enter user name"/>)}
+                                })(<Input placeholder="Please enter user name" />)}
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -65,8 +68,8 @@ class SuggestionBox extends React.Component {
                                     rules: [{required: true, message: 'Please enter Email'}],
                                 })(
                                     <Input
-                                        style={{width: '100%'}}
-                                        placeholder="Please enter Email"
+                                      style={{width: '100%'}}
+                                      placeholder="Please enter Email"
                                     />,
                                 )}
                             </Form.Item>
@@ -77,15 +80,15 @@ class SuggestionBox extends React.Component {
                         <Col span={12}>
                             <Form.Item label="Mobile">
                                 {getFieldDecorator('mobile')
-                                (<Input placeholder="Please enter Mobile"/>)}
+                                (<Input placeholder="Please enter Mobile" />)}
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item label="Subject">
                                 {getFieldDecorator('subject')(
                                     <Input
-                                        style={{width: '100%'}}
-                                        placeholder="Please enter Email"
+                                      style={{width: '100%'}}
+                                      placeholder="Please enter Email"
                                     />,
                                 )}
                             </Form.Item>
@@ -95,14 +98,16 @@ class SuggestionBox extends React.Component {
                         <Col span={24}>
                             <Form.Item label="Description">
                                 {getFieldDecorator('description')
-                                (<TextArea placeholder="Please enter description"
-                                           autosize={{minRows: 4, maxRows: 6}}/>)}
+                                (<TextArea
+                                  placeholder="Please enter description"
+                                  autosize={{minRows: 4, maxRows: 6}}
+                                />)}
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Divider/>
+                    <Divider />
                     <div
-                        style={{
+                      style={{
                             textAlign: '-webkit-center',
                         }}
                     >
@@ -116,7 +121,8 @@ class SuggestionBox extends React.Component {
                 </Form>
 
             </Modal>
-        </div>
+</div>
+)
 
     }
 }

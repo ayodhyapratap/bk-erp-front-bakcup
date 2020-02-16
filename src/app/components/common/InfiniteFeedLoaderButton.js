@@ -15,14 +15,15 @@ export default class InfiniteFeedLoaderButton extends React.Component {
             this.startMakingExtraLabels();
         }
     }
+
     startMakingExtraLabels = () => {
-        let that = this;
+        const that = this;
         this.setState(function (prevState) {
             if (prevState.extraLoadingLabel.length > 2) {
                 return {extraLoadingLabel: ''}
-            } else {
-                return {extraLoadingLabel: prevState.extraLoadingLabel + '.'}
-            }
+            } 
+                return {extraLoadingLabel: `${prevState.extraLoadingLabel  }.`}
+            
         }, function () {
             if (that.props.loading)
                 setTimeout(function () {
@@ -33,23 +34,29 @@ export default class InfiniteFeedLoaderButton extends React.Component {
 
     render() {
         if (this.props.loading) {
-            return <Spin spinning={this.props.loading}>
-                <Row style={{minHeight: 200}}/>
-            </Spin>
+            return (
+<Spin spinning={this.props.loading}>
+                <Row style={{minHeight: 200}} />
+</Spin>
+)
         }
         if (this.props.hidden) {
-            return <Row>
+            return (
+<Row>
                 <div style={{textAlign: 'center', margin: '15px 0px'}}>
                     <small>No More Data Found</small>
                 </div>
-            </Row>
+</Row>
+)
         }
-        return <Row>
+        return (
+<Row>
             <div style={{textAlign: 'center', margin: '15px 0px'}}>
-                <Button type={'primary'} onClick={this.startLoading} loading={this.props.loading}>
-                    {this.props.loading ? 'Loading' + this.state.extraLoadingLabel : 'Load More'}
+                <Button type="primary" onClick={this.startLoading} loading={this.props.loading}>
+                    {this.props.loading ? `Loading${  this.state.extraLoadingLabel}` : 'Load More'}
                 </Button>
             </div>
-        </Row>
+</Row>
+)
     }
 }

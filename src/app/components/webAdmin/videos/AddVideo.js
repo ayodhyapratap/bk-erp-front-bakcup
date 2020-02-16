@@ -1,5 +1,7 @@
 import {Card, Form, Row,} from "antd";
 import React from "react";
+import {Route} from "react-router";
+import {Redirect} from "react-router-dom";
 import {
     INPUT_FIELD, NUMBER_FIELD,
     SUCCESS_MSG_TYPE
@@ -10,8 +12,6 @@ import {
     BLOG_VIDEOS,
     SINGLE_VIDEO
 } from "../../../constants/api";
-import {Route} from "react-router";
-import {Redirect} from "react-router-dom";
 
 
 export default class AddVideo extends React.Component {
@@ -31,20 +31,20 @@ export default class AddVideo extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
     }
 
     loadData() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 editBlogData: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(SINGLE_VIDEO, [this.props.match.params.id]), successFn, errorFn);
@@ -54,7 +54,7 @@ export default class AddVideo extends React.Component {
 
 
     render() {
-        let that = this;
+        const that = this;
         const fields = [{
             label: "Name",
             key: "name",
@@ -86,14 +86,14 @@ export default class AddVideo extends React.Component {
         let editformProp;
         if (this.state.editBlogData) {
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     that.setState({
                         redirect: true
                     });
                     that.props.loadData();
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(SINGLE_VIDEO, [this.props.match.params.id]),
@@ -104,7 +104,7 @@ export default class AddVideo extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.setState({
                     redirect: true
@@ -112,31 +112,50 @@ export default class AddVideo extends React.Component {
                 that.props.loadData();
                 console.log(data);
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: BLOG_VIDEOS,
             method: "post",
         }
-        let defaultValues = [{key: 'is_active', value: true}];
+        const defaultValues = [{key: 'is_active', value: true}];
 
-        return <Row>
+        return (
+<Row>
             <Card>
-                <Route exact path='/web/videos/edit/:id'
-                       render={() => (this.props.match.params.id ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit Video"
-                                           changeRedirect={this.changeRedirect} formProp={editformProp}
-                                           fields={fields}/> : <Redirect to={'/web/videos'}/>)}/>
-                <Route exact path='/web/videos/add'
-                       render={() => <TestFormLayout title="Add video" defaultValues={defaultValues}
-                                                     changeRedirect={this.changeRedirect}
-                                                     formProp={formProp} fields={fields}/>}/>
+                <Route
+                  exact
+                  path='/web/videos/edit/:id'
+                  render={() => (this.props.match.params.id ? (
+                           <TestFormLayout
+                             defaultValues={defaultValues}
+                             title="Edit Video"
+                             changeRedirect={this.changeRedirect}
+                             formProp={editformProp}
+                             fields={fields}
+                           />
+                         ) : <Redirect to="/web/videos" />)}
+                />
+                <Route
+                  exact
+                  path='/web/videos/add'
+                  render={() => (
+<TestFormLayout
+  title="Add video"
+  defaultValues={defaultValues}
+  changeRedirect={this.changeRedirect}
+  formProp={formProp}
+  fields={fields}
+/>
+)}
+                />
 
 
             </Card>
 
-            {this.state.redirect && <Redirect to={'/web/videos'}/>}
-        </Row>
+            {this.state.redirect && <Redirect to="/web/videos" />}
+</Row>
+)
 
     }
 }

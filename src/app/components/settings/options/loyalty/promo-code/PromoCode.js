@@ -22,54 +22,54 @@ export default class PromoCode extends React.Component {
     }
 
     loadData = (page = 1) => {
-        let that = this;
+        const that = this;
         this.setState({
             loading: true,
         });
 
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 promoCode: data.results,
                 nextPage: data.next,
                 loading: false,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false,
             })
         };
 
         getAPI(interpolate(PROMO_CODE, [this.props.active_practiceId]), successFn, errorFn, {
-            page: page,
+            page,
             practice: this.props.active_practiceId
         });
     };
 
     deleteObject = (record) => {
-        let that = this;
-        let reqData = {
+        const that = this;
+        const reqData = {
             // id:record.id,
             is_active: false
         };
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
         };
 
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
         putAPI(interpolate(SINGLE_PROMO_CODE, [record.id]), reqData, successFn, errorFn);
     };
 
     sendSMS = (record) => {
-        let that = this;
+        const that = this;
 
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
         };
 
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
         getAPI(interpolate(SEND_PROMO_CODE_SMS, [record.id]),  successFn, errorFn);
@@ -109,17 +109,23 @@ export default class PromoCode extends React.Component {
                 title: 'Action',
                 render: (text, record) => (
                     <div>
-                        <Popconfirm title="Are you sure send SMS for this promo code?"
-                                    onConfirm={() => this.sendSMS(record)}
-                                    okText="Yes" cancelText="No">
+                        <Popconfirm
+                          title="Are you sure send SMS for this promo code?"
+                          onConfirm={() => this.sendSMS(record)}
+                          okText="Yes"
+                          cancelText="No"
+                        >
                             <a>
                                 Send SMS
                             </a>
                         </Popconfirm>
-                        <Divider type="vertical"/>
-                        <Popconfirm title="Are you sure delete this promo code?"
-                                    onConfirm={() => this.deleteObject(record)}
-                                    okText="Yes" cancelText="No">
+                        <Divider type="vertical" />
+                        <Popconfirm
+                          title="Are you sure delete this promo code?"
+                          onConfirm={() => this.deleteObject(record)}
+                          okText="Yes"
+                          cancelText="No"
+                        >
                             <a>
                                 Delete
                             </a>
@@ -131,11 +137,14 @@ export default class PromoCode extends React.Component {
         ];
         return (
             <Row>
-                <AddOrEdiPromoCode {...this.props} loadData={this.loadData}/>
-                <Divider/>
-                <Table loading={loading} columns={columns} dataSource={promoCode} pagination={false}/>
-                <InfiniteFeedLoaderButton loading={this.state.loading} hidden={!this.state.nextPage}
-                                          loaderFunction={() => this.loadData(this.state.nextPage)}/>
+                <AddOrEdiPromoCode {...this.props} loadData={this.loadData} />
+                <Divider />
+                <Table loading={loading} columns={columns} dataSource={promoCode} pagination={false} />
+                <InfiniteFeedLoaderButton
+                  loading={this.state.loading}
+                  hidden={!this.state.nextPage}
+                  loaderFunction={() => this.loadData(this.state.nextPage)}
+                />
             </Row>
         )
     }

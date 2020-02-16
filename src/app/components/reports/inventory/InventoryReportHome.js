@@ -32,46 +32,57 @@ export default class InventoryReportHome extends React.Component {
         this.loadProductItem();
 
     }
+
     loadProductItem(){
-        let that=this;
-        let successFn =function (data) {
+        const that=this;
+        const successFn =function (data) {
             that.setState({
                 productItems:data,
             });
         };
-        let errorFn=function () {
+        const errorFn=function () {
 
         }
         getAPI(PRODUCTS_API,successFn ,errorFn,{practice:this.props.active_practiceId})
     }
+
     onChangeHandle = (type, value) => {
-        let that = this;
+        const that = this;
         this.setState({
             [type]: value.target.value,
         })
     }
+
     advancedOption(value){
         this.setState({
             advancedOptionShow:value,
         })
     }
+
     changeSidePanelSize = (sidePanel) => {
         this.setState({
             sidePanelColSpan: sidePanel ? 0 : 4
         })
     }
+
     handleChangeOption = (type,value) => {
-        let that = this;
+        const that = this;
         this.setState({
             [type]: value,
         })
     };
+
     render() {
-        return <div>
-            <h2>Inventory Report <Button type="primary" shape="round"
-                                        icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
-                                        style={{float: "right"}}
-                                        onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
+        return (
+<div>
+            <h2>Inventory Report <Button
+              type="primary"
+              shape="round"
+              icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
+              style={{float: "right"}}
+              onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}
+            >Panel
+                                 </Button>
             </h2>
             <Card>
                 <Row gutter={16}>
@@ -81,63 +92,82 @@ export default class InventoryReportHome extends React.Component {
                             <InventoryReport {...this.props} {...this.state} /> : null}
 
                         {this.state.type == DAILY_INVENTORY ?
-                            <DailyInventory  {...this.props} {...this.state} /> : null}
+                            <DailyInventory {...this.props} {...this.state} /> : null}
 
                         {this.state.type ==MONTHLY_INVENTORY?
                             <MonthlyInventory {...this.props} {...this.state}  />:null}
                         {this.state.type== TOP_INVENTORY?
-                            <TopInventory {...this.props} {...this.state}/>:null}
+                            <TopInventory {...this.props} {...this.state} />:null}
 
                     </Col>
 
 
                     <Col span={this.state.sidePanelColSpan}>
-                        <Radio.Group buttonStyle="solid" defaultValue={ALL_INVENTORY}
-                                     onChange={(value) => this.onChangeHandle('type', value)}>
+                        <Radio.Group
+                          buttonStyle="solid"
+                          defaultValue={ALL_INVENTORY}
+                          onChange={(value) => this.onChangeHandle('type', value)}
+                        >
                             <h2>Inventory</h2>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value={ALL_INVENTORY}>
+                            <Radio.Button
+                              style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                              value={ALL_INVENTORY}
+                            >
                                 All Stock Update History
                             </Radio.Button>
-                            <p><br/></p>
+                            <p><br /></p>
                             <h2>Related Reports</h2>
-                            {INVENTORY_RELATED_REPORT.map((item) => <Radio.Button
-                                style={{width: '100%', backgroundColor: 'transparent'}}
-                                value={item.value}>
+                            {INVENTORY_RELATED_REPORT.map((item) => (
+<Radio.Button
+  style={{width: '100%', backgroundColor: 'transparent'}}
+  value={item.value}
+>
                                 {item.name}
-                            </Radio.Button>)}
+</Radio.Button>
+))}
                         </Radio.Group>
 
-                        <br/>
-                        <br/>
-                        {this.state.type !== ALL_INVENTORY?<>
-                            {this.state.advancedOptionShow?<>
+                        <br />
+                        <br />
+                        {this.state.type !== ALL_INVENTORY?(
+<>
+                            {this.state.advancedOptionShow?(
+<>
                                 <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
-                                <Col> <br/>
+                                <Col> <br />
                                     <h4>Product</h4>
-                                    <Select style={{minWidth: '200px'}} defaultValue={ALL}
-                                            onChange={(value)=>this.handleChangeOption('product_item',value)}>
-                                        <Select.Option value={''}>{ALL}</Select.Option>
-                                        {this.state.productItems.map((item) => <Select.Option value={item.id}>
-                                            {item.name}</Select.Option>)}
+                                    <Select
+                                      style={{minWidth: '200px'}}
+                                      defaultValue={ALL}
+                                      onChange={(value)=>this.handleChangeOption('product_item',value)}
+                                    >
+                                        <Select.Option value="">{ALL}</Select.Option>
+                                        {this.state.productItems.map((item) => (
+<Select.Option value={item.id}>
+                                            {item.name}
+</Select.Option>
+))}
                                     </Select>
 
-                                    <br/>
-                                    <br/>
-                                    <br/>
-                                    <Checkbox.Group style={{ width: '100%',display:"inline-grid" }}  defaultValue={TYPE_OF_CONSUMPTION.map(item=>item.value)} onChange={(value)=>this.handleChangeOption('consume',value)}>
-                                        {/*<Row>*/}
-                                            {TYPE_OF_CONSUMPTION.map((item) =><Checkbox value={item.value} > {item.label}</Checkbox>)}
-                                        {/*</Row>*/}
+                                    <br />
+                                    <br />
+                                    <br />
+                                    <Checkbox.Group style={{ width: '100%',display:"inline-grid" }} defaultValue={TYPE_OF_CONSUMPTION.map(item=>item.value)} onChange={(value)=>this.handleChangeOption('consume',value)}>
+                                        {/* <Row> */}
+                                            {TYPE_OF_CONSUMPTION.map((item) =><Checkbox value={item.value}> {item.label}</Checkbox>)}
+                                        {/* </Row> */}
                                     </Checkbox.Group>
 
                                 </Col>
-                            </>: <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
-                        </>:null}
+</>
+): <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
+</>
+):null}
                     </Col>
 
                 </Row>
             </Card>
-        </div>
+</div>
+)
     }
 }

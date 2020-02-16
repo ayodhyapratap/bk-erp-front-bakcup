@@ -26,9 +26,9 @@ class PracticeDetails extends React.Component {
     }
 
     admin_practiceData() {
-        var that = this;
-        let successFn = function (data) {
-            let specialisations = {};
+        const that = this;
+        const successFn = function (data) {
+            const specialisations = {};
             data[0].specialisations.forEach(function (speciality) {
                 specialisations[speciality.id] = speciality
             });
@@ -36,11 +36,11 @@ class PracticeDetails extends React.Component {
 
             that.setState({
                 practiceList: data,
-                specialisations: specialisations,
+                specialisations,
                 loading: false
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
@@ -71,14 +71,14 @@ class PracticeDetails extends React.Component {
     // }
 
     deletePractice(value) {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log("data");
             that.admin_practiceData();
             if (that.props.refreshClinicData)
                 that.props.refreshClinicData();
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         postAPI(interpolate(PRACTICE_DELETE, [value]), {}, successFn, errorFn);
 
@@ -89,12 +89,13 @@ class PracticeDetails extends React.Component {
             return {visible: true, practice: item}
         });
     };
+
     handleCancel = () => {
         this.setState({visible: false});
     };
 
     render() {
-        let that = this;
+        const that = this;
         const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -122,40 +123,53 @@ class PracticeDetails extends React.Component {
             key: 'action',
             render: (text, record) => (
                 <span>
-                <Link to={'/settings/clinics/' + record.id + '/edit'}>Edit</Link>
-                <Divider type="vertical"/>
-                    {that.props.practiceList.length > 1 ? <Popconfirm title="Are you sure delete this Practice?"
-                                                                      onConfirm={() => this.deletePractice(record.id)}
-                                                                      okText="Yes" cancelText="No">
-                        <a>Delete</a></Popconfirm> : null}
-              </span>
+                <Link to={`/settings/clinics/${  record.id  }/edit`}>Edit</Link>
+                <Divider type="vertical" />
+                    {that.props.practiceList.length > 1 ? (
+<Popconfirm
+  title="Are you sure delete this Practice?"
+  onConfirm={() => this.deletePractice(record.id)}
+  okText="Yes"
+  cancelText="No"
+>
+                        <a>Delete</a>
+</Popconfirm>
+) : null}
+                </span>
             ),
         }];
 
-        return <Row>
+        return (
+<Row>
             <h2>Practice Details
                 <Link to="/settings/clinics/add">
                     <Button type="primary" style={{float: 'right'}}>
-                        <Icon type="plus"/>&nbsp;Add
+                        <Icon type="plus" />&nbsp;Add
                     </Button>
                 </Link>
             </h2>
             <Card loading={this.state.loading}>
-                <Table pagination={false} columns={columns} dataSource={this.state.practiceList}/>
+                <Table pagination={false} columns={columns} dataSource={this.state.practiceList} />
             </Card>
             <Modal
-                visible={this.state.visible}
-                closable={false}
-                width={600}
-                onCancel={this.handleCancel}
-                footer={null}>
-                <Button icon="close" type="danger" shape="circle" style={{position: 'absolute', top: '-50px', right: 0}}
-                        onClick={this.handleCancel}/>
+              visible={this.state.visible}
+              closable={false}
+              width={600}
+              onCancel={this.handleCancel}
+              footer={null}
+            >
+                <Button
+                  icon="close"
+                  type="danger"
+                  shape="circle"
+                  style={{position: 'absolute', top: '-50px', right: 0}}
+                  onClick={this.handleCancel}
+                />
                 {/* <Card > */}
                 <Row style={{paddingBottom: "25px"}}>
                     <Col span={12} offset={10}>
                         {this.state.practice.logo ?
-                            <Avatar shape="square" size="large" src={makeFileURL(this.state.practice.logo)}/>
+                            <Avatar shape="square" size="large" src={makeFileURL(this.state.practice.logo)} />
 
                             : null}
 
@@ -163,17 +177,17 @@ class PracticeDetails extends React.Component {
                 </Row>
 
 
-                <ProfileTables label={"Practice Name : "} value={this.state.practice.name}/>
-                <ProfileTables label={"Tagline : "} value={this.state.practice.tagline}/>
-                <ProfileTables label={"Email Id: "} value={this.state.practice.email}/>
-                <ProfileTables label={"Contact Number : "} value={this.state.practice.contact}/>
-                <ProfileTables label={"Website : "} value={this.state.practice.website}/>
-                <ProfileTables label={"GSTIN : "} value={this.state.practice.gstin}/>
-                <ProfileTables label={"Specialisation"} value={this.state.practice.specialisation}/>
+                <ProfileTables label="Practice Name : " value={this.state.practice.name} />
+                <ProfileTables label="Tagline : " value={this.state.practice.tagline} />
+                <ProfileTables label="Email Id: " value={this.state.practice.email} />
+                <ProfileTables label="Contact Number : " value={this.state.practice.contact} />
+                <ProfileTables label="Website : " value={this.state.practice.website} />
+                <ProfileTables label="GSTIN : " value={this.state.practice.gstin} />
+                <ProfileTables label="Specialisation" value={this.state.practice.specialisation} />
                 {ProfileTables({
                     label: 'Address',
-                    value: this.state.practice.address ? this.state.practice.address : '' + ' ' + this.state.practice.locality ? this.state.practice.locality : '' + ' ' + this.state.practice.city ? this.state.practice.city : ''
-                    + ' ' + this.state.practice.state ? this.state.practice.state : '' + ' ' + this.state.practice.country ? this.state.practice.country : '' + ' ' + this.state.practice.pincode ? this.state.practice.pincode : ''
+                    value: this.state.practice.address ? this.state.practice.address : `${'' + ' '}${  this.state.practice.locality}` ? this.state.practice.locality : `${'' + ' '}${  this.state.practice.city}` ? this.state.practice.city : `${''
+                    + ' '}${  this.state.practice.state}` ? this.state.practice.state : `${'' + ' '}${  this.state.practice.country}` ? this.state.practice.country : `${'' + ' '}${  this.state.practice.pincode}` ? this.state.practice.pincode : ''
                 })}
 
 
@@ -181,18 +195,21 @@ class PracticeDetails extends React.Component {
 
 
             </Modal>
-        </Row>
+</Row>
+)
     }
 }
 
 export default PracticeDetails;
 
 function ProfileTables(props) {
-    return <Row gutter={16}>
+    return (
+<Row gutter={16}>
         <Col span={8}>
             <p><b>{props.label}</b></p>
         </Col>
         <Col span={16}>{props.value}</Col>
-    </Row>
+</Row>
+)
 
 }

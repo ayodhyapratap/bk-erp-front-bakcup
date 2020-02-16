@@ -34,7 +34,7 @@ export default class DailySummaryReport extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
             this.setState({
                 startDate: newProps.startDate,
@@ -45,14 +45,14 @@ export default class DailySummaryReport extends React.Component {
     }
 
     loadDailySummary(page = 1) {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState(function (prevState) {
-                let rows = [];
-                let finalRow = {
+                const rows = [];
+                const finalRow = {
                     type: 'FINAL',
                     unit_cost: 0,
                     tax_value: 0,
@@ -120,27 +120,27 @@ export default class DailySummaryReport extends React.Component {
                         loading: false,
                         dailySummary: rows,
                         nextItemPage: data.next,
-                        paidAmountForPaymentMode: paidAmountForPaymentMode
+                        paidAmountForPaymentMode
                     }
-                } else {
+                } 
                     return {
                         loading: false,
                         dailySummary: [...prevState.dailySummary, ...rows],
                         nextItemPage: data.next,
-                        paidAmountForPaymentMode: paidAmountForPaymentMode
+                        paidAmountForPaymentMode
                     }
-                }
+                
             })
 
         }
 
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams = {
-            page: page,
+        const apiParams = {
+            page,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             practice: this.props.active_practiceId
@@ -161,7 +161,7 @@ export default class DailySummaryReport extends React.Component {
     }
 
     sendMail = (mailTo) => {
-        let apiParams = {
+        const apiParams = {
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             practice: this.props.active_practiceId
@@ -174,7 +174,7 @@ export default class DailySummaryReport extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         let i = 1;
         let lastInvoiceForSerialNo = null;
         let lastInvoiceForPatientName = null;
@@ -188,7 +188,7 @@ export default class DailySummaryReport extends React.Component {
             dataIndex: 'abcd',
             align: 'center',
             render: (item, record, index) => {
-                let obj = {props: {}};
+                const obj = {props: {}};
                 if (record.invoice.invoice_id == lastInvoiceForSerialNo) {
                     obj.props.rowSpan = 0
                 } else {
@@ -208,21 +208,31 @@ export default class DailySummaryReport extends React.Component {
             key: 'patient_name',
             dataIndex: 'invoice.patient_data.user.first_name',
             render: (item, record, index) => {
-                let obj = {props: {}};
+                const obj = {props: {}};
                 if (record.invoice.invoice_id == lastInvoiceForPatientName) {
                     obj.props.rowSpan = 0
                 } else {
                     lastInvoiceForPatientName = record.invoice.invoice_id;
-                    let paidAmount = record.invoice.payments.map(payment => payment.pay_amount).reduce((a, b) => a + b, 0).toFixed(2);
-                    obj.children = record.type == 'FINAL' ? '--' :
-                        <span><b>{item} ({record.invoice.patient_data.custom_id})</b><br/>
+                    const paidAmount = record.invoice.payments.map(payment => payment.pay_amount).reduce((a, b) => a + b, 0).toFixed(2);
+                    obj.children = record.type == 'FINAL' ? '--' : (
+                        <span><b>{item} ({record.invoice.patient_data.custom_id})</b><br />
                         <span>Invoice Income: <Text
-                            type="danger">INR&nbsp;{record.invoice.total.toFixed(2)}</Text></span><br/>
+                          type="danger"
+                        >INR&nbsp;{record.invoice.total.toFixed(2)}
+                                              </Text>
+                        </span><br />
                     <span>Total Payment: <Text
-                        type="danger">INR&nbsp;{paidAmount}</Text></span><br/>
+                      type="danger"
+                    >INR&nbsp;{paidAmount}
+                                         </Text>
+                    </span><br />
                     <span>Amount Due: <Text
-                        type="danger">INR&nbsp;{(record.invoice.total - paidAmount).toFixed(2)}</Text></span><br/>
-                    </span>;
+                      type="danger"
+                    >INR&nbsp;{(record.invoice.total - paidAmount).toFixed(2)}
+                                      </Text>
+                    </span><br />
+                        </span>
+                      );
                     obj.props.rowSpan = record.invoice.inventory.length + record.invoice.prescription.length + record.invoice.procedure.length;
                     if (record.type == 'FINAL') {
                         obj.props.rowSpan = 1;
@@ -240,11 +250,12 @@ export default class DailySummaryReport extends React.Component {
             key: 'unit_cost',
             dataIndex: 'unit_cost',
             align: 'right',
-            render: (item, record) => record.unit_cost ?
+            render: (item, record) => record.unit_cost ? (
                 <span>{(record.unit_cost.toFixed(2) * record.unit).toFixed(2)}
                     {record.type == 'FINAL' ? null :
-                        <span><br/><small>{record.unit_cost.toFixed(2)}x{record.unit}</small></span>}
-                </span> : '--',
+                        <span><br /><small>{record.unit_cost.toFixed(2)}x{record.unit}</small></span>}
+                </span>
+              ) : '--',
             // export: (item, record) => (record.unit_cost ? record.unit_cost.toFixed(2) : '0.00'),
         }, {
             title: 'Discount (INR)',
@@ -264,7 +275,7 @@ export default class DailySummaryReport extends React.Component {
             title: 'Invoice No.',
             key: 'invoice_id',
             dataIndex: 'invoice.invoice_id',
-            render: (item, record) => <span>{item}<br/><small>{record.invoice.date}</small></span>
+            render: (item, record) => <span>{item}<br /><small>{record.invoice.date}</small></span>
         }, {
             title: 'Invoice Cost (INR)',
             key: 'invoice_cost',
@@ -277,13 +288,13 @@ export default class DailySummaryReport extends React.Component {
             key: 'payment_data.payment_id',
             dataIndex: '',
             render: (item, record, index) => {
-                let obj = {props: {}};
+                const obj = {props: {}};
                 if (record.invoice.invoice_id == lastInvoiceForReceipt) {
                     obj.props.rowSpan = 0
                 } else {
                     lastInvoiceForReceipt = record.invoice.invoice_id;
                     obj.children =
-                        <span>{record.invoice.payments.map(payment => <span>{payment.payment_id}<br/></span>)}</span>;
+                        <span>{record.invoice.payments.map(payment => <span>{payment.payment_id}<br /></span>)}</span>;
                     obj.props.rowSpan = record.invoice.inventory.length + record.invoice.prescription.length + record.invoice.procedure.length;
                     if (record.type == 'FINAL') {
                         obj.props.rowSpan = 1;
@@ -297,14 +308,16 @@ export default class DailySummaryReport extends React.Component {
             dataIndex: 'payment_mode',
             align: 'center',
             render: (item, record, index) => {
-                let obj = {props: {}};
+                const obj = {props: {}};
                 if (record.invoice.invoice_id == lastInvoiceForPaymentMode) {
                     obj.props.rowSpan = 0
                 } else {
                     lastInvoiceForPaymentMode = record.invoice.invoice_id;
-                    obj.children = <span>
-                            {record.invoice.payments.map(payment => <span>{payment.payment_mode || '--'}<br/></span>)}
-                        </span>;
+                    obj.children = (
+<span>
+                            {record.invoice.payments.map(payment => <span>{payment.payment_mode || '--'}<br /></span>)}
+</span>
+);
                     obj.props.rowSpan = record.invoice.inventory.length + record.invoice.prescription.length + record.invoice.procedure.length;
                     if (record.type == 'FINAL') {
                         obj.props.rowSpan = 1;
@@ -319,15 +332,17 @@ export default class DailySummaryReport extends React.Component {
             dataIndex: 'pay_amount',
             align: 'right',
             render: (item, record, index) => {
-                let obj = {props: {}};
+                const obj = {props: {}};
                 if (record.invoice.invoice_id == lastInvoiceForAmountPaid) {
                     obj.props.rowSpan = 0
                 } else {
                     lastInvoiceForAmountPaid = record.invoice.invoice_id;
-                    obj.children = <span>
+                    obj.children = (
+<span>
                             {record.invoice.payments.map(payment =>
-                                <span>{payment.pay_amount.toFixed(2) || '--'}<br/></span>)}
-                        </span>;
+                                <span>{payment.pay_amount.toFixed(2) || '--'}<br /></span>)}
+</span>
+);
                     obj.props.rowSpan = record.invoice.inventory.length + record.invoice.prescription.length + record.invoice.procedure.length;
                     if (record.type == 'FINAL') {
                         obj.props.rowSpan = 1;
@@ -342,15 +357,17 @@ export default class DailySummaryReport extends React.Component {
             dataIndex: 'total',
             align: 'right',
             render: (item, record, index) => {
-                let obj = {props: {}};
+                const obj = {props: {}};
                 if (record.invoice.invoice_id == lastInvoiceForTotalAmountPaid) {
                     obj.props.rowSpan = 0
                 } else {
                     lastInvoiceForTotalAmountPaid = record.invoice.invoice_id;
-                    obj.children = <span>
+                    obj.children = (
+<span>
                             {record.invoice.payments.map(payment =>
-                                <b>{payment.pay_amount.toFixed(2) || '--'}<br/></b>)}
-                        </span>;
+                                <b>{payment.pay_amount.toFixed(2) || '--'}<br /></b>)}
+</span>
+);
                     obj.props.rowSpan = record.invoice.inventory.length + record.invoice.prescription.length + record.invoice.procedure.length;
                     if (record.type == 'FINAL') {
                         obj.props.rowSpan = 1;
@@ -362,54 +379,78 @@ export default class DailySummaryReport extends React.Component {
             // export: (item, record) => (record.total ? record.total.toFixed(2) : '0.00'),
         }];
 
-        return <div><h2>Daily Summary Report
-        </h2>
+        return (
+<div><h2>Daily Summary Report
+     </h2>
             <Card
-                bodyStyle={{padding: 0}}
-                extra={<>
+              bodyStyle={{padding: 0}}
+              extra={(
+<>
                     <span>Doctors :&nbsp;</span>
-                    <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
-                            onChange={(value) => this.filterReport('doctors', value)}>
-                        {this.state.practiceDoctors.map((item) => <Select.Option key={item.id} value={item.id}>
-                            {item.user.first_name}</Select.Option>)}
+                    <Select
+                      style={{minWidth: '200px'}}
+                      mode="multiple"
+                      placeholder="Select Doctors"
+                      onChange={(value) => this.filterReport('doctors', value)}
+                    >
+                        {this.state.practiceDoctors.map((item) => (
+<Select.Option key={item.id} value={item.id}>
+                            {item.user.first_name}
+</Select.Option>
+))}
                     </Select>&nbsp;&nbsp;
 
                     <span>E-Mail To:&nbsp;
                             <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                                {this.state.mailingUsersList.map(item => <Select.Option
-                                    value={item.email}>{item.name}</Select.Option>)}
+                                {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                             </Select>
                     </span>
-                </>
-                }>
+</>
+)}
+            >
 
-                <Table bordered={true}
-                       rowKey={(record, index) => {
+                <Table
+                  bordered
+                  rowKey={(record, index) => {
                            return index
                        }}
-                       columns={columns}
-                       dataSource={this.state.dailySummary}
-                       pagination={false}
+                  columns={columns}
+                  dataSource={this.state.dailySummary}
+                  pagination={false}
                 />
 
 
                 <InfiniteFeedLoaderButton
-                    loaderFunction={() => this.loadDailySummary(this.state.nextItemPage)}
-                    loading={this.state.loading}
-                    hidden={!this.state.nextItemPage}/>
-                {this.state.nextItemPage ? null : <Row gutter={16}>
+                  loaderFunction={() => this.loadDailySummary(this.state.nextItemPage)}
+                  loading={this.state.loading}
+                  hidden={!this.state.nextItemPage}
+                />
+                {this.state.nextItemPage ? null : (
+<Row gutter={16}>
                     <Col span={6} style={{margin: 15}}>
                         <h4>Amount Total by Mode of Payments</h4>
-                        <List size="small" dataSource={Object.keys(this.state.paidAmountForPaymentMode).map(key => {
+                        <List
+                          size="small"
+                          dataSource={Object.keys(this.state.paidAmountForPaymentMode).map(key => {
                             return {payment_mode: key || '--', value: 0}
                         })}
-                              renderItem={item => <List.Item>
-                                  <List.Item.Meta title={item.payment_mode || '--'}/>
+                          renderItem={item => (
+<List.Item>
+                                  <List.Item.Meta title={item.payment_mode || '--'} />
                                   <span>INR {that.state.paidAmountForPaymentMode[item.payment_mode].toFixed(2)}</span>
-                              </List.Item>}/>
+</List.Item>
+)}
+                        />
                     </Col>
-                </Row>}
+</Row>
+)}
             </Card>
-        </div>
+</div>
+)
     }
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import {Button, Card, Col, Icon, Radio, Row, Select, Checkbox} from "antd";
+import moment from "moment"
 import {APPOINTMENT_REPORTS, APPOINTMENT_CATEGORIES, PRACTICESTAFF} from "../../../constants/api";
 import {
     ALL_APPOINTMENT,
@@ -17,7 +18,6 @@ import {
     from "../../../constants/dataKeys";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import {APPOINTMENT_RELATED_REPORT} from "../../../constants/hardData";
-import moment from "moment"
 import AllAppointments from "./AllAppointments";
 import AppointmentByCategory from "./AppointmentByCategory";
 import AppointmentForEachDoctor from "./AppointmentForEachDoctor";
@@ -48,6 +48,7 @@ export default class AppointmentsReportHome extends React.Component {
 
 
     }
+
     componentDidMount() {
         this.loadAppointmentCategory();
         loadDoctors(this);
@@ -55,13 +56,13 @@ export default class AppointmentsReportHome extends React.Component {
 
 
     loadAppointmentCategory(){
-        let that=this;
-        let successFn=function (data) {
+        const that=this;
+        const successFn=function (data) {
             that.setState({
                 appointmentCategory:data,
             })
         };
-        let errorFn=function () {
+        const errorFn=function () {
 
         }
         getAPI(interpolate(APPOINTMENT_CATEGORIES,[this.props.active_practiceId]),successFn ,errorFn);
@@ -69,22 +70,25 @@ export default class AppointmentsReportHome extends React.Component {
 
 
     onChangeHandle =(type,value)=>{
-        let that=this;
+        const that=this;
         this.setState({
             [type]:value.target.value,
         });
     }
+
     advancedOption(value){
         this.setState({
             advancedOptionShow:value,
         })
     }
+
     handleChangeOption = (type,value) => {
-        let that = this;
+        const that = this;
         this.setState({
             [type]: value,
         })
     }
+
     onChangeCheckbox=(e)=>{
         this.setState({
             exclude_cancelled: !this.state.exclude_cancelled,
@@ -96,103 +100,121 @@ export default class AppointmentsReportHome extends React.Component {
             sidePanelColSpan: sidePanel ? 0 : 4
         })
     }
+
     render() {
-        let {sidePanelColSpan, type, advancedOptionShow, practiceDoctors, appointmentCategory} =this.state;
-        return <div>
-            <h2>Appointments Report <Button type="primary" shape="round"
-                                        icon={sidePanelColSpan ? "double-right" : "double-left"}
-                                        style={{float: "right"}}
-                                        onClick={() => this.changeSidePanelSize(sidePanelColSpan)}>Panel</Button>
+        const {sidePanelColSpan, type, advancedOptionShow, practiceDoctors, appointmentCategory} =this.state;
+        return (
+<div>
+            <h2>Appointments Report <Button
+              type="primary"
+              shape="round"
+              icon={sidePanelColSpan ? "double-right" : "double-left"}
+              style={{float: "right"}}
+              onClick={() => this.changeSidePanelSize(sidePanelColSpan)}
+            >Panel
+                                    </Button>
             </h2>
             <Card>
                 <Row gutter={16}>
                     <Col span={(24 - sidePanelColSpan)}>
                        {type == ALL_APPOINTMENT ?
-                           <AllAppointments type={ALL_APPOINTMENT} {...this.state} {...this.props}/>:null
-                       }
+                           <AllAppointments type={ALL_APPOINTMENT} {...this.state} {...this.props} />:null}
                        {type == APPOINTMENT_FOR_EACH_CATEGORY ?
-                           <AppointmentByCategory {...this.state} {...this.props} />:null
-                       }
+                           <AppointmentByCategory {...this.state} {...this.props} />:null}
 
                        {type == APPOINTMENT_FOR_EACH_DOCTOR ?
-                           <AppointmentForEachDoctor {...this.state} {...this.props}/>:null
-                       }
+                           <AppointmentForEachDoctor {...this.state} {...this.props} />:null}
                        {type == APPOINTMENT_FOR_EACH_PATIENT_GROUP ?
-                           <AppointmentForEachPatientGroup {...this.state} {...this.props}/>:null
-                       }
+                           <AppointmentForEachPatientGroup {...this.state} {...this.props} />:null}
                        {type == AVERAGE_WAITING_ENGAGED_TIME_DAY_WISE ?
-                           <AverageWaitingOrEngagedTimeDayWise {...this.state} {...this.props}/>:null
-                       }
+                           <AverageWaitingOrEngagedTimeDayWise {...this.state} {...this.props} />:null}
                        {type == AVERAGE_WAITING_ENGAGED_TIME_MONTH_WISE ?
-                           <AverageWaitingOrEngagedTimeMonthWise {...this.state} {...this.props}/>:null
-                       }
+                           <AverageWaitingOrEngagedTimeMonthWise {...this.state} {...this.props} />:null}
                        {type == CANCELLATION_NUMBERS ?
-                           <CancellationsNumbers {...this.state} {...this.props}/>:null
-                       }
+                           <CancellationsNumbers {...this.state} {...this.props} />:null}
                        {type == DAILY_APPOINTMENT_COUNT ?
-                           <DailyAppointmentCount {...this.state} {...this.props}/>:null
-                       }
+                           <DailyAppointmentCount {...this.state} {...this.props} />:null}
                        {type == MONTHLY_APPOINTMENT_COUNT ?
-                           <MonthlyAppointmentCount {...this.state} {...this.props}/>:null
-                       }
+                           <MonthlyAppointmentCount {...this.state} {...this.props} />:null}
                        {type==APPOINTMENT_FOR_PATIENT_CONVERSION ?
-                           <Patient_Conversion {...this.props} {...this.state}/>:null
-                       }
+                           <Patient_Conversion {...this.props} {...this.state} />:null}
 
                     </Col>
                     <Col span={sidePanelColSpan}>
-                        <Radio.Group buttonStyle="solid" defaultValue={ALL_APPOINTMENT}  onChange={(value)=>this.onChangeHandle('type',value)}>
+                        <Radio.Group buttonStyle="solid" defaultValue={ALL_APPOINTMENT} onChange={(value)=>this.onChangeHandle('type',value)}>
                             <h2>Appointments</h2>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value={ALL_APPOINTMENT}>
+                            <Radio.Button
+                              style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                              value={ALL_APPOINTMENT}
+                            >
                                 All Appointments
                             </Radio.Button>
-                            <p><br/></p>
+                            <p><br /></p>
                             <h2>Related Reports</h2>
-                            {APPOINTMENT_RELATED_REPORT.map((item) => <Radio.Button
-                                style={{width: '100%', backgroundColor: 'transparent'}}
-                                value={item.value}>
+                            {APPOINTMENT_RELATED_REPORT.map((item) => (
+<Radio.Button
+  style={{width: '100%', backgroundColor: 'transparent'}}
+  value={item.value}
+>
                                 {item.name}
-                            </Radio.Button>)}
+</Radio.Button>
+))}
                         </Radio.Group>
 
 
-                        <br/>
-                        <br/>
-                        {advancedOptionShow?<>
+                        <br />
+                        <br />
+                        {advancedOptionShow?(
+<>
                             <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
-                            <Col> <br/>
+                            <Col> <br />
                                 <h4>Doctors</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
-                                        onChange={(value)=>this.handleChangeOption('doctors',value)}>
-                                    {practiceDoctors.map((item) => <Select.Option value={item.id}>
-                                        {item.user.first_name}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  mode="multiple"
+                                  placeholder="Select Doctors"
+                                  onChange={(value)=>this.handleChangeOption('doctors',value)}
+                                >
+                                    {practiceDoctors.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.user.first_name}
+</Select.Option>
+))}
                                 </Select>
 
-                                <br/>
-                                <br/>
+                                <br />
+                                <br />
                                 <h4>Appointment Categories</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Category"
-                                        onChange={(value)=>this.handleChangeOption('categories',value)}>
-                                    {appointmentCategory.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  mode="multiple"
+                                  placeholder="Select Category"
+                                  onChange={(value)=>this.handleChangeOption('categories',value)}
+                                >
+                                    {appointmentCategory.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.name}
+</Select.Option>
+))}
                                 </Select>
-                                {/*<h4>Offer Applied</h4>*/}
-                                {/*<Select style={{minWidth: '200px'}}*/}
-                                {/*        onChange={(value)=>this.handleChangeOption('referrer',value)}>*/}
-                                {/*    {this.state.referrerOption.map((item) => <Select.Option value={item.id}>*/}
-                                {/*        {item.name}</Select.Option>)}*/}
-                                {/*</Select>*/}
+                                {/* <h4>Offer Applied</h4> */}
+                                {/* <Select style={{minWidth: '200px'}} */}
+                                {/*        onChange={(value)=>this.handleChangeOption('referrer',value)}> */}
+                                {/*    {this.state.referrerOption.map((item) => <Select.Option value={item.id}> */}
+                                {/*        {item.name}</Select.Option>)} */}
+                                {/* </Select> */}
 
-                                <br/>
-                                <br/>
-                                <Checkbox  onChange={(e)=>this.onChangeCheckbox(e)}> Exclude Cancelled</Checkbox>
+                                <br />
+                                <br />
+                                <Checkbox onChange={(e)=>this.onChangeCheckbox(e)}> Exclude Cancelled</Checkbox>
                             </Col>
-                        </>:<Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
+</>
+):<Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
 
                     </Col>
                 </Row>
             </Card>
-        </div>
+</div>
+)
     }
 }

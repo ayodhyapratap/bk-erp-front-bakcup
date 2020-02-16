@@ -20,6 +20,7 @@ import InvoiceReturnForEachDoctor from "./InvoiceReturnForEachDoctor";
 import InvoiceReturnForEachPatientGroup from "./InvoiceReturnForEachPatientGroup";
 import InvoiceReturnForEachTax from "./InvoiceReturnForEachTax";
 import DailyWiseReturnInvoice from "./DailyWiseReturnInvoice"
+
 export default class InvoiceReturnHome extends React.Component{
     constructor(props){
         super(props);
@@ -46,52 +47,52 @@ export default class InvoiceReturnHome extends React.Component{
     }
 
     loadPatientGroup() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 patientGroup: data,
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(PATIENT_GROUPS, [this.props.active_practiceId]), successFn, errorFn)
     }
 
     loadTaxes() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 taxes_list: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
     }
 
     loadProductItem() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 productItems: data,
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(PRODUCTS_API, successFn, errorFn, {practice: this.props.active_practiceId})
     }
 
     loadTreatments() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 treatment_data: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn, {pagination: false});
 
@@ -99,7 +100,7 @@ export default class InvoiceReturnHome extends React.Component{
 
 
     onChangeHandle =(type,value)=>{
-        let that=this;
+        const that=this;
         this.setState({
             [type]:value.target.value,
         });
@@ -110,6 +111,7 @@ export default class InvoiceReturnHome extends React.Component{
             advancedOptionShow:value,
         })
     }
+
     changeSidePanelSize = (sidePanel) => {
         this.setState({
             sidePanelColSpan: sidePanel ? 0 : 4
@@ -129,154 +131,208 @@ export default class InvoiceReturnHome extends React.Component{
     };
 
     render() {
-        return<div>
-            <h2>Return Invoice Report <Button type="primary" shape="round"
-                                              icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
-                                              style={{float: "right"}}
-                                              onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
+        return(
+<div>
+            <h2>Return Invoice Report <Button
+              type="primary"
+              shape="round"
+              icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
+              style={{float: "right"}}
+              onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}
+            >Panel
+                                      </Button>
             </h2>
             <Card>
                 <Row gutter={16}>
                     <Col span={(24 - this.state.sidePanelColSpan)}>
                         {this.state.type == ALL_INVOICE_RETURN ?
 
-                            <AllReturnedInvoice {...this.props} {...this.state} /> : null
-                        }
+                            <AllReturnedInvoice {...this.props} {...this.state} /> : null}
 
 
                         {this.state.type == DAILY_WISE_RETURN_INVOICE ?
 
-                            <DailyWiseReturnInvoice  {...this.props} {...this.state} /> : null
-                        }
+                            <DailyWiseReturnInvoice {...this.props} {...this.state} /> : null}
 
                         {this.state.type == MONTHLY_WISE_RETURN_INVOICE?
 
-                            <MonthlyWiseReturnInvoice {...this.props} {...this.state}  />:null
-                        }
+                            <MonthlyWiseReturnInvoice {...this.props} {...this.state}  />:null}
                         {this.state.type == RETURN_INVOICE_FOR_EACH_PROCEDURE?
 
-                            <InvoiceReturnForEachProcedure {...this.props} {...this.state}/>:null
-                        }
+                            <InvoiceReturnForEachProcedure {...this.props} {...this.state} />:null}
 
                         {this.state.type ==RETURN_INVOICE_FOR_EACH_PRODUCT?
 
-                            <InvoiceReturnForEachProduct {...this.props} {...this.state}/>:null
-                        }
+                            <InvoiceReturnForEachProduct {...this.props} {...this.state} />:null}
 
                         {this.state.type == RETURN_INVOICE_FOR_EACH_DOCTOR?
 
-                            <InvoiceReturnForEachDoctor {...this.state} {...this.props}/>:null
-
-                        }
+                            <InvoiceReturnForEachDoctor {...this.state} {...this.props} />:null}
                         {this.state.type == RETURN_INVOICE_FOR_EACH_PATIENT_GROUPS?
 
-                            <InvoiceReturnForEachPatientGroup {...this.state} {...this.props}/>:null
-                        }
+                            <InvoiceReturnForEachPatientGroup {...this.state} {...this.props} />:null}
 
                         {this.state.type == RETURN_INVOICE_FOR_EACH_TAX?
 
-                            <InvoiceReturnForEachTax {...this.state} {...this.props}/>:null
-                        }
+                            <InvoiceReturnForEachTax {...this.state} {...this.props} />:null}
 
 
 
 
                     </Col>
                     <Col span={this.state.sidePanelColSpan}>
-                        <Radio.Group buttonStyle="solid" defaultValue={ALL_INVOICE_RETURN}
-                                     onChange={(value) => this.onChangeHandle('type', value)}>
+                        <Radio.Group
+                          buttonStyle="solid"
+                          defaultValue={ALL_INVOICE_RETURN}
+                          onChange={(value) => this.onChangeHandle('type', value)}
+                        >
                             <h2>Invoice Returns</h2>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value={ALL}>
+                            <Radio.Button
+                              style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                              value={ALL}
+                            >
                                 All Returned Invoices
                             </Radio.Button>
-                            <p><br/></p>
+                            <p><br /></p>
                             <h2>Related Reports</h2>
-                            {INVOICE_RELATED_REPORT.map((item) => <Radio.Button
-                                style={{width: '100%', backgroundColor: 'transparent'}}
-                                value={item.value}>
+                            {INVOICE_RELATED_REPORT.map((item) => (
+<Radio.Button
+  style={{width: '100%', backgroundColor: 'transparent'}}
+  value={item.value}
+>
                                 {item.name}
-                            </Radio.Button>)}
+</Radio.Button>
+))}
                         </Radio.Group>
 
-                        <br/>
-                        <br/>
-                        {this.state.advancedOptionShow?<>
+                        <br />
+                        <br />
+                        {this.state.advancedOptionShow?(
+<>
                             <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
-                            <Col> <br/>
+                            <Col> <br />
                                 <h4>Patient Groups</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Patient Groups"
-                                        onChange={(value)=>this.handleChangeOption('patient_groups',value)}>
-                                    {this.state.patientGroup.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  mode="multiple"
+                                  placeholder="Select Patient Groups"
+                                  onChange={(value)=>this.handleChangeOption('patient_groups',value)}
+                                >
+                                    {this.state.patientGroup.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.name}
+</Select.Option>
+))}
                                 </Select>
 
-                                <br/>
-                                <br/>
+                                <br />
+                                <br />
 
                                 <h4>Doctors</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
-                                        onChange={(value) => this.handleChangeOption('doctors', value)}>
-                                    {this.state.practiceDoctors.map((item) => <Select.Option value={item.id}>
-                                        {item.user.first_name}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  mode="multiple"
+                                  placeholder="Select Doctors"
+                                  onChange={(value) => this.handleChangeOption('doctors', value)}
+                                >
+                                    {this.state.practiceDoctors.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.user.first_name}
+</Select.Option>
+))}
                                 </Select>
 
-                                <br/>
-                                <br/>
+                                <br />
+                                <br />
                                 <h4>Income Type</h4>
-                                <Select style={{minWidth: '200px'}} placeholder="Select Income Type"
-                                        onChange={(value) => this.handleChangeOption('income_type', value)}>
-                                    {INCOME_TYPE.map((item) => <Select.Option value={item.value}>
-                                        {item.label}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  placeholder="Select Income Type"
+                                  onChange={(value) => this.handleChangeOption('income_type', value)}
+                                >
+                                    {INCOME_TYPE.map((item) => (
+<Select.Option value={item.value}>
+                                        {item.label}
+</Select.Option>
+))}
                                 </Select>
-                                <br/>
-                                <br/>
+                                <br />
+                                <br />
                                 <h4>Taxes</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Taxes"
-                                        onChange={(value) => this.handleChangeOption('taxes', value)}>
-                                    {this.state.taxes_list.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  mode="multiple"
+                                  placeholder="Select Taxes"
+                                  onChange={(value) => this.handleChangeOption('taxes', value)}
+                                >
+                                    {this.state.taxes_list.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.name}
+</Select.Option>
+))}
                                 </Select>
 
-                                <br/>
-                                <br/>
+                                <br />
+                                <br />
                                 <h4>Discount</h4>
-                                <Select style={{minWidth: '200px'}} placeholder="Select Discount"
-                                        onChange={(value) => this.handleChangeOption('discount', value)}>
-                                    {DISCOUNT.map((item) => <Select.Option value={item.value}>
-                                        {item.label}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  placeholder="Select Discount"
+                                  onChange={(value) => this.handleChangeOption('discount', value)}
+                                >
+                                    {DISCOUNT.map((item) => (
+<Select.Option value={item.value}>
+                                        {item.label}
+</Select.Option>
+))}
                                 </Select>
-                                <br/>
-                                <br/>
+                                <br />
+                                <br />
 
                                 <h4>Product</h4>
-                                <Select style={{minWidth: '200px'}} mode={"multiple"} placeholder={"Select Products"}
-                                        onChange={(value) => this.handleChangeOption('products', value)}>
-                                    {this.state.productItems.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  mode="multiple"
+                                  placeholder="Select Products"
+                                  onChange={(value) => this.handleChangeOption('products', value)}
+                                >
+                                    {this.state.productItems.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.name}
+</Select.Option>
+))}
                                 </Select>
-                                <br/>
-                                <br/>
+                                <br />
+                                <br />
 
                                 <h4>Treatments</h4>
-                                <Select style={{minWidth: '200px'}} mode={"multiple"} placeholder={"Select Treatments"}
-                                        onChange={(value) => this.handleChangeOption('treatments', value)}>
-                                    {this.state.treatment_data.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  mode="multiple"
+                                  placeholder="Select Treatments"
+                                  onChange={(value) => this.handleChangeOption('treatments', value)}
+                                >
+                                    {this.state.treatment_data.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.name}
+</Select.Option>
+))}
                                 </Select>
 
-                                <br/>
-                                <br/>
+                                <br />
+                                <br />
 
                                 <Checkbox onChange={(e) => this.onChangeCheckbox(e)}> Exclude Cancelled</Checkbox>
 
 
                             </Col>
-                        </>:<Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
+</>
+):<Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
 
                     </Col>
                 </Row>
             </Card>
-        </div>
+</div>
+)
     }
 }

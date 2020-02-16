@@ -1,6 +1,7 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm} from "antd";
+import {Link} from "react-router-dom";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     SUCCESS_MSG_TYPE,
     CHECKBOX_FIELD,
@@ -10,7 +11,6 @@ import {
     SELECT_FIELD
 } from "../../../../constants/dataKeys";
 import {MEDICAL_HISTORY} from "../../../../constants/api"
-import {Link} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
 import CustomizedTable from "../../../common/CustomizedTable";
 
@@ -36,8 +36,8 @@ class MedicalHistory extends React.Component {
     }
 
     loadData(deleted = false) {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log("get table");
             if (deleted) {
                 that.setState({
@@ -51,7 +51,7 @@ class MedicalHistory extends React.Component {
                 })
             }
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
@@ -64,7 +64,7 @@ class MedicalHistory extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -84,16 +84,16 @@ class MedicalHistory extends React.Component {
     }
 
     deleteObject(record,type) {
-        let that = this;
-        let reqData = record;
+        const that = this;
+        const reqData = record;
         reqData.is_active = type;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
             if (that.state.showDeleted) {
                 that.loadData(true);
             }
         }
-        let errorFn = function () {
+        const errorFn = function () {
         };
         postAPI(interpolate(MEDICAL_HISTORY, [this.props.active_practiceId]), reqData, successFn, errorFn)
     }
@@ -107,7 +107,7 @@ class MedicalHistory extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const columns = [{
             title: 'Medical History',
             dataIndex: 'name',
@@ -116,20 +116,32 @@ class MedicalHistory extends React.Component {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-                record.is_active?<span>
+                record.is_active?(
+<span>
 
               <a onClick={() => this.editTax(record)}>  Edit</a>
-                <Divider type="vertical"/>
-                <Popconfirm title="Are you sure to delete this?"
-                            onConfirm={() => that.deleteObject(record,false)} okText="Yes" cancelText="No">
+                <Divider type="vertical" />
+                <Popconfirm
+                  title="Are you sure to delete this?"
+                  onConfirm={() => that.deleteObject(record,false)}
+                  okText="Yes"
+                  cancelText="No"
+                >
                   <a>Delete</a>
-              </Popconfirm>
-              </span> : <span>
-                    <Popconfirm title="Are you sure to show this?"
-                                onConfirm={() => that.deleteObject(record,true)} okText="Yes" cancelText="No">
+                </Popconfirm>
+</span>
+) : (
+<span>
+                    <Popconfirm
+                      title="Are you sure to show this?"
+                      onConfirm={() => that.deleteObject(record,true)}
+                      okText="Yes"
+                      cancelText="No"
+                    >
                   <a>Show</a>
-              </Popconfirm>
-                </span>
+                    </Popconfirm>
+</span>
+)
             ),
         }];
         const fields = [{
@@ -146,14 +158,14 @@ class MedicalHistory extends React.Component {
             type: INPUT_FIELD
         },];
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 that.handleCancel();
                 that.loadData();
                 console.log(data);
                 console.log("sucess");
                 displayMessage(SUCCESS_MSG_TYPE, "success")
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(MEDICAL_HISTORY, [this.props.active_practiceId]),
@@ -162,30 +174,40 @@ class MedicalHistory extends React.Component {
         const defaultValues = [];
         const editFormDefaultValues = [{"key": "id", "value": this.state.editingId}];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>
+        return (
+<div>
             <h2>Medical History</h2>
             <Card>
-                <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
-                <Divider/>
-                <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.history}/>
-                {this.state.showDeleted ?
+                <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields} />
+                <Divider />
+                <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.history} />
+                {this.state.showDeleted ? (
                     <div>
-                        <CustomizedTable loading={this.state.deletedLoading} columns={columns}
-                                         dataSource={this.state.deletedHistory}/>
-                    </div> :
+                        <CustomizedTable
+                          loading={this.state.deletedLoading}
+                          columns={columns}
+                          dataSource={this.state.deletedHistory}
+                        />
+                    </div>
+                  ) :
                     <h4><a onClick={() => this.showDeletedMedicalHistory()}>Show Deleted Medical History</a></h4>}
             </Card>
             <Modal
-                title="Basic Modal"
-                visible={this.state.visible}
-                footer={null}
+              title="Basic Modal"
+              visible={this.state.visible}
+              footer={null}
             >
-                <TestFormLayout title="Change history" defaultValues={editFormDefaultValues} formProp={formProp}
-                                fields={editfields}/>
+                <TestFormLayout
+                  title="Change history"
+                  defaultValues={editFormDefaultValues}
+                  formProp={formProp}
+                  fields={editfields}
+                />
                 <Button key="back" onClick={this.handleCancel}>Return</Button>,
 
             </Modal>
-        </div>
+</div>
+)
     }
 }
 

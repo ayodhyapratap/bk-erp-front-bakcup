@@ -30,63 +30,67 @@ export default class InventoryDetailsReportHome extends React.Component {
         loadDoctors(this);
 
     }
+
     componentDidMount() {
         this.loadManufactures();
         this.loadProducts();
         this.loadSuppliers();
         this.loadPatientGroup();
     }
+
     loadPatientGroup(){
-        let that=this;
-        let successFn =function (data) {
+        const that=this;
+        const successFn =function (data) {
             that.setState({
                 patientGroup:data,
             });
         };
-        let errorFn=function () {
+        const errorFn=function () {
 
         }
         getAPI(interpolate(PATIENT_GROUPS,[this.props.active_practiceId]),successFn ,errorFn)
     }
+
     loadManufactures(){
-        let that=this;
-        let successFn=function (data) {
+        const that=this;
+        const successFn=function (data) {
             that.setState({
                 manufacturesOption:data,
             })
         };
-        let errorFn=function () {
+        const errorFn=function () {
 
         }
         getAPI(MANUFACTURER_API,successFn ,errorFn);
     };
 
     loadSuppliers(){
-        let that=this;
-        let successFn=function (data) {
+        const that=this;
+        const successFn=function (data) {
             that.setState({
                 suppliersOption:data,
             })
         };
-        let errorFn=function () {
+        const errorFn=function () {
 
         };
-        let apiParams={
+        const apiParams={
             practice:this.props.active_practiceId,
         };
         getAPI(SUPPLIER_API ,successFn ,errorFn ,apiParams);
     }
+
     loadProducts(){
-        let that=this;
-        let successFn=function (data) {
+        const that=this;
+        const successFn=function (data) {
             that.setState({
                 productsOption:data,
             })
         };
-        let errorFn=function () {
+        const errorFn=function () {
 
         };
-        let apiParams={
+        const apiParams={
             practice:this.props.active_practiceId,
         };
         getAPI(PRODUCTS_API ,successFn ,errorFn,apiParams);
@@ -94,22 +98,25 @@ export default class InventoryDetailsReportHome extends React.Component {
 
 
     onChangeHandle =(type,value)=>{
-        let that=this;
+        const that=this;
         this.setState({
             [type]:value.target.value,
         });
     }
+
     advancedOption(value){
         this.setState({
             advancedOptionShow:value,
         })
     }
+
     handleChangeOption = (type,value) => {
-        let that = this;
+        const that = this;
         this.setState({
             [type]: value,
         })
     }
+
     onChangeCheckbox=(e)=>{
         this.setState({
             exclude_cancelled: !this.state.exclude_cancelled,
@@ -121,80 +128,125 @@ export default class InventoryDetailsReportHome extends React.Component {
             sidePanelColSpan: sidePanel ? 0 : 4
         })
     }
+
     render() {
-        return <div>
-            <h2>Inventory Report <Button type="primary" shape="round"
-                                            icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
-                                            style={{float: "right"}}
-                                            onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
+        return (
+<div>
+            <h2>Inventory Report <Button
+              type="primary"
+              shape="round"
+              icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
+              style={{float: "right"}}
+              onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}
+            >Panel
+                                 </Button>
             </h2>
             <Card>
                 <Row gutter={16}>
                     <Col span={(24 - this.state.sidePanelColSpan)}>
-                        <ProfitLossReport  {...this.state} {...this.props}/>
+                        <ProfitLossReport {...this.state} {...this.props} />
 
                     </Col>
                     <Col span={this.state.sidePanelColSpan}>
                         <Radio.Group buttonStyle="solid" defaultValue={ALL}>
                             <h2>Inventory Retails</h2>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value={ALL}>
+                            <Radio.Button
+                              style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                              value={ALL}
+                            >
                                 Profit Loss
                             </Radio.Button>
-                            <p><br/></p>
+                            <p><br /></p>
                             <h2>Related Reports</h2>
 
                         </Radio.Group>
 
-                        <br/>
-                        <br/>
-                        {this.state.advancedOptionShow?<>
+                        <br />
+                        <br />
+                        {this.state.advancedOptionShow?(
+<>
                             <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
-                            <Col> <br/>
+                            <Col> <br />
                                 <h4>Patient Groups</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Patient Groups"
-                                        onChange={(value)=>this.handleChangeOption('patient_groups',value)}>
-                                    {this.state.patientGroup.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  mode="multiple"
+                                  placeholder="Select Patient Groups"
+                                  onChange={(value)=>this.handleChangeOption('patient_groups',value)}
+                                >
+                                    {this.state.patientGroup.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.name}
+</Select.Option>
+))}
                                 </Select>
-                                <br/>
+                                <br />
                                 <h4>Doctors</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Doctors"
-                                        onChange={(value)=>this.handleChangeOption('doctors',value)}>
-                                    {this.state.practiceDoctors.map((item) => <Select.Option value={item.id}>
-                                        {item.user.first_name}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  mode="multiple"
+                                  placeholder="Select Doctors"
+                                  onChange={(value)=>this.handleChangeOption('doctors',value)}
+                                >
+                                    {this.state.practiceDoctors.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.user.first_name}
+</Select.Option>
+))}
                                 </Select>
 
-                                <br/>
-                                <br/>
+                                <br />
+                                <br />
                                 <h4>Products</h4>
-                                <Select style={{minWidth: '200px'}}  placeholder="Select Products"
-                                        onChange={(value)=>this.handleChangeOption('products',value)}>
-                                    {this.state.productsOption.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  placeholder="Select Products"
+                                  onChange={(value)=>this.handleChangeOption('products',value)}
+                                >
+                                    {this.state.productsOption.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.name}
+</Select.Option>
+))}
                                 </Select>
-                                <br/>
-                                <br/>
+                                <br />
+                                <br />
                                 <h4>Manufactures</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Manufacturers"
-                                        onChange={(value)=>this.handleChangeOption('manufacturers',value)}>
-                                    {this.state.manufacturesOption.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  mode="multiple"
+                                  placeholder="Select Manufacturers"
+                                  onChange={(value)=>this.handleChangeOption('manufacturers',value)}
+                                >
+                                    {this.state.manufacturesOption.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.name}
+</Select.Option>
+))}
                                 </Select>
-                                <br/>
-                                <br/>
+                                <br />
+                                <br />
                                 <h4>Suppliers</h4>
-                                <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Suppliers"
-                                        onChange={(value)=>this.handleChangeOption('suppliers',value)}>
-                                    {this.state.suppliersOption.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
+                                <Select
+                                  style={{minWidth: '200px'}}
+                                  mode="multiple"
+                                  placeholder="Select Suppliers"
+                                  onChange={(value)=>this.handleChangeOption('suppliers',value)}
+                                >
+                                    {this.state.suppliersOption.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.name}
+</Select.Option>
+))}
                                 </Select>
                             </Col>
-                        </>:<Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
+</>
+):<Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
 
                     </Col>
                 </Row>
             </Card>
-        </div>
+</div>
+)
     }
 }

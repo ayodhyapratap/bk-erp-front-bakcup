@@ -1,5 +1,7 @@
 import {Card, Form, Row} from "antd";
 import React from "react";
+import {Route} from "react-router";
+import {Redirect} from "react-router-dom";
 import {
     SINGLE_IMAGE_UPLOAD_FIELD,
     INPUT_FIELD,
@@ -11,8 +13,6 @@ import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {
     BLOG_SLIDER, SINGLE_SLIDER
 } from "../../../constants/api";
-import {Route} from "react-router";
-import {Redirect} from "react-router-dom";
 
 
 export default class AddSliderImage extends React.Component {
@@ -24,7 +24,7 @@ export default class AddSliderImage extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -39,14 +39,14 @@ export default class AddSliderImage extends React.Component {
     }
 
     loadData() {
-        let that = this;
+        const that = this;
         console.log("i M groot")
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 editBlogData: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(SINGLE_SLIDER, [this.props.match.params.id]), successFn, errorFn);
@@ -77,17 +77,17 @@ export default class AddSliderImage extends React.Component {
             type: SINGLE_IMAGE_UPLOAD_FIELD
         },];
 
-        let that = this;
+        const that = this;
         let editformProp;
         if (this.state.editBlogData) {
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     console.log(data);
                     that.props.loadData();
                     that.changeRedirect();
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(SINGLE_SLIDER, [this.props.match.params.id]),
@@ -98,36 +98,55 @@ export default class AddSliderImage extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.props.loadData();
                 that.changeRedirect();
                 console.log(data);
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: BLOG_SLIDER,
             method: "post",
         }
-        let defaultValues = [{key: 'is_active', value: true}];
+        const defaultValues = [{key: 'is_active', value: true}];
 
-        return <Row>
+        return (
+<Row>
             <Card>
-                <Route exact path='/web/slider-image/edit/:id'
-                       render={() => (this.props.match.params.id ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit Slider Image"
-                                           changeRedirect={this.changeRedirect} formProp={editformProp}
-                                           fields={fields}/> : <Redirect to={'web/silder-image'}/>)}/>
-                <Route exact path='/web/slider-image/add'
-                       render={() => <TestFormLayout title="Add Slider Image" defaultValues={defaultValues}
-                                                     changeRedirect={this.changeRedirect}
-                                                     formProp={formProp} fields={fields}/>}/>
+                <Route
+                  exact
+                  path='/web/slider-image/edit/:id'
+                  render={() => (this.props.match.params.id ? (
+                           <TestFormLayout
+                             defaultValues={defaultValues}
+                             title="Edit Slider Image"
+                             changeRedirect={this.changeRedirect}
+                             formProp={editformProp}
+                             fields={fields}
+                           />
+                         ) : <Redirect to="web/silder-image" />)}
+                />
+                <Route
+                  exact
+                  path='/web/slider-image/add'
+                  render={() => (
+<TestFormLayout
+  title="Add Slider Image"
+  defaultValues={defaultValues}
+  changeRedirect={this.changeRedirect}
+  formProp={formProp}
+  fields={fields}
+/>
+)}
+                />
 
 
             </Card>
-            {this.state.redirect && <Redirect to={'/web/slider-image'}/>}
-        </Row>
+            {this.state.redirect && <Redirect to="/web/slider-image" />}
+</Row>
+)
 
     }
 }

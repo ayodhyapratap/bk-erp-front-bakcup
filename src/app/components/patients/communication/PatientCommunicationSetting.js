@@ -1,12 +1,12 @@
 import React from "react";
-import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Button, List, DatePicker,Card, Form, Icon, Row, Table, Divider, Col, Radio} from "antd";
-import {SINGLE_CHECKBOX_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import {Link} from "react-router-dom";
+import moment from "moment";
+import DynamicFieldsForm from "../../common/DynamicFieldsForm";
+import {SINGLE_CHECKBOX_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import {getAPI, displayMessage, interpolate, putAPI} from "../../../utils/common";
 import {PATIENT_COMMUNICATION_HISTORY_API, PATIENT_PROFILE} from "../../../constants/api";
 import {SMS_ENABLE, BIRTHDAY_SMS_ENABLE, EMAIL_ENABLE} from "../../../constants/hardData";
-import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
 
 class PatientCommunicationSetting extends React.Component {
@@ -30,14 +30,14 @@ class PatientCommunicationSetting extends React.Component {
     }
 
     loadProfile() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 patientProfile: data,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
@@ -46,14 +46,14 @@ class PatientCommunicationSetting extends React.Component {
     }
 
     loadCommunication() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 parient_communication_history: data.user_sms,
                 loading: false
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
@@ -62,7 +62,7 @@ class PatientCommunicationSetting extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -75,24 +75,24 @@ class PatientCommunicationSetting extends React.Component {
     }
 
     handleSubmit = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqData = {...values,
+                const reqData = {...values,
                     medicine_till:moment(values.medicine_till).format('YYYY-MM-DD'),
                     follow_up_date:moment(values.follow_up_date).format('YYYY-MM-DD'),
                 };
                 that.setState({
                     saving: true
                 });
-                let successFn = function (data) {
+                const successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Communication Settings Saved Successfully!!");
                     that.setState({
                         saving: false
                     });
                 }
-                let errorFn = function () {
+                const errorFn = function () {
                     that.setState({
                         saving: false
                     });
@@ -143,77 +143,96 @@ class PatientCommunicationSetting extends React.Component {
 
         const sms_enabled = SMS_ENABLE.map((isSMS) => <Radio value={isSMS.value}>{isSMS.title}</Radio>)
         const email_enabled = EMAIL_ENABLE.map((isEmail) => <Radio value={isEmail.value}>{isEmail.title}</Radio>)
-        const bithday_sms_enabled = BIRTHDAY_SMS_ENABLE.map((isBirth_SMS) => <Radio
-            value={isBirth_SMS.value}>{isBirth_SMS.title}</Radio>);
-        return (<Form onSubmit={this.handleSubmit}>
+        const bithday_sms_enabled = BIRTHDAY_SMS_ENABLE.map((isBirth_SMS) => (
+<Radio
+  value={isBirth_SMS.value}
+>{isBirth_SMS.title}
+</Radio>
+));
+        return (
+<Form onSubmit={this.handleSubmit}>
                 <Card
-                    title={this.props.currentPatient ? this.props.currentPatient.user.first_name + " Communication" : "Patient Communication"}
-                    extra={<Button type="primary" htmlType="submit" loading={this.state.saving}>
-                        <Icon type="save"/> Save Communication Setting
-                    </Button>}>
+                  title={this.props.currentPatient ? `${this.props.currentPatient.user.first_name  } Communication` : "Patient Communication"}
+                  extra={(
+<Button type="primary" htmlType="submit" loading={this.state.saving}>
+                        <Icon type="save" /> Save Communication Setting
+</Button>
+)}
+                >
 
-                    <Form.Item {...formItemLayout} key={'sms_enable'}> <label>
-                        <span className="ant-form-text">{'Enable SMS the patient'} : </span>
+                    <Form.Item {...formItemLayout} key="sms_enable"> <label>
+                        <span className="ant-form-text">Enable SMS the patient : </span>
                         {getFieldDecorator('sms_enable', {initialValue: this.state.patientProfile ? this.state.patientProfile.sms_enable : false})
                         (
                             <Radio.Group onChange={(e) => this.onChanged('sms_enable', e.target.value)}>
                                 {sms_enabled}
                             </Radio.Group>
                         )}
-                    </label>
+                                                                     </label>
                     </Form.Item>
 
-                    <Form.Item {...formItemLayout} key={'email_enable'}> <label> <span
-                        className="ant-form-text">{'Enable Email the patient'} : </span>
+                    <Form.Item {...formItemLayout} key="email_enable"> <label> <span
+                      className="ant-form-text"
+                    >Enable Email the patient : 
+                                                                               </span>
                         {getFieldDecorator('email_enable', {initialValue: this.state.patientProfile ? this.state.patientProfile.email_enable : false})
                         (
                             <Radio.Group onChange={(e) => this.onChanged('email_enable', e.target.value)}>
                                 {email_enabled}
                             </Radio.Group>
                         )}
-                    </label>
+                                                                       </label>
                     </Form.Item>
 
-                    <Form.Item {...formItemLayout} key={'birthday_sms_email'}> <label> <span
-                        className="ant-form-text"> {"Send Birthday wish SMS & Email"} : </span>
+                    <Form.Item {...formItemLayout} key="birthday_sms_email"> <label> <span
+                      className="ant-form-text"
+                    > Send Birthday wish SMS & Email : 
+                                                                                     </span>
                         {getFieldDecorator('birthday_sms_email', {initialValue: this.state.patientProfile ? this.state.patientProfile.birthday_sms_email : false})
                         (
                             <Radio.Group onChange={(e) => this.onChanged('birthday_sms_email', e.target.value)}>
                                 {bithday_sms_enabled}
                             </Radio.Group>
                         )}
-                    </label>
+                                                                             </label>
                     </Form.Item>
 
-                    <Form.Item {...formItemLayout} key={'medicine_till'}> <label>
+                    <Form.Item {...formItemLayout} key="medicine_till"> <label>
                         <span
-                            className="ant-form-text"> {"Medicine Till Date"} : </span>
+                          className="ant-form-text"
+                        > Medicine Till Date : 
+                        </span>
                             {getFieldDecorator('medicine_till', {initialValue: this.state.patientProfile && this.state.patientProfile.medicine_till? moment(this.state.patientProfile.medicine_till) : moment()})
-                                (<DatePicker allowClear={false} format={'YYYY-MM-DD'}/>
+                                (<DatePicker allowClear={false} format="YYYY-MM-DD" />
                             )}
-                        </label>
+                                                                        </label>
                     </Form.Item>
 
-                    <Form.Item {...formItemLayout} key={'medicine_till'}> <label>
+                    <Form.Item {...formItemLayout} key="medicine_till"> <label>
                         <span
-                            className="ant-form-text"> {"Next follow-up To"} : </span>
+                          className="ant-form-text"
+                        > Next follow-up To : 
+                        </span>
                         {getFieldDecorator('follow_up_date', {initialValue: this.state.patientProfile && this.state.patientProfile.follow_up_date ? moment(this.state.patientProfile.follow_up_date) : moment()})
-                        (<DatePicker allowClear={false} format={'YYYY-MM-DD'}/>
+                        (<DatePicker allowClear={false} format="YYYY-MM-DD" />
                         )}
-                    </label>
+                                                                        </label>
                     </Form.Item>
 
 
 
 
                     <div>
-                        <Divider dashed/>
+                        <Divider dashed />
                         <h2>Past Communication</h2>
-                        <CustomizedTable loading={this.state.loading} columns={columns}
-                               dataSource={this.state.parient_communication_history}/>
+                        <CustomizedTable
+                          loading={this.state.loading}
+                          columns={columns}
+                          dataSource={this.state.parient_communication_history}
+                        />
                     </div>
                 </Card>
-            </Form>
+</Form>
         );
 
     }

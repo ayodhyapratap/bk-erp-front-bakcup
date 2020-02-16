@@ -1,5 +1,7 @@
 import {Card, Form, Row} from "antd";
 import React from "react";
+import {Route} from "react-router";
+import {Redirect} from "react-router-dom";
 import {
     INPUT_FIELD,
     QUILL_TEXT_FIELD,
@@ -10,8 +12,6 @@ import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {
     BLOG_FACILITY, SINGLE_FACILITY,
 } from "../../../constants/api";
-import {Route} from "react-router";
-import {Redirect} from "react-router-dom";
 
 
 export default class AddFacility extends React.Component {
@@ -23,7 +23,7 @@ export default class AddFacility extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -38,14 +38,14 @@ export default class AddFacility extends React.Component {
     }
 
     loadData() {
-        let that = this;
+        const that = this;
         console.log("i M groot")
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 editBlogData: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(SINGLE_FACILITY, [this.props.match.params.id]), successFn, errorFn);
@@ -66,11 +66,11 @@ export default class AddFacility extends React.Component {
             type: QUILL_TEXT_FIELD,
         },];
 
-        let that = this;
+        const that = this;
         let editformProp;
         if (this.state.editBlogData) {
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     that.props.loadData();
                     that.changeRedirect();
@@ -79,7 +79,7 @@ export default class AddFacility extends React.Component {
                     };
 
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(SINGLE_FACILITY, [this.props.match.params.id]),
@@ -90,7 +90,7 @@ export default class AddFacility extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.props.loadData();
                 that.changeRedirect();
@@ -98,30 +98,49 @@ export default class AddFacility extends React.Component {
                     that.props.history.replace('/web/facilities');
                 };
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: BLOG_FACILITY,
             method: "post",
         }
-        let defaultValues = [{key: 'is_active', value: true}];
+        const defaultValues = [{key: 'is_active', value: true}];
 
-        return <Row>
+        return (
+<Row>
             <Card>
-                <Route exact path='/web/facilities/edit/:id'
-                       render={() => (this.props.match.params.id ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit Facility"
-                                           changeRedirect={this.changeRedirect} formProp={editformProp}
-                                           fields={fields}/> : <Redirect to={'web/facilities'}/>)}/>
-                <Route exact path='/web/facilities/add'
-                       render={() => <TestFormLayout title="Add Facility" defaultValues={defaultValues}
-                                                     changeRedirect={this.changeRedirect} formProp={formProp}
-                                                     fields={fields}/>}/>
+                <Route
+                  exact
+                  path='/web/facilities/edit/:id'
+                  render={() => (this.props.match.params.id ? (
+                           <TestFormLayout
+                             defaultValues={defaultValues}
+                             title="Edit Facility"
+                             changeRedirect={this.changeRedirect}
+                             formProp={editformProp}
+                             fields={fields}
+                           />
+                         ) : <Redirect to="web/facilities" />)}
+                />
+                <Route
+                  exact
+                  path='/web/facilities/add'
+                  render={() => (
+<TestFormLayout
+  title="Add Facility"
+  defaultValues={defaultValues}
+  changeRedirect={this.changeRedirect}
+  formProp={formProp}
+  fields={fields}
+/>
+)}
+                />
 
 
             </Card>
-            {this.state.redirect && <Redirect to={'/web/facilities'}/>}
-        </Row>
+            {this.state.redirect && <Redirect to="/web/facilities" />}
+</Row>
+)
 
     }
 }

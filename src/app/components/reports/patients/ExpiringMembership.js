@@ -25,7 +25,7 @@ export default class ExpiringMembership extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
             this.setState({
                 startDate: newProps.startDate,
@@ -36,30 +36,31 @@ export default class ExpiringMembership extends React.Component {
     }
 
     loadExpireMembership() {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report:data,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             from_date: this.props.startDate.format('YYYY-MM-DD'),
             to_date: this.props.endDate.format('YYYY-MM-DD'),
             type:this.props.type,
         };
         getAPI(MEMBERSHIP_REPORTS,  successFn, errorFn,apiParams);
     }
+
     sendMail = (mailTo) => {
-        let apiParams={
+        const apiParams={
             from_date: this.props.startDate.format('YYYY-MM-DD'),
             to_date: this.props.endDate.format('YYYY-MM-DD'),
             type:this.props.type,
@@ -67,8 +68,9 @@ export default class ExpiringMembership extends React.Component {
         apiParams.mail_to = mailTo;
         sendReportMail(MEMBERSHIP_REPORTS, apiParams)
     }
+
     render() {
-        let that=this;
+        const that=this;
         const {report} =this.state;
         const reportData = [];
         for (let i = 1; i <= report.length; i++) {
@@ -112,24 +114,31 @@ export default class ExpiringMembership extends React.Component {
             dataIndex:'medical_to'
         }];
 
-        return <div>
+        return (
+<div>
             <h2>Expiring Membership
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                 <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                    {this.state.mailingUsersList.map(item => <Select.Option
-                        value={item.email}>{item.name}</Select.Option>)}
+                    {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                 </Select>
                     </p>
-            </span>
+                </span>
             </h2>
             <CustomizedTable
-                loading={this.state.loading}
-                columns={columns}
-                hideReport={true}
-                dataSource={reportData}/>
+              loading={this.state.loading}
+              columns={columns}
+              hideReport
+              dataSource={reportData}
+            />
 
 
-        </div>
+</div>
+)
     }
 }

@@ -1,8 +1,8 @@
 import React from "react";
+import {Col, Row, Select, Statistic, Table} from "antd";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
 import {getAPI, interpolate} from "../../../utils/common";
 import {ACTIVE_PATIENTS_REPORTS, PATIENT_APPOINTMENTS_REPORTS, PATIENTS_REPORTS} from "../../../constants/api";
-import {Col, Row, Select, Statistic, Table} from "antd";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
@@ -19,12 +19,14 @@ export default class ActivePatients extends React.Component {
         }
         this.loadActivePatient = this.loadActivePatient.bind(this);
     }
+
     componentDidMount() {
         this.loadActivePatient();
         loadMailingUserListForReportsMail(this);
     }
+
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.patient_groups !=newProps.patient_groups
             ||this.props.blood_group !=newProps.blood_group || this.props.blood_group !=newProps.blood_group)
             this.setState({
@@ -34,23 +36,24 @@ export default class ActivePatients extends React.Component {
                 this.loadActivePatient();
             })
     }
+
     loadActivePatient() {
-        let that = this;
+        const that = this;
         that.setState({
             loading:true,
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report:data,
                 loading:false
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             from_date: this.props.startDate.format('YYYY-MM-DD'),
             to_date: this.props.endDate.format('YYYY-MM-DD'),
         };
@@ -62,8 +65,9 @@ export default class ActivePatients extends React.Component {
         }
         getAPI(ACTIVE_PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }
+
     sendMail = (mailTo) => {
-        let apiParams={
+        const apiParams={
             from_date: this.props.startDate.format('YYYY-MM-DD'),
             to_date: this.props.endDate.format('YYYY-MM-DD'),
         };
@@ -76,8 +80,9 @@ export default class ActivePatients extends React.Component {
         apiParams.mail_to = mailTo;
         sendReportMail(ACTIVE_PATIENTS_REPORTS, apiParams)
     }
+
     render() {
-        let that=this;
+        const that=this;
 
         const {report} =this.state;
         const reportData = [];
@@ -118,34 +123,41 @@ export default class ActivePatients extends React.Component {
             key: 'gender',
             dataIndex: 'gender',
         }];
-        return <div>
+        return (
+<div>
             <h2>Active Patients Report
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                 <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                    {this.state.mailingUsersList.map(item => <Select.Option
-                        value={item.email}>{item.name}</Select.Option>)}
+                    {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                 </Select>
                     </p>
-            </span>
+                </span>
             </h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
                     <Statistic title="Total Patients" value={this.state.report.length} />
-                    <br/>
+                    <br />
                 </Col>
             </Row>
 
             <CustomizedTable
-                loading={this.state.loading}
-                columns={columns}
-                hideReport={true}
-                dataSource={reportData}/>
+              loading={this.state.loading}
+              columns={columns}
+              hideReport
+              dataSource={reportData}
+            />
 
-            {/*<InfiniteFeedLoaderButton loaderFunction={() => this.loadNewPatient(that.state.next)}*/}
-            {/*                          loading={this.state.loading}*/}
-            {/*                          hidden={!this.state.next}/>*/}
+            {/* <InfiniteFeedLoaderButton loaderFunction={() => this.loadNewPatient(that.state.next)} */}
+            {/*                          loading={this.state.loading} */}
+            {/*                          hidden={!this.state.next}/> */}
 
-        </div>
+</div>
+)
     }
 }

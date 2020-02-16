@@ -1,6 +1,7 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm} from "antd";
+import {Link} from "react-router-dom";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     CHECKBOX_FIELD,
     SUCCESS_MSG_TYPE,
@@ -10,7 +11,6 @@ import {
     SELECT_FIELD
 } from "../../../../constants/dataKeys";
 import {TAXES} from "../../../../constants/api"
-import {Link} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
 import CustomizedTable from "../../../common/CustomizedTable";
 
@@ -32,14 +32,14 @@ class TableData extends React.Component {
     }
 
     loadData() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
-                data: data,
+                data,
                 loading:false
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading:false
             })
@@ -48,7 +48,7 @@ class TableData extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -68,19 +68,19 @@ class TableData extends React.Component {
     }
 
     deleteObject(record) {
-        let that = this;
-        let reqData = record;
+        const that = this;
+        const reqData = record;
         reqData.is_active = false;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
         }
-        let errorFn = function () {
+        const errorFn = function () {
         };
         postAPI(interpolate(this.props.id, [this.props.active_practiceId]), reqData, successFn, errorFn)
     }
 
     render() {
-        let that = this;
+        const that = this;
         const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -91,12 +91,16 @@ class TableData extends React.Component {
             render: (text, record) => (
                 <span>
               <a onClick={() => this.editFunction(record)}>  Edit</a>
-                <Divider type="vertical"/>
-                    <Popconfirm title="Are you sure delete this item?"
-                                onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
+                <Divider type="vertical" />
+                    <Popconfirm
+                      title="Are you sure delete this item?"
+                      onConfirm={() => that.deleteObject(record)}
+                      okText="Yes"
+                      cancelText="No"
+                    >
                       <a>Delete</a>
-                  </Popconfirm>
-              </span>
+                    </Popconfirm>
+                </span>
             ),
         }];
         const fields = [{
@@ -115,7 +119,7 @@ class TableData extends React.Component {
                 type: INPUT_FIELD
             },];
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 that.handleCancel();
                 that.loadData();
                 console.log(data);
@@ -123,7 +127,7 @@ class TableData extends React.Component {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
 
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(this.props.id, [this.props.active_practiceId]),
@@ -136,21 +140,23 @@ class TableData extends React.Component {
         }]
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>
-            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
-            <Divider/>
-            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.data}/>
+        return (
+<div>
+            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields} />
+            <Divider />
+            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.data} />
             <Modal
-                title={"Edit " + this.props.name}
-                visible={this.state.visible}
-                footer={null}
-                onCancel={this.handleCancel}
+              title={`Edit ${  this.props.name}`}
+              visible={this.state.visible}
+              footer={null}
+              onCancel={this.handleCancel}
             >
-                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields}/>
+                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields} />
                 <Button key="back" onClick={this.handleCancel}>Return</Button>,
 
             </Modal>
-        </div>
+</div>
+)
     }
 }
 

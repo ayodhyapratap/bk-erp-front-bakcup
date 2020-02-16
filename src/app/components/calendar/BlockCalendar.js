@@ -1,4 +1,7 @@
 import React from "react";
+import moment from "moment";
+import {Form, Card, Row, Col,Popover, List,Button, DatePicker,TimePicker,Input,Select,Divider} from "antd";
+import { tag } from "postcss-selector-parser";
 import {
     DATE_PICKER,
     DATE_TIME_PICKER, DOCTORS_ROLE,
@@ -7,9 +10,7 @@ import {
     SELECT_FIELD,
     TIME_PICKER
 } from "../../constants/dataKeys";
-import moment from "moment";
 import DynamicFieldsForm from "../common/DynamicFieldsForm";
-import {Form, Card, Row, Col,Popover, List,Button, DatePicker,TimePicker,Input,Select,Divider} from "antd";
 import {APPOINTMENT_PERPRACTICE_API, BLOCK_CALENDAR, PRACTICESTAFF} from "../../constants/api";
 import {displayMessage, getAPI, interpolate,postAPI} from "../../utils/common";
 import { loadDoctors } from "../../utils/clinicUtils";
@@ -21,7 +22,6 @@ import {
     WAITING_STATUS
 } from "../../constants/hardData";
 import EventPatientPopover from "./EventPatientPopover";
-import { tag } from "postcss-selector-parser";
 import {REQUIRED_FIELD_MESSAGE} from "../../constants/messages";
 
 class BlockCalendar extends React.Component {
@@ -36,11 +36,12 @@ class BlockCalendar extends React.Component {
         };
         loadDoctors(this);
     }
+
     // componentDidMount() {
     //
     // }
     changeParamsForBlockedAppointments = (type, value) => {
-        let that = this;
+        const that = this;
         this.setState(function (prevState) {
             return {
                 blockedAppointmentParams: {
@@ -53,12 +54,13 @@ class BlockCalendar extends React.Component {
             that.retrieveBlockingAppointments();
         })
     }
+
     retrieveBlockingAppointments = () => {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState(function (prevState) {
                 return {
                     blockingAppointments: data,
@@ -66,7 +68,7 @@ class BlockCalendar extends React.Component {
                 }
             });
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
@@ -80,7 +82,7 @@ class BlockCalendar extends React.Component {
     }
 
     handleSubmit =(e)=>{
-        let that=this;
+        const that=this;
         e.preventDefault();
         let reqData={}
         this.props.form.validateFields((err, values) => {
@@ -95,19 +97,19 @@ class BlockCalendar extends React.Component {
             }
         });
 
-        let successFn =function(data){
+        const successFn =function(data){
             if (that.props.history){
                 that.props.history.replace('/calendar');
             }
         };
-        let errorFn=function(){
+        const errorFn=function(){
 
         };
         postAPI(BLOCK_CALENDAR,reqData,successFn,errorFn)
     };
 
     render(){
-        let that = this;
+        const that = this;
         const {getFieldDecorator} = this.props.form;
 
         const formItemLayout = ({
@@ -129,46 +131,48 @@ class BlockCalendar extends React.Component {
         //     doctorId.id=doctorArray[0].user.id
         // });
 
-        return(<Card title={'Block Calendar'}>
+        return(
+<Card title="Block Calendar">
                 <Row>
                     <Col span={18}>
                         <Form onSubmit={this.handleSubmit}>
                             <Form.Item label="Block From" {...formItemLayout}>
                                 {getFieldDecorator('block_from',{initialValue:moment(),rules: [{ required: true, message: REQUIRED_FIELD_MESSAGE }]})
-                                (<DatePicker  showTime={{use12Hours: true}} format="YYYY-MM-DD hh:mm a" allowClear={false}  onChange={(value)=>this.changeParamsForBlockedAppointments('block_from',value)}/>)
-                            }
+                                (<DatePicker showTime={{use12Hours: true}} format="YYYY-MM-DD hh:mm a" allowClear={false} onChange={(value)=>this.changeParamsForBlockedAppointments('block_from',value)} />)}
                             </Form.Item>
 
                             <Form.Item label="Block To" {...formItemLayout}>
                                 {getFieldDecorator('block_to',{initialValue:moment(),rules: [{ required: true, message: REQUIRED_FIELD_MESSAGE }],})
-                                (<DatePicker  showTime={{ use12Hours: true }} format="YYYY-MM-DD hh:mm a" allowClear={false} onChange={(value)=>this.changeParamsForBlockedAppointments('block_to',value)}/>)
-                            }
+                                (<DatePicker showTime={{ use12Hours: true }} format="YYYY-MM-DD hh:mm a" allowClear={false} onChange={(value)=>this.changeParamsForBlockedAppointments('block_to',value)} />)}
                             </Form.Item>
 
                             <Form.Item label="Event Name" {...formItemLayout}>
                                 {getFieldDecorator('event', {})
-                                (<Input placeholder="Event Name"/>)
-                                }
+                                (<Input placeholder="Event Name" />)}
                             </Form.Item>
 
                             <Form.Item label="Doctor" {...formItemLayout}>
                                 {getFieldDecorator('doctor', {initialValue:6})
-                                (<Select placeholder="Doctor List"  onChange={(value) => this.changeParamsForBlockedAppointments("doctor", value)}>
-                                    {this.state.practiceDoctors.map((option) => <Select.Option
-                                    value={option.id} key={option.id}>{option.user.first_name}</Select.Option>)}
-                                </Select>)
-
-                                }
+                                (<Select placeholder="Doctor List" onChange={(value) => this.changeParamsForBlockedAppointments("doctor", value)}>
+                                    {this.state.practiceDoctors.map((option) => (
+<Select.Option
+  value={option.id}
+  key={option.id}
+>{option.user.first_name}
+</Select.Option>
+))}
+                                 </Select>)}
                             </Form.Item>
 
                             <Form.Item>
                                 <Button style={{margin: 5}} type="primary" htmlType="submit">
                                     Submit
                                 </Button>
-                                {that.props.history ?
+                                {that.props.history ? (
                                     <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
                                         Cancel
-                                    </Button> : null}
+                                    </Button>
+                                  ) : null}
                             </Form.Item>
 
                         </Form>
@@ -176,30 +180,37 @@ class BlockCalendar extends React.Component {
 
                     <Col span={6}>
                         <List
-                            size={'small'}
-                            dataSource={this.state.blockingAppointments}
-                            renderItem={(apppointment) => (apppointment.status == CANCELLED_STATUS ? <div/> : <List.Item
-                                color={'transparent'}
-                                style={{padding: 0}}>
+                          size="small"
+                          dataSource={this.state.blockingAppointments}
+                          renderItem={(apppointment) => (apppointment.status == CANCELLED_STATUS ? <div /> : (
+<List.Item
+  color="transparent"
+  style={{padding: 0}}
+>
                                 <div
-                                    style={{
+                                  style={{
                                         border: '1px solid #ddd',
                                         borderRadius: '5px',
                                         textDecoration: (apppointment.status == CANCELLED_STATUS ? 'line-through' : 'inherit'),
                                         backgroundColor: (apppointment.status == CANCELLED_STATUS ? '#aaa' : '#eee'),
                                         width: '100%',
                                         marginTop: '2px',
-                                        borderLeft: '5px solid' + (apppointment.doctor && that.state.practice_doctors && that.state.practice_doctors[apppointment.doctor] ? that.props.doctors_object[apppointment.doctor].calendar_colour : 'transparent')
-                                    }}>
-                                    <AppointmentCard {...apppointment}
-                                                    changeAppointmentStatus={this.changeAppointmentStatus} {...this.props}/>
+                                        borderLeft: `5px solid${  apppointment.doctor && that.state.practice_doctors && that.state.practice_doctors[apppointment.doctor] ? that.props.doctors_object[apppointment.doctor].calendar_colour : 'transparent'}`
+                                    }}
+                                >
+                                    <AppointmentCard
+                                      {...apppointment}
+                                      changeAppointmentStatus={this.changeAppointmentStatus}
+                                      {...this.props}
+                                    />
                                 </div>
-                            </List.Item>)
-                            }/>
+</List.Item>
+))}
+                        />
                     </Col>
                 </Row>
 
-            </Card>
+</Card>
 
         )
     }
@@ -207,18 +218,29 @@ class BlockCalendar extends React.Component {
 export default Form.create()(BlockCalendar);
 
 function AppointmentCard(appointment) {
-    return <div style={{width: '100%'}}>
+    return (
+<div style={{width: '100%'}}>
 
         <p style={{marginBottom: 0}}>
         <Divider type="vertical" />
-            <Popover placement="right"
-                     content={<EventPatientPopover appointmentId={appointment.id}
-                                                   key={appointment.id} {...appointment}/>}>
+            <Popover
+              placement="right"
+              content={(
+<EventPatientPopover
+  appointmentId={appointment.id}
+  key={appointment.id}
+  {...appointment}
+/>
+)}
+            >
             <span
-                style={{width: 'calc(100% - 60px)'}}><b>{moment(appointment.schedule_at).format("LLL")}</b>&nbsp;
-                {appointment.patient.user.first_name}</span>
-            <p style={{color:appointment.doctor_data ?appointment.doctor_data.calendar_colour:null}}><Divider type="vertical"/><span>{appointment.doctor_data ? appointment.doctor_data.user.first_name:null}</span></p>
+              style={{width: 'calc(100% - 60px)'}}
+            ><b>{moment(appointment.schedule_at).format("LLL")}</b>&nbsp;
+                {appointment.patient.user.first_name}
+            </span>
+            <p style={{color:appointment.doctor_data ?appointment.doctor_data.calendar_colour:null}}><Divider type="vertical" /><span>{appointment.doctor_data ? appointment.doctor_data.user.first_name:null}</span></p>
             </Popover>
         </p>
-    </div>;
+</div>
+);
 }

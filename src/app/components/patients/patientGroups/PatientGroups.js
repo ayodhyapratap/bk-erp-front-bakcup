@@ -20,14 +20,14 @@ export default class PatientGroups extends React.Component {
     }
 
     getPatientGroup = () => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 patientGroup: data,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
@@ -37,19 +37,19 @@ export default class PatientGroups extends React.Component {
     }
 
     deleteObject(record) {
-        let that = this;
-        let reqData = record;
+        const that = this;
+        const reqData = record;
         reqData.is_active = false;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.getPatientGroup();
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         postAPI(interpolate(PATIENT_GROUPS, [this.props.active_practiceId]), reqData, successFn, errorFn);
     }
 
     render() {
-        let that = this;
+        const that = this;
         const coloumns = [{
             title: 'Group Name',
             dataIndex: 'name',
@@ -62,8 +62,12 @@ export default class PatientGroups extends React.Component {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-                <Popconfirm title="Are you sure delete this prescription?" onConfirm={() => that.deleteObject(record)}
-                            okText="Yes" cancelText="No">
+                <Popconfirm
+                  title="Are you sure delete this prescription?"
+                  onConfirm={() => that.deleteObject(record)}
+                  okText="Yes"
+                  cancelText="No"
+                >
                     <a>
                         Delete
                     </a>
@@ -77,28 +81,33 @@ export default class PatientGroups extends React.Component {
             type: INPUT_FIELD
         }]
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 console.log(data);
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 that.getPatientGroup()
 
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(PATIENT_GROUPS, [this.props.active_practiceId]),
             method: "post",
-            beforeSubmit: function (data) {
+            beforeSubmit (data) {
                 console.log(data)
             }
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <Row>
-            <TestFormLayout formProp={formProp}
-                            title={"Patient Groups"}
-                            fields={fields} {...this.props}/>
-            <Divider/>
-            <CustomizedTable dataSource={this.state.patientGroup} loading={this.state.loading} columns={coloumns}/>
-        </Row>
+        return (
+<Row>
+            <TestFormLayout
+              formProp={formProp}
+              title="Patient Groups"
+              fields={fields}
+              {...this.props}
+            />
+            <Divider />
+            <CustomizedTable dataSource={this.state.patientGroup} loading={this.state.loading} columns={coloumns} />
+</Row>
+)
     }
 }

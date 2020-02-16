@@ -37,14 +37,15 @@ export default class PatientsReportHome extends React.Component {
     componentDidMount() {
         this.loadPatientGroup();
     }
+
     loadPatientGroup(){
-        let that=this;
-        let successFn =function (data) {
+        const that=this;
+        const successFn =function (data) {
             that.setState({
                 patientGroup:data,
             });
         };
-        let errorFn=function () {
+        const errorFn=function () {
 
         }
         getAPI(interpolate(PATIENT_GROUPS,[this.props.active_practiceId]),successFn ,errorFn)
@@ -63,112 +64,148 @@ export default class PatientsReportHome extends React.Component {
     // }
 
     onChangeHandle = (type, value) => {
-        let that = this;
+        const that = this;
         this.setState({
             [type]: value.target.value,
         })
     }
+
     advancedOption(value){
         this.setState({
             advancedOptionShow:value,
         })
     }
+
     changeSidePanelSize = (sidePanel) => {
         this.setState({
             sidePanelColSpan: sidePanel ? 0 : 4
         })
     }
+
     handleChangeOption = (type,value) => {
-        let that = this;
+        const that = this;
         this.setState({
             [type]: value,
         })
     }
+
     render() {
-        return <div>
-            <h2>Patients Report <Button type="primary" shape="round"
-                                        icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
-                                        style={{float: "right"}}
-                                        onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
+        return (
+<div>
+            <h2>Patients Report <Button
+              type="primary"
+              shape="round"
+              icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
+              style={{float: "right"}}
+              onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}
+            >Panel
+                                </Button>
             </h2>
             <Card>
                 <Row gutter={16}>
                     <Col span={(24 - this.state.sidePanelColSpan)}>
 
                         {this.state.type == NEW_PATIENTS ?
-                            <NewPatientReports {...this.props}  {...this.state}/> : null}
+                            <NewPatientReports {...this.props} {...this.state} /> : null}
 
                         {this.state.type == DAILY_NEW_PATIENTS ?
-                            <DailyNewPatientReports {...this.props} {...this.state}/> : null}
+                            <DailyNewPatientReports {...this.props} {...this.state} /> : null}
 
                         {this.state.type == EXPIRING_MEMBERSHIP ?
                             <ExpiringMembership {...this.props} {...this.state} /> : null}
                         {this.state.type == PATIENTS_FIRST_APPOINTMENT ?
-                            <PatientsFirstAppointment {...this.props} {...this.state}/> : null}
+                            <PatientsFirstAppointment {...this.props} {...this.state} /> : null}
                         {this.state.type == MONTHLY_NEW_PATIENTS ?
-                            <MonthlyNewPatients  {...this.props} {...this.state}/> : null}
+                            <MonthlyNewPatients {...this.props} {...this.state} /> : null}
                         {this.state.type == NEW_MEMBERSHIP ?
-                            <NewMembership  {...this.props} {...this.state}/> :null}
+                            <NewMembership {...this.props} {...this.state} /> :null}
 
                         {this.state.type == ACTIVE_PATIENTS ?
-                            <ActivePatients  {...this.props} {...this.state}/> : null}
+                            <ActivePatients {...this.props} {...this.state} /> : null}
 
                         {this.state.type ==FOLLOW_UP ?
-                            <PatientFollowUp {...this.props} {...this.state}/>:null}
+                            <PatientFollowUp {...this.props} {...this.state} />:null}
 
                         {this.state.type ==MEDICINE ?
-                            <PatientMedicine {...this.props} {...this.state}/>:null}
+                            <PatientMedicine {...this.props} {...this.state} />:null}
 
 
                     </Col>
 
 
                     <Col span={this.state.sidePanelColSpan}>
-                        <Radio.Group buttonStyle="solid" defaultValue={NEW_PATIENTS}
-                                     onChange={(value) => this.onChangeHandle('type', value)}>
+                        <Radio.Group
+                          buttonStyle="solid"
+                          defaultValue={NEW_PATIENTS}
+                          onChange={(value) => this.onChangeHandle('type', value)}
+                        >
                             <h2>Patients</h2>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value={NEW_PATIENTS}>
+                            <Radio.Button
+                              style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                              value={NEW_PATIENTS}
+                            >
                                 New Patients
                             </Radio.Button>
-                            <p><br/></p>
+                            <p><br /></p>
                             <h2>Related Reports</h2>
-                            {PATIENTS_RELATED_REPORT.map((item) => <Radio.Button
-                                style={{width: '100%', backgroundColor: 'transparent'}}
-                                value={item.value}>
+                            {PATIENTS_RELATED_REPORT.map((item) => (
+<Radio.Button
+  style={{width: '100%', backgroundColor: 'transparent'}}
+  value={item.value}
+>
                                 {item.name}
-                            </Radio.Button>)}
+</Radio.Button>
+))}
                         </Radio.Group>
 
-                        <br/>
-                        <br/>
+                        <br />
+                        <br />
                         {this.state.type == NEW_PATIENTS || this.state.type == DAILY_NEW_PATIENTS ||this.state.type == MONTHLY_NEW_PATIENTS || this.state.type == ACTIVE_PATIENTS || this.state.type == FOLLOW_UP
-                            ||this.state.type ==MEDICINE ?<>
-                            {this.state.advancedOptionShow?<>
+                            ||this.state.type ==MEDICINE ?(
+<>
+                            {this.state.advancedOptionShow?(
+<>
                                 <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
-                                <Col> <br/>
+                                <Col> <br />
                                     <h4>Patient Groups</h4>
-                                    <Select style={{minWidth: '200px'}} mode="multiple" placeholder="Select Patient Groups"
-                                            onChange={(value)=>this.handleChangeOption('patient_groups',value)}>
-                                        {this.state.patientGroup.map((item) => <Select.Option value={item.id}>
-                                            {item.name}</Select.Option>)}
+                                    <Select
+                                      style={{minWidth: '200px'}}
+                                      mode="multiple"
+                                      placeholder="Select Patient Groups"
+                                      onChange={(value)=>this.handleChangeOption('patient_groups',value)}
+                                    >
+                                        {this.state.patientGroup.map((item) => (
+<Select.Option value={item.id}>
+                                            {item.name}
+</Select.Option>
+))}
                                     </Select>
 
-                                    <br/>
+                                    <br />
                                     <h4>Blood Groups</h4>
-                                    <Select style={{minWidth: '200px'}} placeholder="Select Blood Group"
-                                            onChange={(value)=>this.handleChangeOption('blood_group',value)} allowClear>
-                                        {BLOOD_GROUPS.map((item) => <Select.Option value={item.value}>
-                                            {item.name}</Select.Option>)}
+                                    <Select
+                                      style={{minWidth: '200px'}}
+                                      placeholder="Select Blood Group"
+                                      onChange={(value)=>this.handleChangeOption('blood_group',value)}
+                                      allowClear
+                                    >
+                                        {BLOOD_GROUPS.map((item) => (
+<Select.Option value={item.value}>
+                                            {item.name}
+</Select.Option>
+))}
                                     </Select>
 
                                 </Col>
-                            </>: <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
-                            </>:null}
+</>
+): <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
+</>
+):null}
                     </Col>
 
                 </Row>
             </Card>
-        </div>
+</div>
+)
     }
 }

@@ -1,5 +1,7 @@
 import {Card, Form, Row} from "antd";
 import React from "react";
+import {Route} from "react-router";
+import {Redirect} from "react-router-dom";
 import {
     INPUT_FIELD,
     SUCCESS_MSG_TYPE,
@@ -11,8 +13,6 @@ import {
     BLOG_PAGE_SEO,
     SINGLE_PAGE_SEO,
 } from "../../../constants/api";
-import {Route} from "react-router";
-import {Redirect} from "react-router-dom";
 
 
 export default class AddSEO extends React.Component {
@@ -24,7 +24,7 @@ export default class AddSEO extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -39,14 +39,14 @@ export default class AddSEO extends React.Component {
     }
 
     loadData() {
-        let that = this;
+        const that = this;
         console.log("i M groot")
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 editBlogData: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(SINGLE_PAGE_SEO, [this.props.match.params.id]), successFn, errorFn);
@@ -60,7 +60,7 @@ export default class AddSEO extends React.Component {
             key: "name",
             initialValue: this.state.editBlogData ? this.state.editBlogData.name : null,
             type: INPUT_FIELD,
-            disabled: false //true
+            disabled: false // true
         }, {
             label: "Page Title",
             key: "title",
@@ -81,10 +81,10 @@ export default class AddSEO extends React.Component {
 
 
         let editformProp;
-        let that = this;
+        const that = this;
         if (this.state.editBlogData) {
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                         that.setState({
                             redirect: true
@@ -92,7 +92,7 @@ export default class AddSEO extends React.Component {
                         that.props.loadData();
                     console.log(data);
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(SINGLE_PAGE_SEO, [this.props.match.params.id]),
@@ -103,7 +103,7 @@ export default class AddSEO extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                     that.setState({
                         redirect: true
@@ -111,29 +111,48 @@ export default class AddSEO extends React.Component {
                     that.props.loadData();
                     console.log(data);
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: BLOG_PAGE_SEO,
             method: "post",
         }
-        let defaultValues = [{key: 'is_active', value: true}];
+        const defaultValues = [{key: 'is_active', value: true}];
 
-        return <Row>
+        return (
+<Row>
             <Card>
-                <Route exact path='/web/pageseo/edit/:id'
-                       render={() => (this.props.match.params.id ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit SEO"
-                                           changeRedirect={this.changeRedirect} formProp={editformProp}
-                                           fields={fields}/> : <Redirect to={'web/pageseo'}/>)}/>
-                <Route exact path='/web/pageseo/add'
-                       render={() => <TestFormLayout title="Add SEO" changeRedirect={this.changeRedirect}
-                                                     formProp={formProp} fields={fields}/>}/>
+                <Route
+                  exact
+                  path='/web/pageseo/edit/:id'
+                  render={() => (this.props.match.params.id ? (
+                           <TestFormLayout
+                             defaultValues={defaultValues}
+                             title="Edit SEO"
+                             changeRedirect={this.changeRedirect}
+                             formProp={editformProp}
+                             fields={fields}
+                           />
+                         ) : <Redirect to="web/pageseo" />)}
+                />
+                <Route
+                  exact
+                  path='/web/pageseo/add'
+                  render={() => (
+<TestFormLayout
+  title="Add SEO"
+  changeRedirect={this.changeRedirect}
+  formProp={formProp}
+  fields={fields}
+/>
+)}
+                />
 
 
             </Card>
-            {this.state.redirect && <Redirect to={'/web/pageseo'}/>}
-        </Row>
+            {this.state.redirect && <Redirect to="/web/pageseo" />}
+</Row>
+)
 
     }
 }

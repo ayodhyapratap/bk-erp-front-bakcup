@@ -1,6 +1,8 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon, Row} from "antd";
+import {Redirect} from 'react-router-dom'
+import {Route} from "react-router";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     CHECKBOX_FIELD,
     SUCCESS_MSG_TYPE,
@@ -13,8 +15,6 @@ import {
 } from "../../../../constants/dataKeys";
 import {ALL_PRACTICE_STAFF, DRUG_CATALOG, SINGLE_PRACTICE_STAFF_API, STAFF_ROLES} from "../../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
-import {Redirect} from 'react-router-dom'
-import {Route} from "react-router";
 import {ROLES} from "../../../../constants/hardData";
 
 class AddEditStaff extends React.Component {
@@ -48,15 +48,15 @@ class AddEditStaff extends React.Component {
     // }
 
     loadEditPracticeStaff() {
-        let staffid = this.props.match.params.staffid;
+        const {staffid} = this.props.match.params;
         console.log(staffid)
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 editStaff: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
             })
         }
@@ -65,14 +65,14 @@ class AddEditStaff extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
     }
 
     render() {
-        let that = this;
+        const that = this;
         const fields = [
             {
                 label: "Staff Name",
@@ -126,7 +126,7 @@ class AddEditStaff extends React.Component {
                 type: SINGLE_CHECKBOX_FIELD,
             },]
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.setState({
                     redirect: true
@@ -137,7 +137,7 @@ class AddEditStaff extends React.Component {
                     that.props.history.replace("/settings/clinics-staff");
                 }
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: ALL_PRACTICE_STAFF,
@@ -147,7 +147,7 @@ class AddEditStaff extends React.Component {
         if (this.state.editStaff) {
 
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     that.setState({
                         redirect: true,
@@ -157,7 +157,7 @@ class AddEditStaff extends React.Component {
                         that.props.history.replace("/settings/clinics-staff");
                     }
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(SINGLE_PRACTICE_STAFF_API, [that.props.match.params.staffid]),
@@ -167,21 +167,43 @@ class AddEditStaff extends React.Component {
         const defaultValues = [];
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <Row>
+        return (
+<Row>
             <Card>
-                <Route exact path='/settings/clinics-staff/staff/:staffid/edit'
-                       render={(route) => (this.props.match.params.staffid ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit Staff"
-                                           changeRedirect={this.changeRedirect} formProp={editformProp}
-                                           fields={fields} {...route}/> : <Redirect to={'/settings/clinics-staff'}/>)}/>
+                <Route
+                  exact
+                  path='/settings/clinics-staff/staff/:staffid/edit'
+                  render={(route) => (this.props.match.params.staffid ? (
+                           <TestFormLayout
+                             defaultValues={defaultValues}
+                             title="Edit Staff"
+                             changeRedirect={this.changeRedirect}
+                             formProp={editformProp}
+                             fields={fields}
+                             {...route}
+                           />
+                         ) : <Redirect to="/settings/clinics-staff" />)}
+                />
 
-                <Route exact path='/settings/clinics-staff/addstaff'
-                       render={(route) => <TestFormLayout defaultValues={defaultValues} changeRedirect={this.changeRedirect}
-                                                     title="Add Staff " formProp={formProp} fields={fields} {...route}/>}/>
+                <Route
+                  exact
+                  path='/settings/clinics-staff/addstaff'
+                  render={(route) => (
+<TestFormLayout
+  defaultValues={defaultValues}
+  changeRedirect={this.changeRedirect}
+  title="Add Staff "
+  formProp={formProp}
+  fields={fields}
+  {...route}
+/>
+)}
+                />
             </Card>
-            {this.state.redirect && <Redirect to='/settings/clinics-staff'/>}
+            {this.state.redirect && <Redirect to='/settings/clinics-staff' />}
 
-        </Row>
+</Row>
+)
     }
 }
 

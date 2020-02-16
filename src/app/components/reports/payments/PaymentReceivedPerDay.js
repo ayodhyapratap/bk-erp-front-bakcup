@@ -1,9 +1,9 @@
 import React from "react";
 import { Col, Divider, Row, Select, Statistic, Table, Empty, Spin } from "antd";
-import { PAYMENT_REPORTS } from "../../../constants/api";
-import { getAPI, interpolate } from "../../../utils/common";
 import moment from "moment"
 import {Bar, CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis} from "recharts";
+import { PAYMENT_REPORTS } from "../../../constants/api";
+import { getAPI, interpolate } from "../../../utils/common";
 import { loadMailingUserListForReportsMail, sendReportMail } from "../../../utils/clinicUtils";
 
 export default class PaymentReceivedPerDay extends React.Component {
@@ -25,7 +25,7 @@ export default class PaymentReceivedPerDay extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate || this.props.patient_groups != newProps.patient_groups || this.props.taxes != newProps.taxes
             || this.props.doctors != newProps.doctors || this.props.payment_mode != newProps.payment_mode || this.props.discount != newProps.discount || this.props.treatments != newProps.treatments ||
             this.props.consume != newProps.consume || this.props.exclude_cancelled != newProps.exclude_cancelled)
@@ -39,27 +39,27 @@ export default class PaymentReceivedPerDay extends React.Component {
     }
 
     loadPaymentsReport = () => {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true,
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report: data,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams = {
+        const apiParams = {
             type: that.props.type,
             practice: that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            exclude_cancelled: this.props.exclude_cancelled ? true : false,
+            exclude_cancelled: !!this.props.exclude_cancelled,
         };
         if (this.props.taxes) {
             apiParams.taxes = this.props.taxes.toString();
@@ -86,12 +86,12 @@ export default class PaymentReceivedPerDay extends React.Component {
     };
 
     sendMail = (mailTo) => {
-        let that = this
-        let { startDate, endDate } = this.state;
-        let { active_practiceId, type } = this.props;
-        let apiParams = {
+        const that = this
+        const { startDate, endDate } = this.state;
+        const { active_practiceId, type } = this.props;
+        const apiParams = {
             practice: active_practiceId,
-            type: type,
+            type,
             start: startDate.format('YYYY-MM-DD'),
             end: endDate.format('YYYY-MM-DD'),
         };
@@ -102,7 +102,7 @@ export default class PaymentReceivedPerDay extends React.Component {
     };
 
     render() {
-        let that = this;
+        const that = this;
         let i = 1;
         const columns = [{
             title: 'S. No',
@@ -129,7 +129,7 @@ export default class PaymentReceivedPerDay extends React.Component {
             export:(text,record)=> (record.amount?record.amount.toFixed(2):'--')
         }];
 
-        var totalAmount = this.state.report.reduce(function (prev, cur) {
+        const totalAmount = this.state.report.reduce(function (prev, cur) {
             return prev + cur.amount;
         }, 0);
 
@@ -137,45 +137,60 @@ export default class PaymentReceivedPerDay extends React.Component {
             return <text x={x} y={y} dy={-4} fill="#666" fontSize={18} textAnchor="middle">{value}</text>
         };
 
-        return <div>
+        return (
+<div>
             <h2>Payment Received Per Day
                 <span style={{ float: 'right' }}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{ width: 200 }}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
             </h2>
             
             <Spin size="large" spinning={this.state.loading}>
-                {this.state.report.length > 0 ?
-                    <LineChart width={1000} height={300} data={[...this.state.report].reverse()}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 55 }}>
+                {this.state.report.length > 0 ? (
+                    <LineChart
+                      width={1000}
+                      height={300}
+                      data={[...this.state.report].reverse()}
+                      margin={{ top: 5, right: 30, left: 20, bottom: 55 }}
+                    >
 
-                        <XAxis dataKey="date" tickFormatter={(value) => {
+                        <XAxis
+                          dataKey="date"
+                          tickFormatter={(value) => {
                             return moment(value).format('DD MMM')
                         }}
-                            label={{ value: "Data Range", offset: 0, margin: { top: 10 }, position: "insideBottom" }} />
-                        {/*</XAxis>*/}
+                          label={{ value: "Data Range", offset: 0, margin: { top: 10 }, position: "insideBottom" }}
+                        />
+                        {/* </XAxis> */}
 
                         <YAxis label={{ value: 'Amount', angle: -90, position: 'insideLeft' }} />
 
                         <CartesianGrid strokeDasharray="3 3" />
                         <Tooltip />
                         <Line type="monotone" dataKey="amount" stroke="#1DA57A" strokeWidth={4} label={<CustomizedLabel />} />
-                    </LineChart> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show" />}
+                    </LineChart>
+                  ) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show" />}
             </Spin>
 
             <Divider><Statistic title="Total" value={totalAmount.toFixed(2)} /></Divider>
 
             <Table
-                loading={this.state.loading}
-                columns={columns}
-                pagination={false}
-                dataSource={this.state.report} />
+              loading={this.state.loading}
+              columns={columns}
+              pagination={false}
+              dataSource={this.state.report}
+            />
 
-        </div>
+</div>
+)
     }
 }

@@ -1,8 +1,8 @@
 import React from "react";
 import {Col, Row, Select, Statistic} from "antd";
+import moment from "moment"
 import {EXPENSE_PAYMENT_MODE_API} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
-import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -18,13 +18,14 @@ export default class ExpensesReport extends React.Component {
         }
         this.ExpenseReport = this.ExpenseReport.bind(this);
     }
+
     componentDidMount =async ()=>{
         await this.ExpenseReport();
         loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.expense_type!=newProps.expense_type
             ||this.props.payment_mode!=newProps.payment_mode)
             this.setState({
@@ -37,22 +38,22 @@ export default class ExpensesReport extends React.Component {
     }
 
     ExpenseReport =async ()=> {
-        let that = this;
+        const that = this;
         this.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report: data,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             practice:that.props.active_practiceId,
@@ -68,10 +69,10 @@ export default class ExpensesReport extends React.Component {
 
 
     sendMail = (mailTo) => {
-        let that = this;
-        let errorMsg =true;
-        let successMsg =true;
-        let apiParams = {
+        const that = this;
+        const errorMsg =true;
+        const successMsg =true;
+        const apiParams = {
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             practice:that.props.active_practiceId,
@@ -104,7 +105,7 @@ export default class ExpensesReport extends React.Component {
             render: (text, record) => (
                 <span>
                 {moment(record.expense_date).format('DD MMM YYYY')}
-                  </span>
+                </span>
             ),
             export:(item,record)=>(moment(record.expense_date).format('ll')),
         }, {
@@ -131,16 +132,21 @@ export default class ExpensesReport extends React.Component {
             dataIndex: 'remark',
             key: 'remark',
         }];
-        var totalAmount = this.state.report.reduce(function(prev, cur) {
+        const totalAmount = this.state.report.reduce(function(prev, cur) {
             return prev + cur.amount;
         }, 0);
-        return <div>
+        return (
+<div>
             <h2>Expenses Report
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
@@ -148,14 +154,16 @@ export default class ExpensesReport extends React.Component {
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
                     <Statistic title="Total Expense (INR)" value={totalAmount} />
-                    <br/>
+                    <br />
                 </Col>
             </Row>
 
             <CustomizedTable
-                loading={this.state.loading}
-                columns={columns}
-                dataSource={this.state.report}/>
-        </div>
+              loading={this.state.loading}
+              columns={columns}
+              dataSource={this.state.report}
+            />
+</div>
+)
     }
 }

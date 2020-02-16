@@ -30,12 +30,12 @@ class AddorEditProcedure extends React.Component {
             });
         }
         if (this.props.history && this.props.history.location.search) {
-            let pairValueArray = this.props.history.location.search.substr(1).split('&');
+            const pairValueArray = this.props.history.location.search.substr(1).split('&');
             if (pairValueArray.length) {
-                let urlInitialValue = {};
-                let {setFieldsValue} = this.props.form;
+                const urlInitialValue = {};
+                const {setFieldsValue} = this.props.form;
                 pairValueArray.forEach(function (item) {
-                    let keyValue = item.split('=');
+                    const keyValue = item.split('=');
                     if (keyValue && keyValue.length == 2) {
                         if (!isNaN(keyValue[1]) && keyValue[1].toString().indexOf('.') != -1) {
                             urlInitialValue[keyValue[0]] = parseFloat(keyValue[1]);
@@ -60,13 +60,13 @@ class AddorEditProcedure extends React.Component {
     }
 
     loadProductMargin() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 productMargin: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
@@ -74,34 +74,34 @@ class AddorEditProcedure extends React.Component {
 
 
     loadProcedures() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 procedure_category: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn,{pagination:false});
     }
 
     loadTaxes() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 taxes: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     changeNetPrice = (value) => {
-        let that = this;
+        const that = this;
         const {getFieldsValue, setFields} = this.props.form;
         setTimeout(function () {
-            let values = getFieldsValue();
+            const values = getFieldsValue();
             if (values.cost_with_tax) {
                 let totalTaxAmount = 0;
                 values.taxes.forEach(function (taxid) {
@@ -110,7 +110,7 @@ class AddorEditProcedure extends React.Component {
                             totalTaxAmount += taxObj.tax_value;
                     })
                 });
-                let retailPrice = values.cost_with_tax / (1 + totalTaxAmount * 0.01);
+                const retailPrice = values.cost_with_tax / (1 + totalTaxAmount * 0.01);
                 that.setState({
                     retail_price: retailPrice.toFixed(2)
                 })
@@ -124,21 +124,21 @@ class AddorEditProcedure extends React.Component {
     }
 
     handleSubmit = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqData = {
+                const reqData = {
                     ...values,
                     cost: that.state.retail_price
                 }
-                let successFn = function (data) {
+                const successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, 'Procedure Updated Successfully!!');
                     if (that.props.loadData)
                         that.props.loadData();
                     that.props.history.replace("settings/procedures");
                 }
-                let errorFn = function () {
+                const errorFn = function () {
 
                 }
                 if(this.state.editingProcedureData){
@@ -150,13 +150,14 @@ class AddorEditProcedure extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const formItemLayout = ({
             labelCol: {span: 8},
             wrapperCol: {span: 14},
         });
         const {getFieldDecorator} = this.props.form;
-        return <div>
+        return (
+<div>
             <Card>
                 <Form onSubmit={this.handleSubmit}>
                     <h2>{this.state.editingProcedureData ? "Edit Procedures" : "Add Procedures"}</h2>
@@ -165,8 +166,7 @@ class AddorEditProcedure extends React.Component {
                             initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.name : null,
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}]
                         })
-                        (<Input placeholder="Procedure Name"/>)
-                        }
+                        (<Input placeholder="Procedure Name" />)}
                     </Form.Item>
                     <Form.Item label="Procedure Net Price" {...formItemLayout}>
                         {getFieldDecorator('cost_with_tax', {
@@ -176,38 +176,47 @@ class AddorEditProcedure extends React.Component {
                                 message: REQUIRED_FIELD_MESSAGE
                             }]
                         })
-                        (<InputNumber onChange={this.changeNetPrice}/>)
-                        }<span className="ant-form-text">INR</span>
+                        (<InputNumber onChange={this.changeNetPrice} />)}<span className="ant-form-text">INR</span>
                     </Form.Item>
                     <Form.Item label="Tax" {...formItemLayout}>
                         {getFieldDecorator('taxes', {initialValue: this.state.editingProcedureData && this.state.editingProcedureData.taxes? this.state.editingProcedureData.taxes.map(item => item.id) : []})
                         (<Checkbox.Group onChange={this.changeNetPrice}>
-                            {this.state.taxes.map((tax) => <Checkbox
-                                value={tax.id}>{tax.name + (tax.tax_value ? "(" + tax.tax_value + "%)" : '')}
-                            </Checkbox>)}
-                        </Checkbox.Group>)
-                        }
+                            {this.state.taxes.map((tax) => (
+<Checkbox
+  value={tax.id}
+>{tax.name + (tax.tax_value ? `(${  tax.tax_value  }%)` : '')}
+</Checkbox>
+))}
+                         </Checkbox.Group>)}
                     </Form.Item>
                     <Form.Item label="Procedure Retail Price" {...formItemLayout}>
                         <span className="ant-form-text"><b>{that.state.retail_price}</b>&nbsp;INR</span>
                     </Form.Item>
-                    <Form.Item key={"margin"} {...formItemLayout} label={"MLM Margin"}>
+                    <Form.Item key="margin" {...formItemLayout} label="MLM Margin">
                         {getFieldDecorator("margin", {
                             initialValue: this.state.editingProcedureData && this.state.editingProcedureData.margin ? this.state.editingProcedureData.margin.id : null,
                         })(
                             <Select>
-                                {this.state.productMargin.map((option) => <Select.Option
-                                    value={option.id}>{option.name}</Select.Option>)}
+                                {this.state.productMargin.map((option) => (
+<Select.Option
+  value={option.id}
+>{option.name}
+</Select.Option>
+))}
                             </Select>
                         )}
                     </Form.Item>
-                    <Form.Item key={"under"} {...formItemLayout} label={"Add Under"}>
+                    <Form.Item key="under" {...formItemLayout} label="Add Under">
                         {getFieldDecorator("under", {
                             initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.under : null,
                         })(
                             <Select>
-                                {this.state.procedure_category.map((option) => <Select.Option
-                                    value={option.id}>{option.name}</Select.Option>)}
+                                {this.state.procedure_category.map((option) => (
+<Select.Option
+  value={option.id}
+>{option.name}
+</Select.Option>
+))}
                             </Select>
                         )}
                     </Form.Item>
@@ -216,21 +225,22 @@ class AddorEditProcedure extends React.Component {
                             initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.default_notes : null,
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}]
                         })
-                        (<Input placeholder="Default Note"/>)
-                        }
+                        (<Input placeholder="Default Note" />)}
                     </Form.Item>
                     <Form.Item>
                         <Button style={{margin: 5}} type="primary" htmlType="submit">
                             Submit
                         </Button>
-                        {that.props.history ?
+                        {that.props.history ? (
                             <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
                                 Cancel
-                            </Button> : null}
+                            </Button>
+                          ) : null}
                     </Form.Item>
                 </Form>
             </Card>
-        </div>
+</div>
+)
     }
 }
 

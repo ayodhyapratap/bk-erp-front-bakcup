@@ -1,6 +1,6 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form, Card} from "antd";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     INPUT_FIELD, MULTI_SELECT_FIELD,
     NUMBER_FIELD,
@@ -25,22 +25,22 @@ export default class AddorEditMedicinePackages extends React.Component {
     }
 
     loadRequiredData = () => {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 taxes: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
     }
 
     render() {
-        let that = this;
-        let MedicinePackageForm = Form.create()(DynamicFieldsForm);
-        let fields = [{
+        const that = this;
+        const MedicinePackageForm = Form.create()(DynamicFieldsForm);
+        const fields = [{
             label: "Package Name",
             key: 'name',
             required: true,
@@ -80,32 +80,38 @@ export default class AddorEditMedicinePackages extends React.Component {
             initialValue: this.props.editPackage && this.props.editPackage.taxes ? this.props.editPackage.taxes.map(item => item.id) : [],
             type: MULTI_SELECT_FIELD,
             options: this.state.taxes.map(tax => Object.create({
-                label: tax.name + "(" + tax.tax_value + "%)",
+                label: `${tax.name  }(${  tax.tax_value  }%)`,
                 value: tax.id
             }))
         }];
-        let formProps = {
+        const formProps = {
             method: "post",
             action: interpolate(MEDICINE_PACKAGES, [this.props.active_practiceId]),
-            successFn: function () {
+            successFn () {
                 displayMessage(SUCCESS_MSG_TYPE, "Package Saved Successfully");
                 if (that.props.loadData)
                     that.props.loadData();
                 that.props.history.replace('/settings/medicine-packages');
-            }, errorFn: function () {
+            }, errorFn () {
 
             }
         }
-        let defaultValues = [];
+        const defaultValues = [];
         if (this.state.editPackage) {
             defaultValues.push({key: 'id', value: this.state.editPackage.id})
         }
-        return <div>
+        return (
+<div>
             <Card>
-                <MedicinePackageForm fields={fields} formProp={formProps}
-                                     defaultValues={defaultValues}
-                                     title={this.state.editPackage ? "Edit Medicine Package" : "Add Medicine Packages"} {...this.props}/>
+                <MedicinePackageForm
+                  fields={fields}
+                  formProp={formProps}
+                  defaultValues={defaultValues}
+                  title={this.state.editPackage ? "Edit Medicine Package" : "Add Medicine Packages"}
+                  {...this.props}
+                />
             </Card>
-        </div>
+</div>
+)
     }
 }

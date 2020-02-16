@@ -1,6 +1,6 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Modal, Form, Table, Divider, Popconfirm} from "antd";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     SUCCESS_MSG_TYPE,
     INPUT_FIELD,
@@ -28,20 +28,20 @@ class PaymentModes extends React.Component {
     }
 
     loadData() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log("get table");
             that.setState({
                 modes: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(PAYMENT_MODES, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -62,19 +62,19 @@ class PaymentModes extends React.Component {
     }
 
     deleteObject(record) {
-        let that = this;
-        let reqData = record;
+        const that = this;
+        const reqData = record;
         reqData.is_active = false;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
         }
-        let errorFn = function () {
+        const errorFn = function () {
         };
         postAPI(interpolate(PAYMENT_MODES, [this.props.active_practiceId]), reqData, successFn, errorFn)
     }
 
     render() {
-        let that = this;
+        const that = this;
         const columns = [{
             title: 'Mode of Payment',
             placeholder:"",
@@ -95,12 +95,16 @@ class PaymentModes extends React.Component {
             render: (text, record) => (
                 <span>
               <a onClick={() => this.editPayment(record)}>Edit</a>
-                    <Divider type="vertical"/>
-                    <Popconfirm title="Are you sure delete this payment mode?"
-                                onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
+                    <Divider type="vertical" />
+                    <Popconfirm
+                      title="Are you sure delete this payment mode?"
+                      onConfirm={() => that.deleteObject(record)}
+                      okText="Yes"
+                      cancelText="No"
+                    >
                       <a>Delete</a>
-                  </Popconfirm>
-              </span>
+                    </Popconfirm>
+                </span>
             ),
         }];
         const fields = [{
@@ -145,14 +149,14 @@ class PaymentModes extends React.Component {
             follow: '%'
         },];
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 that.handleCancel();
                 that.loadData();
                 console.log(data);
                 console.log("sucess");
                 displayMessage(SUCCESS_MSG_TYPE, "sucess")
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(PAYMENT_MODES, [this.props.active_practiceId]),
@@ -165,20 +169,22 @@ class PaymentModes extends React.Component {
         }];
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>
-            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields} {...this.props}/>
-            <Divider/>
-            <CustomizedTable columns={columns} dataSource={this.state.modes}/>
+        return (
+<div>
+            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields} {...this.props} />
+            <Divider />
+            <CustomizedTable columns={columns} dataSource={this.state.modes} />
             <Modal
-                title="Edit Payment Mode"
-                visible={this.state.visible}
-                footer={null}
-                onCancel={this.handleCancel}
+              title="Edit Payment Mode"
+              visible={this.state.visible}
+              footer={null}
+              onCancel={this.handleCancel}
             >
-                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields}/>
+                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields} />
                 <Button key="back" onClick={this.handleCancel}>Return</Button>
             </Modal>
-        </div>
+</div>
+)
     }
 }
 

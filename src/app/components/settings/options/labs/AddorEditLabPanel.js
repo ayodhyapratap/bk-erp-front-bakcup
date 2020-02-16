@@ -1,11 +1,12 @@
 import React from "react";
-import {Card, Divider, Row, Col, Input,Button,InputNumber,Select} from "antd";
+import {Card, Divider, Row, Col, Input,Button,InputNumber,Select,Form} from "antd";
 import {Redirect, Route} from "react-router-dom";
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {LABTEST_API,LABPANEL_API} from "../../../../constants/api";
 import {displayMessage, getAPI,postAPI ,interpolate,} from "../../../../utils/common";
-import {Form} from "antd/lib/index";
+
 import {WARNING_MSG_TYPE} from "../../../../constants/dataKeys";
+
 const { Option } = Select;
 class AddorEditLab extends React.Component {
     constructor(props) {
@@ -19,20 +20,21 @@ class AddorEditLab extends React.Component {
         this.loadTests = this.loadTests.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
     }
+
     componentDidMount() {
         this.loadTests();
     }
 
     loadTests(){
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 tests: data.results,
                 loading: false
             })
             console.log(JSON.stringify(that.state.tests));
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
@@ -47,6 +49,7 @@ class AddorEditLab extends React.Component {
             panelCost:value,
         })
     }
+
     onChangeSelect = (e)=>{
         this.setState(function(prevState){
             if(prevState.selectedTest[e]){
@@ -69,6 +72,7 @@ class AddorEditLab extends React.Component {
         })
 
     }
+
     removeLabPanel = (id) => {
         this.setState(function (prevState) {
             return {
@@ -80,30 +84,33 @@ class AddorEditLab extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        let that = this;
+        const that = this;
         this.props.form.validateFields((err, formData) => {
             if (!err) {
-                let reqData = {...formData ,tests:Object.keys(this.state.selectedTest)}
+                const reqData = {...formData ,tests:Object.keys(this.state.selectedTest)}
                 console.log("test", reqData);
-                let successFn = function (data) {
+                const successFn = function (data) {
                     if (that.props.history){
                         that.props.history.replace("/settings/labs");
                     }
                 };
-                let errorFn = function () {
+                const errorFn = function () {
                 };
                 postAPI(interpolate(LABPANEL_API, [that.props.active_practiceId]), reqData, successFn, errorFn);
             }
         });
     }
+
     onChangeCostCalculate(){
 
     }
+
     handleCancel(){
         this.props.history.push('/settings/labs');
     }
+
     render() {
-        let that = this;
+        const that = this;
         const formItemLayout = {
             labelCol: {
                 xs: {span: 8},
@@ -118,15 +125,16 @@ class AddorEditLab extends React.Component {
                 lg: {span: 16},
             },
         };
-        let testKeys = Object.keys(this.state.selectedTest);
+        const testKeys = Object.keys(this.state.selectedTest);
         let TotalCost =0;
          testKeys.forEach(function(key){TotalCost+=parseInt(that.state.selectedTest[key].cost)});
         const {getFieldDecorator} = this.props.form;
         const testOption = this.state.tests.map((test) => <Select.Option value={test.id}>{test.name}</Select.Option>)
-        return <Row>
+        return (
+<Row>
             <Col span={18}>
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Item  label={"Panel Name"} {...formItemLayout}>
+                    <Form.Item label="Panel Name" {...formItemLayout}>
                         {getFieldDecorator('name', {
 
                         })(
@@ -135,22 +143,32 @@ class AddorEditLab extends React.Component {
                     </Form.Item>
 
                     <Form.Item label={(<span>Test Name</span>)} {...formItemLayout}>
-                        <Select style={{width:'100%'}} onChange={this.onChangeSelect} >
+                        <Select style={{width:'100%'}} onChange={this.onChangeSelect}>
                             {testOption}
                         </Select>
 
-                        <div>{testKeys ? testKeys.map((key)=><p key={key}>{that.state.selectedTest[key].name} <span style={{paddingLeft: '50%'}}>{this.state.selectedTest[key].cost}</span>
-                           <Button icon={"close"} style={{float:'right'}} onClick={() => this.removeLabPanel(that.state.selectedTest[key].id)} type={"danger"} shape="circle"
-                        size="small"/></p>): null}</div>
+                        <div>{testKeys ? testKeys.map((key)=>(
+<p key={key}>{that.state.selectedTest[key].name} <span style={{paddingLeft: '50%'}}>{this.state.selectedTest[key].cost}</span>
+                           <Button
+                             icon="close"
+                             style={{float:'right'}}
+                             onClick={() => this.removeLabPanel(that.state.selectedTest[key].id)}
+                             type="danger"
+                             shape="circle"
+                             size="small"
+                           />
+</p>
+)): null}
+                        </div>
                     </Form.Item>
 
-                    <Form.Item  label={(<span>Panel Cost</span>)} {...formItemLayout}>
+                    <Form.Item label={(<span>Panel Cost</span>)} {...formItemLayout}>
                         {getFieldDecorator('cost', {
                             initialValue:TotalCost,
                             // onChange:this.onChangeHandler,
 
                         })(
-                            <InputNumber/>
+                            <InputNumber />
 
                         )}
                          <span className="ant-form-text"> Total : {typeof TotalCost === 'number'  ? TotalCost : 0}</span>
@@ -165,7 +183,8 @@ class AddorEditLab extends React.Component {
             </Col>
 
 
-        </Row>
+</Row>
+)
     }
 }
 export default Form.create()(AddorEditLab);

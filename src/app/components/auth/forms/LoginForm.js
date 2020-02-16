@@ -1,9 +1,9 @@
 import {Form, Icon, Input, Button, Modal, Divider} from 'antd';
 import React from 'react';
 import 'antd/dist/antd.css';
-import {EMAIL, PASSWORD, PHONE, OTP} from "../../../constants/formLabels";
 import {Redirect} from 'react-router';
 import {Link, Route, Switch} from "react-router-dom";
+import {EMAIL, PASSWORD, PHONE, OTP} from "../../../constants/formLabels";
 import {displayMessage, makeURL, postOuterAPI} from "../../../utils/common";
 import {RESET_PASSWORD_MAIL} from "../../../constants/api";
 
@@ -32,15 +32,15 @@ class LoginForm extends React.Component {
     }
 
     handleOk = (e) => {
-        var that = this;
+        const that = this;
         console.log(e);
-        var successFn = function (data) {
+        const successFn = function (data) {
             displayMessage('success', "Link to update your password have been sent to your mail.")
             that.setState({
                 resetModalVisible: false,
             });
         }
-        var errorFn = function () {
+        const errorFn = function () {
 
         }
         postOuterAPI(makeURL(RESET_PASSWORD_MAIL), {mobile: this.state.userMail}, successFn, errorFn);
@@ -61,10 +61,10 @@ class LoginForm extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        let that = this;
+        const that = this;
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let data = {
+                const data = {
                     [EMAIL]: values.email,
                     [PASSWORD]: values.password
                 };
@@ -77,7 +77,7 @@ class LoginForm extends React.Component {
     render() {
         const {getFieldDecorator} = this.props.form;
         if (this.state.redirect)
-            return <Redirect to={this.state.redirect}/>
+            return <Redirect to={this.state.redirect} />
         return (
             <>
                 <Form onSubmit={this.handleSubmit} className="login-form">
@@ -85,52 +85,67 @@ class LoginForm extends React.Component {
                         {getFieldDecorator('email', {
                             rules: [{required: true, message: 'Please input your username!'}],
                         })(
-                            <Input size="large" prefix={<Icon type="phone" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                                   placeholder="Mobile Number"/>
+                            <Input
+                              size="large"
+                              prefix={<Icon type="phone" style={{color: 'rgba(0,0,0,.25)'}} />}
+                              placeholder="Mobile Number"
+                            />
                         )}
                     </FormItem>
                     <FormItem>
                         {getFieldDecorator('password', {
                             rules: [{required: true, message: 'Please input your Password!'}],
                         })(
-                            <Input size="large" prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                                   type="password"
-                                   placeholder="Password"/>
+                            <Input
+                              size="large"
+                              prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}} />}
+                              type="password"
+                              placeholder="Password"
+                            />
                         )}
                     </FormItem>
                     <FormItem>
                         <a style={{float: 'right'}} type="primary" onClick={this.showResetModal}>
                             Forgot Password ?
                         </a>
-                        <Button size="large" loading={this.state.changePassLoading} type="primary" htmlType="submit"
-                                className="login-form-button">
+                        <Button
+                          size="large"
+                          loading={this.state.changePassLoading}
+                          type="primary"
+                          htmlType="submit"
+                          className="login-form-button"
+                        >
                             Log in
                         </Button>
                     </FormItem>
                 </Form>
                 <Divider>OR</Divider>
                 <h4>
-                    <Link to={"/loginwithphone"}>
-                        <Button size="large" type="primary"
-                                className="login-form-button">Log in with phone</Button>
+                    <Link to="/loginwithphone">
+                        <Button
+                          size="large"
+                          type="primary"
+                          className="login-form-button"
+                        >Log in with phone
+                        </Button>
 
                     </Link>
                 </h4>
-                <Divider/>
+                <Divider />
                 <Modal
-                    title="Email to Reset Password"
-                    visible={this.state.resetModalVisible}
-                    onOk={this.handleOk}
-                    onCancel={this.handleCancel}
-                    okText="Reset Password"
+                  title="Email to Reset Password"
+                  visible={this.state.resetModalVisible}
+                  onOk={this.handleOk}
+                  onCancel={this.handleCancel}
+                  okText="Reset Password"
                 >
                     <Input
-                        placeholder="Enter your Mobile Number"
-                        prefix={<Icon type="mobile" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                        onChange={this.changeUserMail}
+                      placeholder="Enter your Mobile Number"
+                      prefix={<Icon type="mobile" style={{color: 'rgba(0,0,0,.25)'}} />}
+                      onChange={this.changeUserMail}
                     />
                 </Modal>
-                {this.props.redirect == true && <Redirect push to="/"/>}
+                {this.props.redirect == true && <Redirect push to="/" />}
             </>
         );
     }

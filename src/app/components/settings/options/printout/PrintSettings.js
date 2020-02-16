@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Form, Col, Radio, Input, Divider, Select, InputNumber, Icon, Button, Upload, Checkbox} from "antd";
+import {Row, Form, Col, Radio, Input, Divider, Select, InputNumber, Icon, Button, Upload, Checkbox,message} from "antd";
 import {
     CUSTOMIZE_PAPER_TYPE,
     EXCLUDE_PATIENT_DOB, HEADER_INCLUDE, LOGO_ALIGMENT, LOGO_INCLUDE, LOGO_TYPE,
@@ -14,7 +14,7 @@ import {
     PRINT_PREVIEW_RENDER,
     SAVE_ALL_PRINT_SETTINGS
 } from "../../../../constants/api";
-import {message} from "antd/lib/index";
+
 import {SINGLE_IMAGE_UPLOAD_FIELD, SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
 import {BACKEND_BASE_URL} from "../../../../config/connect";
 
@@ -47,14 +47,14 @@ class PrintSettings extends React.Component {
     }
 
     loadData() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             if (data.length)
                 that.setState({
                     print_setting: data[0],
                 });
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(PRACTICE_PRINT_SETTING_API, [this.props.active_practiceId, that.state.type, that.state.sub_type]), successFn, errorFn);
     }
@@ -62,7 +62,7 @@ class PrintSettings extends React.Component {
     handleSubmit = (e) => {
         console.log(e);
         e.preventDefault();
-        let that = this;
+        const that = this;
 
         this.props.form.validateFields((err, formData) => {
             console.log(formData);
@@ -72,7 +72,7 @@ class PrintSettings extends React.Component {
                     ...formData
                 }
 
-                let key = "logo_path";
+                const key = "logo_path";
                 if (reqData[key] && formData[key].file && formData[key].file.response)
                     reqData[key] = formData[key].file.response.image_path;
                 else
@@ -86,10 +86,10 @@ class PrintSettings extends React.Component {
                     }
                 }
                 delete reqData.save_for_all;
-                let successFn = function (data) {
+                const successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Settings Saved Successfully!!");
                 };
-                let errorFn = function () {
+                const errorFn = function () {
                 };
                 if (formData.save_for_all) {
                     postAPI(interpolate(SAVE_ALL_PRINT_SETTINGS, [this.props.active_practiceId]), reqData, successFn, errorFn);
@@ -99,24 +99,27 @@ class PrintSettings extends React.Component {
             }
         });
     }
+
     handleFormEditSettings = (type, value) => {
         this.setState(function (prevState) {
             return {editedPrintSettings: {...prevState.editedPrintSettings, [type]: value}}
         })
     }
+
     loadPDF = (path) => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             if (data.report)
                 window.open(BACKEND_BASE_URL + data.report);
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(path, successFn, errorFn);
     }
+
     onchangeHandle=(type ,value)=>{
-        let that=this;
+        const that=this;
         this.setState({
             [type]:value
         }
@@ -127,9 +130,10 @@ class PrintSettings extends React.Component {
         }
         )
     }
+
     render() {
         console.log(this.state)
-        let that = this;
+        const that = this;
         const formItemLayout = {
             labelCol: {
                 xs: {span: 8},
@@ -144,15 +148,31 @@ class PrintSettings extends React.Component {
                 lg: {span: 16},
             },
         };
-        const pageSizeOptionList = PAPER_SIZE.map((pageSize) => <Select.Option
-            value={pageSize}>{pageSize}</Select.Option>)
-        const headerInclude = HEADER_INCLUDE.map((header_include) => <Radio
-            value={header_include.value}>{header_include.title}</Radio>)
+        const pageSizeOptionList = PAPER_SIZE.map((pageSize) => (
+<Select.Option
+  value={pageSize}
+>{pageSize}
+</Select.Option>
+))
+        const headerInclude = HEADER_INCLUDE.map((header_include) => (
+<Radio
+  value={header_include.value}
+>{header_include.title}
+</Radio>
+))
         const logoType = LOGO_TYPE.map((logo_type) => <Radio value={logo_type.value}>{logo_type.value}</Radio>)
-        const logoAlignment = LOGO_ALIGMENT.map((logo_alignment) => <Radio
-            value={logo_alignment.value}>{logo_alignment.value}</Radio>)
-        const logoInclude = LOGO_INCLUDE.map((logo_include) => <Radio
-            value={logo_include.value}>{logo_include.title}</Radio>)
+        const logoAlignment = LOGO_ALIGMENT.map((logo_alignment) => (
+<Radio
+  value={logo_alignment.value}
+>{logo_alignment.value}
+</Radio>
+))
+        const logoInclude = LOGO_INCLUDE.map((logo_include) => (
+<Radio
+  value={logo_include.value}
+>{logo_include.title}
+</Radio>
+))
         const singleUploadprops = {
             name: 'image',
             data: {
@@ -175,25 +195,37 @@ class PrintSettings extends React.Component {
             },
 
         };
-        const patientDetailsList = PATIENT_DETAILS_LIST.map((patient_details) => <li>
-            <Checkbox value={patient_details.value}>{patient_details.value}</Checkbox></li>)
-        const pageOrientation = PAGE_ORIENTATION.map((pageOrientation) => <Radio
-            value={pageOrientation.value}>{pageOrientation.value}</Radio>)
-        const printer_type = PRINTER_TYPE.map((printerType) => <Radio
-            value={printerType.value}>{printerType.value}</Radio>)
-        let PreviewParamsURL = '?preview=true&type=' + this.props.type + '&sub_type=' + this.props.sub_type;
+        const patientDetailsList = PATIENT_DETAILS_LIST.map((patient_details) => (
+<li>
+            <Checkbox value={patient_details.value}>{patient_details.value}</Checkbox>
+</li>
+))
+        const pageOrientation = PAGE_ORIENTATION.map((pageOrientation) => (
+<Radio
+  value={pageOrientation.value}
+>{pageOrientation.value}
+</Radio>
+))
+        const printer_type = PRINTER_TYPE.map((printerType) => (
+<Radio
+  value={printerType.value}
+>{printerType.value}
+</Radio>
+))
+        let PreviewParamsURL = `?preview=true&type=${  this.props.type  }&sub_type=${  this.props.sub_type}`;
 
         if (this.state.print_setting) {
-            let editedObject = {...this.state.print_setting, ...this.state.editedPrintSettings};
-            let keys = Object.keys(editedObject);
+            const editedObject = {...this.state.print_setting, ...this.state.editedPrintSettings};
+            const keys = Object.keys(editedObject);
             keys.forEach(function (key) {
                 if (editedObject[key])
-                    PreviewParamsURL += '&' + key + '=' + encodeURIComponent(editedObject[key])
+                    PreviewParamsURL += `&${  key  }=${  encodeURIComponent(editedObject[key])}`
             });
 
         }
         const {getFieldDecorator} = this.props.form;
-        return (<Row>
+        return (
+<Row>
                 <Col span={24}>
                     <Form onSubmit={this.handleSubmit}>
 
@@ -202,87 +234,117 @@ class PrintSettings extends React.Component {
                             <Row gutter={16}>
                                 <Col span={12}>
                                     <div style={{textAlign: 'center'}}>
-                                        <Radio.Group buttonStyle="solid" size="small" onChange={this.changeFormType}
-                                                     defaultValue={this.state.selectedFormType}>
+                                        <Radio.Group
+                                          buttonStyle="solid"
+                                          size="small"
+                                          onChange={this.changeFormType}
+                                          defaultValue={this.state.selectedFormType}
+                                        >
                                             {radioTabList}
                                         </Radio.Group>
-                                        <br/>
+                                        <br />
                                     </div>
                                     <div hidden={this.state.selectedFormType != 'PAGE'}>
 
                                         <h2>Page Setup</h2>
-                                        <Form.Item key={'page_size'} {...formItemLayout} label={"Paper Size"}>
+                                        <Form.Item key="page_size" {...formItemLayout} label="Paper Size">
                                             {getFieldDecorator('page_size', {
                                                 initialValue: this.state.print_setting.page_size
-                                            })(<Select style={{width: '100%'}}
-                                                       onChange={(value) => this.handleFormEditSettings('page_size', value)}>
+                                            })(<Select
+                                              style={{width: '100%'}}
+                                              onChange={(value) => this.handleFormEditSettings('page_size', value)}
+                                            >
                                                 {pageSizeOptionList}
-                                            </Select>)
-                                            }
+                                               </Select>)}
                                         </Form.Item>
 
-                                        <Form.Item label={"Orientation"} {...formItemLayout} >
+                                        <Form.Item label="Orientation" {...formItemLayout}>
                                             {getFieldDecorator('page_orientation', {
                                                 initialValue: this.state.print_setting.page_orientation
                                             })(<Radio.Group
-                                                    onChange={(e) => this.handleFormEditSettings('orientation', e.target.value)}>
+                                              onChange={(e) => this.handleFormEditSettings('orientation', e.target.value)}
+                                            >
                                                     {pageOrientation}
-                                                </Radio.Group>
-                                            )
-                                            }
+                                               </Radio.Group>
+                                            )}
                                         </Form.Item>
 
                                         <Form.Item label={(<span>Printer Type&nbsp;</span>)} {...formItemLayout}>
                                             {getFieldDecorator('page_print_type', {
                                                 initialValue: this.state.print_setting.page_print_type
                                             })(<Radio.Group
-                                                    onChange={(e) => this.handleFormEditSettings('printerType', e.target.value)}>
+                                              onChange={(e) => this.handleFormEditSettings('printerType', e.target.value)}
+                                            >
                                                     {printer_type}
-                                                </Radio.Group>
+                                               </Radio.Group>
                                             )}
 
                                         </Form.Item>
 
-                                        <Form.Item key={'page_margin_top'}
-                                                   label={(<span>Top Margin</span>)} {...formItemLayout}>
+                                        <Form.Item
+                                          key="page_margin_top"
+                                          label={(<span>Top Margin</span>)}
+                                          {...formItemLayout}
+                                        >
                                             {getFieldDecorator('page_margin_top', {
                                                 initialValue: this.state.print_setting.page_margin_top
                                             })(
-                                                <InputNumber min={0} max={10}
-                                                             onChange={(value) => this.handleFormEditSettings('page_margin_top', value)}/>
+                                                <InputNumber
+                                                  min={0}
+                                                  max={10}
+                                                  onChange={(value) => this.handleFormEditSettings('page_margin_top', value)}
+                                                />
                                             )}
                                             <span className="ant-form-text">Inches</span>
                                         </Form.Item>
 
-                                        <Form.Item key={'page_margin_left'}
-                                                   label={(<span>Left Margin</span>)} {...formItemLayout}>
+                                        <Form.Item
+                                          key="page_margin_left"
+                                          label={(<span>Left Margin</span>)}
+                                          {...formItemLayout}
+                                        >
                                             {getFieldDecorator('page_margin_left', {
                                                 initialValue: this.state.print_setting.page_margin_left
                                             })(
-                                                <InputNumber min={0} max={10}
-                                                             onChange={(value) => this.handleFormEditSettings('page_margin_left', value)}/>
+                                                <InputNumber
+                                                  min={0}
+                                                  max={10}
+                                                  onChange={(value) => this.handleFormEditSettings('page_margin_left', value)}
+                                                />
                                             )}
                                             <span className="ant-form-text">Inches</span>
                                         </Form.Item>
 
-                                        <Form.Item key={'page_margin_bottom'}
-                                                   label={(<span>Bottom Margin</span>)} {...formItemLayout}>
+                                        <Form.Item
+                                          key="page_margin_bottom"
+                                          label={(<span>Bottom Margin</span>)}
+                                          {...formItemLayout}
+                                        >
                                             {getFieldDecorator('page_margin_bottom', {
                                                 initialValue: this.state.print_setting.page_margin_bottom
                                             })(
-                                                <InputNumber min={0} max={10}
-                                                             onChange={(value) => this.handleFormEditSettings('page_margin_bottom', value)}/>
+                                                <InputNumber
+                                                  min={0}
+                                                  max={10}
+                                                  onChange={(value) => this.handleFormEditSettings('page_margin_bottom', value)}
+                                                />
                                             )}
                                             <span className="ant-form-text">Inches</span>
                                         </Form.Item>
 
-                                        <Form.Item key={'page_margin_right'}
-                                                   label={(<span>Right Margin</span>)} {...formItemLayout}>
+                                        <Form.Item
+                                          key="page_margin_right"
+                                          label={(<span>Right Margin</span>)}
+                                          {...formItemLayout}
+                                        >
                                             {getFieldDecorator('page_margin_right', {
                                                 initialValue: this.state.print_setting.page_margin_right
                                             })(
-                                                <InputNumber min={0} max={10}
-                                                             onChange={(value) => this.handleFormEditSettings('page_margin_right', value)}/>
+                                                <InputNumber
+                                                  min={0}
+                                                  max={10}
+                                                  onChange={(value) => this.handleFormEditSettings('page_margin_right', value)}
+                                                />
                                             )}
                                             <span className="ant-form-text">Inches</span>
                                         </Form.Item>
@@ -290,132 +352,153 @@ class PrintSettings extends React.Component {
                                     <div hidden={this.state.selectedFormType != 'HEADER'}>
                                         <h2>Customize Header</h2>
 
-                                        <Form.Item key={'header_include'} {...formItemLayout}
-                                                   label={(<span>Include Header&nbsp;</span>)}>
+                                        <Form.Item
+                                          key="header_include"
+                                          {...formItemLayout}
+                                          label={(<span>Include Header&nbsp;</span>)}
+                                        >
                                             {getFieldDecorator('header_include', {initialValue: this.state.print_setting.header_include})
                                             (
                                                 <Radio.Group
-                                                    onChange={(e) => this.handleFormEditSettings('header_include', e.target.value)}>
+                                                  onChange={(e) => this.handleFormEditSettings('header_include', e.target.value)}
+                                                >
                                                     {headerInclude}
                                                 </Radio.Group>
-                                            )
-                                            }
+                                            )}
                                         </Form.Item>
 
-                                        <Form.Item key={'header_text'} {...formItemLayout}
-                                                   label={(<span>Header&nbsp;</span>)}>
+                                        <Form.Item
+                                          key="header_text"
+                                          {...formItemLayout}
+                                          label={(<span>Header&nbsp;</span>)}
+                                        >
                                             {getFieldDecorator('header_text', {
                                                 initialValue: this.state.print_setting.header_text
                                             })(
                                                 <Input
-                                                    onChange={(e) => this.handleFormEditSettings('header_text', e.target.value)}/>
+                                                  onChange={(e) => this.handleFormEditSettings('header_text', e.target.value)}
+                                                />
                                             )}
                                         </Form.Item>
-                                        <Form.Item key={'header_left_text'} {...formItemLayout}
-                                                   label={(<span>Left Text&nbsp;</span>)}>
+                                        <Form.Item
+                                          key="header_left_text"
+                                          {...formItemLayout}
+                                          label={(<span>Left Text&nbsp;</span>)}
+                                        >
                                             {getFieldDecorator('header_left_text', {
                                                 initialValue: this.state.print_setting.header_left_text
                                             })(
                                                 <TextArea
-                                                    onChange={(e) => this.handleFormEditSettings('header_left_text', e.target.value)}/>
+                                                  onChange={(e) => this.handleFormEditSettings('header_left_text', e.target.value)}
+                                                />
                                             )}
                                         </Form.Item>
 
-                                        <Form.Item key={'header_right_text'} {...formItemLayout}
-                                                   label={(<span>Right Text&nbsp;</span>)}>
+                                        <Form.Item
+                                          key="header_right_text"
+                                          {...formItemLayout}
+                                          label={(<span>Right Text&nbsp;</span>)}
+                                        >
                                             {getFieldDecorator('header_right_text', {initialValue: this.state.print_setting.header_right_text})
                                             (<TextArea
-                                                onChange={(e) => this.handleFormEditSettings('header_right_text', e.target.value)}/>)
-                                            }
+                                              onChange={(e) => this.handleFormEditSettings('header_right_text', e.target.value)}
+                                            />)}
                                         </Form.Item>
 
-                                        <Form.Item key={'logo_include'} {...formItemLayout}
-                                                   label={(<span>Include Logo&nbsp;</span>)}>
+                                        <Form.Item
+                                          key="logo_include"
+                                          {...formItemLayout}
+                                          label={(<span>Include Logo&nbsp;</span>)}
+                                        >
                                             {getFieldDecorator('logo_include', {initialValue: this.state.print_setting.logo_include})
                                             (
                                                 <Radio.Group
-                                                    onChange={(e) => this.handleFormEditSettings('logo_include', e.target.value)}>
+                                                  onChange={(e) => this.handleFormEditSettings('logo_include', e.target.value)}
+                                                >
                                                     {logoInclude}
                                                 </Radio.Group>
-                                            )
-                                            }
+                                            )}
                                         </Form.Item>
 
-                                        <Form.Item key={'logo_path'} {...formItemLayout}
-                                                   label={(<span>Logo&nbsp;</span>)}>
+                                        <Form.Item
+                                          key="logo_path"
+                                          {...formItemLayout}
+                                          label={(<span>Logo&nbsp;</span>)}
+                                        >
                                             {getFieldDecorator('logo_path')
-                                            (<Upload {...singleUploadprops} >
+                                            (<Upload {...singleUploadprops}>
                                                 <Button>
-                                                    <Icon type="upload"/> Click to Upload
+                                                    <Icon type="upload" /> Click to Upload
                                                 </Button>
-                                            </Upload>)}
-                                            {/*<Avatar style={{backgroundColor: this.state.color}} size="large">*/}
-                                            {/*{this.state.user}*/}
-                                            {/*</Avatar>*/}
+                                             </Upload>)}
+                                            {/* <Avatar style={{backgroundColor: this.state.color}} size="large"> */}
+                                            {/* {this.state.user} */}
+                                            {/* </Avatar> */}
 
                                         </Form.Item>
 
-                                        <Form.Item key={'logo_type'} {...formItemLayout}
-                                                   label={(<span>Type&nbsp;</span>)}>
+                                        <Form.Item
+                                          key="logo_type"
+                                          {...formItemLayout}
+                                          label={(<span>Type&nbsp;</span>)}
+                                        >
                                             {getFieldDecorator('logo_type', {initialValue: this.state.print_setting.logo_type})(
                                                 <Radio.Group
-                                                    onChange={(e) => this.handleFormEditSettings('logo_type', e.target.value)}>
+                                                  onChange={(e) => this.handleFormEditSettings('logo_type', e.target.value)}
+                                                >
                                                     {logoType}
                                                 </Radio.Group>
                                             )}
                                         </Form.Item>
 
-                                        <Form.Item key={'logo_alignment'} {...formItemLayout}
-                                                   label={(<span>Alignment&nbsp;</span>)}>
+                                        <Form.Item
+                                          key="logo_alignment"
+                                          {...formItemLayout}
+                                          label={(<span>Alignment&nbsp;</span>)}
+                                        >
                                             {getFieldDecorator('logo_alignment', {initialValue: this.state.print_setting.logo_alignment})
                                             (
                                                 <Radio.Group
-                                                    onChange={(e) => this.handleFormEditSettings('logo_alignment', e.target.value)}>
+                                                  onChange={(e) => this.handleFormEditSettings('logo_alignment', e.target.value)}
+                                                >
                                                     {logoAlignment}
                                                 </Radio.Group>
-                                            )
-                                            }
+                                            )}
                                         </Form.Item>
                                     </div>
                                     <div hidden={this.state.selectedFormType != 'PATIENT'}>
                                         <h2>Customize Patient Details</h2>
                                         <Form.Item>
                                             {getFieldDecorator('patient_details', {})(
-                                                <Checkbox onChange={(e)=>this.onchangeHandle('is_patient_not',e.target.checked)}>Show Patient Details</Checkbox>)
-                                            }
+                                                <Checkbox onChange={(e)=>this.onchangeHandle('is_patient_not',e.target.checked)}>Show Patient Details</Checkbox>)}
                                            
                                         </Form.Item>
                                             <ul className="subLists">
                                                 <Form.Item>
                                                     {getFieldDecorator('exclude_history', {})(
-                                                        <Checkbox >Exclude Mediacal History</Checkbox>)
-                                                    }
+                                                        <Checkbox>Exclude Mediacal History</Checkbox>)}
                                                 
                                                 </Form.Item>
 
                                                 <Form.Item>
                                                     {getFieldDecorator('exclude_phone', {})(
-                                                        <Checkbox>Exclude Patient Number</Checkbox>)
-                                                    }
+                                                        <Checkbox>Exclude Patient Number</Checkbox>)}
                                                 
                                                 </Form.Item>
                                                 <Form.Item>
                                                     {getFieldDecorator('exclude_email', {})(
-                                                        <Checkbox>Exclude Patient Email Id</Checkbox>)
-                                                    }
+                                                        <Checkbox>Exclude Patient Email Id</Checkbox>)}
                                                 
                                                 </Form.Item>
 
                                                 <Form.Item>
                                                     {getFieldDecorator('exclude_address', {})(
-                                                        <Checkbox>Exclude address</Checkbox>)
-                                                    }
+                                                        <Checkbox>Exclude address</Checkbox>)}
                                                 
                                                 </Form.Item>
                                                 <Form.Item>
                                                     {getFieldDecorator('exclude_blood_group', {})(
-                                                        <Checkbox>Exclude Blood Group</Checkbox>)
-                                                    }
+                                                        <Checkbox>Exclude Blood Group</Checkbox>)}
                                                 
                                                 </Form.Item>
                                                 <Form.Item>
@@ -429,50 +512,69 @@ class PrintSettings extends React.Component {
                                     </div>
                                     <div hidden={this.state.selectedFormType != 'FOOTER'}>
                                         <h2>Footer Setup</h2>
-                                        <Form.Item key={'footer_margin_top'} {...formItemLayout}
-                                                   label={(<span>Top Margin&nbsp;</span>)}>
+                                        <Form.Item
+                                          key="footer_margin_top"
+                                          {...formItemLayout}
+                                          label={(<span>Top Margin&nbsp;</span>)}
+                                        >
                                             {getFieldDecorator('footer_margin_top', {
                                                 initialValue: this.state.print_setting.footer_margin_top
                                             })(
-                                                <InputNumber min={0} max={10}
-                                                             onChange={(value) => this.handleFormEditSettings('footer_margin_top', value)}/>
+                                                <InputNumber
+                                                  min={0}
+                                                  max={10}
+                                                  onChange={(value) => this.handleFormEditSettings('footer_margin_top', value)}
+                                                />
                                             )}
                                             <span className="ant-form-text">Inches</span>
                                         </Form.Item>
-                                        <Form.Item key={'footer_text'} {...formItemLayout}
-                                                   label={(<span>Full Width Content&nbsp;</span>)}>
+                                        <Form.Item
+                                          key="footer_text"
+                                          {...formItemLayout}
+                                          label={(<span>Full Width Content&nbsp;</span>)}
+                                        >
                                             {getFieldDecorator('footer_text', {
                                                 initialValue: this.state.print_setting.footer_text
                                             })(
-                                                <TextArea rows={3}
-                                                          onChange={(e) => this.handleFormEditSettings('footer_text', e.target.value)}/>
+                                                <TextArea
+                                                  rows={3}
+                                                  onChange={(e) => this.handleFormEditSettings('footer_text', e.target.value)}
+                                                />
                                             )}
                                         </Form.Item>
 
-                                        <Form.Item key={'footer_left_text'} {...formItemLayout}
-                                                   label={(<span>Left Signature&nbsp;</span>)}>
+                                        <Form.Item
+                                          key="footer_left_text"
+                                          {...formItemLayout}
+                                          label={(<span>Left Signature&nbsp;</span>)}
+                                        >
                                             {getFieldDecorator('footer_left_text', {
                                                 initialValue: this.state.print_setting.footer_left_text
                                             })(
                                                 <TextArea
-                                                    onChange={(e) => this.handleFormEditSettings('footer_left_text', e.target.value)}/>
+                                                  onChange={(e) => this.handleFormEditSettings('footer_left_text', e.target.value)}
+                                                />
                                             )}
                                         </Form.Item>
 
-                                        <Form.Item key={'footer_right_text'} {...formItemLayout}
-                                                   label={(<span>Right Signature&nbsp;</span>)}>
+                                        <Form.Item
+                                          key="footer_right_text"
+                                          {...formItemLayout}
+                                          label={(<span>Right Signature&nbsp;</span>)}
+                                        >
                                             {getFieldDecorator('footer_right_text', {
                                                 initialValue: this.state.print_setting.footer_right_text
                                             })(
                                                 <TextArea
-                                                    onChange={(e) => this.handleFormEditSettings('footer_right_text', e.target.value)}/>
+                                                  onChange={(e) => this.handleFormEditSettings('footer_right_text', e.target.value)}
+                                                />
                                             )}
                                         </Form.Item>
 
                                     </div>
                                     <Row>
-                                        <Divider/>
-                                        <Form.Item {...formItemLayout} key={'save_for_all'}>
+                                        <Divider />
+                                        <Form.Item {...formItemLayout} key="save_for_all">
                                             {getFieldDecorator('save_for_all', {})(
                                                 <Checkbox>
                                                     <b> Save for all</b>
@@ -480,11 +582,19 @@ class PrintSettings extends React.Component {
                                             )}
                                         </Form.Item>
                                         <Form.Item>
-                                            <Button style={{margin: 5}} type="primary" htmlType="submit"
-                                                    value={"ALL"}>Save</Button>
-                                            <Button style={{margin: 5}}
-                                                    onClick={() => this.loadPDF(PRINT_PREVIEW_RENDER + PreviewParamsURL + '&pdf=1')}>Show
-                                                Print Preview</Button>
+                                            <Button
+                                              style={{margin: 5}}
+                                              type="primary"
+                                              htmlType="submit"
+                                              value="ALL"
+                                            >Save
+                                            </Button>
+                                            <Button
+                                              style={{margin: 5}}
+                                              onClick={() => this.loadPDF(`${PRINT_PREVIEW_RENDER + PreviewParamsURL  }&pdf=1`)}
+                                            >Show
+                                                Print Preview
+                                            </Button>
                                         </Form.Item>
                                     </Row>
                                 </Col>
@@ -496,24 +606,26 @@ class PrintSettings extends React.Component {
                                         padding: 10,
                                         right: 20,
                                         top: 50
-                                    }}>
+                                    }}
+                                    >
                                         <b>PREVIEW</b>
                                     </div>
                                     <iframe
-                                        src={makeURL(PRINT_PREVIEW_RENDER + PreviewParamsURL)}
-                                        style={{
+                                      src={makeURL(PRINT_PREVIEW_RENDER + PreviewParamsURL)}
+                                      style={{
                                             width: '100%',
                                             height: '100%',
                                             minHeight: '600px',
                                             boxShadow: '-2px 0px 4px #B8B8B8'
-                                        }}/>
+                                        }}
+                                    />
                                 </Col>
 
                             </Row>
                         </div>
                     </Form>
                 </Col>
-            </Row>
+</Row>
         );
 
     }

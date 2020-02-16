@@ -1,6 +1,6 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Card, Form} from "antd";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     INPUT_FIELD,
     MULTI_SELECT_FIELD,
@@ -29,35 +29,35 @@ export default class AddorEditBedPackages extends React.Component {
     }
 
     loadRequiredData = () => {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 roomTypes: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(ROOM_TYPE, [this.props.active_practiceId]), successFn, errorFn);
 
     }
 
     loadTaxes() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 taxes: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
     }
 
     render() {
-        let that = this;
-        let BedPackageForm = Form.create()(DynamicFieldsForm);
-        let fields = [{
+        const that = this;
+        const BedPackageForm = Form.create()(DynamicFieldsForm);
+        const fields = [{
             label: "Package Name",
             key: 'name',
             required: true,
@@ -102,7 +102,7 @@ export default class AddorEditBedPackages extends React.Component {
             initialValue: this.props.editPackage && this.props.editPackage.taxes ? this.props.editPackage.taxes.map(item => item.id) : [],
             type: MULTI_SELECT_FIELD,
             options: this.state.taxes.map(tax => Object.create({
-                label: tax.name + "(" + tax.tax_value + "%)",
+                label: `${tax.name  }(${  tax.tax_value  }%)`,
                 value: tax.id
             }))
         },{
@@ -113,28 +113,34 @@ export default class AddorEditBedPackages extends React.Component {
             minRows:3,
 
         }];
-        let formProps = {
+        const formProps = {
             method: "post",
             action: interpolate(BED_PACKAGES, [this.props.active_practiceId]),
-            successFn: function () {
+            successFn () {
                 displayMessage(SUCCESS_MSG_TYPE, "Package Saved Successfully");
                 if (that.props.loadData)
                     that.props.loadData();
                 that.props.history.replace('/settings/bed-packages');
-            }, errorFn: function () {
+            }, errorFn () {
 
             }
         }
-        let defaultValues = [];
+        const defaultValues = [];
         if (this.state.editPackage) {
             defaultValues.push({key: 'id', value: this.state.editPackage.id})
         }
-        return <div>
+        return (
+<div>
             <Card>
-                <BedPackageForm fields={fields} formProp={formProps}
-                                defaultValues={defaultValues}
-                                title={this.state.editPackage ? "Edit Bed Package" : "Add Bed Packages"} {...this.props}/>
+                <BedPackageForm
+                  fields={fields}
+                  formProp={formProps}
+                  defaultValues={defaultValues}
+                  title={this.state.editPackage ? "Edit Bed Package" : "Add Bed Packages"}
+                  {...this.props}
+                />
             </Card>
-        </div>
+</div>
+)
     }
 }

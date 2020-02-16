@@ -1,6 +1,7 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form, Card, message} from "antd";
+import {Redirect} from "react-router-dom";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     CHECKBOX_FIELD,
     SUCCESS_MSG_TYPE,
@@ -11,7 +12,6 @@ import {
 } from "../../../../constants/dataKeys";
 import {PROCEDURE_CATEGORY, PRODUCT_MARGIN, TAXES} from "../../../../constants/api"
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
-import {Redirect} from "react-router-dom";
 
 class EditProcedure extends React.Component {
     constructor(props) {
@@ -32,21 +32,21 @@ class EditProcedure extends React.Component {
     }
 
     loadProductMargin() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 productMargin: data,
                 loading: false
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -66,17 +66,17 @@ class EditProcedure extends React.Component {
     }
 
     loadProcedures(id) {
-        var that = this;
-        var url = `${interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId])}`;
+        const that = this;
+        const url = `${interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId])}`;
 
-        let successFn = function (data) {
+        const successFn = function (data) {
             console.log("get table", data);
             that.setState({
                 procedure_category: data,
                 loading: false
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             this.setState({
                 loading: false
             })
@@ -86,10 +86,10 @@ class EditProcedure extends React.Component {
     }
 
     loadTaxes() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log(data.map(tax => Object.create({
-                    label: tax.name + (tax.tax_value ? "(" + tax.tax_value + "%)" : ''),
+                    label: tax.name + (tax.tax_value ? `(${  tax.tax_value  }%)` : ''),
                     value: tax.id
                 })
             ));
@@ -97,13 +97,13 @@ class EditProcedure extends React.Component {
                 taxes: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     render() {
-        let that = this;
+        const that = this;
         const formFields = [{
             label: "Procedure Name",
             key: "name",
@@ -123,7 +123,7 @@ class EditProcedure extends React.Component {
             initialValue: this.state.editingProcedureData ? this.state.editingProcedureData.taxes : null,
             type: CHECKBOX_FIELD,
             options: this.state.taxes.map(tax => Object.create({
-                    label: tax.name + (tax.tax_value ? "(" + tax.tax_value + "%)" : ''),
+                    label: tax.name + (tax.tax_value ? `(${  tax.tax_value  }%)` : ''),
                     value: tax.id
                 })
             )
@@ -155,7 +155,7 @@ class EditProcedure extends React.Component {
             type: INPUT_FIELD
         },];
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, 'success');
                 that.changeRedirect();
                 that.props.loadProcedures();
@@ -163,7 +163,7 @@ class EditProcedure extends React.Component {
                     that.props.history.replace("/settings/procedures");
                 }
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]),
@@ -174,12 +174,22 @@ class EditProcedure extends React.Component {
             defaultValues = [{"key": "id", "value": this.props.editingProcedureData.id}];
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>{that.props.editingProcedureData ? <Card loading={that.state.loading}>
-            <TestFormLayout {...this.props} title="Edit Procedure" defaultValues={defaultValues}
-                            changeRedirect={this.changeRedirect} formProp={formProp} fields={formFields}/>
-            {this.state.redirect && <Redirect to='/settings/procedures'/>}
-        </Card> : <Redirect to='/settings/procedures'/>}
-        </div>
+        return (
+<div>{that.props.editingProcedureData ? (
+<Card loading={that.state.loading}>
+            <TestFormLayout
+              {...this.props}
+              title="Edit Procedure"
+              defaultValues={defaultValues}
+              changeRedirect={this.changeRedirect}
+              formProp={formProp}
+              fields={formFields}
+            />
+            {this.state.redirect && <Redirect to='/settings/procedures' />}
+</Card>
+) : <Redirect to='/settings/procedures' />}
+</div>
+)
     }
 }
 

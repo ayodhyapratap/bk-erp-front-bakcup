@@ -1,11 +1,12 @@
 import React from "react";
 import {Divider, Empty, Modal, Select, Spin, Statistic} from "antd";
+import moment from "moment";
+import {ComposedChart,Bar, Tooltip, XAxis, YAxis} from "recharts";
 import {BED_BOOKING_REPORTS} from "../../../constants/api";
 import {getAPI, interpolate} from "../../../utils/common";
 import CustomizedTable from "../../common/CustomizedTable";
-import moment from "moment";
-import {ComposedChart,Bar, Tooltip, XAxis, YAxis} from "recharts";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
+
 const { confirm } = Modal;
 
 export default class MonthlyBookingCount extends React.Component {
@@ -21,12 +22,14 @@ export default class MonthlyBookingCount extends React.Component {
         };
         this.loadBedBookingReport = this.loadBedBookingReport.bind(this);
     }
+
     componentDidMount() {
         this.loadBedBookingReport();
         loadMailingUserListForReportsMail(this);
     }
+
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.bed_packages!=newProps.bed_packages ||this.props.payment_status!=newProps.payment_status
             ||this.props.type!=newProps.type)
             this.setState({
@@ -38,22 +41,22 @@ export default class MonthlyBookingCount extends React.Component {
     }
 
     loadBedBookingReport = () => {
-        let that = this;
+        const that = this;
         this.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 bedBookingReports:data,
                 loading:false,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams = {
+        const apiParams = {
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             practice: this.props.active_practiceId,
@@ -72,8 +75,8 @@ export default class MonthlyBookingCount extends React.Component {
     }
 
     sendMail = (mailTo) => {
-        let that = this;
-        let apiParams = {
+        const that = this;
+        const apiParams = {
             practice: this.props.active_practiceId,
             report_type:this.props.report_type,
             start: this.state.startDate.format('YYYY-MM-DD'),
@@ -111,7 +114,7 @@ export default class MonthlyBookingCount extends React.Component {
             render: (text, record) => (
                 <span>
                 {moment(record.date).format('MMM YYYY')}
-                  </span>
+                </span>
             ),
             export:(item,record)=> (moment(record.date).format('MMM YYYY')),
         },{
@@ -127,39 +130,53 @@ export default class MonthlyBookingCount extends React.Component {
         const renderCustomBarLabel = ({ payload, x, y, width, height, value }) => {
             return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value}</text>;
         };
-        var totalAmount = this.state.bedBookingReports.reduce(function(prev, cur) {
+        const totalAmount = this.state.bedBookingReports.reduce(function(prev, cur) {
             return prev + cur.total;
         }, 0);
-        return <div>
+        return (
+<div>
             <h2>Monthly Booking Count
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
             </h2>
             <Spin size="large" spinning={this.state.loading}>
-                {this.state.bedBookingReports.length>0?
-                    <ComposedChart width={1000} height={400} data={[...this.state.bedBookingReports].reverse()}
-                                   margin={{top: 20, right: 20, bottom: 20, left: 20}}>
+                {this.state.bedBookingReports.length>0? (
+                    <ComposedChart
+                      width={1000}
+                      height={400}
+                      data={[...this.state.bedBookingReports].reverse()}
+                      margin={{top: 20, right: 20, bottom: 20, left: 20}}
+                    >
 
 
-                        <XAxis dataKey="date" tickFormatter={(value) => {
+                        <XAxis
+                          dataKey="date"
+                          tickFormatter={(value) => {
                             return moment(value).format('MMM YY')
-                        }} />
+                        }}
+                        />
                         <YAxis />
                         <Tooltip />
-                        {/*<Legend />*/}
-                        <Bar dataKey='count' barSize={35} fill='#0059b3' stroke="#0059b3" label={renderCustomBarLabel}/>
-                    </ComposedChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+                        {/* <Legend /> */}
+                        <Bar dataKey='count' barSize={35} fill='#0059b3' stroke="#0059b3" label={renderCustomBarLabel} />
+                    </ComposedChart>
+                  ):<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show" />}
             </Spin>
 
-            <Divider><Statistic title="Total Amounts" value={totalAmount?totalAmount:'0.00'} /></Divider>
-            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.bedBookingReports}/>
-        </div>
+            <Divider><Statistic title="Total Amounts" value={totalAmount || '0.00'} /></Divider>
+            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.bedBookingReports} />
+</div>
+)
     }
 }
 

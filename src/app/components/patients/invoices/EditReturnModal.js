@@ -4,6 +4,7 @@ import moment from "moment";
 import {CANCELINVOICE_GENERATE_OTP, CANCELINVOICE_RESENT_OTP, CANCELINVOICE_VERIFY_OTP} from "../../../constants/api";
 import {getAPI, postAPI} from "../../../utils/common";
 import {OTP_DELAY_TIME} from "../../../constants/dataKeys";
+
 class EditReturnModal extends React.Component {
     constructor(props) {
         super(props);
@@ -17,22 +18,22 @@ class EditReturnModal extends React.Component {
     }
 
     handleSubmitEditInvoice = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqData = {
+                const reqData = {
                     ...values,
                     practice: this.props.active_practiceId,
                 }
-                let successFn = function (data) {
+                const successFn = function (data) {
                     that.setState({
                         editIncoiceVisible: false,
                     });
                     that.editInvoiceData(that.props.editInvoice);
                     that.props.editInvoiceClose();
                 };
-                let errorFn = function () {
+                const errorFn = function () {
 
                 };
                 postAPI(CANCELINVOICE_VERIFY_OTP, reqData, successFn, errorFn);
@@ -41,37 +42,37 @@ class EditReturnModal extends React.Component {
     };
 
     editInvoiceData = (record) => {
-        let that = this;
+        const that = this;
         // let id = this.props.match.params.id;
         this.setState({
             editInvoice: record,
         }, function () {
-            that.props.history.push("/patient/" + record.patient_data.id + "/billing/invoices/edit/")
+            that.props.history.push(`/patient/${  record.patient_data.id  }/billing/invoices/edit/`)
         });
     };
 
 
     sendOTP() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
 
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
         getAPI(CANCELINVOICE_RESENT_OTP, successFn, errorFn);
     }
 
     render() {
-        let that = this;
+        const that = this;
         const {getFieldDecorator} = that.props.form;
         return(
             <Modal
-                visible={(that.state.editIncoiceVisible && that.props.editInvoice && that.props.editInvoice.id == that.props.invoice.id)}
-                title="Edit Invoice"
-                footer={null}
-                onOk={that.handleSubmitEditInvoice}
-                onCancel={that.props.editInvoiceClose}
+              visible={(that.state.editIncoiceVisible && that.props.editInvoice && that.props.editInvoice.id == that.props.invoice.id)}
+              title="Edit Invoice"
+              footer={null}
+              onOk={that.handleSubmitEditInvoice}
+              onCancel={that.props.editInvoiceClose}
                 
             >
                 <Form>
@@ -79,15 +80,18 @@ class EditReturnModal extends React.Component {
                         {getFieldDecorator('otp', {
                             rules: [{required: true, message: 'Please input Otp!'}],
                         })(
-                            <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                                   placeholder="Otp"
+                            <Input
+                              prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}} />}
+                              placeholder="Otp"
                             />,
                         )}
                     </Form.Item>
                     <Form.Item>
-                        {that.props.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
+                        {that.props.otpSent ? (
+<a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
                             Resend Otp ?
-                        </a> : null}
+</a>
+) : null}
                         <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitEditInvoice}>
                             Submit
                         </Button>&nbsp;

@@ -1,11 +1,11 @@
 import {Button, Card, Divider, Icon, Popconfirm, Table} from "antd";
 import React from "react";
-import {getAPI, interpolate, patchAPI} from "../../../utils/common";
-import {BLOG_EVENTS, BLOG_POST,SINGLE_EVENTS} from "../../../constants/api";
 import {Route, Switch} from "react-router";
 import {Link} from "react-router-dom";
-import AddEvent from "./AddEvent";
 import moment from "moment";
+import {getAPI, interpolate, patchAPI} from "../../../utils/common";
+import {BLOG_EVENTS, BLOG_POST,SINGLE_EVENTS} from "../../../constants/api";
+import AddEvent from "./AddEvent";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class DiseaseList extends React.Component {
@@ -24,8 +24,8 @@ export default class DiseaseList extends React.Component {
     }
 
     loadData =(page =1 )=> {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState(function (prevState) {
                 if (data.current == 1){
                     return{
@@ -41,33 +41,33 @@ export default class DiseaseList extends React.Component {
                 }
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading:false
             })
 
         };
-        let apiParams ={
-            page:page,
+        const apiParams ={
+            page,
         };
         getAPI(BLOG_EVENTS, successFn, errorFn, apiParams);
     };
 
     deleteObject(record) {
-        let that = this;
-        let reqData = {};
+        const that = this;
+        const reqData = {};
         reqData.is_active = false;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         patchAPI(interpolate(SINGLE_EVENTS, [record.id]), reqData, successFn, errorFn)
     }
 
     render() {
-        let that = this;
-        let columns = [{
+        const that = this;
+        const columns = [{
             title: 'Event Title',
             dataIndex: 'title',
             key: 'event_title'
@@ -81,30 +81,48 @@ export default class DiseaseList extends React.Component {
         }, {
             title: 'Actions',
             render: (item) => {
-                return <div>
-                    <Link to={"/web/event/edit/" + item.id}>Edit</Link>
-                    <Divider type="vertical"/>
-                    <Popconfirm title="Are you sure delete this item?"
-                                onConfirm={() => that.deleteObject(item)} okText="Yes" cancelText="No">
+                return (
+<div>
+                    <Link to={`/web/event/edit/${  item.id}`}>Edit</Link>
+                    <Divider type="vertical" />
+                    <Popconfirm
+                      title="Are you sure delete this item?"
+                      onConfirm={() => that.deleteObject(item)}
+                      okText="Yes"
+                      cancelText="No"
+                    >
                         <a>Delete</a>
                     </Popconfirm>
-                </div>
+</div>
+)
             }
         }];
-        return <div><Switch>
-            <Route exact path='/web/event/add'
-                   render={(route) => <AddEvent {...this.state} loadData={this.loadData} {...route}/>}/>
-            <Route exact path='/web/event/edit/:id'
-                   render={(route) => <AddEvent {...this.state} loadData={this.loadData} {...route}/>}/>
-            <Card title="Events"
-                  extra={<Link to={"/web/event/add"}><Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <Table loading={this.state.loading} pagination={false} dataSource={this.state.events} columns={columns}/>
+        return (
+<div><Switch>
+            <Route
+              exact
+              path='/web/event/add'
+              render={(route) => <AddEvent {...this.state} loadData={this.loadData} {...route} />}
+            />
+            <Route
+              exact
+              path='/web/event/edit/:id'
+              render={(route) => <AddEvent {...this.state} loadData={this.loadData} {...route} />}
+            />
+            <Card
+              title="Events"
+              extra={<Link to="/web/event/add"><Button type="primary"><Icon type="plus" /> Add</Button></Link>}
+            >
+                <Table loading={this.state.loading} pagination={false} dataSource={this.state.events} columns={columns} />
 
-                <InfiniteFeedLoaderButton loaderFunction={()=>this.loadData(this.state.next)}
-                                          loading={this.state.loading}
-                                          hidden={!this.state.next}/>
+                <InfiniteFeedLoaderButton
+                  loaderFunction={()=>this.loadData(this.state.next)}
+                  loading={this.state.loading}
+                  hidden={!this.state.next}
+                />
             </Card>
-        </Switch>
-        </div>
+     </Switch>
+</div>
+)
     }
 }

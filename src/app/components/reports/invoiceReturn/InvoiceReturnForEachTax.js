@@ -1,11 +1,12 @@
 import React from "react";
-import {getAPI} from "../../../utils/common";
-import {RETURN_INVOICE_REPORTS} from "../../../constants/api";
 import {Col, Divider, Empty, Row, Select, Spin, Statistic} from "antd";
 import {Cell, Pie, PieChart, Sector} from "recharts";
-import CustomizedTable from "../../common/CustomizedTable";
 import * as _ from "lodash";
+import {getAPI} from "../../../utils/common";
+import {RETURN_INVOICE_REPORTS} from "../../../constants/api";
+import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
+
 export default class InvoiceReturnForEachTax extends React.Component{
     constructor(props){
         super(props);
@@ -25,9 +26,10 @@ export default class InvoiceReturnForEachTax extends React.Component{
         loadMailingUserListForReportsMail(this);
 
     }
+
     componentWillReceiveProps (newProps) {
-        let that = this;
-        let {startDate, endDate, patient_groups, doctors, income_type, taxes, discount, products, treatments, exclude_cancelled} =this.props;
+        const that = this;
+        const {startDate, endDate, patient_groups, doctors, income_type, taxes, discount, products, treatments, exclude_cancelled} =this.props;
         if (startDate != newProps.startDate ||
             endDate != newProps.endDate ||
             patient_groups != newProps.patient_groups ||
@@ -65,18 +67,18 @@ export default class InvoiceReturnForEachTax extends React.Component{
 
 
     loadEachTaxInvoiceReturn = () =>{
-        let that = this;
+        const that = this;
         this.startLoading();
-        let {startDate, endDate} = this.state;
-        let {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
+        const {startDate, endDate} = this.state;
+        const {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
 
-        let apiParams = {
+        const apiParams = {
             practice:active_practiceId,
-            type:type,
+            type,
             start: startDate.format('YYYY-MM-DD'),
             end: endDate.format('YYYY-MM-DD'),
             // start:"2019-01-01",
-            is_cancelled: exclude_cancelled ? true : false,
+            is_cancelled: !!exclude_cancelled,
         };
 
         if (patient_groups){
@@ -106,13 +108,13 @@ export default class InvoiceReturnForEachTax extends React.Component{
             apiParams.products = products.toString()
         }
 
-        let successFn =function (data) {
+        const successFn =function (data) {
             that.setState({
                 report:data,
             })
             that.stopLoading();
         };
-        let errorFn = function (data) {
+        const errorFn = function (data) {
             that.stopLoading();
         };
 
@@ -128,14 +130,14 @@ export default class InvoiceReturnForEachTax extends React.Component{
 
 
     sendMail = (mailTo) => {
-        let {startDate, endDate} = this.state;
-        let {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
-        let apiParams = {
+        const {startDate, endDate} = this.state;
+        const {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
+        const apiParams = {
             practice:active_practiceId,
-            type:type,
+            type,
             start: startDate.format('YYYY-MM-DD'),
             end: endDate.format('YYYY-MM-DD'),
-            is_cancelled: exclude_cancelled ? true : false,
+            is_cancelled: !!exclude_cancelled,
         };
 
         if (patient_groups){
@@ -172,7 +174,7 @@ export default class InvoiceReturnForEachTax extends React.Component{
     render() {
 
 
-        let {report, loading, activeIndex } =this.state;
+        const {report, loading, activeIndex } =this.state;
 
         const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
         const renderActiveShape = (props) => {
@@ -193,26 +195,26 @@ export default class InvoiceReturnForEachTax extends React.Component{
                 <g>
 
                     <Sector
-                        cx={cx}
-                        cy={cy}
-                        innerRadius={innerRadius}
-                        outerRadius={outerRadius}
-                        startAngle={startAngle}
-                        endAngle={endAngle}
-                        fill={fill}
+                      cx={cx}
+                      cy={cy}
+                      innerRadius={innerRadius}
+                      outerRadius={outerRadius}
+                      startAngle={startAngle}
+                      endAngle={endAngle}
+                      fill={fill}
                     />
                     <Sector
-                        cx={cx}
-                        cy={cy}
-                        startAngle={startAngle}
-                        endAngle={endAngle}
-                        innerRadius={outerRadius + 6}
-                        outerRadius={outerRadius + 10}
-                        fill={fill}
+                      cx={cx}
+                      cy={cy}
+                      startAngle={startAngle}
+                      endAngle={endAngle}
+                      innerRadius={outerRadius + 6}
+                      outerRadius={outerRadius + 10}
+                      fill={fill}
                     />
-                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
-                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
-                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.name+','+ payload.total.toFixed(2)}</text>
+                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
+                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`${payload.name},${ payload.total.toFixed(2)}`}</text>
 
                     <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
                         {`(Rate ${(percent * 100).toFixed(2)}%)`}
@@ -239,7 +241,7 @@ export default class InvoiceReturnForEachTax extends React.Component{
         ];
 
 
-        let totalTaxAmount = report.reduce(function(prev, cur) {
+        const totalTaxAmount = report.reduce(function(prev, cur) {
             return prev + cur.total;
         }, 0);
 
@@ -249,8 +251,12 @@ export default class InvoiceReturnForEachTax extends React.Component{
                     <span style={{float: 'right'}}>
                         <p><small>E-Mail To:&nbsp;</small>
                             <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                                {this.state.mailingUsersList.map(item => <Select.Option
-                                    value={item.email}>{item.name}</Select.Option>)}
+                                {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                             </Select>
                         </p>
                     </span>
@@ -258,33 +264,35 @@ export default class InvoiceReturnForEachTax extends React.Component{
                 <Row>
                     <Col span={12} offset={6}>
                         <Spin size="large" spinning={loading}>
-                            {report.length>0?
-                                <PieChart width={800} height={400} >
+                            {report.length>0? (
+                                <PieChart width={800} height={400}>
                                     <Pie
-                                        activeIndex={activeIndex}
-                                        activeShape={renderActiveShape}
-                                        data={report}
-                                        cx={300}
-                                        dataKey="total"
-                                        cy={200}
-                                        innerRadius={60}
-                                        outerRadius={80}
-                                        fill="#8884d8"
-                                        onMouseEnter={this.onPieEnter}>
+                                      activeIndex={activeIndex}
+                                      activeShape={renderActiveShape}
+                                      data={report}
+                                      cx={300}
+                                      dataKey="total"
+                                      cy={200}
+                                      innerRadius={60}
+                                      outerRadius={80}
+                                      fill="#8884d8"
+                                      onMouseEnter={this.onPieEnter}
+                                    >
                                         {
-                                            report.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                            report.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} />)
                                         }
                                     </Pie>
-                                    {/*<Tooltip/>*/}
+                                    {/* <Tooltip/> */}
                                 </PieChart>
-                                :<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+                              )
+                                :<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show" />}
 
                         </Spin>
                     </Col>
                 </Row>
 
                 <Divider><Statistic title="Total" value={totalTaxAmount.toFixed(2)} /></Divider>
-                <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={report}/>
+                <CustomizedTable loading={this.state.loading} columns={columns} dataSource={report} />
             </div>
         )
     }

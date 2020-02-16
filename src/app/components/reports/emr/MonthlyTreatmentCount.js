@@ -1,9 +1,9 @@
 import React from "react";
 import {Divider, Statistic, Empty, Spin, Select} from "antd";
-import {EMR_REPORTS} from "../../../constants/api";
-import {getAPI, interpolate} from "../../../utils/common";
 import moment from "moment";
 import {ComposedChart, Bar, XAxis, YAxis, Tooltip} from 'recharts';
+import {EMR_REPORTS} from "../../../constants/api";
+import {getAPI, interpolate} from "../../../utils/common";
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -19,13 +19,14 @@ export default class MonthlyTreatmentCount extends React.Component {
         }
         this.loadTreatmentMonthly = this.loadTreatmentMonthly.bind(this);
     }
+
     componentDidMount() {
         this.loadTreatmentMonthly();
         loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.doctors!=newProps.doctors ||this.props.is_complete!=newProps.is_complete)
             this.setState({
                 startDate: newProps.startDate,
@@ -37,11 +38,11 @@ export default class MonthlyTreatmentCount extends React.Component {
     }
 
     loadTreatmentMonthly = () => {
-        let that = this;
+        const that = this;
         that.setState({
             loading:true,
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 treatmentMonthly: data.data,
                 total:data.total,
@@ -49,16 +50,16 @@ export default class MonthlyTreatmentCount extends React.Component {
             });
 
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             type:that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            is_complete:this.props.is_complete?true:false,
+            is_complete:!!this.props.is_complete,
         };
         if(this.props.doctors){
             apiParams.doctors=this.props.doctors.toString();
@@ -68,8 +69,8 @@ export default class MonthlyTreatmentCount extends React.Component {
 
 
     sendMail = (mailTo) => {
-        let that = this;
-        let apiParams = {
+        const that = this;
+        const apiParams = {
             type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -104,7 +105,7 @@ export default class MonthlyTreatmentCount extends React.Component {
             render: (text, record) => (
                 <span>
                 {moment(record.date).format('MMMM YYYY')}
-                  </span>
+                </span>
             ),
             export:(item,record)=>{moment(record.date).format('ll')},
         },{
@@ -116,36 +117,50 @@ export default class MonthlyTreatmentCount extends React.Component {
         const renderCustomBarLabel = ({ payload, x, y, width, height, value }) => {
             return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{value}</text>;
         };
-        return <div>
+        return (
+<div>
             <h2>Monthly Treatments Count
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
             </h2>
             <Spin size="large" spinning={this.state.loading}>
-                {this.state.treatmentMonthly.length>0?
-                <ComposedChart width={1000} height={400} data={[...this.state.treatmentMonthly].reverse()}
-                               margin={{top: 20, right: 20, bottom: 20, left: 20}}>
+                {this.state.treatmentMonthly.length>0? (
+                <ComposedChart
+                  width={1000}
+                  height={400}
+                  data={[...this.state.treatmentMonthly].reverse()}
+                  margin={{top: 20, right: 20, bottom: 20, left: 20}}
+                >
 
 
-                    <XAxis dataKey="date" tickFormatter={(value) => {
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(value) => {
                         return moment(value).format('MMM YY')
-                    }} />
+                    }}
+                    />
                     <YAxis />
                     <Tooltip />
-                    {/*<Legend />*/}
-                    <Bar dataKey='count' barSize={35} fill='#0059b3' stroke="#0059b3" label={renderCustomBarLabel}/>
-                </ComposedChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+                    {/* <Legend /> */}
+                    <Bar dataKey='count' barSize={35} fill='#0059b3' stroke="#0059b3" label={renderCustomBarLabel} />
+                </ComposedChart>
+              ):<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show" />}
             </Spin>
 
             <Divider><Statistic title="Total" value={this.state.total} /></Divider>
-            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.treatmentMonthly}/>
+            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.treatmentMonthly} />
 
-        </div>
+</div>
+)
     }
 }

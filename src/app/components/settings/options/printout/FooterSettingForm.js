@@ -23,22 +23,22 @@ class FooterSetting extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        let that = this;
-        let data = {};
+        const that = this;
+        const data = {};
         this.props.form.validateFields((err, formData) => {
             if (!err) {
-                let reqData = {
+                const reqData = {
                     type: this.state.type,
                     sub_type: this.state.sub_type,
                     id: this.state.print_setting.id, ...formData
                 }
                 console.log("test", reqData);
-                let successFn = function (data) {
+                const successFn = function (data) {
                     if (data) {
                         console.log(data)
                     }
                 };
-                let errorFn = function () {
+                const errorFn = function () {
                 };
                 postAPI(interpolate(PRACTICE_PRINT_SETTING_API, [this.props.active_practiceId]), reqData, successFn, errorFn);
             }
@@ -46,21 +46,21 @@ class FooterSetting extends React.Component {
     }
 
     loadData() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             if (data.length)
                 that.setState({
                     print_setting: data[0],
                 })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(PRACTICE_PRINT_SETTING_API, [this.props.active_practiceId, that.state.type, that.state.sub_type]), successFn, errorFn);
 
     }
 
     render() {
-        let that = this;
+        const that = this;
         const formItemLayout = {
             labelCol: {
                 xs: {span: 8},
@@ -76,28 +76,27 @@ class FooterSetting extends React.Component {
             },
         };
         const {getFieldDecorator} = this.props.form;
-        let PreviewParamsURL = '?preview=true&type=' + this.props.type + '&sub_type=' + this.props.sub_type;
+        let PreviewParamsURL = `?preview=true&type=${  this.props.type  }&sub_type=${  this.props.sub_type}`;
         if (this.state.print_setting) {
-            let keys = Object.keys(this.state.print_setting);
+            const keys = Object.keys(this.state.print_setting);
             keys.forEach(function (key) {
                 if (that.state.print_setting[key])
-                    PreviewParamsURL += '&' + key + '=' + that.state.print_setting[key]
+                    PreviewParamsURL += `&${  key  }=${  that.state.print_setting[key]}`
             });
         }
-        return (<Row gutter={16}>
+        return (
+<Row gutter={16}>
                 <Col span={12}>
-                    <Form onSubmit={this.handleSubmit}>
-
-
-                    </Form>
+                    <Form onSubmit={this.handleSubmit} />
                 </Col>
                 <Col span={12} style={{textAlign: 'center'}}>
                     <iframe
-                        src={makeURL(PRINT_PREVIEW_RENDER + PreviewParamsURL)}
-                        style={{width: '100%', height: '100%', boxShadow: '-2px 0px 4px #B8B8B8'}}/>
+                      src={makeURL(PRINT_PREVIEW_RENDER + PreviewParamsURL)}
+                      style={{width: '100%', height: '100%', boxShadow: '-2px 0px 4px #B8B8B8'}}
+                    />
                 </Col>
 
-            </Row>
+</Row>
 
         );
     }

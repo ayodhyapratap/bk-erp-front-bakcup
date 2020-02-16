@@ -1,8 +1,8 @@
 import React from "react";
 import {Alert, Button, Card, DatePicker, Form, Input, InputNumber, Row, Select} from "antd";
+import moment from "moment";
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../../../utils/common";
 import {PROMO_CODE, SEARCH_PATIENT} from "../../../../../constants/api";
-import moment from "moment";
 import {CURRENCY_TYPE} from "../../../../../constants/hardData";
 import {SUCCESS_MSG_TYPE} from "../../../../../constants/dataKeys";
 
@@ -18,15 +18,15 @@ class AddOrEdiPromoCode extends React.Component {
 
 
     loadPatient = (value) => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             if (data.results.length > 0) {
                 that.setState({
                     patientList: data.results,
                 })
             }
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         if (value) {
             getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
@@ -35,16 +35,16 @@ class AddOrEdiPromoCode extends React.Component {
     };
 
     handleSubmit = (e) => {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true
         });
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqData = values;
+                const reqData = values;
                 reqData.practice = that.props.active_practiceId;
-                let successFn = function (data) {
+                const successFn = function (data) {
                     that.setState({
                         loading: false,
                     });
@@ -55,7 +55,7 @@ class AddOrEdiPromoCode extends React.Component {
                         that.props.history.replace("/settings/loyalty");
                     }
                 };
-                let errorFn = function () {
+                const errorFn = function () {
 
                 };
 
@@ -75,61 +75,66 @@ class AddOrEdiPromoCode extends React.Component {
         const {getFieldDecorator} = this.props.form;
 
 
-        return (<div>
+        return (
+<div>
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Item label={"Promo Code"} {...formItemLayout} key={'promo_code'}>
+                    <Form.Item label="Promo Code" {...formItemLayout} key="promo_code">
                         {getFieldDecorator('promo_code', {initialValue: ''})
-                        (<Input placeholder={"Promo Code"}/>)
-                        }
+                        (<Input placeholder="Promo Code" />)}
                     </Form.Item>
 
-                    <Form.Item label={"Promo Code Value"} {...formItemLayout} key={'code_value'}>
+                    <Form.Item label="Promo Code Value" {...formItemLayout} key="code_value">
                         {getFieldDecorator('code_value', {initialValue: ''})
-                        (<InputNumber placeholder={"Promo Code Value"}/>)
-                        }
+                        (<InputNumber placeholder="Promo Code Value" />)}
                     </Form.Item>
 
-                    <Form.Item label={"Code Type"} {...formItemLayout} key={'code_type'}>
+                    <Form.Item label="Code Type" {...formItemLayout} key="code_type">
                         {getFieldDecorator('code_type', {initialValue: ''})
-                        (<Select placeholder={"Code Type"} style={{width: '100%'}}>
+                        (<Select placeholder="Code Type" style={{width: '100%'}}>
 
                             {CURRENCY_TYPE.map(option => (
                                 <Select.Option
-                                    value={option.value}>{option.label} ({option.value})</Select.Option>))}
-                        </Select>)
-                        }
+                                  value={option.value}
+                                >{option.label} ({option.value})
+                                </Select.Option>
+))}
+                         </Select>)}
                     </Form.Item>
 
-                    <Form.Item label={"Min Order"} {...formItemLayout} key={'minimum_order'}>
+                    <Form.Item label="Min Order" {...formItemLayout} key="minimum_order">
                         {getFieldDecorator('minimum_order', {initialValue: ''})
-                        (<InputNumber placeholder={"Min Order"}/>)
-                        }
+                        (<InputNumber placeholder="Min Order" />)}
                     </Form.Item>
 
-                    <Form.Item label={"Max Discount"} {...formItemLayout} key={'maximum_discount'}>
+                    <Form.Item label="Max Discount" {...formItemLayout} key="maximum_discount">
                         {getFieldDecorator('maximum_discount', {initialValue: ''})
-                        (<InputNumber placeholder={"Min Order"}/>)
-                        }
+                        (<InputNumber placeholder="Min Order" />)}
                     </Form.Item>
 
-                    <Form.Item label={"Expiry Date"} {...formItemLayout} key={'expiry_date'}>
+                    <Form.Item label="Expiry Date" {...formItemLayout} key="expiry_date">
 
                         {getFieldDecorator('expiry_date', {initialValue: moment()})
-                        (<DatePicker format="YYYY/MM/DD" allowClear={false}/>)
-                        }
+                        (<DatePicker format="YYYY/MM/DD" allowClear={false} />)}
                     </Form.Item>
 
 
-                    <Form.Item label={"Patients"} {...formItemLayout} key={'patient'}>
+                    <Form.Item label="Patients" {...formItemLayout} key="patient">
                         {getFieldDecorator('patients', {initialValue: []})
-                        (<Select mode={"multiple"}
-                                 placeholder="Select Patient" style={{width: '100%'}}
-                                 showSearch onSearch={this.loadPatient} filterOption={false}>
+                        (<Select
+                          mode="multiple"
+                          placeholder="Select Patient"
+                          style={{width: '100%'}}
+                          showSearch
+                          onSearch={this.loadPatient}
+                          filterOption={false}
+                        >
                             {patientList.map(option => (
                                 <Select.Option
-                                    value={option.id}>{option.user.first_name} ({option.custom_id})</Select.Option>))}
-                        </Select>)
-                        }
+                                  value={option.id}
+                                >{option.user.first_name} ({option.custom_id})
+                                </Select.Option>
+))}
+                         </Select>)}
                         <span className="ant-form-text">If no patient is selected, promo code will be available to all patients.</span>
                     </Form.Item>
 
@@ -137,14 +142,15 @@ class AddOrEdiPromoCode extends React.Component {
                         <Button type="primary" htmlType="submit" style={{margin: 5}}>
                             Submit
                         </Button>
-                        {this.props.history ?
+                        {this.props.history ? (
                             <Button style={{margin: 5}} onClick={() => this.props.history.goBack()}>
                                 Cancel
-                            </Button> : null}
+                            </Button>
+                          ) : null}
                     </Form.Item>
 
                 </Form>
-            </div>
+</div>
         )
     }
 }

@@ -1,6 +1,6 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Card, Divider, Form, Modal, Popconfirm} from "antd";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {INPUT_FIELD, NUMBER_FIELD, SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
 import {ROOM_TYPE} from "../../../../constants/api";
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../../utils/common";
@@ -29,8 +29,8 @@ class RoomTypes extends React.Component {
     }
 
     loadData(deleted = false) {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log("get table");
             if (deleted) {
                 that.setState({
@@ -44,7 +44,7 @@ class RoomTypes extends React.Component {
                 })
             }
         };
-        let errorFn = function () {
+        const errorFn = function () {
             if (deleted) {
                 that.setState({
                     deletedLoading: false
@@ -66,7 +66,7 @@ class RoomTypes extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -84,16 +84,16 @@ class RoomTypes extends React.Component {
     }
 
     deleteObject(record, type) {
-        let that = this;
-        let reqData = record;
+        const that = this;
+        const reqData = record;
         reqData.is_active = type;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
             if (that.state.showDeleted) {
                 that.loadData(true);
             }
         }
-        let errorFn = function () {
+        const errorFn = function () {
         };
         postAPI(interpolate(ROOM_TYPE, [this.props.active_practiceId]), reqData, successFn, errorFn)
     }
@@ -107,7 +107,7 @@ class RoomTypes extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const columns = [{
             title: 'Room Type',
             dataIndex: 'name',
@@ -124,20 +124,32 @@ class RoomTypes extends React.Component {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-                record.is_active ? <span>
+                record.is_active ? (
+<span>
 
               <a onClick={() => this.editTax(record)}>  Edit</a>
-                <Divider type="vertical"/>
-                <Popconfirm title="Are you sure to delete this?"
-                            onConfirm={() => that.deleteObject(record, false)} okText="Yes" cancelText="No">
+                <Divider type="vertical" />
+                <Popconfirm
+                  title="Are you sure to delete this?"
+                  onConfirm={() => that.deleteObject(record, false)}
+                  okText="Yes"
+                  cancelText="No"
+                >
                   <a>Delete</a>
-              </Popconfirm>
-              </span> : <span>
-                    <Popconfirm title="Are you sure show this?"
-                                onConfirm={() => that.deleteObject(record, true)} okText="Yes" cancelText="No">
+                </Popconfirm>
+</span>
+) : (
+<span>
+                    <Popconfirm
+                      title="Are you sure show this?"
+                      onConfirm={() => that.deleteObject(record, true)}
+                      okText="Yes"
+                      cancelText="No"
+                    >
                   <a>Show</a>
-              </Popconfirm>
-                </span>
+                    </Popconfirm>
+</span>
+)
             ),
         }];
         const fields = [{
@@ -180,14 +192,14 @@ class RoomTypes extends React.Component {
             min: 0
         },];
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 that.handleCancel();
                 that.loadData();
                 console.log(data);
                 console.log("sucess");
                 displayMessage(SUCCESS_MSG_TYPE, "success");
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(ROOM_TYPE, [this.props.active_practiceId]),
@@ -199,31 +211,37 @@ class RoomTypes extends React.Component {
             "value": this.state.editObj.id
         }];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>
+        return (
+<div>
             <h2>Room Types</h2>
             <Card>
-                <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields}/>
-                <Divider/>
-                <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.rooms}/>
-                {/*{this.state.showDeleted ?*/}
-                {/*<div>*/}
-                {/*<CustomizedTable loading={this.state.deletedLoading} columns={columns}*/}
-                {/*dataSource={this.state.deletedExpenses}/>*/}
-                {/*</div> :*/}
-                {/*<h4><a onClick={() => this.showDeletedExpenses()}>Show Deleted Expenses</a></h4>}*/}
+                <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields} />
+                <Divider />
+                <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.rooms} />
+                {/* {this.state.showDeleted ? */}
+                {/* <div> */}
+                {/* <CustomizedTable loading={this.state.deletedLoading} columns={columns} */}
+                {/* dataSource={this.state.deletedExpenses}/> */}
+                {/* </div> : */}
+                {/* <h4><a onClick={() => this.showDeletedExpenses()}>Show Deleted Expenses</a></h4>} */}
             </Card>
             <Modal
-                visible={this.state.visible}
-                footer={null}
-                onCancel={this.handleCancel}
+              visible={this.state.visible}
+              footer={null}
+              onCancel={this.handleCancel}
             >
 
-                <TestFormLayout title="Edit Room Type" defaultValues={editFormDefaultValues} formProp={formProp}
-                                fields={editfields}/>
+                <TestFormLayout
+                  title="Edit Room Type"
+                  defaultValues={editFormDefaultValues}
+                  formProp={formProp}
+                  fields={editfields}
+                />
                 <Button key="back" onClick={this.handleCancel}>Return</Button>,
 
             </Modal>
-        </div>
+</div>
+)
     }
 }
 

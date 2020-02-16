@@ -1,4 +1,4 @@
-/***
+/** *
  * Status Constants
  * */
 
@@ -7,7 +7,7 @@ export const WARNING_MSG_TYPE = 'warning';
 export const ERROR_MSG_TYPE = 'error';
 export const INFO_MSG_TYPE = 'info';
 
-/***
+/** *
  * Data Keys Constants
  * */
 export const USERNAME = 'username';
@@ -25,7 +25,7 @@ export const PRACTICE = 'practice';
 export const MEDICAL_HISTORY_KEY = 'Medical History';
 export const PATIENT_GROUP_KEY = 'Patient Group';
 
-/***
+/** *
  * Form Data Types
  * */
 export const INPUT_FIELD = 'input';
@@ -52,15 +52,15 @@ export const SMS_FIELD = 'sms_field';
 export const DIVIDER_FIELD = 'divider_field';
 export const MAIL_TEMPLATE_FIELD = 'mail_field';
 export const LABEL_FIELD ='label_field';
-/***
+/** *
  *Role
- **/
+ * */
 export const DOCTORS_ROLE = '3';
 export const CALENDAR_SETTINGS = 'calendar_settings';
 
-/***Reports***/
+/** *Reports** */
 
-/*Patient Reports*/
+/* Patient Reports */
 export const NEW_PATIENTS='DETAILED';
 export const DAILY_NEW_PATIENTS='DAILY';
 export const EXPIRING_MEMBERSHIP='EXPIRED';
@@ -71,7 +71,7 @@ export const ACTIVE_PATIENTS='ACTIVE';
 export const FOLLOW_UP='FOLLOW_UP';
 export const MEDICINE='MEDICINE';
 
-/*Appointment Reports*/
+/* Appointment Reports */
 export const ALL_APPOINTMENT='ALL';
 export const APPOINTMENT_FOR_EACH_CATEGORY='CATEGORY' ;
 export const CANCELLATION_NUMBERS='CANCEL_NUMBERS';
@@ -85,7 +85,7 @@ export const APPOINTMENT_FOR_EACH_PATIENT_GROUP='PATIENT_GROUPS';
 export const APPOINTMENT_FOR_PATIENT_CONVERSION='CONVERSION_REPORT';
 
 
-/*Amount Due Reports*/
+/* Amount Due Reports */
 export const TOTAL_AMOUNT_DUE='ALL';
 export const AGEING_AMOUNT_DUE='AGEING';
 export const AMOUNT_DUE_PER_DOCTOR='DOCTOR';
@@ -93,41 +93,41 @@ export const AMOUNT_DUE_PER_DOCTOR='DOCTOR';
 // export const UNSETTLED_INVOICE='d';
 
 
-/*EMR Reports*/
+/* EMR Reports */
 export const ALL_TREATMENTS='ALL';
 export const DAILY_TREATMENT_COUNT='DAILY';
 export const TREATMENTS_FOR_EACH_DOCTOR='DOCTOR';
 export const MONTHLY_TREATMENT_COUNT='MONTHLY';
 export const TREATMENT_FOR_EACH_CATEGORY='CATEGORY';
 
-/*Inventory Retails*/
+/* Inventory Retails */
 export const ALL='ALL';
 
-/*Expenses Reports*/
+/* Expenses Reports */
 export const ALL_EXPENSES ='ALL';
 export const DAILY_EXPENSES ='DAILY';
 export const MONTHLY_EXPENSES ='MONTHLY';
 export const EXPENSES_EACH_TYPE='EXPENSE_TYPE';
 
-/*Inventory Reports*/
+/* Inventory Reports */
 export const ALL_INVENTORY='ALL';
 export const DAILY_INVENTORY='DAILY';
 export const MONTHLY_INVENTORY='MONTHLY';
 export const TOP_INVENTORY='TOP';
 
-/** Bed Booking Reports**/
+/** Bed Booking Reports* */
 export const DAILY_BOOKING_COUNT='DAILY';
 export const MONTHLY_BOOKING_COUNT='MONTHLY';
 export const MEDICINE_USAGE_COUNT='MEDICINE_COUNT';
 export const BED_BOOKING_PACKAGE_COUNT='BED_PACKAGE_COUNT';
 
-/** MLM Reports***/
+/** MLM Reports** */
 export const MARGIN_TYPE_WISE='MARGIN';
 export const PRODUCT_WISE='PRODUCT';
 export const WALLET_BALANCE_AMOUNT='WALLET';
 export const AGENT_TREE_VIEW='AGENTVIEW'
 
-/** Payments Reports**/
+/** Payments Reports* */
 export const ALL_PAYMENTS='ALL';
 export const PAYMENT_RECEIVED_PATIENT_GROUP='PATIENT_GROUPS';
 export const PATIENTS_UNSETTLED_ADVANCE='UNSETTLED_ADVANCE';
@@ -150,7 +150,7 @@ export const PAYMENT_SETTLEMENT_PER_DOCTOR='SETTLEMENT_DOCTOR';
 export const PAYMENT_REFUND='REFUND';
 
 
-/*Income Reports*/
+/* Income Reports */
 export const ALL_INVOICE='ALL';
 export const DAILY_INCOME="DAILY";
 export const MONTHLY_INCOME="MONTHLY";
@@ -160,7 +160,7 @@ export const PROCEDURE_INCOME="PROCEDURE";
 export const PRODUCT_INCOME="PRODUCT";
 export const PATIENT_GROUPS_INCOME="PATIENT_GROUPS";
 
-/*Invoice Return Reports */
+/* Invoice Return Reports */
 export const ALL_INVOICE_RETURN='ALL';
 export const DAILY_WISE_RETURN_INVOICE='DAILY';
 export const MONTHLY_WISE_RETURN_INVOICE='MONTHLY';

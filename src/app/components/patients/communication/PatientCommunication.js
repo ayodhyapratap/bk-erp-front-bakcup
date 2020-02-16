@@ -10,7 +10,7 @@ class PatientCommunication extends React.Component {
     }
 
     render() {
-        return <PatientCommunicationSetting  {...this.state} {...this.props} />
+        return <PatientCommunicationSetting {...this.state} {...this.props} />
     }
 }
 

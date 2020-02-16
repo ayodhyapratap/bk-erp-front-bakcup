@@ -1,8 +1,8 @@
 import React from "react";
-import {getAPI} from "../../../utils/common";
-import {RETURN_INVOICE_REPORTS} from "../../../constants/api";
 import {Select, Table} from "antd";
 import * as _ from 'lodash';
+import {getAPI} from "../../../utils/common";
+import {RETURN_INVOICE_REPORTS} from "../../../constants/api";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class AllReturnedInvoice extends React.Component{
@@ -24,7 +24,7 @@ export default class AllReturnedInvoice extends React.Component{
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate ||
             this.props.endDate != newProps.endDate ||
             this.props.patient_groups != newProps.patient_groups ||
@@ -59,17 +59,17 @@ export default class AllReturnedInvoice extends React.Component{
     };
 
     loadReturnInvoice (){
-       let that = this;
+       const that = this;
        this.startLoading();
-        let {startDate, endDate} = this.state;
-        let {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
+        const {startDate, endDate} = this.state;
+        const {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
 
-        let apiParams = {
+        const apiParams = {
             practice:active_practiceId,
-            type:type,
+            type,
             start: startDate.format('YYYY-MM-DD'),
             end: endDate.format('YYYY-MM-DD'),
-            is_cancelled: exclude_cancelled ? true : false,
+            is_cancelled: !!exclude_cancelled,
         };
 
         if (patient_groups){
@@ -99,13 +99,13 @@ export default class AllReturnedInvoice extends React.Component{
             apiParams.products = products.toString()
         }
 
-        let successFn =function (data) {
+        const successFn =function (data) {
             that.setState({
                 report:data,
             })
             that.stopLoading();
         };
-        let errorFn = function (data) {
+        const errorFn = function (data) {
             that.stopLoading();
         };
 
@@ -113,14 +113,14 @@ export default class AllReturnedInvoice extends React.Component{
     };
 
     sendMail = (mailTo) => {
-        let {startDate, endDate} = this.state;
-        let {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
-        let apiParams = {
+        const {startDate, endDate} = this.state;
+        const {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
+        const apiParams = {
             practice:active_practiceId,
-            type:type,
+            type,
             start: startDate.format('YYYY-MM-DD'),
             end: endDate.format('YYYY-MM-DD'),
-            is_cancelled: exclude_cancelled ? true : false,
+            is_cancelled: !!exclude_cancelled,
         };
 
         if (patient_groups){
@@ -156,7 +156,7 @@ export default class AllReturnedInvoice extends React.Component{
 
 
     render() {
-        let {report, loading} = this.state;
+        const {report, loading} = this.state;
         const reportData = [];
         for (let i = 1; i <= report.length; i++) {
             reportData.push({s_no: i,...report[i-1]});
@@ -215,27 +215,32 @@ export default class AllReturnedInvoice extends React.Component{
 
 
 
-        return (<div>
+        return (
+<div>
                 <h2>All Returned Invoices
                     <span style={{float: 'right'}}>
                         <p><small>E-Mail To:&nbsp;</small>
                             <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                                {this.state.mailingUsersList.map(item => <Select.Option
-                                    value={item.email}>{item.name}</Select.Option>)}
+                                {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                             </Select>
                         </p>
                     </span>
                 </h2>
 
                 <Table
-                    loading={loading}
-                    rowKey={(record)=>record.s_no}
-                    pagination={false}
-                    columns={columns}
-                    expandedRowRender={(record) => <ReportInnerTable record={[...record.inventory, ...record.procedure]}/>}
-                    dataSource={reportData}
+                  loading={loading}
+                  rowKey={(record)=>record.s_no}
+                  pagination={false}
+                  columns={columns}
+                  expandedRowRender={(record) => <ReportInnerTable record={[...record.inventory, ...record.procedure]} />}
+                  dataSource={reportData}
                 />
-            </div>
+</div>
         );
     }
 }
@@ -274,7 +279,7 @@ function ReportInnerTable(item) {
     ];
     return(
         <div>
-            <Table  columns={columns} dataSource={_.get(item,'record')} pagination={false}/>
+            <Table columns={columns} dataSource={_.get(item,'record')} pagination={false} />
         </div>
     )
 }

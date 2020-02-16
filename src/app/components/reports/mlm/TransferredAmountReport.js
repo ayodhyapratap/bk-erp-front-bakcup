@@ -1,12 +1,13 @@
 import React from "react";
 import {Col, Empty, Row, Select, Spin, Typography} from "antd";
+import moment from "moment"
+import {Cell, Pie, PieChart, Sector} from "recharts";
 import {MLM_Reports} from "../../../constants/api";
 import {getAPI } from "../../../utils/common";
-import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
-import {Cell, Pie, PieChart, Sector} from "recharts";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
+
 const {Text} = Typography;
 
 export default class TransferredAmountReport extends React.Component {
@@ -23,13 +24,14 @@ export default class TransferredAmountReport extends React.Component {
         }
         this.loadMlmReport = this.loadMlmReport.bind(this);
     }
+
     componentDidMount() {
         this.loadMlmReport();
         loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.agents!=newProps.agents)
             this.setState({
                 startDate: newProps.startDate,
@@ -41,23 +43,23 @@ export default class TransferredAmountReport extends React.Component {
     }
 
     loadMlmReport() {
-        let that = this;
+        const that = this;
         this.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report: data.data,
                 reportSummary: data.summary,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -78,8 +80,8 @@ export default class TransferredAmountReport extends React.Component {
 
 
     sendMail = (mailTo) => {
-        let that = this;
-        let apiParams={
+        const that = this;
+        const apiParams={
             practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -94,7 +96,7 @@ export default class TransferredAmountReport extends React.Component {
 
 
     render() {
-        let that =this;
+        const that =this;
         const {report} =this.state;
         const reportData = [];
         for (let i = 1; i <= report.length; i++) {
@@ -175,26 +177,26 @@ export default class TransferredAmountReport extends React.Component {
             return (
                 <g>
                     <Sector
-                        cx={cx}
-                        cy={cy}
-                        innerRadius={innerRadius}
-                        outerRadius={outerRadius}
-                        startAngle={startAngle}
-                        endAngle={endAngle}
-                        fill={fill}
+                      cx={cx}
+                      cy={cy}
+                      innerRadius={innerRadius}
+                      outerRadius={outerRadius}
+                      startAngle={startAngle}
+                      endAngle={endAngle}
+                      fill={fill}
                     />
                     <Sector
-                        cx={cx}
-                        cy={cy}
-                        startAngle={startAngle}
-                        endAngle={endAngle}
-                        innerRadius={outerRadius + 6}
-                        outerRadius={outerRadius + 10}
-                        fill={fill}
+                      cx={cx}
+                      cy={cy}
+                      startAngle={startAngle}
+                      endAngle={endAngle}
+                      innerRadius={outerRadius + 6}
+                      outerRadius={outerRadius + 10}
+                      fill={fill}
                     />
-                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
-                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
-                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.ledger_type+','+ payload.total}</text>
+                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
+                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`${payload.ledger_type},${ payload.total}`}</text>
                     <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
                         {`(Rate ${(percent * 100).toFixed(2)}%)`}
                     </text>
@@ -202,59 +204,66 @@ export default class TransferredAmountReport extends React.Component {
             );
         };
 
-        var totalAmount = this.state.reportSummary.reduce(function(prev, cur) {
+        const totalAmount = this.state.reportSummary.reduce(function(prev, cur) {
             return prev + cur.total;
         }, 0);
-        return <div>
+        return (
+<div>
             <h2>ALl MLM
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
             </h2>
             <Row>
                 <Col span={12} offset={6}>
-                    <Spin  size="large" spinning={this.state.loading}>
-                        {this.state.reportSummary.length>0?
+                    <Spin size="large" spinning={this.state.loading}>
+                        {this.state.reportSummary.length>0? (
                             <PieChart width={800} height={400}>
                                 <Pie
-                                    activeIndex={this.state.activeIndex}
-                                    activeShape={renderActiveShape}
-                                    data={this.state.reportSummary}
-                                    cx={300}
-                                    dataKey="total"
-                                    cy={200}
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    onMouseEnter={this.onPieEnter}>
+                                  activeIndex={this.state.activeIndex}
+                                  activeShape={renderActiveShape}
+                                  data={this.state.reportSummary}
+                                  cx={300}
+                                  dataKey="total"
+                                  cy={200}
+                                  innerRadius={60}
+                                  outerRadius={80}
+                                  fill="#8884d8"
+                                  onMouseEnter={this.onPieEnter}
+                                >
                                     {
-                                        this.state.reportSummary.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                        this.state.reportSummary.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} />)
                                     }
                                 </Pie>
-                                {/*<Tooltip/>*/}
-                            </PieChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>
-
-                        }
+                                {/* <Tooltip/> */}
+                            </PieChart>
+                          ):<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show" />}
                     </Spin>
                 </Col>
             </Row>
 
-            {/*<Row>*/}
-            {/*    <Col span={12} offset={6} style={{textAlign:"center"}}>*/}
-            {/*        <Statistic title="Total Expense (INR)" value={totalAmount?totalAmount.toFixed(2):'0.00'} />*/}
-            {/*        <br/>*/}
-            {/*    </Col>*/}
-            {/*</Row>*/}
+            {/* <Row> */}
+            {/*    <Col span={12} offset={6} style={{textAlign:"center"}}> */}
+            {/*        <Statistic title="Total Expense (INR)" value={totalAmount?totalAmount.toFixed(2):'0.00'} /> */}
+            {/*        <br/> */}
+            {/*    </Col> */}
+            {/* </Row> */}
 
             <CustomizedTable
-                loading={this.state.loading}
-                columns={columns}
-                dataSource={reportData}/>
-        </div>
+              loading={this.state.loading}
+              columns={columns}
+              dataSource={reportData}
+            />
+</div>
+)
     }
 }

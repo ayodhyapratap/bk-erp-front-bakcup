@@ -1,11 +1,11 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Card, Form} from "antd";
+import {Route} from "react-router";
+import {Redirect} from "react-router-dom";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import { INPUT_FIELD, SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
 import {displayMessage,  interpolate} from "../../../../utils/common";
 import {AGENT_ROLES} from "../../../../constants/api";
-import {Route} from "react-router";
-import {Redirect} from "react-router-dom";
 
 
 export default class AddOrEditAgentRoles extends React.Component {
@@ -22,9 +22,9 @@ export default class AddOrEditAgentRoles extends React.Component {
         console.log(this.state);
         console.log("prop",this.props);
 
-        let that = this;
-        let AgentRolesForm = Form.create()(DynamicFieldsForm);
-        let fields = [{
+        const that = this;
+        const AgentRolesForm = Form.create()(DynamicFieldsForm);
+        const fields = [{
             label: "Role Name",
             key: 'name',
             required: true,
@@ -32,15 +32,15 @@ export default class AddOrEditAgentRoles extends React.Component {
             type: INPUT_FIELD
         }];
 
-        let formProp = {
+        const formProp = {
             method: "post",
             action: interpolate(AGENT_ROLES, [that.props.active_practiceId]),
-            successFn: function () {
+            successFn () {
                 displayMessage(SUCCESS_MSG_TYPE, "Roles Saved Successfully");
                 if (that.props.loadData)
                     that.props.loadData();
                 that.props.history.push('/settings/agent-roles-roles');
-            }, errorFn: function () {
+            }, errorFn () {
 
             }
         }
@@ -48,13 +48,13 @@ export default class AddOrEditAgentRoles extends React.Component {
         let editformProp;
         if (this.state.editRole) {
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     console.log(data);
                     that.props.loadData();
                     that.changeRedirect();
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(AGENT_ROLES, [this.props.match.params.id]),
@@ -64,25 +64,40 @@ export default class AddOrEditAgentRoles extends React.Component {
         }
 
 
-        let defaultValues = [];
+        const defaultValues = [];
         if (that.props.editRole) {
             defaultValues.push({key: 'id', value: that.props.editRole.id})
         }
 
 
-        return <div>
+        return (
+<div>
             <Card>
-                <Route exact path="/settings/agent-roles/:id/edit"
-                    render={(route) => (this.props.match.params.id ?
-                            <AgentRolesForm title={"Edit Adviser Roles"} fields={fields} formProp={formProp} defaultValues={defaultValues} {...this.props} {...route} changeRedirect={this.changeRedirect}/>:
-                            <Redirect to={"/settings/agent-roles-roles"} />
-                        )}/>
+                <Route
+                  exact
+                  path="/settings/agent-roles/:id/edit"
+                  render={(route) => (this.props.match.params.id ?
+                            <AgentRolesForm title="Edit Adviser Roles" fields={fields} formProp={formProp} defaultValues={defaultValues} {...this.props} {...route} changeRedirect={this.changeRedirect} />:
+                            <Redirect to="/settings/agent-roles-roles" />
+                        )}
+                />
 
-                <Route exact path='/settings/agent-roles/add'
-                       render={(route) => <AgentRolesForm defaultValues={defaultValues} title="Add Adviser Roles" changeRedirect={this.changeRedirect}
-                       formProp={formProp} fields={fields}/>}/>
+                <Route
+                  exact
+                  path='/settings/agent-roles/add'
+                  render={(route) => (
+<AgentRolesForm
+  defaultValues={defaultValues}
+  title="Add Adviser Roles"
+  changeRedirect={this.changeRedirect}
+  formProp={formProp}
+  fields={fields}
+/>
+)}
+                />
             </Card>
-            {this.state.redirect && <Redirect to={'/settings/agent-roles-roles'}/>}
-        </div>
+            {this.state.redirect && <Redirect to="/settings/agent-roles-roles" />}
+</div>
+)
     }
 }

@@ -1,6 +1,7 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon, Row} from "antd";
+import {Redirect} from 'react-router-dom'
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     CHECKBOX_FIELD,
     EMAIL_FIELD,
@@ -12,7 +13,6 @@ import {
 } from "../../../../constants/dataKeys";
 import {PRACTICE} from "../../../../constants/api";
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
-import {Redirect} from 'react-router-dom'
 import {LANGUAGE, SMS_LANGUAGE_CONFIG_PARAM} from "../../../../constants/hardData";
 import {loadConfigParameters} from "../../../../utils/clinicUtils";
 
@@ -30,22 +30,22 @@ class EditPracticeDetail extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
     }
 
     componentDidMount() {
-        var that = this;
-        let successFn = function (data) {
-            let countries = data.countries;
+        const that = this;
+        const successFn = function (data) {
+            const {countries} = data;
             that.setState({
-                countries: countries,
+                countries,
                 practiceDetail: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(PRACTICE, [this.props.practiceId]), successFn, errorFn);
         loadConfigParameters(this, [SMS_LANGUAGE_CONFIG_PARAM])
@@ -53,7 +53,7 @@ class EditPracticeDetail extends React.Component {
 
 
     render() {
-        let specialisationsOptions = [];
+        const specialisationsOptions = [];
         if (this.state.practiceDetail) {
             this.state.practiceDetail.specialisations.forEach(function (specialisation) {
                 specialisationsOptions.push({label: (specialisation.name), value: specialisation.id});
@@ -184,13 +184,13 @@ class EditPracticeDetail extends React.Component {
             }];
             const TestFormLayout = Form.create()(DynamicFieldsForm);
             const formProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     if (this.props.history){
                         this.props.history.replace('/settings/clinics')
                     }
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(PRACTICE, [this.props.practiceId]),
@@ -198,14 +198,21 @@ class EditPracticeDetail extends React.Component {
             };
 
 
-            return <Row>
+            return (
+<Row>
                 <Card>
-                    <TestFormLayout title="Edit Practice Details" changeRedirect={this.changeRedirect}
-                                    formProp={formProp} fields={fields} {...this.props}/>
-                    {this.state.redirect && <Redirect to='/settings/clinics'/>}
+                    <TestFormLayout
+                      title="Edit Practice Details"
+                      changeRedirect={this.changeRedirect}
+                      formProp={formProp}
+                      fields={fields}
+                      {...this.props}
+                    />
+                    {this.state.redirect && <Redirect to='/settings/clinics' />}
                 </Card>
-            </Row>
-        } else return <Card loading={true}/>
+</Row>
+)
+        } return <Card loading />
     }
 }
 

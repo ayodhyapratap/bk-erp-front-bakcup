@@ -5,6 +5,7 @@ import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {displayMessage, getAPI, interpolate} from "../../../../utils/common";
 import {INPUT_FIELD, SUCCESS_MSG_TYPE} from "../../../../constants/dataKeys";
 import {MEETING_USER, SINGLE_POST} from "../../../../constants/api";
+
 export default class AddOrEditZoomUser extends React.Component{
     constructor(props){
         super(props);
@@ -15,30 +16,30 @@ export default class AddOrEditZoomUser extends React.Component{
     }
 
     componentWillMount() {
-        let that=this;
+        const that=this;
         if (that.props.match.params.id){
             this.loadData();
         }
     }
 
     changeRedirect(){
-        var redirectVar=this.state.redirect;
+        const redirectVar=this.state.redirect;
         this.setState({
             redirect:  !redirectVar,
         })  ;
     }
 
     loadData(){
-        let that =this;
-        let successFn = function (data) {
+        const that =this;
+        const successFn = function (data) {
             that.setState({
                 editZoomData:data[0],
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
-        let reqData={
+        const reqData={
             id:that.props.match.params.id
         };
         getAPI(MEETING_USER ,successFn, errorFn,reqData);
@@ -47,7 +48,7 @@ export default class AddOrEditZoomUser extends React.Component{
     }
 
     render() {
-        let that=this;
+        const that=this;
         const fields=[{
             label:'User Name',
             key:'username',
@@ -69,7 +70,7 @@ export default class AddOrEditZoomUser extends React.Component{
 
         if(this.state.editZoomData) {
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     that.setState({
                         redirect: true
@@ -79,7 +80,7 @@ export default class AddOrEditZoomUser extends React.Component{
                         that.props.history.replace("/settings/zoom-user");
                     }
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(MEETING_USER, [this.props.match.params.id]),
@@ -89,7 +90,7 @@ export default class AddOrEditZoomUser extends React.Component{
         }
 
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
 
                 that.setState({
@@ -100,25 +101,46 @@ export default class AddOrEditZoomUser extends React.Component{
                     that.props.history.replace("/settings/zoom-user");
                 }
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action:MEETING_USER,
             method: "post",
         };
-        let defaultValues=[{key:'id',value:this.props.match.params.id}];
-        return <Row>
+        const defaultValues=[{key:'id',value:this.props.match.params.id}];
+        return (
+<Row>
             <Card>
-                <Route exact path='/settings/zoom-user/edit/:id'
-                       render={() =>(this.props.match.params.id? <TestFormLayout title="Edit Zoom User" defaultValues={defaultValues} changeRedirect= {this.changeRedirect}
-                                                     formProp={editformProp} fields={fields}/>: <Redirect to={'/settings/zoom-user'} />)}/>
+                <Route
+                  exact
+                  path='/settings/zoom-user/edit/:id'
+                  render={() =>(this.props.match.params.id? (
+<TestFormLayout
+  title="Edit Zoom User"
+  defaultValues={defaultValues}
+  changeRedirect={this.changeRedirect}
+  formProp={editformProp}
+  fields={fields}
+/>
+): <Redirect to="/settings/zoom-user" />)}
+                />
 
-                <Route exact path='/settings/zoom-user/add'
-                       render={() => <TestFormLayout title="Add Zoom User" changeRedirect= {this.changeRedirect}
-                                                     formProp={formProp} fields={fields}/>}/>
+                <Route
+                  exact
+                  path='/settings/zoom-user/add'
+                  render={() => (
+<TestFormLayout
+  title="Add Zoom User"
+  changeRedirect={this.changeRedirect}
+  formProp={formProp}
+  fields={fields}
+/>
+)}
+                />
 
             </Card>
-            {this.state.redirect&&    <Redirect to={'/settings/zoom-user'} />}
-        </Row>
+            {this.state.redirect&&    <Redirect to="/settings/zoom-user" />}
+</Row>
+)
     }
 }

@@ -37,7 +37,7 @@ class PatientLabOrders extends React.Component{
             title: 'Completed',
             key: 'is_completed',
             render: (text, record) => (
-                <Checkbox checked={record.is_completed}/>
+                <Checkbox checked={record.is_completed} />
             )
         }, {
             title: 'Action',
@@ -45,25 +45,35 @@ class PatientLabOrders extends React.Component{
             render: (text, record) => (
                 <span>
                 <a onClick={() => this.editPrescriptionData(record)}>Edit</a>
-                <Divider type="vertical"/>
+                <Divider type="vertical" />
                 <a href="javascript:;">Delete</a>
-              </span>
+                </span>
             ),
         }];
 
-    	return <div><Switch>
-              <Route exact path='/patient/:id/emr/labtrackings/add'
-                     render={(route) => <AddPatientLabOrders{...this.state} {...route} />}/>
-              <Card title={ this.state.currentPatient?this.state.currentPatient.user.first_name + " Lab Order":"Patients Lab Order"}  extra={<Button.Group>
-                    <Link to={"/patient/"+this.props.match.params.id+"/emr/labtrackings/add"}><Button><Icon type="plus"/>Add</Button></Link>
-              </Button.Group>}>
+    	return (
+<div><Switch>
+              <Route
+                exact
+                path='/patient/:id/emr/labtrackings/add'
+                render={(route) => <AddPatientLabOrders {...this.state} {...route} />}
+              />
+              <Card
+                title={this.state.currentPatient?`${this.state.currentPatient.user.first_name  } Lab Order`:"Patients Lab Order"}
+                extra={(
+<Button.Group>
+                    <Link to={`/patient/${this.props.match.params.id}/emr/labtrackings/add`}><Button><Icon type="plus" />Add</Button></Link>
+</Button.Group>
+)}
+              >
 
-                  <Table loading={this.state.loading} columns={columns}  dataSource={this.state.payments} />
+                  <Table loading={this.state.loading} columns={columns} dataSource={this.state.payments} />
 
               </Card>
-            </Switch>
+     </Switch>
 
-        </div>
+</div>
+)
     }
 
 }

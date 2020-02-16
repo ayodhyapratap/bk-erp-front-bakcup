@@ -16,6 +16,7 @@ import {
     Dropdown,
     Modal
 } from 'antd';
+import moment from "moment";
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
 import {
     EMR_COMPLAINTS,
@@ -28,7 +29,6 @@ import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {INPUT_FIELD, SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 import {CUSTOM_STRING_SEPERATOR} from "../../../constants/hardData";
 import {loadDoctors} from "../../../utils/clinicUtils";
-import moment from "moment";
 
 const {TabPane} = Tabs;
 const tabLists = ['Complaints', 'Observations', 'Diagnoses', 'Investigations', 'Notes','Recent Medication'];
@@ -73,8 +73,8 @@ class AddClinicNotesDynamic extends React.Component {
     }
 
     setInitialData = () => {
-        let that = this;
-        let initialData = this.state.editClinicNotes;
+        const that = this;
+        const initialData = this.state.editClinicNotes;
         if (initialData.chief_complaints)
             initialData.chief_complaints.split(CUSTOM_STRING_SEPERATOR).forEach(str => setTimeout(function () {
                 if (str.length)
@@ -107,11 +107,12 @@ class AddClinicNotesDynamic extends React.Component {
             }, 500));
 
     }
+
     loadRequiredResources = (API, key) => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState(function (prevState) {
-                let newResources = {...prevState.resourceList, [key]: data}
+                const newResources = {...prevState.resourceList, [key]: data}
                 return {
                     resourceList: newResources,
                     filteredResourceList: newResources,
@@ -119,11 +120,12 @@ class AddClinicNotesDynamic extends React.Component {
                 }
             })
         }
-        let errorFn = function () {
-            console.log(key + " fetching error");
+        const errorFn = function () {
+            console.log(`${key  } fetching error`);
         }
         getAPI(API, successFn, errorFn);
     }
+
     add = (tab) => {
         const {form} = this.props;
         // can use data-binding to get
@@ -135,6 +137,7 @@ class AddClinicNotesDynamic extends React.Component {
             [tab]: nextKeys,
         });
     };
+
     remove = (tab, k) => {
         const {form} = this.props;
         // can use data-binding to get
@@ -149,6 +152,7 @@ class AddClinicNotesDynamic extends React.Component {
             [tab]: keys.filter(key => key !== k),
         });
     };
+
     addValues = (tab, value) => {
         const {form} = this.props;
         // can use data-binding to get
@@ -161,6 +165,7 @@ class AddClinicNotesDynamic extends React.Component {
             [`field[${keys[keys.length - 1]}]`]: value,
         });
     }
+
     changeValues = (tab, id) => {
         const {form} = this.props;
         // can use data-binding to get
@@ -169,9 +174,10 @@ class AddClinicNotesDynamic extends React.Component {
             this.add(tab);
         }
     }
+
     toggleModal = (option) => {
         let prevsOption = null;
-        let that = this;
+        const that = this;
         this.setState(function (prevState) {
             console.log(prevState.resourceAddModal);
             if (prevState.resourceAddModal)
@@ -184,16 +190,18 @@ class AddClinicNotesDynamic extends React.Component {
         });
 
     }
+
     searchValues = (type, value) => {
-        let that = this;
+        const that = this;
         this.setState(function (prevState) {
-            let searchValues = {...prevState.searchStrings};
+            const searchValues = {...prevState.searchStrings};
             searchValues[type] = value;
             return {searchStrings: searchValues}
         }, function () {
             that.filterValues(type);
         });
     }
+
     filterValues = (type) => {
         this.setState(function (prevState) {
             let filteredItemOfGivenType = [];
@@ -218,11 +226,11 @@ class AddClinicNotesDynamic extends React.Component {
     }
 
     handleSubmit = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                let reqData = {};
+                const reqData = {};
                 reqData.chief_complaints = values.Complaints.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
                 reqData.investigations = values.Investigations.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
                 reqData.diagnosis = values.Diagnoses.map(id => values.field[id]).join(CUSTOM_STRING_SEPERATOR);
@@ -235,17 +243,17 @@ class AddClinicNotesDynamic extends React.Component {
                 reqData.date = that.state.selectedDate && moment(that.state.selectedDate).isValid() ? moment(that.state.selectedDate).format('YYYY-MM-DD') : null
                 if (that.state.editClinicNotes)
                     reqData.id = that.state.editClinicNotes.id;
-                let successFn = function (data) {
+                const successFn = function (data) {
                     if (that.props.loadData){
                         that.props.loadData();
                     }
 
                     if (that.props.history){
-                        that.props.history.replace('/patient/' + that.props.match.params.id + '/emr/clinicnotes/');
+                        that.props.history.replace(`/patient/${  that.props.match.params.id  }/emr/clinicnotes/`);
                     }
 
                 };
-                let errorFn = function () {
+                const errorFn = function () {
 
                 }
                 postAPI(interpolate(PATIENT_CLINIC_NOTES_API, [this.props.match.params.id]), reqData, successFn, errorFn);
@@ -253,6 +261,7 @@ class AddClinicNotesDynamic extends React.Component {
         });
 
     }
+
     changeTab = (e, tab) => {
         // this.setState({
         //     selectedTab: tab
@@ -260,11 +269,13 @@ class AddClinicNotesDynamic extends React.Component {
 
 
     }
+
     selectDoctor = (doctor) => {
         this.setState({
             selectedDoctor: doctor
         })
     }
+
     selectedDate = (date) => {
         this.setState({
             selectedDate: date
@@ -272,7 +283,7 @@ class AddClinicNotesDynamic extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const {getFieldDecorator, getFieldValue} = this.props.form;
         const formItemLayout = {
             labelCol: {
@@ -284,7 +295,7 @@ class AddClinicNotesDynamic extends React.Component {
                 sm: {span: 20},
             },
         };
-        let keysObject = {};
+        const keysObject = {};
         tabLists.forEach(function (tab) {
             getFieldDecorator(tab, {initialValue: [++id]});
             keysObject[tab] = getFieldValue(tab);
@@ -293,56 +304,70 @@ class AddClinicNotesDynamic extends React.Component {
 
         const keys = keysObject;
         const ResourceAddForm = Form.create()(DynamicFieldsForm);
-        return <Card>
+        return (
+<Card>
             <Row>
                 <Col span={18}>
                     <h2>Clinical Notes</h2>
                     <Form onSubmit={this.handleSubmit}>
-                        {tabLists.map(tab =>
+                        {tabLists.map(tab => (
                             <div>
                                 <Divider style={{margin: 5}}>{tab}</Divider>
                                 <div style={{
                                     backgroundColor: (tab == that.state.selectedTab ? '#ddd' : 'initial'),
                                     padding: 10
-                                }}>
+                                }}
+                                >
                                     {keys[tab].map((k, index) => (
                                         <Form.Item
-                                            {...formItemLayout}
-                                            label={tab + ' ' + (index + 1)}
-                                            key={k}>
+                                          {...formItemLayout}
+                                          label={`${tab  } ${  index + 1}`}
+                                          key={k}
+                                        >
                                             {getFieldDecorator(`field[${k}]`, {
                                                 validateTrigger: ['onChange', 'onBlur'],
                                                 rules: [{
                                                     whitespace: true,
                                                 }],
-                                            })(<Input placeholder={tab} style={{width: '60%', marginRight: 8}}
-                                                      key={k}
-                                                      onFocus={(e) => that.changeTab(e, tab)}
-                                                      onChange={() => that.changeValues(tab, k)}/>)}
+                                            })(<Input
+                                              placeholder={tab}
+                                              style={{width: '60%', marginRight: 8}}
+                                              key={k}
+                                              onFocus={(e) => that.changeTab(e, tab)}
+                                              onChange={() => that.changeValues(tab, k)}
+                                            />)}
                                             {keys[tab].length - 1 != index ? (
                                                 <Button
-                                                    shape={"circle"}
-                                                    type={"danger"}
-                                                    size={"small"}
-                                                    icon="delete"
-                                                    onClick={() => this.remove(tab, k)}
+                                                  shape="circle"
+                                                  type="danger"
+                                                  size="small"
+                                                  icon="delete"
+                                                  onClick={() => this.remove(tab, k)}
                                                 />
                                             ) : null}
                                         </Form.Item>
                                     ))}
                                 </div>
                             </div>
+                          )
                         )}
                         <Affix offsetBottom={0}>
                             <Card>
                                 <Row>
                                     <span>by &nbsp;&nbsp;</span>
-                                    <Dropdown placement="topCenter" overlay={<Menu>
-                                        {this.state.practiceDoctors.map(doctor =>
+                                    <Dropdown
+                                      placement="topCenter"
+                                      overlay={(
+<Menu>
+                                        {this.state.practiceDoctors.map(doctor => (
                                             <Menu.Item key="0">
                                                 <a onClick={() => this.selectDoctor(doctor)}>{doctor.user.first_name}</a>
-                                            </Menu.Item>)}
-                                    </Menu>} trigger={['click']}>
+                                            </Menu.Item>
+                                          ))}
+</Menu>
+)}
+                                      trigger={['click']}
+                                    >
                                         <a className="ant-dropdown-link" href="#">
                                             <b>
                                                 {this.state.selectedDoctor.user ? this.state.selectedDoctor.user.first_name : 'No DOCTORS Found'}
@@ -350,17 +375,23 @@ class AddClinicNotesDynamic extends React.Component {
                                         </a>
                                     </Dropdown>
                                     <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
-                                    <DatePicker value={this.state.selectedDate}
-                                                allowClear={false}
-                                                onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}/>
+                                    <DatePicker
+                                      value={this.state.selectedDate}
+                                      allowClear={false}
+                                      onChange={(value) => this.selectedDate(value)}
+                                      format="DD-MM-YYYY"
+                                    />
                                     <Button type="primary" htmlType="submit" style={{float: 'right', margin: 5}}>
                                         Save
                                     </Button>
-                                    {that.props.history ?
-                                        <Button style={{margin: 5, float: 'right'}}
-                                                onClick={() => that.props.history.goBack()}>
+                                    {that.props.history ? (
+                                        <Button
+                                          style={{margin: 5, float: 'right'}}
+                                          onClick={() => that.props.history.goBack()}
+                                        >
                                             Cancel
-                                        </Button> : null}
+                                        </Button>
+                                      ) : null}
                                 </Row>
                                 <Row>
                                     Next Follow up
@@ -370,54 +401,69 @@ class AddClinicNotesDynamic extends React.Component {
                     </Form>
                 </Col>
                 <Col span={6}>
-                    <Tabs type={"card"}>
-                        {tabLists.map(tabList => <TabPane tab={tabList} key={tabList}>
+                    <Tabs type="card">
+                        {tabLists.map(tabList => (
+<TabPane tab={tabList} key={tabList}>
                             <div style={{padding: 5}}>
-                                <Button type={"primary"} block size={"small"} onClick={() => that.toggleModal(tabList)}>
-                                    <Icon type={"plus"}/>Add&nbsp;{tabList}
+                                <Button type="primary" block size="small" onClick={() => that.toggleModal(tabList)}>
+                                    <Icon type="plus" />Add&nbsp;{tabList}
                                 </Button>
                                 <div style={{backgroundColor: '#ddd', padding: 8}}>
-                                    <Input.Search placeholder={"Search in " + tabList + " ..."}
-                                                  onChange={e => this.searchValues(tabList, e.target.value)}/>
+                                    <Input.Search
+                                      placeholder={`Search in ${  tabList  } ...`}
+                                      onChange={e => this.searchValues(tabList, e.target.value)}
+                                    />
                                 </div>
-                                <List key={tabList} size={'small'} dataSource={that.state.filteredResourceList[tabList]}
-                                      renderItem={item => <List.Item
-                                          key={item.id}
-                                          onClick={() => this.addValues(tabList, item.name)}>
+                                <List
+                                  key={tabList}
+                                  size="small"
+                                  dataSource={that.state.filteredResourceList[tabList]}
+                                  renderItem={item => (
+<List.Item
+  key={item.id}
+  onClick={() => this.addValues(tabList, item.name)}
+>
                                           {item.name}
-                                      </List.Item>}/>
+</List.Item>
+)}
+                                />
                             </div>
-                        </TabPane>)}
+</TabPane>
+))}
                     </Tabs>
                 </Col>
-                <Modal visible={!!this.state.resourceAddModal}
-                       onCancel={() => that.toggleModal(null)}
-                       title={"Add " + this.state.resourceAddModal}
-                       footer={null}>
-                    {this.state.resourceAddModal ?
+                <Modal
+                  visible={!!this.state.resourceAddModal}
+                  onCancel={() => that.toggleModal(null)}
+                  title={`Add ${  this.state.resourceAddModal}`}
+                  footer={null}
+                >
+                    {this.state.resourceAddModal ? (
                         <ResourceAddForm
-                            fields={[{
+                          fields={[{
                                 label: this.state.resourceAddModal,
                                 required: true,
                                 type: INPUT_FIELD,
                                 key: 'name'
                             }]}
-                            defaultValues={[{key: 'practice', value: this.props.active_practiceId}]}
-                            formProp={{
+                          defaultValues={[{key: 'practice', value: this.props.active_practiceId}]}
+                          formProp={{
                                 method: 'post',
                                 action: interpolate(tabResourcesAPI[this.state.resourceAddModal], [this.props.active_practiceId]),
-                                successFn: function () {
+                                successFn () {
                                     that.toggleModal(null);
-                                    displayMessage(SUCCESS_MSG_TYPE, that.state.resourceAddModal + " added successfully!!");
+                                    displayMessage(SUCCESS_MSG_TYPE, `${that.state.resourceAddModal  } added successfully!!`);
                                 },
-                                errorFn: function (err) {
+                                errorFn (err) {
                                     console.log(err);
                                 }
                             }}
-                        /> : null}
+                        />
+                      ) : null}
                 </Modal>
             </Row>
-        </Card>
+</Card>
+)
     }
 }
 

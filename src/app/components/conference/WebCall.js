@@ -1,8 +1,8 @@
 import React from "react";
 import io from 'socket.io-client';
+import {Button, Card, Col, Row} from "antd";
 import {SINGLE_MEETING} from "../../constants/api";
 import {displayMessage, getAPI, interpolate} from "../../utils/common";
-import {Button, Card, Col, Row} from "antd";
 import {ERROR_MSG_TYPE, WARNING_MSG_TYPE} from "../../constants/dataKeys";
 
 let signaling_socket = null;   /* our socket.io connection to our webserver */
@@ -21,7 +21,7 @@ export default class WebCall extends React.Component {
             ICE_SERVERS: [
                 {url: "stun:stun.l.google.com:19302"}
             ],
-            localMediaComponent: <div/>,
+            localMediaComponent: <div />,
             availablePeers: {},
             meetingUserDetails: {}
         }
@@ -43,9 +43,10 @@ export default class WebCall extends React.Component {
         })
         signaling_socket.send({admin:key,peer_id:'admin'});
     }
+
     loadMeeting = (meetingId) => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             let admin = false;
             data.admins.forEach(function (doctor) {
                 if (that.props.user.staff && that.props.user.staff.id == doctor) {
@@ -58,24 +59,26 @@ export default class WebCall extends React.Component {
             });
             that.changeChannel(data.meeting_id);
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(SINGLE_MEETING, [meetingId]), successFn, errorFn);
     }
+
     changeChannel = (value) => {
         value = value || 'default';
-        let that = this;
+        const that = this;
         this.setState({
             DEFAULT_CHANNEL: value,
         }, function () {
             that.init();
         })
     }
+
     init = () => {
-        let that = this;
+        const that = this;
         console.log("Connecting to signaling server");
-        let {SIGNALING_SERVER, DEFAULT_CHANNEL, ICE_SERVERS} = this.state;
+        const {SIGNALING_SERVER, DEFAULT_CHANNEL, ICE_SERVERS} = this.state;
         signaling_socket = io(SIGNALING_SERVER);
         // signaling_socket = io();
         signaling_socket.on('message', function (data) {
@@ -125,13 +128,13 @@ export default class WebCall extends React.Component {
          */
         signaling_socket.on('addPeer', function (config) {
             console.log('Signaling server said to add peer:', config);
-            var peer_id = config.peer_id;
+            const {peer_id} = config;
             if (peer_id in peers) {
                 /* This could happen if the user joins multiple channels where the other peer is also in. */
                 console.log("Already connected to peer ", peer_id);
                 return;
             }
-            var peer_connection = new RTCPeerConnection(
+            const peer_connection = new RTCPeerConnection(
                 {"iceServers": ICE_SERVERS},
                 {"optional": [{"DtlsSrtpKeyAgreement": true}]} /* this will no longer be needed by chrome
                                                                         * eventually (supposedly), but is necessary
@@ -154,14 +157,17 @@ export default class WebCall extends React.Component {
             }
             peer_connection.onaddstream = function (event) {
                 console.log("onAddStream", event);
-                let remote_media = <video key={peer_id}
-                                          ref={video => {
+                const remote_media = (
+<video
+  key={peer_id}
+  ref={video => {
                                               if (video)
                                                   video.srcObject = event.stream
                                           }}
-                                          autoPlay style={{width: '100%'}}>
-
-                </video>;
+  autoPlay
+  style={{width: '100%'}}
+/>
+);
                 peer_media_elements[peer_id] = remote_media;
                 that.setState(function (prevState) {
                     return {availablePeers: {...prevState.availablePeers, [peer_id]: true}}
@@ -207,11 +213,11 @@ export default class WebCall extends React.Component {
          */
         signaling_socket.on('sessionDescription', function (config) {
             console.log('Remote description received: ', config);
-            var peer_id = config.peer_id;
-            var peer = peers[peer_id];
-            var remote_description = config.session_description;
+            const {peer_id} = config;
+            const peer = peers[peer_id];
+            const remote_description = config.session_description;
             console.log(config.session_description);
-            let userData = {...that.props.user, peer_id: peer_id};
+            const userData = {...that.props.user, peer_id};
             if (that.state.is_admin || userData.is_superuser) {
                 userData.admin = true;
                 signaling_socket.send({admin:peer_id,peer_id:'admin'});
@@ -220,8 +226,8 @@ export default class WebCall extends React.Component {
                 myPeerId : config.peer_id
             })
             signaling_socket.send(userData);
-            var desc = new RTCSessionDescription(remote_description);
-            var stuff = peer.setRemoteDescription(desc,
+            const desc = new RTCSessionDescription(remote_description);
+            const stuff = peer.setRemoteDescription(desc,
                 function () {
                     console.log("setRemoteDescription succeeded");
                     if (remote_description.type == "offer") {
@@ -259,8 +265,8 @@ export default class WebCall extends React.Component {
          * can begin trying to find the best path to one another on the net.
          */
         signaling_socket.on('iceCandidate', function (config) {
-            var peer = peers[config.peer_id];
-            var ice_candidate = config.ice_candidate;
+            const peer = peers[config.peer_id];
+            const {ice_candidate} = config;
             peer.addIceCandidate(new RTCIceCandidate(ice_candidate));
         });
 
@@ -277,9 +283,9 @@ export default class WebCall extends React.Component {
          */
         signaling_socket.on('removePeer', function (config) {
             console.log('Signaling server said to remove peer:', config);
-            var peer_id = config.peer_id;
+            const {peer_id} = config;
             // if (peer_id in peer_media_elements) {
-            peer_media_elements[peer_id] = <video src=""/>;
+            peer_media_elements[peer_id] = <video src="" />;
             // }
             // if (peer_id in peers) {
             peers[peer_id].close();
@@ -288,7 +294,7 @@ export default class WebCall extends React.Component {
             delete peers[peer_id];
             delete peer_media_elements[config.peer_id];
             that.setState(function (prevState) {
-                let availablePeers = {...prevState.availablePeers};
+                const availablePeers = {...prevState.availablePeers};
                 delete availablePeers[peer_id];
                 return {availablePeers: {...availablePeers}}
             }, function () {
@@ -299,11 +305,11 @@ export default class WebCall extends React.Component {
     }
 
 
-    /***********************/
-    /** Local media stuff **/
-    /***********************/
+    /** ******************** */
+    /** Local media stuff * */
+    /** ******************** */
     setup_local_media = (callback, errorback) => {
-        let that = this;
+        const that = this;
         if (local_media_stream != null) {  /* ie, if we've already been initialized */
             if (callback) callback();
             return;
@@ -323,10 +329,18 @@ export default class WebCall extends React.Component {
             function (stream) { /* user accepted access to a/v */
                 console.log("Access granted to audio/video");
                 local_media_stream = stream;
-                let local_media = <video key="me" muted autoPlay style={{width: '100%'}} ref={video => {
+                const local_media = (
+<video
+  key="me"
+  muted
+  autoPlay
+  style={{width: '100%'}}
+  ref={video => {
                     if (video)
                         video.srcObject = stream
-                }}/>;
+                }}
+/>
+);
                 that.setState({
                     localMediaComponent: local_media
                 })
@@ -341,56 +355,70 @@ export default class WebCall extends React.Component {
     }
 
     render() {
-        let that = this;
-        let {localMediaComponent, availablePeers, meetingUserDetails, meetingDetails, myPeerId} = this.state;
-        let availablePeersIdArray = Object.keys(availablePeers);
-        return <div style={{minHeight: '100vh', textAlign: 'center'}}>
+        const that = this;
+        const {localMediaComponent, availablePeers, meetingUserDetails, meetingDetails, myPeerId} = this.state;
+        const availablePeersIdArray = Object.keys(availablePeers);
+        return (
+<div style={{minHeight: '100vh', textAlign: 'center'}}>
             <h3>{meetingDetails.name}</h3>
             <Row type="flex" justify="center" gutter={16} style={{marginTop: 10}}>
-                {meetingUserDetails.me && meetingUserDetails.me.socket  == meetingUserDetails.admin ?
+                {meetingUserDetails.me && meetingUserDetails.me.socket  == meetingUserDetails.admin ? (
                     <Col xs={24} sm={12} md={12} lg={12} xl={12} key={myPeerId}>
                     <Card bodyStyle={{padding: 0, textAlign: 'center'}}>
                         {localMediaComponent}
                         <h4>{meetingUserDetails[meetingUserDetails.admin] ? meetingUserDetails[meetingUserDetails.admin].first_name : '--'} </h4>
                     </Card>
-                </Col>:availablePeersIdArray.map(key => {
+                    </Col>
+                  ):availablePeersIdArray.map(key => {
                     if (meetingUserDetails.admin == key)
-                        return <Col xs={24} sm={12} md={12} lg={12} xl={12} key={key}>
+                        return (
+<Col xs={24} sm={12} md={12} lg={12} xl={12} key={key}>
                             <Card bodyStyle={{padding: 0, textAlign: 'center'}}>
                                 {peer_media_elements[key]}
-                                <h4>{meetingUserDetails[key] ? meetingUserDetails[key].first_name : '--'} <Button type="danger" shape="circle" icon="close" onClick={() => this.setFocusedPeer(meetingUserDetails.me ? meetingUserDetails.me.socket : null)}
-                                                                                                                  style={{float: 'right'}}/></h4>
+                                <h4>{meetingUserDetails[key] ? meetingUserDetails[key].first_name : '--'} <Button
+                                  type="danger"
+                                  shape="circle"
+                                  icon="close"
+                                  onClick={() => this.setFocusedPeer(meetingUserDetails.me ? meetingUserDetails.me.socket : null)}
+                                  style={{float: 'right'}}
+                                />
+                                </h4>
                             </Card>
-                        </Col>;
+</Col>
+);
                     return null;
                 })}
-                {/*{focusedPeer ? <Col xs={24} sm={12} md={12} lg={12} xl={12} key={focusedPeer}>*/}
-                {/*        <Card bodyStyle={{padding: 0, textAlign: 'center'}}>*/}
-                {/*            {peer_media_elements[focusedPeer]}*/}
-                {/*            <h4>{meetingUserDetails[focusedPeer] ? meetingUserDetails[focusedPeer].first_name : '--'}*/}
-                {/*                <Button type="danger" shape="circle" icon="close" onClick={() => this.setFocusedPeer(myPeerId)}*/}
-                {/*                        style={{float: 'right'}}/>*/}
-                {/*            </h4>*/}
-                {/*        </Card>*/}
-                {/*    </Col> :*/}
-                {/*    null*/}
-                {/*}*/}
+                {/* {focusedPeer ? <Col xs={24} sm={12} md={12} lg={12} xl={12} key={focusedPeer}> */}
+                {/*        <Card bodyStyle={{padding: 0, textAlign: 'center'}}> */}
+                {/*            {peer_media_elements[focusedPeer]} */}
+                {/*            <h4>{meetingUserDetails[focusedPeer] ? meetingUserDetails[focusedPeer].first_name : '--'} */}
+                {/*                <Button type="danger" shape="circle" icon="close" onClick={() => this.setFocusedPeer(myPeerId)} */}
+                {/*                        style={{float: 'right'}}/> */}
+                {/*            </h4> */}
+                {/*        </Card> */}
+                {/*    </Col> : */}
+                {/*    null */}
+                {/* } */}
             </Row>
             <Row gutter={16} style={{marginTop: 10}} type="flex" justify="center">
                 <Col xs={24} sm={12} md={4} lg={4} xl={3}>
-                    <Card key={'me'} bodyStyle={{padding: 0, textAlign: 'center'}}>
+                    <Card key="me" bodyStyle={{padding: 0, textAlign: 'center'}}>
                         {localMediaComponent}
                         <h4>ME</h4>
                     </Card>
                 </Col>
                 {availablePeersIdArray.map(key => {
-                    return <Col xs={8} sm={8} md={4} lg={4} xl={3} key={key} onClick={() => this.setFocusedPeer(key)}>
+                    return (
+<Col xs={8} sm={8} md={4} lg={4} xl={3} key={key} onClick={() => this.setFocusedPeer(key)}>
                         <Card bodyStyle={{padding: 0, textAlign: 'center'}}>{peer_media_elements[key]}
-                            <h4>{meetingUserDetails[key] ? meetingUserDetails[key].first_name : '--'}</h4></Card>
-                    </Col>
+                            <h4>{meetingUserDetails[key] ? meetingUserDetails[key].first_name : '--'}</h4>
+                        </Card>
+</Col>
+)
                 })}
             </Row>
-        </div>
+</div>
+)
     }
 
 }

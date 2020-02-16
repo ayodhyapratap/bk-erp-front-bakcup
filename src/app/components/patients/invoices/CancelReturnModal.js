@@ -1,5 +1,6 @@
 import React from "react";
 import {Button, Card, Form, Icon, Input, Modal} from "antd";
+import moment from "moment";
 import {
     CANCELINVOICE_RESENT_OTP,
     CANCELINVOICE_VERIFY_OTP,
@@ -7,7 +8,6 @@ import {
 } from "../../../constants/api";
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {SUCCESS_MSG_TYPE, OTP_DELAY_TIME} from "../../../constants/dataKeys";
-import moment from "moment";
 import { REQUIRED_FIELD_MESSAGE } from "../../../constants/messages";
 
 const { TextArea } = Input;
@@ -21,9 +21,10 @@ class CancelReturnModal extends React.Component {
 
         };
     }
+
     componentDidMount(){
-        let that =this;
-        let created_time = moment().diff(that.props.editInvoice.created_at, 'minutes');
+        const that =this;
+        const created_time = moment().diff(that.props.editInvoice.created_at, 'minutes');
         if(created_time>OTP_DELAY_TIME){
             that.setState({
                 otpField:true
@@ -33,22 +34,22 @@ class CancelReturnModal extends React.Component {
     }
 
     handleSubmitCancelInvoice = (e) => {
-        let that = this;
-        let {otpField} =that.state;
+        const that = this;
+        const {otpField} =that.state;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqData = {
+                const reqData = {
                     ...values,
                     practice: this.props.active_practiceId,
                 }
-                let successFn = function (data) {
+                const successFn = function (data) {
                     that.setState({
                         cancelIncoiceVisible: false,
                     });
                     that.deleteInvoice(that.props.editInvoice.patient, that.props.editInvoice.id, values.cancel_note)
                 };
-                let errorFn = function () {
+                const errorFn = function () {
 
                 };
                 if(otpField){
@@ -63,18 +64,18 @@ class CancelReturnModal extends React.Component {
 
 
     deleteInvoice(patient, invoice, cancel_note) {
-        let that = this;
-        let reqData = {
-            patient: patient, 
+        const that = this;
+        const reqData = {
+            patient, 
             is_cancelled: true,
-            cancel_note:cancel_note
+            cancel_note
         };
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.props.cancelInvoiceClose();
             displayMessage(SUCCESS_MSG_TYPE, "Invoice cancelled successfully")
             that.props.loadInvoices();
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         putAPI(interpolate(SINGLE_INVOICES_API, [invoice]), reqData, successFn, errorFn);
     }
@@ -82,52 +83,55 @@ class CancelReturnModal extends React.Component {
    
 
     sendOTP() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
 
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
         getAPI(CANCELINVOICE_RESENT_OTP, successFn, errorFn);
     }
 
     render() {
-        let that = this;
-        let {otpField} =this.state;
+        const that = this;
+        const {otpField} =this.state;
         
         const {getFieldDecorator} = that.props.form;
         return(
             <Modal
-                visible={that.state.cancelIncoiceVisible}
-                title="Cancel Invoice"
-                footer={null}
-                onOk={that.handleSubmitCancelInvoice}
-                onCancel={that.props.cancelInvoiceClose}
+              visible={that.state.cancelIncoiceVisible}
+              title="Cancel Invoice"
+              footer={null}
+              onOk={that.handleSubmitCancelInvoice}
+              onCancel={that.props.cancelInvoiceClose}
             >
                 <Form>
                     <Form.Item key="cancel_notes">
                         {getFieldDecorator('cancel_note',{
                             rules:[{required:true, message:REQUIRED_FIELD_MESSAGE}],
                         })(
-                            <TextArea placeholder="cancel notes"/>
+                            <TextArea placeholder="cancel notes" />
                         )}
                     </Form.Item>
-                    { otpField &&
+                    { otpField && (
                         <Form.Item key="cancelOtp">
                             {getFieldDecorator('otp', {
                                 rules: [{required: true, message: 'Please input Otp!'}],
                             })(
-                                <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                                    placeholder="Otp"
+                                <Input
+                                  prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}} />}
+                                  placeholder="Otp"
                                 />
                             )}
                         </Form.Item>
-                    }
+                      )}
                     <Form.Item>
-                        {that.props.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
+                        {that.props.otpSent ? (
+<a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
                             Resend Otp ?
-                        </a> : null}
+</a>
+) : null}
                         <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitCancelInvoice}>
                             Submit
                         </Button>&nbsp;

@@ -1,10 +1,10 @@
 import {Button, Card, Icon} from "antd";
 import React from "react";
+import {Route, Switch} from "react-router";
+import {Link} from "react-router-dom";
 import {getAPI} from "../../../utils/common";
 import {LAB_API} from "../../../constants/api";
-import {Route, Switch} from "react-router";
 import AddLab from "./AddLab";
-import {Link} from "react-router-dom";
 
 export default class LabList extends React.Component {
     constructor(props) {
@@ -22,14 +22,14 @@ export default class LabList extends React.Component {
     }
 
     loadData() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 lab: data,
                 loading:false
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading:false
             })
@@ -39,16 +39,31 @@ export default class LabList extends React.Component {
     }
 
     render() {
-        return <div><Switch>
-            <Route exact path='/inventory/lab/add'
-                   render={(route) => <AddLab {...this.state} {...route}/>}/>
-            <Route exact path='/inventory/expenses/lab/:id'
-                   render={(route) => <AddLab {...this.state} {...route}/>}/>
-            <Card loading={this.state.loading} title="Lab" extra={<Link to={"/inventory/lab/add"}> <Button type="primary"><Icon
-                type="plus"/> Add</Button></Link>}>
-
-            </Card>
-        </Switch>
-        </div>
+        return (
+<div><Switch>
+            <Route
+              exact
+              path='/inventory/lab/add'
+              render={(route) => <AddLab {...this.state} {...route} />}
+            />
+            <Route
+              exact
+              path='/inventory/expenses/lab/:id'
+              render={(route) => <AddLab {...this.state} {...route} />}
+            />
+            <Card
+              loading={this.state.loading}
+              title="Lab"
+              extra={(
+<Link to="/inventory/lab/add"> <Button type="primary"><Icon
+  type="plus"
+/> Add
+                               </Button>
+</Link>
+)}
+            />
+     </Switch>
+</div>
+)
     }
 }

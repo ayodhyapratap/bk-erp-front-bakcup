@@ -20,14 +20,14 @@ export default class BedPackages extends React.Component {
     }
 
     loadData = () => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 loading: false,
                 packages: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false,
             })
@@ -36,13 +36,13 @@ export default class BedPackages extends React.Component {
     }
 
     deleteObject(record) {
-        let that = this;
-        let reqData = record;
+        const that = this;
+        const reqData = record;
         reqData.is_active = false;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         postAPI(interpolate(BED_PACKAGES, [this.props.active_practiceId]), reqData, successFn, errorFn);
     }
@@ -56,12 +56,12 @@ export default class BedPackages extends React.Component {
     }
 
     render() {
-        let that = this;
-        let columns = [{
+        const that = this;
+        const columns = [{
             dataIndex: 'image',
             key: 'image',
             render: (value) => value ?
-                <img src={makeFileURL(value)} alt="" style={{maxWidth: 200, maxHeight: 100}}/> : null
+                <img src={makeFileURL(value)} alt="" style={{maxWidth: 200, maxHeight: 100}} /> : null
         }, {
             title: "Package Name",
             dataIndex: 'name',
@@ -93,32 +93,58 @@ export default class BedPackages extends React.Component {
                 <span>
                     <a onClick={() => this.editObject(record)}>
                 Edit</a>
-                <Divider type="vertical"/>
-                  <Popconfirm title="Are you sure delete this prescription?" onConfirm={() => that.deleteObject(record)}
-                              okText="Yes" cancelText="No">
+                <Divider type="vertical" />
+                  <Popconfirm
+                    title="Are you sure delete this prescription?"
+                    onConfirm={() => that.deleteObject(record)}
+                    okText="Yes"
+                    cancelText="No"
+                  >
                       <a>Delete</a>
                   </Popconfirm>
-              </span>
+                </span>
             ),
         }]
-        return <Switch>
-            <Route path={"/settings/bed-packages/add"}
-                   render={(route) => <AddorEditBedPackages {...this.props} {...route}
-                                                            loadData={this.loadData}/>}/>
-            <Route path={"/settings/bed-packages/edit"}
-                   render={(route) => (this.state.editPackage ?
-                       <AddorEditBedPackages {...this.state} {...this.props} {...route} loadData={this.loadData}/> :
-                       <Redirect to={"/settings/bed-packages"}/>)
-                   }/>
+        return (
+<Switch>
+            <Route
+              path="/settings/bed-packages/add"
+              render={(route) => (
+<AddorEditBedPackages
+  {...this.props}
+  {...route}
+  loadData={this.loadData}
+/>
+)}
+            />
+            <Route
+              path="/settings/bed-packages/edit"
+              render={(route) => (this.state.editPackage ?
+                       <AddorEditBedPackages {...this.state} {...this.props} {...route} loadData={this.loadData} /> :
+                       <Redirect to="/settings/bed-packages" />)}
+            />
             <Route>
                 <Card
-                    title={<h4>Bed Packages <Link to={"/settings/bed-packages/add"}><Button style={{float: 'right'}}
-                                                                                            type={"primary"}><Icon
-                        type={"plus"}/> Add</Button></Link></h4>}>
-                    <CustomizedTable dataSource={this.state.packages} loading={this.state.loading}
-                                     columns={columns}/>
+                  title={(
+<h4>Bed Packages <Link to="/settings/bed-packages/add"><Button
+  style={{float: 'right'}}
+  type="primary"
+><Icon
+  type="plus"
+/> Add
+                                                       </Button>
+                 </Link>
+</h4>
+)}
+                >
+                    <CustomizedTable
+                      dataSource={this.state.packages}
+                      loading={this.state.loading}
+                      columns={columns}
+                    />
                 </Card>
             </Route>
-        </Switch>
+</Switch>
+)
     }
 }

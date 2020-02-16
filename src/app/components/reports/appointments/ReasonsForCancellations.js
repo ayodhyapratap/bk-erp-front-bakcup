@@ -1,10 +1,11 @@
 import React from "react";
+import moment from "moment";
+import {Modal, Select} from "antd";
 import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
-import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
-import {Modal, Select} from "antd";
+
 export default class ReasonsForCancellations extends React.Component {
     constructor(props) {
         super(props);
@@ -17,13 +18,14 @@ export default class ReasonsForCancellations extends React.Component {
         }
         this.loadAppointmentReport = this.loadAppointmentReport.bind(this);
     }
+
     componentDidMount() {
         this.loadAppointmentReport();
         loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.categories!=newProps.categories
             ||this.props.doctors!=newProps.doctors ||this.props.exclude_cancelled!=newProps.exclude_cancelled)
             this.setState({
@@ -36,11 +38,11 @@ export default class ReasonsForCancellations extends React.Component {
     }
 
     loadAppointmentReport = () => {
-        let that = this;
+        const that = this;
         this.setState({
             loading:true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             console.log(data);
             that.setState({
                 appointmentReports: data.data,
@@ -48,17 +50,17 @@ export default class ReasonsForCancellations extends React.Component {
             });
             console.log(that.state.appointmentReports);
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             type:that.props.type,
             practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            exclude_cancelled:this.props.exclude_cancelled?true:false,
+            exclude_cancelled:!!this.props.exclude_cancelled,
         };
         // if (this.props.exclude_cancelled){
         //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
@@ -72,13 +74,14 @@ export default class ReasonsForCancellations extends React.Component {
 
         getAPI(PATIENT_APPOINTMENTS_REPORTS,  successFn, errorFn, apiParams);
     }
+
     sendMail = (mailTo) => {
-        let apiParams={
+        const apiParams={
             type:this.props.type,
             practice:this.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            exclude_cancelled:this.props.exclude_cancelled?true:false,
+            exclude_cancelled:!!this.props.exclude_cancelled,
         };
         // if (this.props.exclude_cancelled){
         //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
@@ -108,7 +111,7 @@ export default class ReasonsForCancellations extends React.Component {
             render: (text, record) => (
                 <span>
                 {moment(record.schedule_at).format('LL')}
-                  </span>
+                </span>
             ),
         }, {
             title: 'Scheduled At	',
@@ -117,7 +120,7 @@ export default class ReasonsForCancellations extends React.Component {
                 <span>
                   {moment(record.schedule_at).format('HH:mm')}
 
-                  </span>
+                </span>
             ),
         }, {
             title: 'Check-in At',
@@ -126,16 +129,18 @@ export default class ReasonsForCancellations extends React.Component {
             render: (text, record) => (
                 <span>
                 {record.waiting ? moment(record.waiting).format('lll') : ''}
-                  </span>
+                </span>
             ),
         }, {
             title: 'Waited For (hh:mm:ss)',
             dataIndex: 'age',
             key: 'age',
-            render: (age, record) => (<span>
+            render: (age, record) => (
+<span>
                 {record.engaged ? moment(record.engaged).from(moment(record.waiting))
                     : ''}
-            </span>)
+</span>
+)
         }, {
             title: 'Engaged At',
             dataIndex: 'engaged',
@@ -143,7 +148,7 @@ export default class ReasonsForCancellations extends React.Component {
             render: (text, record) => (
                 <span>
                 {record.engaged ? moment(record.engaged).format('lll') : ''}
-                  </span>
+                </span>
             ),
         }, {
             title: 'Checkout At',
@@ -152,7 +157,7 @@ export default class ReasonsForCancellations extends React.Component {
             render: (text, record) => (
                 <span>
                 {record.checkout ? moment(record.checkout).format('lll') : ''}
-                  </span>
+                </span>
             ),
         }, {
             title: 'Patient',
@@ -175,20 +180,31 @@ export default class ReasonsForCancellations extends React.Component {
 
 
 
-        return <div>
+        return (
+<div>
             <h2>Reasons For Cancellations
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                 <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                    {this.state.mailingUsersList.map(item => <Select.Option
-                        value={item.email}>{item.name}</Select.Option>)}
+                    {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                 </Select>
                     </p>
-            </span>
+                </span>
             </h2>
-            <CustomizedTable hideReport={true} loading={this.state.loading} columns={columns} size={'small'}
-                             dataSource={appointmentReports}/>
+            <CustomizedTable
+              hideReport
+              loading={this.state.loading}
+              columns={columns}
+              size="small"
+              dataSource={appointmentReports}
+            />
 
-        </div>
+</div>
+)
     }
 }

@@ -18,23 +18,23 @@ export default class ChangePasswordForm extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        let that = this;
+        const that = this;
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 that.setState({
                     changePassLoading: true
                 });
-                let data = {
+                const data = {
                     [OLD_PASSWORD]: values.oldPass,
                     [NEW_PASSWORD]: values.newPass,
                 };
-                let successFn = function (data) {
+                const successFn = function (data) {
                     message.success(data.message);
                     that.setState({
                         changePassLoading: false
                     });
                 };
-                let errorFn = function () {
+                const errorFn = function () {
                     that.setState({
                         changePassLoading: false
                     });
@@ -43,18 +43,21 @@ export default class ChangePasswordForm extends React.Component {
             }
         });
     };
+
     handleConfirmBlur = (e) => {
-        const value = e.target.value;
+        const {value} = e.target;
         this.setState({confirmDirty: this.state.confirmDirty || !!value});
     };
+
     compareToFirstPassword = (rule, value, callback) => {
-        const form = this.props.form;
+        const {form} = this.props;
         if (value && value != form.getFieldValue('newPass')) {
             callback('Two passwords that you enter is inconsistent!');
         } else {
             callback();
         }
     };
+
     validateToNextPassword = (rule, value, callback) => {
         callback(validatePassword(rule, value, callback));
     };
@@ -67,15 +70,18 @@ export default class ChangePasswordForm extends React.Component {
         const {getFieldDecorator} = this.props.form;
         return (
             <Form onSubmit={this.handleSubmit}>
-                <FormItem label="Old Password"  {...formItemLayout}>
+                <FormItem label="Old Password" {...formItemLayout}>
                     {getFieldDecorator('oldPass', {
                         rules: [{required: true, message: 'Please enter your old Password!'}],
                     })(
-                        <Input prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>} type="password"
-                               placeholder="Old Password"/>
+                        <Input
+                          prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}} />}
+                          type="password"
+                          placeholder="Old Password"
+                        />
                     )}
                 </FormItem>
-                <FormItem label="New Password"  {...formItemLayout}>
+                <FormItem label="New Password" {...formItemLayout}>
                     {getFieldDecorator('newPass', {
                         rules: [{
                             required: true, message: 'Please enter your new Password!'
@@ -83,23 +89,34 @@ export default class ChangePasswordForm extends React.Component {
                             validator: this.validateToNextPassword
                         }]
                     })(
-                        <Input prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>} type="password"
-                               placeholder="New Password"/>
+                        <Input
+                          prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}} />}
+                          type="password"
+                          placeholder="New Password"
+                        />
                     )}
                 </FormItem>
-                <FormItem label="Confirm Password"  {...formItemLayout}>
+                <FormItem label="Confirm Password" {...formItemLayout}>
                     {getFieldDecorator('confirmPass', {
                         rules: [{required: true, message: 'Please confirm your new Password!'}, {
                             validator: this.compareToFirstPassword
                         }],
                     })(
-                        <Input prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>} type="password"
-                               placeholder="Confirm Password" onBlur={this.handleConfirmBlur}/>
+                        <Input
+                          prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}} />}
+                          type="password"
+                          placeholder="Confirm Password"
+                          onBlur={this.handleConfirmBlur}
+                        />
                     )}
                 </FormItem>
                 <FormItem>
-                    <Button loading={this.state.changePassLoading} type="primary" htmlType="submit"
-                            className="login-form-button">
+                    <Button
+                      loading={this.state.changePassLoading}
+                      type="primary"
+                      htmlType="submit"
+                      className="login-form-button"
+                    >
                         Change Password
                     </Button>
                 </FormItem>

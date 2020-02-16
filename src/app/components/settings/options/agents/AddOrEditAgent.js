@@ -50,28 +50,28 @@ class AddOrEditAgent extends React.Component {
 
 
     getPatient() {
-        let that = this;
+        const that = this;
 
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 userListData: data.results,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
         getAPI(PATIENTS_LIST, successFn, errorFn);
     }
 
     loadAgentRoles() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 agentRoles: data,
                 loading: false
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
@@ -81,15 +81,15 @@ class AddOrEditAgent extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
     }
 
     searchPatient(value) {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             if (data) {
                 that.setState({
                     userListData: data.results
@@ -97,7 +97,7 @@ class AddOrEditAgent extends React.Component {
 
             }
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         if (value){
             getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
@@ -106,7 +106,7 @@ class AddOrEditAgent extends React.Component {
     }
 
     handleSubmit = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -114,7 +114,7 @@ class AddOrEditAgent extends React.Component {
                     saving: true
                 });
 
-                let reqData = {
+                const reqData = {
                     user: {},
                     referal: values.referal,
                     role: values.role,
@@ -133,7 +133,7 @@ class AddOrEditAgent extends React.Component {
                 } else {
                     reqData.user = this.state.userDetails.user;
                 }
-                let successFn = function (data) {
+                const successFn = function (data) {
                     that.setState({
                         saving: false
                     });
@@ -148,7 +148,7 @@ class AddOrEditAgent extends React.Component {
                         displayMessage(SUCCESS_MSG_TYPE, "Agent Created Successfully");
                     }
                 };
-                let errorFn = function () {
+                const errorFn = function () {
                     that.setState({
                         saving: false
                     });
@@ -165,15 +165,16 @@ class AddOrEditAgent extends React.Component {
         });
 
     }
+
     handlePatientSelect = (event) => {
         if (event) {
-            let that = this;
-            let successFn = function (data) {
+            const that = this;
+            const successFn = function (data) {
                 that.setState({
                     userDetails: data
                 });
             };
-            let errorFn = function () {
+            const errorFn = function () {
             };
             getAPI(interpolate(PATIENT_PROFILE, [event]), successFn, errorFn);
         }
@@ -218,112 +219,132 @@ class AddOrEditAgent extends React.Component {
                 }
             },
         };
-        return <Card>
+        return (
+<Card>
             <Spin spinning={this.state.saving}>
                 <Form onSubmit={this.handleSubmit}>
                     {this.props.title ? <h2>{this.props.title}</h2> : null}
 
-                    {that.state.userDetails ?
+                    {that.state.userDetails ? (
                         <FormItem key="id" value={this.state.userDetails.id} {...formPatients}>
                             <Card bordered={false} style={{background: '#ECECEC'}}>
                                 <Meta
-                                    avatar={(this.state.userDetails.image ? <Avatar src={makeFileURL(this.state.userDetails.image)}/> :
+                                  avatar={(this.state.userDetails.image ? <Avatar src={makeFileURL(this.state.userDetails.image)} /> : (
                                         <Avatar style={{backgroundColor: '#87d068'}}>
                                             {this.state.userDetails.user.first_name ? this.state.userDetails.user.first_name.charAt(0) :
-                                                <Icon type="user"/>}
-                                        </Avatar>)}
-                                    title={this.state.userDetails.user.first_name}
-                                    description={
-                                        <span>{that.props.activePracticePermissions.PatientPhoneNumber ? this.state.userDetails.user.mobile : hideMobile(this.state.userDetails.user.mobile)}<br/>
+                                                <Icon type="user" />}
+                                        </Avatar>
+                                      ))}
+                                  title={this.state.userDetails.user.first_name}
+                                  description={(
+                                        <span>{that.props.activePracticePermissions.PatientPhoneNumber ? this.state.userDetails.user.mobile : hideMobile(this.state.userDetails.user.mobile)}<br />
                                     <Button type="primary" style={{float: 'right'}} onClick={this.handleClick}>Select Different</Button>
-                                    </span>}
+                                        </span>
+                                      )}
                                 />
 
 
                             </Card>
                         </FormItem>
-                        : <div>
-                            <FormItem key="name" label="Advisor Name"  {...formItemLayout}>
+                      )
+                        : (
+<div>
+                            <FormItem key="name" label="Advisor Name" {...formItemLayout}>
                                 {getFieldDecorator("first_name", {
                                     initialValue: that.props.editAgentData ? that.props.editAgentData.user.first_name : ''
                                 })(
-                                    <AutoComplete placeholder="Advisor Name"
-                                                  showSearch
-                                                  disabled={that.props.editAgentData?true:false}
-                                                  onSearch={this.searchPatient}
-                                                  defaultActiveFirstOption={false}
-                                                  showArrow={false}
-                                                  filterOption={false}
-                                                  onSelect={this.handlePatientSelect}>
-                                        {this.state.userListData.map((option) => <AutoComplete.Option
-                                            value={option.id.toString()}>
+                                    <AutoComplete
+                                      placeholder="Advisor Name"
+                                      showSearch
+                                      disabled={!!that.props.editAgentData}
+                                      onSearch={this.searchPatient}
+                                      defaultActiveFirstOption={false}
+                                      showArrow={false}
+                                      filterOption={false}
+                                      onSelect={this.handlePatientSelect}
+                                    >
+                                        {this.state.userListData.map((option) => (
+<AutoComplete.Option
+  value={option.id.toString()}
+>
                                             <List.Item style={{padding: 0}}>
                                                 <List.Item.Meta
-                                                    avatar={(option.image ? <Avatar src={makeFileURL(option.image)}/> :
+                                                  avatar={(option.image ? <Avatar src={makeFileURL(option.image)} /> : (
                                                         <Avatar style={{backgroundColor: '#87d068'}}>
                                                             {option.user.first_name ? option.user.first_name.charAt(0) :
-                                                                <Icon type="user"/>}
-                                                        </Avatar>)}
-                                                    title={option.user.first_name + " (ID:" + (option.custom_id?option.custom_id:option.user.id) + ")"}
-                                                    description={that.props.activePracticePermissions.PatientPhoneNumber ? option.user.mobile : hideMobile(option.user.mobile)}
+                                                                <Icon type="user" />}
+                                                        </Avatar>
+                                                      ))}
+                                                  title={`${option.user.first_name  } (ID:${  option.custom_id?option.custom_id:option.user.id  })`}
+                                                  description={that.props.activePracticePermissions.PatientPhoneNumber ? option.user.mobile : hideMobile(option.user.mobile)}
 
                                                 />
                                             </List.Item>
-                                        </AutoComplete.Option>)}
+</AutoComplete.Option>
+))}
                                     </AutoComplete>
                                 )}
                             </FormItem>
-                            <FormItem key="mobile" label="Mobile Number"   {...formItemLayout}>
+                            <FormItem key="mobile" label="Mobile Number" {...formItemLayout}>
                                 {getFieldDecorator("mobile", {
                                     initialValue: that.props.editAgentData ? that.props.editAgentData.user.mobile : null,
                                     rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                                 })(
-                                    <Input placeholder="Mobile Number" disabled={that.props.editAgentData?true:false}/>
+                                    <Input placeholder="Mobile Number" disabled={!!that.props.editAgentData} />
                                 )}
                             </FormItem>
-                            <FormItem key="email" label="Email Address"  {...formItemLayout}>
+                            <FormItem key="email" label="Email Address" {...formItemLayout}>
                                 {getFieldDecorator("email", {
                                     initialValue: that.props.editAgentData ? that.props.editAgentData.user.email : null,
                                     rules: [{type: 'email', message: 'The input is not valid E-mail!'},
                                         {required: true, message: REQUIRED_FIELD_MESSAGE}],
                                 })(
-                                    <Input placeholder="Email Address" disabled={that.props.editAgentData?true:false}/>
+                                    <Input placeholder="Email Address" disabled={!!that.props.editAgentData} />
                                 )}
                             </FormItem>
-                            {this.state.editAgentData ? null :
-                                <FormItem key="referal" label="Referer Code"  {...formItemLayout}>
+                            {this.state.editAgentData ? null : (
+                                <FormItem key="referal" label="Referer Code" {...formItemLayout}>
                                     {getFieldDecorator("referal", {
                                         initialValue: that.props.editAgentData && that.props.editAgentData.user.referer_data.referer ? that.props.editAgentData.user.referer_data.referer.referer_code : null,
 
                                     })(
                                         <Input placeholder="Referer Code" />
                                     )}
-                                </FormItem>}
+                                </FormItem>
+                              )}
 
-                        </div>}
+</div>
+)}
 
                     <FormItem key="role" {...formItemLayout} label="Role Type">
                         {getFieldDecorator("role", {initialValue: that.props.editAgentData && that.props.editAgentData.role ? that.props.editAgentData.role : null}, {
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                         })(
                             <Select>
-                                {this.state.agentRoles.map((option) => <Select.Option
-                                    value={option.id}>{option.name}</Select.Option>)}
+                                {this.state.agentRoles.map((option) => (
+<Select.Option
+  value={option.id}
+>{option.name}
+</Select.Option>
+))}
                             </Select>
                         )}
                     </FormItem>
-                    <FormItem label={"Document Upload"} {...formItemLayout}>
+                    <FormItem label="Document Upload" {...formItemLayout}>
                         {getFieldDecorator("aadhar_upload",{initialValue: that.props.editAgentData && that.props.editAgentData.aadhar_upload ? that.props.editAgentData.aadhar_upload : null,
                             rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                             valuePropName: "aadhar_upload",
                         })(
                             <Upload {...singleUploadprops}>
                                 <Button>
-                                    <Icon type="upload"/> Click to Upload
+                                    <Icon type="upload" /> Click to Upload
                                 </Button>
-                                {that.props.editAgentData && that.props.editAgentData.aadhar_upload ?
-                                    <img src={makeFileURL(that.props.editAgentData.aadhar_upload)}
-                                         style={{maxWidth: '100%'}}/> : null}
+                                {that.props.editAgentData && that.props.editAgentData.aadhar_upload ? (
+                                    <img
+                                      src={makeFileURL(that.props.editAgentData.aadhar_upload)}
+                                      style={{maxWidth: '100%'}}
+                                    />
+                                  ) : null}
                             </Upload>
                         )}
                     </FormItem>
@@ -332,14 +353,16 @@ class AddOrEditAgent extends React.Component {
                         <Button type="primary" htmlType="submit" style={{margin: 5}}>
                             Submit
                         </Button>
-                        {that.props.history ?
+                        {that.props.history ? (
                             <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
                                 Cancel
-                            </Button> : null}
+                            </Button>
+                          ) : null}
                     </FormItem>
                 </Form>
             </Spin>
-        </Card>
+</Card>
+)
     }
 }
 

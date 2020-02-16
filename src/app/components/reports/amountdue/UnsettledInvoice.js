@@ -25,7 +25,7 @@ export default class TotalAmountDue extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate || this.props.patient_groups != newProps.patient_groups)
             this.setState({
                 startDate: newProps.startDate,
@@ -37,20 +37,20 @@ export default class TotalAmountDue extends React.Component {
     }
 
     loadAppointmentReport = () => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 appointmentReports: data.data,
                 total: data.total,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams = {
+        const apiParams = {
             practice: this.props.active_practiceId,
             type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
@@ -61,13 +61,15 @@ export default class TotalAmountDue extends React.Component {
         }
         getAPI(interpolate(APPOINTMENT_REPORTS, [that.props.active_practiceId]), successFn, errorFn, apiParams);
     };
+
     onPieEnter = (data, index) => {
         this.setState({
             activeIndex: index,
         });
     };
+
     sendMail = (mailTo) => {
-        let apiParams = {
+        const apiParams = {
             practice: this.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -115,24 +117,31 @@ export default class TotalAmountDue extends React.Component {
             dataIndex: 'last_payed_amount',
         }];
 
-        return <div>
+        return (
+<div>
             <h2>Unsettled Invoices
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                 <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                    {this.state.mailingUsersList.map(item => <Select.Option
-                        value={item.email}>{item.name}</Select.Option>)}
+                    {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                 </Select>
                     </p>
-            </span>
+                </span>
             </h2>
             <Table
-                loading={this.state.loading}
-                columns={columns}
-                pagination={false}
-                dataSource={appointmentReportsData}/>
+              loading={this.state.loading}
+              columns={columns}
+              pagination={false}
+              dataSource={appointmentReportsData}
+            />
 
 
-        </div>
+</div>
+)
     }
 }

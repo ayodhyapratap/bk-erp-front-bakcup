@@ -1,5 +1,8 @@
 import React from "react";
 import {Card, Form, Row, Col, Input, Button, Select, Checkbox, InputNumber} from "antd";
+import {Link, Redirect, Switch} from "react-router-dom";
+import {Route} from "react-router";
+import TextArea from "antd/lib/input/TextArea";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {CHECKBOX_FIELD, INPUT_FIELD, SUCCESS_MSG_TYPE, NUMBER_FIELD, SELECT_FIELD} from "../../../constants/dataKeys";
 import {
@@ -14,9 +17,6 @@ import {
 } from "../../../constants/api";
 import {INVENTORY_ITEM_TYPE, DRUG, SUPPLIES, EQUIPMENT} from "../../../constants/hardData";
 import {getAPI, putAPI, postAPI, displayMessage, interpolate} from "../../../utils/common";
-import {Link, Redirect, Switch} from "react-router-dom";
-import {Route} from "react-router";
-import TextArea from "antd/lib/input/TextArea";
 import {REQUIRED_FIELD_MESSAGE} from "../../../constants/messages";
 
 const CheckboxGroup = Checkbox.Group;
@@ -41,7 +41,7 @@ class AddorEditInventoryItem extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -68,52 +68,52 @@ class AddorEditInventoryItem extends React.Component {
     }
 
     loadProductMargin() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 productMargin: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
 
     loadTaxes() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 taxes_list: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
     }
 
     loadManufactureList() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 manufacture_list: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(MANUFACTURER_API, successFn, errorFn);
     }
 
     loadVendorList() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 vendor_list: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(VENDOR_API, [this.props.active_practiceId]), successFn, errorFn);
@@ -121,22 +121,22 @@ class AddorEditInventoryItem extends React.Component {
 
 
     loadData() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState(function (prevState) {
                 let totalTax = 0;
                 data.taxes_data.forEach(function (tax) {
                     totalTax += tax.tax_value;
                 });
-                let net_price = (data.retail_price * (1 + totalTax * 0.01)).toFixed(2);
+                const net_price = (data.retail_price * (1 + totalTax * 0.01)).toFixed(2);
                 return {
-                    editInventoryItem: {...data, net_price: net_price},
+                    editInventoryItem: {...data, net_price},
                     type: data.item_type,
                     retail_price: data.retail_price
                 }
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         if (this.props.match.params.id)
@@ -145,32 +145,33 @@ class AddorEditInventoryItem extends React.Component {
     }
 
     loadDrugType = () => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 drugTypeList: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(DRUG_TYPE_API, [this.props.active_practiceId]), successFn, errorFn);
     }
+
     onChangeHandeler = (e) => {
-        let that = this
+        const that = this
         that.setState({
             type: e,
         })
     }
 
     loadDrugUnit() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 drugUnitList: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         getAPI(interpolate(DRUG_UNIT_API, [this.props.active_practiceId]), successFn, errorFn);
     }
@@ -183,10 +184,10 @@ class AddorEditInventoryItem extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        let that = this;
+        const that = this;
         this.props.form.validateFields((err, formData) => {
             if (!err) {
-                let reqData = {
+                const reqData = {
                     ...formData,
                     retail_without_tax: that.state.retail_price,
                     net_price: undefined,
@@ -197,14 +198,14 @@ class AddorEditInventoryItem extends React.Component {
                     reqData.id = this.state.editInventoryItem.id
                 }
 
-                let successFn = function (data) {
+                const successFn = function (data) {
                     that.setState({
                         redirect: true,
                     });
                     that.props.loadData();
                     that.props.history.replace('/inventory');
                 };
-                let errorFn = function () {
+                const errorFn = function () {
 
                 };
                 if (!this.state.editInventoryItem) {
@@ -216,11 +217,12 @@ class AddorEditInventoryItem extends React.Component {
             }
         });
     }
+
     changeNetPrice = (value) => {
-        let that = this;
+        const that = this;
         const {getFieldsValue, setFields} = this.props.form;
         setTimeout(function () {
-            let values = getFieldsValue();
+            const values = getFieldsValue();
             if (values.retail_with_tax) {
                 let totalTaxAmount = 0;
                 values.taxes.forEach(function (taxid) {
@@ -229,7 +231,7 @@ class AddorEditInventoryItem extends React.Component {
                             totalTaxAmount += taxObj.tax_value;
                     })
                 });
-                let retailPrice = values.retail_with_tax / (1 + totalTaxAmount * 0.01);
+                const retailPrice = values.retail_with_tax / (1 + totalTaxAmount * 0.01);
                 that.setState({
                     retail_price: retailPrice.toFixed(2)
                 })
@@ -243,11 +245,11 @@ class AddorEditInventoryItem extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const taxesOption = [];
         if (this.state.taxes_list) {
             this.state.taxes_list.forEach(function (drug) {
-                taxesOption.push({label: (drug.name + "(" + drug.tax_value + "%)"), value: drug.id});
+                taxesOption.push({label: (`${drug.name  }(${  drug.tax_value  }%)`), value: drug.id});
             })
         }
         const manufacturerOption = [];
@@ -270,26 +272,25 @@ class AddorEditInventoryItem extends React.Component {
             wrapperCol: {span: 14},
         });
 
-        return <Card title={this.state.editInventoryItem ? "Edit Inventory Item" : "Add Inventory Item"} loading={this.state.loading}>
+        return (
+<Card title={this.state.editInventoryItem ? "Edit Inventory Item" : "Add Inventory Item"} loading={this.state.loading}>
             <Row>
-                <Col span={18} >
+                <Col span={18}>
                     <Form onSubmit={this.handleSubmit}>
                         <Form.Item label="Item Name" {...formItemLayout}>
                             {getFieldDecorator('name', {
                                 initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.name : null,
                                 rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}]
                             })
-                            (<Input placeholder="Item Name"/>)
-                            }
+                            (<Input placeholder="Item Name" />)}
                         </Form.Item>
 
                         <Form.Item label="HSN" {...formItemLayout}>
                             {getFieldDecorator('code', {initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.code : null})
-                            (<Input placeholder="HSN Number"/>)
-                            }
+                            (<Input placeholder="HSN Number" />)}
                         </Form.Item>
-                        {this.state.manufacturerType && this.state.manufacturerType == INPUT_FIELD ?
-                            <Form.Item key={'manufacturer_extra'} label={"Manufacturer"}  {...formItemLayout}>
+                        {this.state.manufacturerType && this.state.manufacturerType == INPUT_FIELD ? (
+                            <Form.Item key="manufacturer_extra" label="Manufacturer" {...formItemLayout}>
                                 {getFieldDecorator("manufacturer_extra", {
                                     initialValue: that.state.editPrescreption ? that.state.editPrescreption.manufacturer_extra : null,
                                     rules: [{
@@ -297,36 +298,43 @@ class AddorEditInventoryItem extends React.Component {
                                         message: REQUIRED_FIELD_MESSAGE
                                     }]
                                 })(
-                                    <Input/>
+                                    <Input />
                                 )}
                                 <a onClick={() => that.setFormParams('manufacturerType', SELECT_FIELD)}>Choose
-                                    Manufacturer</a>
+                                    Manufacturer
+                                </a>
                             </Form.Item>
-                            : <Form.Item key={"manufacturer"} {...formItemLayout} label={"Manufacturer"}>
+                          )
+                            : (
+<Form.Item key="manufacturer" {...formItemLayout} label="Manufacturer">
                                 {getFieldDecorator("manufacturer", {
                                     initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.manufacturer : null,
                                 })(
                                     <Select>
-                                        {manufacturerOption.map((option) => <Select.Option
-                                            value={option.value}>{option.label}</Select.Option>)}
+                                        {manufacturerOption.map((option) => (
+<Select.Option
+  value={option.value}
+>{option.label}
+</Select.Option>
+))}
                                     </Select>
                                 )}
                                 <a onClick={() => that.setFormParams('manufacturerType', INPUT_FIELD)}>Add New
-                                    Manufacturer</a>
-                            </Form.Item>}
+                                    Manufacturer
+                                </a>
+</Form.Item>
+)}
                         <Form.Item label="Stocking Unit" {...formItemLayout}>
                             {getFieldDecorator('stocking_unit', {
                                 initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.stocking_unit : null,
                                 rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                             })
-                            (<Input placeholder="Example: Bottles, Strips etc."/>)
-                            }<p>(Make sure this is the same as the unit in which you dispense this item.)</p>
+                            (<Input placeholder="Example: Bottles, Strips etc." />)}<p>(Make sure this is the same as the unit in which you dispense this item.)</p>
                         </Form.Item>
 
                         <Form.Item label="Re-Order Level" {...formItemLayout}>
                             {getFieldDecorator('re_order_level', {initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.re_order_level : null})
-                            (<InputNumber placeholder="Re-Order Level"/>)
-                            }
+                            (<InputNumber placeholder="Re-Order Level" />)}
                         </Form.Item>
                         <Form.Item label="Net Price" {...formItemLayout}>
                             {getFieldDecorator('retail_with_tax', {
@@ -336,29 +344,34 @@ class AddorEditInventoryItem extends React.Component {
                                     message: REQUIRED_FIELD_MESSAGE
                                 }]
                             })
-                            (<InputNumber onChange={this.changeNetPrice}/>)
-                            }<span className="ant-form-text">INR</span>
+                            (<InputNumber onChange={this.changeNetPrice} />)}<span className="ant-form-text">INR</span>
                         </Form.Item>
                         <Form.Item label="Tax" {...formItemLayout}>
                             {getFieldDecorator('taxes', {initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.taxes : []})
                             (<CheckboxGroup onChange={this.changeNetPrice}>
-                                {taxesOption.map((option) => <Checkbox
-                                    value={option.value}>{option.label}
-                                </Checkbox>)}
-                            </CheckboxGroup>)
-                            }
+                                {taxesOption.map((option) => (
+<Checkbox
+  value={option.value}
+>{option.label}
+</Checkbox>
+))}
+                             </CheckboxGroup>)}
                         </Form.Item>
                         <Form.Item label="Retail Price" {...formItemLayout}>
                             <span className="ant-form-text"><b>{that.state.retail_price}</b>&nbsp;INR</span>
                         </Form.Item>
 
-                        <Form.Item key={"margin"} {...formItemLayout} label={"MLM Margin"}>
+                        <Form.Item key="margin" {...formItemLayout} label="MLM Margin">
                             {getFieldDecorator("margin", {
                                 initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.margin : null,
                             })(
                                 <Select>
-                                    {this.state.productMargin.map((option) => <Select.Option
-                                        value={option.id}>{option.name}</Select.Option>)}
+                                    {this.state.productMargin.map((option) => (
+<Select.Option
+  value={option.id}
+>{option.name}
+</Select.Option>
+))}
                                 </Select>
                             )}
                         </Form.Item>
@@ -368,25 +381,26 @@ class AddorEditInventoryItem extends React.Component {
                                 rules: [{required: true, message: REQUIRED_FIELD_MESSAGE}],
                             })
                             (<Select placeholder="Item Type" onChange={this.onChangeHandeler}>
-                                {INVENTORY_ITEM_TYPE.map((option) => <Select.Option
-                                    value={option.value}>{option.label}
-                                </Select.Option>)}
-                            </Select>)
-
-                            }
+                                {INVENTORY_ITEM_TYPE.map((option) => (
+<Select.Option
+  value={option.value}
+>{option.label}
+</Select.Option>
+))}
+                             </Select>)}
                         </Form.Item>
 
-                        {this.state.type == DRUG ? <div>
+                        {this.state.type == DRUG ? (
+<div>
                                 <Form.Item label="I prescribe this" {...formItemLayout}>
                                     {getFieldDecorator('perscribe_this', {
                                         valuePropName: 'checked',
                                         initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.perscribe_this : false
                                     })
-                                    (<Checkbox></Checkbox>)
-                                    }
+                                    (<Checkbox />)}
                                 </Form.Item>
-                                {this.state.drugType && this.state.drugType == INPUT_FIELD ?
-                                    <Form.Item key={'drug_type_extra'} label={"Medicine Type"}  {...formItemLayout}>
+                                {this.state.drugType && this.state.drugType == INPUT_FIELD ? (
+                                    <Form.Item key="drug_type_extra" label="Medicine Type" {...formItemLayout}>
                                         {getFieldDecorator("drug_type_extra", {
                                             initialValue: that.state.editInventoryItem ? that.state.editInventoryItem.drug_type_extra : null,
                                             rules: [{
@@ -394,12 +408,15 @@ class AddorEditInventoryItem extends React.Component {
                                                 message: REQUIRED_FIELD_MESSAGE
                                             }]
                                         })(
-                                            <Input/>
+                                            <Input />
                                         )}
                                         <a onClick={() => that.setFormParams('drugType', SELECT_FIELD)}>Choose Medicine
-                                            Type</a>
+                                            Type
+                                        </a>
                                     </Form.Item>
-                                    : <Form.Item key={"drug_type"} {...formItemLayout} label={"Medicine Type"}>
+                                  )
+                                    : (
+<Form.Item key="drug_type" {...formItemLayout} label="Medicine Type">
                                         {getFieldDecorator("drug_type", {
                                             initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.drug_type : null,
                                             rules: [{
@@ -408,20 +425,25 @@ class AddorEditInventoryItem extends React.Component {
                                             }]
                                         })(
                                             <Select>
-                                                {that.state.drugTypeList.map((option) => <Select.Option
-                                                    value={option.id}>{option.name}</Select.Option>)}
+                                                {that.state.drugTypeList.map((option) => (
+<Select.Option
+  value={option.id}
+>{option.name}
+</Select.Option>
+))}
                                             </Select>
                                         )}
                                         <a onClick={() => that.setFormParams('drugType', INPUT_FIELD)}>Add New Medicine
-                                            Type</a>
-                                    </Form.Item>}
+                                            Type
+                                        </a>
+</Form.Item>
+)}
                                 <Form.Item label="Strength" {...formItemLayout}>
                                     {getFieldDecorator('strength', {initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.strength : null})
-                                    (<InputNumber/>)
-                                    }
+                                    (<InputNumber />)}
                                 </Form.Item>
-                                {this.state.drugUnit && this.state.drugUnit == INPUT_FIELD ?
-                                    <Form.Item key={'unit_type_extra'} label={"Strength Unit"}  {...formItemLayout}>
+                                {this.state.drugUnit && this.state.drugUnit == INPUT_FIELD ? (
+                                    <Form.Item key="unit_type_extra" label="Strength Unit" {...formItemLayout}>
                                         {getFieldDecorator("unit_type_extra", {
                                             initialValue: that.state.editInventoryItem ? that.state.editInventoryItem.unit_type_extra : null,
                                             rules: [{
@@ -429,12 +451,15 @@ class AddorEditInventoryItem extends React.Component {
                                                 message: REQUIRED_FIELD_MESSAGE
                                             }]
                                         })(
-                                            <Input/>
+                                            <Input />
                                         )}
                                         <a onClick={() => that.setFormParams('drugUnit', SELECT_FIELD)}>Choose Strength
-                                            Unit</a>
+                                            Unit
+                                        </a>
                                     </Form.Item>
-                                    : <Form.Item key={"stength_unit"} {...formItemLayout} label={"Strength Unit"}>
+                                  )
+                                    : (
+<Form.Item key="stength_unit" {...formItemLayout} label="Strength Unit">
                                         {getFieldDecorator("stength_unit", {
                                             initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.stength_unit : null,
                                             rules: [{
@@ -443,39 +468,44 @@ class AddorEditInventoryItem extends React.Component {
                                             }]
                                         })(
                                             <Select>
-                                                {that.state.drugUnitList.map((option) => <Select.Option
-                                                    value={option.id}>{option.name}</Select.Option>)}
+                                                {that.state.drugUnitList.map((option) => (
+<Select.Option
+  value={option.id}
+>{option.name}
+</Select.Option>
+))}
                                             </Select>
                                         )}
                                         <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Strength
-                                            Unit</a>
-                                    </Form.Item>}
+                                            Unit
+                                        </a>
+</Form.Item>
+)}
                                 <Form.Item label="Instructions" {...formItemLayout}>
                                     {getFieldDecorator('instructions', {initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.instructions : null})
-                                    (<TextArea/>)
-                                    }
+                                    (<TextArea />)}
                                 </Form.Item>
 
-                            </div>
+</div>
+)
 
                             : null}
-                        {this.state.type == SUPPLIES ? <div>
+                        {this.state.type == SUPPLIES ? (
+<div>
                                 <Form.Item label="I prescribe this" {...formItemLayout}>
                                     {getFieldDecorator('perscribe_this', {
                                         valuePropName: 'checked',
                                         initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.perscribe_this : false
                                     })
-                                    (<Checkbox></Checkbox>)
-                                    }
+                                    (<Checkbox />)}
                                 </Form.Item>
                                 <Form.Item label="Strength Unit" {...formItemLayout}>
                                     {getFieldDecorator('strength', {initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.strength : null})
-                                    (<Input/>)
-                                    }
+                                    (<Input />)}
                                 </Form.Item>
 
-                                {this.state.drugUnit && this.state.drugUnit == INPUT_FIELD ?
-                                    <Form.Item key={'unit_type_extra'} label={"Strength Unit"}  {...formItemLayout}>
+                                {this.state.drugUnit && this.state.drugUnit == INPUT_FIELD ? (
+                                    <Form.Item key="unit_type_extra" label="Strength Unit" {...formItemLayout}>
                                         {getFieldDecorator("unit_type_extra", {
                                             initialValue: that.state.editInventoryItem ? that.state.editInventoryItem.unit_type_extra : null,
                                             rules: [{
@@ -483,12 +513,15 @@ class AddorEditInventoryItem extends React.Component {
                                                 message: REQUIRED_FIELD_MESSAGE
                                             }]
                                         })(
-                                            <Input/>
+                                            <Input />
                                         )}
                                         <a onClick={() => that.setFormParams('drugUnit', SELECT_FIELD)}>Choose Strength
-                                            Unit</a>
+                                            Unit
+                                        </a>
                                     </Form.Item>
-                                    : <Form.Item key={"stength_unit"} {...formItemLayout} label={"Strength Unit"}>
+                                  )
+                                    : (
+<Form.Item key="stength_unit" {...formItemLayout} label="Strength Unit">
                                         {getFieldDecorator("stength_unit", {
                                             initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.stength_unit : null,
                                             rules: [{
@@ -497,36 +530,42 @@ class AddorEditInventoryItem extends React.Component {
                                             }]
                                         })(
                                             <Select>
-                                                {that.state.drugUnitList.map((option) => <Select.Option
-                                                    value={option.id}>{option.name}</Select.Option>)}
+                                                {that.state.drugUnitList.map((option) => (
+<Select.Option
+  value={option.id}
+>{option.name}
+</Select.Option>
+))}
                                             </Select>
                                         )}
                                         <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Strength
-                                            Unit</a>
-                                    </Form.Item>}
+                                            Unit
+                                        </a>
+</Form.Item>
+)}
 
                                 <Form.Item label="Instructions" {...formItemLayout}>
                                     {getFieldDecorator('instructions', {initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.instructions : null})
-                                    (<TextArea/>)
-                                    }
+                                    (<TextArea />)}
                                 </Form.Item>
-                            </div>
+</div>
+)
                             : null}
-                        {this.state.type == EQUIPMENT ? <div>
+                        {this.state.type == EQUIPMENT ? (
+<div>
                                 <Form.Item label="I prescribe this" {...formItemLayout}>
                                     {getFieldDecorator('perscribe_this', {
                                         valuePropName: 'checked',
                                         initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.perscribe_this : null
                                     })
-                                    (<Checkbox></Checkbox>)
-                                    }
+                                    (<Checkbox />)}
                                 </Form.Item>
                                 <Form.Item label="Instructions" {...formItemLayout}>
                                     {getFieldDecorator('instructions', {initialValue: this.state.editInventoryItem ? this.state.editInventoryItem.instructions : null})
-                                    (<TextArea/>)
-                                    }
+                                    (<TextArea />)}
                                 </Form.Item>
-                            </div>
+</div>
+)
 
                             : null}
 
@@ -534,18 +573,20 @@ class AddorEditInventoryItem extends React.Component {
                             <Button style={{margin: 5}} type="primary" htmlType="submit">
                                 Submit
                             </Button>
-                            {that.props.history ?
+                            {that.props.history ? (
                                 <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
                                     Cancel
-                                </Button> : null}
+                                </Button>
+                              ) : null}
                         </Form.Item>
 
 
                     </Form>
                 </Col>
             </Row>
-            {this.state.redirect && <Redirect to={'/inventory'}/>}
-        </Card>
+            {this.state.redirect && <Redirect to="/inventory" />}
+</Card>
+)
 
     }
 }

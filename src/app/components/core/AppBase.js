@@ -1,8 +1,8 @@
 import React from "react";
 import {Route, Switch} from "react-router-dom";
-import AppHeader from "./AppHeader";
 import {Layout, Spin, Button} from "antd";
 import loadable from '@loadable/component';
+import AppHeader from "./AppHeader";
 import AppSider from "./AppSider";
 import {loadUserDetails, loggedInactivePractice, loggedInUserPractices, setCurrentPractice} from "../../utils/auth";
 import Error404 from "../common/errors/Error404";
@@ -57,10 +57,10 @@ class AppBase extends React.Component {
     }
 
     activeData() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState(function (prevState) {
-                let permissions = {};
+                const permissions = {};
                 data.practice_permissions.forEach(function (permission) {
                     permissions[permission.codename] = permission;
                 });
@@ -76,7 +76,7 @@ class AppBase extends React.Component {
                 // that.clinicData();
             });
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loadingPermissions: false
             })
@@ -108,7 +108,7 @@ class AppBase extends React.Component {
     }
 
     switchPractice(practiceId) {
-        let that = this;
+        const that = this;
         that.setState(function (prevState) {
             return {
                 active_practiceId: practiceId,
@@ -126,6 +126,7 @@ class AppBase extends React.Component {
             visible: true,
         });
     };
+
     onClose = () => {
         this.setState({
             visible: false,
@@ -134,108 +135,195 @@ class AppBase extends React.Component {
 
 
     render() {
-        let that = this;
+        const that = this;
 
         if (this.state.loadingPermissions) {
-            return <Spin spinning={this.state.loadingPermissions} tip={"Loading Permissions...."}>
-                <div style={{width: '100vw', height: '100vh'}}/>
-            </Spin>
+            return (
+                <Spin spinning={this.state.loadingPermissions} tip="Loading Permissions....">
+                    <div style={{width: '100vw', height: '100vh'}} />
+                </Spin>
+            )
         }
-        return <Layout style={{minHeight: '100vh'}}>
-            <ErrorBoundary>
-                <div style={{
-                    position: 'fixed', right: '29px',
-                    bottom: '23px', zIndex: '20'
-                }}>
-                    <Button type="primary" shape="circle" icon="mail" size={"large"} onClick={this.showDrawer}/>
-                </div>
-                <Switch>
-                    <Route path={"/patients/patientprintform"}
-                           render={(route) => <PrintPatientForm {...this.state} key={that.state.active_practiceId}/>}/>
-                    <Route>
-                        <Layout>
-                            <AppSider toggleSider={this.toggleSider} {...this.state}
-                                      key={that.state.active_practiceId} {...this.props} />
+        return (
+            <Layout style={{minHeight: '100vh'}}>
+                <ErrorBoundary>
+                    <div style={{
+                        position: 'fixed', right: '29px',
+                        bottom: '23px', zIndex: '20'
+                    }}
+                    >
+                        <Button type="primary" shape="circle" icon="mail" size="large" onClick={this.showDrawer} />
+                    </div>
+                    <Switch>
+                        <Route
+                          path="/patients/patientprintform"
+                          render={(route) => <PrintPatientForm {...this.state} key={that.state.active_practiceId} />}
+                        />
+                        <Route>
                             <Layout>
-                                <AppHeader {...this.props}
-                                           {...this.state}
-                                           switchPractice={this.switchPractice}
-                                           toggleSider={this.toggleSider}/>
-                                <Switch>
-                                    {this.state.activePracticePermissions.WebAdmin ?
-                                        <Route path="/web" render={(route) => <WebAdminHome {...this.state}
-                                                                                            {...this.props}
-                                                                                            {...route}
-                                                                                            key={that.state.active_practiceId}/>}/>
-                                        : null}
+                                <AppSider
+                                  toggleSider={this.toggleSider}
+                                  {...this.state}
+                                  key={that.state.active_practiceId}
+                                  {...this.props}
+                                />
+                                <Layout>
+                                    <AppHeader
+                                      {...this.props}
+                                      {...this.state}
+                                      switchPractice={this.switchPractice}
+                                      toggleSider={this.toggleSider}
+                                    />
+                                    <Switch>
+                                        {this.state.activePracticePermissions.WebAdmin ? (
+                                                <Route
+                                                  path="/web"
+                                                  render={(route) => (
+                                                        <WebAdminHome
+                                                          {...this.state}
+                                                          {...this.props}
+                                                          {...route}
+                                                          key={that.state.active_practiceId}
+                                                        />
+                                                    )}
+                                                />
+                                            )
+                                            : null}
 
-                                    <Route exact path="/calendar/blockcalendar"
-                                           render={(route) => (that.state.activePracticePermissions.BlockCalendar || that.state.allowAllPermissions ?
-                                               <BlockCalendar {...this.state} {...this.props} {...route}/> :
-                                               <PermissionDenied/>)}/>
-                                    <Route path="/calendar"
-                                           render={(route) => (that.state.activePracticePermissions.ViewCalendar ?
-                                               <Calendar {...that.state}
-                                                         {...that.props}
-                                                         {...route}
-                                                         key={that.state.active_practiceId}/> : <PermissionDenied/>)}/>
-                                    <Route path="/patient/:id" render={(route) => <PatientHome {...this.state}
-                                                                                               {...this.props}
-                                                                                               {...route}
-                                                                                               key={that.state.active_practiceId + "|" + route.match.params.id}/>}/>
+                                        <Route
+                                          exact
+                                          path="/calendar/blockcalendar"
+                                          render={(route) => (that.state.activePracticePermissions.BlockCalendar || that.state.allowAllPermissions ?
+                                                <BlockCalendar {...this.state} {...this.props} {...route} /> :
+                                                <PermissionDenied />)}
+                                        />
+                                        <Route
+                                          path="/calendar"
+                                          render={(route) => (that.state.activePracticePermissions.ViewCalendar ? (
+                                                <Calendar
+                                                  {...that.state}
+                                                  {...that.props}
+                                                  {...route}
+                                                  key={that.state.active_practiceId}
+                                                />
+                                            ) : <PermissionDenied />)}
+                                        />
+                                        <Route
+                                          path="/patient/:id"
+                                          render={(route) => (
+                                                <PatientHome
+                                                  {...this.state}
+                                                  {...this.props}
+                                                  {...route}
+                                                  key={`${that.state.active_practiceId}|${route.match.params.id}`}
+                                                />
+                                            )}
+                                        />
 
-                                    <Route path="/settings" render={(route) => <SettingsDash {...this.state}
-                                                                                             {...this.props}
-                                                                                             {...route}
-                                                                                             key={that.state.active_practiceId}
-                                                                                             refreshClinicData={this.activeData}/>}/>
-                                    <Route path="/inventory" render={(route) => <InventoryHome {...this.state}
-                                                                                               {...this.props}
-                                                                                               {...route}
-                                                                                               key={that.state.active_practiceId}/>}/>
-                                    <Route path="/reports/:type" render={(route) => <ReportsHome {...this.state}
-                                                                                                 {...this.props}
-                                                                                                 {...route}
-                                                                                                 key={that.state.active_practiceId}/>}/>
+                                        <Route
+                                          path="/settings"
+                                          render={(route) => (
+                                                <SettingsDash
+                                                  {...this.state}
+                                                  {...this.props}
+                                                  {...route}
+                                                  key={that.state.active_practiceId}
+                                                  refreshClinicData={this.activeData}
+                                                />
+                                            )}
+                                        />
+                                        <Route
+                                          path="/inventory"
+                                          render={(route) => (
+                                                <InventoryHome
+                                                  {...this.state}
+                                                  {...this.props}
+                                                  {...route}
+                                                  key={that.state.active_practiceId}
+                                                />
+                                            )}
+                                        />
+                                        <Route
+                                          path="/reports/:type"
+                                          render={(route) => (
+                                                <ReportsHome
+                                                  {...this.state}
+                                                  {...this.props}
+                                                  {...route}
+                                                  key={that.state.active_practiceId}
+                                                />
+                                            )}
+                                        />
 
-                                    <Route path="/profile" render={(route) =>
-                                        <Profile {...this.state}
-                                                 {...this.props}
-                                                 {...route} key={that.state.active_practiceId}/>}/>
+                                        <Route
+                                          path="/profile"
+                                          render={(route) => (
+                                                <Profile
+                                                  {...this.state}
+                                                  {...this.props}
+                                                  {...route}
+                                                  key={that.state.active_practiceId}
+                                                />
+                                            )}
+                                        />
 
-                                    <Route path="/meeting-booking"
-                                           render={(route) => (this.state.activePracticePermissions.ViewMeeting || this.state.allowAllPermissions ?
-                                               <MeetingBooking  {...this.state} {...this.props} {...route}
-                                                                key={that.state.active_practiceId}/> :
-                                               <PermissionDenied/>)}/>
-                                    {/*<Route path="/alternate-medicine" render={(route)=>(this.state.activePracticePermissions.ManageMedicineConversion || this.state.allowAllPermissions?*/}
-                                    {/*    <AlternateMedicineHome  {...this.state} {...this.props} {...route}*/}
-                                    {/*                     key={that.state.active_practiceId}/>:<PermissionDenied/>)}/>*/}
+                                        <Route
+                                          path="/meeting-booking"
+                                          render={(route) => (this.state.activePracticePermissions.ViewMeeting || this.state.allowAllPermissions ? (
+                                                    <MeetingBooking
+                                                      {...this.state}
+                                                      {...this.props}
+                                                      {...route}
+                                                      key={that.state.active_practiceId}
+                                                    />
+                                                ) :
+                                                <PermissionDenied />)}
+                                        />
+                                        {/* <Route path="/alternate-medicine" render={(route)=>(this.state.activePracticePermissions.ManageMedicineConversion || this.state.allowAllPermissions? */}
+                                        {/*    <AlternateMedicineHome  {...this.state} {...this.props} {...route} */}
+                                        {/*                     key={that.state.active_practiceId}/>:<PermissionDenied/>)}/> */}
 
-                                    {this.state.activePracticePermissions.ViewCalendar ?
-                                        <Route exact path="/" render={(route) => <Calendar {...this.state}
-                                                                                           {...this.props}
-                                                                                           {...route}
-                                                                                           key={that.state.active_practiceId}/>}/> : null}
+                                        {this.state.activePracticePermissions.ViewCalendar ? (
+                                            <Route
+                                              exact
+                                              path="/"
+                                              render={(route) => (
+                                                    <Calendar
+                                                      {...this.state}
+                                                      {...this.props}
+                                                      {...route}
+                                                      key={that.state.active_practiceId}
+                                                    />
+                                                )}
+                                            />
+                                        ) : null}
 
 
-                                    <Route path="/" render={(route) => <PatientHome {...this.state}
-                                                                                    {...this.props}
-                                                                                    {...route}
-                                                                                    key={that.state.active_practiceId}/>}/>
+                                        <Route
+                                          path="/"
+                                          render={(route) => (
+                                                <PatientHome
+                                                  {...this.state}
+                                                  {...this.props}
+                                                  {...route}
+                                                  key={that.state.active_practiceId}
+                                                />
+                                            )}
+                                        />
 
 
-                                    <Route component={Error404}/>
+                                        <Route component={Error404} />
 
-                                </Switch>
-                                {/*<AppFooter/>*/}
+                                    </Switch>
+                                    {/* <AppFooter/> */}
+                                </Layout>
                             </Layout>
-                        </Layout>
-                    </Route>
-                </Switch>
-                <SuggestionBox {...this.state} close={this.onClose}/>
-            </ErrorBoundary>
-        </Layout>
+                        </Route>
+                    </Switch>
+                    <SuggestionBox {...this.state} close={this.onClose} />
+                </ErrorBoundary>
+            </Layout>
+        )
             ;
     }
 }

@@ -1,8 +1,8 @@
 import React from "react";
 import {Col, Row, Select, Statistic} from "antd";
+import moment from "moment"
 import {SUGGESTIONS} from "../../../constants/api";
 import {displayMessage, getAPI} from "../../../utils/common";
-import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 import {MAIL_SEND_MSG, SUCCESS} from "../../../constants/messages";
@@ -26,7 +26,7 @@ export default class Suggestions extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.status!=newProps.status)
             this.setState({
                 startDate: newProps.startDate,
@@ -38,23 +38,23 @@ export default class Suggestions extends React.Component {
     }
 
     loadSuggestionsReport = () => {
-        let that = this;
+        const that = this;
         that.setState({
             loading:true,
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report:data.results,
                 loading: false,
             })
         };
 
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
         };
@@ -66,10 +66,10 @@ export default class Suggestions extends React.Component {
 
 
     sendMail = (mailTo) => {
-        let that = this;
-        let errorMsg =true;
-        let successMsg =true;
-        let apiParams={
+        const that = this;
+        const errorMsg =true;
+        const successMsg =true;
+        const apiParams={
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
         };
@@ -99,7 +99,7 @@ export default class Suggestions extends React.Component {
             render: (text, record) => (
                 <span>
                 {moment(record.created_at).format('DD MMM YYYY')}
-                  </span>
+                </span>
             ),
             export:(item,record)=>(moment(record.created_at).format('DD MMM YYYY')),
         },{
@@ -129,24 +129,30 @@ export default class Suggestions extends React.Component {
                      <span style={{float: 'right'}}>
                         <p><small>E-Mail To:&nbsp;</small>
                             <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                                {this.state.mailingUsersList.map(item => <Select.Option
-                                    value={item.email}>{item.name}</Select.Option>)}
+                                {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                             </Select>
                         </p>
-                    </span>
+                     </span>
                 </h2>
                 <Row>
                     <Col span={12} offset={6} style={{textAlign:"center"}}>
                         <Statistic title="Total Suggestions" value={reportData.length} />
-                        <br/>
+                        <br />
                     </Col>
                 </Row>
 
                 <CustomizedTable
-                    loading={this.state.loading}
-                columns={columns}
-                dataSource={reportData}/>
+                  loading={this.state.loading}
+                  columns={columns}
+                  dataSource={reportData}
+                />
 
-        </div>)
+            </div>
+)
     }
 }

@@ -3,13 +3,13 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {Button, Card, Col, Dropdown, Icon, Menu, Row, Spin} from "antd";
 import {Route, Switch} from "react-router";
-import AddOrEditMeeting from "./AddOrEditMeeting";
 import {Link} from "react-router-dom";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import {Calendar as BigCalendar, momentLocalizer, Navigate} from "react-big-calendar";
 import moment from "moment";
 import TimeGrid from "react-big-calendar/lib/TimeGrid";
 import * as dates from "date-arithmetic";
+import AddOrEditMeeting from "./AddOrEditMeeting";
 import {getAPI} from "../../../utils/common";
 import {MEETING_DETAILS, MEETING_USER} from "../../../constants/api";
 import MeetingEventComponent from "./MeetingEventComponent";
@@ -42,23 +42,24 @@ export default class MeetingBooking extends React.Component {
 
 
     loadZoomUser(){
-        let that=this;
-        let successFn=function (data) {
+        const that=this;
+        const successFn=function (data) {
             that.setState({
                 zoomUser:data,
                 loading:false,
             })
         };
-        let errorFn =function () {
+        const errorFn =function () {
             that.setState({
                 loading:false,
             })
         };
         getAPI(MEETING_USER,successFn,errorFn);
     }
+
     onSelectSlot = (value) => {
-        let that = this;
-        let time = moment(value.start);
+        const that = this;
+        const time = moment(value.start);
         if (value.action == "doubleClick") {
             that.setState({
                 startTime: time,
@@ -68,8 +69,9 @@ export default class MeetingBooking extends React.Component {
         }
 
     }
+
     onRangeChange = (e) => {
-        let that = this;
+        const that = this;
         if (e.start && e.end) {
 
             if (moment(e.start).date() == 1) {
@@ -81,7 +83,7 @@ export default class MeetingBooking extends React.Component {
                     that.loadMeetingList();
                 })
             } else {
-                let newDate = moment(e.start);
+                const newDate = moment(e.start);
                 this.setState({
                     selectedDate: newDate.month(newDate.month() + 1).date(1),
                     selectedStartDate: moment(e.start),
@@ -112,13 +114,14 @@ export default class MeetingBooking extends React.Component {
 
         }
     };
+
     loadMeetingList =()=>{
-        let that = this;
+        const that = this;
         that.setState({
             loading: true
         });
-        let successFn = function (data) {
-            let eventList = [];
+        const successFn = function (data) {
+            const eventList = [];
             data.forEach(function (meeting) {
                 eventList.push({
                     ...meeting,
@@ -133,10 +136,10 @@ export default class MeetingBooking extends React.Component {
                 loading: false
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
-        let params = {
+        const params = {
             start: moment(this.state.selectedStartDate).startOf('day').format(),
             end: moment(this.state.selectedEndDate).endOf('day').format(),
         };
@@ -147,7 +150,7 @@ export default class MeetingBooking extends React.Component {
     };
 
     setFilterType = (e) => {
-        let that = this;
+        const that = this;
         this.setState({
             filterType: e.key,
             selectedZoomUser: 'ALL',
@@ -163,7 +166,7 @@ export default class MeetingBooking extends React.Component {
             this.loadMeetingList()
         }
         this.setState(function (prevState) {
-            let filteredEvent = [];
+            const filteredEvent = [];
             prevState.meetingList.forEach(function (event) {
                 if (value == 'ALL') {
                     filteredEvent.push(event)
@@ -180,80 +183,109 @@ export default class MeetingBooking extends React.Component {
     };
 
     render() {
-        let that = this;
+        const that = this;
         return (
             <div style={{margin: 20}}>
                 <Switch>
-                    <Route exact path='/meeting-booking/add'
-                           render={(route) =>(that.props.activePracticePermissions || that.props.CreateMeeting?<AddOrEditMeeting {...this.state} {...route} {...this.props}
-                                                                loadData={this.loadMeetingList}/>:<PermissionDenied/>)}/>
+                    <Route
+                      exact
+                      path='/meeting-booking/add'
+                      render={(route) =>(that.props.activePracticePermissions || that.props.CreateMeeting?(
+<AddOrEditMeeting
+  {...this.state}
+  {...route}
+  {...this.props}
+  loadData={this.loadMeetingList}
+/>
+):<PermissionDenied />)}
+                    />
 
-                    <Route exact path={"/meeting-booking/edit/:id"}
-                           render={(route) =>(that.props.activePracticePermissions || that.props.UpdateMeeting? <AddOrEditMeeting  {...route} {...this.props} {...this.state}
-                                                                 loadData={this.loadMeetingList}/>:<PermissionDenied/>)}/>
+                    <Route
+                      exact
+                      path="/meeting-booking/edit/:id"
+                      render={(route) =>(that.props.activePracticePermissions || that.props.UpdateMeeting? (
+<AddOrEditMeeting
+  {...route}
+  {...this.props}
+  {...this.state}
+  loadData={this.loadMeetingList}
+/>
+):<PermissionDenied />)}
+                    />
 
-                    <Card title="Meeting Booking"
-                          extra={<Link to="/meeting-booking/add"><Button type="primary"><Icon type="plus"/> Add Booking</Button></Link>}>
+                    <Card
+                      title="Meeting Booking"
+                      extra={<Link to="/meeting-booking/add"><Button type="primary"><Icon type="plus" /> Add Booking</Button></Link>}
+                    >
                         <Spin size="large" spinning={this.state.loading}>
                             <Row gutter={16}>
                                 <Col span={3}>
                                     <div>
-                                        <Dropdown trigger={'click'} overlay={
-                                            <Menu >
-                                                <Menu.Item key={"Zoom User"}>
+                                        <Dropdown
+                                          trigger="click"
+                                          overlay={(
+                                            <Menu>
+                                                <Menu.Item key="Zoom User">
                                                     Zoom User
                                                 </Menu.Item>
                                             </Menu>
-
-                                        }>
+                                          )}
+                                        >
                                             <Button block style={{margin: 5}}>
-                                                {this.state.filterType} <Icon type={"caret-down"}/>
+                                                {this.state.filterType} <Icon type="caret-down" />
                                             </Button>
                                         </Dropdown>
-                                        <Menu  defaultSelectedKeys={"ALL"} onClick={(e) => this.changeFilter('selectedZoomUser', e.key)}>
-                                            <Menu.Item key={"ALL"} style={{
+                                        <Menu defaultSelectedKeys="ALL" onClick={(e) => this.changeFilter('selectedZoomUser', e.key)}>
+                                            <Menu.Item
+                                              key="ALL"
+                                              style={{
                                                 marginBottom: 2,
                                                 textOverflow: "ellipsis",
                                                 borderRight: 'none'
-                                            }}><span>All Zoom User</span>
+                                            }}
+                                            ><span>All Zoom User</span>
                                             </Menu.Item>
-                                            {this.state.zoomUser.map(item =>
-                                                <Menu.Item key={item.id} style={{
+                                            {this.state.zoomUser.map(item => (
+                                                <Menu.Item
+                                                  key={item.id}
+                                                  style={{
                                                     textOverflow: "ellipsis",
                                                     borderRight: 'none',
 
-                                                }}>
+                                                }}
+                                                >
                                                     <span>{item.id ? item.username :null}</span>
                                                 </Menu.Item>
+                                              )
                                             )}
                                         </Menu>
                                     </div>
                                 </Col>
                                 <Col span={16}>
                                     <DragAndDropCalendar
-                                        localizer={localizer}
-                                        startAccessor="start"
-                                        defaultView="week"
-                                        step={10}
-                                        timeslots={1}
-                                        events={this.state.filterMeetingList}
-                                        selectable
-                                        date={new Date(this.state.selectedDate.format())}
-                                        endAccessor="end"
-                                        defaultDate={new Date()}
-                                        views={{month: true, week: MyWeek, day: true}}
-                                        onSelectSlot={this.onSelectSlot}
-                                        style={{height: "calc(100vh - 85px)"}}
-                                        onRangeChange={this.onRangeChange}
-                                        components={{
-                                            event: function (option) {
-                                                return <MeetingEventComponent {...option} {...that.props}/>
+                                      localizer={localizer}
+                                      startAccessor="start"
+                                      defaultView="week"
+                                      step={10}
+                                      timeslots={1}
+                                      events={this.state.filterMeetingList}
+                                      selectable
+                                      date={new Date(this.state.selectedDate.format())}
+                                      endAccessor="end"
+                                      defaultDate={new Date()}
+                                      views={{month: true, week: MyWeek, day: true}}
+                                      onSelectSlot={this.onSelectSlot}
+                                      style={{height: "calc(100vh - 85px)"}}
+                                      onRangeChange={this.onRangeChange}
+                                      components={{
+                                            event (option) {
+                                                return <MeetingEventComponent {...option} {...that.props} />
                                             }
                                         }}
                                     />
                                 </Col>
                                 <Col span={5}>
-                                    <MeetingRightPanel {...this.props} {...this.state}/>
+                                    <MeetingRightPanel {...this.props} {...this.state} />
                                 </Col>
                             </Row>
                         </Spin>
@@ -269,18 +301,18 @@ class MyWeek
     extends React
         .Component {
     render() {
-        let {date} = this.props
-        let range = MyWeek.range(date)
+        const {date} = this.props
+        const range = MyWeek.range(date)
 
-        return <TimeGrid {...this.props} range={range} eventOffset={15}/>
+        return <TimeGrid {...this.props} range={range} eventOffset={15} />
     }
 }
 
 MyWeek.range = date => {
-    let start = dates.add(date, -1, 'day')
-    let end = dates.add(start, 6, 'day')
+    const start = dates.add(date, -1, 'day')
+    const end = dates.add(start, 6, 'day')
     let current = start
-    let range = []
+    const range = []
     while (dates.lte(current, end, 'day')) {
         range.push(current)
         current = dates.add(current, 1, 'day')

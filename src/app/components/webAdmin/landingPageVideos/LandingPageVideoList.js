@@ -1,5 +1,8 @@
 import {Avatar, Button, Card, Divider, Icon, List, Popconfirm} from "antd";
 import React from "react";
+import {Route, Switch} from "react-router";
+import {Link} from "react-router-dom";
+import YouTube from 'react-youtube';
 import {getAPI, interpolate, patchAPI, postAPI} from "../../../utils/common";
 import {
     BLOG_POST,
@@ -8,10 +11,7 @@ import {
     SINGLE_LANDING_PAGE_CONTENT,
     SINGLE_LANDING_PAGE_VIDEO
 } from "../../../constants/api";
-import {Route, Switch} from "react-router";
-import {Link} from "react-router-dom";
 import AddLandingPageVideo from "./AddLandingPageVideo";
-import YouTube from 'react-youtube';
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 export default class LandingPageVideoList extends React.Component{
@@ -24,12 +24,14 @@ export default class LandingPageVideoList extends React.Component{
         this.loadData=this.loadData.bind(this);
         this.deleteObject = this.deleteObject.bind(this);
     }
+
     componentDidMount(){
         this.loadData();
     }
+
     loadData =(page=1)=>{
-        let that =this;
-        let successFn = function (data) {
+        const that =this;
+        const successFn = function (data) {
             that.setState(function (prevState) {
                 if (data.current ==1){
                     return{
@@ -45,30 +47,32 @@ export default class LandingPageVideoList extends React.Component{
                 }
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
           that.setState({
             loading:false
           })
 
         };
-        let apiParams ={
-            page:page,
+        const apiParams ={
+            page,
         }
         getAPI(LANDING_PAGE_VIDEO ,successFn, errorFn, apiParams);
     };
+
     deleteObject(record) {
-        let that = this;
-        let reqData = {};
+        const that = this;
+        const reqData = {};
         reqData.is_active = false;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
         }
-        let errorFn = function () {
+        const errorFn = function () {
         };
         patchAPI(interpolate(SINGLE_LANDING_PAGE_VIDEO, [record.id]), reqData, successFn, errorFn)
     }
+
     render(){
-        let that = this;
+        const that = this;
         const opts = {
             height: '200',
             width: '300',
@@ -76,34 +80,59 @@ export default class LandingPageVideoList extends React.Component{
             //     autoplay: 1
             // }
         };
-        return<div><Switch>
-            <Route exact path='/web/landingpagevideo/add'
-                   render={(route) => <AddLandingPageVideo {...this.state} loadData={this.loadData} {...route}/>}/>
-            <Route exact path='/web/landingpagevideo/edit/:id'
-                   render={(route) => <AddLandingPageVideo {...this.state} loadData={this.loadData} {...route}/>}/>
-            <Card title="Landing Page Video" extra={<Link to={"/web/landingpagevideo/add"}> <Button type="primary"><Icon type="plus"/> Add</Button></Link>}>
-                <List loading={this.state.loading} dataSource={this.state.videos}
-                      itemLayout="vertical"
-                      renderItem={item => <List.Item key={item.id}
+        return(
+<div><Switch>
+            <Route
+              exact
+              path='/web/landingpagevideo/add'
+              render={(route) => <AddLandingPageVideo {...this.state} loadData={this.loadData} {...route} />}
+            />
+            <Route
+              exact
+              path='/web/landingpagevideo/edit/:id'
+              render={(route) => <AddLandingPageVideo {...this.state} loadData={this.loadData} {...route} />}
+            />
+            <Card title="Landing Page Video" extra={<Link to="/web/landingpagevideo/add"> <Button type="primary"><Icon type="plus" /> Add</Button></Link>}>
+                <List
+                  loading={this.state.loading}
+                  dataSource={this.state.videos}
+                  itemLayout="vertical"
+                  renderItem={item => (
+<List.Item
+  key={item.id}
 
-                                                     actions={[<Link to={"/web/landingpagevideo/edit/"+item.id}>Edit</Link>,
-                                                         <Popconfirm title="Are you sure delete this item?"
-                                                                     onConfirm={() => that.deleteObject(item)} okText="Yes" cancelText="No">
+  actions={[<Link to={`/web/landingpagevideo/edit/${item.id}`}>Edit</Link>,
+                                                         <Popconfirm
+                                                           title="Are you sure delete this item?"
+                                                           onConfirm={() => that.deleteObject(item)}
+                                                           okText="Yes"
+                                                           cancelText="No"
+                                                         >
                                                              <a>Delete</a>
                                                          </Popconfirm>]}
-                                                     extra={<YouTube videoId={item.link}
-                                                                     opts={opts}/>}>
+  extra={(
+<YouTube
+  videoId={item.link}
+  opts={opts}
+/>
+)}
+>
                           <List.Item.Meta
-                              avatar={<Avatar style={{ backgroundColor: '#87d068' }} >{item.rank}</Avatar>}
-                              title={item.name}
+                            avatar={<Avatar style={{ backgroundColor: '#87d068' }}>{item.rank}</Avatar>}
+                            title={item.name}
                           />
-                      </List.Item>}/>
-                <Divider/>
-                <InfiniteFeedLoaderButton loaderFunction={()=>this.loadData(this.state.next)}
-                                          loading={this.state.loading}
-                                          hidden={!this.state.next}/>
+</List.Item>
+)}
+                />
+                <Divider />
+                <InfiniteFeedLoaderButton
+                  loaderFunction={()=>this.loadData(this.state.next)}
+                  loading={this.state.loading}
+                  hidden={!this.state.next}
+                />
             </Card>
-        </Switch>
-        </div>
+     </Switch>
+</div>
+)
     }
 }

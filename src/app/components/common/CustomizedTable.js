@@ -1,9 +1,9 @@
 import React from "react";
 import {Button, Col, Icon, Input, Modal, Row, Table, Tag} from "antd";
-import {exportToExcel, exportToPDF} from "../../utils/export";
 import moment from "moment";
 import Highlighter from 'react-highlight-words';
 import * as _ from "lodash";
+import {exportToExcel, exportToPDF} from "../../utils/export";
 import {interpolate} from "../../utils/common";
 import {CLINIC_NOTES_PDF} from "../../constants/api";
 import {sendMail} from "../../utils/clinicUtils";
@@ -26,15 +26,15 @@ export default class CustomizedTable extends React.Component {
     }
 
     pdfExport() {
-        let that = this;
-        let excelColumns = [];
+        const that = this;
+        const excelColumns = [];
             that.state.columns.forEach(function(item) {
                 if(!item.hideExport)
                     excelColumns.push({title: item.title, dataKey: item.title})
             });
-        let dataArrayForExcel = [];
+        const dataArrayForExcel = [];
         that.state.dataSource.forEach(function (dataRow,index) {
-            let dataObjectToPush = {};
+            const dataObjectToPush = {};
             that.state.columns.forEach(function (column) {
                 if (column.export) {
                     dataObjectToPush[column.title] = column.export(dataRow[column.dataIndex], dataRow,index);
@@ -44,19 +44,19 @@ export default class CustomizedTable extends React.Component {
             });
             dataArrayForExcel.push(dataObjectToPush);
         });
-        exportToPDF(excelColumns, dataArrayForExcel, "Export" + moment(), true);
+        exportToPDF(excelColumns, dataArrayForExcel, `Export${  moment()}`, true);
     }
 
     excelExport() {
-        let that = this;
-        let excelColumns = [];
+        const that = this;
+        const excelColumns = [];
         that.state.columns.forEach(function(item) {
             if(!item.hideExport)
                 excelColumns.push(item.title)
         });
-        let dataArrayForExcel = [];
+        const dataArrayForExcel = [];
         that.state.dataSource.forEach(function (dataRow,index) {
-            let dataObjectToPush = {};
+            const dataObjectToPush = {};
             that.state.columns.forEach(function (column) {
                 if (column.export) {
                     dataObjectToPush[column.title] = column.export(dataRow[column.dataIndex], dataRow,index);
@@ -66,7 +66,7 @@ export default class CustomizedTable extends React.Component {
             });
             dataArrayForExcel.push(dataObjectToPush);
         });
-        exportToExcel(excelColumns, dataArrayForExcel, "Export" + moment());
+        exportToExcel(excelColumns, dataArrayForExcel, `Export${  moment()}`);
     }
 
 
@@ -74,21 +74,21 @@ export default class CustomizedTable extends React.Component {
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
             <div style={{padding: 8}}>
                 <Input
-                    ref={node => {
+                  ref={node => {
                         this.searchInput = node;
                     }}
-                    placeholder={`Search ${dataIndex}`}
-                    value={selectedKeys[0]}
-                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                    onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
-                    style={{width: 188, marginBottom: 8, display: 'block'}}
+                  placeholder={`Search ${dataIndex}`}
+                  value={selectedKeys[0]}
+                  onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                  onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+                  style={{width: 188, marginBottom: 8, display: 'block'}}
                 />
                 <Button
-                    type="primary"
-                    onClick={() => this.handleSearch(selectedKeys, confirm)}
-                    icon="search"
-                    size="small"
-                    style={{width: 90, marginRight: 8}}
+                  type="primary"
+                  onClick={() => this.handleSearch(selectedKeys, confirm)}
+                  icon="search"
+                  size="small"
+                  style={{width: 90, marginRight: 8}}
                 >
                     Search
                 </Button>
@@ -97,7 +97,7 @@ export default class CustomizedTable extends React.Component {
                 </Button>
             </div>
         ),
-        filterIcon: filtered => (<Icon type="search" style={{color: filtered ? '#1890ff' : undefined}}/>),
+        filterIcon: filtered => (<Icon type="search" style={{color: filtered ? '#1890ff' : undefined}} />),
         onFilter: (value, record) =>
             record[dataIndex] != null ? record[dataIndex]
                 .toString()
@@ -110,13 +110,14 @@ export default class CustomizedTable extends React.Component {
         },
         render: text => (
             <Highlighter
-                highlightStyle={{backgroundColor: '#ffc069', padding: 0}}
-                searchWords={[this.state.searchText]}
-                autoEscape
-                textToHighlight={text ? text.toString() : ''}
+              highlightStyle={{backgroundColor: '#ffc069', padding: 0}}
+              searchWords={[this.state.searchText]}
+              autoEscape
+              textToHighlight={text ? text.toString() : ''}
             />
         ),
     });
+
     handleSearch = (selectedKeys, confirm) => {
         confirm();
         this.setState({searchText: selectedKeys[0]});
@@ -128,41 +129,52 @@ export default class CustomizedTable extends React.Component {
     };
 
     render() {
-        let that = this;
+        const that = this;
         const columns = this.state.columns.map(item => {
                 if (!item.render)
                     return {...item, ...that.getColumnSearchProps(item.dataIndex)}
                 return {...item};
             }
         )
-        return <div>
-            {this.props.hideReport ? null :
+        return (
+<div>
+            {this.props.hideReport ? null : (
                 <Row>
                     <Col>
                         <Button.Group size="small">
                             <Button disabled={this.state.loading} type="primary" onClick={this.excelExport}><Icon
-                                type="file-excel"/> Excel</Button>
+                              type="file-excel"
+                            /> Excel
+                            </Button>
                             <Button disabled={this.state.loading} type="primary" onClick={this.pdfExport}><Icon
-                                type="file-pdf"/> PDF</Button>
+                              type="file-pdf"
+                            /> PDF
+                            </Button>
 
                         </Button.Group>
                     </Col>
-                </Row>}
+                </Row>
+              )}
             <Row>
-                <Table pagination={{
+                <Table
+                  pagination={{
                     position: 'both',
                     pageSizeOptions: ['10', '20', '30', '40', '50', '100'],
                     showSizeChanger: true,
                     showQuickJumper: true,
                     size: "small",
-                    showTotal: function (total, range) {
+                    showTotal (total, range) {
                         return <Tag>Showing <b>{range[0]}</b> to <b>{range[1]}</b> of <b>{total}</b> items</Tag>
                     }
-                }} {...this.state} columns={columns}/>
+                }}
+                  {...this.state}
+                  columns={columns}
+                />
 
 
             </Row>
-        </div>
+</div>
+)
     }
 
 }

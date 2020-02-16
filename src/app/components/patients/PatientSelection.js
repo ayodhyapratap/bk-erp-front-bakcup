@@ -3,6 +3,9 @@ import {
     Avatar, Input, Card, Col, Icon, InputNumber, Radio, Row, Button, Spin, Modal, Tag,
     DatePicker, Select, Form, Divider
 } from "antd";
+import moment from "moment";
+import filter from "lodash/filter";
+import mapKeys from "lodash/mapKeys"
 import {getAPI, interpolate, makeFileURL, postAPI} from "../../utils/common";
 import {
     PATIENT_GROUPS,
@@ -23,13 +26,10 @@ import {
     HAS_GENDER, HAS_PINCODE, HAS_STREET, REFERED_BY_AGENT, GENDER_OPTION
 } from "../../constants/hardData";
 import {CHOOSE, GENDER} from "../../constants/dataKeys";
-import moment from "moment";
-import filter from "lodash/filter";
-import mapKeys from "lodash/mapKeys"
 import PermissionDenied from "../common/errors/PermissionDenied";
 
 const {Meta} = Card;
-const Search = Input.Search;
+const {Search} = Input;
 const {MonthPicker} = DatePicker;
 let id = 1;
 
@@ -62,13 +62,13 @@ class PatientSelection extends React.Component {
     }
 
     getSources() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 sourceList: data,
             })
         };
-        let errorFun = function () {
+        const errorFun = function () {
 
         };
         getAPI(SOURCE, successFn, errorFun);
@@ -76,16 +76,16 @@ class PatientSelection extends React.Component {
 
 
     getPatientGroup() {
-        let that = this;
-        let successFn = function (data) {
-            let filteredData = data.sort(function (a, b) {
+        const that = this;
+        const successFn = function (data) {
+            const filteredData = data.sort(function (a, b) {
                 return b.patient_count - a.patient_count
             })
             that.setState({
                 patientGroup: filteredData,
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({})
 
         };
@@ -93,8 +93,8 @@ class PatientSelection extends React.Component {
     }
 
     getPatientListData() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 patientListData: data.results,
                 morePatients: data.next,
@@ -104,7 +104,7 @@ class PatientSelection extends React.Component {
                 // advancedOptionShow: false,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
@@ -115,12 +115,12 @@ class PatientSelection extends React.Component {
 
     searchPatient(value, page = 1) {
 
-        let that = this;
+        const that = this;
         that.setState({
             searchvalue: true,
             searchString: value
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState(function (prevState) {
                 if (prevState.searchString == value)
                     if (data.current > 1) {
@@ -140,11 +140,11 @@ class PatientSelection extends React.Component {
             })
 
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
-        let apiParams = {
-            page: page,
+        const apiParams = {
+            page,
             page_size: 20
         };
         if (value) {
@@ -155,10 +155,10 @@ class PatientSelection extends React.Component {
     }
 
     getMorePatient() {
-        let that = this;
-        let current = this.state.currentPage;
+        const that = this;
+        const current = this.state.currentPage;
 
-        let successFn = function (data) {
+        const successFn = function (data) {
             if (data.current == current + 1)
                 that.setState(function (prevState) {
                     if (data.current > 1)
@@ -167,8 +167,7 @@ class PatientSelection extends React.Component {
                             morePatients: data.next,
                             currentPage: data.current,
                         }
-                    else
-                        return {
+                    return {
                             patientListData: [...data.results],
                             morePatients: data.next,
                             currentPage: data.current,
@@ -176,10 +175,10 @@ class PatientSelection extends React.Component {
                         }
                 })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
-        let params = {};
+        const params = {};
         if (current) {
             params.page = parseInt(current) + 1;
         } else {
@@ -187,7 +186,7 @@ class PatientSelection extends React.Component {
                 loading: true
             })
         }
-        let patientGroup = this.state.selectedPatientGroup;
+        const patientGroup = this.state.selectedPatientGroup;
         if (patientGroup != 'all') {
             if (patientGroup == 'smart_a' || patientGroup == 'smart_b' || patientGroup == 'smart_c' || patientGroup == 'smart_d' || patientGroup == 'smart_e' || patientGroup == 'smart_f') {
                 switch (patientGroup) {
@@ -236,7 +235,7 @@ class PatientSelection extends React.Component {
     }
 
     changeSelectedPatientGroup = (e) => {
-        let that = this;
+        const that = this;
         this.setState({
             selectedPatientGroup: e.target.value,
             currentPage: null
@@ -247,7 +246,7 @@ class PatientSelection extends React.Component {
 
     advancedOption(value) {
         // console.log("value",value)
-        let that = this;
+        const that = this;
         this.getPatientListData();
         this.setState({
             advancedOptionShow: !value,
@@ -272,6 +271,7 @@ class PatientSelection extends React.Component {
             keys: nextKeys,
         });
     };
+
     removeNewOptionField = (k) => {
         const {form} = this.props;
         const keys = form.getFieldValue('keys');
@@ -285,8 +285,8 @@ class PatientSelection extends React.Component {
     };
 
     handleChangeOption = (index, type, value) => {
-        let that = this;
-        let selectedOption = {};
+        const that = this;
+        const selectedOption = {};
         that.setState(function (prevState) {
             return {
                 selectedOption: {...prevState.selectedOption, [index]: value},
@@ -296,7 +296,7 @@ class PatientSelection extends React.Component {
     };
 
     AdvanceSearchPatient = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         let reqData = {};
         this.props.form.validateFields((err, values) => {
@@ -320,13 +320,13 @@ class PatientSelection extends React.Component {
     };
 
     loadAdvanceSearchPatient = (page = 1) => {
-        let that = this;
-        let reqData = that.state.patientData;
+        const that = this;
+        const reqData = that.state.patientData;
         that.setState({
             advancedSearch: true,
             advanceLoading: true,
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState(function (prevState) {
                 if (data.current > 1) {
                     return {
@@ -335,17 +335,17 @@ class PatientSelection extends React.Component {
                         currentPage: data.current,
                         advanceLoading: false
                     }
-                } else {
+                } 
                     return {
                         patientListData: [...data.results],
                         morePatientList: data.next,
                         currentPage: data.current,
                         advanceLoading: false
                     }
-                }
+                
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 advanceLoading: false,
             })
@@ -356,7 +356,7 @@ class PatientSelection extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const {getFieldDecorator, getFieldValue} = this.props.form;
 
         const formItemLayout = {
@@ -376,153 +376,214 @@ class PatientSelection extends React.Component {
                 return value
             })
         }
-        const chooseOption = keys.map((k, index) => (<Row gutter={12} key={k}>
+        const chooseOption = keys.map((k, index) => (
+<Row gutter={12} key={k}>
                 <Col span={10}>
-                    <Select style={{width: '200px'}} defaultValue={CHOOSE} key={k} size={"small"}
-                            onChange={(value) => this.handleChangeOption(k, 'type', value)}>
-                        <Select.Option value={''}>{CHOOSE}</Select.Option>
+                    <Select
+                      style={{width: '200px'}}
+                      defaultValue={CHOOSE}
+                      key={k}
+                      size="small"
+                      onChange={(value) => this.handleChangeOption(k, 'type', value)}
+                    >
+                        <Select.Option value="">{CHOOSE}</Select.Option>
                         {filter(this.state.advanced_option, function (item) {
                             if (that.state.selectedOption[k] == item.value)
                                 return true
                             return !selectedOptionKeys[item.value]
-                        }).map((item) => <Select.Option value={item.value} key={k}>
-                            {item.label}</Select.Option>)}
+                        }).map((item) => (
+<Select.Option value={item.value} key={k}>
+                            {item.label}
+</Select.Option>
+))}
                     </Select>
                 </Col>
-                {this.state.selectedOption ?
+                {this.state.selectedOption ? (
                     <>
                         <Col span={8}>
-                            <FormItems k={k} selectedOption={this.state.selectedOption} form={this.props.form}
-                                       sourceList={this.state.sourceList}/>
+                            <FormItems
+                              k={k}
+                              selectedOption={this.state.selectedOption}
+                              form={this.props.form}
+                              sourceList={this.state.sourceList}
+                            />
                         </Col>
                         <Col span={4}>
                             {index ? (
-                                <Button onClick={() => this.removeNewOptionField(k)} size={"small"} style={{margin: 5}}>
-                                    <Icon className="dynamic-delete-button" type="minus-circle-o"
-                                          style={{color: "red"}}/>
+                                <Button onClick={() => this.removeNewOptionField(k)} size="small" style={{margin: 5}}>
+                                    <Icon
+                                      className="dynamic-delete-button"
+                                      type="minus-circle-o"
+                                      style={{color: "red"}}
+                                    />
                                 </Button>
                             ) : null}
-                            {index == keys.length - 1 && that.state.selectedOption[k] ?
-                                <Button onClick={this.addNewOptionField} size={"small"} style={{margin: 5}}>
-                                    <Icon className="dynamic-delete-button" type="plus-circle-o"/>
-                                </Button> : null}
+                            {index == keys.length - 1 && that.state.selectedOption[k] ? (
+                                <Button onClick={this.addNewOptionField} size="small" style={{margin: 5}}>
+                                    <Icon className="dynamic-delete-button" type="plus-circle-o" />
+                                </Button>
+                              ) : null}
                         </Col>
-                    </> : null
-                }
-            </Row>
+                    </>
+                  ) : null}
+</Row>
         ));
 
 
-        return that.props.activePracticePermissions.ViewPatient ? <div>
+        return that.props.activePracticePermissions.ViewPatient ? (
+<div>
 
             <Row gutter={16}>
-                {this.state.advancedOptionShow ?
-                    <Form onSubmit={this.AdvanceSearchPatient} layout={'inline'}>
+                {this.state.advancedOptionShow ? (
+                    <Form onSubmit={this.AdvanceSearchPatient} layout="inline">
                         <Row gutter={16}>
                             <Col span={16}>
                                 {chooseOption}
                             </Col>
                             <Col span={4} style={{display: 'flex'}}>
                                 <Form.Item>
-                                    <Button icon="search" htmlType="submit" onSubmit={this.AdvanceSearchPatient}
-                                            type={"primary"}
-                                            style={{margin: 5}}
-                                    >Search</Button>
+                                    <Button
+                                      icon="search"
+                                      htmlType="submit"
+                                      onSubmit={this.AdvanceSearchPatient}
+                                      type="primary"
+                                      style={{margin: 5}}
+                                    >Search
+                                    </Button>
                                 </Form.Item>
                                 <Form.Item>
-                                    <Button style={{margin: 5}} onClick={(value) => this.advancedOption(true)}
-                                            size={"small"}>Basic
-                                        Search</Button>
+                                    <Button
+                                      style={{margin: 5}}
+                                      onClick={(value) => this.advancedOption(true)}
+                                      size="small"
+                                    >Basic
+                                        Search
+                                    </Button>
                                 </Form.Item>
                             </Col>
                         </Row>
                     </Form>
-                    : <>
+                  )
+                    : (
+<>
                         <Col span={12}>
-                            <Search style={{margin: 5}}
-                                    placeholder="Search Patient By Name / ID / Mobile No / Aadhar No" size={"small"}
-                                    onChange={value => this.searchPatient(value.target.value)}
-                                    enterButton/>
+                            <Search
+                              style={{margin: 5}}
+                              placeholder="Search Patient By Name / ID / Mobile No / Aadhar No"
+                              size="small"
+                              onChange={value => this.searchPatient(value.target.value)}
+                              enterButton
+                            />
                         </Col>
                         <Col span={12} style={{textAlign: "center"}}>
-                            <Button style={{margin: 5}} onClick={(value) => this.advancedOption(false)} size={"small"}>Advance
-                                Search</Button>
+                            <Button style={{margin: 5}} onClick={(value) => this.advancedOption(false)} size="small">Advance
+                                Search
+                            </Button>
                         </Col>
 
-                    </>}
-                <Divider style={{margin: 0}}/>
+</>
+)}
+                <Divider style={{margin: 0}} />
             </Row>
             <Row gutter={16}>
-                <Col span={5}
-                     style={{
+                <Col
+                  span={5}
+                  style={{
                          height: 'calc(100% - 55px)',
                          overflow: 'auto',
                          padding: '10px',
                          // backgroundColor: '#e3e5e6',
                          // borderRight: '1px solid #ccc'
-                     }}>
-                    <Radio.Group buttonStyle="solid" defaultValue={this.state.selectedPatientGroup}
-                                 onChange={this.changeSelectedPatientGroup}>
+                     }}
+                >
+                    <Radio.Group
+                      buttonStyle="solid"
+                      defaultValue={this.state.selectedPatientGroup}
+                      onChange={this.changeSelectedPatientGroup}
+                    >
                         <h2>Patients</h2>
-                        <Radio.Button key={'all'} style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                      value="all">
+                        <Radio.Button
+                          key="all"
+                          style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                          value="all"
+                        >
                             All Patients
                             <Tag color="#87d068" style={{float: 'right', margin: 4}}>
                                 {this.state.totalPatients ? this.state.totalPatients : 0}
                             </Tag>
                         </Radio.Button>
-                        {/*<Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="b">*/}
-                        {/*Recently Visited*/}
-                        {/*</Radio.Button>*/}
-                        {/*<Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="c">*/}
-                        {/*Recently Added*/}
-                        {/*</Radio.Button>*/}
-                        <p><br/></p>
+                        {/* <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="b"> */}
+                        {/* Recently Visited */}
+                        {/* </Radio.Button> */}
+                        {/* <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value="c"> */}
+                        {/* Recently Added */}
+                        {/* </Radio.Button> */}
+                        <p><br /></p>
                         <h2>Groups</h2>
                         <p><b>My Groups</b>
-                            <a style={{float: 'right'}}
-                               onClick={() => this.togglePatientGroupEditing(true)}>Manage</a></p>
-                        {this.state.patientGroup.map((group) => <Radio.Button
-                            key={group.id}
-                            style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} value={group.id}>
+                            <a
+                              style={{float: 'right'}}
+                              onClick={() => this.togglePatientGroupEditing(true)}
+                            >Manage
+                            </a>
+                        </p>
+                        {this.state.patientGroup.map((group) => (
+<Radio.Button
+  key={group.id}
+  style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+  value={group.id}
+>
                             {group.name}
                             <Tag color="#87d068" style={{float: 'right', margin: 4}}>
                                 {group.patient_count}
                             </Tag>
-                        </Radio.Button>)}
-                        <p><br/></p>
+</Radio.Button>
+))}
+                        <p><br /></p>
                         <p><b>Smart Groups</b></p>
                         <Radio.Button
-                            style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_a"}
-                            value={"smart_a"}>
+                          style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                          key="smart_a"
+                          value="smart_a"
+                        >
                             All Male
                         </Radio.Button>
                         <Radio.Button
-                            style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_b"}
-                            value={"smart_b"}>
+                          style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                          key="smart_b"
+                          value="smart_b"
+                        >
                             All Female
                         </Radio.Button>
                         <Radio.Button
-                            style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_e"}
-                            value={"smart_e"}>
+                          style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                          key="smart_e"
+                          value="smart_e"
+                        >
                             Male Over 30
                         </Radio.Button>
                         <Radio.Button
-                            style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_c"}
-                            value={"smart_c"}>
+                          style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                          key="smart_c"
+                          value="smart_c"
+                        >
                             Female Over 30
                         </Radio.Button>
                         <Radio.Button
-                            style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_f"}
-                            value={"smart_f"}>
+                          style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                          key="smart_f"
+                          value="smart_f"
+                        >
                             Male Under 30
                         </Radio.Button>
                         <Radio.Button
-                            style={{width: '100%', backgroundColor: 'transparent', border: '0px'}} key={"smart_d"}
-                            value={"smart_d"}>
+                          style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                          key="smart_d"
+                          value="smart_d"
+                        >
                             Female Under 30
                         </Radio.Button>
-                        <p><br/></p>
+                        <p><br /></p>
                     </Radio.Group>
                 </Col>
                 <Col span={19} style={{overflow: 'scroll', borderLeft: '1px solid #ccc'}}>
@@ -531,310 +592,363 @@ class PatientSelection extends React.Component {
                     <Spin spinning={this.state.loading}>
                         <Row>
                             {this.state.patientListData.length ?
-                                this.state.patientListData.map((patient) => <PatientCard {...patient}
-                                                                                         key={patient.id}
-                                                                                         showMobile={that.props.activePracticePermissions.PatientPhoneNumber}
-                                                                                         showEmail={that.props.activePracticePermissions.PatientEmailId}
-                                                                                         setCurrentPatient={that.props.setCurrentPatient}/>) :
-                                <p style={{textAlign: 'center'}}>No Data Found</p>
-                            }
+                                this.state.patientListData.map((patient) => (
+<PatientCard
+  {...patient}
+  key={patient.id}
+  showMobile={that.props.activePracticePermissions.PatientPhoneNumber}
+  showEmail={that.props.activePracticePermissions.PatientEmailId}
+  setCurrentPatient={that.props.setCurrentPatient}
+/>
+)) :
+                                <p style={{textAlign: 'center'}}>No Data Found</p>}
                         </Row>
                     </Spin>
-                    {this.state.searchvalue ? <InfiniteFeedLoaderButton loaderFunction={this.searchPatient}
-                                                                        loading={this.state.loading}
-                                                                        hidden={!this.state.morePatients}/> : (this.state.advancedSearch ?
-                        <InfiniteFeedLoaderButton loading={this.state.advanceLoading}
-                                                  loaderFunction={() => this.loadAdvanceSearchPatient(that.state.morePatientList)}
-                                                  hidden={!this.state.morePatientList}/> :
-
-                        <InfiniteFeedLoaderButton loaderFunction={this.getMorePatient}
-                                                  loading={this.state.loading}
-                                                  hidden={!this.state.morePatients}/>)
-                    }
+                    {this.state.searchvalue ? (
+<InfiniteFeedLoaderButton
+  loaderFunction={this.searchPatient}
+  loading={this.state.loading}
+  hidden={!this.state.morePatients}
+/>
+) : (this.state.advancedSearch ? (
+                        <InfiniteFeedLoaderButton
+                          loading={this.state.advanceLoading}
+                          loaderFunction={() => this.loadAdvanceSearchPatient(that.state.morePatientList)}
+                          hidden={!this.state.morePatientList}
+                        />
+                      ) : (
+                        <InfiniteFeedLoaderButton
+                          loaderFunction={this.getMorePatient}
+                          loading={this.state.loading}
+                          hidden={!this.state.morePatients}
+                        />
+                      ))}
                 </Col>
 
-                {/*<Col span={19} style={{overflow: 'scroll', borderLeft: '1px solid #ccc'}}>*/}
-                {/*    <Search placeholder="Search Patient By Name / ID / Mobile No / Aadhar No"*/}
-                {/*            onChange={value => this.searchPatient(value.target.value)}*/}
-                {/*            enterButton/>*/}
+                {/* <Col span={19} style={{overflow: 'scroll', borderLeft: '1px solid #ccc'}}> */}
+                {/*    <Search placeholder="Search Patient By Name / ID / Mobile No / Aadhar No" */}
+                {/*            onChange={value => this.searchPatient(value.target.value)} */}
+                {/*            enterButton/> */}
 
-                {/*    <Spin spinning={this.state.loading}>*/}
-                {/*        <Row>*/}
-                {/*            {this.state.patientListData.length ?*/}
-                {/*                this.state.patientListData.map((patient) => <PatientCard {...patient}*/}
-                {/*                                                                         key={patient.id}*/}
-                {/*                                                                         showMobile={that.props.activePracticePermissions.PatientPhoneNumber}*/}
-                {/*                                                                         showEmail={that.props.activePracticePermissions.PatientEmailId}*/}
-                {/*                                                                         setCurrentPatient={that.props.setCurrentPatient}/>) :*/}
-                {/*                <p style={{textAlign: 'center'}}>No Data Found</p>*/}
-                {/*            }*/}
-                {/*        </Row>*/}
-                {/*    </Spin>*/}
-                {/*    {this.state.searchvalue ?  <InfiniteFeedLoaderButton loaderFunction={this.searchPatient}*/}
-                {/*                                                         loading={this.state.loading}*/}
-                {/*                                                         hidden={!this.state.morePatients}/> :*/}
+                {/*    <Spin spinning={this.state.loading}> */}
+                {/*        <Row> */}
+                {/*            {this.state.patientListData.length ? */}
+                {/*                this.state.patientListData.map((patient) => <PatientCard {...patient} */}
+                {/*                                                                         key={patient.id} */}
+                {/*                                                                         showMobile={that.props.activePracticePermissions.PatientPhoneNumber} */}
+                {/*                                                                         showEmail={that.props.activePracticePermissions.PatientEmailId} */}
+                {/*                                                                         setCurrentPatient={that.props.setCurrentPatient}/>) : */}
+                {/*                <p style={{textAlign: 'center'}}>No Data Found</p> */}
+                {/*            } */}
+                {/*        </Row> */}
+                {/*    </Spin> */}
+                {/*    {this.state.searchvalue ?  <InfiniteFeedLoaderButton loaderFunction={this.searchPatient} */}
+                {/*                                                         loading={this.state.loading} */}
+                {/*                                                         hidden={!this.state.morePatients}/> : */}
 
-                {/*        <InfiniteFeedLoaderButton loaderFunction={this.getMorePatient}*/}
-                {/*                                  loading={this.state.loading}*/}
-                {/*                                  hidden={!this.state.morePatients}/>*/}
-                {/*    }*/}
+                {/*        <InfiniteFeedLoaderButton loaderFunction={this.getMorePatient} */}
+                {/*                                  loading={this.state.loading} */}
+                {/*                                  hidden={!this.state.morePatients}/> */}
+                {/*    } */}
 
-                {/*</Col>*/}
-                <Modal visible={this.state.showPatientGroupModal}
-                       footer={null}
-                       onCancel={() => this.togglePatientGroupEditing(false)}>
-                    <PatientGroups {...this.props}/>
+                {/* </Col> */}
+                <Modal
+                  visible={this.state.showPatientGroupModal}
+                  footer={null}
+                  onCancel={() => this.togglePatientGroupEditing(false)}
+                >
+                    <PatientGroups {...this.props} />
                 </Modal>
             </Row>
-        </div> : <PermissionDenied/>
+</div>
+) : <PermissionDenied />
     }
 }
 
 export default Form.create()(PatientSelection);
 
 function PatientCard(patient) {
-    return <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6}>
+    return (
+<Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6}>
         <Card onClick={() => patient.setCurrentPatient(patient)} style={{margin: '3px', paddingBottom: "8px"}}>
-            <Meta avatar={(patient.image ? <Avatar src={makeFileURL(patient.image)} size={50}/> :
+            <Meta
+              avatar={(patient.image ? <Avatar src={makeFileURL(patient.image)} size={50} /> : (
                 <Avatar style={{backgroundColor: '#87d068'}} size={50}>
                     {patient.user.first_name ? patient.user.first_name.charAt(0) :
-                        <Icon type="user"/>}
-                </Avatar>)}
-                  title={patient.user.first_name}
-                  description={
-                      <span>{patient.showMobile ? patient.user.mobile : hideMobile(patient.user.mobile)}<br/>{patient.showEmail ? patient.user.email : hideEmail(patient.user.email)}
-                          <br/>
-                          <span className={"patientIdHighlight"}>#
+                        <Icon type="user" />}
+                </Avatar>
+              ))}
+              title={patient.user.first_name}
+              description={(
+                      <span>{patient.showMobile ? patient.user.mobile : hideMobile(patient.user.mobile)}<br />{patient.showEmail ? patient.user.email : hideEmail(patient.user.email)}
+                          <br />
+                          <span className="patientIdHighlight">#
                               {patient.custom_id ? patient.custom_id : patient.id}
-                              {patient.gender ? "," + patient.gender.charAt(0).toUpperCase() : null}
+                              {patient.gender ? `,${  patient.gender.charAt(0).toUpperCase()}` : null}
                           </span>
 
-                      </span>}/>
+                      </span>
+                    )}
+            />
         </Card>
-    </Col>;
+</Col>
+);
 }
 
 function FormItems(index) {
     return (
         <>
-            {index.selectedOption[index.k] == 'name' ?
-                <Form.Item key={index.key} label={'contains'}>
+            {index.selectedOption[index.k] == 'name' ? (
+                <Form.Item key={index.key} label="contains">
                     {index.form.getFieldDecorator('name',)
-                    (<Input placeholder={"patient Name"} size={"small"}/>)
-                    }
-                </Form.Item> : null}
+                    (<Input placeholder="patient Name" size="small" />)}
+                </Form.Item>
+              ) : null}
 
-            {index.selectedOption[index.k] == 'phone' ?
-                <Form.Item key={index.key} label={'contains'}>
+            {index.selectedOption[index.k] == 'phone' ? (
+                <Form.Item key={index.key} label="contains">
                     {index.form.getFieldDecorator('phone',)
-                    (<Input placeholder={"Contact Number"} size={"small"}/>)
-                    }
-                </Form.Item> : null}
+                    (<Input placeholder="Contact Number" size="small" />)}
+                </Form.Item>
+              ) : null}
 
-            {index.selectedOption[index.k] == 'age' ?
+            {index.selectedOption[index.k] == 'age' ? (
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('age',)
-                    (<InputNumber placeholder={"Patient Age"} size={"small"}/>)
-                    }
-                </Form.Item> : null}
+                    (<InputNumber placeholder="Patient Age" size="small" />)}
+                </Form.Item>
+              ) : null}
 
-            {index.selectedOption[index.k] == 'age_gte' ?
+            {index.selectedOption[index.k] == 'age_gte' ? (
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('age_gte',)
-                    (<InputNumber placeholder={"Age more than"} size={"small"}/>)
-                    }
-                </Form.Item> : null}
+                    (<InputNumber placeholder="Age more than" size="small" />)}
+                </Form.Item>
+              ) : null}
 
-            {index.selectedOption[index.k] == 'age_lte' ?
+            {index.selectedOption[index.k] == 'age_lte' ? (
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('age_lte',)
-                    (<InputNumber placeholder={"Age Less than"} size={"small"}/>)
-                    }
-                </Form.Item> : null}
+                    (<InputNumber placeholder="Age Less than" size="small" />)}
+                </Form.Item>
+              ) : null}
 
-            {index.selectedOption[index.k] == 'has_age' ?
+            {index.selectedOption[index.k] == 'has_age' ? (
                 <Form.Item>
                     {index.form.getFieldDecorator('has_age')
-                    (<Select style={{width: 100}} size={"small"}>
+                    (<Select style={{width: 100}} size="small">
                         {HAS_AGE.map((option) => <Select.Option value={option.value}>{option.label} </Select.Option>)}
-                    </Select>)
-                    }
+                     </Select>)}
                 </Form.Item>
+              )
                 : null}
 
-            {index.selectedOption[index.k] == 'dob' ?
-                <Form.Item key={index.key} label={'is'}>
+            {index.selectedOption[index.k] == 'dob' ? (
+                <Form.Item key={index.key} label="is">
                     {index.form.getFieldDecorator('dob',)
-                    (<DatePicker placeholder={"Date of Birth"} size={"small"}/>)
-                    }
-                </Form.Item> : null}
+                    (<DatePicker placeholder="Date of Birth" size="small" />)}
+                </Form.Item>
+              ) : null}
 
-            {index.selectedOption[index.k] == 'dob_gte' ?
+            {index.selectedOption[index.k] == 'dob_gte' ? (
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('dob_gte',)
-                    (<DatePicker size={"small"}/>)
-                    }
-                </Form.Item> : null}
+                    (<DatePicker size="small" />)}
+                </Form.Item>
+              ) : null}
 
-            {index.selectedOption[index.k] == 'dob_lte' ?
+            {index.selectedOption[index.k] == 'dob_lte' ? (
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('dob_lte',)
-                    (<DatePicker size={"small"}/>)
-                    }
-                </Form.Item> : null}
+                    (<DatePicker size="small" />)}
+                </Form.Item>
+              ) : null}
 
-            {index.selectedOption[index.k] == 'dob_month' ?
+            {index.selectedOption[index.k] == 'dob_month' ? (
                 <Form.Item key={index.key}>
                     {index.form.getFieldDecorator('dob_month',)
-                    (<MonthPicker size={"small"}/>)
-                    }
-                </Form.Item> : null}
+                    (<MonthPicker size="small" />)}
+                </Form.Item>
+              ) : null}
 
-            {index.selectedOption[index.k] == 'has_dob' ?
+            {index.selectedOption[index.k] == 'has_dob' ? (
                 <Form.Item>
                     {index.form.getFieldDecorator('has_dob')
-                    (<Select style={{width: 100}} size={"small"}>
+                    (<Select style={{width: 100}} size="small">
                         {HAS_DOB.map((option) => <Select.Option value={option.value}>{option.label} </Select.Option>)}
-                    </Select>)
-                    }
+                     </Select>)}
                 </Form.Item>
+              )
                 : null}
 
-            {index.selectedOption[index.k] == 'patient_id' ?
-                <Form.Item key={index.key} label={'contains'}>
+            {index.selectedOption[index.k] == 'patient_id' ? (
+                <Form.Item key={index.key} label="contains">
                     {index.form.getFieldDecorator('patient_id',)
-                    (<Input placeholder={"Patient Id"} size={"small"}/>)
-                    }
-                </Form.Item> : null}
+                    (<Input placeholder="Patient Id" size="small" />)}
+                </Form.Item>
+              ) : null}
 
-            {index.selectedOption[index.k] == 'has_aadhar' ?
+            {index.selectedOption[index.k] == 'has_aadhar' ? (
                 <Form.Item>
                     {index.form.getFieldDecorator('has_aadhar')
-                    (<Select style={{width: 100}} size={"small"}>
-                        {HAS_AADHAR_ID.map((option) => <Select.Option
-                            value={option.value}>{option.label} </Select.Option>)}
-                    </Select>)
-                    }
+                    (<Select style={{width: 100}} size="small">
+                        {HAS_AADHAR_ID.map((option) => (
+<Select.Option
+  value={option.value}
+>{option.label} 
+</Select.Option>
+))}
+                     </Select>)}
                 </Form.Item>
+              )
                 : null}
 
-            {index.selectedOption[index.k] == 'aadhar' ?
-                <Form.Item key={index.key} label={'contains'}>
+            {index.selectedOption[index.k] == 'aadhar' ? (
+                <Form.Item key={index.key} label="contains">
                     {index.form.getFieldDecorator('aadhar',)
-                    (<Input placeholder={"Aadhar Id"} size={"small"}/>)
-                    }
-                </Form.Item> : null}
+                    (<Input placeholder="Aadhar Id" size="small" />)}
+                </Form.Item>
+              ) : null}
 
-            {index.selectedOption[index.k] == 'email' ?
-                <Form.Item key={index.key} label={'contains'}>
+            {index.selectedOption[index.k] == 'email' ? (
+                <Form.Item key={index.key} label="contains">
                     {index.form.getFieldDecorator('email',)
-                    (<Input placeholder={"Email Id"} size={"small"}/>)
-                    }
-                </Form.Item> : null}
+                    (<Input placeholder="Email Id" size="small" />)}
+                </Form.Item>
+              ) : null}
 
-            {index.selectedOption[index.k] == 'has_email' ?
+            {index.selectedOption[index.k] == 'has_email' ? (
                 <Form.Item>
                     {index.form.getFieldDecorator('has_email')
-                    (<Select style={{width: 100}} size={"small"}>
+                    (<Select style={{width: 100}} size="small">
                         {HAS_EMAIL.map((option) => <Select.Option value={option.value}>{option.label} </Select.Option>)}
-                    </Select>)
-                    }
+                     </Select>)}
                 </Form.Item>
+              )
                 : null}
 
-            {index.selectedOption[index.k] == 'gender' ?
-                <Form.Item key={index.key} label={'is'}>
+            {index.selectedOption[index.k] == 'gender' ? (
+                <Form.Item key={index.key} label="is">
                     {index.form.getFieldDecorator('gender')
-                    (<Select style={{width: 100}} size={"small"}>
-                        {GENDER_OPTION.map((option) => <Select.Option
-                            value={option.value}>{option.label} </Select.Option>)}
-                    </Select>)
-                    }
+                    (<Select style={{width: 100}} size="small">
+                        {GENDER_OPTION.map((option) => (
+<Select.Option
+  value={option.value}
+>{option.label} 
+</Select.Option>
+))}
+                     </Select>)}
                 </Form.Item>
+              )
                 : null}
 
 
-            {index.selectedOption[index.k] == 'has_gender' ?
+            {index.selectedOption[index.k] == 'has_gender' ? (
                 <Form.Item>
                     {index.form.getFieldDecorator('has_gender')
-                    (<Select style={{width: 100}} size={"small"}>
-                        {HAS_GENDER.map((option) => <Select.Option
-                            value={option.value}>{option.label} </Select.Option>)}
-                    </Select>)
-                    }
+                    (<Select style={{width: 100}} size="small">
+                        {HAS_GENDER.map((option) => (
+<Select.Option
+  value={option.value}
+>{option.label} 
+</Select.Option>
+))}
+                     </Select>)}
                 </Form.Item>
+              )
                 : null}
 
-            {index.selectedOption[index.k] == 'pincode' ?
-                <Form.Item key={index.key} label={'contains'}>
+            {index.selectedOption[index.k] == 'pincode' ? (
+                <Form.Item key={index.key} label="contains">
                     {index.form.getFieldDecorator('pincode',)
-                    (<Input placeholder={"PINCODE"} size={"small"}/>)
-                    }
-                </Form.Item> : null}
+                    (<Input placeholder="PINCODE" size="small" />)}
+                </Form.Item>
+              ) : null}
 
-            {index.selectedOption[index.k] == 'has_pincode' ?
+            {index.selectedOption[index.k] == 'has_pincode' ? (
                 <Form.Item>
                     {index.form.getFieldDecorator('has_pincode')
-                    (<Select style={{width: 100}} size={"small"}>
-                        {HAS_PINCODE.map((option) => <Select.Option
-                            value={option.value}>{option.label} </Select.Option>)}
-                    </Select>)
-                    }
+                    (<Select style={{width: 100}} size="small">
+                        {HAS_PINCODE.map((option) => (
+<Select.Option
+  value={option.value}
+>{option.label} 
+</Select.Option>
+))}
+                     </Select>)}
                 </Form.Item>
+              )
                 : null}
 
-            {index.selectedOption[index.k] == 'has_street' ?
+            {index.selectedOption[index.k] == 'has_street' ? (
                 <Form.Item>
                     {index.form.getFieldDecorator('has_street')
-                    (<Select style={{width: 100}} size={"small"}>
-                        {HAS_STREET.map((option) => <Select.Option
-                            value={option.value}>{option.label} </Select.Option>)}
-                    </Select>)
-                    }
+                    (<Select style={{width: 100}} size="small">
+                        {HAS_STREET.map((option) => (
+<Select.Option
+  value={option.value}
+>{option.label} 
+</Select.Option>
+))}
+                     </Select>)}
                 </Form.Item>
+              )
                 : null}
 
 
-            {index.selectedOption[index.k] == 'street' ?
-                <Form.Item key={index.key} label={'contains'}>
+            {index.selectedOption[index.k] == 'street' ? (
+                <Form.Item key={index.key} label="contains">
                     {index.form.getFieldDecorator('street',)
-                    (<Input placeholder={"Street Address"} size={"small"}/>)
-                    }
-                </Form.Item> : null}
-
-            {index.selectedOption[index.k] == 'blood_group' ?
-                <Form.Item key={index.key} label={'is'}>
-                    {index.form.getFieldDecorator('blood_group')
-                    (<Select style={{width: 100}} size={"small"}>
-                        {BLOOD_GROUPS.map((option) => <Select.Option
-                            value={option.value}>{option.name} </Select.Option>)}
-                    </Select>)
-                    }
+                    (<Input placeholder="Street Address" size="small" />)}
                 </Form.Item>
+              ) : null}
+
+            {index.selectedOption[index.k] == 'blood_group' ? (
+                <Form.Item key={index.key} label="is">
+                    {index.form.getFieldDecorator('blood_group')
+                    (<Select style={{width: 100}} size="small">
+                        {BLOOD_GROUPS.map((option) => (
+<Select.Option
+  value={option.value}
+>{option.name} 
+</Select.Option>
+))}
+                     </Select>)}
+                </Form.Item>
+              )
                 : null}
 
-            {index.selectedOption[index.k] == 'source' ?
+            {index.selectedOption[index.k] == 'source' ? (
                 <Form.Item>
                     {index.form.getFieldDecorator('source')
-                    (<Select style={{width: 100}} size={"small"}>
-                        {index.sourceList.map((option) => <Select.Option
-                            value={option.id}>{option.name} </Select.Option>)}
-                    </Select>)
-                    }
+                    (<Select style={{width: 100}} size="small">
+                        {index.sourceList.map((option) => (
+<Select.Option
+  value={option.id}
+>{option.name} 
+</Select.Option>
+))}
+                     </Select>)}
                 </Form.Item>
+              )
                 : null}
 
-            {index.selectedOption[index.k] == 'agent_referal' ?
+            {index.selectedOption[index.k] == 'agent_referal' ? (
                 <Form.Item>
                     {index.form.getFieldDecorator('agent_referal')
-                    (<Select style={{width: 100}} size={"small"}>
-                        {REFERED_BY_AGENT.map((option) => <Select.Option
-                            value={option.value}>{option.label} </Select.Option>)}
-                    </Select>)
-                    }
+                    (<Select style={{width: 100}} size="small">
+                        {REFERED_BY_AGENT.map((option) => (
+<Select.Option
+  value={option.value}
+>{option.label} 
+</Select.Option>
+))}
+                     </Select>)}
                 </Form.Item>
+              )
                 : null}
 
 
-        </>)
+        </>
+)
 }

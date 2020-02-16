@@ -18,14 +18,14 @@ export default class ActivityList extends React.Component {
     }
 
     loadActivityLog() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 activity: data,
                 loading:false
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading:false
             })
@@ -35,8 +35,10 @@ export default class ActivityList extends React.Component {
     }
 
     render() {
-        return <Card title="Activity Log">
-            <Table loading={this.state.loading} dataSource={this.state.activity}/>
-        </Card>
+        return (
+<Card title="Activity Log">
+            <Table loading={this.state.loading} dataSource={this.state.activity} />
+</Card>
+)
     }
 }

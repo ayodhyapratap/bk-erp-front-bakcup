@@ -1,6 +1,7 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm, Tag} from "antd";
+import {Link} from "react-router-dom";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     SUCCESS_MSG_TYPE,
     CHECKBOX_FIELD,
@@ -10,7 +11,6 @@ import {
     SELECT_FIELD
 } from "../../../../constants/dataKeys";
 import {APPOINTMENT_CATEGORIES} from "../../../../constants/api"
-import {Link} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
 import CustomizedTable from "../../../common/CustomizedTable";
 import {hashCode, intToRGB} from "../../../../utils/clinicUtils";
@@ -34,8 +34,8 @@ class AppointmentCategories extends React.Component {
     }
 
     loadAppointmentCategories() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState(function (prevState) {
                 data.forEach(function (obj) {
                     obj.color = intToRGB(hashCode(obj.name))
@@ -46,14 +46,14 @@ class AppointmentCategories extends React.Component {
                 }
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(APPOINTMENT_CATEGORIES, [this.props.active_practiceId]), successFn, errorFn)
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -69,13 +69,13 @@ class AppointmentCategories extends React.Component {
     }
 
     deleteObject(record) {
-        let that = this;
-        let reqData = record;
+        const that = this;
+        const reqData = record;
         reqData.is_active = false;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadAppointmentCategories();
         }
-        let errorFn = function () {
+        const errorFn = function () {
         };
         postAPI(interpolate(APPOINTMENT_CATEGORIES, [this.props.active_practiceId]), reqData, successFn, errorFn)
     }
@@ -86,12 +86,12 @@ class AppointmentCategories extends React.Component {
 
 
     render() {
-        let that = this;
+        const that = this;
         const columns = [{
             // title: 'Name',
             dataIndex: 'color',
             key: 'color',
-            render: (color) => <Tag color={'#' + color}>#</Tag>
+            render: (color) => <Tag color={`#${  color}`}>#</Tag>
         }, {
             title: 'Name',
             dataIndex: 'name',
@@ -102,12 +102,16 @@ class AppointmentCategories extends React.Component {
             render: (text, record) => (
                 <span>
               <a onClick={() => this.editCategory(record)}>  Edit</a>
-                <Divider type="vertical"/>
-                <Popconfirm title="Are you sure delete this?"
-                            onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
+                <Divider type="vertical" />
+                <Popconfirm
+                  title="Are you sure delete this?"
+                  onConfirm={() => that.deleteObject(record)}
+                  okText="Yes"
+                  cancelText="No"
+                >
                   <a>Delete</a>
-              </Popconfirm>
-              </span>
+                </Popconfirm>
+                </span>
             ),
         }];
         const fields = [{
@@ -125,14 +129,14 @@ class AppointmentCategories extends React.Component {
             type: INPUT_FIELD
         },];
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 that.handleCancel();
                 that.loadAppointmentCategories();
                 console.log(data);
                 console.log("sucess");
                 displayMessage(SUCCESS_MSG_TYPE, "success")
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(APPOINTMENT_CATEGORIES, [this.props.active_practiceId]),
@@ -141,22 +145,27 @@ class AppointmentCategories extends React.Component {
         const defaultValues = [];
         const editFormDefaultValues = [{"key": "id", "value": this.state.editingId}];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>
-            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields} {...this.props}/>
-            <Divider/>
-            <CustomizedTable loading={this.state.loading} columns={columns}
-                             dataSource={this.state.appointmentCategories}/>
+        return (
+<div>
+            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields} {...this.props} />
+            <Divider />
+            <CustomizedTable
+              loading={this.state.loading}
+              columns={columns}
+              dataSource={this.state.appointmentCategories}
+            />
             <Modal
-                title="Edit Appointment Category"
-                visible={this.state.visible}
-                footer={null}
-                onCancel={this.handleCancel}
+              title="Edit Appointment Category"
+              visible={this.state.visible}
+              footer={null}
+              onCancel={this.handleCancel}
             >
-                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields}/>
+                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields} />
                 <Button key="back" onClick={this.handleCancel}>Return</Button>,
 
             </Modal>
-        </div>
+</div>
+)
     }
 }
 

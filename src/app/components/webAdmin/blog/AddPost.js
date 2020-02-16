@@ -1,5 +1,8 @@
 import { Card, Form,Row} from "antd";
 import React from "react";
+import {Route} from "react-router";
+import {Redirect} from "react-router-dom";
+import moment from "moment";
 import {
     DATE_PICKER, SINGLE_IMAGE_UPLOAD_FIELD,
     INPUT_FIELD,
@@ -13,9 +16,6 @@ import {
     BLOG_POST,
     SINGLE_POST
 } from "../../../constants/api";
-import {Route} from "react-router";
-import {Redirect} from "react-router-dom";
-import moment from "moment";
 
 
 export default class AddPost extends React.Component {
@@ -25,8 +25,9 @@ export default class AddPost extends React.Component {
             editBlogData : this.props.editBlogData?this.props.editBlogData:null
         }
     }
+
     changeRedirect(){
-        var redirectVar=this.state.redirect;
+        const redirectVar=this.state.redirect;
         this.setState({
             redirect:  !redirectVar,
         })  ;
@@ -41,13 +42,13 @@ export default class AddPost extends React.Component {
     }
 
     loadData(){
-        let that =this;
-        let successFn = function (data) {
+        const that =this;
+        const successFn = function (data) {
             that.setState({
                 editBlogData:data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(SINGLE_POST, [this.props.match.params.id]) ,successFn, errorFn);
@@ -57,7 +58,7 @@ export default class AddPost extends React.Component {
 
 
     render(){
-        let that =this;
+        const that =this;
         const  fields= [{
             label: "Blog Title",
             key: "title",
@@ -110,7 +111,7 @@ export default class AddPost extends React.Component {
         let editformProp;
         if(this.state.editBlogData) {
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     that.setState({
                         redirect: true
@@ -121,7 +122,7 @@ export default class AddPost extends React.Component {
                     }
 
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(SINGLE_POST, [this.props.match.params.id]),
@@ -132,7 +133,7 @@ export default class AddPost extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
         const formProp={
-            successFn:function(data){
+            successFn(data){
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.setState({
                     redirect: true
@@ -142,24 +143,32 @@ export default class AddPost extends React.Component {
                     that.props.history.replace('/web/blog');
                 };
             },
-            errorFn:function(data){
+            errorFn(data){
             },
             action:  BLOG_POST,
             method: "post",
         };
-        let defaultValues=[];
+        const defaultValues=[];
 
-        return <Row>
+        return (
+<Row>
             <Card>
-                <Route exact path='/web/blog/edit/:id'
-                       render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Post" changeRedirect= {this.changeRedirect} formProp= {editformProp} fields={fields}/>: <Redirect to={'/web/blog'} />)}/>
-                <Route exact path='/web/blog/add'
-                       render={() =><TestFormLayout title="Add Post" changeRedirect= {this.changeRedirect} formProp= {formProp} fields={fields}/>}/>
+                <Route
+                  exact
+                  path='/web/blog/edit/:id'
+                  render={() => (this.props.match.params.id?<TestFormLayout defaultValues={defaultValues} title="Edit Post" changeRedirect={this.changeRedirect} formProp={editformProp} fields={fields} />: <Redirect to="/web/blog" />)}
+                />
+                <Route
+                  exact
+                  path='/web/blog/add'
+                  render={() =><TestFormLayout title="Add Post" changeRedirect={this.changeRedirect} formProp={formProp} fields={fields} />}
+                />
 
 
             </Card>
-            {this.state.redirect&&    <Redirect to={'/web/blog'} />}
-        </Row>
+            {this.state.redirect&&    <Redirect to="/web/blog" />}
+</Row>
+)
 
     }
 }

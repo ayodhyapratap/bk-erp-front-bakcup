@@ -10,8 +10,10 @@ export default class AddOrEditMedicine extends React.Component {
 
     render() {
         const MedicineForm = Form.create()(DynamicFieldsForm);
-        return <Card title={this.props.editId ? "Edit Medicine" : "Add New Medicine"}>
+        return (
+<Card title={this.props.editId ? "Edit Medicine" : "Add New Medicine"}>
             <MedicineForm />
-        </Card>
+</Card>
+)
     }
 }

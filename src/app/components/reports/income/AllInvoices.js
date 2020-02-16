@@ -1,8 +1,8 @@
 import React from "react";
 import {Select, Table, Tag} from "antd";
+import moment from "moment";
 import {INCOME_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
-import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -20,6 +20,7 @@ export default class AllInvoices extends React.Component {
         this.loadInvoices = this.loadInvoices.bind(this);
         // this.loadPatientList = this.loadPatientList.bind(this);
     }
+
     componentDidMount() {
         this.loadInvoices();
         loadMailingUserListForReportsMail(this);
@@ -27,7 +28,7 @@ export default class AllInvoices extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.products!=newProps.products || this.props.income_type!=newProps.income_type
             ||this.props.is_cancelled!=newProps.is_cancelled ||this.props.discount!=newProps.discount || this.props.treatments!=newProps.treatments
             ||this.props.doctors!=newProps.doctors ||this.props.taxes!=newProps.taxes ||this.props.patient_groups!=newProps.patient_groups)
@@ -41,8 +42,8 @@ export default class AllInvoices extends React.Component {
     }
 
     loadInvoices= () => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 invoiceReports:data,
                 loading: false
@@ -54,17 +55,17 @@ export default class AllInvoices extends React.Component {
             // }
 
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             type:that.props.type,
-            is_cancelled:this.props.is_cancelled ? true : false,
+            is_cancelled:!!this.props.is_cancelled,
         };
         if (that.props.income_type){
             apiParams.income_type= that.props.income_type;
@@ -110,13 +111,13 @@ export default class AllInvoices extends React.Component {
 
 
     sendMail = (mailTo) => {
-        let that = this;
-        let apiParams = {
+        const that = this;
+        const apiParams = {
             practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             type:that.props.type,
-            is_cancelled:this.props.is_cancelled ? true : false,
+            is_cancelled:!!this.props.is_cancelled,
         };
 
         if (that.props.income_type){
@@ -145,9 +146,9 @@ export default class AllInvoices extends React.Component {
     };
 
     render() {
-        let that = this;
-        let inventoryData=this.state.invoiceReports;
-        let inventorySummary=[];
+        const that = this;
+        const inventoryData=this.state.invoiceReports;
+        const inventorySummary=[];
         let total_sale=0;
         let total_cost=0;
         let total_tax=0;
@@ -160,14 +161,14 @@ export default class AllInvoices extends React.Component {
             profit_before_tax +=inventoryData[indx].total - inventoryData[indx].cost;
             profit_after_tax +=inventoryData[indx].total - inventoryData[indx].cost -inventoryData[indx].taxes ;
         }
-        inventorySummary.push({sale_amount:total_sale,tax_amount:total_tax,cost_amount:total_cost ,profit_before_tax:profit_before_tax ,profit_after_tax:profit_after_tax});
+        inventorySummary.push({sale_amount:total_sale,tax_amount:total_tax,cost_amount:total_cost ,profit_before_tax ,profit_after_tax});
 
 
         let tableObjects=[];
-        let newData=[];
+        const newData=[];
         inventoryData.map((invoice)=>{
             if (invoice.reservation){
-                let medicinesPackages= invoice.reservation_data.medicines.map((item)=>({
+                const medicinesPackages= invoice.reservation_data.medicines.map((item)=>({
                     ...item,
                     unit: 1,
                     total: item.final_price,
@@ -176,7 +177,7 @@ export default class AllInvoices extends React.Component {
 
                 }));
 
-                let mapper = {
+                const mapper = {
                     "NORMAL": {total: 'final_normal_price', tax: "normal_tax_value", unit_cost: "normal_price"},
                     "TATKAL": {total: 'final_tatkal_price', tax: "tatkal_tax_value", unit_cost: "tatkal_price"}
                 }
@@ -237,7 +238,7 @@ export default class AllInvoices extends React.Component {
             render: (text, record) => (
                 <span>
                 {moment(record.created_at).format('ll')}
-                  </span>
+                </span>
             ),
             export:(item,record)=>(moment(record.created_at).format('ll')),
         },{
@@ -255,10 +256,13 @@ export default class AllInvoices extends React.Component {
             {
             title:'Treatments & Products',
             key:'treatments',
-            render: (text, record) => <span>{record.treatment.map((item) =>
+            render: (text, record) => (
+<span>{record.treatment.map((item) =>
                 <Tag>{item.name}</Tag>
-            )}</span>,
-            export:(text,record)=>(record.treatment.map((item)=>(item.name+ ",")))
+            )}
+</span>
+),
+            export:(text,record)=>(record.treatment.map((item)=>(`${item.name },`)))
         }];
 
         if(that.props.income_type=='PRODUCTS'){
@@ -299,22 +303,28 @@ export default class AllInvoices extends React.Component {
         }
 
 
-        return <div>
+        return (
+<div>
             <h2>All Invoices
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
             </h2>
 
-            <Table loading={this.state.loading} columns={SummaryColumns} pagination={false} dataSource={inventorySummary}/>
+            <Table loading={this.state.loading} columns={SummaryColumns} pagination={false} dataSource={inventorySummary} />
 
-            <CustomizedTable loading={this.state.loading} columns={DetailColumns} pagination={false} dataSource={newData}/>
+            <CustomizedTable loading={this.state.loading} columns={DetailColumns} pagination={false} dataSource={newData} />
 
-        </div>
+</div>
+)
     }
 }

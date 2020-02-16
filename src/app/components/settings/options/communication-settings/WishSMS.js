@@ -1,6 +1,6 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form} from "antd";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {SMS_FIELD, SUCCESS_MSG_TYPE, SINGLE_CHECKBOX_FIELD} from "../../../../constants/dataKeys";
 import {APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS} from "../../../../constants/hardData";
 import {displayMessage, interpolate, getAPI} from "../../../../utils/common";
@@ -15,18 +15,19 @@ class WishSMS extends React.Component {
         }
         this.loadWishSMS =this.loadWishSMS.bind(this);
     }
+
     componentDidMount() {
         this.loadWishSMS();
     }
 
     loadWishSMS(){
-        let that=this;
-        let successFn =function(data){
+        const that=this;
+        const successFn =function(data){
             that.setState({
                 wishsmsData:data[data.length-1]
             })
         }
-        let errorFn= function() {
+        const errorFn= function() {
             
         }
         getAPI(interpolate(COMMUNICATONS_API, [this.props.active_practiceId]), successFn, errorFn);
@@ -35,7 +36,7 @@ class WishSMS extends React.Component {
 
     render() {
         console.log("wishSMS",this.state.wishsmsData)
-        let that = this;
+        const that = this;
         const fields = [{
             key: "birthday_wish_sms",
             initialValue: this.state.wishsmsData ? this.state.wishsmsData.birthday_wish_sms : false,
@@ -78,10 +79,10 @@ class WishSMS extends React.Component {
             options: APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS
         }];
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(COMMUNICATONS_API, [that.props.active_practiceId]),
@@ -92,10 +93,15 @@ class WishSMS extends React.Component {
         ];
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>
-            <TestFormLayout formProp={formProp} defaultValues={defaultValues}
-                            fields={fields}/>
-        </div>
+        return (
+<div>
+            <TestFormLayout
+              formProp={formProp}
+              defaultValues={defaultValues}
+              fields={fields}
+            />
+</div>
+)
     }
 }
 

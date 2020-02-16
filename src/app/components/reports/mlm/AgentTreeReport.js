@@ -26,7 +26,7 @@ export default class AgentTreeReport extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.agent != newProps.agent)
             this.setState({
                 startDate: newProps.startDate,
@@ -40,11 +40,11 @@ export default class AgentTreeReport extends React.Component {
     }
 
     loadAgentTree() {
-        let that = this;
+        const that = this;
         that.setState({
             loading:true,
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 agentData: data,
                 loading:false
@@ -55,7 +55,7 @@ export default class AgentTreeReport extends React.Component {
                 });
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading:false,
             });
@@ -65,8 +65,8 @@ export default class AgentTreeReport extends React.Component {
     }
 
     ref_data_level(user, level) {
-        let currentData = this.state.agentData;
-        let filterData = currentData[level.toString()] ? currentData[level.toString()].filter(function (item) {
+        const currentData = this.state.agentData;
+        const filterData = currentData[level.toString()] ? currentData[level.toString()].filter(function (item) {
             return item.user.referer == user;
         }) : [];
         return filterData;
@@ -74,8 +74,8 @@ export default class AgentTreeReport extends React.Component {
     }
 
     general_list(level, data) {
-        let children = this.ref_data_level(data.user.id, level + 1);
-        for (let child in children) {
+        const children = this.ref_data_level(data.user.id, level + 1);
+        for (const child in children) {
             children[child] = this.general_list(level + 1, children[child]);
         }
         data.children = children;
@@ -83,16 +83,16 @@ export default class AgentTreeReport extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         return (
             <div style={{background:"#f0f2f5",paddingBottom:"20px" }}>
-                {/*{[that.state.agentTreeData].length >0 ?*/}
+                {/* {[that.state.agentTreeData].length >0 ? */}
 
                 <h2 style={{padding:"10px"}}>Agent Tree</h2>
                 <div style={{width:'100%',overflowX:'scroll'}}>
-                <OrgChart tree={this.state.agentTreeData} NodeComponent={MyNodeComponent}/>
+                <OrgChart tree={this.state.agentTreeData} NodeComponent={MyNodeComponent} />
                 </div>
-                {/*: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}*/}
+                {/*: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />} */}
 
             </div>
         )
@@ -101,29 +101,36 @@ export default class AgentTreeReport extends React.Component {
 }
 const MyNodeComponent = function ({node}) {
     return (
-        <div >
-            {node.user ? <>
+        <div>
+            {node.user ? (
+<>
                 <Card style={{margin: 'auto', height: 160, width:160}} bodyStyle={{padding:5,overflow:'hidden'}} hoverable>
                     <Row>
                         <Col span={24}>
-                            {node.image ? <Avatar src={makeFileURL(node.image)} size={50}/> :
+                            {node.image ? <Avatar src={makeFileURL(node.image)} size={50} /> : (
                                 <Avatar style={{backgroundColor: '#87d068'}} size={50}>
                                     {node.user.first_name ? node.user.first_name.charAt(0) :
-                                        <Icon type="user"/>}
-                                </Avatar>}
+                                        <Icon type="user" />}
+                                </Avatar>
+                              )}
                         </Col>
                         <Col span={24}>
                             {node.user.first_name}
                         </Col>
                         <Col span={24}>
-                            <span>{node.is_approved ? <Tag color="#87d068">Approved</Tag> : <Tag color="#f50">Not
-                                Approved</Tag>}<br/>{node.user.mobile}<br/>{node.user.email}</span>
+                            <span>{node.is_approved ? <Tag color="#87d068">Approved</Tag> : (
+<Tag color="#f50">Not
+                                Approved
+</Tag>
+)}<br />{node.user.mobile}<br />{node.user.email}
+                            </span>
                         </Col>
                     </Row>
 
                 </Card>
 
-            </> : null}
+</>
+) : null}
         </div>
     );
 };

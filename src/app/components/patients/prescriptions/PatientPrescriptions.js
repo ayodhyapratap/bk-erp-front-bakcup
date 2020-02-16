@@ -8,6 +8,9 @@ import {
     Dropdown, Modal, Tooltip, Spin, Row, Input
 } from "antd";
 import {Link} from "react-router-dom";
+import moment from "moment";
+import {Redirect, Switch, Route} from "react-router";
+import * as _ from "lodash";
 import {
     PRESCRIPTIONS_API,
     DRUG_CATALOG,
@@ -16,15 +19,12 @@ import {
     PRESCRIPTION_PDF, TREATMENTPLANS_PDF
 } from "../../../constants/api";
 import {getAPI, interpolate, displayMessage, postAPI, putAPI} from "../../../utils/common";
-import moment from "moment";
-import {Redirect, Switch, Route} from "react-router";
 import AddorEditDynamicPatientPrescriptions from "./AddorEditDynamicPatientPrescriptions";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {BACKEND_BASE_URL} from "../../../config/connect";
-import * as _ from "lodash";
 import {sendMail} from "../../../utils/clinicUtils";
 
-const confirm = Modal.confirm;
+const {confirm} = Modal;
 
 class PatientPrescriptions extends React.Component {
     constructor(props) {
@@ -53,25 +53,25 @@ class PatientPrescriptions extends React.Component {
     }
 
     loadPrescriptions(page = 1) {
-        let that = this;
+        const that = this;
         this.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 prescription: data.results,
                 nextPrescriptionPage: data.next,
                 loading: false
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
 
         }
-        let apiParams = {
-            page: page,
+        const apiParams = {
+            page,
             practice: this.props.active_practiceId
         };
         if (this.props.match.params.id) {
@@ -84,12 +84,12 @@ class PatientPrescriptions extends React.Component {
     }
 
     loadPDF(id) {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             if (data.report)
                 window.open(BACKEND_BASE_URL + data.report);
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(PRESCRIPTION_PDF, [id]), successFn, errorFn);
@@ -97,14 +97,14 @@ class PatientPrescriptions extends React.Component {
 
 
     loadDrugCatalog() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 drug_catalog: data,
             })
 
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({})
 
         }
@@ -112,29 +112,29 @@ class PatientPrescriptions extends React.Component {
     }
 
     editPrescriptionData(record) {
-        let that = this;
+        const that = this;
         this.setState({
             editPrescription: record,
         }, function () {
-            that.props.history.push("/patient/" + record.patient + "/emr/prescriptions/edit")
+            that.props.history.push(`/patient/${  record.patient  }/emr/prescriptions/edit`)
         });
 
 
     }
 
     deletePrescriptions(record) {
-        let that = this;
+        const that = this;
         confirm({
             title: 'Are you sure to delete this item?',
             okText: 'Yes',
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                let reqData = {"id": record.id, patient: record.patient, is_active: false};
-                let successFn = function (data) {
+                const reqData = {"id": record.id, patient: record.patient, is_active: false};
+                const successFn = function (data) {
                     that.loadPrescriptions();
                 }
-                let errorFn = function () {
+                const errorFn = function () {
                 }
                 postAPI(interpolate(PRESCRIPTIONS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
             },
@@ -150,6 +150,7 @@ class PatientPrescriptions extends React.Component {
             [type]: value
         })
     };
+
     mailModalOpen =() =>{
         this.setState({
             visibleMail:true
@@ -173,9 +174,9 @@ class PatientPrescriptions extends React.Component {
     };
 
     sendMailToPatient =()=>{
-        let {mail_to ,prescriptionId } = this.state;
-        let apiParams ={
-            mail_to:mail_to,
+        const {mail_to ,prescriptionId } = this.state;
+        const apiParams ={
+            mail_to,
         }
         sendMail(interpolate(TREATMENTPLANS_PDF,[prescriptionId]),apiParams)
         this.mailModalClose();
@@ -188,10 +189,10 @@ class PatientPrescriptions extends React.Component {
         if (this.state.drug_catalog) {
 
             this.state.drug_catalog.forEach(function (drug) {
-                drugs[drug.id] = (drug.name + "," + drug.strength)
+                drugs[drug.id] = (`${drug.name  },${  drug.strength}`)
             })
         }
-        let that = this;
+        const that = this;
         const columns = [{
             title: 'Drug',
             key: 'name',
@@ -210,198 +211,277 @@ class PatientPrescriptions extends React.Component {
             title: 'Instruction',
             dataIndex: 'instruction',
             key: 'instruction',
-            render: (instruction, record) => <span>
+            render: (instruction, record) => (
+<span>
                     {record.before_food ? <Tag>before food </Tag> : null}
                 {record.after_food ? <Tag>after food</Tag> : null}
                 {instruction}
-                </span>
+</span>
+)
         }];
 
         if (this.props.match.params.id) {
-            return <div><Switch>
-                <Route exact path='/patient/:id/emr/prescriptions/add'
-                       render={(route) => <AddorEditDynamicPatientPrescriptions {...this.state} {...this.props}
-                                                                                loadData={this.loadPrescriptions}
-                                                                                {...route}/>}/>
-                <Route exact path='/patient/:id/emr/prescriptions/edit'
-                       render={(route) => (that.state.editPrescription ?
-                           <AddorEditDynamicPatientPrescriptions {...this.state} {...route} {...this.props}
-                                                                 loadData={this.loadPrescriptions}
-                                                                 editId={that.state.editPrescription.id}/> :
-                           <Redirect to={"/patient/" + that.props.match.params.id + "/emr/prescriptions"}/>)}/>
+            return (
+<div><Switch>
+                <Route
+                  exact
+                  path='/patient/:id/emr/prescriptions/add'
+                  render={(route) => (
+<AddorEditDynamicPatientPrescriptions
+  {...this.state}
+  {...this.props}
+  loadData={this.loadPrescriptions}
+  {...route}
+/>
+)}
+                />
+                <Route
+                  exact
+                  path='/patient/:id/emr/prescriptions/edit'
+                  render={(route) => (that.state.editPrescription ? (
+                           <AddorEditDynamicPatientPrescriptions
+                             {...this.state}
+                             {...route}
+                             {...this.props}
+                             loadData={this.loadPrescriptions}
+                             editId={that.state.editPrescription.id}
+                           />
+                         ) :
+                           <Redirect to={`/patient/${  that.props.match.params.id  }/emr/prescriptions`} />)}
+                />
                 <Route>
                     <div>
                         <Card
-                            bodyStyle={{padding: 0}}
-                            title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Prescriptions" : "Prescriptions"}
-                            extra={<Button.Group style={{float: 'right'}}>
-                                <Link to={"/patient/" + this.props.match.params.id + "/emr/prescriptions/add"}>
-                                    <Button type={"primary"}><Icon type="plus"/>Add</Button>
+                          bodyStyle={{padding: 0}}
+                          title={this.state.currentPatient ? `${this.state.currentPatient.user.first_name  } Prescriptions` : "Prescriptions"}
+                          extra={(
+<Button.Group style={{float: 'right'}}>
+                                <Link to={`/patient/${  this.props.match.params.id  }/emr/prescriptions/add`}>
+                                    <Button type="primary"><Icon type="plus" />Add</Button>
                                 </Link>
-                            </Button.Group>}/>
+</Button.Group>
+)}
+                        />
 
-                        {this.state.prescription.map((presc) => <div>
-                            <Card style={{marginTop: 10}}
-                                  bodyStyle={{padding: 0}}
-                                  title={<small>{presc.date ? moment(presc.date).format('ll') : null}</small>}
-                                  extra={<Dropdown.Button
-                                      size={"small"}
-                                      style={{float: 'right'}}
-                                      overlay={<Menu>
-                                          <Menu.Item key="1" onClick={() => that.editPrescriptionData(presc)}
-                                                     disabled={(presc.practice && presc.practice.id != that.props.active_practiceId)}>
-                                              <Icon type="edit"/>
+                        {this.state.prescription.map((presc) => (
+<div>
+                            <Card
+                              style={{marginTop: 10}}
+                              bodyStyle={{padding: 0}}
+                              title={<small>{presc.date ? moment(presc.date).format('ll') : null}</small>}
+                              extra={(
+<Dropdown.Button
+  size="small"
+  style={{float: 'right'}}
+  overlay={(
+<Menu>
+                                          <Menu.Item
+                                            key="1"
+                                            onClick={() => that.editPrescriptionData(presc)}
+                                            disabled={(presc.practice && presc.practice.id != that.props.active_practiceId)}
+                                          >
+                                              <Icon type="edit" />
                                               Edit
                                           </Menu.Item>
-                                          <Menu.Item key="2" onClick={() => that.deletePrescriptions(presc)}
-                                                     disabled={(presc.practice && presc.practice.id != that.props.active_practiceId)}>
-                                              <Icon type="delete"/>
+                                          <Menu.Item
+                                            key="2"
+                                            onClick={() => that.deletePrescriptions(presc)}
+                                            disabled={(presc.practice && presc.practice.id != that.props.active_practiceId)}
+                                          >
+                                              <Icon type="delete" />
                                               Delete
                                           </Menu.Item>
 
 
 
-                                          <Menu.Divider/>
+                                          <Menu.Divider />
                                           <Menu.Item key="3">
-                                              <Link to={"/patient/" + presc.patient + "/emr/timeline"}>
-                                                  <Icon type="clock-circle"/>
+                                              <Link to={`/patient/${  presc.patient  }/emr/timeline`}>
+                                                  <Icon type="clock-circle" />
                                                   &nbsp;
                                                   Patient Timeline
                                               </Link>
                                           </Menu.Item>
 
-                                          <Menu.Divider/>
-                                          <Menu.Item key={'4'}>
+                                          <Menu.Divider />
+                                          <Menu.Item key="4">
                                               <a onClick={() => this.sendPatientMail(presc)}><Icon
-                                                  type="mail"/> Send mail to patient
+                                                type="mail"
+                                              /> Send mail to patient
                                               </a>
                                           </Menu.Item>
 
-                                      </Menu>}>
-                                      <a onClick={() => this.loadPDF(presc.id)}><Icon type="printer"/></a>
-                                  </Dropdown.Button>}>
+</Menu>
+)}
+>
+                                      <a onClick={() => this.loadPDF(presc.id)}><Icon type="printer" /></a>
+</Dropdown.Button>
+)}
+                            >
 
                                 <Modal
-                                    title={null}
-                                    visible={this.state.visibleMail}
-                                    onOk={this.sendMailToPatient}
-                                    onCancel={this.mailModalClose}
-                                    footer={[
+                                  title={null}
+                                  visible={this.state.visibleMail}
+                                  onOk={this.sendMailToPatient}
+                                  onCancel={this.mailModalClose}
+                                  footer={[
                                         <Button key="back" onClick={this.mailModalClose}>
                                             Cancel
                                         </Button>,
-                                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                                        <Button key="submit" type="primary" onClick={this.sendMailToPatient}>
                                             Send
                                         </Button>,
                                     ]}
                                 >
                                     <p>Send Prescription  To {this.state.patientName} ?</p>
-                                    <Input value={this.state.mail_to} placeholder={"Email"}
-                                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                                    <Input
+                                      value={this.state.mail_to}
+                                      placeholder="Email"
+                                      onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}
+                                    />
                                 </Modal>
 
 
-                                <Table columns={columns} dataSource={presc.drugs} pagination={false}
-                                       footer={() => prescriptonFooter(presc)}
-                                       key={presc.id}/>
+                                <Table
+                                  columns={columns}
+                                  dataSource={presc.drugs}
+                                  pagination={false}
+                                  footer={() => prescriptonFooter(presc)}
+                                  key={presc.id}
+                                />
                             </Card>
-                        </div>)}
+</div>
+))}
                         <Spin spinning={this.state.loading}>
-                            <Row>
-                            </Row>
+                            <Row />
                         </Spin>
-                        <InfiniteFeedLoaderButton loading={this.state.loading}
-                                                  loaderFunction={() => this.loadPrescriptions(this.state.nextPrescriptionPage)}
-                                                  hidden={!this.state.nextPrescriptionPage}/>
+                        <InfiniteFeedLoaderButton
+                          loading={this.state.loading}
+                          loaderFunction={() => this.loadPrescriptions(this.state.nextPrescriptionPage)}
+                          hidden={!this.state.nextPrescriptionPage}
+                        />
                     </div>
                 </Route>
-            </Switch>
+     </Switch>
 
-            </div>
+</div>
+)
         }
-        else {
-            return <div>
+        
+            return (
+<div>
                 <Card
-                    bodyStyle={{padding: 0}}
-                    title={this.state.currentPatient ? this.state.currentPatient.user.first_name + " Prescriptions" : "Prescriptions"}
-                    extra={<Button.Group style={{float: 'right'}}>
-                        <Button type={"primary"} onClick={() => this.props.togglePatientListModal(true)}>
-                            <Icon type="plus"/>Add
+                  bodyStyle={{padding: 0}}
+                  title={this.state.currentPatient ? `${this.state.currentPatient.user.first_name  } Prescriptions` : "Prescriptions"}
+                  extra={(
+<Button.Group style={{float: 'right'}}>
+                        <Button type="primary" onClick={() => this.props.togglePatientListModal(true)}>
+                            <Icon type="plus" />Add
                         </Button>
-                    </Button.Group>}/>
-                {this.state.prescription.map((presc) => <div key={presc.id}>
-                    <Card style={{marginTop: 10,}}
-                          bodyStyle={{padding: 0}}
-                          title={<small>{presc.date ? moment(presc.date).format('ll') : null}
-                              <Link to={"/patient/" + presc.patient.id + "/emr/prescriptions"}>
+</Button.Group>
+)}
+                />
+                {this.state.prescription.map((presc) => (
+<div key={presc.id}>
+                    <Card
+                      style={{marginTop: 10,}}
+                      bodyStyle={{padding: 0}}
+                      title={(
+<small>{presc.date ? moment(presc.date).format('ll') : null}
+                              <Link to={`/patient/${  presc.patient.id  }/emr/prescriptions`}>
                                   &nbsp;&nbsp; {presc.patient.user ? presc.patient.user.first_name : null} (ID: {presc.patient.custom_id?presc.patient.custom_id:presc.patient.id})&nbsp;
                               </Link>
                               <span>, {presc.patient.gender}</span>
-                          </small>}
-                          extra={<Dropdown.Button
-                              size={"small"}
-                              style={{float: 'right'}}
-                              overlay={<Menu>
-                                  <Menu.Item key="1" onClick={() => that.editPrescriptionData(presc)}
-                                             disabled={(presc.practice && presc.practice.id != that.props.active_practiceId)}>
-                                      <Icon type="edit"/>
+</small>
+)}
+                      extra={(
+<Dropdown.Button
+  size="small"
+  style={{float: 'right'}}
+  overlay={(
+<Menu>
+                                  <Menu.Item
+                                    key="1"
+                                    onClick={() => that.editPrescriptionData(presc)}
+                                    disabled={(presc.practice && presc.practice.id != that.props.active_practiceId)}
+                                  >
+                                      <Icon type="edit" />
                                       Edit
                                   </Menu.Item>
-                                  <Menu.Item key="2" onClick={() => that.deletePrescriptions(presc)}
-                                             disabled={(presc.practice && presc.practice.id != that.props.active_practiceId)}>
-                                      <Icon type="delete"/>
+                                  <Menu.Item
+                                    key="2"
+                                    onClick={() => that.deletePrescriptions(presc)}
+                                    disabled={(presc.practice && presc.practice.id != that.props.active_practiceId)}
+                                  >
+                                      <Icon type="delete" />
                                       Delete
                                   </Menu.Item>
-                                  <Menu.Divider/>
+                                  <Menu.Divider />
                                   <Menu.Item key="3">
-                                      <Link to={"/patient/" + presc.patient + "/emr/timeline"}>
-                                          <Icon type="clock-circle"/>
+                                      <Link to={`/patient/${  presc.patient  }/emr/timeline`}>
+                                          <Icon type="clock-circle" />
                                           &nbsp;
                                           Patient Timeline
                                       </Link>
                                   </Menu.Item>
 
-                                  <Menu.Divider/>
-                                  <Menu.Item key={'4'}>
+                                  <Menu.Divider />
+                                  <Menu.Item key="4">
                                       <a onClick={() => this.sendPatientMail(presc)}><Icon
-                                          type="mail"/> Send mail to patient
+                                        type="mail"
+                                      /> Send mail to patient
                                       </a>
                                   </Menu.Item>
-                              </Menu>}>
-                              <a onClick={() => this.loadPDF(presc.id)}><Icon type="printer"/></a>
-                          </Dropdown.Button>}>
-                        <Table columns={columns} dataSource={presc.drugs} pagination={false}
-                               footer={() => prescriptonFooter(presc)}
-                               key={presc.id}/>
-                    </Card></div>)}
+</Menu>
+)}
+>
+                              <a onClick={() => this.loadPDF(presc.id)}><Icon type="printer" /></a>
+</Dropdown.Button>
+)}
+                    >
+                        <Table
+                          columns={columns}
+                          dataSource={presc.drugs}
+                          pagination={false}
+                          footer={() => prescriptonFooter(presc)}
+                          key={presc.id}
+                        />
+                    </Card>
+</div>
+))}
                 <Spin spinning={this.state.loading}>
-                    <Row>
-                    </Row>
+                    <Row />
                 </Spin>
-                <InfiniteFeedLoaderButton loading={this.state.loading}
-                                          loaderFunction={() => this.loadPrescriptions(this.state.nextPrescriptionPage)}
-                                          hidden={!this.state.nextPrescriptionPage}/>
+                <InfiniteFeedLoaderButton
+                  loading={this.state.loading}
+                  loaderFunction={() => this.loadPrescriptions(this.state.nextPrescriptionPage)}
+                  hidden={!this.state.nextPrescriptionPage}
+                />
 
                 <Modal
-                    title={null}
-                    visible={this.state.visibleMail}
-                    onOk={this.sendMailToPatient}
-                    onCancel={this.mailModalClose}
-                    footer={[
+                  title={null}
+                  visible={this.state.visibleMail}
+                  onOk={this.sendMailToPatient}
+                  onCancel={this.mailModalClose}
+                  footer={[
                         <Button key="back" onClick={this.mailModalClose}>
                             Cancel
                         </Button>,
-                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                        <Button key="submit" type="primary" onClick={this.sendMailToPatient}>
                             Send
                         </Button>,
                     ]}
                 >
                     <p>Send Prescription To {this.state.patientName} ?</p>
-                    <Input value={this.state.mail_to} placeholder={"Email"}
-                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                    <Input
+                      value={this.state.mail_to}
+                      placeholder="Email"
+                      onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}
+                    />
                 </Modal>
-            </div>
-        }
+</div>
+)
+        
 
     }
 }
@@ -411,20 +491,29 @@ export default PatientPrescriptions;
 function prescriptonFooter(presc) {
     if (presc) {
 
-        return <div>
-            {presc.doctor ? <Tooltip title="Doctor"><Tag color={presc.doctor ? presc.doctor.calendar_colour : null}>
-                <b>{"prescribed by  " + presc.doctor.user.first_name} </b>
-            </Tag></Tooltip> : null}
-            {presc.practice ? <Tag style={{float: 'right'}}>
+        return (
+<div>
+            {presc.doctor ? (
+<Tooltip title="Doctor"><Tag color={presc.doctor ? presc.doctor.calendar_colour : null}>
+                <b>{`prescribed by  ${  presc.doctor.user.first_name}`} </b>
+                        </Tag>
+</Tooltip>
+) : null}
+            {presc.practice ? (
+<Tag style={{float: 'right'}}>
                 <Tooltip title="Practice Name">
                     <b>{presc.practice.name} </b>
                 </Tooltip>
-            </Tag> : null}
-            {presc.labs.length ? <div>
+</Tag>
+) : null}
+            {presc.labs.length ? (
+<div>
                 +{presc.labs.length}&nbsp;Lab Orders
-                {/*<Divider style={{margin:0}}/>*/}
-            </div> : null}
-        </div>
+                {/* <Divider style={{margin:0}}/> */}
+</div>
+) : null}
+</div>
+)
     }
     return null
 }

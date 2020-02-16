@@ -1,8 +1,8 @@
 import React from "react";
-import {FIRST_APPOINTMENT_REPORTS, PATIENTS_REPORTS} from "../../../constants/api";
-import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import moment from "moment";
 import {Col, Row, Select, Statistic, Table} from "antd";
+import {FIRST_APPOINTMENT_REPORTS, PATIENTS_REPORTS} from "../../../constants/api";
+import {getAPI, displayMessage, interpolate} from "../../../utils/common";
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -25,7 +25,7 @@ export default class PatientsFirstAppointment extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
             this.setState({
                 startDate: newProps.startDate,
@@ -36,37 +36,39 @@ export default class PatientsFirstAppointment extends React.Component {
     }
 
     loadFirstAppointment() {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report: data,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             from_date: this.props.startDate.format('YYYY-MM-DD'),
             to_date: this.props.endDate.format('YYYY-MM-DD'),
         }
         getAPI(FIRST_APPOINTMENT_REPORTS, successFn, errorFn,apiParams);
     }
+
     sendMail = (mailTo) => {
-        let apiParams={
+        const apiParams={
             from_date: this.props.startDate.format('YYYY-MM-DD'),
             to_date: this.props.endDate.format('YYYY-MM-DD'),
         }
         apiParams.mail_to = mailTo;
         sendReportMail(FIRST_APPOINTMENT_REPORTS, apiParams)
     }
+
     render() {
-        let that=this;
+        const that=this;
         const {report} =this.state;
         const reportData = [];
         for (let i = 1; i <= report.length; i++) {
@@ -84,7 +86,7 @@ export default class PatientsFirstAppointment extends React.Component {
             render: (text, record) => (
                 <span>
                 {moment(record.appointment_time).format('LL')}
-                  </span>
+                </span>
             ),
             export:(item,record)=> (moment(record.appointment_time).format('LL')),
         }, {
@@ -98,31 +100,38 @@ export default class PatientsFirstAppointment extends React.Component {
             exports:(item ,record) =>(record.custom_id?record.custom_id:record.patient_id),
         }];
 
-        return <div>
+        return (
+<div>
             <h2>Patients First AppointmentReport
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                 <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                    {this.state.mailingUsersList.map(item => <Select.Option
-                        value={item.email}>{item.name}</Select.Option>)}
+                    {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                 </Select>
                     </p>
-            </span>
+                </span>
             </h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
                     <Statistic title="Total Patients" value={this.state.report.length} />
-                    <br/>
+                    <br />
                 </Col>
             </Row>
 
             <CustomizedTable
-                hideReport={true}
-                loading={this.state.loading}
-                columns={columns}
-                dataSource={reportData}/>
+              hideReport
+              loading={this.state.loading}
+              columns={columns}
+              dataSource={reportData}
+            />
 
 
-        </div>
+</div>
+)
     }
 }

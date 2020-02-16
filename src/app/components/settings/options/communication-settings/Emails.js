@@ -1,6 +1,7 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form} from "antd";
+import moment from "moment/moment";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     DIVIDER_FIELD,
     SUCCESS_MSG_TYPE,
@@ -8,7 +9,6 @@ import {
 } from "../../../../constants/dataKeys";
 import {EMAIL_COMMUNICATONS_API} from "../../../../constants/api"
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
-import moment from "moment/moment";
 import {APPOINTMENT_CONFIRMATION_SMS_TAG_OPTIONS} from "../../../../constants/hardData";
 
 
@@ -24,19 +24,19 @@ class Emails extends React.Component {
     }
 
     loadData() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 data: data[0],
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(EMAIL_COMMUNICATONS_API, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     render() {
-        let that = this;
+        const that = this;
         const fields = [{
             label: "Contact Number",
             key: "contact_number",
@@ -198,11 +198,11 @@ class Emails extends React.Component {
         }];
 
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "Communication Settings Saved Successfully!!");
                 console.log("form",data);
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(EMAIL_COMMUNICATONS_API, [that.props.active_practiceId]),
@@ -215,10 +215,16 @@ class Emails extends React.Component {
         }];
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>
-            <TestFormLayout formProp={formProp} defaultValues={defaultValues}
-                            fields={fields} {...this.props}/>
-        </div>
+        return (
+<div>
+            <TestFormLayout
+              formProp={formProp}
+              defaultValues={defaultValues}
+              fields={fields}
+              {...this.props}
+            />
+</div>
+)
     }
 }
 

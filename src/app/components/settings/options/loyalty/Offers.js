@@ -22,15 +22,15 @@ class Offers extends React.Component {
     }
 
     loadData() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log("get table");
             that.setState({
                 offers: data,
                 loading: false
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: true
             })
@@ -39,19 +39,19 @@ class Offers extends React.Component {
     }
 
     deleteObject(record) {
-        let that = this;
-        let reqData = record;
+        const that = this;
+        const reqData = record;
         reqData.is_active = false;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         postAPI(interpolate(OFFERS, [this.props.active_practiceId]), reqData, successFn, errorFn);
     }
 
     render() {
-        let that = this;
+        const that = this;
         const columns = [{
             title: 'Name',
             dataIndex: 'code',
@@ -72,26 +72,32 @@ class Offers extends React.Component {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-                <Popconfirm title="Are you sure delete this Offer?" onConfirm={() => that.deleteObject(record)}
-                            okText="Yes" cancelText="No">
+                <Popconfirm
+                  title="Are you sure delete this Offer?"
+                  onConfirm={() => that.deleteObject(record)}
+                  okText="Yes"
+                  cancelText="No"
+                >
                     <a>
                         Delete
                     </a>
                 </Popconfirm>
             ),
         }];
-        return <Row>
-            {/*<h2>All Offers*/}
-            {/*<Link to="/settings/loyalty/add">*/}
-            {/*<Button type="primary" style={{float: 'right'}}>*/}
-            {/*<Icon type="plus"/>&nbsp;Add*/}
-            {/*</Button>*/}
-            {/*</Link>*/}
-            {/*</h2>*/}
-            <AddOffer {...this.props} loadData={this.loadData}/>
-            <Divider/>
-            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.offers}/>
-        </Row>
+        return (
+<Row>
+            {/* <h2>All Offers */}
+            {/* <Link to="/settings/loyalty/add"> */}
+            {/* <Button type="primary" style={{float: 'right'}}> */}
+            {/* <Icon type="plus"/>&nbsp;Add */}
+            {/* </Button> */}
+            {/* </Link> */}
+            {/* </h2> */}
+            <AddOffer {...this.props} loadData={this.loadData} />
+            <Divider />
+            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.offers} />
+</Row>
+)
     }
 }
 

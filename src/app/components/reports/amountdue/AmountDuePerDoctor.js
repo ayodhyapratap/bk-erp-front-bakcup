@@ -1,8 +1,8 @@
 import React from "react";
-import {AMOUNT_DUE_REPORTS} from "../../../constants/api";
-import {getAPI} from "../../../utils/common";
 import {Col, Empty,  Row, Select, Spin, Table} from "antd";
 import {Pie, PieChart, Sector,Cell} from "recharts";
+import {AMOUNT_DUE_REPORTS} from "../../../constants/api";
+import {getAPI} from "../../../utils/common";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class AmountDuePerDoctor extends React.Component {
@@ -19,13 +19,14 @@ export default class AmountDuePerDoctor extends React.Component {
         this.loadReport = this.loadReport.bind(this);
 
     }
+
     componentDidMount() {
         this.loadReport();
         loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
             this.setState({
                 startDate: newProps.startDate,
@@ -35,24 +36,25 @@ export default class AmountDuePerDoctor extends React.Component {
             })
 
     }
+
     loadReport(){
-        let that =this;
+        const that =this;
         that.setState({
             loading:true,
         });
 
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 reportEachDoctor:data,
                 loading:false,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading:false
             })
         };
-        let apiParams={
+        const apiParams={
             practice:this.props.active_practiceId,
             type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
@@ -67,8 +69,9 @@ export default class AmountDuePerDoctor extends React.Component {
             activeIndex: index,
         });
     };
+
     sendMail = (mailTo) => {
-        let apiParams={
+        const apiParams={
             practice:this.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -126,72 +129,80 @@ export default class AmountDuePerDoctor extends React.Component {
                 <g>
 
                     <Sector
-                        cx={cx}
-                        cy={cy}
-                        innerRadius={innerRadius}
-                        outerRadius={outerRadius}
-                        startAngle={startAngle}
-                        endAngle={endAngle}
-                        fill={fill}
+                      cx={cx}
+                      cy={cy}
+                      innerRadius={innerRadius}
+                      outerRadius={outerRadius}
+                      startAngle={startAngle}
+                      endAngle={endAngle}
+                      fill={fill}
                     />
                     <Sector
-                        cx={cx}
-                        cy={cy}
-                        startAngle={startAngle}
-                        endAngle={endAngle}
-                        innerRadius={outerRadius + 6}
-                        outerRadius={outerRadius + 10}
-                        fill={fill}
+                      cx={cx}
+                      cy={cy}
+                      startAngle={startAngle}
+                      endAngle={endAngle}
+                      innerRadius={outerRadius + 6}
+                      outerRadius={outerRadius + 10}
+                      fill={fill}
                     />
-                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
-                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
-                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.doctor_name+', '+ 'INR ' + payload.invoiced.toFixed(2)}</text>
+                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
+                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`${payload.doctor_name}, `+ `INR ${  payload.invoiced.toFixed(2)}`}</text>
                     <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
                         {`(Rate ${(percent * 100).toFixed(2)}%)`}
                     </text>
                 </g>
             );
         };
-        return <div>
+        return (
+<div>
             <h2>Amount Due Per Doctor
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                 <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                    {this.state.mailingUsersList.map(item => <Select.Option
-                        value={item.email}>{item.name}</Select.Option>)}
+                    {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                 </Select>
                     </p>
-            </span>
+                </span>
             </h2>
 
             <Row>
                 <Col span={12} offset={6}>
                     <Spin size="large" spinning={loading}>
-                        {reportEachDoctor.length>0?
-                            <PieChart width={800} height={400} >
+                        {reportEachDoctor.length>0? (
+                            <PieChart width={800} height={400}>
                                 <Pie
-                                    activeIndex={this.state.activeIndex}
-                                    activeShape={renderActiveShape}
-                                    data={reportEachDoctor}
-                                    cx={300}
-                                    dataKey="amount_due"
-                                    cy={200}
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    onMouseEnter={this.onPieEnter}>
+                                  activeIndex={this.state.activeIndex}
+                                  activeShape={renderActiveShape}
+                                  data={reportEachDoctor}
+                                  cx={300}
+                                  dataKey="amount_due"
+                                  cy={200}
+                                  innerRadius={60}
+                                  outerRadius={80}
+                                  fill="#8884d8"
+                                  onMouseEnter={this.onPieEnter}
+                                >
                                     {
-                                        reportEachDoctor.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                        reportEachDoctor.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} />)
                                     }
                                 </Pie>
-                                {/*<Tooltip/>*/}
-                            </PieChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+                                {/* <Tooltip/> */}
+                            </PieChart>
+                          ):<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show" />}
                     </Spin>
                 </Col>
             </Row>
-            <Table loading={loading} columns={columns} pagination={false} dataSource={reportEachDoctor}/>
+            <Table loading={loading} columns={columns} pagination={false} dataSource={reportEachDoctor} />
 
 
-        </div>
+</div>
+)
     }
 }

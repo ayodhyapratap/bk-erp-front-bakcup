@@ -1,9 +1,9 @@
 import {BACKEND_BASE_URL} from "../config/connect";
 
-/***
+/** *
  * API Connection URLs
  * */
-export const API_URL = BACKEND_BASE_URL + '/erp-api';
+export const API_URL = `${BACKEND_BASE_URL  }/erp-api`;
 export const CONFIG_API = 'users/config/';
 export const FILE_UPLOAD_API = 'blogImage/';
 export const FILE_UPLOAD_BASE64 = 'blogImage/create_with_base64/';
@@ -69,8 +69,8 @@ export const APPOINTMENT_API = 'appointment/%s/';
 export const APPOINTMENT_PERPRACTICE_API = 'appointment/?id=%s';
 export const SINGLE_APPOINTMENT_PERPRACTICE_API = 'appointment/?id=%s&patient=%s';
 export const PATIENT_GROUPS = 'patients/group/?id=%s';
-export const VITAL_SIGNS_API = 'patients/vital_sign/'; //?patient=patientId&practice=practiceId
-export const PRESCRIPTIONS_API = 'patients/prescriptions/'; //?id=patientId&practice=practiceId
+export const VITAL_SIGNS_API = 'patients/vital_sign/'; // ?patient=patientId&practice=practiceId
+export const PRESCRIPTIONS_API = 'patients/prescriptions/'; // ?id=patientId&practice=practiceId
 export const SINGLE_REATMENTPLANS_API = 'patients/procedure/?id=%s';
 export const BLOCK_CALENDAR = 'appointment/block_calendar/';
 export const APPOINTMENT_SCHEDULE = 'appointment/?practice=%s';
@@ -85,8 +85,8 @@ export const MEDICAL_CERTIFICATE_API = 'patients/medical_certificate/?practice=%
 export const MEDICAL_MEMBERSHIP_CANCEL_API = 'patients/cancel_membership/'
 export const PATIENTS_MEMBERSHIP_API = 'patients/membership/?patient=%s'
 export const PATIENT_MAILEDFILES = 'patients/files/';
-/*DELETE OBJECT*/
-export const TREATMENTPLANS_API = 'patients/procedure/'; //?id=patientId&complete=true/false
+/* DELETE OBJECT */
+export const TREATMENTPLANS_API = 'patients/procedure/'; // ?id=patientId&complete=true/false
 export const TREATMENTPLANS_MARK_COMPLETE_API = 'patients/complete_procedure/?id=%s&complete=%s';
 export const ALL_PRESCRIPTIONS_API = 'patients/prescriptions/%s/';
 export const INVOICES_API = 'invoice/';
@@ -109,12 +109,12 @@ export const CANCELINVOICE_RESENT_OTP = 'patients/resend_otp/'
 export const INVOICE_RETURN_API = 'return/';
 export const SINGLE_RETURN_API = 'return/%s/'
 export const RETURN_INVOICE_PDF_API = 'return/%s/get_pdf'
-//search and advanced search API
+// search and advanced search API
 export const ADVANCED_SEARCH_PATIENT = 'patients/advance_search/'
 export const SEARCH_PATIENT = 'patients/search/?name=%s';
 export const PATIENT_PENDING_AMOUNT = 'patients/%s/pending_amount/';
 export const AVAILABLE_ADVANCE = 'patients/%s/advance_payment/';
-//extra data
+// extra data
 export const EXTRA_DATA = 'clinics/extra_data/';
 export const COUNTRY = 'patients/country/';
 export const STATE = 'patients/state/';
@@ -124,42 +124,42 @@ export const SOURCE = 'patients/source/';
  * Reports API
  * */
 
-/** *Patient Reports* **/
+/** *Patient Reports* * */
 export const PATIENTS_REPORTS = 'patients/new_patients';
 export const ACTIVE_PATIENTS_REPORTS = 'patients/active_patients';
 export const MEMBERSHIP_REPORTS = 'patients/membership_report';
 export const FIRST_APPOINTMENT_REPORTS = 'patients/first_appointment';
 
-/** Appointment Reports**/
+/** Appointment Reports* */
 export const PATIENT_APPOINTMENTS_REPORTS = 'appointment/appointment_report';
 
-/** EMR Reports**/
+/** EMR Reports* */
 export const EMR_REPORTS = 'clinics/%s/emr_report';
 
-/** Inventory Retails Reports**/
+/** Inventory Retails Reports* */
 export const PRODUCTS_API = 'inventory_item/products/';
 export const INVENTORY_RETAILS_REPORT = 'inventory_item/inventory_retail';
 
-/** Expense Reports ***/
+/** Expense Reports ** */
 export const EXPENSE_PAYMENT_MODE_API = 'expenses';
 export const EXPENSE_REPORT_API = 'expenses/report';
-/** Inventory Reports***/
+/** Inventory Reports** */
 export const INVENTORY_REPORT_API = 'inventory_item/inventory_report';
 
-/** MLM Reports**/
+/** MLM Reports* */
 export const MLM_Reports = 'patients/mlm_report';
 export const MLM_Agent_Wallet = 'patients/agent_wallet_balance';
-/** Payment Reports**/
+/** Payment Reports* */
 export const PAYMENT_REPORTS = 'payment/payment_reports/';
 
-/** Income Reports**/
+/** Income Reports* */
 export const INCOME_REPORTS = "invoice/invoice_reports";
 
-/** Return Invoice**/
+/** Return Invoice* */
 
 export const RETURN_INVOICE_REPORTS ="return/return_reports/";
 
-/** Amount Due Reports **/
+/** Amount Due Reports * */
 export const AMOUNT_DUE_REPORTS ='invoice/amount_due/';
 
 export const APPOINTMENT_REPORTS = 'clinics/%s/appointment_report/';
@@ -269,24 +269,24 @@ export const CHECK_SEAT_AVAILABILITY = 'clinics/%s/seat_availability/';
 export const DISEASE_LIST = 'clinics/%s/other_diseases/';
 
 
-/** Agent Tree***/
+/** Agent Tree** */
 export const AGENT_TREE = 'patients/%s/agents_chain/';
 
-/**suggestions**/
+/** suggestions* */
 export const SUGGESTIONS = 'suggestions/';
 
-/** Credentials Save**/
+/** Credentials Save* */
 export const CREDENTIALS = 'https://www.bkarogyam.com/api/authenticate';
 export const SWITCH_PORTAL = '';
 export const SAVE_CREDENTIALS = 'users/%s/task_login/';
 
-/** Meetings**/
+/** Meetings* */
 export const MEETING_USER = 'meetings/zoom_user/';
 export const MEETINGS = 'meetings/';
 export const MEETING_DETAILS = 'meetings/details';
 export const SINGLE_MEETING = 'meetings/%s/';
 
-/** Alternate Medicine Conversion **/
+/** Alternate Medicine Conversion * */
 export const ALTERNATE_MEDICINE = 'conversion/';
 
 

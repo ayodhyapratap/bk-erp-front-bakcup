@@ -1,8 +1,8 @@
 import React from "react";
 import {Select} from "antd";
+import moment from "moment"
 import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
-import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -26,7 +26,7 @@ export default class AverageWaitingOrEngagedTimeMonthWise extends React.Componen
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate || this.props.categories != newProps.categories
             || this.props.doctors != newProps.doctors || this.props.exclude_cancelled != newProps.exclude_cancelled)
             this.setState({
@@ -39,27 +39,27 @@ export default class AverageWaitingOrEngagedTimeMonthWise extends React.Componen
     }
 
     loadAppointmentMonthWait = () => {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true,
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 appointmentMonthWait: data,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams = {
+        const apiParams = {
             type: that.props.type,
             practice: that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            exclude_cancelled: this.props.exclude_cancelled ? true : false,
+            exclude_cancelled: !!this.props.exclude_cancelled,
         };
         // if (this.props.exclude_cancelled){
         //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
@@ -73,13 +73,14 @@ export default class AverageWaitingOrEngagedTimeMonthWise extends React.Componen
 
         getAPI(PATIENT_APPOINTMENTS_REPORTS, successFn, errorFn, apiParams);
     };
+
     sendMail = (mailTo) => {
-        let apiParams={
+        const apiParams={
             type:this.props.type,
             practice:this.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            exclude_cancelled:this.props.exclude_cancelled?true:false,
+            exclude_cancelled:!!this.props.exclude_cancelled,
         };
         // if (this.props.exclude_cancelled){
         //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
@@ -93,6 +94,7 @@ export default class AverageWaitingOrEngagedTimeMonthWise extends React.Componen
         apiParams.mail_to = mailTo;
         sendReportMail(PATIENT_APPOINTMENTS_REPORTS, apiParams)
     }
+
     render() {
         const {appointmentMonthWait} = this.state;
         const appointmentMonthWaitData = [];
@@ -113,7 +115,7 @@ export default class AverageWaitingOrEngagedTimeMonthWise extends React.Componen
             render: (text, record) => (
                 <span>
                 {moment(record.date).format('DD MMM YYYY')}
-                  </span>
+                </span>
             ),
             export: (item, record) => (moment(record.date).format('DD MMM YYYY')),
         }, {
@@ -140,27 +142,39 @@ export default class AverageWaitingOrEngagedTimeMonthWise extends React.Componen
             title: 'Avg. stay Time (hh:mm:ss)',
             key: 'stay',
             dataIndex: 'stay',
-            render: (stay, record) => (<span>
+            render: (stay, record) => (
+<span>
                 {record.stay ? moment().add(record.stay, 'second').fromNow() : ''}
-            </span>),
+</span>
+),
             export: (item, record) => (record.stay ? moment().add(record.stay, 'second').fromNow() : ''),
         }];
 
 
-        return <div>
+        return (
+<div>
             <h2>Average Waiting/engaged Time Month Wise
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                 <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                    {this.state.mailingUsersList.map(item => <Select.Option
-                        value={item.email}>{item.name}</Select.Option>)}
+                    {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                 </Select>
                     </p>
-            </span>
+                </span>
             </h2>
-            <CustomizedTable hideReport={true} loading={this.state.loading} columns={columns}
-                             dataSource={appointmentMonthWaitData}/>
+            <CustomizedTable
+              hideReport
+              loading={this.state.loading}
+              columns={columns}
+              dataSource={appointmentMonthWaitData}
+            />
 
-        </div>
+</div>
+)
     }
 }

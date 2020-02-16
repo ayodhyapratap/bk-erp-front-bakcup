@@ -1,8 +1,8 @@
 import React from "react";
 import {Col, Divider, Row, Select, Statistic, Table} from "antd";
+import moment from "moment"
 import {PAYMENT_REPORTS} from "../../../constants/api";
 import {getAPI, interpolate} from "../../../utils/common";
-import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -25,7 +25,7 @@ export default class PatientsWithUnsettledAdvance extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate || this.props.patient_groups != newProps.patient_groups ||this.props.taxes!=newProps.taxes
             || this.props.doctors != newProps.doctors ||this.props.payment_mode !=newProps.payment_mode||this.props.discount != newProps.discount||this.props.treatments!=newProps.treatments||
             this.props.consume!=newProps.consume || this.props.exclude_cancelled != newProps.exclude_cancelled)
@@ -39,27 +39,27 @@ export default class PatientsWithUnsettledAdvance extends React.Component {
     }
 
     loadPaymentsReport = () => {
-        let that = this;
+        const that = this;
         that.setState({
             loading:true,
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report: data,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams = {
+        const apiParams = {
             type: that.props.type,
             practice: that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            is_cancelled: this.props.exclude_cancelled ? true : false,
+            is_cancelled: !!this.props.exclude_cancelled,
         };
         if (this.props.taxes){
             apiParams.taxes=this.props.taxes.toString();
@@ -86,12 +86,12 @@ export default class PatientsWithUnsettledAdvance extends React.Component {
     };
 
     sendMail = (mailTo) => {
-        let that = this
-        let {startDate, endDate} = this.state;
-        let {active_practiceId, type} = this.props;
-        let apiParams = {
+        const that = this
+        const {startDate, endDate} = this.state;
+        const {active_practiceId, type} = this.props;
+        const apiParams = {
             practice:active_practiceId,
-            type:type,
+            type,
             start: startDate.format('YYYY-MM-DD'),
             end: endDate.format('YYYY-MM-DD'),
         };
@@ -100,8 +100,9 @@ export default class PatientsWithUnsettledAdvance extends React.Component {
         apiParams.mail_to = mailTo;
         sendReportMail(interpolate(PAYMENT_REPORTS, [that.props.active_practiceId]), apiParams);
     };
+
     render() {
-        let that = this;
+        const that = this;
         let i = 1;
         const columns = [{
             title: 'S. No',
@@ -117,7 +118,7 @@ export default class PatientsWithUnsettledAdvance extends React.Component {
             render: (text, record) => (
                 <span>
                 {moment(record.date).format('LL')}
-                  </span>
+                </span>
             ),
             export:(text,record)=> {moment(record.date).format('LL')}
         },{
@@ -147,24 +148,31 @@ export default class PatientsWithUnsettledAdvance extends React.Component {
             dataIndex:"last_payment"
         }];
 
-        return <div>
+        return (
+<div>
             <h2>Patients With Unsettled Advance
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
             </h2>
 
             <Table
-                loading={this.state.loading}
-                columns={columns}
-                pagination={false}
-                dataSource={this.state.report}/>
+              loading={this.state.loading}
+              columns={columns}
+              pagination={false}
+              dataSource={this.state.report}
+            />
 
-        </div>
+</div>
+)
     }
 }

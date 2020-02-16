@@ -1,6 +1,7 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form, Card, message} from "antd";
+import {Redirect} from "react-router-dom";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     CHECKBOX_FIELD,
     SUCCESS_MSG_TYPE,
@@ -11,7 +12,6 @@ import {
 } from "../../../../constants/dataKeys";
 import {PROCEDURE_CATEGORY, PRODUCT_MARGIN, TAXES} from "../../../../constants/api"
 import {getAPI, displayMessage, interpolate} from "../../../../utils/common";
-import {Redirect} from "react-router-dom";
 
 class AddProcedure extends React.Component {
     constructor(props) {
@@ -26,6 +26,7 @@ class AddProcedure extends React.Component {
         this.loadProcedures = this.loadProcedures.bind(this)
 
     }
+
     componentDidMount(){
         this.loadTaxes();
         this.loadProcedures();
@@ -33,41 +34,41 @@ class AddProcedure extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
     }
 
     loadProductMargin() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 productMargin: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(PRODUCT_MARGIN, successFn, errorFn);
     }
 
     loadProcedures() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log("get table");
             that.setState({
                 procedure_category: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     loadTaxes() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log(data.map(tax => Object.create({
                     label: tax.name,
                     value: tax.id
@@ -77,13 +78,13 @@ class AddProcedure extends React.Component {
                 taxes: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     render() {
-        let that = this;
+        const that = this;
         const formFields = [{
             label: "Procedure Name",
             key: "name",
@@ -101,7 +102,7 @@ class AddProcedure extends React.Component {
             key: "taxes",
             type: CHECKBOX_FIELD,
             options: this.state.taxes.map(tax => Object.create({
-                    label: tax.name + (tax.tax_value ? "(" + tax.tax_value + "%)" : ''),
+                    label: tax.name + (tax.tax_value ? `(${  tax.tax_value  }%)` : ''),
                     value: tax.id
                 })
             )
@@ -132,14 +133,14 @@ class AddProcedure extends React.Component {
             type: INPUT_FIELD
         },];
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, 'success');
                 that.changeRedirect();
                 if (that.props.history){
                     that.props.history.replace("/settings/procedures");
                 }
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]),
@@ -147,14 +148,20 @@ class AddProcedure extends React.Component {
         }
 
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>
+        return (
+<div>
             <Card>
-                <TestFormLayout title="Add Procedure" changeRedirect={this.changeRedirect} formProp={formProp}
-                                {...this.props}
-                                fields={formFields}/>
-                {this.state.redirect && <Redirect to='/settings/procedures'/>}
+                <TestFormLayout
+                  title="Add Procedure"
+                  changeRedirect={this.changeRedirect}
+                  formProp={formProp}
+                  {...this.props}
+                  fields={formFields}
+                />
+                {this.state.redirect && <Redirect to='/settings/procedures' />}
             </Card>
-        </div>
+</div>
+)
     }
 }
 

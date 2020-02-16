@@ -1,8 +1,8 @@
 import React from "react";
 import {Col, Divider, Empty, Row, Select, Spin, Statistic} from "antd"
+import {Sector, PieChart, Pie, Cell} from 'recharts';
 import {INCOME_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
-import {Sector, PieChart, Pie, Cell} from 'recharts';
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -20,13 +20,14 @@ export default class TaxedInvoicedIncome extends React.Component {
         }
         this.loadTaxedIncome = this.loadTaxedIncome.bind(this);
     }
+
     componentDidMount() {
         this.loadTaxedIncome();
         loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.products!=newProps.products || this.props.income_type!=newProps.income_type
             ||this.props.is_cancelled!=newProps.is_cancelled ||this.props.discount!=newProps.discount || this.props.treatments!=newProps.treatments
             ||this.props.doctors!=newProps.doctors ||this.props.taxes!=newProps.taxes ||this.props.patient_groups!=newProps.patient_groups)
@@ -39,27 +40,27 @@ export default class TaxedInvoicedIncome extends React.Component {
     }
 
     loadTaxedIncome() {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report: data,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             type:that.props.type,
-            is_cancelled:this.props.is_cancelled ? true : false,
+            is_cancelled:!!this.props.is_cancelled,
         };
         if (that.props.income_type){
             apiParams.income_type= that.props.income_type;
@@ -87,13 +88,13 @@ export default class TaxedInvoicedIncome extends React.Component {
 
 
     sendMail = (mailTo) => {
-        let that = this;
-        let apiParams = {
+        const that = this;
+        const apiParams = {
             practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             type:that.props.type,
-            is_cancelled:this.props.is_cancelled ? true : false,
+            is_cancelled:!!this.props.is_cancelled,
         };
 
         if (that.props.income_type){
@@ -160,18 +161,18 @@ export default class TaxedInvoicedIncome extends React.Component {
                 <g>
 
                     <Sector
-                        cx={cx}
-                        cy={cy}
-                        innerRadius={innerRadius}
-                        outerRadius={outerRadius}
-                        startAngle={startAngle}
-                        endAngle={endAngle}
-                        fill={fill}
+                      cx={cx}
+                      cy={cy}
+                      innerRadius={innerRadius}
+                      outerRadius={outerRadius}
+                      startAngle={startAngle}
+                      endAngle={endAngle}
+                      fill={fill}
                     />
 
-                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
-                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
-                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.name+'@'+payload.tax_value+'% ,'+ payload.total.toFixed(2)}</text>
+                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
+                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`${payload.name}@${payload.tax_value}% ,${ payload.total.toFixed(2)}`}</text>
                     <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
                         {`(Rate ${(percent * 100).toFixed(2)}%)`}
                     </text>
@@ -179,17 +180,22 @@ export default class TaxedInvoicedIncome extends React.Component {
             );
         };
 
-        var taxesTotal = this.state.report.reduce(function(prev, cur) {
+        const taxesTotal = this.state.report.reduce(function(prev, cur) {
             return prev + cur.total;
         }, 0);
 
-        return <div>
+        return (
+<div>
             <h2>Taxed Invoiced Income
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
@@ -197,31 +203,38 @@ export default class TaxedInvoicedIncome extends React.Component {
             <Row>
                 <Col span={12} offset={6}>
                     <Spin size="large" spinning={this.state.loading}>
-                        {this.state.report.length>0 && taxesTotal?
-                            <PieChart width={800} height={400} >
+                        {this.state.report.length>0 && taxesTotal? (
+                            <PieChart width={800} height={400}>
                                 <Pie
-                                    label={renderActiveShape}
-                                    data={this.state.report}
-                                    cx={300}
-                                    dataKey="total"
-                                    cy={200}
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    fill="#8884d8">
+                                  label={renderActiveShape}
+                                  data={this.state.report}
+                                  cx={300}
+                                  dataKey="total"
+                                  cy={200}
+                                  innerRadius={60}
+                                  outerRadius={80}
+                                  fill="#8884d8"
+                                >
                                     {
-                                        this.state.report.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                        this.state.report.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} />)
                                     }
                                 </Pie>
-                                {/*<Tooltip/>*/}
-                            </PieChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+                                {/* <Tooltip/> */}
+                            </PieChart>
+                          ):<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show" />}
                     </Spin>
                 </Col>
             </Row>
             <Divider><Statistic title="Total" value={taxesTotal.toFixed(2)} /></Divider>
 
-            <CustomizedTable loading={this.state.loading} columns={columns}
-                             dataSource={this.state.report} hideReport={true}/>
+            <CustomizedTable
+              loading={this.state.loading}
+              columns={columns}
+              dataSource={this.state.report}
+              hideReport
+            />
 
-        </div>
+</div>
+)
     }
 }

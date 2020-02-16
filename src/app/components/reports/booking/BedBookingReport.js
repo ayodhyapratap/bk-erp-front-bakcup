@@ -1,9 +1,9 @@
 import React from "react";
 import {Select, Tag} from "antd";
+import moment from "moment";
 import {BED_BOOKING_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
 import CustomizedTable from "../../common/CustomizedTable";
-import moment from "moment";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -28,7 +28,7 @@ export default class BedBookingReport extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate || this.props.bed_packages != newProps.bed_packages || this.props.payment_status != newProps.payment_status
             || this.props.type != newProps.type)
             this.setState({
@@ -41,11 +41,11 @@ export default class BedBookingReport extends React.Component {
     }
 
     loadBedBookingReport = (page = 1) => {
-        let that = this;
+        const that = this;
         this.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             if (data.current == 1)
                 that.setState({
                     bedBookingReports: data.results,
@@ -62,15 +62,15 @@ export default class BedBookingReport extends React.Component {
                     }
                 );
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams = {
+        const apiParams = {
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            page: page,
+            page,
             practice: this.props.active_practiceId
         }
         if (this.props.payment_status) {
@@ -87,8 +87,8 @@ export default class BedBookingReport extends React.Component {
 
 
     sendMail = (mailTo) => {
-        let that = this;
-        let apiParams = {
+        const that = this;
+        const apiParams = {
             practice: this.props.active_practiceId,
             report_type:this.props.report_type,
             start: this.state.startDate.format('YYYY-MM-DD'),
@@ -110,7 +110,7 @@ export default class BedBookingReport extends React.Component {
 
 
     render() {
-        let that = this;
+        const that = this;
         let i = 1;
         const columns = [{
             title: 'S. No',
@@ -133,16 +133,19 @@ export default class BedBookingReport extends React.Component {
             title: 'Medicine Package',
             key: 'medicine',
             dataIndex: 'medicines',
-            render: (text, record) => <span>{text.map((item) =>
+            render: (text, record) => (
+<span>{text.map((item) =>
                 <Tag>{item.name}</Tag>
-            )}</span>
+            )}
+</span>
+)
         }, {
             title: 'From ',
             key: 'from_date',
             render: (text, record) => (
                 <span>
                 {moment(record.from_date).format('LL')}
-                  </span>
+                </span>
             ),
         }, {
             title: 'To ',
@@ -150,7 +153,7 @@ export default class BedBookingReport extends React.Component {
             render: (text, record) => (
                 <span>
                 {moment(record.to_date).format('LL')}
-                  </span>
+                </span>
             ),
         }, {
             title: 'Seat/Bed Type',
@@ -181,23 +184,34 @@ export default class BedBookingReport extends React.Component {
                 dataIndex: 'payment_status'
 
             }];
-        return <div>
+        return (
+<div>
             <h2>Seat/Bed Booking Report
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
             </h2>
-            <CustomizedTable hideReport={true} pagination={false} columns={columns}
-                             dataSource={this.state.bedBookingReports}/>
+            <CustomizedTable
+              hideReport
+              pagination={false}
+              columns={columns}
+              dataSource={this.state.bedBookingReports}
+            />
             <InfiniteFeedLoaderButton
-                loaderFunction={() => this.loadBedBookingReport(this.state.nextReport)}
-                loading={this.state.loading}
-                hidden={!this.state.nextReport}/>
-        </div>
+              loaderFunction={() => this.loadBedBookingReport(this.state.nextReport)}
+              loading={this.state.loading}
+              hidden={!this.state.nextReport}
+            />
+</div>
+)
     }
 }

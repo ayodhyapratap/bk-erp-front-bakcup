@@ -1,4 +1,5 @@
 import React from "react";
+
 export default class DayWiseReturn extends React.Component{
     constructor(props){
         super(props);
@@ -8,10 +9,11 @@ export default class DayWiseReturn extends React.Component{
     }
 
     render() {
-        return (<div>
+        return (
+<div>
                 <h2>Day wise Return Count & Revenue</h2>
 
-            </div>
+</div>
         );
     }
 }

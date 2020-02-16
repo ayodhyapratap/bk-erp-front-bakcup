@@ -15,12 +15,12 @@ import {
     Menu,
     DatePicker
 } from 'antd';
-import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
-import {PRACTICESTAFF, PROCEDURE_CATEGORY, TREATMENTPLANS_API} from "../../../constants/api";
 import {remove} from 'lodash';
 import {Redirect} from 'react-router-dom';
-import {DOCTORS_ROLE} from "../../../constants/dataKeys";
 import moment from "moment";
+import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
+import {PRACTICESTAFF, PROCEDURE_CATEGORY, TREATMENTPLANS_API} from "../../../constants/api";
+import {DOCTORS_ROLE} from "../../../constants/dataKeys";
 import {loadDoctors} from "../../../utils/clinicUtils";
 
 
@@ -41,9 +41,9 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
     componentDidMount() {
         if (this.props.editId) {
             this.setState(function (prevState) {
-                let tableValues = [];
+                const tableValues = [];
                 this.props.editTreatmentPlan.treatment_plans.forEach(function (treatment) {
-                    let randId = Math.random().toFixed(7);
+                    const randId = Math.random().toFixed(7);
                     tableValues.push({
                         ...treatment,
                         ...treatment.procedure,
@@ -66,17 +66,19 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
         const {getFieldsValue} = this.props.form;
         // console.log(getFieldsValue());
         this.setState(function (prevState) {
-            let newtableFormValues = [...prevState.tableFormValues];
+            const newtableFormValues = [...prevState.tableFormValues];
             newtableFormValues.forEach(function (item) {
 
             });
         });
     }
+
     addNotes = (_id, option) => {
         this.setState(function (prevState) {
             return {addNotes: {...prevState.addNotes, [_id]: !!option}}
         })
     }
+
     removeTreatment = (_id) => {
         this.setState(function (prevState) {
             return {
@@ -86,10 +88,11 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
             }
         });
     }
+
     add = (item) => {
-        let that = this;
+        const that = this;
         this.setState(function (prevState) {
-            let randId = Math.random().toFixed(7);
+            const randId = Math.random().toFixed(7);
             return {
                 addNotes: {...prevState.addNotes, [randId]: !!item.default_notes},
                 tableFormValues: [{
@@ -104,15 +107,15 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
     };
 
     loadProcedures() {
-        var that = this;
-        let params = {};
+        const that = this;
+        const params = {};
         if (this.state.searchString) {
             params.name = this.state.searchString;
         }
         that.setState({
             loadingProcedures: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             if (!params.name || that.state.searchString == params.name)
                 that.setState({
                     // procedure_category: data.results,
@@ -120,7 +123,7 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
                     filteredItems: data.results,
                 })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loadingProcedures: false
             })
@@ -134,18 +137,20 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
             selectedDoctor: doctor
         })
     }
+
     selectedDate = (date) => {
         this.setState({
             selectedDate: date
         })
     }
+
     handleSubmit = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 // console.log('Received values of form: ', values);
-                let reqData = {
+                const reqData = {
                     treatment_plans: [],
                     patient: that.props.match.params.id,
                     "doctor": that.state.selectedDoctor.id,
@@ -162,7 +167,7 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
                     item.discount = values.discount[item._id];
                     if (values.notes)
                         item.notes = values.notes[item._id];
-                    let sendingItem = {
+                    const sendingItem = {
                         "procedure": item.id,
                         "cost": item.cost,
                         "quantity": item.quantity,
@@ -177,22 +182,23 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
                     reqData.treatment_plans.push(sendingItem);
                 });
 
-                let successFn = function (data) {
+                const successFn = function (data) {
                     displayMessage("Inventory updated successfully");
                     if (that.props.loadData)
                         that.props.loadData();
-                    let url = '/patient/' + that.props.match.params.id + '/emr/workdone';
+                    const url = `/patient/${  that.props.match.params.id  }/emr/workdone`;
                     that.props.history.replace(url);
                 };
-                let errorFn = function () {
+                const errorFn = function () {
 
                 };
                 postAPI(interpolate(TREATMENTPLANS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
             }
         });
     };
+
     searchValues = (value) => {
-        let that = this;
+        const that = this;
         this.setState(function (prevState) {
             return {searchString: value}
         }, function () {
@@ -202,7 +208,7 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const formItemLayout = {
             labelCol: {
@@ -228,12 +234,14 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
             title: 'Treatments',
             dataIndex: 'name',
             key: 'name',
-            render: (name, record) => <span>
-                <b>{name}</b><br/>
-                {this.state.addNotes[record._id] || this.props.editId ?
+            render: (name, record) => (
+<span>
+                <b>{name}</b><br />
+                {this.state.addNotes[record._id] || this.props.editId ? (
                     <Form.Item
-                        key={`default_notes[${record._id}]`}
-                        {...formItemLayout}>
+                      key={`default_notes[${record._id}]`}
+                      {...formItemLayout}
+                    >
                         {getFieldDecorator(`notes[${record._id}]`, {
                             validateTrigger: ['onChange', 'onBlur'],
                             rules: [{
@@ -241,18 +249,22 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
                             }],
                             initialValue: record.default_notes
                         })(
-                            <Input.TextArea min={0} placeholder={"Notes..."}/>
+                            <Input.TextArea min={0} placeholder="Notes..." />
                         )}
                     </Form.Item>
+                  )
                     : <a onClick={() => this.addNotes(record._id, true)}>+ Add Note</a>}
-                </span>
+</span>
+)
         }, {
             title: 'Quantity',
             dataIndex: 'quantity',
             key: 'quantity',
-            render: (name, record) => <Form.Item
-                key={`quantity[${record._id}]`}
-                {...formItemLayout}>
+            render: (name, record) => (
+<Form.Item
+  key={`quantity[${record._id}]`}
+  {...formItemLayout}
+>
                 {getFieldDecorator(`quantity[${record._id}]`, {
                     validateTrigger: ['onChange', 'onBlur'],
                     rules: [{
@@ -261,17 +273,24 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
                     }],
                     initialValue: record.quantity,
                 })(
-                    <InputNumber min={0} placeholder="Quantity" size={'small'}
-                                 onChange={() => this.calculateItem(record._id)}/>
+                    <InputNumber
+                      min={0}
+                      placeholder="Quantity"
+                      size="small"
+                      onChange={() => this.calculateItem(record._id)}
+                    />
                 )}
-            </Form.Item>
+</Form.Item>
+)
         }, {
             title: 'Cost',
             dataIndex: 'cost',
             key: 'cost',
-            render: (name, record) => <Form.Item
-                key={`cost[${record._id}]`}
-                {...formItemLayout}>
+            render: (name, record) => (
+<Form.Item
+  key={`cost[${record._id}]`}
+  {...formItemLayout}
+>
                 {getFieldDecorator(`cost[${record._id}]`, {
                     validateTrigger: ['onChange', 'onBlur'],
                     rules: [{
@@ -280,58 +299,86 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
                     }],
                     initialValue: record.cost
                 })(
-                    <InputNumber min={0} placeholder="Cost" size={'small'}
-                                 onChange={() => this.calculateItem(record._id)}/>
+                    <InputNumber
+                      min={0}
+                      placeholder="Cost"
+                      size="small"
+                      onChange={() => this.calculateItem(record._id)}
+                    />
                 )}
-            </Form.Item>
+</Form.Item>
+)
         }, {
             title: 'Discount',
             dataIndex: 'discount',
             key: 'discount',
-            render: (name, record) => <Form.Item
-                key={`discount[${record._id}]`}
-                {...formItemLayout}>
+            render: (name, record) => (
+<Form.Item
+  key={`discount[${record._id}]`}
+  {...formItemLayout}
+>
                 {getFieldDecorator(`discount[${record._id}]`, {
                     validateTrigger: ['onChange', 'onBlur'],
                     rules: [{
                         message: "This field is required.",
                     }],
                 })(
-                    <InputNumber min={0} placeholder="Discount" size={'small'}
-                                 onChange={() => this.calculateItem(record._id)}/>
+                    <InputNumber
+                      min={0}
+                      placeholder="Discount"
+                      size="small"
+                      onChange={() => this.calculateItem(record._id)}
+                    />
                 )} %
-            </Form.Item>
+</Form.Item>
+)
         }, {
             title: 'Total',
             dataIndex: 'total',
             key: 'total',
-            render: (total, record) => <span>
+            render: (total, record) => (
+<span>
                 {total}
-                <Button icon={"close"} onClick={() => this.removeTreatment(record._id)} type={"danger"}
-                        shape="circle"
-                        size="small"/>
-            </span>
+                <Button
+                  icon="close"
+                  onClick={() => this.removeTreatment(record._id)}
+                  type="danger"
+                  shape="circle"
+                  size="small"
+                />
+</span>
+)
         }];
-        return <div>
+        return (
+<div>
 
-            <Card title={"Completed Procedures"}>
+            <Card title="Completed Procedures">
                 <Row>
                     <Col span={17}>
                         <Form onSubmit={this.handleSubmit}>
-                            <Table pagination={false}
-                                   bordered={true}
-                                   dataSource={this.state.tableFormValues}
-                                   columns={consumeRow}/>
+                            <Table
+                              pagination={false}
+                              bordered
+                              dataSource={this.state.tableFormValues}
+                              columns={consumeRow}
+                            />
 
                             <Affix offsetBottom={0}>
                                 <Card>
                                     <span>by &nbsp;&nbsp;</span>
-                                    <Dropdown placement="topCenter" overlay={<Menu>
-                                        {this.state.practiceDoctors.map(doctor =>
+                                    <Dropdown
+                                      placement="topCenter"
+                                      overlay={(
+<Menu>
+                                        {this.state.practiceDoctors.map(doctor => (
                                             <Menu.Item key="0">
                                                 <a onClick={() => this.selectDoctor(doctor)}>{doctor.user.first_name}</a>
-                                            </Menu.Item>)}
-                                    </Menu>} trigger={['click']}>
+                                            </Menu.Item>
+                                          ))}
+</Menu>
+)}
+                                      trigger={['click']}
+                                    >
                                         <a className="ant-dropdown-link" href="#">
                                             <b>
                                                 {this.state.selectedDoctor.user ? this.state.selectedDoctor.user.first_name : 'No DOCTORS Found'}
@@ -339,48 +386,65 @@ class AddorEditDynamicCompletedTreatmentPlans extends React.Component {
                                         </a>
                                     </Dropdown>
                                     <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
-                                    <DatePicker value={this.state.selectedDate}
-                                                onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}
-                                                allowClear={false}/>
-                                    <Form.Item {...formItemLayoutWithOutLabel}
-                                               style={{marginBottom: 0, float: 'right'}}>
+                                    <DatePicker
+                                      value={this.state.selectedDate}
+                                      onChange={(value) => this.selectedDate(value)}
+                                      format="DD-MM-YYYY"
+                                      allowClear={false}
+                                    />
+                                    <Form.Item
+                                      {...formItemLayoutWithOutLabel}
+                                      style={{marginBottom: 0, float: 'right'}}
+                                    >
                                         <Button type="primary" htmlType="submit" style={{margin: 5}}>Save Treatment
-                                            Plan</Button>
-                                        {that.props.history ?
-                                            <Button style={{margin: 5, float: 'right'}}
-                                                    onClick={() => that.props.history.goBack()}>
+                                            Plan
+                                        </Button>
+                                        {that.props.history ? (
+                                            <Button
+                                              style={{margin: 5, float: 'right'}}
+                                              onClick={() => that.props.history.goBack()}
+                                            >
                                                 Cancel
-                                            </Button> : null}
+                                            </Button>
+                                          ) : null}
                                     </Form.Item>
                                 </Card>
                             </Affix>
                             <div ref={el => {
                                 that.bottomPoint = el;
-                            }}/>
+                            }}
+                            />
                         </Form>
                     </Col>
                     <Col span={7}>
                         <Affix offsetTop={0}>
                             <div style={{backgroundColor: '#ddd', padding: 8}}>
-                                <Input.Search placeholder={"Search in plans ..."}
-                                              onChange={e => this.searchValues(e.target.value)}/>
+                                <Input.Search
+                                  placeholder="Search in plans ..."
+                                  onChange={e => this.searchValues(e.target.value)}
+                                />
                             </div>
-                            <List size={"small"}
-                                  loading={this.state.loadingProcedures}
-                                  style={{maxHeight: '100vh', overflowX: 'scroll'}}
-                                  itemLayout="horizontal"
-                                  dataSource={this.state.filteredItems}
-                                  renderItem={item => (
+                            <List
+                              size="small"
+                              loading={this.state.loadingProcedures}
+                              style={{maxHeight: '100vh', overflowX: 'scroll'}}
+                              itemLayout="horizontal"
+                              dataSource={this.state.filteredItems}
+                              renderItem={item => (
                                       <List.Item onClick={() => this.add(item)}>
                                           <List.Item.Meta
-                                              title={item.name}/>
-                                      </List.Item>)}/>
+                                            title={item.name}
+                                          />
+                                      </List.Item>
+)}
+                            />
                         </Affix>
                     </Col>
                 </Row>
             </Card>
 
-        </div>
+</div>
+)
     }
 }
 

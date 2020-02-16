@@ -1,8 +1,10 @@
 import React from "react";
 import {Route} from "react-router";
 
-import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon, Row} from "antd";
+import {Redirect} from 'react-router-dom'
+import moment from 'moment';
+import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {
     CHECKBOX_FIELD,
     DATE_PICKER,
@@ -21,8 +23,6 @@ import {
     PROCEDURE_CATEGORY, TAXES
 } from "../../../constants/api";
 import {getAPI, interpolate, displayMessage} from "../../../utils/common";
-import {Redirect} from 'react-router-dom'
-import moment from 'moment';
 
 
 class AddInvoice extends React.Component {
@@ -57,49 +57,49 @@ class AddInvoice extends React.Component {
     }
 
     loadDrugCatalog() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 drug_catalog: data
             })
 
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(DRUG_CATALOG, [this.props.active_practiceId]), successFn, errorFn)
     }
 
     loadProcedureCategory() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 procedure_category: data
             })
 
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     loadTaxes() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log("get table");
             that.setState({
                 taxes_list: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -109,7 +109,7 @@ class AddInvoice extends React.Component {
         const drugOption = []
         if (this.state.drug_catalog) {
             this.state.drug_catalog.forEach(function (drug) {
-                drugOption.push({label: (drug.name + "(" + drug.strength + ")"), value: drug.id});
+                drugOption.push({label: (`${drug.name  }(${  drug.strength  })`), value: drug.id});
             })
         }
         const procedureOption = []
@@ -121,7 +121,7 @@ class AddInvoice extends React.Component {
         const taxesOption = []
         if (this.state.taxes_list) {
             this.state.taxes_list.forEach(function (drug) {
-                taxesOption.push({label: (drug.name + "(" + drug.tax_value + ")"), value: drug.id});
+                taxesOption.push({label: (`${drug.name  }(${  drug.tax_value  })`), value: drug.id});
             })
         }
         const fields = [{
@@ -170,36 +170,56 @@ class AddInvoice extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 if (this.props.history){
-                    this.props.history.replace('/patient/' + this.props.match.params.id + '/billing/invoices')
+                    this.props.history.replace(`/patient/${  this.props.match.params.id  }/billing/invoices`)
                 }
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(INVOICES_API, [this.props.match.params.id]),
             method: "post",
         }
-        let defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
+        const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
         if (this.state.editInvoice) {
             defaultValues.push({"key": "id", "value": this.state.editInvoice.id});
         }
-        return <Row>
+        return (
+<Row>
             <Card>
-                <Route exact path='/patient/:id/billing/invoices/edit'
-                       render={() => (this.state.editInvoice ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit Invoive"
-                                           changeRedirect={this.changeRedirect} formProp={formProp} fields={fields}/> :
-                           <Redirect to={'/patient/' + this.props.match.params.id + '/billing/invoices'}/>)}/>
-                <Route exact path='/patient/:id/billing/invoices/add'
-                       render={() => <TestFormLayout title="Add Invoice" changeRedirect={this.changeRedirect}
-                                                     formProp={formProp} fields={fields}/>}/>
+                <Route
+                  exact
+                  path='/patient/:id/billing/invoices/edit'
+                  render={() => (this.state.editInvoice ? (
+                           <TestFormLayout
+                             defaultValues={defaultValues}
+                             title="Edit Invoive"
+                             changeRedirect={this.changeRedirect}
+                             formProp={formProp}
+                             fields={fields}
+                           />
+                         ) :
+                           <Redirect to={`/patient/${  this.props.match.params.id  }/billing/invoices`} />)}
+                />
+                <Route
+                  exact
+                  path='/patient/:id/billing/invoices/add'
+                  render={() => (
+<TestFormLayout
+  title="Add Invoice"
+  changeRedirect={this.changeRedirect}
+  formProp={formProp}
+  fields={fields}
+/>
+)}
+                />
 
             </Card>
-            {this.state.redirect && <Redirect to={'/patient/' + this.props.match.params.id + '/billing/invoices'}/>}
-        </Row>
+            {this.state.redirect && <Redirect to={`/patient/${  this.props.match.params.id  }/billing/invoices`} />}
+</Row>
+)
 
     }
 }

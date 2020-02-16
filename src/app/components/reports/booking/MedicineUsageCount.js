@@ -1,10 +1,11 @@
 import React from "react";
 import {Col, Divider, Empty, Modal, Row, Select, Spin, Statistic} from "antd";
+import {Cell,Pie, PieChart, Sector} from "recharts";
 import {BED_BOOKING_REPORTS, BED_PACKAGES} from "../../../constants/api";
 import {getAPI, interpolate} from "../../../utils/common";
 import CustomizedTable from "../../common/CustomizedTable";
-import {Cell,Pie, PieChart, Sector} from "recharts";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
+
 const { confirm } = Modal;
 
 export default class MedicineUsageCount extends React.Component {
@@ -30,7 +31,7 @@ export default class MedicineUsageCount extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.bed_packages!=newProps.bed_packages ||this.props.payment_status!=newProps.payment_status
             ||this.props.type!=newProps.type)
             this.setState({
@@ -43,22 +44,22 @@ export default class MedicineUsageCount extends React.Component {
     }
 
     loadBedBookingReport = () => {
-        let that = this;
+        const that = this;
         this.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 bedBookingReports:data,
                 loading:false,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams = {
+        const apiParams = {
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
             report_type:this.props.report_type,
@@ -83,8 +84,8 @@ export default class MedicineUsageCount extends React.Component {
     };
 
     sendMail = (mailTo) => {
-        let that = this;
-        let apiParams = {
+        const that = this;
+        const apiParams = {
             practice: this.props.active_practiceId,
             report_type:this.props.report_type,
             start: this.state.startDate.format('YYYY-MM-DD'),
@@ -142,43 +143,48 @@ export default class MedicineUsageCount extends React.Component {
                 <g>
 
                     <Sector
-                        cx={cx}
-                        cy={cy}
-                        innerRadius={innerRadius}
-                        outerRadius={outerRadius}
-                        startAngle={startAngle}
-                        endAngle={endAngle}
-                        fill={fill}
+                      cx={cx}
+                      cy={cy}
+                      innerRadius={innerRadius}
+                      outerRadius={outerRadius}
+                      startAngle={startAngle}
+                      endAngle={endAngle}
+                      fill={fill}
                     />
                     <Sector
-                        cx={cx}
-                        cy={cy}
-                        startAngle={startAngle}
-                        endAngle={endAngle}
-                        innerRadius={outerRadius + 6}
-                        outerRadius={outerRadius + 10}
-                        fill={fill}
+                      cx={cx}
+                      cy={cy}
+                      startAngle={startAngle}
+                      endAngle={endAngle}
+                      innerRadius={outerRadius + 6}
+                      outerRadius={outerRadius + 10}
+                      fill={fill}
                     />
-                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
-                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
-                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.medicine+','+ payload.count}</text>
+                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
+                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`${payload.medicine},${ payload.count}`}</text>
                     <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
                         {`(Rate ${(percent * 100).toFixed(2)}%)`}
                     </text>
                 </g>
             );
         };
-        var totalMedicine = this.state.bedBookingReports.reduce(function(prev, cur) {
+        const totalMedicine = this.state.bedBookingReports.reduce(function(prev, cur) {
             return prev + cur.count;
         }, 0);
 
-        return <div>
+        return (
+<div>
             <h2>Medicine Usage Count
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
@@ -186,32 +192,35 @@ export default class MedicineUsageCount extends React.Component {
             <Row>
                 <Col span={12} offset={6}>
                     <Spin size="large" spinning={this.state.loading}>
-                        {this.state.bedBookingReports.length>0?
-                            <PieChart width={800} height={400} >
+                        {this.state.bedBookingReports.length>0? (
+                            <PieChart width={800} height={400}>
                                 <Pie
-                                    activeIndex={this.state.activeIndex}
-                                    activeShape={renderActiveShape}
-                                    data={this.state.bedBookingReports}
-                                    cx={300}
-                                    dataKey="count"
-                                    cy={200}
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    onMouseEnter={this.onPieEnter}>
+                                  activeIndex={this.state.activeIndex}
+                                  activeShape={renderActiveShape}
+                                  data={this.state.bedBookingReports}
+                                  cx={300}
+                                  dataKey="count"
+                                  cy={200}
+                                  innerRadius={60}
+                                  outerRadius={80}
+                                  fill="#8884d8"
+                                  onMouseEnter={this.onPieEnter}
+                                >
                                     {
-                                        this.state.bedBookingReports.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                        this.state.bedBookingReports.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} />)
                                     }
                                 </Pie>
-                                {/*<Tooltip/>*/}
-                            </PieChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+                                {/* <Tooltip/> */}
+                            </PieChart>
+                          ):<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show" />}
                     </Spin>
                 </Col>
             </Row>
 
             <Divider><Statistic title="Total Amounts" value={totalMedicine} /></Divider>
-            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.bedBookingReports}/>
-        </div>
+            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.bedBookingReports} />
+</div>
+)
     }
 }
 

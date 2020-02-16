@@ -1,8 +1,8 @@
 import React from "react";
 import {Col, Row, Select, Statistic} from "antd";
+import moment from "moment"
 import {EMR_REPORTS} from "../../../constants/api";
 import {getAPI,  interpolate} from "../../../utils/common";
-import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -25,7 +25,7 @@ export default class AllTreatmentPerformed extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.doctors!=newProps.doctors ||this.props.is_complete!=newProps.is_complete)
             this.setState({
                 startDate: newProps.startDate,
@@ -37,27 +37,27 @@ export default class AllTreatmentPerformed extends React.Component {
     }
 
     loadTreatmentsReport = () => {
-        let that = this;
+        const that = this;
         that.setState({
             loading:true,
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
            that.setState({
                treatmentPerformed:data,
                loading: false,
            })
         };
 
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             type:that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            is_complete:this.props.is_complete?true:false,
+            is_complete:!!this.props.is_complete,
         };
         if(this.props.doctors){
             apiParams.doctors=this.props.doctors.toString();
@@ -66,8 +66,8 @@ export default class AllTreatmentPerformed extends React.Component {
     };
 
     sendMail = (mailTo) => {
-        let that = this;
-        let apiParams = {
+        const that = this;
+        const apiParams = {
             type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -88,7 +88,7 @@ export default class AllTreatmentPerformed extends React.Component {
 
 
     render() {
-        let that=this;
+        const that=this;
         let i=1;
         const columns = [{
             title: 'S. No',
@@ -102,7 +102,7 @@ export default class AllTreatmentPerformed extends React.Component {
             render: (text, record) => (
                 <span>
                 {moment(record.schedule_at).format('DD MMM YYYY')}
-                  </span>
+                </span>
             ),
             export:(item,record)=>(moment(record.schedule_at).format('DD MMM YYYY')),
         },{
@@ -118,7 +118,7 @@ export default class AllTreatmentPerformed extends React.Component {
             key:'quantity',
             dataIndex:'quantity',
         }];
-        var totalTreatments = this.state.treatmentPerformed.reduce(function(prev, cur) {
+        const totalTreatments = this.state.treatmentPerformed.reduce(function(prev, cur) {
                  return prev + cur.quantity;
              }, 0);
         return (
@@ -127,24 +127,30 @@ export default class AllTreatmentPerformed extends React.Component {
                      <span style={{float: 'right'}}>
                         <p><small>E-Mail To:&nbsp;</small>
                             <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                                {this.state.mailingUsersList.map(item => <Select.Option
-                                    value={item.email}>{item.name}</Select.Option>)}
+                                {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                             </Select>
                         </p>
-                    </span>
+                     </span>
                 </h2>
                 <Row>
                     <Col span={12} offset={6} style={{textAlign:"center"}}>
                         <Statistic title="Total Treatments" value={totalTreatments} />
-                        <br/>
+                        <br />
                     </Col>
                 </Row>
 
                 <CustomizedTable
-                    loading={this.state.loading}
-                    columns={columns}
-                    dataSource={this.state.treatmentPerformed}/>
+                  loading={this.state.loading}
+                  columns={columns}
+                  dataSource={this.state.treatmentPerformed}
+                />
 
-            </div>)
+            </div>
+)
     }
 }

@@ -2,10 +2,10 @@ import React from "react";
 import {Bar, ComposedChart, Tooltip, XAxis, YAxis} from "recharts";
 import moment from "moment";
 import {Empty, Select, Spin} from "antd";
+import * as _ from 'lodash';
 import CustomizedTable from "../../common/CustomizedTable";
 import {getAPI} from "../../../utils/common";
 import {RETURN_INVOICE_REPORTS} from "../../../constants/api";
-import * as _ from 'lodash';
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class MonthlyWiseReturnInvoice extends React.Component{
@@ -29,8 +29,8 @@ export default class MonthlyWiseReturnInvoice extends React.Component{
     }
 
     componentWillReceiveProps (newProps) {
-        let that = this;
-        let {startDate, endDate, patient_groups, doctors, income_type, taxes, discount, products, treatments, exclude_cancelled} =this.props;
+        const that = this;
+        const {startDate, endDate, patient_groups, doctors, income_type, taxes, discount, products, treatments, exclude_cancelled} =this.props;
         if (startDate != newProps.startDate ||
             endDate != newProps.endDate ||
             patient_groups != newProps.patient_groups ||
@@ -68,18 +68,18 @@ export default class MonthlyWiseReturnInvoice extends React.Component{
 
 
     loadMonthlyInvoiceReturn = () =>{
-        let that = this;
+        const that = this;
         this.startLoading();
-        let {startDate, endDate} = this.state;
-        let {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
+        const {startDate, endDate} = this.state;
+        const {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
 
-        let apiParams = {
+        const apiParams = {
             practice:active_practiceId,
-            type:type,
+            type,
             start: startDate.format('YYYY-MM-DD'),
             end: endDate.format('YYYY-MM-DD'),
             // start:"2019-01-01",
-            is_cancelled: exclude_cancelled ? true : false,
+            is_cancelled: !!exclude_cancelled,
         };
 
         if (patient_groups){
@@ -109,13 +109,13 @@ export default class MonthlyWiseReturnInvoice extends React.Component{
             apiParams.products = products.toString()
         }
 
-        let successFn =function (data) {
+        const successFn =function (data) {
             that.setState({
                 report:data,
             })
             that.stopLoading();
         };
-        let errorFn = function (data) {
+        const errorFn = function (data) {
             that.stopLoading();
         };
 
@@ -123,14 +123,14 @@ export default class MonthlyWiseReturnInvoice extends React.Component{
     };
 
     sendMail = (mailTo) => {
-        let {startDate, endDate} = this.state;
-        let {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
-        let apiParams = {
+        const {startDate, endDate} = this.state;
+        const {active_practiceId, type, exclude_cancelled, patient_groups, doctors, income_type, taxes, discount, products, treatments} = this.props;
+        const apiParams = {
             practice:active_practiceId,
-            type:type,
+            type,
             start: startDate.format('YYYY-MM-DD'),
             end: endDate.format('YYYY-MM-DD'),
-            is_cancelled: exclude_cancelled ? true : false,
+            is_cancelled: !!exclude_cancelled,
         };
 
         if (patient_groups){
@@ -166,7 +166,7 @@ export default class MonthlyWiseReturnInvoice extends React.Component{
 
     render() {
 
-        let {report, loading} =this.state;
+        const {report, loading} =this.state;
 
 
         const reportData = [];
@@ -174,7 +174,7 @@ export default class MonthlyWiseReturnInvoice extends React.Component{
             reportData.push({s_no: i, ...report[i - 1]});
         };
 
-        let columns = [{
+        const columns = [{
             title: 'S. No',
             key: 's_no',
             dataIndex: 's_no',
@@ -212,30 +212,42 @@ export default class MonthlyWiseReturnInvoice extends React.Component{
                     <span style={{float: 'right'}}>
                         <p><small>E-Mail To:&nbsp;</small>
                             <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                                {this.state.mailingUsersList.map(item => <Select.Option
-                                    value={item.email}>{item.name}</Select.Option>)}
+                                {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                             </Select>
                         </p>
                     </span>
                 </h2>
 
                 <Spin size="large" spinning={loading}>
-                    {reportData.length>0?
-                        <ComposedChart width={1000} height={400} data={reportData}
-                                       margin={{top: 20, right: 20, bottom: 20, left: 20}}>
+                    {reportData.length>0? (
+                        <ComposedChart
+                          width={1000}
+                          height={400}
+                          data={reportData}
+                          margin={{top: 20, right: 20, bottom: 20, left: 20}}
+                        >
 
 
-                            <XAxis dataKey="date" tickFormatter={(value) => {
+                            <XAxis
+                              dataKey="date"
+                              tickFormatter={(value) => {
                                 return moment(value).format('MM YYYY')
-                            }} />
+                            }}
+                            />
                             <YAxis label={{ value: 'Return Invoice(INR)', angle: -90, position: 'insideLeft' }} />
                             <Tooltip />
-                            {/*<Legend />*/}
+                            {/* <Legend /> */}
                             <Bar dataKey='cost' barSize={35} fill='#0059b3' stroke="#0059b3" />
-                        </ComposedChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+                        </ComposedChart>
+                      ):<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show" />}
                 </Spin>
 
-                <CustomizedTable loading={loading} columns={columns}  dataSource={reportData}/>
+                <CustomizedTable loading={loading} columns={columns} dataSource={reportData} />
             </div>
         );
     }

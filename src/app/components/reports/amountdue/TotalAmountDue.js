@@ -1,8 +1,8 @@
 import React from "react";
 import {Col, Row, Select, Statistic, Table} from "antd";
+import moment from "moment"
 import {AMOUNT_DUE_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
-import moment from "moment"
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
 export default class TotalAmountDue extends React.Component {
@@ -23,7 +23,7 @@ export default class TotalAmountDue extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.patient_groups !=newProps.patient_groups || this.props.doctors != newProps.doctors)
             this.setState({
                 startDate: newProps.startDate,
@@ -33,24 +33,25 @@ export default class TotalAmountDue extends React.Component {
             })
 
     }
+
     loadReport =()=>{
-      let that =this;
+      const that =this;
       that.setState({
           loading:true,
       });
 
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report:data,
                 loading:false,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading:false
             })
         };
-        let apiParams={
+        const apiParams={
             practice:this.props.active_practiceId,
             type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
@@ -65,8 +66,9 @@ export default class TotalAmountDue extends React.Component {
 
         getAPI(AMOUNT_DUE_REPORTS, successFn ,errorFn,apiParams);
     };
+
     sendMail = (mailTo) => {
-        let apiParams={
+        const apiParams={
             practice:this.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -99,7 +101,7 @@ export default class TotalAmountDue extends React.Component {
             render: (text, record) => (
                 <span>
                 {moment(record.date).format('DD MMM YYYY')}
-                  </span>
+                </span>
             ),
         },{
             title:'Invoice Number',
@@ -131,30 +133,36 @@ export default class TotalAmountDue extends React.Component {
 
 
 
-        var totalAmount = report.reduce(function(prev, cur) {
+        const totalAmount = report.reduce(function(prev, cur) {
             return prev + cur.amount_due;
         }, 0);
-        return <div>
+        return (
+<div>
             <h2>Total Amount Due <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                 <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                    {this.state.mailingUsersList.map(item => <Select.Option
-                        value={item.email}>{item.name}</Select.Option>)}
+                    {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                 </Select>
                     </p>
-            </span>
+                                 </span>
             </h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
                     <Statistic title="Amount Due For Listed Invoices(INR)" value={totalAmount.toFixed(2)} />
-                    <br/>
+                    <br />
                     <p>*Advance payments are not considered here. Amounts may vary slightly.</p>
                 </Col>
             </Row>
 
-            <Table loading={loading} columns={columns}  pagination={false}  dataSource={report}/>
+            <Table loading={loading} columns={columns} pagination={false} dataSource={report} />
 
 
-        </div>
+</div>
+)
     }
 }

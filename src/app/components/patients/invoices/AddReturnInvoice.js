@@ -19,6 +19,7 @@ import {
     Tag,
     Checkbox, Divider
 } from "antd";
+import moment from "moment";
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {DRUG, INVENTORY, PRESCRIPTIONS, PROCEDURES} from "../../../constants/hardData";
 import {
@@ -29,14 +30,13 @@ import {
     UNPAID_PRESCRIPTIONS,
     INVOICE_RETURN_API, SINGLE_INVOICE_API
 } from "../../../constants/api";
-import moment from "moment";
 import {loadDoctors} from "../../../utils/clinicUtils";
 
 const {Search} = Input;
 const {MonthPicker} = DatePicker;
-const TabPane = Tabs.TabPane;
+const {TabPane} = Tabs;
 
-let tableFormFields = {
+const tableFormFields = {
     _id: null,
     quantity: 0,
     batch: null
@@ -81,12 +81,13 @@ class AddReturnInvoice extends React.Component {
             selectedDate: date
         })
     }
+
     loadEditInvoiceData = () => {
-        let that = this;
-        let successFn = function (data) {
-            let invoice = data;
+        const that = this;
+        const successFn = function (data) {
+            const invoice = data;
             that.setState(function (prevState) {
-                let tableValues = [];
+                const tableValues = [];
                 invoice.procedure.forEach(function (proc) {
                     tableValues.push({
                         ...proc.procedure_data,
@@ -97,15 +98,15 @@ class AddReturnInvoice extends React.Component {
                         item_type: PROCEDURES
                     })
                 });
-                let stocks = {...prevState.stocks};
-                let itemBatches = {...prevState.itemBatches};
+                const stocks = {...prevState.stocks};
+                const itemBatches = {...prevState.itemBatches};
                 invoice.inventory.forEach(function (proc) {
 
                     if (!itemBatches[proc.inventory]) {
                         itemBatches[proc.inventory] = proc.inventory_item_data.item_type_stock.item_stock;
                     }
                     if (stocks[proc.inventory]) {
-                        let stock_quantity = stocks[proc.inventory];
+                        const stock_quantity = stocks[proc.inventory];
                         if (proc.inventory_item_data.item_type_stock && proc.inventory_item_data.item_type_stock.item_stock)
                             proc.inventory_item_data.item_type_stock.item_stock.forEach(function (stock) {
                                 if (stock_quantity[stock.batch_number])
@@ -114,7 +115,7 @@ class AddReturnInvoice extends React.Component {
                                     stock_quantity[stock.batch_number] = stock.quantity;
                             });
                     } else {
-                        let stock_quantity = {}
+                        const stock_quantity = {}
                         if (proc.inventory_item_data.item_type_stock && proc.inventory_item_data.item_type_stock.item_stock)
                             proc.inventory_item_data.item_type_stock.item_stock.forEach(function (stock) {
                                 stock_quantity[stock.batch_number] = stock.quantity
@@ -123,13 +124,13 @@ class AddReturnInvoice extends React.Component {
                     }
 
                     if (stocks[proc.inventory]) {
-                        let stock_quantity = stocks[proc.inventory];
+                        const stock_quantity = stocks[proc.inventory];
                         if (stock_quantity[proc.batch_number])
                             stock_quantity[proc.batch_number] += proc.unit;
                         else
                             stock_quantity[proc.batch_number] = proc.unit;
                     } else {
-                        let stock_quantity = {};
+                        const stock_quantity = {};
                         stock_quantity[proc.batch_number] = proc.unit;
                         stocks[proc.inventory] = stock_quantity;
                     }
@@ -150,33 +151,33 @@ class AddReturnInvoice extends React.Component {
                 return {
                     tableFormValues: tableValues,
                     selectedDate: moment(invoice.date).isValid() ? moment(invoice.date) : null,
-                    stocks: stocks,
-                    itemBatches: itemBatches
+                    stocks,
+                    itemBatches
                 }
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(SINGLE_INVOICE_API, [this.props.editId]), successFn, errorFn);
     }
 
     loadInventoryItemList() {
-        let that = this;
-        let successFn = function (reqData) {
-            let data = reqData.results;
-            let drugItems = [];
-            let equipmentItems = [];
-            let supplesItems = [];
+        const that = this;
+        const successFn = function (reqData) {
+            const data = reqData.results;
+            const drugItems = [];
+            const equipmentItems = [];
+            const supplesItems = [];
 
             that.setState(function (prevState) {
-                    let stocks = {...prevState.stocks};
-                    let itemBatches = {};
+                    const stocks = {...prevState.stocks};
+                    const itemBatches = {};
                     data.forEach(function (item) {
                         if (item.item_type == DRUG) {
                             drugItems.push(item);
                             if (stocks[item.id]) {
-                                let stock_quantity = stocks[item.id]
+                                const stock_quantity = stocks[item.id]
                                 if (item.item_type_stock && item.item_type_stock.item_stock)
                                     item.item_type_stock.item_stock.forEach(function (stock) {
                                         if (stock_quantity[stock.batch_number])
@@ -185,7 +186,7 @@ class AddReturnInvoice extends React.Component {
                                             stock_quantity[stock.batch_number] += stock.quantity;
                                     });
                             } else {
-                                let stock_quantity = {}
+                                const stock_quantity = {}
                                 if (item.item_type_stock && item.item_type_stock.item_stock)
                                     item.item_type_stock.item_stock.forEach(function (stock) {
                                         stock_quantity[stock.batch_number] = stock.quantity
@@ -196,10 +197,10 @@ class AddReturnInvoice extends React.Component {
                         }
 
                     });
-                    let items = that.state.items;
+                    const {items} = that.state;
                     items[INVENTORY] = drugItems;
                     return {
-                        items: items,
+                        items,
                         stocks: {...prevState.stocks, ...stocks},
                         itemBatches: {...prevState.itemBatches, ...itemBatches}
                     }
@@ -211,9 +212,9 @@ class AddReturnInvoice extends React.Component {
             )
 
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
-        let paramsApi = {
+        const paramsApi = {
             page_size: 1000,
             practice: this.props.active_practiceId,
             maintain_inventory: true,
@@ -226,23 +227,23 @@ class AddReturnInvoice extends React.Component {
     }
 
     loadProcedures() {
-        var that = this;
-        let successFn = function (data) {
-            let items = that.state.items;
+        const that = this;
+        const successFn = function (data) {
+            const {items} = that.state;
             items[PROCEDURES] = data;
             that.setState({
-                items: items,
+                items,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
 
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     loadPrescriptions() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
 
             that.setState(function (prevState) {
                 return {
@@ -250,19 +251,19 @@ class AddReturnInvoice extends React.Component {
                 }
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(UNPAID_PRESCRIPTIONS, [that.props.match.params.id]), successFn, errorFn);
     }
 
     loadTaxes() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 taxes_list: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
@@ -270,7 +271,7 @@ class AddReturnInvoice extends React.Component {
 
     remove = (k) => {
         this.setState(function (prevState) {
-            let newTableFormValues = [];
+            const newTableFormValues = [];
             prevState.tableFormValues.forEach(function (formValue) {
                 if (formValue._id != k)
                     newTableFormValues.push(formValue);
@@ -313,9 +314,10 @@ class AddReturnInvoice extends React.Component {
             }
         });
     };
+
     selectDoctor = (doctor, id, type) => {
         this.setState(function (prevState) {
-            let finalTableFormValues = [];
+            const finalTableFormValues = [];
             prevState.tableFormValues.forEach(function (formValue) {
                 if (formValue._id == id && formValue.item_type == type) {
                     finalTableFormValues.push({...formValue, selectedDoctor: doctor})
@@ -328,9 +330,10 @@ class AddReturnInvoice extends React.Component {
             }
         })
     }
+
     selectedDate = (dateValue, id, type) => {
         this.setState(function (prevState) {
-            let finalTableFormValues = [];
+            const finalTableFormValues = [];
             prevState.tableFormValues.forEach(function (formValue) {
                 if (formValue._id == id && formValue.item_type == type) {
                     finalTableFormValues.push({...formValue, selectedDate: dateValue})
@@ -343,9 +346,10 @@ class AddReturnInvoice extends React.Component {
             }
         })
     }
+
     selectBatch = (batch, id, type) => {
         this.setState(function (prevState) {
-            let finalTableFormValues = [];
+            const finalTableFormValues = [];
             prevState.tableFormValues.forEach(function (formValue) {
                 if (formValue._id == id && formValue.item_type == type) {
                     finalTableFormValues.push({...formValue, selectedBatch: batch})
@@ -358,8 +362,9 @@ class AddReturnInvoice extends React.Component {
             }
         })
     }
+
     addPrescription = (item) => {
-        let that = this;
+        const that = this;
         item.drugs.forEach(function (drug_item) {
             if (drug_item.inventory.maintain_inventory)
                 that.add({...drug_item.inventory, item_type: INVENTORY, inventory: item.inventory.id, id: undefined})
@@ -368,15 +373,16 @@ class AddReturnInvoice extends React.Component {
             return {selectedPrescriptions: [...prevState.selectedPrescriptions, item.id]}
         })
     }
+
     handleSubmit = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 that.setState({
                     saveLoading: true
                 });
-                let reqData = {
+                const reqData = {
                     bank: '',
                     number: '',
                     practice: that.props.active_practiceId,
@@ -389,13 +395,13 @@ class AddReturnInvoice extends React.Component {
                     staff: this.props.editInvoice.staff_data ? this.props.editInvoice.staff_data.id : null,
                     prescription: that.state.selectedPrescriptions,
                     date: that.state.selectedDate && moment(that.state.selectedDate).isValid() ? that.state.selectedDate.format('YYYY-MM-DD') : null,
-                    with_tax: this.state.return_with_tax ? true : false,
+                    with_tax: !!this.state.return_with_tax,
                     cash_return: values.cash_return,
                     advance_value: this.state.returnCashAvailable - values.cash_return || 0,
                 };
                 that.state.tableFormValues.forEach(function (item) {
                     item.unit = values.unit[item._id];
-                    var id = item.id;
+                    const {id} = item;
                     delete (item.id);
                     // item.taxes = values.taxes[item._id];
                     // item.unit_cost = values.unit_cost[item._id];
@@ -445,16 +451,16 @@ class AddReturnInvoice extends React.Component {
                                 return null;
                         }
                 });
-                let successFn = function (data) {
+                const successFn = function (data) {
                     that.setState({
                         saveLoading: false
                     });
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
-                    let url = '/patient/' + that.props.match.params.id + '/billing/invoices';
+                    const url = `/patient/${  that.props.match.params.id  }/billing/invoices`;
                     that.props.history.replace(url);
                 }
-                let errorFn = function () {
+                const errorFn = function () {
                     that.setState({
                         saveLoading: false
                     });
@@ -465,23 +471,24 @@ class AddReturnInvoice extends React.Component {
             }
         });
     }
+
     addItemThroughQR = (value) => {
-        let that = this;
+        const that = this;
         that.setState({
             loadingQr: true,
         })
-        let qrSplitted = value.split('*');
-        let successFn = function (data) {
+        const qrSplitted = value.split('*');
+        const successFn = function (data) {
 
-            let item = data;
-            let {setFieldsValue, getFieldsValue, getFieldValue} = that.props.form;
-            let randomId = Math.random().toFixed(7);
+            const item = data;
+            const {setFieldsValue, getFieldsValue, getFieldValue} = that.props.form;
+            const randomId = Math.random().toFixed(7);
             let flag = true
             that.state.tableFormValues.forEach(function (row) {
                 if (row.name == qrSplitted[0]) {
-                    let _id = row._id;
-                    let batch = row.selectedBatch.batch_number;
-                    let quantity = getFieldValue(`unit[${_id}]`);
+                    const {_id} = row;
+                    const batch = row.selectedBatch.batch_number;
+                    const quantity = getFieldValue(`unit[${_id}]`);
                     if (batch == qrSplitted[1]) {
                         flag = false;
                         setFieldsValue({
@@ -513,19 +520,21 @@ class AddReturnInvoice extends React.Component {
                 }
             });
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(SEARCH_THROUGH_QR, successFn, errorFn, {qr: value, form: 'Invoice'})
     }
+
     setQrValue = (e) => {
-        let value = e.target.value;
+        const {value} = e.target;
         this.setState({
             qrValue: value
         })
     }
+
     searchValues = (e) => {
-        let value = e.target.value;
+        const {value} = e.target;
         this.setState({
             searchItem: value,
         }, function () {
@@ -533,15 +542,16 @@ class AddReturnInvoice extends React.Component {
         })
 
     }
+
     changeNetPrice = (id) => {
-        let that = this;
+        const that = this;
         const {getFieldsValue, setFields} = this.props.form;
         setTimeout(function () {
-            let values = getFieldsValue();
+            const values = getFieldsValue();
             if (values.total_unit_cost[id]) {
 
                 that.setState(function (prevState) {
-                    let newTableValues = []
+                    const newTableValues = []
                     prevState.tableFormValues.forEach(function (tableObj) {
                         if (tableObj._id == id) {
                             let totalTaxAmount = 0;
@@ -551,7 +561,7 @@ class AddReturnInvoice extends React.Component {
                                         totalTaxAmount += taxObj.tax_value;
                                 })
                             });
-                            let retailPrice = values.total_unit_cost[id] / (1 + totalTaxAmount * 0.01);
+                            const retailPrice = values.total_unit_cost[id] / (1 + totalTaxAmount * 0.01);
                             newTableValues.push({...tableObj, unit_cost: retailPrice})
                         } else {
                             newTableValues.push(tableObj);
@@ -569,7 +579,7 @@ class AddReturnInvoice extends React.Component {
     }
 
     onChangeHandle = (e) => {
-        let that = this;
+        const that = this;
         this.setState({
             return_with_tax: e.target.checked
         }, function () {
@@ -578,17 +588,17 @@ class AddReturnInvoice extends React.Component {
     }
 
     calculateReturnCashAvailable = () => {
-        let that = this;
-        let totalAmountPaid = this.state.editInvoice.payments.reduce((a, b) => a + b.pay_amount, 0);
-        let totalInvoiceAmount = this.state.editInvoice.total;
-        let pendingPayment = totalInvoiceAmount - totalAmountPaid;
+        const that = this;
+        const totalAmountPaid = this.state.editInvoice.payments.reduce((a, b) => a + b.pay_amount, 0);
+        const totalInvoiceAmount = this.state.editInvoice.total;
+        const pendingPayment = totalInvoiceAmount - totalAmountPaid;
         let worthOfReturningItems = 0;
         const {getFieldsValue} = this.props.form;
         setTimeout(function () {
-            let values = getFieldsValue();
-            let taxAllowed = that.state.return_with_tax;
+            const values = getFieldsValue();
+            const taxAllowed = that.state.return_with_tax;
             that.state.tableFormValues.forEach(function (item) {
-                let units = values.unit[item._id];
+                const units = values.unit[item._id];
                 if (item.item_type == INVENTORY) {
                     worthOfReturningItems += units * item.unit_cost;
                     worthOfReturningItems += (taxAllowed ? (item.tax_value / item.unit) * units : null);
@@ -609,7 +619,7 @@ class AddReturnInvoice extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const formItemLayout = {
             labelCol: {
@@ -640,12 +650,14 @@ class AddReturnInvoice extends React.Component {
             title: 'Item Name',
             key: 'item_name',
             dataIndex: 'name',
-            render: function (name, record) {
+            render (name, record) {
                 switch (record.item_type) {
                     case PROCEDURES:
-                        return <Form.Item
-                            key={`name[${record._id}]`}
-                            {...formItemLayout}>
+                        return (
+<Form.Item
+  key={`name[${record._id}]`}
+  {...formItemLayout}
+>
                             {getFieldDecorator(`name[${record._id}]`, {
                                 validateTrigger: ['onChange', 'onBlur'],
                                 initialValue: name,
@@ -654,15 +666,23 @@ class AddReturnInvoice extends React.Component {
                                     message: "This field is required.",
                                 }],
                             })(
-                                <Input min={0} placeholder="Item name" size={'small'} disabled/>
+                                <Input min={0} placeholder="Item name" size="small" disabled />
                             )}
                             <span>by &nbsp;&nbsp;</span>
-                            <Dropdown placement="topCenter" disabled overlay={<Menu>
-                                {that.state.practiceDoctors.map(doctor =>
+                            <Dropdown
+                              placement="topCenter"
+                              disabled
+                              overlay={(
+<Menu>
+                                {that.state.practiceDoctors.map(doctor => (
                                     <Menu.Item key="0">
                                         <a onClick={() => that.selectDoctor(doctor, record._id, PROCEDURES)}>{doctor.user.first_name}</a>
-                                    </Menu.Item>)}
-                            </Menu>} trigger={['click']}>
+                                    </Menu.Item>
+                                  ))}
+</Menu>
+)}
+                              trigger={['click']}
+                            >
                                 <a className="ant-dropdown-link" href="#">
                                     <b>
                                         {record.selectedDoctor.user ? record.selectedDoctor.user.first_name : 'No DOCTORS Found'}
@@ -670,39 +690,62 @@ class AddReturnInvoice extends React.Component {
                                 </a>
                             </Dropdown>
                             <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
-                            <DatePicker value={record.selectedDate}
-                                        disabled
-                                        size={'small'}
-                                        onChange={(value) => that.selectedDate(value, record._id, PROCEDURES)}
-                                        format={"DD-MM-YYYY"}/>
-                        </Form.Item>;
+                            <DatePicker
+                              value={record.selectedDate}
+                              disabled
+                              size="small"
+                              onChange={(value) => that.selectedDate(value, record._id, PROCEDURES)}
+                              format="DD-MM-YYYY"
+                            />
+</Form.Item>
+);
                     case PRESCRIPTIONS:
                         return <b>{record.name}</b>;
                     case INVENTORY:
-                        return <div>
+                        return (
+<div>
                             {record.name}
-                            <span><br/>by &nbsp;&nbsp;</span>
-                            <Dropdown placement="topCenter" disabled overlay={<Menu>
-                                {that.state.practiceDoctors.map(doctor =>
+                            <span><br />by &nbsp;&nbsp;</span>
+                            <Dropdown
+                              placement="topCenter"
+                              disabled
+                              overlay={(
+<Menu>
+                                {that.state.practiceDoctors.map(doctor => (
                                     <Menu.Item key={doctor.id}>
                                         <a onClick={() => that.selectDoctor(doctor, record._id, PROCEDURES)}>{doctor.user.first_name}</a>
-                                    </Menu.Item>)}
-                            </Menu>} trigger={['click']}>
+                                    </Menu.Item>
+                                  ))}
+</Menu>
+)}
+                              trigger={['click']}
+                            >
                                 <a className="ant-dropdown-link" href="#">
                                     <b>
                                         {record.selectedDoctor && record.selectedDoctor.user ? record.selectedDoctor.user.first_name : '+Add Doctor'}
                                     </b>
                                 </a>
                             </Dropdown>
-                            <span><br/>from batch &nbsp;&nbsp;</span>
-                            <Dropdown placement="topCenter" disabled overlay={<Menu>
+                            <span><br />from batch &nbsp;&nbsp;</span>
+                            <Dropdown
+                              placement="topCenter"
+                              disabled
+                              overlay={(
+<Menu>
                                 {that.state.itemBatches[record.inventory] && that.state.itemBatches[record.inventory].map((batch, index) =>
-                                    (moment() >= moment(batch.expiry_date) ? <Menu.Item key={index} disabled={true}>
+                                    (moment() >= moment(batch.expiry_date) ? (
+<Menu.Item key={index} disabled>
                                         {batch.batch_number}&nbsp;({batch.quantity}) &nbsp;&nbsp;{batch.expiry_date}
-                                    </Menu.Item> : <Menu.Item key={index}>
+</Menu.Item>
+) : (
+<Menu.Item key={index}>
                                         <a onClick={() => that.selectBatch(batch, record._id, INVENTORY)}>{batch.batch_number}&nbsp;({batch.quantity}) &nbsp;&nbsp;{batch.expiry_date}</a>
-                                    </Menu.Item>))}
-                            </Menu>} trigger={['click']}>
+</Menu.Item>
+)))}
+</Menu>
+)}
+                              trigger={['click']}
+                            >
                                 <a className="ant-dropdown-link" href="#">
                                     <b>
                                         {record.selectedBatch ? record.selectedBatch.batch_number : 'Select Batch'}
@@ -710,7 +753,8 @@ class AddReturnInvoice extends React.Component {
                                 </a>
                             </Dropdown>
                             {record.selectedBatch && record.selectedBatch.expiry_date && moment(record.selectedBatch.expiry_date)<moment()? <Tag color="#f50">Expired</Tag> : null}
-                        </div>
+</div>
+)
                     default:
                         return null;
                 }
@@ -721,35 +765,48 @@ class AddReturnInvoice extends React.Component {
             key: 'unit',
             width: 100,
             dataIndex: 'unit',
-            render: (item, record) => (record.item_type == INVENTORY ?
+            render: (item, record) => (record.item_type == INVENTORY ? (
                     <Form.Item
-                        key={`unit[${record._id}]`}
-                        {...formItemLayout}>
+                      key={`unit[${record._id}]`}
+                      {...formItemLayout}
+                    >
                         {getFieldDecorator(`unit[${record._id}]`, {
                             validateTrigger: ['onChange', 'onBlur'],
                             initialValue: 0,
                         })(
-                            <InputNumber max={(record.unit)}
-                                         onChange={this.calculateReturnCashAvailable}
-                                         min={0}
-                                         placeholder="units" size={'small'}
-                                         disabled={!(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number])}/>
+                            <InputNumber
+                              max={(record.unit)}
+                              onChange={this.calculateReturnCashAvailable}
+                              min={0}
+                              placeholder="units"
+                              size="small"
+                              disabled={!(record.selectedBatch && that.state.stocks[record.inventory] && that.state.stocks[record.inventory][record.selectedBatch.batch_number])}
+                            />
                         )}
                         <span className="ant-form-text">Items: {record.unit}</span>
                     </Form.Item>
+                  )
 
-                    : <Form.Item
-                        key={`unit[${record._id}]`}
-                        {...formItemLayout}>
+                    : (
+<Form.Item
+  key={`unit[${record._id}]`}
+  {...formItemLayout}
+>
                         {getFieldDecorator(`unit[${record._id}]`, {
                             initialValue: 0,
                             validateTrigger: ['onChange', 'onBlur'],
                         })(
-                            <InputNumber min={0} max={record.unit} placeholder="unit" size={'small'}
-                                         onChange={this.calculateReturnCashAvailable}/>
+                            <InputNumber
+                              min={0}
+                              max={record.unit}
+                              placeholder="unit"
+                              size="small"
+                              onChange={this.calculateReturnCashAvailable}
+                            />
                         )}
                         <span className="ant-form-text">Items: {record.unit}</span>
-                    </Form.Item>
+</Form.Item>
+)
             )
         }, {
             title: 'Unit Cost',
@@ -762,37 +819,51 @@ class AddReturnInvoice extends React.Component {
             key: 'discount',
             width: 100,
             dataIndex: 'discount',
-            render: (item, record) => <Form.Item
-                key={`discount[${record._id}]`}
-                {...formItemLayout}>
+            render: (item, record) => (
+<Form.Item
+  key={`discount[${record._id}]`}
+  {...formItemLayout}
+>
                 {getFieldDecorator(`discount[${record._id}]`, {
                     initialValue: record.discount,
                     validateTrigger: ['onChange', 'onBlur'],
 
                 })(
-                    <InputNumber min={0} max={100} placeholder="discount" size={'small'} disabled={true}/>
+                    <InputNumber min={0} max={100} placeholder="discount" size="small" disabled />
                 )}
-            </Form.Item>
+</Form.Item>
+)
         }, {
             title: 'Taxes',
             key: 'taxes',
             dataIndex: 'taxes',
-            render: (item, record) => <Form.Item
-                key={`taxes[${record._id}]`}
-                {...formItemLayout}>
+            render: (item, record) => (
+<Form.Item
+  key={`taxes[${record._id}]`}
+  {...formItemLayout}
+>
                 {getFieldDecorator(`taxes[${record._id}]`, {
                     initialValue: record.taxes || [],
                     validateTrigger: ['onChange', 'onBlur'],
                 })(
-                    <Select placeholder="Taxes" size={'small'} mode={"multiple"}
-                            disabled={true}
-                            style={{width: 150}}
-                            onChange={() => that.changeNetPrice(record._id)}>
-                        {this.state.taxes_list && this.state.taxes_list.map((tax) => <Select.Option
-                            value={tax.id}>{tax.name}@{tax.tax_value}%</Select.Option>)}
+                    <Select
+                      placeholder="Taxes"
+                      size="small"
+                      mode="multiple"
+                      disabled
+                      style={{width: 150}}
+                      onChange={() => that.changeNetPrice(record._id)}
+                    >
+                        {this.state.taxes_list && this.state.taxes_list.map((tax) => (
+<Select.Option
+  value={tax.id}
+>{tax.name}@{tax.tax_value}%
+</Select.Option>
+))}
                     </Select>
                 )}
-            </Form.Item>
+</Form.Item>
+)
         }, {
             title: 'Total Unit Cost',
             key: 'total',
@@ -801,70 +872,93 @@ class AddReturnInvoice extends React.Component {
             render: (item, record) => (record.unit ? (record.total / record.unit).toFixed(2) : record.total.toFixed(2))
         }]);
 
-        return <div>
+        return (
+<div>
             <Spin spinning={this.state.saveLoading} tip="Saving Invoice...">
                 <Row gutter={16}>
                     <Col span={20}>
                         <Card
-                            title={this.props.editId ? "Return Invoice (INV " + this.props.editId + ")" : "Add Invoice"}
-                            bodyStyle={{padding: 0}}>
+                          title={this.props.editId ? `Return Invoice (INV ${  this.props.editId  })` : "Add Invoice"}
+                          bodyStyle={{padding: 0}}
+                        >
                             <Row gutter={16}>
                                 <Col span={24}>
                                     <Form onSubmit={this.handleSubmit} layout="inline">
-                                        <Table pagination={false}
-                                               bordered={true}
-                                               dataSource={this.state.tableFormValues}
-                                               columns={consumeRow}/>
+                                        <Table
+                                          pagination={false}
+                                          bordered
+                                          dataSource={this.state.tableFormValues}
+                                          columns={consumeRow}
+                                        />
                                         <Affix offsetBottom={0}>
                                             <Card>
                                                 <Row gutter={16}>
                                                     <Col span={6}>
 
                                                         <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
-                                                        <DatePicker value={this.state.selectedDate}
-                                                                    disabled
-                                                                    onChange={(value) => this.selectedDefaultDate(value)}
-                                                                    format={"DD-MM-YYYY"}
-                                                                    allowClear={false}/>
-                                                        <br/>
-                                                        <br/>
-                                                        <Checkbox onChange={this.onChangeHandle}
-                                                                  defaultChecked={this.state.return_with_tax}>
+                                                        <DatePicker
+                                                          value={this.state.selectedDate}
+                                                          disabled
+                                                          onChange={(value) => this.selectedDefaultDate(value)}
+                                                          format="DD-MM-YYYY"
+                                                          allowClear={false}
+                                                        />
+                                                        <br />
+                                                        <br />
+                                                        <Checkbox
+                                                          onChange={this.onChangeHandle}
+                                                          defaultChecked={this.state.return_with_tax}
+                                                        >
                                                             Return With Tax
                                                         </Checkbox>
                                                     </Col>
                                                     <Col span={8}>
-                                                        <Form.Item label={"Returned Cash "}>
+                                                        <Form.Item label="Returned Cash ">
                                                             {getFieldDecorator('cash_return',
                                                             )
-                                                            (<InputNumber min={0} max={this.state.returnCashAvailable}
-                                                                          placeholder={"Cash Returned"}/>)
-                                                            }
-                                                            <span><br/>Max Cash Return Allowed (INR) {this.state.returnCashAvailable}</span>
+                                                            (<InputNumber
+                                                              min={0}
+                                                              max={this.state.returnCashAvailable}
+                                                              placeholder="Cash Returned"
+                                                            />)}
+                                                            <span><br />Max Cash Return Allowed (INR) {this.state.returnCashAvailable}</span>
                                                         </Form.Item>
                                                     </Col>
                                                     <Col span={10}>
                                                         <Form.Item
-                                                            label={"Notes"}
-                                                            key={`notes`}
+                                                          label="Notes"
+                                                          key="notes"
                                                         >
                                                             {getFieldDecorator(`notes`, {
                                                                 initialValue: this.state.tableFormValues.notes,
                                                                 validateTrigger: ['onChange', 'onBlur'],
                                                             })(
-                                                                <Input.TextArea row={2} placeholder="Notes..."
-                                                                                size={'small'} style={{width: '100%'}}/>
+                                                                <Input.TextArea
+                                                                  row={2}
+                                                                  placeholder="Notes..."
+                                                                  size="small"
+                                                                  style={{width: '100%'}}
+                                                                />
                                                             )}
                                                         </Form.Item>
-                                                        <Form.Item {...formItemLayoutWithOutLabel}
-                                                                   style={{marginBottom: 0, float: 'right'}}>
-                                                            <Button type="primary" htmlType="submit"
-                                                                    style={{margin: 5}}>Save Return Invoice</Button>
-                                                            {that.props.history ?
-                                                                <Button style={{margin: 5, float: 'right'}}
-                                                                        onClick={() => that.props.history.goBack()}>
+                                                        <Form.Item
+                                                          {...formItemLayoutWithOutLabel}
+                                                          style={{marginBottom: 0, float: 'right'}}
+                                                        >
+                                                            <Button
+                                                              type="primary"
+                                                              htmlType="submit"
+                                                              style={{margin: 5}}
+                                                            >Save Return Invoice
+                                                            </Button>
+                                                            {that.props.history ? (
+                                                                <Button
+                                                                  style={{margin: 5, float: 'right'}}
+                                                                  onClick={() => that.props.history.goBack()}
+                                                                >
                                                                     Cancel
-                                                                </Button> : null}
+                                                                </Button>
+                                                              ) : null}
                                                         </Form.Item>
 
                                                     </Col>
@@ -880,17 +974,27 @@ class AddReturnInvoice extends React.Component {
                     </Col>
                     <Col span={4}>
                         <Divider>Payments Done</Divider>
-                        <List dataSource={this.state.editInvoice.payments}
-                              renderItem={payment => <Card title={payment.payment_id} style={{marginBottom: 10}}
-                                                           bodyStyle={{padding: 5}}>
+                        <List
+                          dataSource={this.state.editInvoice.payments}
+                          renderItem={payment => (
+<Card
+  title={payment.payment_id}
+  style={{marginBottom: 10}}
+  bodyStyle={{padding: 5}}
+>
                                   <p>Paid (INR)<span
-                                      style={{float: 'right', fontWeight: 600}}> {payment.pay_amount.toFixed(2)}</span>
+                                    style={{float: 'right', fontWeight: 600}}
+                                  > {payment.pay_amount.toFixed(2)}
+                                               </span>
                                   </p>
-                              </Card>}/>
+</Card>
+)}
+                        />
                     </Col>
                 </Row>
             </Spin>
-        </div>
+</div>
+)
 
     }
 }

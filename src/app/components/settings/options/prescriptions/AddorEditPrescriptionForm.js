@@ -1,5 +1,6 @@
 import React from "react";
 import {Form, Input, Select, InputNumber, Button, Card} from "antd";
+import moment from "moment/moment";
 import {REQUIRED_FIELD_MESSAGE} from "../../../../constants/messages";
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../../utils/common";
 import {DRUG_TYPE_API, DRUG_UNIT_API, INVENTORY_ITEM_API} from "../../../../constants/api";
@@ -10,7 +11,6 @@ import {
     SELECT_FIELD,
     SINGLE_IMAGE_UPLOAD_FIELD, SUCCESS_MSG_TYPE, TIME_PICKER,
 } from "../../../../constants/dataKeys";
-import moment from "moment/moment";
 import {DRUG} from "../../../../constants/hardData";
 
 class AddorEditPrescriptionForm extends React.Component {
@@ -29,25 +29,25 @@ class AddorEditPrescriptionForm extends React.Component {
     }
 
     loadDrugType() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 drugTypeList: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         getAPI(interpolate(DRUG_TYPE_API, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     loadDrugUnit() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 drugUnitList: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         getAPI(interpolate(DRUG_UNIT_API, [this.props.active_practiceId]), successFn, errorFn);
     }
@@ -57,13 +57,14 @@ class AddorEditPrescriptionForm extends React.Component {
             [type]: value
         })
     }
+
     handleSubmit = (option) => {
-        let that = this;
+        const that = this;
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 // console.log(values);
             }
-            let reqData = {
+            const reqData = {
                 ...values,
                 practice: that.props.active_practiceId,
                 maintain_inventory: option,
@@ -72,14 +73,14 @@ class AddorEditPrescriptionForm extends React.Component {
             if (that.state.editPrescreption) {
                 reqData.id = that.state.editPrescreption.id;
             }
-            let successFn = function (data) {
+            const successFn = function (data) {
 
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 that.props.loadData();
-                let url = '/settings/prescriptions';
+                const url = '/settings/prescriptions';
                 that.props.history.replace(url);
             }
-            let errorFn = function () {
+            const errorFn = function () {
 
             }
 
@@ -94,10 +95,11 @@ class AddorEditPrescriptionForm extends React.Component {
             wrapperCol: {span: 14},
         });
         const {getFieldDecorator} = this.props.form;
-        return <Card>
+        return (
+<Card>
             <Form>
                 <h2>{this.props.title}</h2>
-                <Form.Item key={'name'} label={'Name'}  {...formItemLayout}>
+                <Form.Item key="name" label="Name" {...formItemLayout}>
                     {getFieldDecorator('name', {
                         initialValue: that.state.editPrescreption ? that.state.editPrescreption.name : null,
                         rules: [{
@@ -105,11 +107,11 @@ class AddorEditPrescriptionForm extends React.Component {
                             message: REQUIRED_FIELD_MESSAGE
                         }]
                     })(
-                        <Input placeholder={'Medicine Name'}/>
+                        <Input placeholder="Medicine Name" />
                     )}
                 </Form.Item>
-                {this.state.drugType && this.state.drugType == INPUT_FIELD ?
-                    <Form.Item key={'drug_type_extra'} label={"Medicine Type"}  {...formItemLayout}>
+                {this.state.drugType && this.state.drugType == INPUT_FIELD ? (
+                    <Form.Item key="drug_type_extra" label="Medicine Type" {...formItemLayout}>
                         {getFieldDecorator("drug_type_extra", {
                             initialValue: that.state.editPrescreption ? that.state.editPrescreption.drug_type_extra : null,
                             rules: [{
@@ -117,11 +119,13 @@ class AddorEditPrescriptionForm extends React.Component {
                                 message: REQUIRED_FIELD_MESSAGE
                             }]
                         })(
-                            <Input/>
+                            <Input />
                         )}
                         <a onClick={() => that.setFormParams('drugType', SELECT_FIELD)}>Choose Medicine Type</a>
                     </Form.Item>
-                    : <Form.Item key={"drug_type"} {...formItemLayout} label={"Medicine Type"}>
+                  )
+                    : (
+<Form.Item key="drug_type" {...formItemLayout} label="Medicine Type">
                         {getFieldDecorator("drug_type", {
                             initialValue: this.state.editPrescreption ? this.state.editPrescreption.drug_type : null,
                             rules: [{
@@ -130,14 +134,22 @@ class AddorEditPrescriptionForm extends React.Component {
                             }]
                         })(
                             <Select>
-                                {that.state.drugTypeList.map((option) => <Select.Option
-                                    value={option.id}>{option.name}</Select.Option>)}
+                                {that.state.drugTypeList.map((option) => (
+<Select.Option
+  value={option.id}
+>{option.name}
+</Select.Option>
+))}
                             </Select>
                         )}
                         <a onClick={() => that.setFormParams('drugType', INPUT_FIELD)}>Add New Medicine Type</a>
-                    </Form.Item>}
-                <Form.Item key={"strength"}{...formItemLayout}
-                           label={"Dosage"}>
+</Form.Item>
+)}
+                <Form.Item
+                  key="strength"
+                  {...formItemLayout}
+                  label="Dosage"
+                >
                     {getFieldDecorator("strength", {
                         initialValue: that.state.editPrescreption ? that.state.editPrescreption.strength : null,
                         rules: [{
@@ -145,11 +157,11 @@ class AddorEditPrescriptionForm extends React.Component {
                             message: REQUIRED_FIELD_MESSAGE
                         }]
                     })(
-                        <InputNumber min={0}/>
+                        <InputNumber min={0} />
                     )}
                 </Form.Item>
-                {this.state.drugUnit && this.state.drugUnit == INPUT_FIELD ?
-                    <Form.Item key={'unit_type_extra'} label={"Medicine Unit"}  {...formItemLayout}>
+                {this.state.drugUnit && this.state.drugUnit == INPUT_FIELD ? (
+                    <Form.Item key="unit_type_extra" label="Medicine Unit" {...formItemLayout}>
                         {getFieldDecorator("unit_type_extra", {
                             initialValue: that.state.editPrescreption ? that.state.editPrescreption.unit_type_extra : null,
                             rules: [{
@@ -157,11 +169,13 @@ class AddorEditPrescriptionForm extends React.Component {
                                 message: REQUIRED_FIELD_MESSAGE
                             }]
                         })(
-                            <Input/>
+                            <Input />
                         )}
                         <a onClick={() => that.setFormParams('drugUnit', SELECT_FIELD)}>Choose Medicine Unit</a>
                     </Form.Item>
-                    : <Form.Item key={"stength_unit"} {...formItemLayout} label={"Medicine Unit"}>
+                  )
+                    : (
+<Form.Item key="stength_unit" {...formItemLayout} label="Medicine Unit">
                         {getFieldDecorator("stength_unit", {
                             initialValue: this.state.editPrescreption ? this.state.editPrescreption.stength_unit : null,
                             rules: [{
@@ -170,31 +184,38 @@ class AddorEditPrescriptionForm extends React.Component {
                             }]
                         })(
                             <Select>
-                                {that.state.drugUnitList.map((option) => <Select.Option
-                                    value={option.id}>{option.name}</Select.Option>)}
+                                {that.state.drugUnitList.map((option) => (
+<Select.Option
+  value={option.id}
+>{option.name}
+</Select.Option>
+))}
                             </Select>
                         )}
                         <a onClick={() => that.setFormParams('drugUnit', INPUT_FIELD)}>Add New Medicine Unit</a>
-                    </Form.Item>}
-                <Form.Item key={"instructions"} {...formItemLayout} label={"Instructions"}>
+</Form.Item>
+)}
+                <Form.Item key="instructions" {...formItemLayout} label="Instructions">
                     {getFieldDecorator("instructions", {
                         initialValue: that.state.editPrescreption ? that.state.editPrescreption.instructions : null
                     })(
-                        <Input/>
+                        <Input />
                     )}
                 </Form.Item>
-                <Form.Item {...formItemLayout} >
+                <Form.Item {...formItemLayout}>
                     <Button onClick={() => this.handleSubmit(false)}>Save Medicine</Button>
                     &nbsp;&nbsp;&nbsp;
-                    <Button onClick={() => this.handleSubmit(true)} type={'primary'}>Save & Add to Inventory</Button>
+                    <Button onClick={() => this.handleSubmit(true)} type="primary">Save & Add to Inventory</Button>
                     &nbsp;&nbsp;&nbsp;
-                    {that.props.history ?
+                    {that.props.history ? (
                         <Button onClick={() => that.props.history.goBack()}>
                             Cancel
-                        </Button> : null}
+                        </Button>
+                      ) : null}
                 </Form.Item>
             </Form>
-        </Card>
+</Card>
+)
     }
 }
 

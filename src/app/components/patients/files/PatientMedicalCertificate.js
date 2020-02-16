@@ -18,11 +18,11 @@ import {
     Menu
 } from 'antd';
 import {Redirect, Link} from 'react-router-dom'
+import moment from 'moment';
 import {postAPI, interpolate, displayMessage} from "../../../utils/common";
 import {NOTES} from "../../../constants/hardData";
 import {MEDICAL_CERTIFICATE_API} from "../../../constants/api";
 import {SUCCESS_MSG_TYPE ,ERROR_MSG_TYPE} from "../../../constants/dataKeys";
-import moment from 'moment';
 import {loadDoctors} from "../../../utils/clinicUtils";
 
 
@@ -55,7 +55,7 @@ class PatientMedicalCertificate extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -66,21 +66,25 @@ class PatientMedicalCertificate extends React.Component {
             excused_duty_checked: !this.state.excused_duty_checked
         });
     }
+
     handleLighDutyCheck = (e) => {
         this.setState({
             fit_light_duty_checked: !this.state.fit_light_duty_checked
         });
     }
+
     onChangeHandle = (e) => {
         this.setState({
             value: e.target.value,
         });
     }
+
     handleAttendanceCheck = (e) => {
         this.setState({
             attendance_checked: !this.state.attendance_checked
         });
     }
+
     handleChangeStart = (date) => {
         this.setState({
             startDate: date
@@ -107,24 +111,27 @@ class PatientMedicalCertificate extends React.Component {
             proof_attendance_from: timeString
         });
     }
+
     selectedDate = (date) => {
         this.setState({
             selectedDate: date
         })
     }
+
     selectDoctor = (doctor) => {
         this.setState({
             selectedDoctor: doctor
         })
     }
+
     handleSubmit = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
 
             if(values.excused_duty || values.fit_light_duty || values.proof_attendance){
                 if (!err) {
-                    let reqData = {
+                    const reqData = {
                         ...values,
                         doctor: that.state.selectedDoctor.id,
                         practice: that.props.active_practiceId,
@@ -145,11 +152,11 @@ class PatientMedicalCertificate extends React.Component {
                     if(values.group)
                         reqData[values.group] = true
                     delete reqData.group;
-                    let successFn = function (data) {
+                    const successFn = function (data) {
                         displayMessage(SUCCESS_MSG_TYPE, "Medical Certificate Generated.");
-                        that.props.history.replace('/patient/' + that.props.match.params.id + '/emr/files');
+                        that.props.history.replace(`/patient/${  that.props.match.params.id  }/emr/files`);
                     }
-                    let errorFn = function () {
+                    const errorFn = function () {
                         that.setState({});
                     }
                     postAPI(interpolate(MEDICAL_CERTIFICATE_API, [this.props.currentPatient.id]), reqData, successFn, errorFn);
@@ -177,38 +184,42 @@ class PatientMedicalCertificate extends React.Component {
                 lg: {span: 16},
             },
         };
-        let that = this;
+        const that = this;
         const radioOption = NOTES.map((option) => <Radio value={option.value}>{option.label}</Radio>)
-        return (<Form onSubmit={this.handleSubmit} {...formItemLayout}>
-                <Card title="ADD MEDICAL LEAVE CERTIFICATE"
-                      extra={<Button.Group>
+        return (
+<Form onSubmit={this.handleSubmit} {...formItemLayout}>
+                <Card
+                  title="ADD MEDICAL LEAVE CERTIFICATE"
+                  extra={(
+<Button.Group>
                           <Button type="primary" htmlType="submit">Save Certificate</Button>
-                      </Button.Group>}>
+</Button.Group>
+)}
+                >
 
 
                     <Form.Item>
                         {getFieldDecorator('excused_duty', {})(
                             (<Checkbox onClick={this.handleCheck} defaultChecked={this.state.excused_duty_checked}>Excused
-                                from duty</Checkbox>),
+                                from duty
+                             </Checkbox>),
                         )}
                     </Form.Item>
-                    {this.state.excused_duty_checked ?
+                    {this.state.excused_duty_checked ? (
                         <Row>
                             <Col span={6} offset={6}>
                                 <Form.Item label="From">
                                     {getFieldDecorator('excused_duty_from', {})
                                     (
-                                        <DatePicker/>
-                                    )
-                                    }
+                                        <DatePicker />
+                                    )}
                                 </Form.Item>
 
                                 <Form.Item label="till">
                                     {getFieldDecorator('excused_duty_to', {})
                                     (
-                                        <DatePicker/>
-                                    )
-                                    }
+                                        <DatePicker />
+                                    )}
                                 </Form.Item>
 
                             </Col>
@@ -241,76 +252,79 @@ class PatientMedicalCertificate extends React.Component {
                             </Col>
 
                         </Row>
+                      )
 
                         : null}
 
 
                     <Form.Item>
                         {getFieldDecorator('fit_light_duty', {})(
-                            (<Checkbox onClick={this.handleLighDutyCheck}
-                                       defaultChecked={this.state.fit_light_duty_checked}>Fit for light
-                                duty</Checkbox>),
+                            (<Checkbox
+                              onClick={this.handleLighDutyCheck}
+                              defaultChecked={this.state.fit_light_duty_checked}
+                            >Fit for light
+                                duty
+                             </Checkbox>),
                         )}
                     </Form.Item>
 
-                    {this.state.fit_light_duty_checked ?
+                    {this.state.fit_light_duty_checked ? (
                         <Row>
                             <Col>
                                 <Form.Item label="From">
                                     {getFieldDecorator('fit_light_duty_from', {})
                                     (
-                                        <DatePicker/>
-                                    )
-                                    }
+                                        <DatePicker />
+                                    )}
 
                                 </Form.Item>
 
                                 <Form.Item label="till">
                                     {getFieldDecorator('fit_light_duty_to', {})
                                     (
-                                        <DatePicker/>
-                                    )
-                                    }
+                                        <DatePicker />
+                                    )}
 
                                 </Form.Item>
                             </Col>
 
                         </Row>
-                        : null
-                    }
+                      )
+                        : null}
 
                     <Form.Item>
                         {getFieldDecorator('proof_attendance', {})(
-                            (<Checkbox onClick={this.handleAttendanceCheck}
-                                       defaultChecked={this.state.attendance_checked}>Proof of attendance at
-                                practice</Checkbox>),
+                            (<Checkbox
+                              onClick={this.handleAttendanceCheck}
+                              defaultChecked={this.state.attendance_checked}
+                            >Proof of attendance at
+                                practice
+                             </Checkbox>),
                         )}
                     </Form.Item>
-                    {this.state.attendance_checked ?
+                    {this.state.attendance_checked ? (
                         <Row>
                             <Form.Item label="on">
                                 {getFieldDecorator('proof_attendance_date', {})
-                                (<DatePicker/>)
-                                }
+                                (<DatePicker />)}
                             </Form.Item>
                             <Col span={6} offset={6}>
                                 <Form.Item label="From">
                                     {getFieldDecorator('proof_attendance_from', {})
                                     (
-                                        <TimePicker use12Hours format="h:mm A"/>
-                                    )
-                                    }
+                                        <TimePicker use12Hours format="h:mm A" />
+                                    )}
 
                                 </Form.Item>
                                 <Form.Item label="till">
                                     {getFieldDecorator('proof_attendance_to', {})
                                     (
-                                        <TimePicker use12Hours format="h:mm A"/>
-                                    )
-                                    }
+                                        <TimePicker use12Hours format="h:mm A" />
+                                    )}
                                 </Form.Item>
                             </Col>
                         </Row>
+                      )
 
 
                         : null}
@@ -318,7 +332,7 @@ class PatientMedicalCertificate extends React.Component {
 
                     <Form.Item label="Notes">
                         {getFieldDecorator('notes', {})(
-                            (<TextArea/>),
+                            (<TextArea />),
                         )}
                     </Form.Item>
 
@@ -334,12 +348,19 @@ class PatientMedicalCertificate extends React.Component {
                     <Affix offsetBottom={0}>
                         <Card>
                             <span>Issued by &nbsp;&nbsp;</span>
-                            <Dropdown placement="topCenter" overlay={<Menu>
-                                {this.state.practiceDoctors.map(doctor =>
+                            <Dropdown
+                              placement="topCenter"
+                              overlay={(
+<Menu>
+                                {this.state.practiceDoctors.map(doctor => (
                                     <Menu.Item key="0">
                                         <a onClick={() => this.selectDoctor(doctor)}>{doctor.user.first_name}</a>
-                                    </Menu.Item>)}
-                            </Menu>} trigger={['click']}>
+                                    </Menu.Item>
+                                  ))}
+</Menu>
+)}
+                              trigger={['click']}
+                            >
                                 <a className="ant-dropdown-link" href="#">
                                     <b>
                                         {this.state.selectedDoctor.user ? this.state.selectedDoctor.user.first_name : 'No DOCTORS Found'}
@@ -347,14 +368,17 @@ class PatientMedicalCertificate extends React.Component {
                                 </a>
                             </Dropdown>
                             <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
-                            <DatePicker value={this.state.selectedDate}
-                                        onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"}
-                                        allowClear={false}/>
+                            <DatePicker
+                              value={this.state.selectedDate}
+                              onChange={(value) => this.selectedDate(value)}
+                              format="DD-MM-YYYY"
+                              allowClear={false}
+                            />
                         </Card>
                     </Affix>
 
                 </Card>
-            </Form>
+</Form>
 
         );
     }

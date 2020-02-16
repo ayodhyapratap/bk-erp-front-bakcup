@@ -1,11 +1,11 @@
 import {Button, Card, Divider, Icon, Popconfirm, Row, Col, Select, DatePicker, Table} from "antd";
 import React from "react";
-import {getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
-import {EXPENSE_TYPE, EXPENSES_API, PAYMENT_MODES, SINGLE_EXPENSES_API} from "../../../constants/api";
 import {Route, Switch} from "react-router";
-import AddExpenses from "./AddExpenses";
 import {Link} from "react-router-dom";
 import moment from "moment";
+import {getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
+import {EXPENSE_TYPE, EXPENSES_API, PAYMENT_MODES, SINGLE_EXPENSES_API} from "../../../constants/api";
+import AddExpenses from "./AddExpenses";
 import PermissionDenied from "../../common/errors/PermissionDenied";
 
 export default class ExpensesList extends React.Component {
@@ -32,8 +32,8 @@ export default class ExpensesList extends React.Component {
     }
 
     loadExpenseTypes(deleted = false) {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log("get table");
             if (deleted) {
                 that.setState({
@@ -46,7 +46,7 @@ export default class ExpensesList extends React.Component {
                 })
             }
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         if (deleted) {
             getAPI(interpolate(EXPENSE_TYPE, [this.props.active_practiceId]), successFn, errorFn, {deleted: true});
@@ -56,39 +56,40 @@ export default class ExpensesList extends React.Component {
     }
 
     loadPaymentModes() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log("get table");
             that.setState({
                 paymentModes: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(PAYMENT_MODES, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     changeExpenseFilters = (type, value) => {
-        let that = this;
+        const that = this;
         this.setState({
             [type]: value
         }, function () {
             that.loadData();
         })
     }
+
     loadData = () => {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 expenses: data,
                 loading: false
             })
             console.log("log data", that.state.expenses)
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
@@ -104,31 +105,31 @@ export default class ExpensesList extends React.Component {
     }
 
     deleteObject(record, type) {
-        let that = this;
-        let reqData = {};
+        const that = this;
+        const reqData = {};
         reqData.id = record.id;
         reqData.is_active = type;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
             if (that.state.showDeleted) {
                 that.loadData(true);
             }
         }
-        let errorFn = function () {
+        const errorFn = function () {
         };
         putAPI(interpolate(SINGLE_EXPENSES_API, [record.id]), reqData, successFn, errorFn)
     }
 
     render() {
-        let that = this;
+        const that = this;
         const expenseColoumns = [{
             title: 'Expense Date',
             key: 'expense_date',
             dataIndex: 'expense_date',
-            export: function (text) {
+            export (text) {
                 return moment(text).format('lll');
             },
-            render: function (text) {
+            render (text) {
                 return moment(text).format('lll');
             }
         }, {
@@ -157,54 +158,88 @@ export default class ExpensesList extends React.Component {
             dataIndex: 'remark'
         }, {
             title: 'Action',
-            render: function (record) {
-                return <div>
+            render (record) {
+                return (
+<div>
                     {that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?
-                        <Link to={'/inventory/expenses/edit/' + record.id}>Edit</Link> : null}
-                    <Divider type={"vertical"}/>
-                    {that.props.activePracticePermissions.DeleteExpenses || that.props.allowAllPermissions ?
-                        <Popconfirm title="Are you sure to delete this?"
-                                    onConfirm={() => that.deleteObject(record, false)} okText="Yes" cancelText="No">
+                        <Link to={`/inventory/expenses/edit/${  record.id}`}>Edit</Link> : null}
+                    <Divider type="vertical" />
+                    {that.props.activePracticePermissions.DeleteExpenses || that.props.allowAllPermissions ? (
+                        <Popconfirm
+                          title="Are you sure to delete this?"
+                          onConfirm={() => that.deleteObject(record, false)}
+                          okText="Yes"
+                          cancelText="No"
+                        >
                             <a>Delete</a>
-                        </Popconfirm> : null}
-                </div>
+                        </Popconfirm>
+                      ) : null}
+</div>
+)
             }
         }]
-        return <div>
+        return (
+<div>
             <Switch>
-                <Route exact path='/inventory/expenses/add'
-                       render={(route) => (that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?
-                           <AddExpenses {...this.state} {...route} loadData={this.loadData}/> : <PermissionDenied/>)}/>
-                <Route exact path='/inventory/expenses/edit/:id'
-                       render={(route) => (that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?
-                           <AddExpenses {...this.state} {...route} loadData={this.loadData}/> : <PermissionDenied/>)}/>
-                <Card title="Expenses"
-                      extra={(that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?
-                          <Link to={"/inventory/expenses/add"}> <Button type="primary"><Icon
-                              type="plus"/> Add</Button></Link> : <PermissionDenied/>)}>
+                <Route
+                  exact
+                  path='/inventory/expenses/add'
+                  render={(route) => (that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?
+                           <AddExpenses {...this.state} {...route} loadData={this.loadData} /> : <PermissionDenied />)}
+                />
+                <Route
+                  exact
+                  path='/inventory/expenses/edit/:id'
+                  render={(route) => (that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ?
+                           <AddExpenses {...this.state} {...route} loadData={this.loadData} /> : <PermissionDenied />)}
+                />
+                <Card
+                  title="Expenses"
+                  extra={(that.props.activePracticePermissions.EditExpenses || that.props.allowAllPermissions ? (
+                          <Link to="/inventory/expenses/add"> <Button type="primary"><Icon
+                            type="plus"
+                          /> Add
+                                                              </Button>
+                          </Link>
+                        ) : <PermissionDenied />)}
+                >
                     <Row gutter={16} style={{marginBottom: 10}}>
                         <Col span={2} style={{textAlign: "right"}}>
                             <b> Expense Types</b>
                         </Col>
                         <Col span={4}>
-                            <Select style={{width: '100%'}} value={this.state.selectedExpenseType}
-                                    disabled={this.state.loading}
-                                    onChange={(value) => this.changeExpenseFilters('selectedExpenseType', value)}>
+                            <Select
+                              style={{width: '100%'}}
+                              value={this.state.selectedExpenseType}
+                              disabled={this.state.loading}
+                              onChange={(value) => this.changeExpenseFilters('selectedExpenseType', value)}
+                            >
                                 <Select.Option value={null}>--ALL EXPENSES--</Select.Option>
-                                {this.state.expenseTypes.map(item => <Select.Option
-                                    value={item.id}>{item.name}</Select.Option>)}
+                                {this.state.expenseTypes.map(item => (
+<Select.Option
+  value={item.id}
+>{item.name}
+</Select.Option>
+))}
                             </Select>
                         </Col>
                         <Col span={2} style={{textAlign: "right"}}>
                             <b> Payment Modes</b>
                         </Col>
                         <Col span={4}>
-                            <Select style={{width: '100%'}} value={this.state.selectedPaymentMode}
-                                    disabled={this.state.loading}
-                                    onChange={(value) => this.changeExpenseFilters('selectedPaymentMode', value)}>
+                            <Select
+                              style={{width: '100%'}}
+                              value={this.state.selectedPaymentMode}
+                              disabled={this.state.loading}
+                              onChange={(value) => this.changeExpenseFilters('selectedPaymentMode', value)}
+                            >
                                 <Select.Option value={null}>--ALL PAYMENT MODE--</Select.Option>
-                                {this.state.paymentModes.map(item => <Select.Option
-                                    value={item.id}>{item.mode}</Select.Option>)}
+                                {this.state.paymentModes.map(item => (
+<Select.Option
+  value={item.id}
+>{item.mode}
+</Select.Option>
+))}
                             </Select>
                         </Col>
 
@@ -212,25 +247,33 @@ export default class ExpensesList extends React.Component {
                             <b> From</b>
                         </Col>
                         <Col span={4}>
-                            <DatePicker value={this.state.selectedStartDate}
-                                        disabled={this.state.loading}
-                                        allowClear={false}
-                                        onChange={(value) => this.changeExpenseFilters('selectedStartDate', value)}/>
+                            <DatePicker
+                              value={this.state.selectedStartDate}
+                              disabled={this.state.loading}
+                              allowClear={false}
+                              onChange={(value) => this.changeExpenseFilters('selectedStartDate', value)}
+                            />
                         </Col>
                         <Col span={2} style={{textAlign: "right"}}>
                             <b> To</b>
                         </Col>
                         <Col span={4}>
-                            <DatePicker value={this.state.selectedEndDate}
-                                        disabled={this.state.loading}
-                                        allowClear={false}
-                                        onChange={(value) => this.changeExpenseFilters('selectedEndDate', value)}/>
+                            <DatePicker
+                              value={this.state.selectedEndDate}
+                              disabled={this.state.loading}
+                              allowClear={false}
+                              onChange={(value) => this.changeExpenseFilters('selectedEndDate', value)}
+                            />
                         </Col>
                     </Row>
-                    <Table loading={this.state.loading} dataSource={this.state.expenses}
-                                     columns={expenseColoumns}/>
+                    <Table
+                      loading={this.state.loading}
+                      dataSource={this.state.expenses}
+                      columns={expenseColoumns}
+                    />
                 </Card>
             </Switch>
-        </div>
+</div>
+)
     }
 }

@@ -1,9 +1,9 @@
 import React from "react";
+import {Card, Col, DatePicker, Icon, Row, Select, Statistic, Typography} from "antd";
+import moment from "moment";
 import CustomizedTable from "../../common/CustomizedTable";
 import {getAPI, interpolate} from "../../../utils/common";
 import {AGENT_WALLET, MY_AGENTS, WALLET_LEDGER, WALLET_LEDGER_SUM} from "../../../constants/api";
-import {Card, Col, DatePicker, Icon, Row, Select, Statistic, Typography} from "antd";
-import moment from "moment";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
 
 const {Text} = Typography;
@@ -30,15 +30,15 @@ export default class PatientWalletLedger extends React.Component {
     }
 
     loadPatientWallet = () => {
-        let that = this;
+        const that = this;
         if (this.props.currentPatient && this.props.currentPatient.id) {
-            let successFn = function (data) {
+            const successFn = function (data) {
                 if (data.length)
                     that.setState({
                         walletAmount: data[0]
                     })
             }
-            let errorFn = function () {
+            const errorFn = function () {
 
             }
             getAPI(interpolate(AGENT_WALLET, [this.props.currentPatient.id]), successFn, errorFn);
@@ -48,12 +48,13 @@ export default class PatientWalletLedger extends React.Component {
             })
         }
     }
+
     loadData = (page = 1) => {
-        let that = this;
+        const that = this;
         this.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             if (data.current == 1) {
                 that.setState({
                     ledger: data.results,
@@ -70,12 +71,12 @@ export default class PatientWalletLedger extends React.Component {
                 })
             }
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         }
-        let params = {
+        const params = {
             page,
             start: this.state.selectedStartDate.startOf('day').format(),
             end: this.state.selectedEndDate.endOf('day').format(),
@@ -85,19 +86,20 @@ export default class PatientWalletLedger extends React.Component {
             params.agents = this.state.selectedAgents.join(',');
         getAPI(interpolate(WALLET_LEDGER, [this.props.currentPatient.id]), successFn, errorFn, params);
     }
-    loadSumData = (page = 1) => {
-        let that = this;
 
-        let successFn = function (data) {
+    loadSumData = (page = 1) => {
+        const that = this;
+
+        const successFn = function (data) {
                 that.setState({
                     ledgerDetails: data,
                     nextPage: data.next
                 })
 
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
-        let params = {
+        const params = {
             page,
             start: this.state.selectedStartDate.format(),
             end: this.state.selectedEndDate.format(),
@@ -107,16 +109,17 @@ export default class PatientWalletLedger extends React.Component {
             params.agents = this.state.selectedAgents.join(',');
         getAPI(interpolate(WALLET_LEDGER_SUM, [this.props.currentPatient.id]), successFn, errorFn, params);
     }
+
     loadAgents() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 agents: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
-        let apiParams = {
+        const apiParams = {
             agent: true,
             pagination: false
         }
@@ -124,7 +127,7 @@ export default class PatientWalletLedger extends React.Component {
     }
 
     changeExpenseFilters = (type, value) => {
-        let that = this;
+        const that = this;
         this.setState({
             [type]: value
         }, function () {
@@ -133,7 +136,7 @@ export default class PatientWalletLedger extends React.Component {
     }
 
     render() {
-        let columns = [{
+        const columns = [{
             title: 'Date',
             dataIndex: 'created_at',
             key: 'created_at',
@@ -172,81 +175,106 @@ export default class PatientWalletLedger extends React.Component {
                 render: (value, record) => record.is_cancelled ?
                     <Text delete>{value.toFixed(2)}</Text> : value.toFixed(2)
             }];
-        return <div>
-            <Card title={"Wallet Ledger"}>
+        return (
+<div>
+            <Card title="Wallet Ledger">
                 <Row gutter={16} style={{marginBottom: 10}}>
                     <Col span={2} style={{textAlign: "right"}}>
                         <b> Agents</b>
                     </Col>
                     <Col span={4}>
-                        <Select style={{width: '100%'}} value={this.state.selectedAgents}
-                                mode="multiple"
-                                disabled={this.state.loading}
-                                onChange={(value) => this.changeExpenseFilters('selectedAgents', value)}>
-                            {this.state.agents.map(item => <Select.Option
-                                value={item.id}>{item.user.first_name}</Select.Option>)}
+                        <Select
+                          style={{width: '100%'}}
+                          value={this.state.selectedAgents}
+                          mode="multiple"
+                          disabled={this.state.loading}
+                          onChange={(value) => this.changeExpenseFilters('selectedAgents', value)}
+                        >
+                            {this.state.agents.map(item => (
+<Select.Option
+  value={item.id}
+>{item.user.first_name}
+</Select.Option>
+))}
                         </Select>
                     </Col>
-                    {/*<Col span={2} style={{textAlign: "right"}}>*/}
-                    {/*    <b> Payment Modes</b>*/}
-                    {/*</Col>*/}
-                    {/*<Col span={4}>*/}
-                    {/*    <Select style={{width: '100%'}} value={this.state.selectedPaymentMode}*/}
-                    {/*            disabled={this.state.loading}*/}
-                    {/*            onChange={(value) => this.changeExpenseFilters('selectedPaymentMode', value)}>*/}
-                    {/*        <Select.Option value={null}>--ALL PAYMENT MODE--</Select.Option>*/}
-                    {/*        {this.state.paymentModes.map(item => <Select.Option*/}
-                    {/*            value={item.id}>{item.mode}</Select.Option>)}*/}
-                    {/*    </Select>*/}
-                    {/*</Col>*/}
+                    {/* <Col span={2} style={{textAlign: "right"}}> */}
+                    {/*    <b> Payment Modes</b> */}
+                    {/* </Col> */}
+                    {/* <Col span={4}> */}
+                    {/*    <Select style={{width: '100%'}} value={this.state.selectedPaymentMode} */}
+                    {/*            disabled={this.state.loading} */}
+                    {/*            onChange={(value) => this.changeExpenseFilters('selectedPaymentMode', value)}> */}
+                    {/*        <Select.Option value={null}>--ALL PAYMENT MODE--</Select.Option> */}
+                    {/*        {this.state.paymentModes.map(item => <Select.Option */}
+                    {/*            value={item.id}>{item.mode}</Select.Option>)} */}
+                    {/*    </Select> */}
+                    {/* </Col> */}
 
                     <Col span={2} style={{textAlign: "right"}}>
                         <b> From</b>
                     </Col>
                     <Col span={4}>
-                        <DatePicker value={this.state.selectedStartDate}
-                                    disabled={this.state.loading} allowClear={false}
-                                    onChange={(value) => this.changeExpenseFilters('selectedStartDate', value)}/>
+                        <DatePicker
+                          value={this.state.selectedStartDate}
+                          disabled={this.state.loading}
+                          allowClear={false}
+                          onChange={(value) => this.changeExpenseFilters('selectedStartDate', value)}
+                        />
                     </Col>
                     <Col span={2} style={{textAlign: "right"}}>
                         <b> To</b>
                     </Col>
                     <Col span={4}>
-                        <DatePicker value={this.state.selectedEndDate}
-                                    disabled={this.state.loading}
-                                    allowClear={false}
-                                    onChange={(value) => this.changeExpenseFilters('selectedEndDate', value)}/>
+                        <DatePicker
+                          value={this.state.selectedEndDate}
+                          disabled={this.state.loading}
+                          allowClear={false}
+                          onChange={(value) => this.changeExpenseFilters('selectedEndDate', value)}
+                        />
                     </Col>
                 </Row>
-                {this.state.walletAmount ?
+                {this.state.walletAmount ? (
                     <Row style={{textAlign: 'center', marginBottom: 10}}>
-                        {/*<Col span={12}>*/}
-                        {/*    <Statistic title={""} prefix={<Icon type={"wallet"}/>}*/}
-                        {/*               value={this.state.walletAmount.refundable_amount}/>*/}
-                        {/*</Col>*/}
+                        {/* <Col span={12}> */}
+                        {/*    <Statistic title={""} prefix={<Icon type={"wallet"}/>} */}
+                        {/*               value={this.state.walletAmount.refundable_amount}/> */}
+                        {/* </Col> */}
                         <Col span={24}>
-                            <Statistic title={"Wallet Total"} prefix={<Icon type={"wallet"}/>}
-                                       value={this.state.walletAmount.non_refundable} precision={2}/>
+                            <Statistic
+                              title="Wallet Total"
+                              prefix={<Icon type="wallet" />}
+                              value={this.state.walletAmount.non_refundable}
+                              precision={2}
+                            />
                         </Col>
-                    </Row> : null}
-                <CustomizedTable dataSource={this.state.ledger} loading={this.state.loading} columns={columns}
-                                 hideReport
-                                 pagination={false}/>
-                <InfiniteFeedLoaderButton loading={this.state.loading}
-                                          hidden={!this.state.nextPage}
-                                          loaderFunction={() => this.loadData(this.state.nextPage)}/>
+                    </Row>
+                  ) : null}
+                <CustomizedTable
+                  dataSource={this.state.ledger}
+                  loading={this.state.loading}
+                  columns={columns}
+                  hideReport
+                  pagination={false}
+                />
+                <InfiniteFeedLoaderButton
+                  loading={this.state.loading}
+                  hidden={!this.state.nextPage}
+                  loaderFunction={() => this.loadData(this.state.nextPage)}
+                />
                 <Row style={{textAlign: 'center', marginBottom: 10}}>
                     <Col span={8}>
-                        <Statistic title={"Credit"} value={this.state.ledgerDetails.credit} precision={2}/>
+                        <Statistic title="Credit" value={this.state.ledgerDetails.credit} precision={2} />
                     </Col>
                     <Col span={8}>
-                        <Statistic title={"Debit"} value={this.state.ledgerDetails.debit} precision={2}/>
+                        <Statistic title="Debit" value={this.state.ledgerDetails.debit} precision={2} />
                     </Col>
                     <Col span={8}>
-                        <Statistic title={"Profit"} value={this.state.ledgerDetails.credit-this.state.ledgerDetails.debit} precision={2}/>
+                        <Statistic title="Profit" value={this.state.ledgerDetails.credit-this.state.ledgerDetails.debit} precision={2} />
                     </Col>
                 </Row>
             </Card>
-        </div>
+</div>
+)
     }
 }

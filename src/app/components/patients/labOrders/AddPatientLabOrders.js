@@ -1,9 +1,9 @@
 import React from "react";
 import {Card, Row, Form, Col, List, Button, Table, InputNumber, Input, Icon} from 'antd';
+import {remove} from 'lodash';
 import {displayMessage, getAPI, interpolate, postAPI} from "../../../utils/common";
 import {LABTEST_API} from "../../../constants/api";
 import {WARNING_MSG_TYPE} from "../../../constants/dataKeys";
-import {remove} from 'lodash';
 
 class AddPatientLabOrders extends React.Component{
     constructor(props){
@@ -21,13 +21,13 @@ class AddPatientLabOrders extends React.Component{
     }
 
     loadLabs(){
-    	var that =this;
-    	let successFn = function(data){
+    	const that =this;
+    	const successFn = function(data){
     		that.setState({
     			lab_test: data,
     		})
     	};
-    	let errorFn = function(){
+    	const errorFn = function(){
 
     	};
     	getAPI(interpolate(LABTEST_API, [that.props.active_practiceId]), successFn, errorFn);
@@ -37,7 +37,7 @@ class AddPatientLabOrders extends React.Component{
         const {getFieldsValue} = this.props.form;
         console.log(getFieldsValue());
         this.setState(function (prevState) {
-            let newtableFormValues = [...prevState.tableFormValues];
+            const newtableFormValues = [...prevState.tableFormValues];
             newtableFormValues.forEach(function (item) {
 
             });
@@ -54,11 +54,12 @@ class AddPatientLabOrders extends React.Component{
             }
         });
     }
+
     add = (item) => {
     	console.log("item",item);
         this.setState(function (prevState) {
         	console.log("preview",prevState);
-            let randId = Math.random().toFixed(7);
+            const randId = Math.random().toFixed(7);
             if(prevState.addedLabs[item.id]){
             	displayMessage(WARNING_MSG_TYPE,"Item Already Added");
             	return false;
@@ -74,17 +75,17 @@ class AddPatientLabOrders extends React.Component{
     };
 
      handleSubmit = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqData = {
+                const reqData = {
                     treatment: [],
                     patient: that.props.match.params.id
                 };
                 that.state.tableFormValues.forEach(function (item) {
                     item.cost = values.cost[item._id];
-                    let sendingItem = {
+                    const sendingItem = {
                         "name": item.id,
                         "cost": item.cost,
                         "instruction":item.instruction,
@@ -95,11 +96,11 @@ class AddPatientLabOrders extends React.Component{
                     };
                     reqData.treatment.push(sendingItem);
                 });
-                let successFn = function (data) {
+                const successFn = function (data) {
                     displayMessage("Inventory updated successfully");
 
                 }
-                let errorFn = function () {
+                const errorFn = function () {
 
                 }
                 console.log("DataSet",reqData);
@@ -110,7 +111,7 @@ class AddPatientLabOrders extends React.Component{
 
 
     render(){
-    	let that = this;
+    	const that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const formItemLayout = {
             labelCol: {
@@ -136,16 +137,20 @@ class AddPatientLabOrders extends React.Component{
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            render: (name, record) => <span>
+            render: (name, record) => (
+<span>
                 <b>{name}</b>
-                </span>
+</span>
+)
         }, {
             title: 'Cost',
             dataIndex: 'cost',
             key: 'cost',
-            render: (name, record) => <span><Form.Item
-                key={`cost[${record._id}]`}
-                {...formItemLayout}>
+            render: (name, record) => (
+<span><Form.Item
+  key={`cost[${record._id}]`}
+  {...formItemLayout}
+>
                 {getFieldDecorator(`cost[${record._id}]`, {
                     validateTrigger: ['onChange', 'onBlur'],
                     rules: [{
@@ -154,52 +159,72 @@ class AddPatientLabOrders extends React.Component{
                     }],
                     initialValue: record.cost
                 })}
-            </Form.Item>
-            </span>
+      </Form.Item>
+</span>
+)
         },  {
             title: 'Total',
             dataIndex: 'total',
             key: 'total',
-            render: (total, record) => <span>
+            render: (total, record) => (
+<span>
                 {total}
                 <a onClick={() => this.removeTests(record._id,record)}>
-                    <Icon type="close-circle" theme="twoTone" twoToneColor={"#f00"}/>
+                    <Icon type="close-circle" theme="twoTone" twoToneColor="#f00" />
                 </a>
-            </span>
+</span>
+)
         }];
-        return <div>
+        return (
+<div>
             <Form onSubmit={this.handleSubmit}>
-                <Card title={"Patient Lab Orders"} bodyStyle={{padding: 0}}
-                      extra={<Form.Item {...formItemLayoutWithOutLabel} style={{marginBottom: 0}}>
+                <Card
+                  title="Patient Lab Orders"
+                  bodyStyle={{padding: 0}}
+                  extra={(
+<Form.Item {...formItemLayoutWithOutLabel} style={{marginBottom: 0}}>
                           <Button type="primary" htmlType="submit">Save Lab Orders</Button>
-                      </Form.Item>}>
+</Form.Item>
+)}
+                >
                     <Row gutter={16}>
                         <Col span={7}>
-                            <List size={"small"}
-                                  itemLayout="horizontal"
-                                  dataSource={this.state.lab_test}
-                                  renderItem={item => (
+                            <List
+                              size="small"
+                              itemLayout="horizontal"
+                              dataSource={this.state.lab_test}
+                              renderItem={item => (
                                       <List.Item>
                                           <List.Item.Meta
-                                              title={item.name}/>
-                                          <Button type="primary" size="small" shape="circle"
-                                                  onClick={() => this.add(item)}
-                                                  icon={"arrow-right"}/>
-                                      </List.Item>)}/>
+                                            title={item.name}
+                                          />
+                                          <Button
+                                            type="primary"
+                                            size="small"
+                                            shape="circle"
+                                            onClick={() => this.add(item)}
+                                            icon="arrow-right"
+                                          />
+                                      </List.Item>
+)}
+                            />
                         </Col>
                         <Col span={17}>
 
-                            <Table pagination={false}
-                                   bordered={true}
-                                   dataSource={this.state.tableFormValues}
-                                   columns={coloums}/>
+                            <Table
+                              pagination={false}
+                              bordered
+                              dataSource={this.state.tableFormValues}
+                              columns={coloums}
+                            />
 
 
                         </Col>
                     </Row>
                 </Card>
             </Form>
-        </div>
+</div>
+)
     }
 }
 export default Form.create()(AddPatientLabOrders);

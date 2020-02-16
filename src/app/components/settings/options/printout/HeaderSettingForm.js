@@ -36,27 +36,27 @@ class HeaderSettingForm extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        let that = this;
-        let data = {};
+        const that = this;
+        const data = {};
         this.props.form.validateFields((err, formData) => {
             if (!err) {
-                let image = null;
+                const image = null;
                 // if (formData['logo_path'].file.response)
                 //     image = formData['logo_path'].file.response.image_path;
 
-                let reqData = {
+                const reqData = {
                     type: this.state.type,
                     sub_type: this.state.sub_type,
                     id: this.state.print_setting.id, ...formData,
                     logo_path: image
                 }
 
-                let successFn = function (data) {
+                const successFn = function (data) {
                     if (data) {
                         console.log(data)
                     }
                 };
-                let errorFn = function () {
+                const errorFn = function () {
                 };
 
 
@@ -76,7 +76,7 @@ class HeaderSettingForm extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const formItemLayout = {
             labelCol: {
                 xs: {span: 24},
@@ -91,27 +91,27 @@ class HeaderSettingForm extends React.Component {
         const {getFieldDecorator} = this.props.form;
 
 
-        let PreviewParamsURL = '?preview=true&type=' + this.props.type + '&sub_type=' + this.props.sub_type;
+        let PreviewParamsURL = `?preview=true&type=${  this.props.type  }&sub_type=${  this.props.sub_type}`;
         if (this.state.print_setting) {
-            let keys = Object.keys(this.state.print_setting);
+            const keys = Object.keys(this.state.print_setting);
             keys.forEach(function (key) {
                 if (that.state.print_setting[key])
-                    PreviewParamsURL += '&' + key + '=' + that.state.print_setting[key]
+                    PreviewParamsURL += `&${  key  }=${  that.state.print_setting[key]}`
             });
         }
-        return (<Row gutter={16}>
+        return (
+<Row gutter={16}>
                 <Col span={12}>
-                    <Form onSubmit={this.handleSubmit} key={this.state.print_setting.id}>
-
-
-                    </Form>
+                    <Form onSubmit={this.handleSubmit} key={this.state.print_setting.id} />
                 </Col>
                 <Col span={12} style={{textAlign: 'center'}}>
                     <iframe
-                        src={makeURL(PRINT_PREVIEW_RENDER + PreviewParamsURL)} style={{width: '100%', height: '100%', boxShadow: '-2px 0px 4px #B8B8B8'}}/>
+                      src={makeURL(PRINT_PREVIEW_RENDER + PreviewParamsURL)}
+                      style={{width: '100%', height: '100%', boxShadow: '-2px 0px 4px #B8B8B8'}}
+                    />
                 </Col>
 
-            </Row>
+</Row>
         );
     }
 }

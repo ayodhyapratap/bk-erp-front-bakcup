@@ -69,7 +69,7 @@ import {
     RETURN_INVOICE_FOR_EACH_PRODUCT,
     RETURN_INVOICE_FOR_EACH_PATIENT_GROUPS,
     RETURN_INVOICE_FOR_EACH_TAX, MONTHLY_WISE_RETURN_INVOICE, DAILY_WISE_RETURN_INVOICE, PAYMENT_UNSETTLEMENT
-} from "../constants/dataKeys";
+} from "./dataKeys";
 
 export const PAYMENT_TYPES = [
     {label: 'cash', value: 'cash'},
@@ -303,7 +303,7 @@ export const ROLES = [
     {label: "ADMIN", value: '1'},
     {label: "CLINIC_ADMIN", value: '2'}
 ];
-/*Patient Reports*/
+/* Patient Reports */
 export const PATIENTS_RELATED_REPORT = [
     {name: 'Daily New Patients', value: DAILY_NEW_PATIENTS},
     {name: 'Expiring Membership', value: EXPIRING_MEMBERSHIP},
@@ -315,7 +315,7 @@ export const PATIENTS_RELATED_REPORT = [
     {name: "Medicine Report", value: MEDICINE},
 ];
 
-/*Appointment Reports*/
+/* Appointment Reports */
 export const APPOINTMENT_RELATED_REPORT = [
     {name: 'Appointments For Each Category', value: APPOINTMENT_FOR_EACH_CATEGORY},
     {name: 'Cancellation Numbers', value: CANCELLATION_NUMBERS},
@@ -329,7 +329,7 @@ export const APPOINTMENT_RELATED_REPORT = [
     {name: 'Patient Conversion', value: APPOINTMENT_FOR_PATIENT_CONVERSION},
 ];
 
-/*Emr Reports*/
+/* Emr Reports */
 export const EMR_RELATED_REPORT = [
     {name: 'Daily Treatments Count', value: DAILY_TREATMENT_COUNT},
     {name: 'Treatments For Each Doctor', value: TREATMENTS_FOR_EACH_DOCTOR},
@@ -337,7 +337,7 @@ export const EMR_RELATED_REPORT = [
     {name: 'Treatments For Each Category', value: TREATMENT_FOR_EACH_CATEGORY}
 ];
 
-/*Amount Due Reports*/
+/* Amount Due Reports */
 export const AMOUNT_DUE_RELATED_REPORT = [
     {name: 'Ageing Amount Due', value: AGEING_AMOUNT_DUE},
     {name: 'Amount Due Per Doctor', value: AMOUNT_DUE_PER_DOCTOR},
@@ -356,13 +356,13 @@ export const BLOOD_GROUPS = [
     {name: "O-", value: 'O-'},
 ];
 
-/*** Expense Reports ***/
+/** * Expense Reports ** */
 export const EXPENSE_RELATED_REPORT = [
     {name: 'Daily Expenses', value: DAILY_EXPENSES},
     {name: 'Expenses For Each Type', value: EXPENSES_EACH_TYPE},
     {name: 'Monthly Expenses', value: MONTHLY_EXPENSES}];
 
-/***Inventory Reports **/
+/** *Inventory Reports * */
 export const INVENTORY_RELATED_REPORT = [
     {name: 'Daily Stock Consumption Item Wise', value: DAILY_INVENTORY},
     {name: 'Monthly Stock Consumption Item Wise', value: MONTHLY_INVENTORY},
@@ -374,14 +374,14 @@ export const PRODUCT_ITEM = [
     {label: EQUIPMENT, value: EQUIPMENT},
     {label: SUPPLIES, value: SUPPLIES},
 ];
-/*Bed Booking Reports*/
+/* Bed Booking Reports */
 export const BED_BOOKING_RELATED_REPORT = [
     {name: 'Daily Booking Count', value: DAILY_BOOKING_COUNT},
     {name: 'Monthly Booking Count', value: MONTHLY_BOOKING_COUNT},
     {name: 'Medicine Usage Count', value: MEDICINE_USAGE_COUNT},
     {name: 'Bed Booking Package Count', value: BED_BOOKING_PACKAGE_COUNT},
 ];
-/*MLM reports*/
+/* MLM reports */
 export const MLM_RELATED_REPORT = [
     {name: 'Margin Type wise', value: MARGIN_TYPE_WISE},
     // {name:'Product Wise', value:PRODUCT_WISE},
@@ -389,7 +389,7 @@ export const MLM_RELATED_REPORT = [
     {name: 'Agent Tree View', value: AGENT_TREE_VIEW},
 ];
 
-/*Payments Reports*/
+/* Payments Reports */
 export const PAYMENT_RELATED_REPORT = [
     // {name: 'Refund Payments', value: PAYMENT_REFUND},
     {name: 'Payment Received From Each Patient Group', value: PAYMENT_RECEIVED_PATIENT_GROUP},
@@ -405,7 +405,7 @@ export const PAYMENT_RELATED_REPORT = [
     // {name: 'Credit Amount Per Doctor', value: CREDIT_AMOUNT_PER_DOCTOR},
 ];
 
-/*Income Reports*/
+/* Income Reports */
 
 export const INCOME_RELATED_REPORT = [
     {name: "Daily Invoiced Income", value: DAILY_INCOME},
@@ -455,7 +455,7 @@ export const PATIENT_AGE = [
     {label: 'Age', value: 'AGE'}
 ];
 
-/** Suggestions Reports***/
+/** Suggestions Reports** */
 export const SUGGESTIONS_STATUS = [
     {label: "Open", value: "Open"},
     {label: "In Progress", value: "InProgress"},
@@ -501,7 +501,7 @@ export const FAMILY_GROUPS = [
 //
 // ];
 
-/** Advanced Search Constant Data**/
+/** Advanced Search Constant Data* */
 export const ADVANCED_SEARCH = [
     {label: 'Patient Name', value: 'name'},
     {label: 'Contact No', value: 'phone'},

@@ -1,8 +1,8 @@
 import React from "react";
 import {Col, Row, Select} from "antd";
+import moment from "moment"
 import {MLM_Reports} from "../../../constants/api";
 import {getAPI } from "../../../utils/common";
-import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -18,13 +18,14 @@ export default class ProductWiseReport extends React.Component {
         }
         this.loadMlmReport = this.loadMlmReport.bind(this);
     }
+
     componentDidMount() {
         this.loadMlmReport();
         loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.agents!=newProps.agents)
             this.setState({
                 startDate: newProps.startDate,
@@ -36,22 +37,22 @@ export default class ProductWiseReport extends React.Component {
     }
 
     loadMlmReport() {
-        let that = this;
+        const that = this;
         this.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report: data.data,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -63,8 +64,8 @@ export default class ProductWiseReport extends React.Component {
     }
 
     sendMail = (mailTo) => {
-        let that = this;
-        let apiParams={
+        const that = this;
+        const apiParams={
             practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -95,7 +96,7 @@ export default class ProductWiseReport extends React.Component {
             render: (text, record) => (
                 <span>
                 {moment(record.expense_date).format('DD MMM YYYY')}
-                  </span>
+                </span>
             ),
             export:(item,record)=>(moment(record.expense_date).format('ll')),
         }, {
@@ -125,29 +126,36 @@ export default class ProductWiseReport extends React.Component {
         // var totalAmount = this.state.report.reduce(function(prev, cur) {
         //     return prev + cur.amount;
         // }, 0);
-        return <div>
+        return (
+<div>
             <h2>MLM Report
 
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
             </h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
-                    {/*<Statistic title="Total Expense (INR)" value={totalAmount} />*/}
-                    <br/>
+                    {/* <Statistic title="Total Expense (INR)" value={totalAmount} /> */}
+                    <br />
                 </Col>
             </Row>
 
             <CustomizedTable
-                loading={this.state.loading}
-                columns={columns}
-                dataSource={this.state.report}/>
-        </div>
+              loading={this.state.loading}
+              columns={columns}
+              dataSource={this.state.report}
+            />
+</div>
+)
     }
 }

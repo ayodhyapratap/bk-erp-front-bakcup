@@ -20,18 +20,18 @@ import {
     Dropdown,
     Menu, Tag
 } from 'antd';
-import {DRUG_CATALOG, INVENTORY_ITEM_API, LABTEST_API, PRACTICESTAFF} from "../../../constants/api";
-import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {remove} from "lodash";
+import {Link, Route, Switch} from "react-router-dom";
+import moment from "moment";
+import {DRUG_CATALOG, INVENTORY_ITEM_API, LABTEST_API, PRACTICESTAFF,PRESCRIPTIONS_API, PRESCRIPTION_TEMPLATE} from "../../../constants/api";
+import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {DURATIONS_UNIT, DOSE_REQUIRED, DRUG} from "../../../constants/hardData";
 import {DOCTORS_ROLE, WARNING_MSG_TYPE} from "../../../constants/dataKeys";
-import {PRESCRIPTIONS_API, PRESCRIPTION_TEMPLATE} from "../../../constants/api";
-import PrescriptionTemplate from "./PrescriptionTemplate";
-import {Link, Route, Switch} from "react-router-dom";
-import {loadDoctors} from "../../../utils/clinicUtils";
-import moment from "moment";
 
-const TabPane = Tabs.TabPane;
+import PrescriptionTemplate from "./PrescriptionTemplate";
+import {loadDoctors} from "../../../utils/clinicUtils";
+
+const {TabPane} = Tabs;
 
 class AddorEditDynamicPatientPrescriptions extends React.Component {
     constructor(props) {
@@ -57,30 +57,30 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     }
 
     componentDidMount() {
-        let that = this;
+        const that = this;
         this.loadDrugList();
         this.loadLabList();
         this.loadPrescriptionTemplate();
         loadDoctors(this);
         if (this.props.editId) {
             this.setState(function (prevState) {
-                let drugList = [];
-                let addInstructions = {};
-                let addedLabs = {};
+                const drugList = [];
+                const addInstructions = {};
+                const addedLabs = {};
                 // let dosage = {};
                 // let frequency = {};
                 // let duration = {};
                 // let duration_type = {};
                 that.props.editPrescription.drugs.forEach(function (drug) {
-                    let _id = Math.random();
-                    drugList.push({...drug, _id: _id, food_time: (drug.after_food ? 1 : 0)});
+                    const _id = Math.random();
+                    drugList.push({...drug, _id, food_time: (drug.after_food ? 1 : 0)});
                     addInstructions[_id] = !!drug.instruction;
                     // dosage[_id] = drug.dosage;
                     // frequency[_id] = drug.frequency;
                     // duration[_id] = drug.duration;
                     // duration_type[_id] = drug.duration_type;
                 });
-                let labList = []
+                const labList = []
                 that.props.editPrescription.labs.forEach(lab => {
                     labList.push({
                         ...lab,
@@ -119,10 +119,10 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     }
 
     loadPrescriptionTemplate() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState(function (prevState) {
-                let items = {...prevState.items}
+                const items = {...prevState.items}
                 return {
                     items: {...items, "Template": data.results},
                     filteredItems: {...prevState.filteredItems, "Template": data.results}
@@ -130,49 +130,49 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             })
 
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
         getAPI(interpolate(PRESCRIPTION_TEMPLATE, [that.props.active_practiceId]), successFn, errorFn)
     }
 
     loadLabList() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState(function (prevState) {
-                let items = {...prevState.items}
+                const items = {...prevState.items}
                 return {
                     items: {...items, "Labs": data.results},
                     filteredItems: {...prevState.filteredItems, "Labs": data.results}
                 }
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
         getAPI(interpolate(LABTEST_API, [that.props.active_practiceId]), successFn, errorFn);
     }
 
     loadDrugList(page = 1) {
-        let that = this;
-        let searchString = that.state.searchStrings.Drugs;
-        let successFn = function (data) {
+        const that = this;
+        const searchString = that.state.searchStrings.Drugs;
+        const successFn = function (data) {
             if (searchString == that.state.searchStrings.Drugs)
                 that.setState(function (prevState) {
-                    let items = {...prevState.items}
+                    const items = {...prevState.items}
                     return {
                         items: {...items, "Drugs": data.results},
                         filteredItems: {...prevState.filteredItems, "Drugs": data.results}
                     }
                 })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
-        let params = {
+        const params = {
             practice: this.props.active_practiceId,
             item_type: DRUG,
-            page: page
+            page
         };
         if (searchString) {
             params.item_name = searchString
@@ -183,7 +183,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
 
     addDrug(item) {
         this.setState(function (prevState) {
-            let randId = Math.random().toFixed(7);
+            const randId = Math.random().toFixed(7);
             return {
                 addedDrugs: {...prevState.addedDrugs, [item.id]: true},
                 formDrugList: [{
@@ -200,11 +200,13 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             return {addInstructions: {...prevState.addInstructions, [_id]: !!option}}
         })
     }
+
     changeDurationUnits = (_id, option) => {
         this.setState(function (prevState) {
             return {changeDurationUnits: {...prevState.changeDurationUnits, [_id]: !!option}}
         })
     }
+
     removeDrug = (_id) => {
         this.setState(function (prevState) {
             return {
@@ -214,6 +216,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             }
         });
     }
+
     removeLabs = (_id, item) => {
         this.setState(function (prevState) {
             return {
@@ -224,9 +227,10 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             }
         });
     }
+
     addLabs = (item) => {
         this.setState(function (prevState) {
-            let randId = Math.random().toFixed(7);
+            const randId = Math.random().toFixed(7);
             if (prevState.addedLabs[item.id]) {
                 displayMessage(WARNING_MSG_TYPE, "Item Already Added");
                 return false;
@@ -247,10 +251,10 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 displayMessage(WARNING_MSG_TYPE, "Item Already Added");
                 return false;
             }
-            let prevLabs = [...prevState.formLabList];
+            const prevLabs = [...prevState.formLabList];
             let prevAddedLabs = {...prevState.addedLabs};
             item.labs.forEach(function (lab) {
-                let randId = Math.random().toFixed(7);
+                const randId = Math.random().toFixed(7);
                 prevLabs.push({
                     ...lab,
                     _id: randId,
@@ -258,10 +262,10 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 prevAddedLabs = {...prevAddedLabs, [lab.id]: true}
             });
 
-            let prevDrugs = [...prevState.formDrugList];
-            let prevAddedDrugs = {...prevState.addedDrugs};
+            const prevDrugs = [...prevState.formDrugList];
+            const prevAddedDrugs = {...prevState.addedDrugs};
             item.drugs.forEach(function (drugs) {
-                let randId = Math.random().toFixed(7);
+                const randId = Math.random().toFixed(7);
                 prevDrugs.push({
                     ...drugs,
                     _id: randId,
@@ -281,6 +285,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
 
         });
     };
+
     removeTemplates = (_id, item) => {
         this.setState(function (prevState) {
             return {
@@ -291,12 +296,13 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             }
         });
     }
+
     handleSubmit = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqData = {
+                const reqData = {
                     drugs: [],
                     labs: [],
                     patient: parseInt(that.props.match.params.id),
@@ -347,13 +353,13 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 that.state.formLabList.forEach(function (item) {
                     reqData.labs.push(item.id);
                 });
-                let successFn = function (data) {
+                const successFn = function (data) {
                     if (that.props.loadData)
                         that.props.loadData();
-                    let url = '/patient/' + that.props.match.params.id + '/emr/prescriptions';
+                    const url = `/patient/${  that.props.match.params.id  }/emr/prescriptions`;
                     that.props.history.replace(url);
                 }
-                let errorFn = function () {
+                const errorFn = function () {
 
                 }
                 postAPI(interpolate(PRESCRIPTIONS_API, [that.props.match.params.id]), reqData, successFn, errorFn);
@@ -364,12 +370,12 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     }
 
     deletePrescriptionTemplate(id) {
-        var that = this;
-        let reqData = {id: id, is_active: false};
-        let successFn = function (data) {
+        const that = this;
+        const reqData = {id, is_active: false};
+        const successFn = function (data) {
             that.loadPrescriptionTemplate();
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         postAPI(interpolate(PRESCRIPTION_TEMPLATE, [that.props.active_practiceId]), reqData, successFn, errorFn);
 
@@ -378,10 +384,11 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     onChange = e => {
         this.setState({});
     };
+
     searchValues = (type, value) => {
-        let that = this;
+        const that = this;
         this.setState(function (prevState) {
-            let searchValues = {...prevState.searchStrings};
+            const searchValues = {...prevState.searchStrings};
             searchValues[type] = value;
             return {searchStrings: searchValues}
         }, function () {
@@ -391,6 +398,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                 that.filterValues(type);
         });
     }
+
     filterValues = (type) => {
         this.setState(function (prevState) {
             let filteredItemOfGivenType = [];
@@ -415,7 +423,7 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const {getFieldDecorator, getFieldValue, getFieldsValue} = this.props.form;
         const drugTableColumns = [{
             title: 'Medicine Name',
@@ -426,21 +434,24 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             title: 'Dosage & Frequency',
             dataIndex: 'dosage',
             key: 'dosage',
-            render: (dosage, record) => <div>
+            render: (dosage, record) => (
+<div>
                 <Form.Item
-                    extra={<span>does(s)</span>}
-                    key={`dosage[${record._id}]`}>
+                  extra={<span>does(s)</span>}
+                  key={`dosage[${record._id}]`}
+                >
                     {getFieldDecorator(`dosage[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{message: "This field is required.",}],
                         initialValue: record.dosage,
                         min: 0
                     })(
-                        <InputNumber size={"small"}/>
+                        <InputNumber size="small" />
                     )}
                 </Form.Item>
                 <Form.Item
-                    key={`frequency[${record._id}]`}>
+                  key={`frequency[${record._id}]`}
+                >
                     {getFieldDecorator(`frequency[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{
@@ -448,31 +459,39 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         }],
                         initialValue: record.frequency || DOSE_REQUIRED[0].value
                     })(
-                        <Select size={"small"} onChange={() => this.changeDurationUnits(record._id, false)}>
-                            {DOSE_REQUIRED.map(item => <Select.Option
-                                value={item.value}>{item.label}</Select.Option>)}
+                        <Select size="small" onChange={() => this.changeDurationUnits(record._id, false)}>
+                            {DOSE_REQUIRED.map(item => (
+<Select.Option
+  value={item.value}
+>{item.label}
+</Select.Option>
+))}
                         </Select>
                     )}
                 </Form.Item>
-            </div>
+</div>
+)
         }, {
             title: 'Duration',
             dataIndex: 'duration',
             key: 'duration',
-            render: (duration, record) => <div>
+            render: (duration, record) => (
+<div>
                 <Form.Item
-                    key={`duration[${record._id}]`}>
+                  key={`duration[${record._id}]`}
+                >
                     {getFieldDecorator(`duration[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{message: "This field is required.",}],
                         initialValue: record.duration,
                         min: 0
                     })(
-                        <InputNumber size={"small"}/>
+                        <InputNumber size="small" />
                     )}
                 </Form.Item>
                 <Form.Item
-                    key={`duration_type[${record._id}]`}>
+                  key={`duration_type[${record._id}]`}
+                >
                     {getFieldDecorator(`duration_type[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{
@@ -480,24 +499,33 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                         }],
                         initialValue: record.duration_type || DURATIONS_UNIT[0].value
                     })(
-                        <Select size={"small"} onChange={() => this.changeDurationUnits(record._id, false)}>
-                            {DURATIONS_UNIT.map(item => <Select.Option
-                                value={item.value}>{item.label}</Select.Option>)}
+                        <Select size="small" onChange={() => this.changeDurationUnits(record._id, false)}>
+                            {DURATIONS_UNIT.map(item => (
+<Select.Option
+  value={item.value}
+>{item.label}
+</Select.Option>
+))}
                         </Select>
                     )}
                 </Form.Item>
-            </div>
+</div>
+)
         }, {
             title: 'Instructions',
             dataIndex: 'instruction',
             key: 'instruction',
-            render: (instruction, record) =>
+            render: (instruction, record) => (
                 <div>
-                    {this.state.addInstructions[record._id] ?
+                    {this.state.addInstructions[record._id] ? (
                         <Form.Item
-                            extra={<a onClick={() => this.addInstructions(record._id, false)}>Remove
-                                Instructions</a>}
-                            key={`instruction[${record._id}]`}>
+                          extra={(
+<a onClick={() => this.addInstructions(record._id, false)}>Remove
+                                Instructions
+</a>
+)}
+                          key={`instruction[${record._id}]`}
+                        >
                             {getFieldDecorator(`instruction[${record._id}]`, {
                                 validateTrigger: ['onChange', 'onBlur'],
                                 rules: [{
@@ -505,17 +533,19 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                 }],
                                 initialValue: record.instruction
                             })(
-                                <Input.TextArea placeholder={"Instructions..."} size={"small"}/>
+                                <Input.TextArea placeholder="Instructions..." size="small" />
                             )}
 
                         </Form.Item>
+                      )
                         : <a onClick={() => this.addInstructions(record._id, true)}>+ Add Instructions</a>}
                 </div>
-        }, {
+              )}, {
             title: "Timing",
             dataIndex: "food_time",
             key: 'food_time',
-            render: (timing, record) => <div>
+            render: (timing, record) => (
+<div>
                 <Form.Item key={`food_time[${record._id}]`}>
                     {getFieldDecorator(`food_time[${record._id}]`, {
                         initialValue: record.food_time || 0
@@ -527,24 +557,34 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                     )}
                 </Form.Item>
 
-            </div>
+</div>
+)
 
         }, {
             title: '',
             dataIndex: 'action',
             key: 'action',
-            render: (instructions, record) => <Form.Item>
-                <Button icon={"close"} onClick={() => this.removeDrug(record._id)} type={"danger"} shape="circle"
-                        size="small"/>
-            </Form.Item>
+            render: (instructions, record) => (
+<Form.Item>
+                <Button
+                  icon="close"
+                  onClick={() => this.removeDrug(record._id)}
+                  type="danger"
+                  shape="circle"
+                  size="small"
+                />
+</Form.Item>
+)
         }];
         const labTablecolums = [{
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            render: (name, record) => <span>
+            render: (name, record) => (
+<span>
                 <b>{name}</b>
-                </span>
+</span>
+)
         }, {
             title: 'Cost',
             dataIndex: 'cost',
@@ -554,34 +594,56 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
             title: 'Total',
             dataIndex: 'total',
             key: 'total',
-            render: (total, record) => <span>
+            render: (total, record) => (
+<span>
                 {total}
-                <Button icon={"close"} onClick={() => this.removeLabs(record._id, record)} type={"danger"}
-                        shape="circle"
-                        size="small"/>
-            </span>
+                <Button
+                  icon="close"
+                  onClick={() => this.removeLabs(record._id, record)}
+                  type="danger"
+                  shape="circle"
+                  size="small"
+                />
+</span>
+)
         }];
 
-        return <Card title={"Prescriptions"}>
+        return (
+<Card title="Prescriptions">
             <Row>
                 <Col span={18}>
                     <Form onSubmit={this.handleSubmit}>
-                        <Table pagination={false} bordered={false} columns={drugTableColumns}
-                               dataSource={this.state.formDrugList}/>
+                        <Table
+                          pagination={false}
+                          bordered={false}
+                          columns={drugTableColumns}
+                          dataSource={this.state.formDrugList}
+                        />
 
                         <Divider> Lab Test</Divider>
-                        <Table pagination={false} bordered={false} columns={labTablecolums}
-                               dataSource={this.state.formLabList}/>
+                        <Table
+                          pagination={false}
+                          bordered={false}
+                          columns={labTablecolums}
+                          dataSource={this.state.formLabList}
+                        />
 
                         <Affix offsetBottom={0}>
                             <Card>
                                 <span>by &nbsp;&nbsp;</span>
-                                <Dropdown placement="topCenter" overlay={<Menu>
-                                    {this.state.practiceDoctors.map(doctor =>
+                                <Dropdown
+                                  placement="topCenter"
+                                  overlay={(
+<Menu>
+                                    {this.state.practiceDoctors.map(doctor => (
                                         <Menu.Item key="0">
                                             <a onClick={() => this.selectDoctor(doctor)}>{doctor.user.first_name}</a>
-                                        </Menu.Item>)}
-                                </Menu>} trigger={['click']}>
+                                        </Menu.Item>
+                                      ))}
+</Menu>
+)}
+                                  trigger={['click']}
+                                >
                                     <a className="ant-dropdown-link" href="#">
                                         <b>
                                             {this.state.selectedDoctor.user ? this.state.selectedDoctor.user.first_name : 'No DOCTORS Found'}
@@ -589,17 +651,24 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                                     </a>
                                 </Dropdown>
                                 <span> &nbsp;&nbsp;on&nbsp;&nbsp;</span>
-                                <DatePicker value={this.state.selectedDate}
-                                            onChange={(value) => this.selectedDate(value)} format={"DD-MM-YYYY"} allowClear={false}/>
+                                <DatePicker
+                                  value={this.state.selectedDate}
+                                  onChange={(value) => this.selectedDate(value)}
+                                  format="DD-MM-YYYY"
+                                  allowClear={false}
+                                />
 
                                 <Button type="primary" htmlType="submit" style={{margin: 5, float: 'right'}}>
                                     Save
                                 </Button>
-                                {that.props.history ?
-                                    <Button style={{margin: 5, float: 'right'}}
-                                            onClick={() => that.props.history.goBack()}>
+                                {that.props.history ? (
+                                    <Button
+                                      style={{margin: 5, float: 'right'}}
+                                      onClick={() => that.props.history.goBack()}
+                                    >
                                         Cancel
-                                    </Button> : null}
+                                    </Button>
+                                  ) : null}
                             </Card>
                         </Affix>
                     </Form>
@@ -608,74 +677,96 @@ class AddorEditDynamicPatientPrescriptions extends React.Component {
                     <Tabs type="card">
                         <TabPane tab="Medicine" key="1">
                             <div style={{backgroundColor: '#ddd', padding: 8}}>
-                                <Input.Search key={"Drugs"}
-                                              placeholder={"Search in Medicine..."}
-                                              onChange={e => this.searchValues("Drugs", e.target.value)}
+                                <Input.Search
+                                  key="Drugs"
+                                  placeholder="Search in Medicine..."
+                                  onChange={e => this.searchValues("Drugs", e.target.value)}
                                 />
                             </div>
-                            <List size={"small"}
-                                  itemLayout="horizontal"
-                                  dataSource={this.state.filteredItems["Drugs"]}
-                                  renderItem={item => (
-                                      <List.Item onClick={() => this.addDrug(item)}
-                                                 actions={(item.maintain_inventory ? null : [<Tag>Not Sold</Tag>])}>
+                            <List
+                              size="small"
+                              itemLayout="horizontal"
+                              dataSource={this.state.filteredItems.Drugs}
+                              renderItem={item => (
+                                      <List.Item
+                                        onClick={() => this.addDrug(item)}
+                                        actions={(item.maintain_inventory ? null : [<Tag>Not Sold</Tag>])}
+                                      >
                                           <List.Item.Meta
-                                              title={item.name}
+                                            title={item.name}
                                           />
-                                      </List.Item>)}/>
+                                      </List.Item>
+)}
+                            />
                         </TabPane>
                         <TabPane tab="Labs" key="2">
                             <div style={{backgroundColor: '#ddd', padding: 8}}>
-                                <Input.Search key={"Labs"}
-                                              placeholder={"Search in Labs..."}
-                                              onChange={e => this.searchValues("Labs", e.target.value)}
+                                <Input.Search
+                                  key="Labs"
+                                  placeholder="Search in Labs..."
+                                  onChange={e => this.searchValues("Labs", e.target.value)}
                                 />
                             </div>
-                            <List size={"small"}
-                                  itemLayout="horizontal"
-                                  dataSource={this.state.filteredItems["Labs"]}
-                                  renderItem={item => (
+                            <List
+                              size="small"
+                              itemLayout="horizontal"
+                              dataSource={this.state.filteredItems.Labs}
+                              renderItem={item => (
                                       <List.Item onClick={() => this.addLabs(item)}>
                                           <List.Item.Meta
-                                              title={item.name}/>
-                                      </List.Item>)}/>
+                                            title={item.name}
+                                          />
+                                      </List.Item>
+)}
+                            />
                         </TabPane>
                         <TabPane tab="Template" key="3">
                             <div>
-                                <Link to={"/patient/" + this.props.match.params.id + "/prescriptions/template/add"}>
-                                    <Button type="primary" block size={'small'}>
-                                        <Icon type="plus"/>&nbsp;Add Template
+                                <Link to={`/patient/${  this.props.match.params.id  }/prescriptions/template/add`}>
+                                    <Button type="primary" block size="small">
+                                        <Icon type="plus" />&nbsp;Add Template
                                     </Button>
                                 </Link>
                             </div>
-                            <Divider style={{margin: 0}}/>
+                            <Divider style={{margin: 0}} />
                             <div style={{backgroundColor: '#ddd', padding: 8}}>
-                                <Input.Search key={"Template"}
-                                              placeholder={"Search in Template..."}
-                                              onChange={e => this.searchValues("Template", e.target.value)}
+                                <Input.Search
+                                  key="Template"
+                                  placeholder="Search in Template..."
+                                  onChange={e => this.searchValues("Template", e.target.value)}
                                 />
                             </div>
-                            <List size={"small"}
-                                  itemLayout="horizontal"
-                                  dataSource={this.state.filteredItems["Template"]}
-                                  renderItem={item => (
+                            <List
+                              size="small"
+                              itemLayout="horizontal"
+                              dataSource={this.state.filteredItems.Template}
+                              renderItem={item => (
                                       <List.Item onConfirm={() => that.deletePrescriptionTemplate(item.id)}>
-                                          <List.Item.Meta onClick={() => this.addTemplate(item)} title={item.name}/>
-                                          <Popconfirm title="Are you sure delete this item?"
-                                                      onConfirm={() => that.deletePrescriptionTemplate(item.id)}
-                                                      okText="Yes" cancelText="No">
+                                          <List.Item.Meta onClick={() => this.addTemplate(item)} title={item.name} />
+                                          <Popconfirm
+                                            title="Are you sure delete this item?"
+                                            onConfirm={() => that.deletePrescriptionTemplate(item.id)}
+                                            okText="Yes"
+                                            cancelText="No"
+                                          >
                                               <a>Delete</a>
                                           </Popconfirm>
-                                      </List.Item>)}/>
+                                      </List.Item>
+)}
+                            />
                         </TabPane>
                     </Tabs>
                 </Col>
                 <Switch>
-                    <Route exact path='/patient/:id/prescriptions/template/add'
-                           render={(route) => <PrescriptionTemplate {...this.state} {...route}/>}/>
+                    <Route
+                      exact
+                      path='/patient/:id/prescriptions/template/add'
+                      render={(route) => <PrescriptionTemplate {...this.state} {...route} />}
+                    />
                 </Switch>
             </Row>
-        </Card>
+</Card>
+)
     }
 }
 

@@ -1,12 +1,12 @@
 import React from "react";
-import {Card, Icon, Row, Tabs} from "antd";
+import {Card, Icon, Row, Tabs,Form} from "antd";
 import {INPUT_FIELD, PASSWORD_FIELD} from "../../../../constants/dataKeys";
-import {Form} from "antd/lib/index";
+
 import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {getAPI, interpolate} from "../../../../utils/common";
 import {EXPENSE_TYPE, SAVE_CREDENTIALS} from "../../../../constants/api";
 
-const TabPane = Tabs.TabPane;
+const {TabPane} = Tabs;
 export default class IntegrationHome extends React.Component {
     constructor(props) {
         super(props);
@@ -16,8 +16,9 @@ export default class IntegrationHome extends React.Component {
         }
         this.loadData = this.loadData.bind(this);
     }
+
     componentWillMount() {
-       let that=this;
+       const that=this;
         if (that.props){
             this.loadData();
         }
@@ -25,22 +26,23 @@ export default class IntegrationHome extends React.Component {
     }
 
     loadData(){
-        let that=this;
-        let successFn=function (data) {
+        const that=this;
+        const successFn=function (data) {
             that.setState({
                 integrateData:data,
                 loading:false
             })
         }
-        let errorFn=function () {
+        const errorFn=function () {
             that.setState({
                 loading:false
             })
         }
         getAPI(interpolate(SAVE_CREDENTIALS,[that.props.user.id]),successFn ,errorFn)
     }
+
     render() {
-        let that = this;
+        const that = this;
         const taskIntegrateFormFields = [{
             key: 'login',
             type: INPUT_FIELD,
@@ -56,28 +58,30 @@ export default class IntegrationHome extends React.Component {
         }];
         const taskIntegrateFormProp = {
             method : 'post',
-            successFn : function(data){
+            successFn(data){
                 that.loadData();
             },
-            errorFn : function (){
+            errorFn (){
 
             },
             action: interpolate(SAVE_CREDENTIALS, [this.props.user.id]),
         };
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <Row>
+        return (
+<Row>
             <Card>
                 <h2>My Integrations</h2>
                 <Tabs>
-                    <TabPane tab={<span><Icon type="check-circle"/>Task Tracker</span>} key="Complaints">
-                        <TestFormLayout fields={taskIntegrateFormFields} formProp={taskIntegrateFormProp}/>
+                    <TabPane tab={<span><Icon type="check-circle" />Task Tracker</span>} key="Complaints">
+                        <TestFormLayout fields={taskIntegrateFormFields} formProp={taskIntegrateFormProp} />
                     </TabPane>
-                    {/*<TabPane tab={<span><Icon type="phone"/>Calling</span>} key="observations">*/}
-                    {/*    /!*<TableData {...this.props} id={EMR_OBSERVATIONS} name="Observations"/>*!/*/}
-                    {/*</TabPane>*/}
+                    {/* <TabPane tab={<span><Icon type="phone"/>Calling</span>} key="observations"> */}
+                    {/*    /!*<TableData {...this.props} id={EMR_OBSERVATIONS} name="Observations"/>*!/ */}
+                    {/* </TabPane> */}
                 </Tabs>
 
             </Card>
-        </Row>
+</Row>
+)
     }
 }

@@ -24,14 +24,18 @@ export default class WebCamField extends React.Component {
             height: 720,
             facingMode: "user"
         };
-        return <div style={{width:680}}>
-            <Webcam audio={false}
-                    height={480}
-                    width={640}
-                    ref={this.setRef}
-                    videoConstraints={videoConstraints}
-                    screenshotFormat="image/jpeg"/>
+        return (
+<div style={{width:680}}>
+            <Webcam
+              audio={false}
+              height={480}
+              width={640}
+              ref={this.setRef}
+              videoConstraints={videoConstraints}
+              screenshotFormat="image/jpeg"
+            />
             <Button onClick={this.capture}>Capture photo</Button>
-        </div>
+</div>
+)
     }
 }

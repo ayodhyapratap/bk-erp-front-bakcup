@@ -18,7 +18,7 @@ export default class ReportsHeader extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const reportCategory = [{
             name: 'Daily Summary',
             value: '/reports/summary',
@@ -84,28 +84,38 @@ export default class ReportsHeader extends React.Component {
             active: that.props.activePracticePermissions.ReportsSuggestions || that.props.allowAllPermissions
 
         }];
-        return <Header style={{background: '#fff'}}>
+        return (
+<Header style={{background: '#fff'}}>
             <ul style={{listStyle: 'none'}}>
                 <li style={{display: 'inline'}}>
                     Select Report Category &nbsp;
                 </li>
                 <li style={{display: 'inline'}}>
-                    <Select style={{minWidth: '200px'}} defaultValue={reportCategory[3].name}
-                            value={this.props.history.location.pathname}
-                            onChange={this.changeReport}>
-                        {reportCategory.map((item) => <Select.Option value={item.value}
-                                                                     disabled={!item.active}>{item.name}</Select.Option>)}
+                    <Select
+                      style={{minWidth: '200px'}}
+                      defaultValue={reportCategory[3].name}
+                      value={this.props.history.location.pathname}
+                      onChange={this.changeReport}
+                    >
+                        {reportCategory.map((item) => (
+<Select.Option
+  value={item.value}
+  disabled={!item.active}
+>{item.name}
+</Select.Option>
+))}
                     </Select>
                 </li>
                 <li style={{display: 'inline', float: 'right'}}>
                     <RangePicker
-                        allowClear={false}
-                        onChange={(date, dateString) => that.props.reportsDateRange(dateString)}
-                        defaultValue={[moment(), moment()]}
-                        format={dateFormat}
+                      allowClear={false}
+                      onChange={(date, dateString) => that.props.reportsDateRange(dateString)}
+                      defaultValue={[moment(), moment()]}
+                      format={dateFormat}
                     />
                 </li>
             </ul>
-        </Header>
+</Header>
+)
     }
 }

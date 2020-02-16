@@ -18,6 +18,7 @@ import {
     Tabs,
     Upload
 } from "antd";
+import moment from "moment";
 import {displayMessage, getAPI, interpolate, makeURL, postAPI} from "../../../utils/common";
 
 import {ADD_STOCK, CONSUME_STOCK, INVENTORY_ITEM_TYPE, TYPE_OF_CONSUMPTION} from "../../../constants/hardData";
@@ -28,13 +29,12 @@ import {
     SEARCH_THROUGH_QR,
     SUPPLIER_API
 } from "../../../constants/api";
-import moment from "moment";
 
 const {Search} = Input;
 const {MonthPicker} = DatePicker;
-const TabPane = Tabs.TabPane;
+const {TabPane} = Tabs;
 
-let tableFormFields = {
+const tableFormFields = {
     _id: null,
     quantity: 0,
     batch: null
@@ -70,14 +70,14 @@ class AddOrConsumeStock extends React.Component {
     }
 
     loadSupplierList() {
-        let that = this;
-        let params = {practice: this.props.active_practiceId}
-        let successFn = function (data) {
+        const that = this;
+        const params = {practice: this.props.active_practiceId}
+        const successFn = function (data) {
             that.setState({
                 supplierList: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(SUPPLIER_API, [this.props.active_practiceId]), successFn, errorFn, params);
@@ -87,16 +87,16 @@ class AddOrConsumeStock extends React.Component {
     }
 
     loadInventoryItemList() {
-        let that = this;
+        const that = this;
         INVENTORY_ITEM_TYPE.forEach(function (type) {
             that.loadItemsList(type.value)
         });
     }
 
     loadItemsList = (type, page = 1) => {
-        let that = this;
-        let successFn = function (recData) {
-            let data = recData;
+        const that = this;
+        const successFn = function (recData) {
+            const data = recData;
             that.setState(function (prevState) {
                 return {
                     items: {
@@ -107,9 +107,9 @@ class AddOrConsumeStock extends React.Component {
                 }
             });
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
-        let params = {
+        const params = {
             maintain_inventory: true,
             practice: this.props.active_practiceId,
             item_type: type,
@@ -120,9 +120,10 @@ class AddOrConsumeStock extends React.Component {
         }
         getAPI(INVENTORY_ITEM_API, successFn, errorFn, params);
     }
+
     remove = (k) => {
         this.setState(function (prevState) {
-            let newTableFormValues = [];
+            const newTableFormValues = [];
             prevState.tableFormValues.forEach(function (formValue) {
                 if (formValue._id != k)
                     newTableFormValues.push(formValue);
@@ -147,7 +148,7 @@ class AddOrConsumeStock extends React.Component {
     };
 
     handleSubmit = (e) => {
-        let that = this;
+        const that = this;
         this.setState({
             loading: true,
         });
@@ -157,7 +158,7 @@ class AddOrConsumeStock extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqData = [];
+                const reqData = [];
 
                 that.state.tableFormValues.forEach(function (item) {
                     let itemObject = {
@@ -194,13 +195,13 @@ class AddOrConsumeStock extends React.Component {
                 } else {
                     reqData.supplier = values.supplier;
                 }
-                let successFn = function (data) {
+                const successFn = function (data) {
 
                     displayMessage("Inventory updated successfully");
                     that.props.loadData();
                     that.props.history.replace('/inventory');
                 };
-                let errorFn = function () {
+                const errorFn = function () {
                     that.setState({
                         loading: false,
                     });
@@ -212,7 +213,7 @@ class AddOrConsumeStock extends React.Component {
 
     changeMaxQuantityforConsume(recordId, batch) {
         this.setState(function (prevState) {
-            let newMaxQuantityforConsume = {...prevState.maxQuantityforConsume}
+            const newMaxQuantityforConsume = {...prevState.maxQuantityforConsume}
             prevState.tableFormValues.forEach(function (formValue) {
                 if (formValue._id == recordId)
                     formValue.item_type_stock.item_stock.forEach(function (stock) {
@@ -227,15 +228,16 @@ class AddOrConsumeStock extends React.Component {
     }
 
     searchValues = (type, value) => {
-        let that = this;
+        const that = this;
         this.setState(function (prevState) {
-            let searchValues = {...prevState.searchStrings};
+            const searchValues = {...prevState.searchStrings};
             searchValues[type] = value;
             return {searchStrings: searchValues}
         }, function () {
             that.loadItemsList(type);
         });
     }
+
     filterValues = (type) => {
         this.setState(function (prevState) {
             let filteredItemOfGivenType = [];
@@ -258,13 +260,14 @@ class AddOrConsumeStock extends React.Component {
             }
         });
     }
+
     storeValue = (type, id, value) => {
-        let that = this;
+        const that = this;
         this.setState(function (prevState) {
             return {tempValues: {...prevState.tempValues, [type.toString() + id.toString()]: value}}
         });
         if (type == 'batch') {
-            let {setFieldsValue} = that.props.form;
+            const {setFieldsValue} = that.props.form;
             that.state.tableFormValues.forEach(function (item) {
                 if (item._id == id) {
                     if (item.item_type_stock.batch_number) {
@@ -277,23 +280,24 @@ class AddOrConsumeStock extends React.Component {
 
         }
     }
+
     addItemThroughQR = (value) => {
-        let that = this;
+        const that = this;
         that.setState({
             loadingQr: true,
         });
-        let qrSplitted = value.split('*');
-        let successFn = function (data) {
-            let item = data;
-            let {setFieldsValue, getFieldsValue, getFieldValue} = that.props.form;
-            let randomId = Math.random().toFixed(7);
+        const qrSplitted = value.split('*');
+        const successFn = function (data) {
+            const item = data;
+            const {setFieldsValue, getFieldsValue, getFieldValue} = that.props.form;
+            const randomId = Math.random().toFixed(7);
             let flag = true
             that.state.tableFormValues.forEach(function (row) {
                 if (row.item_name == qrSplitted[0]) {
-                    let _id = row._id;
-                    let batch = getFieldsValue(`batch[${_id}]`);
+                    const {_id} = row;
+                    const batch = getFieldsValue(`batch[${_id}]`);
                     if (batch == qrSplitted[3]) {
-                        let quantity = getFieldsValue(`quantity[${_id}]`);
+                        const quantity = getFieldsValue(`quantity[${_id}]`);
                         flag = false
                         setFieldsValue({
                             [`quantity[${_id}]`]: quantity + 1
@@ -306,7 +310,7 @@ class AddOrConsumeStock extends React.Component {
                 that.add(data, randomId);
                 that.storeValue('batch', randomId, qrSplitted[1]);
                 that.storeValue('unit_cost', randomId, qrSplitted[3]);
-                let fieldsToBeSet = {
+                const fieldsToBeSet = {
                     [`batch[${randomId}]`]: qrSplitted[1],
                     [`expiry_date[${randomId}]`]: moment(qrSplitted[2], 'MM/YY')
                 };
@@ -335,20 +339,21 @@ class AddOrConsumeStock extends React.Component {
                 }
             });
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(SEARCH_THROUGH_QR, successFn, errorFn, {qr: value, form: 'Inventory'})
     }
+
     setQrValue = (e) => {
-        let value = e.target.value;
+        const {value} = e.target;
         this.setState({
             qrValue: value
         })
     }
 
     render() {
-        let that = this;
+        const that = this;
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
             labelCol: {
@@ -401,9 +406,11 @@ class AddOrConsumeStock extends React.Component {
                 title: 'Quantity',
                 key: 'quantity',
                 dataIndex: 'quantity',
-                render: (item, record) => <Form.Item
-                    key={`quantity[${record._id}]`}
-                    {...formItemLayout}>
+                render: (item, record) => (
+<Form.Item
+  key={`quantity[${record._id}]`}
+  {...formItemLayout}
+>
                     {getFieldDecorator(`quantity[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{
@@ -411,17 +418,23 @@ class AddOrConsumeStock extends React.Component {
                             message: "This field is required.",
                         }],
                     })(
-                        <InputNumber min={0} placeholder="quantity"
-                                     onChange={(value) => this.storeValue('quantity', record._id, value)}/>
+                        <InputNumber
+                          min={0}
+                          placeholder="quantity"
+                          onChange={(value) => this.storeValue('quantity', record._id, value)}
+                        />
                     )}
-                </Form.Item>
+</Form.Item>
+)
             }, {
                 title: 'Batch',
                 key: 'batch',
                 dataIndex: 'batch',
-                render: (item, record) => <Form.Item
-                    key={`batch[${record._id}]`}
-                    {...formItemLayout}>
+                render: (item, record) => (
+<Form.Item
+  key={`batch[${record._id}]`}
+  {...formItemLayout}
+>
                     {getFieldDecorator(`batch[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{
@@ -429,18 +442,23 @@ class AddOrConsumeStock extends React.Component {
                             message: "This field is required.",
                         }],
                     })(
-                        <AutoComplete placeholder="Batch Number"
-                                      onChange={(value) => this.storeValue('batch', record._id, value)}
-                                      dataSource={record.item_type_stock && record.item_type_stock.item_stock ? record.item_type_stock.item_stock.map(itemStock => itemStock.batch_number ? itemStock.batch_number : '--') : []}/>
+                        <AutoComplete
+                          placeholder="Batch Number"
+                          onChange={(value) => this.storeValue('batch', record._id, value)}
+                          dataSource={record.item_type_stock && record.item_type_stock.item_stock ? record.item_type_stock.item_stock.map(itemStock => itemStock.batch_number ? itemStock.batch_number : '--') : []}
+                        />
                     )}
-                </Form.Item>
+</Form.Item>
+)
             }, {
                 title: 'Expiry Date',
                 key: 'expiry',
                 dataIndex: 'expiry',
-                render: (item, record) => <Form.Item
-                    key={`expiry_date[${record._id}]`}
-                    {...formItemLayout}>
+                render: (item, record) => (
+<Form.Item
+  key={`expiry_date[${record._id}]`}
+  {...formItemLayout}
+>
                     {getFieldDecorator(`expiry_date[${record._id}]`, {
                         rules: [{
                             required: true,
@@ -448,16 +466,19 @@ class AddOrConsumeStock extends React.Component {
                         }],
                         initialValue: moment(new Date())
                     })(
-                        <MonthPicker allowClear={false}/>
+                        <MonthPicker allowClear={false} />
                     )}
-                </Form.Item>
+</Form.Item>
+)
             }, {
                 title: 'Unit Cost',
                 key: 'unit_cost',
                 dataIndex: 'unit_cost',
-                render: (item, record) => <Form.Item
-                    key={`unit_cost[${record._id}]`}
-                    {...formItemLayout}>
+                render: (item, record) => (
+<Form.Item
+  key={`unit_cost[${record._id}]`}
+  {...formItemLayout}
+>
                     {getFieldDecorator(`unit_cost[${record._id}]`, {
                         // validateTrigger: ['onChange', 'onBlur'],
                         rules: [{
@@ -465,25 +486,30 @@ class AddOrConsumeStock extends React.Component {
                             message: "This field is required.",
                         }],
                     })(
-                        <InputNumber placeholder="Unit Cost"
-                                     onChange={(value) => this.storeValue('unit_cost', record._id, value)}/>
+                        <InputNumber
+                          placeholder="Unit Cost"
+                          onChange={(value) => this.storeValue('unit_cost', record._id, value)}
+                        />
                     )}
-                </Form.Item>
+</Form.Item>
+)
             }, {
                 title: 'Total Cost',
                 key: 'total_cost',
                 dataIndex: 'total_cost',
                 render: (item, record) =>
-                    <span>{this.state.tempValues['unit_cost' + record._id] && this.state.tempValues['quantity' + record._id] ? this.state.tempValues['unit_cost' + record._id] * this.state.tempValues['quantity' + record._id] : '--'}</span>
+                    <span>{this.state.tempValues[`unit_cost${  record._id}`] && this.state.tempValues[`quantity${  record._id}`] ? this.state.tempValues[`unit_cost${  record._id}`] * this.state.tempValues[`quantity${  record._id}`] : '--'}</span>
             }]);
         } else if (this.state.classType == CONSUME_STOCK) {
             consumeRow = consumeRow.concat([{
                 title: 'Batch',
                 key: 'batch',
                 dataIndex: 'batch',
-                render: (item, record) => <Form.Item
-                    key={`batch[${record._id}]`}
-                    {...formItemLayout}>
+                render: (item, record) => (
+<Form.Item
+  key={`batch[${record._id}]`}
+  {...formItemLayout}
+>
                     {getFieldDecorator(`batch[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{
@@ -491,22 +517,28 @@ class AddOrConsumeStock extends React.Component {
                             message: "This field is required.",
                         }],
                     })(
-                        <Select placeholder="Batch Number"
-                                onChange={(value) => that.changeMaxQuantityforConsume(record._id, value)}>
-                            {record.item_type_stock && record.item_type_stock.item_stock && record.item_type_stock.item_stock.map(stock =>
+                        <Select
+                          placeholder="Batch Number"
+                          onChange={(value) => that.changeMaxQuantityforConsume(record._id, value)}
+                        >
+                            {record.item_type_stock && record.item_type_stock.item_stock && record.item_type_stock.item_stock.map(stock => (
                                 <Select.Option value={stock.batch_number}>
                                     #{stock.batch_number} ({stock.quantity})
-                                </Select.Option>)}
+                                </Select.Option>
+                              ))}
                         </Select>
                     )}
-                </Form.Item>
+</Form.Item>
+)
             }, {
                 title: 'Quantity',
                 key: 'quantity',
                 dataIndex: 'quantity',
-                render: (item, record) => <Form.Item
-                    key={`quantity[${record._id}]`}
-                    {...formItemLayout}>
+                render: (item, record) => (
+<Form.Item
+  key={`quantity[${record._id}]`}
+  {...formItemLayout}
+>
                     {getFieldDecorator(`quantity[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{
@@ -514,9 +546,10 @@ class AddOrConsumeStock extends React.Component {
                             message: "This field is required.",
                         }],
                     })(
-                        <InputNumber min={0} max={this.state.maxQuantityforConsume[record._id]} placeholder="quantity"/>
+                        <InputNumber min={0} max={this.state.maxQuantityforConsume[record._id]} placeholder="quantity" />
                     )}
-                </Form.Item>
+</Form.Item>
+)
             },]);
         }
         consumeRow = consumeRow.concat([{
@@ -525,66 +558,91 @@ class AddOrConsumeStock extends React.Component {
             dataIndex: '_id',
             render: (value, record) => <a onClick={() => that.remove(record._id)}>Delete</a>
         }]);
-        return <div>
+        return (
+<div>
             <Spin spinning={this.state.loading}>
-                <Card title={this.state.classType + " Stock"} extra={
+                <Card
+                  title={`${this.state.classType  } Stock`}
+                  extra={(
                     <Search
-                        loading={this.state.loadingQr}
-                        value={this.state.qrValue}
-                        onChange={this.setQrValue}
-                        placeholder="Search QR Code"
-                        onSearch={this.addItemThroughQR}
-                        style={{width: 200}}
-                    />}>
+                      loading={this.state.loadingQr}
+                      value={this.state.qrValue}
+                      onChange={this.setQrValue}
+                      placeholder="Search QR Code"
+                      onSearch={this.addItemThroughQR}
+                      style={{width: 200}}
+                    />
+                  )}
+                >
                     <Row gutter={16}>
                         <Col span={7}>
                             <Tabs size="small" type="card">
-                                {INVENTORY_ITEM_TYPE.map(itemType => <TabPane tab={itemType.label} key={itemType.value}>
+                                {INVENTORY_ITEM_TYPE.map(itemType => (
+<TabPane tab={itemType.label} key={itemType.value}>
                                     <div style={{backgroundColor: '#ddd', padding: 8}}>
-                                        <Input.Search key={itemType.label}
-                                                      placeholder={"Search in " + itemType.label + "..."}
-                                                      onSearch={value => this.searchValues(itemType.label, value)}/>
+                                        <Input.Search
+                                          key={itemType.label}
+                                          placeholder={`Search in ${  itemType.label  }...`}
+                                          onSearch={value => this.searchValues(itemType.label, value)}
+                                        />
                                     </div>
-                                    <List size={"small"}
-                                          itemLayout="horizontal"
-                                          dataSource={this.state.items && this.state.items[itemType.value] ? this.state.items[itemType.value].results : []}
-                                          renderItem={item => (
+                                    <List
+                                      size="small"
+                                      itemLayout="horizontal"
+                                      dataSource={this.state.items && this.state.items[itemType.value] ? this.state.items[itemType.value].results : []}
+                                      renderItem={item => (
                                               <List.Item>
                                                   <List.Item.Meta
-                                                      title={item.name+" ("+item.total_quantity+")"}
-                                                      description={item.item_type_stock.item_stock && item.item_type_stock.item_stock.map((stock) =>
-                                                          <span>#{stock.batch_number}<br/></span>)}/>
-                                                  <Button type="primary" size="small" shape="circle"
-                                                          onClick={() => this.add(item)} icon={"arrow-right"}/>
-                                              </List.Item>)}/>
-                                    {this.state.items && this.state.items[itemType.value] ?
+                                                    title={`${item.name} (${item.total_quantity})`}
+                                                    description={item.item_type_stock.item_stock && item.item_type_stock.item_stock.map((stock) =>
+                                                          <span>#{stock.batch_number}<br /></span>)}
+                                                  />
+                                                  <Button
+                                                    type="primary"
+                                                    size="small"
+                                                    shape="circle"
+                                                    onClick={() => this.add(item)}
+                                                    icon="arrow-right"
+                                                  />
+                                              </List.Item>
+)}
+                                    />
+                                    {this.state.items && this.state.items[itemType.value] ? (
                                         <div style={{textAlign: 'center'}}>
-                                            <a style={{margin: 5}}
-                                               disabled={!this.state.items[itemType.value].previous}
-                                               onClick={() => this.loadItemsList(itemType.value, this.state.items[itemType.value].previous)}>
-                                                <Icon type="left"/>Previous
+                                            <a
+                                              style={{margin: 5}}
+                                              disabled={!this.state.items[itemType.value].previous}
+                                              onClick={() => this.loadItemsList(itemType.value, this.state.items[itemType.value].previous)}
+                                            >
+                                                <Icon type="left" />Previous
                                             </a>
-                                            <Divider type={"vertical"}/>
-                                            <a style={{margin: 5}} disabled={!this.state.items[itemType.value].next}
-                                               onClick={() => this.loadItemsList(itemType.value, this.state.items[itemType.value].next)}>
-                                                Next<Icon type="right"/>
+                                            <Divider type="vertical" />
+                                            <a
+                                              style={{margin: 5}}
+                                              disabled={!this.state.items[itemType.value].next}
+                                              onClick={() => this.loadItemsList(itemType.value, this.state.items[itemType.value].next)}
+                                            >
+                                                Next<Icon type="right" />
                                             </a>
-                                        </div> : null}
-                                </TabPane>)}
+                                        </div>
+                                      ) : null}
+</TabPane>
+))}
                             </Tabs>
                         </Col>
                         <Col span={17}>
                             <Form onSubmit={this.handleSubmit}>
-                                {this.state.classType == CONSUME_STOCK ?
+                                {this.state.classType == CONSUME_STOCK ? (
                                     <Row>
                                         <Col span={16}>
                                             <Form.Item
-                                                key={`type_of_consumption`}
-                                                label={"Type of Consumption"}
-                                                {...{
+                                              key="type_of_consumption"
+                                              label="Type of Consumption"
+                                              {...{
                                                     labelCol: {span: 6},
                                                     wrapperCol: {span: 14},
-                                                }}>
+                                                }}
+                                            >
                                                 {getFieldDecorator(`type_of_consumption`, {
                                                     validateTrigger: ['onChange', 'onBlur'],
                                                     rules: [{
@@ -593,88 +651,100 @@ class AddOrConsumeStock extends React.Component {
                                                     }],
                                                 })(
                                                     <Select>
-                                                        {TYPE_OF_CONSUMPTION.map(item => <Select.Option
-                                                            value={item.value}>{item.label}</Select.Option>)}
+                                                        {TYPE_OF_CONSUMPTION.map(item => (
+<Select.Option
+  value={item.value}
+>{item.label}
+</Select.Option>
+))}
                                                     </Select>
                                                 )}
                                             </Form.Item>
                                         </Col>
-                                        {/*<Col span={8}>*/}
-                                        {/*<Search*/}
-                                        {/*loading={this.state.loadingQr}*/}
-                                        {/*value={this.state.qrValue}*/}
-                                        {/*onChange={this.setQrValue}*/}
-                                        {/*placeholder="Search QR Code"*/}
-                                        {/*onSearch={this.addItemThroughQR}*/}
-                                        {/*style={{width: 200}}*/}
-                                        {/*/>*/}
-                                        {/*</Col>*/}
+                                        {/* <Col span={8}> */}
+                                        {/* <Search */}
+                                        {/* loading={this.state.loadingQr} */}
+                                        {/* value={this.state.qrValue} */}
+                                        {/* onChange={this.setQrValue} */}
+                                        {/* placeholder="Search QR Code" */}
+                                        {/* onSearch={this.addItemThroughQR} */}
+                                        {/* style={{width: 200}} */}
+                                        {/* /> */}
+                                        {/* </Col> */}
                                     </Row>
+                                  )
                                     : null}
 
-                                {/*{this.state.classType == CONSUME_STOCK ?*/}
-                                {/*<Form.Item*/}
-                                {/*key={`supplier`}*/}
-                                {/*label={"Supplier"}*/}
-                                {/*{...{*/}
-                                {/*labelCol: {span: 6},*/}
-                                {/*wrapperCol: {span: 14},*/}
-                                {/*}}>*/}
-                                {/*{getFieldDecorator(`addedOn`, {*/}
-                                {/*validateTrigger: ['onChange', 'onBlur'],*/}
-                                {/*rules: [{*/}
-                                {/*message: "This field is required.",*/}
-                                {/*}],*/}
-                                {/*})(*/}
-                                {/*<Select>*/}
-                                {/*/!*{this.state.suppliersList && this.state.suppliersList.map(item =>*!/*/}
-                                {/*/!*<Select.Option*!/*/}
-                                {/*/!*value={item.id}>{item.name}</Select.Option>)}*!/*/}
-                                {/*</Select>*/}
-                                {/*)}*/}
-                                {/*</Form.Item>*/}
-                                {/*: null}*/}
+                                {/* {this.state.classType == CONSUME_STOCK ? */}
+                                {/* <Form.Item */}
+                                {/* key={`supplier`} */}
+                                {/* label={"Supplier"} */}
+                                {/* {...{ */}
+                                {/* labelCol: {span: 6}, */}
+                                {/* wrapperCol: {span: 14}, */}
+                                {/* }}> */}
+                                {/* {getFieldDecorator(`addedOn`, { */}
+                                {/* validateTrigger: ['onChange', 'onBlur'], */}
+                                {/* rules: [{ */}
+                                {/* message: "This field is required.", */}
+                                {/* }], */}
+                                {/* })( */}
+                                {/* <Select> */}
+                                {/* /!*{this.state.suppliersList && this.state.suppliersList.map(item =>*!/ */}
+                                {/* /!*<Select.Option*!/ */}
+                                {/* /!*value={item.id}>{item.name}</Select.Option>)}*!/ */}
+                                {/* </Select> */}
+                                {/* )} */}
+                                {/* </Form.Item> */}
+                                {/*: null} */}
 
-                                <Table pagination={false}
-                                       bordered={true}
-                                       rowKey={record => record._id}
-                                       dataSource={this.state.tableFormValues}
-                                       columns={consumeRow}/>
-                                {/*<List>{formItems}</List>*/}
+                                <Table
+                                  pagination={false}
+                                  bordered
+                                  rowKey={record => record._id}
+                                  dataSource={this.state.tableFormValues}
+                                  columns={consumeRow}
+                                />
+                                {/* <List>{formItems}</List> */}
 
                                 <Affix offsetBottom={0}>
                                     <Card>
                                         <Row>
                                             <Col span={8}>
                                                 <Form.Item
-                                                    key={`remarks`}
-                                                    label='Notes'
-                                                    {...{
+                                                  key="remarks"
+                                                  label='Notes'
+                                                  {...{
                                                         labelCol: {span: 24},
                                                         wrapperCol: {span: 24},
-                                                    }}>
+                                                    }}
+                                                >
                                                     {getFieldDecorator(`remarks`, {
                                                     })(
-                                                        <Input.TextArea/>
+                                                        <Input.TextArea />
                                                     )}
                                                 </Form.Item>
                                                 <Form.Item {...formItemLayoutWithOutLabel}>
                                                     <Button type="primary" htmlType="submit">Submit</Button>
-                                                    {that.props.history ?
-                                                        <Button style={{margin: 5}}
-                                                                onClick={() => that.props.history.goBack()}>
+                                                    {that.props.history ? (
+                                                        <Button
+                                                          style={{margin: 5}}
+                                                          onClick={() => that.props.history.goBack()}
+                                                        >
                                                             Cancel
-                                                        </Button> : null}
+                                                        </Button>
+                                                      ) : null}
                                                 </Form.Item>
                                             </Col>
                                             <Col span={8}>
                                                 <Form.Item
-                                                    key={`date`}
-                                                    label={this.state.classType == ADD_STOCK ? "Added On" : "Consumed On"}
-                                                    {...{
+                                                  key="date"
+                                                  label={this.state.classType == ADD_STOCK ? "Added On" : "Consumed On"}
+                                                  {...{
                                                         labelCol: {span: 10},
                                                         wrapperCol: {span: 14},
-                                                    }}>
+                                                    }}
+                                                >
                                                     {getFieldDecorator(`date`, {
                                                         // validateTrigger: ['onChange', 'onBlur'],
                                                         rules: [{
@@ -683,17 +753,18 @@ class AddOrConsumeStock extends React.Component {
                                                         }],
                                                         initialValue: moment(),
                                                     })(
-                                                        <DatePicker allowClear={false}/>
+                                                        <DatePicker allowClear={false} />
                                                     )}
                                                 </Form.Item>
 
                                                 <Form.Item
-                                                    key={`bill_number`}
-                                                    label='Bill Number'
-                                                    {...{
+                                                  key="bill_number"
+                                                  label='Bill Number'
+                                                  {...{
                                                         labelCol: {span: 10},
                                                         wrapperCol: {span: 14},
-                                                    }}>
+                                                    }}
+                                                >
                                                     {getFieldDecorator(`bill_number`, {
                                                         validateTrigger: ['onChange', 'onBlur'],
                                                         rules: [{
@@ -702,20 +773,22 @@ class AddOrConsumeStock extends React.Component {
                                                         }],
 
                                                     })(
-                                                        <Input/>
+                                                        <Input />
                                                     )}
                                                 </Form.Item>
 
 
-                                                {this.state.classType == ADD_STOCK ? <div>
-                                                    {this.state.customSupplier ?
+                                                {this.state.classType == ADD_STOCK ? (
+<div>
+                                                    {this.state.customSupplier ? (
                                                         <Form.Item
-                                                            key={`supplier_name`}
-                                                            label={"Supplier"}
-                                                            {...{
+                                                          key="supplier_name"
+                                                          label="Supplier"
+                                                          {...{
                                                                 labelCol: {span: 10},
                                                                 wrapperCol: {span: 14},
-                                                            }}>
+                                                            }}
+                                                        >
                                                             {getFieldDecorator(`supplier_name`, {
                                                                 validateTrigger: ['onChange', 'onBlur'],
                                                                 rules: [{
@@ -723,17 +796,20 @@ class AddOrConsumeStock extends React.Component {
                                                                     message: "This field is required.",
                                                                 }],
                                                             })(
-                                                                <Input/>
+                                                                <Input />
                                                             )}
                                                             {this.state.customSupplier ?
                                                                 <a onClick={() => this.changeSupplierType(false)}>Cancel</a> : null}
-                                                        </Form.Item> : <Form.Item
-                                                            key={`supplier`}
-                                                            label={"Supplier"}
-                                                            {...{
+                                                        </Form.Item>
+                                                      ) : (
+<Form.Item
+  key="supplier"
+  label="Supplier"
+  {...{
                                                                 labelCol: {span: 10},
                                                                 wrapperCol: {span: 14},
-                                                            }}>
+                                                            }}
+>
                                                             {getFieldDecorator(`supplier`, {
                                                                 validateTrigger: ['onChange', 'onBlur'],
                                                                 rules: [{
@@ -741,39 +817,50 @@ class AddOrConsumeStock extends React.Component {
                                                                     message: "This field is required.",
                                                                 }],
                                                             })(<Select>
-                                                                {this.state.supplierList.map(item => <Select.Option
-                                                                    value={item.id}>
+                                                                {this.state.supplierList.map(item => (
+<Select.Option
+  value={item.id}
+>
                                                                     {item.name}
-                                                                </Select.Option>)}
-                                                            </Select>)}
-                                                            {this.state.customSupplier ? null :
+</Select.Option>
+))}
+                                                               </Select>)}
+                                                            {this.state.customSupplier ? null : (
                                                                 <a onClick={() => this.changeSupplierType(true)}>Add
-                                                                    New</a>}
-                                                        </Form.Item>} </div> : null}
+                                                                    New
+                                                                </a>
+                                                              )}
+</Form.Item>
+)} 
+</div>
+) : null}
                                             </Col>
                                             <Col span={6} offset={2}>
-                                                <Form.Item key={'file'} {...formItemLayout}>
+                                                <Form.Item key="file" {...formItemLayout}>
                                                     {getFieldDecorator('file', {})(
                                                         <Upload {...singleUploadprops}>
                                                             <Button>
-                                                                <Icon type="upload"/> Select File
+                                                                <Icon type="upload" /> Select File
                                                             </Button>
 
                                                         </Upload>
                                                     )}
                                                 </Form.Item>
                                             </Col>
-                                            {this.state.classType == ADD_STOCK ?
+                                            {this.state.classType == ADD_STOCK ? (
                                                 <Col style={{textAlign: 'center'}} span={8}>
 
                                                     <h3>Grand
                                                         Total: <b>{this.state.tableFormValues.reduce(function (total, item) {
-                                                            if (that.state.tempValues['quantity' + item._id] && that.state.tempValues['unit_cost' + item._id]) {
-                                                                return total + (that.state.tempValues['quantity' + item._id] * that.state.tempValues['unit_cost' + item._id])
+                                                            if (that.state.tempValues[`quantity${  item._id}`] && that.state.tempValues[`unit_cost${  item._id}`]) {
+                                                                return total + (that.state.tempValues[`quantity${  item._id}`] * that.state.tempValues[`unit_cost${  item._id}`])
                                                             }
                                                             return total
-                                                        }, 0)}</b></h3>
+                                                        }, 0)}
+                                                               </b>
+                                                    </h3>
                                                 </Col>
+                                              )
                                                 : null}
 
                                         </Row>
@@ -786,7 +873,8 @@ class AddOrConsumeStock extends React.Component {
                     </Row>
                 </Card>
             </Spin>
-        </div>
+</div>
+)
 
     }
 }

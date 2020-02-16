@@ -1,5 +1,7 @@
 import {Card, Form, Row} from "antd";
 import React from "react";
+import {Route} from "react-router";
+import {Redirect} from "react-router-dom";
 import {
     SINGLE_IMAGE_UPLOAD_FIELD,
     INPUT_FIELD,
@@ -12,8 +14,6 @@ import {
     LANDING_PAGE_CONTENT,
     SINGLE_LANDING_PAGE_CONTENT,
 } from "../../../constants/api";
-import {Route} from "react-router";
-import {Redirect} from "react-router-dom";
 
 
 export default class AddLandingPageContent extends React.Component {
@@ -33,20 +33,20 @@ export default class AddLandingPageContent extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
     }
 
     loadData() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 editBlogData: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(SINGLE_LANDING_PAGE_CONTENT, [this.props.match.params.id]), successFn, errorFn);
@@ -54,7 +54,7 @@ export default class AddLandingPageContent extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const fields = [{
             label: "Title",
             key: "title",
@@ -75,7 +75,7 @@ export default class AddLandingPageContent extends React.Component {
         let editformProp;
         if (this.state.editBlogData) {
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     that.setState({
                         redirect: true
@@ -85,7 +85,7 @@ export default class AddLandingPageContent extends React.Component {
                         that.props.history.replace('/web/landingpagecontent');
                     };
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(SINGLE_LANDING_PAGE_CONTENT, [this.props.match.params.id]),
@@ -96,7 +96,7 @@ export default class AddLandingPageContent extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.setState({
                     redirect: true
@@ -106,29 +106,48 @@ export default class AddLandingPageContent extends React.Component {
                     that.props.history.replace('/web/landingpagecontent');
                 };
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: LANDING_PAGE_CONTENT,
             method: "post",
         }
-        let defaultValues = [];
+        const defaultValues = [];
 
-        return <Row>
+        return (
+<Row>
             <Card>
-                <Route exact path='/web/landingpagecontent/edit/:id'
-                       render={() => (this.props.match.params.id ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit Content"
-                                           changeRedirect={this.changeRedirect} formProp={editformProp}
-                                           fields={fields}/> : <Redirect to={'/web/landingpagecontent'}/>)}/>
-                <Route exact path='/web/landingpagecontent/add'
-                       render={() => <TestFormLayout title="Add Content" changeRedirect={this.changeRedirect}
-                                                     formProp={formProp} fields={fields}/>}/>
+                <Route
+                  exact
+                  path='/web/landingpagecontent/edit/:id'
+                  render={() => (this.props.match.params.id ? (
+                           <TestFormLayout
+                             defaultValues={defaultValues}
+                             title="Edit Content"
+                             changeRedirect={this.changeRedirect}
+                             formProp={editformProp}
+                             fields={fields}
+                           />
+                         ) : <Redirect to="/web/landingpagecontent" />)}
+                />
+                <Route
+                  exact
+                  path='/web/landingpagecontent/add'
+                  render={() => (
+<TestFormLayout
+  title="Add Content"
+  changeRedirect={this.changeRedirect}
+  formProp={formProp}
+  fields={fields}
+/>
+)}
+                />
 
 
             </Card>
-            {this.state.redirect && <Redirect to={'/web/landingpagecontent'}/>}
-        </Row>
+            {this.state.redirect && <Redirect to="/web/landingpagecontent" />}
+</Row>
+)
 
     }
 }

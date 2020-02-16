@@ -1,6 +1,7 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Modal, Card, Form, Icon, Row, Table, Divider, Popconfirm} from "antd";
+import {Link} from "react-router-dom";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     SUCCESS_MSG_TYPE,
     CHECKBOX_FIELD,
@@ -10,7 +11,6 @@ import {
     SELECT_FIELD
 } from "../../../../constants/dataKeys";
 import {PAYMENT_MODES, TAXES} from "../../../../constants/api"
-import {Link} from "react-router-dom";
 import {getAPI, displayMessage, interpolate, postAPI} from "../../../../utils/common";
 import CustomizedTable from "../../../common/CustomizedTable";
 
@@ -33,15 +33,15 @@ class TaxCatalog extends React.Component {
     }
 
     loadData() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log("get table");
             that.setState({
                 taxes: data,
                 loading:false
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading:false
             })
@@ -50,7 +50,7 @@ class TaxCatalog extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -71,19 +71,19 @@ class TaxCatalog extends React.Component {
     }
 
     deleteObject(record) {
-        let that = this;
-        let reqData = record;
+        const that = this;
+        const reqData = record;
         reqData.is_active = false;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
         }
-        let errorFn = function () {
+        const errorFn = function () {
         };
         postAPI(interpolate(TAXES, [this.props.active_practiceId]), reqData, successFn, errorFn)
     }
 
     render() {
-        let that = this;
+        const that = this;
         const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -98,13 +98,17 @@ class TaxCatalog extends React.Component {
             key: 'action',
             render: (text, record) => (
                 <span>
-              {/*<a onClick={() => this.editTax(record)}>  Edit</a>*/}
+              {/* <a onClick={() => this.editTax(record)}>  Edit</a> */}
                 {/* <Divider type="vertical"/> */}
-                    <Popconfirm title="Are you sure delete this?"
-                                onConfirm={() => that.deleteObject(record)} okText="Yes" cancelText="No">
+                    <Popconfirm
+                      title="Are you sure delete this?"
+                      onConfirm={() => that.deleteObject(record)}
+                      okText="Yes"
+                      cancelText="No"
+                    >
                       <a>Delete</a>
-                  </Popconfirm>
-              </span>
+                    </Popconfirm>
+                </span>
             ),
         }];
         const fields = [{
@@ -140,14 +144,14 @@ class TaxCatalog extends React.Component {
             type: NUMBER_FIELD
         },];
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 that.handleCancel();
                 that.loadData();
                 console.log(data);
                 console.log("sucess");
                 displayMessage(SUCCESS_MSG_TYPE, "success")
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(TAXES, [this.props.active_practiceId]),
@@ -159,21 +163,23 @@ class TaxCatalog extends React.Component {
             "value": this.state.editingId
         }];
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>
-            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields} {...this.props}/>
-            <Divider/>
-            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.taxes}/>
+        return (
+<div>
+            <TestFormLayout defaultValues={defaultValues} formProp={formProp} fields={fields} {...this.props} />
+            <Divider />
+            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.taxes} />
             <Modal
-                title="Edit Tax"
-                visible={this.state.visible}
-                footer={null}
-                onCancel={this.handleCancel}
+              title="Edit Tax"
+              visible={this.state.visible}
+              footer={null}
+              onCancel={this.handleCancel}
             >
-                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields}/>
+                <TestFormLayout defaultValues={editFormDefaultValues} formProp={formProp} fields={editfields} />
                 <Button key="back" onClick={this.handleCancel}>Return</Button>,
 
             </Modal>
-        </div>
+</div>
+)
     }
 }
 

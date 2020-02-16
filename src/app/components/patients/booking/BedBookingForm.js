@@ -21,6 +21,7 @@ import {
     Table,
     Upload
 } from "antd";
+import moment from "moment";
 import {displayMessage, getAPI, interpolate, makeFileURL, makeURL, postAPI} from "../../../utils/common";
 import {
     BED_PACKAGES,
@@ -33,7 +34,6 @@ import {
     PAYMENT_MODES,
     SEARCH_PATIENT
 } from "../../../constants/api";
-import moment from "moment";
 // import {Booking_Type} from "../../constants/hardData";
 import {SUCCESS_MSG_TYPE} from "../../../constants/dataKeys";
 
@@ -52,7 +52,7 @@ class BedBookingForm extends React.Component {
             medicinePackage: [],
             medicineItem: [],
             diseases: []
-            //choosePkg:{},
+            // choosePkg:{},
 
 
         }
@@ -68,46 +68,47 @@ class BedBookingForm extends React.Component {
     }
 
     loadPackages = () => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 packages: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         getAPI(interpolate(BED_PACKAGES, [this.props.active_practiceId]), successFn, errorFn);
 
     }
+
     loadDiseases = () => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 diseases: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         getAPI(interpolate(DISEASE_LIST, [this.props.active_practiceId]), successFn, errorFn);
 
     }
 
     loadMedicinePackages() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 medicinePackage: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(MEDICINE_PACKAGES, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     searchPatient = (value) => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             if (data) {
                 that.setState({
                     patientList: data,
@@ -116,50 +117,50 @@ class BedBookingForm extends React.Component {
                 })
             }
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(SEARCH_PATIENT, [value]), successFn, errorFn);
     }
 
     handlePatientSelect = (event) => {
         if (event) {
-            let that = this;
-            let successFn = function (data) {
+            const that = this;
+            const successFn = function (data) {
                 that.setState({
                     patientDetails: data
                 });
             };
-            let errorFn = function () {
+            const errorFn = function () {
             };
             getAPI(interpolate(PATIENT_PROFILE, [event]), successFn, errorFn);
         }
     }
 
     loadPaymentModes() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 paymentModes: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(PAYMENT_MODES, [this.props.active_practiceId]), successFn, errorFn);
     }
 
     checkBedStatus = (type, value) => {
-        let that = this;
+        const that = this;
         that.handleRoomType();
         this.setState({
             [type]: value
         }, function () {
 
-            let successFn = function (data) {
+            const successFn = function (data) {
                 that.setState({
                     availabilitySeatTatkal: data.TATKAL,
                     availabilitySeatNormal: data.NORMAL,
                 });
-                let currentSelected = that.props.form.getFieldValue('seat_type');
+                const currentSelected = that.props.form.getFieldValue('seat_type');
                 if (!data[currentSelected]) {
                     that.props.form.setFieldsValue({
                         seat_type: null
@@ -168,10 +169,10 @@ class BedBookingForm extends React.Component {
                 }
             }
             that.calculateTotalAmount();
-            let errorFn = function () {
+            const errorFn = function () {
 
             }
-            let {from_date, bed_package} = that.state;
+            const {from_date, bed_package} = that.state;
             if (from_date && bed_package) {
                 let to_date = null;
                 that.state.packages.forEach(function (pkgObj) {
@@ -180,14 +181,14 @@ class BedBookingForm extends React.Component {
                     }
                 });
                 if (from_date && to_date && bed_package) {
-                    let {setFieldsValue} = that.props.form;
+                    const {setFieldsValue} = that.props.form;
                     setFieldsValue({
-                        to_date: to_date
+                        to_date
                     })
                     getAPI(interpolate(CHECK_SEAT_AVAILABILITY, [that.props.active_practiceId]), successFn, errorFn, {
                         start: moment(from_date).format('YYYY-MM-DD'),
                         end: moment(to_date).format('YYYY-MM-DD'),
-                        bed_package: bed_package
+                        bed_package
                     })
                 }
             }
@@ -199,8 +200,8 @@ class BedBookingForm extends React.Component {
         this.setState({
             loading: true
         })
-        let that = this;
-        let details=[];
+        const that = this;
+        const details=[];
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -209,7 +210,7 @@ class BedBookingForm extends React.Component {
                 label.map((key,i)=>
                     details.push({'key':key, 'value': value[i]})
                 );
-                let reqData = {
+                const reqData = {
                     ...values,
                     to_date: moment(values.to_date).format('YYYY-MM-DD'),
                     from_date: moment(values.from_date).format('YYYY-MM-DD'),
@@ -220,23 +221,23 @@ class BedBookingForm extends React.Component {
                     patient: this.state.patientDetails.id,
                     rest_diseases: values.rest_diseases ? values.rest_diseases.join(',') : null,
                     report_upload: values.file && values.file.file.response ? values.file.file.response.image_path : null,
-                    details:details
+                    details
                 };
                 delete reqData.label;
                 delete reqData.value;
                 delete reqData.keys;
 
-                let successFn = function (data) {
+                const successFn = function (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "Saved Successfully!!");
                     if (that.props.history){
                         that.props.history.goBack();
-                        that.props.history.replace('/patient/'+ that.props.match.params.id +'/booking')
+                        that.props.history.replace(`/patient/${ that.props.match.params.id }/booking`)
                     }
                     if (that.props.loadData) {
                         that.props.loadData();
                     }
                 };
-                let errorFn = function () {
+                const errorFn = function () {
 
                 };
 
@@ -246,14 +247,16 @@ class BedBookingForm extends React.Component {
 
 
     };
+
     handleClick = (e) => {
         this.setState({
             patientDetails: null
         })
 
     };
+
     handleRoomType = (name, value) => {
-        let that = this;
+        const that = this;
         this.setState({
             [name]: value,
         }, function () {
@@ -261,8 +264,9 @@ class BedBookingForm extends React.Component {
         });
 
     }
+
     calculateTotalAmount = () => {
-        let that = this;
+        const that = this;
         that.setState(function (prevSate) {
             let payAmount = 0;
             let total_tax = 0;
@@ -323,26 +327,29 @@ class BedBookingForm extends React.Component {
             }
         })
     }
+
     setPaymentAmount = (value) => {
-        let that = this;
+        const that = this;
         this.setState({
             totalPayingAmount: value
         }, function () {
             that.calculateTotalAmount();
         })
     }
+
     handleMedicineSelect = (e) => {
-        let value = e;
+        const value = e;
         this.setState({
             medicineItem: value,
         }, function () {
             this.calculateTotalAmount()
         })
     }
+
     changeDiscount=(id, value)=>{
-        let that=this;
+        const that=this;
         that.setState(function (prevState) {
-            let newTableValue = [];
+            const newTableValue = [];
             prevState.choosePkg.forEach(function (tableObj) {
                 if (tableObj._id == id) {
 
@@ -382,16 +389,16 @@ class BedBookingForm extends React.Component {
         const BOOKING_TYPE = [
             {
                 value: 'NORMAL',
-                is_or_not: this.state.availabilitySeatNormal && this.state.availabilitySeatNormal.available ? true : false
+                is_or_not: !!(this.state.availabilitySeatNormal && this.state.availabilitySeatNormal.available)
             },
             {
                 value: 'TATKAL',
-                is_or_not: this.state.availabilitySeatTatkal && this.state.availabilitySeatTatkal.available ? true : false
+                is_or_not: !!(this.state.availabilitySeatTatkal && this.state.availabilitySeatTatkal.available)
             },
 
         ];
 
-        let that = this;
+        const that = this;
         const {getFieldDecorator, getFieldValue} = this.props.form;
         const formItemLayout = ({
             labelCol: {
@@ -432,17 +439,20 @@ class BedBookingForm extends React.Component {
                 key: 'discount',
                 width: 100,
                 dataIndex: 'discount',
-                render: (item, record) => <Form.Item
-                    key={`discount[${record._id}]`}
-                    {...formItemLayout}>
+                render: (item, record) => (
+<Form.Item
+  key={`discount[${record._id}]`}
+  {...formItemLayout}
+>
                     {getFieldDecorator(`discount[${record._id}]`, {
                         initialValue: record.discount,
                         validateTrigger: ['onChange', 'onBlur'],
 
                     })(
-                        <InputNumber min={0} max={100} placeholder="discount" size={'small'} value={record.discount} onChange={(value) => that.changeDiscount(record._id ,value)}/>
+                        <InputNumber min={0} max={100} placeholder="discount" size="small" value={record.discount} onChange={(value) => that.changeDiscount(record._id ,value)} />
                     )}
-                </Form.Item>
+</Form.Item>
+)
             },
             {
                 title: 'Price',
@@ -492,8 +502,7 @@ class BedBookingForm extends React.Component {
                 <Col span={8}>
                     <Form.Item label="">
                         {getFieldDecorator(`label[${k}]`)
-                        (<Input  placeholder={"name"}/>)
-                        }
+                        (<Input placeholder="name" />)}
                     </Form.Item>
 
                 </Col>
@@ -501,133 +510,170 @@ class BedBookingForm extends React.Component {
                 <Col span={8}>
                     <Form.Item label="">
                         {getFieldDecorator(`value[${k}]`)
-                        (<Input  placeholder={"value"}/>)
-                        }
+                        (<Input placeholder="value" />)}
                     </Form.Item>
 
                 </Col>
                 <Col span={8}>
                     {index ? (
-                        <Button onClick={() => this.removeNewOptionField(k)} size={"small"} type={"danger"}
-                                style={{margin: 5}} icon={'close'} shape={'circle'}/>
+                        <Button
+                          onClick={() => this.removeNewOptionField(k)}
+                          size="small"
+                          type="danger"
+                          style={{margin: 5}}
+                          icon="close"
+                          shape="circle"
+                        />
                     ):null}
 
-                    {index == keys.length - 1 ?
+                    {index == keys.length - 1 ? (
                         <Button type="dashed" style={{marginTop: '3px'}} onClick={this.addNewFields}>
                             <Icon type="plus" /> Add field
                         </Button>
-                        : null
-                    }
+                      )
+                        : null}
                 </Col>
 
             </Row>
         ));
-        return <div>
-            <Card title={"Book a Seat/Bed"}>
+        return (
+<div>
+            <Card title="Book a Seat/Bed">
                 <Form>
                     <Row>
                         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                             <div style={{paddingRight:'10px'}}>
 
-                                {this.state.patientDetails ? <Form.Item key="id"
-                                                                        value={this.state.patientDetails ? this.state.patientDetails.id : ''} {...formPatients}>
+                                {this.state.patientDetails ? (
+<Form.Item
+  key="id"
+  value={this.state.patientDetails ? this.state.patientDetails.id : ''}
+  {...formPatients}
+>
                                         <Card bordered={false} style={{background: '#ECECEC'}}>
                                             <Meta
-                                                avatar={(this.state.patientDetails.image ? <Avatar src={makeFileURL(this.state.patientDetails.image)}/> :
+                                              avatar={(this.state.patientDetails.image ? <Avatar src={makeFileURL(this.state.patientDetails.image)} /> : (
                                                     <Avatar style={{backgroundColor: '#87d068'}}>
                                                         {this.state.patientDetails.user.first_name ? this.state.patientDetails.user.first_name.charAt(0) :
-                                                            <Icon type="user"/>}
-                                                    </Avatar>)}
-                                                title={this.state.patientDetails.user.first_name}
-                                                description={this.state.patientDetails.user.mobile}
+                                                            <Icon type="user" />}
+                                                    </Avatar>
+                                                  ))}
+                                              title={this.state.patientDetails.user.first_name}
+                                              description={this.state.patientDetails.user.mobile}
                                             />
-                                            {/*<Button onClick={this.handleClick} icon="close-circle"*/}
-                                            {/*        type={"danger"}/>*/}
+                                            {/* <Button onClick={this.handleClick} icon="close-circle" */}
+                                            {/*        type={"danger"}/> */}
                                             {/* <Button type="primary" style={{float: 'right'}} onClick={this.handleClick}>Add New
                                                 Patient</Button> */}
                                         </Card>
-                                    </Form.Item>
-                                    : <div>
+</Form.Item>
+)
+                                    : (
+<div>
                                         <Form.Item label="Patient" {...formItemLayout}>
                                             {getFieldDecorator('patient', {
                                                 rules: [{required: true, message: 'this field required'}],
                                             })
-                                            (<AutoComplete placeholder="Patient Name"
-                                                           showSearch
-                                                           onSearch={this.searchPatient}
-                                                           defaultActiveFirstOption={false}
-                                                           showArrow={false}
-                                                           filterOption={false}
-                                                           onSelect={this.handlePatientSelect}>
-                                                {this.state.patientList.map((option) => <AutoComplete.Option
-                                                    value={option ? option.id.toString() : ''}>
+                                            (<AutoComplete
+                                              placeholder="Patient Name"
+                                              showSearch
+                                              onSearch={this.searchPatient}
+                                              defaultActiveFirstOption={false}
+                                              showArrow={false}
+                                              filterOption={false}
+                                              onSelect={this.handlePatientSelect}
+                                            >
+                                                {this.state.patientList.map((option) => (
+<AutoComplete.Option
+  value={option ? option.id.toString() : ''}
+>
                                                     <List.Item style={{padding: 0}}>
                                                         <List.Item.Meta
-                                                            avatar={option.image ?
-                                                                <Avatar style={{backgroundColor: '#ffff'}}
-                                                                        src={makeFileURL(option.image)}/> :
-                                                                <Icon type="user"/>}
-                                                            title={option.user.first_name + " (" + option.user.id + ")"}
-                                                            description={<small>{option.user.mobile}</small>}
+                                                          avatar={option.image ? (
+                                                                <Avatar
+                                                                  style={{backgroundColor: '#ffff'}}
+                                                                  src={makeFileURL(option.image)}
+                                                                />
+                                                              ) :
+                                                                <Icon type="user" />}
+                                                          title={`${option.user.first_name  } (${  option.user.id  })`}
+                                                          description={<small>{option.user.mobile}</small>}
                                                         />
 
                                                     </List.Item>
-                                                </AutoComplete.Option>)}
-                                            </AutoComplete>)
-                                            }
+</AutoComplete.Option>
+))}
+                                             </AutoComplete>)}
 
-                                            {this.state.ptr ? <Alert message="Patient Not Found !!"
-                                                                     description="Please Search another patient or create new patient."
-                                                                     type="error"/> : null}
+                                            {this.state.ptr ? (
+<Alert
+  message="Patient Not Found !!"
+  description="Please Search another patient or create new patient."
+  type="error"
+/>
+) : null}
                                         </Form.Item>
-                                    </div>}
+</div>
+)}
 
                                 <Form.Item label="Bed Package" {...formItemLayout}>
                                     {getFieldDecorator('bed_package', {
                                         rules: [{required: true, message: 'this field required!'}],
                                     })
                                     (<Select onChange={(value) => that.checkBedStatus('bed_package', value)}>
-                                        {that.state.packages.map(room => <Select.Option
-                                            value={room.id}>{room.name}</Select.Option>)}
-                                    </Select>)
-                                    }
+                                        {that.state.packages.map(room => (
+<Select.Option
+  value={room.id}
+>{room.name}
+</Select.Option>
+))}
+                                     </Select>)}
                                 </Form.Item>
                                 <Form.Item label="Book From" {...formItemLayout}>
                                     {getFieldDecorator('from_date', {
                                         rules: [{required: true, message: 'Input From Date!'}],
                                     })
-                                    (<DatePicker onChange={(value) => that.checkBedStatus('from_date', value)}
-                                                 format={'DD-MM-YYYY'} allowClear={false}/>)
-                                    }
+                                    (<DatePicker
+                                      onChange={(value) => that.checkBedStatus('from_date', value)}
+                                      format="DD-MM-YYYY"
+                                      allowClear={false}
+                                    />)}
                                 </Form.Item>
                                 <Form.Item label="Book To" {...formItemLayout}>
                                     {getFieldDecorator('to_date', {
                                         rules: [{required: true, message: 'Input To Date!'}],
                                     })
-                                    (<DatePicker disabled format={'DD-MM-YYYY'}/>)
-                                    }
+                                    (<DatePicker disabled format="DD-MM-YYYY" />)}
                                 </Form.Item>
 
-                                <Form.Item label={"Booking Type"} {...formItemLayout} >
+                                <Form.Item label="Booking Type" {...formItemLayout}>
                                     {getFieldDecorator('seat_type', {
                                         rules: [{
                                             required: true, message: 'this field required'
                                         }]
                                     })(<Radio.Group
-                                            onChange={(e) => this.handleRoomType('seat_type', e.target.value)}>
-                                            {BOOKING_TYPE.map((seat_type) => <Radio
-                                                value={seat_type.is_or_not ? seat_type.value : ''}
-                                                disabled={seat_type.is_or_not ? false : true}>{seat_type.value}</Radio>)}
-                                        </Radio.Group>
+                                      onChange={(e) => this.handleRoomType('seat_type', e.target.value)}
+                                    >
+                                            {BOOKING_TYPE.map((seat_type) => (
+<Radio
+  value={seat_type.is_or_not ? seat_type.value : ''}
+  disabled={!seat_type.is_or_not}
+>{seat_type.value}
+</Radio>
+))}
+                                       </Radio.Group>
                                     )}
                                 </Form.Item>
                                 <Form.Item label="Medicine  Package" {...formItemLayout}>
                                     {getFieldDecorator('medicines', {})
                                     (<Select mode="multiple" onChange={this.handleMedicineSelect}>
-                                        {that.state.medicinePackage.map(item => <Select.Option
-                                            value={item.id}>{item.name}</Select.Option>)}
-                                    </Select>)
-                                    }
+                                        {that.state.medicinePackage.map(item => (
+<Select.Option
+  value={item.id}
+>{item.name}
+</Select.Option>
+))}
+                                     </Select>)}
                                 </Form.Item>
 
                                 <Form.Item label="Pay Now : " {...formItemLayout}>
@@ -639,24 +685,30 @@ class BedBookingForm extends React.Component {
                                         initialValue: this.state.totalPayingAmount ? this.state.totalPayingAmount : null
                                     })
                                     (
-                                        <InputNumber min={0} step={1} max={this.state.totalPayableAmount}
-                                                     onChange={this.setPaymentAmount}/>
-                                    )
-                                    }
+                                        <InputNumber
+                                          min={0}
+                                          step={1}
+                                          max={this.state.totalPayableAmount}
+                                          onChange={this.setPaymentAmount}
+                                        />
+                                    )}
                                 </Form.Item>
                                 <Form.Item label="Payment Mode" {...formItemLayout}>
                                     {getFieldDecorator('payment_mode', {
                                         rules: [{required: true, message: 'this field required'}],
                                     })
-                                    (<Select showSearch
-                                             filterOption={(input, option) =>
-                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                             }
+                                    (<Select
+                                      showSearch
+                                      filterOption={(input, option) =>
+                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                                     >
-                                        {this.state.paymentModes.map(type => <Select.Option
-                                            value={type.id}>{type.mode}</Select.Option>)}
-                                    </Select>)
-                                    }
+                                        {this.state.paymentModes.map(type => (
+<Select.Option
+  value={type.id}
+>{type.mode}
+</Select.Option>
+))}
+                                     </Select>)}
                                 </Form.Item>
 
                                 {/* <Col span={7} style={{float:"right"}}>
@@ -679,52 +731,56 @@ class BedBookingForm extends React.Component {
                                     {getFieldDecorator('creatinine', {
                                         // rules: [{required: true, message: 'this field required'}],
                                     })
-                                    (<Input/>)
-                                    }
+                                    (<Input />)}
                                 </Form.Item>
                                 <Form.Item label="Urea Level" {...formItemLayout}>
                                     {getFieldDecorator('urea_level', {
                                         // rules: [{required: true, message: 'this field required'}],
                                     })
-                                    (<Input/>)
-                                    }
+                                    (<Input />)}
                                 </Form.Item>
                                 <Form.Item label="Currently on Dialysis?" {...formItemLayout}>
                                     {getFieldDecorator('dialysis', {
                                         // rules: [{required: true, message: 'this field required'}],
                                     })
-                                    (<Select showSearch
-                                             filterOption={(input, option) =>
-                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                             }>
+                                    (<Select
+                                      showSearch
+                                      filterOption={(input, option) =>
+                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                    >
                                         <Select.Option
-                                            value={true}>YES</Select.Option>
+                                          value
+                                        >YES
+                                        </Select.Option>
                                         <Select.Option
-                                            value={false}>NO</Select.Option>
-                                    </Select>)
-                                    }
+                                          value={false}
+                                        >NO
+                                        </Select.Option>
+                                     </Select>)}
                                 </Form.Item>
                                 <Form.Item label="Diseases" {...formItemLayout}>
                                     {getFieldDecorator('other_diseases', {
                                         // rules: [{required: true, message: 'this field required'}],
                                     })
-                                    (<Select showSearch mode={"multiple"}
-                                             filterOption={(input, option) =>
-                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                             }>
-                                        {this.state.diseases.map(item => <Select.Option
-                                            value={item.id}>{item.name}</Select.Option>)}
-                                    </Select>)
-                                    }
+                                    (<Select
+                                      showSearch
+                                      mode="multiple"
+                                      filterOption={(input, option) =>
+                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                    >
+                                        {this.state.diseases.map(item => (
+<Select.Option
+  value={item.id}
+>{item.name}
+</Select.Option>
+))}
+                                     </Select>)}
                                 </Form.Item>
                                 <Form.Item label="Other Diseases" {...formItemLayout}>
                                     {getFieldDecorator('rest_diseases', {
                                         // rules: [{required: true, message: 'this field required'}],
                                     })
-                                    (<Select mode={"tags"}>
-
-                                    </Select>)
-                                    }
+                                    (<Select mode="tags" />)}
                                 </Form.Item>
                                 <Form.Item label="Upload Report" {...formItemLayout}>
                                     {getFieldDecorator('file', {
@@ -732,30 +788,33 @@ class BedBookingForm extends React.Component {
                                     })
                                     (<Upload {...singleUploadprops}>
                                         <Button>
-                                            <Icon type="upload"/> Select File
+                                            <Icon type="upload" /> Select File
                                         </Button>
 
-                                    </Upload>)
-                                    }
+                                     </Upload>)}
                                 </Form.Item>
                             </div>
 
                         </Col>
                         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                             <Divider>Item Details</Divider>
-                            <Table pagination={false} columns={columns} size={'small'}
-                                   dataSource={this.state.choosePkg}/>
+                            <Table
+                              pagination={false}
+                              columns={columns}
+                              size="small"
+                              dataSource={this.state.choosePkg}
+                            />
 
                             <Divider>Extra Details</Divider>
                             <Card>
 
                                 {chooseOption}
-                                {/*<Col span={8}>*/}
-                                {/*    <Button type="dashed" style={{marginTop:'3px'}} onClick={this.addNewFields}>*/}
-                                {/*        <Icon type="plus" /> Add field*/}
-                                {/*    </Button>*/}
+                                {/* <Col span={8}> */}
+                                {/*    <Button type="dashed" style={{marginTop:'3px'}} onClick={this.addNewFields}> */}
+                                {/*        <Icon type="plus" /> Add field */}
+                                {/*    </Button> */}
 
-                                {/*</Col>*/}
+                                {/* </Col> */}
                             </Card>
 
 
@@ -764,21 +823,26 @@ class BedBookingForm extends React.Component {
                             <h3>Grand Total: <b>{this.state.totalPayableAmount.toFixed(2)}</b></h3>
                             <Form.Item>
                                 <Popconfirm
-                                    title={"Are you sure to take payment of INR " + this.state.totalPayingAmount + "?"}
-                                    onConfirm={this.handleSubmit}>
-                                    <Button type={'primary'}>Submit</Button>
+                                  title={`Are you sure to take payment of INR ${  this.state.totalPayingAmount  }?`}
+                                  onConfirm={this.handleSubmit}
+                                >
+                                    <Button type="primary">Submit</Button>
                                 </Popconfirm>
-                                {that.props.history ?
-                                    <Button style={{margin: 5}}
-                                            onClick={() => that.props.history.goBack()}>
+                                {that.props.history ? (
+                                    <Button
+                                      style={{margin: 5}}
+                                      onClick={() => that.props.history.goBack()}
+                                    >
                                         Cancel
-                                    </Button> : null}
+                                    </Button>
+                                  ) : null}
                             </Form.Item>
                         </Col>
                     </Row>
                 </Form>
             </Card>
-        </div>
+</div>
+)
     }
 }
 

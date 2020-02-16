@@ -1,8 +1,8 @@
 import React from "react";
 import {Divider, Statistic,Row, Col, Spin, Empty, Select} from "antd";
+import {PieChart, Pie, Sector, Cell} from 'recharts';
 import {PATIENT_APPOINTMENTS_REPORTS} from "../../../constants/api";
 import {getAPI} from "../../../utils/common";
-import {PieChart, Pie, Sector, Cell} from 'recharts';
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -19,13 +19,14 @@ export default class AppointmentForEachPatientGroup extends React.Component {
         }
         this.loadAppointmentPatientGroup = this.loadAppointmentPatientGroup.bind(this);
     }
+
     componentDidMount() {
         this.loadAppointmentPatientGroup();
         loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.categories!=newProps.categories
             ||this.props.doctors!=newProps.doctors ||this.props.exclude_cancelled!=newProps.exclude_cancelled)
             this.setState({
@@ -38,11 +39,11 @@ export default class AppointmentForEachPatientGroup extends React.Component {
     }
 
     loadAppointmentPatientGroup = () => {
-        let that = this;
+        const that = this;
         that.setState({
             loading:true,
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 appointmentGroup: data.data,
                 total:data.total,
@@ -50,17 +51,17 @@ export default class AppointmentForEachPatientGroup extends React.Component {
             });
 
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             type:that.props.type,
             practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            exclude_cancelled:this.props.exclude_cancelled?true:false,
+            exclude_cancelled:!!this.props.exclude_cancelled,
         };
         // if (this.props.exclude_cancelled){
         //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
@@ -74,18 +75,20 @@ export default class AppointmentForEachPatientGroup extends React.Component {
 
         getAPI(PATIENT_APPOINTMENTS_REPORTS,  successFn, errorFn, apiParams);
     };
+
     onPieEnter=(data, index)=>{
         this.setState({
             activeIndex: index,
         });
     };
+
     sendMail = (mailTo) => {
-        let apiParams={
+        const apiParams={
             type:this.props.type,
             practice:this.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            exclude_cancelled:this.props.exclude_cancelled?true:false,
+            exclude_cancelled:!!this.props.exclude_cancelled,
         };
         // if (this.props.exclude_cancelled){
         //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
@@ -141,26 +144,26 @@ export default class AppointmentForEachPatientGroup extends React.Component {
                 <g>
                     <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>{payload.patient_group}</text>
                     <Sector
-                        cx={cx}
-                        cy={cy}
-                        innerRadius={innerRadius}
-                        outerRadius={outerRadius}
-                        startAngle={startAngle}
-                        endAngle={endAngle}
-                        fill={fill}
+                      cx={cx}
+                      cy={cy}
+                      innerRadius={innerRadius}
+                      outerRadius={outerRadius}
+                      startAngle={startAngle}
+                      endAngle={endAngle}
+                      fill={fill}
                     />
                     <Sector
-                        cx={cx}
-                        cy={cy}
-                        startAngle={startAngle}
-                        endAngle={endAngle}
-                        innerRadius={outerRadius + 6}
-                        outerRadius={outerRadius + 10}
-                        fill={fill}
+                      cx={cx}
+                      cy={cy}
+                      startAngle={startAngle}
+                      endAngle={endAngle}
+                      innerRadius={outerRadius + 6}
+                      outerRadius={outerRadius + 10}
+                      fill={fill}
                     />
-                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
-                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
-                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.patient_group+','+ payload.count}</text>
+                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
+                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`${payload.patient_group},${ payload.count}`}</text>
                     <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
                         {`(Rate ${(percent * 100).toFixed(2)}%)`}
                     </text>
@@ -168,47 +171,55 @@ export default class AppointmentForEachPatientGroup extends React.Component {
             );
         };
 
-        return <div>
+        return (
+<div>
             <h2>Appointment For Each Patient Group
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                 <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                    {this.state.mailingUsersList.map(item => <Select.Option
-                        value={item.email}>{item.name}</Select.Option>)}
+                    {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                 </Select>
                     </p>
-            </span>
+                </span>
             </h2>
             <Row>
                 <Col span={12} offset={6}>
                     <Spin size="large" spinning={this.state.loading}>
-                        {appointmentGroupData.length>0?
-                        <PieChart width={800} height={400} >
+                        {appointmentGroupData.length>0? (
+                        <PieChart width={800} height={400}>
                             <Pie
-                                activeIndex={this.state.activeIndex}
-                                activeShape={renderActiveShape}
-                                data={appointmentGroupData}
-                                cx={300}
-                                dataKey="count"
-                                cy={200}
-                                innerRadius={60}
-                                outerRadius={80}
-                                fill="#8884d8"
-                                onMouseEnter={this.onPieEnter}>
+                              activeIndex={this.state.activeIndex}
+                              activeShape={renderActiveShape}
+                              data={appointmentGroupData}
+                              cx={300}
+                              dataKey="count"
+                              cy={200}
+                              innerRadius={60}
+                              outerRadius={80}
+                              fill="#8884d8"
+                              onMouseEnter={this.onPieEnter}
+                            >
                                 {
-                                    appointmentGroupData.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                    appointmentGroupData.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} />)
                                 }
                             </Pie>
-                        {/*<Tooltip/>*/}
-                        </PieChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+                        {/* <Tooltip/> */}
+                        </PieChart>
+                      ):<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show" />}
                     </Spin>
                 </Col>
             </Row>
 
 
             <Divider><Statistic title="Total" value={this.state.total} /></Divider>
-            <CustomizedTable hideReport={true}  loading={this.state.loading} columns={columns}  dataSource={appointmentGroupData}/>
+            <CustomizedTable hideReport loading={this.state.loading} columns={columns} dataSource={appointmentGroupData} />
 
-        </div>
+</div>
+)
     }
 }

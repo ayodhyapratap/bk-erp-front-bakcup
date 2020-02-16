@@ -19,22 +19,22 @@ export default class ReportInnerTable extends React.Component {
     }
 
     loadData() {
-        let that = this;
+        const that = this;
         that.setState({
             loading:true,
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 inventoryList:data,
                 loading:false
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading:false
             })
         }
-        let params={
+        const params={
             bill_number:this.props.id,
             supplier:this.props.supplier,
             date:this.props.date
@@ -47,7 +47,7 @@ export default class ReportInnerTable extends React.Component {
     }
 
     render() {
-        let that =this;
+        const that =this;
         const columns = [ {
             title:'name',
             key:'name',
@@ -93,10 +93,17 @@ export default class ReportInnerTable extends React.Component {
             dataIndex:'total_cost',
         },];
 
-        return <div>
-                <Table loading={this.state.loading} bordered={true} rowKey={(record) => record.id}
-                       pagination={false}
-                 columns={columns} dataSource={[this.state.inventoryList]}/>
-        </div>
+        return (
+<div>
+                <Table
+                  loading={this.state.loading}
+                  bordered
+                  rowKey={(record) => record.id}
+                  pagination={false}
+                  columns={columns}
+                  dataSource={[this.state.inventoryList]}
+                />
+</div>
+)
     }
 }

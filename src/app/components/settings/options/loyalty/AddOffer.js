@@ -1,6 +1,7 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Form, Card, message} from "antd";
+import {Redirect} from 'react-router-dom'
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {
     CHECKBOX_FIELD,
     SUCCESS_MSG_TYPE,
@@ -11,7 +12,6 @@ import {
 } from "../../../../constants/dataKeys";
 import {OFFERS} from "../../../../constants/api";
 import {getAPI, displayMessage, deleteAPI, interpolate} from "../../../../utils/common";
-import {Redirect} from 'react-router-dom'
 
 
 class AddOffer extends React.Component {
@@ -50,16 +50,16 @@ class AddOffer extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
     }
 
     render() {
-        let that = this;
+        const that = this;
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
                 if (that.props.loadData)
                     that.props.loadData();
@@ -67,22 +67,27 @@ class AddOffer extends React.Component {
                     that.props.history.replace("/settings/loyalty");
                 }
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: interpolate(OFFERS, [this.props.active_practiceId]),
             method: "post",
-            beforeSubmit: function (data) {
+            beforeSubmit (data) {
                 console.log(data)
             }
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
-        return <div>
-            <TestFormLayout formProp={formProp}
-                            fields={this.state.fields} {...this.props}/>
-            {this.state.redirect && <Redirect to='/settings/loyalty'/>}
+        return (
+<div>
+            <TestFormLayout
+              formProp={formProp}
+              fields={this.state.fields}
+              {...this.props}
+            />
+            {this.state.redirect && <Redirect to='/settings/loyalty' />}
 
-        </div>
+</div>
+)
     }
 }
 

@@ -9,9 +9,11 @@ class AppFooter extends React.Component {
     }
 
     render() {
-        return <Footer style={{textAlign: 'center'}}>
+        return (
+<Footer style={{textAlign: 'center'}}>
             Powered by: <a target="__blank" href="https://plutonic.co.in">Plutonic Services</a>
-        </Footer>
+</Footer>
+)
     }
 }
 

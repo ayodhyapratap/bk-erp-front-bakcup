@@ -19,6 +19,10 @@ import {
     Dropdown,
     Input,
 } from "antd";
+import moment from "moment";
+import {Route, Switch} from "react-router";
+import {Link, Redirect} from "react-router-dom";
+import * as _ from "lodash";
 import {displayMessage, getAPI, interpolate, putAPI, postAPI} from "../../../utils/common";
 import {
     INVOICE_RETURN_API,
@@ -31,13 +35,9 @@ import {
     CANCELINVOICE_RESENT_OTP,
     CANCELINVOICE_VERIFY_OTP, INVOICE_PDF_API
 } from "../../../constants/api";
-import moment from "moment";
-import {Route, Switch} from "react-router";
 import InfiniteFeedLoaderButton from "../../common/InfiniteFeedLoaderButton";
-import {Link, Redirect} from "react-router-dom";
 import {BACKEND_BASE_URL} from "../../../config/connect";
 import {SUCCESS_MSG_TYPE, OTP_DELAY_TIME} from "../../../constants/dataKeys";
-import * as _ from "lodash";
 import {sendMail} from "../../../utils/clinicUtils";
 import { REQUIRED_FIELD_MESSAGE } from "../../../constants/messages";
 
@@ -65,20 +65,20 @@ class ReturnInvoices extends React.Component {
     }
 
     componentDidMount() {
-        let that =this
+        const that =this
         that.loadReturnInvoices();
        
     }
 
     loadReturnInvoices(page = 1) {
-        let that = this;
+        const that = this;
         if (that.props.refreshWallet && page==1){
             that.props.refreshWallet();
         }
         that.setState({
             loading: true
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             if (data.current == 1) {
                 that.setState({
                     total: data.count,
@@ -97,14 +97,14 @@ class ReturnInvoices extends React.Component {
                 })
             }
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
 
         }
-        let apiParams = {
-            page: page,
+        const apiParams = {
+            page,
             practice: this.props.active_practiceId,
         };
         if (this.props.match.params.id) {
@@ -117,26 +117,26 @@ class ReturnInvoices extends React.Component {
     }
 
     loadDrugCatalog() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 drug_catalog: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(DRUG_CATALOG, [this.props.active_practiceId]), successFn, errorFn)
     }
 
     loadProcedureCategory() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 procedure_category: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
 
         }
@@ -144,13 +144,13 @@ class ReturnInvoices extends React.Component {
     }
 
     loadTaxes() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 taxes_list: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
@@ -159,12 +159,12 @@ class ReturnInvoices extends React.Component {
 
 
     loadPDF = (id) => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             if (data.report)
                 window.open(BACKEND_BASE_URL + data.report);
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(RETURN_INVOICE_PDF_API, [id]), successFn, errorFn);
@@ -200,17 +200,17 @@ class ReturnInvoices extends React.Component {
     };
 
     sendMailToPatient =()=>{
-        let {mail_to ,paymentId } = this.state;
-        let apiParams ={
-            mail_to:mail_to,
+        const {mail_to ,paymentId } = this.state;
+        const apiParams ={
+            mail_to,
         }
         sendMail(interpolate(RETURN_INVOICE_PDF_API,[paymentId]),apiParams)
         this.mailModalClose();
     }
 
     cancelModalOpen = (record) => {
-        let that = this;
-        let created_time=moment().diff(record.created_at,'minutes');
+        const that = this;
+        const created_time=moment().diff(record.created_at,'minutes');
             if(created_time>OTP_DELAY_TIME){
                 that.setState({
                     otpField:true
@@ -221,18 +221,18 @@ class ReturnInvoices extends React.Component {
                 editReturnInvoice: record,
                 patientId:record.patient
             });
-            let reqData = {
+            const reqData = {
                 practice: this.props.active_practiceId,
-                type: 'Return Invoice' + ':' + record.return_id + ' ' + ' Cancellation'
+                type: `${'Return Invoice' + ':'}${  record.return_id  } ` + ` Cancellation`
             }
-            let successFn = function (data) {
+            const successFn = function (data) {
                 that.setState({
                     otpSent: true,
                     patientId: record.patient,
                     returnInvoiceId: record.id
                 })
             }
-            let errorFn = function () {
+            const errorFn = function () {
 
             };
             if(created_time >OTP_DELAY_TIME){
@@ -242,11 +242,11 @@ class ReturnInvoices extends React.Component {
 
 
     sendOTP() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
 
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(CANCELINVOICE_RESENT_OTP, successFn, errorFn);
@@ -257,25 +257,26 @@ class ReturnInvoices extends React.Component {
             cancelReturnIncoiceVisible: false
         })
     }
+
     handleSubmitCancelReturnInvoice = (e) => {
-        let that = this;
-        let created_time=moment().diff(that.state.editReturnInvoice.created_at,'minutes');
+        const that = this;
+        const created_time=moment().diff(that.state.editReturnInvoice.created_at,'minutes');
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqData = {
+                const reqData = {
                     ...values,
                     practice: this.props.active_practiceId,
                 }
 
-                let successFn = function (data) {
+                const successFn = function (data) {
                     that.setState({
                         cancelReturnIncoiceVisible: false,
                         otpField:false,
                     });
                     that.deleteReturnInvoice(that.state.patientId, that.state.returnInvoiceId, values.cancel_note)
                 };
-                let errorFn = function () {
+                const errorFn = function () {
 
                 };
                 if(created_time >OTP_DELAY_TIME){
@@ -286,30 +287,31 @@ class ReturnInvoices extends React.Component {
             }
         });
     }
+
     // deleteReturnInvoice(patient ,returnInvoiceId)
     deleteReturnInvoice(patient ,returnInvoiceId ,cancel_note) {
-        let that = this;
-        let reqData = {patient: patient, 
+        const that = this;
+        const reqData = {patient, 
             is_cancelled: true,
-            cancel_note:cancel_note
+            cancel_note
         };
-        let successFn = function (data) {
+        const successFn = function (data) {
             displayMessage(SUCCESS_MSG_TYPE, "Return Invoice cancelled successfully")
             that.loadReturnInvoices();
             that.cancelReturnInvoiceClose();
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         putAPI(interpolate(SINGLE_RETURN_API, [returnInvoiceId]), reqData, successFn, errorFn);
      }
 
     render() {
-        let that = this;
+        const that = this;
         const drugs = {}
         if (this.state.drug_catalog) {
 
             this.state.drug_catalog.forEach(function (drug) {
-                drugs[drug.id] = (drug.name + "," + drug.strength)
+                drugs[drug.id] = (`${drug.name  },${  drug.strength}`)
             })
         }
         const procedures = {}
@@ -328,87 +330,93 @@ class ReturnInvoices extends React.Component {
         const {getFieldDecorator} = that.props.form;
 
         if (this.props.match.params.id) {
-            return <div>
+            return (
+<div>
                 <Switch>
                     <Route>
                         <div>
-                            <Alert banner showIcon type={"info"}
-                                   message={"The invoices return shown are only for the current selected practice!"}/>
+                            <Alert
+                              banner
+                              showIcon
+                              type="info"
+                              message="The invoices return shown are only for the current selected practice!"
+                            />
                             <Affix offsetTop={0}>
-                                <Card bodyStyle={{padding: 0}}
-                                      style={{boxShadow: '0 5px 8px rgba(0, 0, 0, 0.09)'}}
-                                      title={(this.state.currentPatient ? this.state.currentPatient.user.first_name + " Invoice Return" : "Invoices Return ") + (this.state.total ? `(Total:${this.state.total})` : '')}
-                                    //   extra={<Button.Group>
-                                    //       <Link to={"/patient/" + this.props.match.params.id + "/billing/invoices/add"}>
-                                    //           <Button type={"primary"}>
-                                    //               <Icon type="plus"/>Add
-                                    //           </Button>
-                                    //       </Link>
-                                    //   </Button.Group>}>
-                                    >
-                                </Card>
+                                <Card
+                                  bodyStyle={{padding: 0}}
+                                  style={{boxShadow: '0 5px 8px rgba(0, 0, 0, 0.09)'}}
+                                  title={(this.state.currentPatient ? `${this.state.currentPatient.user.first_name  } Invoice Return` : "Invoices Return ") + (this.state.total ? `(Total:${this.state.total})` : '')}
+                                />
                             </Affix>
                             {this.state.returnInvoices.map(invoice => InvoiceCard(invoice, that))}
                             <Spin spinning={this.state.loading}>
-                                <Row/>
+                                <Row />
                             </Spin>
                             <InfiniteFeedLoaderButton
-                                loaderFunction={() => this.loadInvoices(this.state.loadMoreInvoice)}
-                                loading={this.state.loading}
-                                hidden={!this.state.loadMoreInvoice}/>
+                              loaderFunction={() => this.loadInvoices(this.state.loadMoreInvoice)}
+                              loading={this.state.loading}
+                              hidden={!this.state.loadMoreInvoice}
+                            />
 
                         </div>
                     </Route>
                 </Switch>
 
                 <Modal
-                    title={null}
-                    visible={this.state.visibleMail}
-                    onOk={this.sendMailToPatient}
-                    onCancel={this.mailModalClose}
-                    footer={[
+                  title={null}
+                  visible={this.state.visibleMail}
+                  onOk={this.sendMailToPatient}
+                  onCancel={this.mailModalClose}
+                  footer={[
                         <Button key="back" onClick={this.mailModalClose}>
                             Cancel
                         </Button>,
-                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                        <Button key="submit" type="primary" onClick={this.sendMailToPatient}>
                             Send
                         </Button>,
                     ]}
                 >
                     <p>Send invoice To {this.state.patientName} ?</p>
-                    <Input value={that.state.mail_to} placeholder={"Email"}
-                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                    <Input
+                      value={that.state.mail_to}
+                      placeholder="Email"
+                      onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}
+                    />
                 </Modal>
 
                 <Modal
-                    visible={that.state.cancelReturnIncoiceVisible}
-                    title="Cancel Return Invoice"
-                    footer={null}
-                    onOk={that.handleSubmitCancelReturnInvoice}
-                    onCancel={that.cancelReturnInvoiceClose}>
+                  visible={that.state.cancelReturnIncoiceVisible}
+                  title="Cancel Return Invoice"
+                  footer={null}
+                  onOk={that.handleSubmitCancelReturnInvoice}
+                  onCancel={that.cancelReturnInvoiceClose}
+                >
                     <Form>
                         <Form.Item key="cancel_notes">
                             {getFieldDecorator('cancel_note',{
                                 rules:[{required:true, message:REQUIRED_FIELD_MESSAGE}],
                             })(
-                                <TextArea placeholder="cancel notes"/>
+                                <TextArea placeholder="cancel notes" />
                             )}
                         </Form.Item>
-                        {that.state.otpField &&
+                        {that.state.otpField && (
                             <Form.Item>
                                 {getFieldDecorator('otp', {
                                     rules: [{required: true, message: 'Please input Otp!'}],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                                        placeholder="Otp"
+                                    <Input
+                                      prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}} />}
+                                      placeholder="Otp"
                                     />,
                                 )}
                             </Form.Item>
-                        }
+                          )}
                         <Form.Item>
-                            {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
+                            {that.state.otpSent ? (
+<a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
                                 Resend Otp ?
-                            </a> : null}
+</a>
+) : null}
                             <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitCancelReturnInvoice}>
                                 Submit
                             </Button>&nbsp;
@@ -419,77 +427,83 @@ class ReturnInvoices extends React.Component {
                     </Form>
                 </Modal>
 
-            </div>
-        } else {
-            return <div>
+</div>
+)
+        } 
+            return (
+<div>
                 <Affix offsetTop={0}>
-                    <Card bodyStyle={{padding: 0}}
-                          style={{boxShadow: '0 5px 8px rgba(0, 0, 0, 0.09)'}}
-                          title={(this.state.currentPatient ? this.state.currentPatient.user.first_name + " Invoice Return" : "Invoice Return ") + (this.state.total ? `(Total:${this.state.total})` : '')}
-                        //   extra={<Button.Group>
-                        //       <Button type={"primary"} onClick={() => this.props.togglePatientListModal(true)}>
-                        //           <Icon type="plus"/>Add
-                        //       </Button>
-                        //   </Button.Group>}>
-                        >
-                    </Card>
+                    <Card
+                      bodyStyle={{padding: 0}}
+                      style={{boxShadow: '0 5px 8px rgba(0, 0, 0, 0.09)'}}
+                      title={(this.state.currentPatient ? `${this.state.currentPatient.user.first_name  } Invoice Return` : "Invoice Return ") + (this.state.total ? `(Total:${this.state.total})` : '')}
+                    />
                 </Affix>
                 {this.state.returnInvoices.map(invoice => InvoiceCard(invoice, that))}
                 <Spin spinning={this.state.loading}>
-                    <Row/>
+                    <Row />
                 </Spin>
-                <InfiniteFeedLoaderButton loaderFunction={() => this.loadInvoices(this.state.loadMoreInvoice)}
-                                          loading={this.state.loading}
-                                          hidden={!this.state.loadMoreInvoice}/>
+                <InfiniteFeedLoaderButton
+                  loaderFunction={() => this.loadInvoices(this.state.loadMoreInvoice)}
+                  loading={this.state.loading}
+                  hidden={!this.state.loadMoreInvoice}
+                />
 
                 <Modal
-                    title={null}
-                    visible={this.state.visibleMail}
-                    onOk={this.sendMailToPatient}
-                    onCancel={this.mailModalClose}
-                    footer={[
+                  title={null}
+                  visible={this.state.visibleMail}
+                  onOk={this.sendMailToPatient}
+                  onCancel={this.mailModalClose}
+                  footer={[
                         <Button key="back" onClick={this.mailModalClose}>
                             Cancel
                         </Button>,
-                        <Button key="submit" type="primary"  onClick={this.sendMailToPatient}>
+                        <Button key="submit" type="primary" onClick={this.sendMailToPatient}>
                             Send
                         </Button>,
                     ]}
                 >
                     <p>Send invoice To {this.state.patientName} ?</p>
-                    <Input value={that.state.mail_to} placeholder={"Email"}
-                           onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}/>
+                    <Input
+                      value={that.state.mail_to}
+                      placeholder="Email"
+                      onChange={(e)=>that.updateFormValue('mail_to',e.target.value)}
+                    />
                 </Modal>
 
                 <Modal
-                    visible={that.state.cancelReturnIncoiceVisible}
-                    title="Cancel Return Invoice"
-                    footer={null}
-                    onOk={that.handleSubmitCancelReturnInvoice}
-                    onCancel={that.cancelReturnInvoiceClose}>
+                  visible={that.state.cancelReturnIncoiceVisible}
+                  title="Cancel Return Invoice"
+                  footer={null}
+                  onOk={that.handleSubmitCancelReturnInvoice}
+                  onCancel={that.cancelReturnInvoiceClose}
+                >
                     <Form>
                         <Form.Item key="cancel_notes">
                             {getFieldDecorator('cancel_note',{
                                 rules:[{required:true, message:REQUIRED_FIELD_MESSAGE}],
                             })(
-                                <TextArea placeholder="cancel notes"/>
+                                <TextArea placeholder="cancel notes" />
                             )}
                         </Form.Item>
-                        {that.state.otpField &&
+                        {that.state.otpField && (
                             <Form.Item>
                                 {getFieldDecorator('otp', {
                                     rules: [{required: true, message: 'Please input Otp!'}],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                                        placeholder="Otp"
+                                    <Input
+                                      prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}} />}
+                                      placeholder="Otp"
                                     />,
                                 )}
                             </Form.Item>
-                        }
+                          )}
                         <Form.Item>
-                            {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
+                            {that.state.otpSent ? (
+<a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
                                 Resend Otp ?
-                            </a> : null}
+</a>
+) : null}
                             <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitCancelReturnInvoice}>
                                 Submit
                             </Button>&nbsp;
@@ -500,8 +514,9 @@ class ReturnInvoices extends React.Component {
                     </Form>
                 </Modal>
 
-            </div>
-        }
+</div>
+)
+        
 
     }
 }
@@ -510,18 +525,25 @@ export default Form.create()(ReturnInvoices);
 
 function invoiceFooter(presc) {
     if (presc) {
-        return <p>
-            {presc.staff ? <Tooltip title="Staff"><Tag color={presc.staff ? presc.staff_data.calendar_colour : null}>
-                <b>{"Return by  " + presc.staff_data.user.first_name} </b>
-            </Tag></Tooltip> : null}
-            {presc.practice ? <Tag style={{float: 'right'}}>
+        return (
+<p>
+            {presc.staff ? (
+<Tooltip title="Staff"><Tag color={presc.staff ? presc.staff_data.calendar_colour : null}>
+                <b>{`Return by  ${  presc.staff_data.user.first_name}`} </b>
+                       </Tag>
+</Tooltip>
+) : null}
+            {presc.practice ? (
+<Tag style={{float: 'right'}}>
                 <Tooltip title="Practice Name">
                     <b>{presc.practice_data.name} </b>
                 </Tooltip>
-            </Tag> : null}
+</Tag>
+) : null}
             {presc.notes ? <p>Notes: {presc.notes}</p> : null}
             {presc.cancel_note ? <p>Cancel Notes: {presc.cancel_note}</p> : null}
-        </p>
+</p>
+)
     }
     return null
 }
@@ -529,60 +551,82 @@ function invoiceFooter(presc) {
 function InvoiceCard(invoice, that) {
     
 
-    return <Card
-        key={invoice.id}
-        style={{marginTop: 10}}
-        bodyStyle={{padding: 0}}
-        title={<small>{invoice.date ? moment(invoice.date).format('ll') : null}
-            {that.state.currentPatient ? null : <span>
-            <Link to={"/patient/" + (invoice.patient_data ? invoice.patient_data.id : null) + "/billing/return/invoices"}>
+    return (
+<Card
+  key={invoice.id}
+  style={{marginTop: 10}}
+  bodyStyle={{padding: 0}}
+  title={(
+<small>{invoice.date ? moment(invoice.date).format('ll') : null}
+            {that.state.currentPatient ? null : (
+<span>
+            <Link to={`/patient/${  invoice.patient_data ? invoice.patient_data.id : null  }/billing/return/invoices`}>
                 &nbsp;&nbsp; {invoice.patient_data ? invoice.patient_data.user.first_name : null} (ID: {invoice.patient_data.custom_id? invoice.patient_data.custom_id :invoice.patient_data.id })&nbsp;
-            </Link>, {invoice.patient_data ? invoice.patient_data.gender : null}</span>}
-        </small>}
-          extra={<Dropdown.Button
-            size={"small"}
-            style={{float: 'right'}}
-            overlay={<Menu>
+            </Link>, {invoice.patient_data ? invoice.patient_data.gender : null}
+</span>
+)}
+</small>
+)}
+  extra={(
+<Dropdown.Button
+  size="small"
+  style={{float: 'right'}}
+  overlay={(
+<Menu>
                 {/* <Menu.Item key="1" onClick={() => that.deleteReturnInvoice(invoice)} */}
-                <Menu.Item key="1" onClick={() =>that.cancelModalOpen(invoice)}
-                           disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}>
-                    <Icon type="delete"/>
+                <Menu.Item
+                  key="1"
+                  onClick={() =>that.cancelModalOpen(invoice)}
+                  disabled={(invoice.practice != that.props.active_practiceId) || invoice.payments_data || invoice.is_cancelled}
+                >
+                    <Icon type="delete" />
                     Cancel
                 </Menu.Item>
-                <Menu.Divider/>
-                <Menu.Item key={'2'}>
+                <Menu.Divider />
+                <Menu.Item key="2">
                     <a onClick={() => that.sendPatientMail(invoice)}><Icon
-                        type="mail"/> Send mail to patient
+                      type="mail"
+                    /> Send mail to patient
                     </a>
                 </Menu.Item>
-            </Menu>}>
+</Menu>
+)}
+>
             <a onClick={() => that.loadPDF(invoice.id)}><Icon
-                type="printer"/></a>
-        </Dropdown.Button>}>
+              type="printer"
+            />
+            </a>
+</Dropdown.Button>
+)}
+>
         <Row gutter={8}>
             <Col xs={24} sm={24} md={6} lg={4} xl={4} xxl={4} style={{padding: 10}}>
                 {invoice.is_cancelled ?
-                    <Alert message="Cancelled" type="error" showIcon/> : null}
+                    <Alert message="Cancelled" type="error" showIcon /> : null}
                 <Divider style={{marginBottom: 0}}>{invoice.return_id}</Divider>
-                <Statistic title="Cash / Return "
-                           value={(invoice.cash_return ? invoice.cash_return.toFixed(2) : 0)}
-                           suffix={"/ " + (invoice.return_value ? invoice.return_value.toFixed(2):0)}/>
+                <Statistic
+                  title="Cash / Return "
+                  value={(invoice.cash_return ? invoice.cash_return.toFixed(2) : 0)}
+                  suffix={`/ ${  invoice.return_value ? invoice.return_value.toFixed(2):0}`}
+                />
             </Col>
             <Col xs={24} sm={24} md={18} lg={20} xl={20} xxl={20}>
 
                     <Table
-                        bordered={true}
-                        pagination={false}
-                        columns={columns}
-                        dataSource={[...invoice.inventory, ...invoice.procedure]}
-                        footer={() => invoiceFooter({...invoice})}/>
+                      bordered
+                      pagination={false}
+                      columns={columns}
+                      dataSource={[...invoice.inventory, ...invoice.procedure]}
+                      footer={() => invoiceFooter({...invoice})}
+                    />
             </Col>
         </Row>
 
         
 
 
-    </Card>
+</Card>
+)
 }
 
 const columns = [{
@@ -595,7 +639,8 @@ const columns = [{
                 <Tag color={record.staff_data ? record.staff_data.calendar_colour : null}>
                     <b>{"return by  " + record.staff_data.user.first_name} </b>
                 </Tag> : null} */}
-                </span>)
+        </span>
+)
 }, {
     title: 'Cost',
     dataIndex: 'unit_cost',

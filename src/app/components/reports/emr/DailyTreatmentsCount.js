@@ -1,9 +1,9 @@
 import React from "react";
 import {Statistic, Divider, Empty, Spin, Select} from "antd"
-import {EMR_REPORTS, } from "../../../constants/api";
-import {getAPI, interpolate} from "../../../utils/common";
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip} from 'recharts';
 import moment from "moment";
+import {EMR_REPORTS, } from "../../../constants/api";
+import {getAPI, interpolate} from "../../../utils/common";
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -21,13 +21,14 @@ export default class DailyTreatmentsCount extends React.Component {
         }
         this.loadDailyTreatments = this.loadDailyTreatments.bind(this);
     }
+
     componentDidMount() {
         this.loadDailyTreatments();
         loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.doctors!=newProps.doctors ||this.props.is_complete!=newProps.is_complete )
             this.setState({
                 startDate: newProps.startDate,
@@ -38,27 +39,27 @@ export default class DailyTreatmentsCount extends React.Component {
     }
 
     loadDailyTreatments() {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report: data.data,
                 total:data.total,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             type:that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            is_complete:this.props.is_complete?true:false,
+            is_complete:!!this.props.is_complete,
         };
         if(this.props.doctors){
             apiParams.doctors=this.props.doctors.toString();
@@ -68,8 +69,8 @@ export default class DailyTreatmentsCount extends React.Component {
 
 
     sendMail = (mailTo) => {
-        let that = this;
-        let apiParams = {
+        const that = this;
+        const apiParams = {
             type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -90,7 +91,7 @@ export default class DailyTreatmentsCount extends React.Component {
 
 
     render() {
-        let that=this;
+        const that=this;
         let i = 1;
         const columns = [{
             title: 'S. No',
@@ -122,41 +123,56 @@ export default class DailyTreatmentsCount extends React.Component {
             }
         });
 
-        return <div>
+        return (
+<div>
             <h2>Daily Treatments Count
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
             </h2>
             <Spin size="large" spinning={this.state.loading}>
-                {this.state.report.length>0?
-                <LineChart width={1000} height={300} data={[...this.state.report].reverse()}
-                           margin={{top: 5, right: 30, left: 20, bottom: 55}}>
+                {this.state.report.length>0? (
+                <LineChart
+                  width={1000}
+                  height={300}
+                  data={[...this.state.report].reverse()}
+                  margin={{top: 5, right: 30, left: 20, bottom: 55}}
+                >
 
-                    <XAxis dataKey="date" tickFormatter={(value) => {
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(value) => {
                         return moment(value).format('DD MMM')
                     }}
-                           label= {{value:"Data Range", offset:0, margin:{top:10}, position:"insideBottom"}} />
-                    {/*</XAxis>*/}
+                      label={{value:"Data Range", offset:0, margin:{top:10}, position:"insideBottom"}}
+                    />
+                    {/* </XAxis> */}
 
                     <YAxis label={{ value: 'Total Treatments', angle: -90, position: 'insideLeft' }} />
 
-                    <CartesianGrid strokeDasharray="3 3"/>
-                    <Tooltip/>
-                    <Line type="monotone" dataKey="count" stroke="#8884d8" strokeWidth={4}/>
-                </LineChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="count" stroke="#8884d8" strokeWidth={4} />
+                </LineChart>
+              ):<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show" />}
             </Spin>
 
             <Divider><Statistic title="Total Patients" value={this.state.total} /></Divider>
             <CustomizedTable
-                loading={this.state.loading}
-                columns={columns}
-                dataSource={this.state.report}/>
-        </div>
+              loading={this.state.loading}
+              columns={columns}
+              dataSource={this.state.report}
+            />
+</div>
+)
     }
 }

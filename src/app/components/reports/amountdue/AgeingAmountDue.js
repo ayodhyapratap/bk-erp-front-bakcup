@@ -17,13 +17,14 @@ export default class AgeingAmountDue extends React.Component {
         this.loadReport = this.loadReport.bind(this);
 
     }
+
     componentDidMount() {
         this.loadReport();
         loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate || this.props.doctors != newProps.doctors)
             this.setState({
                 startDate: newProps.startDate,
@@ -33,24 +34,25 @@ export default class AgeingAmountDue extends React.Component {
             })
 
     }
+
     loadReport =() =>{
-        let that =this;
+        const that =this;
         that.setState({
             loading:true,
         });
 
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report:data,
                 loading:false,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading:false
             })
         };
-        let apiParams={
+        const apiParams={
             practice:this.props.active_practiceId,
             type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
@@ -63,8 +65,9 @@ export default class AgeingAmountDue extends React.Component {
 
         getAPI(AMOUNT_DUE_REPORTS, successFn ,errorFn,apiParams);
     };
+
     sendMail = (mailTo) => {
-        let apiParams={
+        const apiParams={
             practice:this.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -134,23 +137,28 @@ export default class AgeingAmountDue extends React.Component {
             render:(item,record)=><span>{(record['0_29'] + record['30_59'] + record['60_89'] +record['89_364'] + record['365']).toFixed(2)}</span>
         }];
 
-        return <div>
+        return (
+<div>
 
                 <h2>Ageing Amount Due <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                 <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                    {this.state.mailingUsersList.map(item => <Select.Option
-                        value={item.email}>{item.name}</Select.Option>)}
+                    {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                 </Select>
                     </p>
-            </span>
+                                      </span>
                 </h2>
                 <Row>
                     <Col span={22} offset={1}>
 
                         <p style={{textAlign:"center", marginTop:40}}>*Unpaid Invoice Amount.</p>
 
-                        <Card title={"Summary"} bordered={false} type={'inner'}>
+                        <Card title="Summary" bordered={false} type="inner">
                             <Row>
                                 <Col span={4}>
                                     <Statistic title="for 0-29 days (INR)" value={zero_twenty_nine.toFixed(2)} />
@@ -177,10 +185,11 @@ export default class AgeingAmountDue extends React.Component {
             <Row gutter={16}>
                 <p style={{textAlign:"center", marginTop:40}}>*Unpaid Invoice Amount.</p>
 
-                <Card title={"Summary"} bordered={false} type={'inner'} bodyStyle={{padding:0}}>
-                    <Table loading={loading} columns={columns} pagination={false}  dataSource={report}/>
+                <Card title="Summary" bordered={false} type="inner" bodyStyle={{padding:0}}>
+                    <Table loading={loading} columns={columns} pagination={false} dataSource={report} />
                 </Card>
             </Row>
-        </div>
+</div>
+)
     }
 }

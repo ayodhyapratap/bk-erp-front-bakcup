@@ -16,43 +16,49 @@ import ManageProductList from "./manageProduct/ManageProductList";
 import ManageTherapyList from "./manageTherapy/ManageTherapyList";
 import Error404 from "../common/errors/Error404";
 
-const Content = Layout.Content;
+const {Content} = Layout;
 
 
 export default class WebAdminHome extends React.Component {
 
     render() {
-        return <Content className="main-container" style={{
+        return (
+<Content
+  className="main-container"
+  style={{
             // margin: '24px 16px',
             // padding: 24,
             minHeight: 280,
             // marginLeft: '200px'
-        }}>
+        }}
+>
             <Layout>
-                <WebAdminSider {...this.props}/>
+                <WebAdminSider {...this.props} />
                 <Content style={{
                     margin: '24px 16px',
                     // padding: 24,
                     minHeight: 280,
                     // marginLeft: '200px'
-                }}>
+                }}
+                >
                     <Switch>
-                        <Route path="/web/videos" render={(route) => <VideosList/>}/>
-                        <Route path="/web/blog" render={(route) => <BlogList/>}/>
-                        <Route path="/web/contact" render={(route) => <ContactsList/>}/>
-                        <Route path="/web/disease" render={(route) => <DiseaseList/>}/>
-                        <Route path="/web/event" render={(route) => <EventsList/>}/>
-                        <Route path="/web/pageseo" render={(route) => <SEOList/>}/>
-                        <Route path="/web/slider-image" render={(route) => <SliderImageList/>}/>
-                        <Route path="/web/facilities" render={(route) => <FacilityList/>}/>
-                        <Route path="/web/landingpagevideo" render={(route) => <LandingPageVideoList/>}/>
-                        <Route path="/web/landingpagecontent" render={(route) => <LandingPageContentList/>}/>
-                        <Route path="/web/manageproduct" render={(route) => <ManageProductList/>}/>
-                        <Route path="/web/managetherapy" render={(route) => <ManageTherapyList/>}/>
-                        <Route component={Error404}/>
+                        <Route path="/web/videos" render={(route) => <VideosList />} />
+                        <Route path="/web/blog" render={(route) => <BlogList />} />
+                        <Route path="/web/contact" render={(route) => <ContactsList />} />
+                        <Route path="/web/disease" render={(route) => <DiseaseList />} />
+                        <Route path="/web/event" render={(route) => <EventsList />} />
+                        <Route path="/web/pageseo" render={(route) => <SEOList />} />
+                        <Route path="/web/slider-image" render={(route) => <SliderImageList />} />
+                        <Route path="/web/facilities" render={(route) => <FacilityList />} />
+                        <Route path="/web/landingpagevideo" render={(route) => <LandingPageVideoList />} />
+                        <Route path="/web/landingpagecontent" render={(route) => <LandingPageContentList />} />
+                        <Route path="/web/manageproduct" render={(route) => <ManageProductList />} />
+                        <Route path="/web/managetherapy" render={(route) => <ManageTherapyList />} />
+                        <Route component={Error404} />
                     </Switch>
                 </Content>
             </Layout>
-        </Content>
+</Content>
+)
     }
 }

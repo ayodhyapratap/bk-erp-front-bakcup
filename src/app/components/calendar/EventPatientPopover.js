@@ -1,9 +1,9 @@
 import React from "react";
 import {Spin, Row, Col, Avatar, Icon, Button, Divider, Tag, Popconfirm} from "antd";
-import {displayMessage, getAPI, interpolate, putAPI} from "../../utils/common";
-import {APPOINTMENT_API} from "../../constants/api";
 import {Link} from "react-router-dom";
 import moment from "moment";
+import {displayMessage, getAPI, interpolate, putAPI} from "../../utils/common";
+import {APPOINTMENT_API} from "../../constants/api";
 import {
     CANCELLED_STATUS,
     CHECKOUT_STATUS,
@@ -36,15 +36,15 @@ export default class EventPatientPopover extends React.Component {
         this.setState({
             loading: true
         })
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 appointment: data,
                 loading: false
             });
             console.log("event", data)
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             });
@@ -53,9 +53,10 @@ export default class EventPatientPopover extends React.Component {
 
 
     }
+
     updateAppointmentStatus = (id, currentStatus, targetStatus) => {
-        let that = this;
-        let reqData = {
+        const that = this;
+        const reqData = {
             status: targetStatus
         };
         if (targetStatus == WAITING_STATUS) {
@@ -65,11 +66,11 @@ export default class EventPatientPopover extends React.Component {
         } else if (targetStatus == CHECKOUT_STATUS) {
             reqData.checkout = moment().format()
         }
-        let successFn = function (data) {
+        const successFn = function (data) {
             displayMessage(SUCCESS_MSG_TYPE, "Appointment Status Changed Successfully!!");
             that.loadAppointmentDetails()
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         putAPI(interpolate(APPOINTMENT_API, [id]), reqData, successFn, errorFn
@@ -77,8 +78,8 @@ export default class EventPatientPopover extends React.Component {
     }
 
     changeAppointmentStatus = (id, currentStatus, targetStatus) => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             if (data.status == currentStatus) {
                 that.updateAppointmentStatus(id, currentStatus, targetStatus)
             } else {
@@ -86,114 +87,141 @@ export default class EventPatientPopover extends React.Component {
                 that.loadAppointmentDetails();
             }
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(APPOINTMENT_API, [id]), successFn, errorFn);
     }
 
     render() {
-        let that = this;
-        let appointment = this.state.appointment;
-        return <div style={{width: '300px', minHeight: '200px'}}>
+        const that = this;
+        const {appointment} = this.state;
+        return (
+<div style={{width: '300px', minHeight: '200px'}}>
             <Spin spinning={this.state.loading}>
-                {this.state.appointment ? <div>
+                {this.state.appointment ? (
+<div>
                         <Row>
                             <Col span={8}>
-                                {this.state.appointment.patient.image?<Avatar src={this.state.appointment.patient.image} size={80}/>:
+                                {this.state.appointment.patient.image?<Avatar src={this.state.appointment.patient.image} size={80} />: (
                                     <Avatar style={{backgroundColor: '#87d068'}}>
                                         {this.state.appointment.patient.user.first_name ? this.state.appointment.patient.user.first_name.charAt(0) :
-                                            <Icon type="user"/>}
+                                            <Icon type="user" />}
                                     </Avatar>
-                                }
+                                  )}
                             </Col>
                             <Col span={16}>
-                                <Link to={"/patient/" + this.state.appointment.patient.id + "/profile"} target="_blank">
+                                <Link to={`/patient/${  this.state.appointment.patient.id  }/profile`} target="_blank">
                                     <h3>{this.state.appointment.patient.user.first_name}
-                                        <br/>
+                                        <br />
                                         <small>
                                             Patient
                                             ID: {this.state.appointment.patient.custom_id} , {this.state.appointment.patient.gender}
-                                            <br/>{this.state.appointment.patient.user.mobile}
+                                            <br />{this.state.appointment.patient.user.mobile}
                                         </small>
                                     </h3>
                                 </Link>
                             </Col>
                         </Row>
-                        <Divider style={{margin: 0}}/>
+                        <Divider style={{margin: 0}} />
                         <small>Status: {this.state.appointment.status}</small>
-                        <br/>
+                        <br />
                         <small>
                             <Icon
-                                type="clock-circle"/> {moment(this.state.appointment.schedule_at).format('HH:mm A on MMMM Do')} for {this.state.appointment.slot} mins.
+                              type="clock-circle"
+                            /> {moment(this.state.appointment.schedule_at).format('HH:mm A on MMMM Do')} for {this.state.appointment.slot} mins.
                         </small>
                         {showStatusTimeline(appointment)}
                         <Row style={{height: '100px', overflow: 'scroll', backgroundColor: '#eee', padding: 5}}>
                             <div>
-                                {appointment.status == SCHEDULE_STATUS ?
+                                {appointment.status == SCHEDULE_STATUS ? (
                                     <span style={{width: '70px', float: 'right'}}>
-                    <a onClick={() => that.changeAppointmentStatus(appointment.id, SCHEDULE_STATUS, WAITING_STATUS)} disabled={!that.props.activePracticePermissions.ChangeAppointmentStatus}> Check In</a></span> : null}
-                                {appointment.status == WAITING_STATUS ?
+                    <a onClick={() => that.changeAppointmentStatus(appointment.id, SCHEDULE_STATUS, WAITING_STATUS)} disabled={!that.props.activePracticePermissions.ChangeAppointmentStatus}> Check In</a>
+                                    </span>
+                                  ) : null}
+                                {appointment.status == WAITING_STATUS ? (
                                     <span style={{width: '70px', float: 'right'}}>
-                    <a onClick={() => that.changeAppointmentStatus(appointment.id, WAITING_STATUS, ENGAGED_STATUS)} disabled={!that.props.activePracticePermissions.ChangeAppointmentStatus}> Engage</a></span> : null}
-                                {appointment.status == ENGAGED_STATUS ?
+                    <a onClick={() => that.changeAppointmentStatus(appointment.id, WAITING_STATUS, ENGAGED_STATUS)} disabled={!that.props.activePracticePermissions.ChangeAppointmentStatus}> Engage</a>
+                                    </span>
+                                  ) : null}
+                                {appointment.status == ENGAGED_STATUS ? (
                                     <span style={{width: '70px', float: 'right'}}>
-                    <a onClick={() => that.changeAppointmentStatus(appointment.id, ENGAGED_STATUS, CHECKOUT_STATUS)} disabled={!that.props.activePracticePermissions.ChangeAppointmentStatus}> Check Out</a></span> : null}
-                                {appointment.status == CHECKOUT_STATUS ?
+                    <a onClick={() => that.changeAppointmentStatus(appointment.id, ENGAGED_STATUS, CHECKOUT_STATUS)} disabled={!that.props.activePracticePermissions.ChangeAppointmentStatus}> Check Out</a>
+                                    </span>
+                                  ) : null}
+                                {appointment.status == CHECKOUT_STATUS ? (
                                     <span style={{width: '70px', float: 'right'}}>
-                    <small>Checked Out</small></span> : null}
-                                {this.state.appointment.doctor_data ? <Tag
-                                    color={this.state.appointment.doctor_data ? this.state.appointment.doctor_data.calendar_colour : null}>
-                                    <b>{"With " + this.state.appointment.doctor_data.user.first_name} </b>
-                                </Tag> : null}
+                    <small>Checked Out</small>
+                                    </span>
+                                  ) : null}
+                                {this.state.appointment.doctor_data ? (
+<Tag
+  color={this.state.appointment.doctor_data ? this.state.appointment.doctor_data.calendar_colour : null}
+>
+                                    <b>{`With ${  this.state.appointment.doctor_data.user.first_name}`} </b>
+</Tag>
+) : null}
                             </div>
-                            <Divider style={{margin: 0}}/>
+                            <Divider style={{margin: 0}} />
                             <b>Category:</b>{this.state.appointment.category_data ? this.state.appointment.category_data.name : null}
                             <p>{this.state.appointment.first_appointment?<span>This is Patient's first apppointment</span> :''}</p>
                         </Row>
-                        <Divider style={{margin: 0}}/>
+                        <Divider style={{margin: 0}} />
                         <Row style={{textAlign: 'right'}}>
-                            <Button.Group size={"small"}>
-                                {that.props.activePracticePermissions.EditAppointment || that.props.allowAllPermissions ?
+                            <Button.Group size="small">
+                                {that.props.activePracticePermissions.EditAppointment || that.props.allowAllPermissions ? (
                                 <Button>
-                                    <Link to={"/calendar/" + this.state.appointment.id + "/edit-appointment"}>
-                                        <Icon type={"edit"}/> Edit
+                                    <Link to={`/calendar/${  this.state.appointment.id  }/edit-appointment`}>
+                                        <Icon type="edit" /> Edit
                                     </Link>
-                                </Button>:null}
-                                {that.props.activePracticePermissions.ChangeAppointmentStatus || that.props.allowAllPermissions?
-                                <Popconfirm title="Are you sure delete this?"
-                                            onConfirm={() => that.changeAppointmentStatus(appointment.id, appointment.status, CANCELLED_STATUS)}
-                                            okText="Yes" cancelText="No">
-                                    <Button type={"danger"}>
-                                        <Icon type={"cross"}/> Cancel
+                                </Button>
+                              ):null}
+                                {that.props.activePracticePermissions.ChangeAppointmentStatus || that.props.allowAllPermissions? (
+                                <Popconfirm
+                                  title="Are you sure delete this?"
+                                  onConfirm={() => that.changeAppointmentStatus(appointment.id, appointment.status, CANCELLED_STATUS)}
+                                  okText="Yes"
+                                  cancelText="No"
+                                >
+                                    <Button type="danger">
+                                        <Icon type="cross" /> Cancel
                                     </Button>
-                                </Popconfirm>:null}
+                                </Popconfirm>
+                              ):null}
                             </Button.Group>
                         </Row>
-                    </div> :
+</div>
+) :
                     <h4>No Patient Found</h4>}
             </Spin>
-        </div>
+</div>
+)
     }
 }
 
 function showStatusTimeline(appointment) {
     switch (appointment.status) {
         case WAITING_STATUS:
-            return <div>
-                <br/><small>Checked in At {moment(appointment.waiting).format('lll')}</small>
-            </div>
+            return (
+<div>
+                <br /><small>Checked in At {moment(appointment.waiting).format('lll')}</small>
+</div>
+)
         case ENGAGED_STATUS:
-            return <div>
+            return (
+<div>
                 <small>Waiting Time {moment(appointment.engaged).from(moment(appointment.waiting))}</small>
-                <br/><small>Engaged At {moment(appointment.engaged).format('lll')}</small>
-            </div>
+                <br /><small>Engaged At {moment(appointment.engaged).format('lll')}</small>
+</div>
+)
         case CHECKOUT_STATUS:
-            return <div>
+            return (
+<div>
                 <small>Waiting Time {moment(appointment.engaged).from(moment(appointment.waiting))}</small>
-                <br/><small>Engaged Time {moment(appointment.checkout).from(moment(appointment.engaged))}</small>
-                <br/><small>Total Stay Time {moment(appointment.checkout).from(moment(appointment.waiting))}</small>
-            </div>
+                <br /><small>Engaged Time {moment(appointment.checkout).from(moment(appointment.engaged))}</small>
+                <br /><small>Total Stay Time {moment(appointment.checkout).from(moment(appointment.waiting))}</small>
+</div>
+)
     }
     return null
 }

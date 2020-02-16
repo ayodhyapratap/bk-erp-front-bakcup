@@ -28,8 +28,8 @@ class Prescriptions extends React.Component {
     }
 
     loadData() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             console.log("get table");
             that.setState({
                 catalog: data.results,
@@ -37,7 +37,7 @@ class Prescriptions extends React.Component {
                 loading: false
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
@@ -51,7 +51,7 @@ class Prescriptions extends React.Component {
     }
 
     loadInitialData() {
-        let that = this;
+        const that = this;
         this.setState({
             loadMorePrescriptions: null
         }, function () {
@@ -60,13 +60,13 @@ class Prescriptions extends React.Component {
     }
 
     deleteObject(record) {
-        let that = this;
-        let reqData = record;
+        const that = this;
+        const reqData = record;
         reqData.is_active = false;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         postAPI(INVENTORY_ITEM_API, reqData, successFn, errorFn);
     }
@@ -80,7 +80,7 @@ class Prescriptions extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const columns = [{
             title: 'Name',
             dataIndex: 'name',
@@ -101,44 +101,67 @@ class Prescriptions extends React.Component {
                 <span>
                     <a onClick={() => this.editCatalog(record)}>
                 Edit</a>
-                <Divider type="vertical"/>
-                  <Popconfirm title="Are you sure delete this prescription?" onConfirm={() => that.deleteObject(record)}
-                              okText="Yes" cancelText="No">
+                <Divider type="vertical" />
+                  <Popconfirm
+                    title="Are you sure delete this prescription?"
+                    onConfirm={() => that.deleteObject(record)}
+                    okText="Yes"
+                    cancelText="No"
+                  >
                       <a>Delete</a>
                   </Popconfirm>
-              </span>
+                </span>
             ),
         }];
-        return <Row>
+        return (
+<Row>
             <Switch>
-                <Route exact path="/settings/prescriptions/add"
-                       render={() => <AddorEditPrescriptionForm  {...this.props} loadData={this.loadInitialData} title={"Add Prescription"}/>}/>
-                <Route exact path="/settings/prescriptions/edit"
-                       render={(route) => (this.state.editCatalog.id ? <AddorEditPrescriptionForm  {...this.state}
-                                                                                                   title={"Edit Prescription"}
-                                                                                                   loadData={this.loadInitialData} {...this.props} {...route}/> :
-                           <Redirect to={"/settings/prescriptions/"}/>)}/>
+                <Route
+                  exact
+                  path="/settings/prescriptions/add"
+                  render={() => <AddorEditPrescriptionForm {...this.props} loadData={this.loadInitialData} title="Add Prescription" />}
+                />
+                <Route
+                  exact
+                  path="/settings/prescriptions/edit"
+                  render={(route) => (this.state.editCatalog.id ? (
+<AddorEditPrescriptionForm
+  {...this.state}
+  title="Edit Prescription"
+  loadData={this.loadInitialData}
+  {...this.props}
+  {...route}
+/>
+) :
+                           <Redirect to="/settings/prescriptions/" />)}
+                />
                 <Route>
                     <div>
                         <h2>All presciptions
                             <Link to="/settings/prescriptions/add">
                                 <Button type="primary" style={{float: 'right'}}>
-                                    <Icon type="plus"/>&nbsp;Add
+                                    <Icon type="plus" />&nbsp;Add
                                 </Button>
                             </Link>
                         </h2>
                         <Card>
-                            <CustomizedTable loading={this.state.loading} columns={columns}
-                                             dataSource={this.state.catalog}
-                                             pagination={false}/>
+                            <CustomizedTable
+                              loading={this.state.loading}
+                              columns={columns}
+                              dataSource={this.state.catalog}
+                              pagination={false}
+                            />
                         </Card>
-                        <InfiniteFeedLoaderButton loaderFunction={this.loadData}
-                                                  loading={this.state.loading}
-                                                  hidden={!this.state.loadMorePrescriptions}/>
+                        <InfiniteFeedLoaderButton
+                          loaderFunction={this.loadData}
+                          loading={this.state.loading}
+                          hidden={!this.state.loadMorePrescriptions}
+                        />
                     </div>
                 </Route>
             </Switch>
-        </Row>
+</Row>
+)
     }
 }
 

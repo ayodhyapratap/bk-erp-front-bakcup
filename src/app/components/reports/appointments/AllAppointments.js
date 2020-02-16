@@ -1,10 +1,11 @@
 import React from "react";
 import {Col, Row, Select, Statistic, Table,Modal} from "antd";
+import moment from "moment"
 import {APPOINTMENT_REPORTS} from "../../../constants/api";
 import {getAPI, interpolate} from "../../../utils/common";
-import moment from "moment"
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
+
 export default class AllAppointments extends React.Component {
     constructor(props) {
         super(props);
@@ -26,7 +27,7 @@ export default class AllAppointments extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate || this.props.categories != newProps.categories
             || this.props.doctors != newProps.doctors || this.props.exclude_cancelled != newProps.exclude_cancelled)
             this.setState({
@@ -39,24 +40,24 @@ export default class AllAppointments extends React.Component {
     }
 
     loadAppointmentReport = () => {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 appointmentReports: data.data,
                 total: data.total,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams = {
+        const apiParams = {
             type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            exclude_cancelled: this.props.exclude_cancelled ? true : false,
+            exclude_cancelled: !!this.props.exclude_cancelled,
             practice:that.props.active_practiceId
         };
         // if (this.props.exclude_cancelled){
@@ -70,19 +71,21 @@ export default class AllAppointments extends React.Component {
         }
         getAPI(interpolate(APPOINTMENT_REPORTS, [that.props.active_practiceId]), successFn, errorFn, apiParams);
     };
+
     onPieEnter = (data, index) => {
         this.setState({
             activeIndex: index,
         });
     };
+
     sendMail = (mailTo) => {
         console.log(mailTo)
-        let that = this;
-        let apiParams = {
+        const that = this;
+        const apiParams = {
             type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            exclude_cancelled: this.props.exclude_cancelled ? true : false,
+            exclude_cancelled: !!this.props.exclude_cancelled,
         };
         // if (this.props.exclude_cancelled){
         //     apiParams.exclude_cancelled=this.props.exclude_cancelled;
@@ -119,7 +122,7 @@ export default class AllAppointments extends React.Component {
             render: (text, record) => (
                 <span>
                 {moment(record.schedule_at).format('DD MMM YYYY')}
-                  </span>
+                </span>
             ),
             export: (item, record) => (moment(record.schedule_at).format('ll')),
         }, {
@@ -130,7 +133,7 @@ export default class AllAppointments extends React.Component {
                 <span>
                   {moment(record.schedule_at).format('HH:mm')}
 
-                  </span>
+                </span>
             ),
             export: (item, record) => (
                 moment(record.schedule_at).format('HH:mm')
@@ -165,7 +168,7 @@ export default class AllAppointments extends React.Component {
             render: (text, record) => (
                 <span>
                 {record.waiting ? moment(record.waiting).format('lll') : ''}
-                  </span>
+                </span>
             ),
             export: (item, record) => (moment(record.schedule_at).format('HH:mm')),
 
@@ -173,10 +176,12 @@ export default class AllAppointments extends React.Component {
             title: 'Waited For (hh:mm:ss)',
             dataIndex: 'age',
             key: 'age',
-            render: (age, record) => (<span>
+            render: (age, record) => (
+<span>
                 {record.engaged ? moment(record.engaged).from(moment(record.waiting))
                     : ''}
-            </span>),
+</span>
+),
             export: (item, record) => (record.engaged ? moment(record.engaged).from(moment(record.waiting))
                 : ''),
         }, {
@@ -186,7 +191,7 @@ export default class AllAppointments extends React.Component {
             render: (text, record) => (
                 <span>
                 {record.engaged ? moment(record.engaged).format('lll') : ''}
-                  </span>
+                </span>
             ),
             export: (item, record) => (record.engaged ? moment(record.engaged).format('lll') : ''),
         }, {
@@ -196,7 +201,7 @@ export default class AllAppointments extends React.Component {
             render: (text, record) => (
                 <span>
                 {record.checkout ? moment(record.checkout).format('lll') : ''}
-                  </span>
+                </span>
             ),
             export: (item, record) => (record.checkout ? moment(record.checkout).format('lll') : ''),
         }, {
@@ -207,31 +212,38 @@ export default class AllAppointments extends React.Component {
             export: (item, record) => (record.category_data ? record.category_data.name : null),
         }];
 
-        return <div>
+        return (
+<div>
             <h2>All Appointments Report
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                 <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                    {this.state.mailingUsersList.map(item => <Select.Option
-                        value={item.email}>{item.name}</Select.Option>)}
+                    {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                 </Select>
                     </p>
-            </span>
+                </span>
             </h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign: "center"}}>
-                    <Statistic title="Total Appointments" value={this.state.total}/>
-                    <br/>
+                    <Statistic title="Total Appointments" value={this.state.total} />
+                    <br />
                 </Col>
             </Row>
 
             <CustomizedTable
-                hideReport={true}
-                loading={this.state.loading}
-                columns={columns}
-                dataSource={appointmentReportsData}/>
+              hideReport
+              loading={this.state.loading}
+              columns={columns}
+              dataSource={appointmentReportsData}
+            />
 
 
-        </div>
+</div>
+)
     }
 }

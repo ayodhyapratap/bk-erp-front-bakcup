@@ -1,6 +1,6 @@
 import React from "react";
-import {logErrorToSlackChannel} from "./utils/crashHandlingUtils";
 import {Button, Result} from "antd";
+import {logErrorToSlackChannel} from "./utils/crashHandlingUtils";
 
 export default class ErrorBoundary extends React.Component {
     constructor(props) {
@@ -24,14 +24,16 @@ export default class ErrorBoundary extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         if (this.state.hasError) {
-            return <Result
-                status="500"
-                title="500"
-                subTitle={"Sorry, something went wrong."}
-                extra={<Button type="primary" onClick={this.redirectToHome}>Back Home</Button>}
-            />;
+            return (
+<Result
+  status="500"
+  title="500"
+  subTitle="Sorry, something went wrong."
+  extra={<Button type="primary" onClick={this.redirectToHome}>Back Home</Button>}
+/>
+);
         }
 
         return this.props.children;

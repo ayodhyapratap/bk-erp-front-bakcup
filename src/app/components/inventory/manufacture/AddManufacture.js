@@ -1,5 +1,7 @@
 import {Card, Form, Row} from "antd";
 import React from "react";
+import {Route} from "react-router";
+import {Redirect} from "react-router-dom";
 import {
     INPUT_FIELD,
     SUCCESS_MSG_TYPE,
@@ -10,8 +12,6 @@ import {displayMessage, getAPI, interpolate} from "../../../utils/common";
 import {
     MANUFACTURER_API, SINGLE_MANUFACTURER_API, SINGLE_VENDOR_API
 } from "../../../constants/api";
-import {Route} from "react-router";
-import {Redirect} from "react-router-dom";
 import PermissionDenied from "../../common/errors/PermissionDenied";
 
 
@@ -24,7 +24,7 @@ export default class AddManufacture extends React.Component {
     }
 
     changeRedirect = () => {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -39,13 +39,13 @@ export default class AddManufacture extends React.Component {
     }
 
     loadData() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 editData: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(SINGLE_MANUFACTURER_API, [this.props.match.params.id]), successFn, errorFn);
@@ -56,7 +56,7 @@ export default class AddManufacture extends React.Component {
 
     render() {
 
-        let that = this;
+        const that = this;
         const fields = [{
             label: "Name",
             key: "name",
@@ -74,14 +74,14 @@ export default class AddManufacture extends React.Component {
         let editformProp;
         if (this.state.editData) {
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     that.props.loadData();
                     if (that.props.history){
                         that.props.history.replace("/inventory/manufacture");
                     }
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(SINGLE_MANUFACTURER_API, [this.props.match.params.id]),
@@ -92,37 +92,55 @@ export default class AddManufacture extends React.Component {
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.props.loadData();
                 if (that.props.history){
                     that.props.history.replace("/inventory/manufacture");
                 }
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: MANUFACTURER_API,
             method: "post",
         }
         const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
-        return <Row>
+        return (
+<Row>
             <Card>
-                <Route  path='/inventory/manufacture/edit/:id'
-                       render={(route) => (this.props.match.params.id ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit Manufacturer"
-                                           changeRedirect={this.changeRedirect} formProp={editformProp}
-                                           {...route}
-                                           fields={fields}/> : <Redirect to={'/inventory/manufacture'}/>)}/>
-                <Route exact path='/inventory/manufacture/add'
-                       render={(route) => (that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ?
-                            <TestFormLayout title="Add Manufacturer" changeRedirect={this.changeRedirect}{...route}
-                                formProp={formProp} fields={fields}/>:<PermissionDenied/>)}/>
+                <Route
+                  path='/inventory/manufacture/edit/:id'
+                  render={(route) => (this.props.match.params.id ? (
+                           <TestFormLayout
+                             defaultValues={defaultValues}
+                             title="Edit Manufacturer"
+                             changeRedirect={this.changeRedirect}
+                             formProp={editformProp}
+                             {...route}
+                             fields={fields}
+                           />
+                         ) : <Redirect to="/inventory/manufacture" />)}
+                />
+                <Route
+                  exact
+                  path='/inventory/manufacture/add'
+                  render={(route) => (that.props.activePracticePermissions.EditManufacturer || that.props.allowAllPermissions ? (
+                            <TestFormLayout
+                              title="Add Manufacturer"
+                              changeRedirect={this.changeRedirect}
+                              {...route}
+                              formProp={formProp}
+                              fields={fields}
+                            />
+                          ):<PermissionDenied />)}
+                />
 
 
             </Card>
-            {this.state.redirect && <Redirect to={'/inventory/manufacture'}/>}
-        </Row>
+            {this.state.redirect && <Redirect to="/inventory/manufacture" />}
+</Row>
+)
 
     }
 }

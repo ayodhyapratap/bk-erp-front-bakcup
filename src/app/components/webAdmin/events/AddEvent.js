@@ -1,5 +1,7 @@
 import {Card, Form, Row} from "antd";
 import React from "react";
+import {Route} from "react-router";
+import {Redirect} from "react-router-dom";
 import {
     DATE_PICKER, SINGLE_IMAGE_UPLOAD_FIELD,
     INPUT_FIELD,
@@ -13,8 +15,6 @@ import {
     BLOG_EVENTS,
     SINGLE_EVENTS,
 } from "../../../constants/api";
-import {Route} from "react-router";
-import {Redirect} from "react-router-dom";
 
 
 export default class AddEvent extends React.Component {
@@ -26,7 +26,7 @@ export default class AddEvent extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -41,13 +41,13 @@ export default class AddEvent extends React.Component {
     }
 
     loadData() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 editBlogData: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(SINGLE_EVENTS, [this.props.match.params.id]), successFn, errorFn);
@@ -97,11 +97,11 @@ export default class AddEvent extends React.Component {
             type: QUILL_TEXT_FIELD,
         }];
 
-        let that = this;
+        const that = this;
         let editformProp;
         if (this.state.editBlogData) {
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     that.props.loadData();
                     that.changeRedirect();
@@ -109,7 +109,7 @@ export default class AddEvent extends React.Component {
                         that.props.history.replace('/web/event');
                     };
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(SINGLE_EVENTS, [this.props.match.params.id]),
@@ -119,8 +119,8 @@ export default class AddEvent extends React.Component {
         }
         const TestFormLayout = Form.create()(DynamicFieldsForm);
 
-        let formProp = {
-            successFn: function (data) {
+        const formProp = {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 that.props.loadData();
                 that.changeRedirect();
@@ -128,30 +128,49 @@ export default class AddEvent extends React.Component {
                     that.props.history.replace('/web/event');
                 };
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: BLOG_EVENTS,
             method: "post",
         }
-        let defaultValues = [{key: 'is_active', value: true}];
+        const defaultValues = [{key: 'is_active', value: true}];
 
-        return <Row>
+        return (
+<Row>
             <Card>
-                <Route exact path='/web/event/edit/:id'
-                       render={() => (this.props.match.params.id ?
-                           <TestFormLayout defaultValues={defaultValues} title="Edit Event"
-                                           changeRedirect={this.changeRedirect} formProp={editformProp}
-                                           fields={fields}/> : <Redirect to={'/web/event'}/>)}/>
-                <Route exact path='/web/event/add'
-                       render={() => <TestFormLayout defaultValues={defaultValues} title="Add Event"
-                                                     changeRedirect={this.changeRedirect}
-                                                     formProp={formProp} fields={fields}/>}/>
+                <Route
+                  exact
+                  path='/web/event/edit/:id'
+                  render={() => (this.props.match.params.id ? (
+                           <TestFormLayout
+                             defaultValues={defaultValues}
+                             title="Edit Event"
+                             changeRedirect={this.changeRedirect}
+                             formProp={editformProp}
+                             fields={fields}
+                           />
+                         ) : <Redirect to="/web/event" />)}
+                />
+                <Route
+                  exact
+                  path='/web/event/add'
+                  render={() => (
+<TestFormLayout
+  defaultValues={defaultValues}
+  title="Add Event"
+  changeRedirect={this.changeRedirect}
+  formProp={formProp}
+  fields={fields}
+/>
+)}
+                />
 
 
             </Card>
-            {this.state.redirect && <Redirect to={'/web/event'}/>}
-        </Row>
+            {this.state.redirect && <Redirect to="/web/event" />}
+</Row>
+)
 
     }
 }

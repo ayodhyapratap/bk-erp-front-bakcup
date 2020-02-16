@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import AddOrEditZoomUser from "./AddOrEditZoomUser";
 import {getAPI, interpolate, patchAPI, postAPI} from "../../../../utils/common";
 import {MEETING_USER, SINGLE_POST} from "../../../../constants/api";
+
 export default class ZoomUser extends React.Component{
     constructor(props){
         super(props);
@@ -13,19 +14,20 @@ export default class ZoomUser extends React.Component{
         }
         this.loadData = this.loadData.bind(this);
     }
+
     componentWillMount() {
         this.loadData();
     }
 
     loadData(){
-        let that=this;
-        let successFn=function (data) {
+        const that=this;
+        const successFn=function (data) {
             that.setState({
                 zoomUser:data,
                 loading:false,
             })
         }
-        let errorFn =function () {
+        const errorFn =function () {
             that.setState({
                 loading:false,
             })
@@ -34,19 +36,20 @@ export default class ZoomUser extends React.Component{
     }
 
     deleteObject(record) {
-        let that = this;
-        let reqData = {};
+        const that = this;
+        const reqData = {};
         reqData.id=record.id;
         reqData.is_active = false;
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadData();
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         postAPI(interpolate(MEETING_USER, [record.id]), reqData, successFn, errorFn)
     }
+
     render() {
-        let that=this;
+        const that=this;
             const columns=[
                 {
                     title: 'User Name',
@@ -63,33 +66,46 @@ export default class ZoomUser extends React.Component{
                 },{
                     title: 'Actions',
                     render: (item) => {
-                        return <div>
-                            <Link to={"/settings/zoom-user/edit/" + item.id}>Edit</Link>
-                            <Divider type="vertical"/>
-                            <Popconfirm title="Are you sure delete this item?"
-                                        onConfirm={() => that.deleteObject(item)} okText="Yes" cancelText="No">
+                        return (
+<div>
+                            <Link to={`/settings/zoom-user/edit/${  item.id}`}>Edit</Link>
+                            <Divider type="vertical" />
+                            <Popconfirm
+                              title="Are you sure delete this item?"
+                              onConfirm={() => that.deleteObject(item)}
+                              okText="Yes"
+                              cancelText="No"
+                            >
                                 <a>Delete</a>
                             </Popconfirm>
-                        </div>
+</div>
+)
                     }
                 }
             ];
-        return( <div>
+        return( 
+<div>
                 <Switch>
-                    <Route exact path='/settings/zoom-user/add'
-                           render={(route) => <AddOrEditZoomUser {...this.state} {...route}  loadData={this.loadData}/>}/>
+                    <Route
+                      exact
+                      path='/settings/zoom-user/add'
+                      render={(route) => <AddOrEditZoomUser {...this.state} {...route} loadData={this.loadData} />}
+                    />
 
-                    <Route exact path={"/settings/zoom-user/edit/:id"} render={(route)=><AddOrEditZoomUser loadData={this.loadData}  {...route} {...this.state}/>}/>
+                    <Route exact path="/settings/zoom-user/edit/:id" render={(route)=><AddOrEditZoomUser loadData={this.loadData} {...route} {...this.state} />} />
 
-                    <Card title="Zoom User" extra={
-                        <Link to="/settings/zoom-user/add" ><Button type="primary"><Icon type="plus"/> Add Zoom User</Button></Link>
-                    }>
+                    <Card
+                      title="Zoom User"
+                      extra={
+                        <Link to="/settings/zoom-user/add"><Button type="primary"><Icon type="plus" /> Add Zoom User</Button></Link>
+                    }
+                    >
 
 
-                        <Table dataSource={this.state.zoomUser} columns={columns} pagination={false}/>
+                        <Table dataSource={this.state.zoomUser} columns={columns} pagination={false} />
                     </Card>
                 </Switch>
-            </div>
+</div>
         )
     }
 }

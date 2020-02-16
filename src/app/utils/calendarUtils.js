@@ -1,56 +1,57 @@
 import {Menu} from "antd";
 import React from 'react';
 import {Link} from "react-router-dom";
+import * as lockr from "lockr";
+import moment from "moment/moment";
 import {getAPI, interpolate} from "./common";
 import {APPOINTMENT_CATEGORIES} from "../constants/api";
 import {hashCode, intToRGB} from "./clinicUtils";
-import * as lockr from "lockr";
 import {CALENDAR_SETTINGS} from "../constants/dataKeys";
-import moment from "moment/moment";
 
-export const calendarSettingMenu = (<Menu>
+export const calendarSettingMenu = (
+<Menu>
         <Menu.Item key="1">
-            <Link to={"/settings/calendarsettings#timings"}>
+            <Link to="/settings/calendarsettings#timings">
                 Modify Calendar Timings
             </Link>
         </Menu.Item>
         <Menu.Item key="2">
-            <Link to={"/settings/clinics-staff#staff"}>
+            <Link to="/settings/clinics-staff#staff">
                 Add/Edit Doctor or Staff
             </Link>
         </Menu.Item>
         <Menu.Item key="3">
-            <Link to={"/settings/clinics-staff#notification"}>
+            <Link to="/settings/clinics-staff#notification">
                 Modify SMS/Email for Doctor/Staff
             </Link>
         </Menu.Item>
         <Menu.Item key="4">
-            <Link to={"/settings/communication-settings"}>
+            <Link to="/settings/communication-settings">
                 Modify SMS/Email for Patients
             </Link>
         </Menu.Item>
         <Menu.Item key="5">
-            <Link to={"/settings/calendarsettings#categories"}>
+            <Link to="/settings/calendarsettings#categories">
                 Add/Edit Categroies
             </Link>
         </Menu.Item>
-    </Menu>
+</Menu>
 );
 export const loadAppointmentCategories = function (that) {
-    let successFn = function (data) {
-        let categories_object = {}
-        let categories = data.map((item) => {
+    const successFn = function (data) {
+        const categories_object = {}
+        const categories = data.map((item) => {
                 categories_object[item.id] = {...item, calendar_colour: intToRGB(hashCode(item.name))}
                 return categories_object[item.id]
             }
         )
         that.setState({
-            categories_object: categories_object,
+            categories_object,
             practice_categories: categories,
         })
 
     }
-    let errorFn = function () {
+    const errorFn = function () {
 
     }
     getAPI(interpolate(APPOINTMENT_CATEGORIES, [that.props.active_practiceId]), successFn, errorFn)
@@ -75,13 +76,13 @@ export const getCalendarSettings = function () {
 
 export const TimeSlotWrapper = function (props) {
     let flag = true;
-    let dayValue = moment(props.value).isValid() ? moment(props.value).format('dddd').toLowerCase() : null;
+    const dayValue = moment(props.value).isValid() ? moment(props.value).format('dddd').toLowerCase() : null;
     if (props.filterType != 'DOCTOR' || props.selectedDoctor == 'ALL') {
         /**
          * Checking for Calendar Clinic Timings
          * */
         if (props.calendarTimings && dayValue && props.calendarTimings[dayValue]) {
-            let daysTimings = props.calendarTimings[dayValue];
+            const daysTimings = props.calendarTimings[dayValue];
             if (daysTimings.lunch) {
                 if (
                     (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss')
@@ -93,20 +94,17 @@ export const TimeSlotWrapper = function (props) {
                 ) {
                     flag = false;
                 }
-            } else {
-                if (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
+            } else if (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
                     flag = false;
                 }
-            }
         } else if (dayValue && !props.calendarTimings[dayValue]) {
             /**
              * If the practice is not opening for the day
              * */
             flag = false;
         }
-    } else {
-        if (props.doctorTimings && dayValue && props.doctorTimings[dayValue]) {
-            let daysTimings = props.doctorTimings[dayValue];
+    } else if (props.doctorTimings && dayValue && props.doctorTimings[dayValue]) {
+            const daysTimings = props.doctorTimings[dayValue];
             if (daysTimings.lunch) {
                 if (
                     (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss')
@@ -118,18 +116,15 @@ export const TimeSlotWrapper = function (props) {
                 ) {
                     flag = false;
                 }
-            } else {
-                if (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
+            } else if (moment(props.value, 'HH:mm:ss').format('HH:mm:ss') <= daysTimings.startTime.format('HH:mm:ss') || moment(props.value, 'HH:mm:ss').format('HH:mm:ss') > daysTimings.endTime.format('HH:mm:ss')) {
                     flag = false;
                 }
-            }
         } else if (props.doctorTimings && dayValue && !props.doctorTimings[dayValue]) {
             /**
              * If the doctor is not working for the day
              * */
             flag = false;
         }
-    }
     /**
      * Checking for Events Timings
      * */
@@ -140,12 +135,10 @@ export const TimeSlotWrapper = function (props) {
                     flag = false;
                     break;
                 }
-            } else {
-                if (moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
+            } else if (moment(props.value).isBetween(moment(props.blockedCalendar[i].block_from), moment(props.blockedCalendar[i].block_to))) {
                     flag = false;
                     break;
                 }
-            }
         }
     }
 
@@ -154,5 +147,5 @@ export const TimeSlotWrapper = function (props) {
 
 
     const child = React.Children.only(props.children);
-    return React.cloneElement(child, {className: child.props.className + ' rbc-off-range-bg'});
+    return React.cloneElement(child, {className: `${child.props.className  } rbc-off-range-bg`});
 }

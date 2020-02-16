@@ -18,13 +18,14 @@ export default class WalletBalanceAmountReport extends React.Component {
         }
         this.loadMlmReport = this.loadMlmReport.bind(this);
     }
+
     componentDidMount() {
         this.loadMlmReport();
         loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.agents!=newProps.agents)
             this.setState({
                 startDate: newProps.startDate,
@@ -36,22 +37,22 @@ export default class WalletBalanceAmountReport extends React.Component {
     }
 
     loadMlmReport() {
-        let that = this;
+        const that = this;
         this.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report: data,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -63,8 +64,8 @@ export default class WalletBalanceAmountReport extends React.Component {
     }
 
     sendMail = (mailTo) => {
-        let that = this;
-        let apiParams={
+        const that = this;
+        const apiParams={
             practice:that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -78,7 +79,7 @@ export default class WalletBalanceAmountReport extends React.Component {
 
 
     render() {
-        let that=this;
+        const that=this;
         const {report} =this.state;
         const reportData = [];
         for (let i = 1; i <= report.length; i++) {
@@ -123,20 +124,25 @@ export default class WalletBalanceAmountReport extends React.Component {
             key: 'non_refundable',
             render:(item,record)=><span>{record.non_refundable?record.non_refundable.toFixed(2) :'0.00'}</span>,
         }];
-        var total_refundable_Amount = this.state.report.reduce(function(prev, cur) {
+        const total_refundable_Amount = this.state.report.reduce(function(prev, cur) {
             return prev + cur.refundable_amount;
         }, 0);
 
-        var total_Non_refundable_Amount = this.state.report.reduce(function(prev, cur) {
+        const total_Non_refundable_Amount = this.state.report.reduce(function(prev, cur) {
             return prev + cur.non_refundable;
         }, 0);
-        return <div>
+        return (
+<div>
             <h2>Wallet Balance Amount
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
@@ -156,9 +162,11 @@ export default class WalletBalanceAmountReport extends React.Component {
             </Row>
 
             <CustomizedTable
-                loading={this.state.loading}
-                columns={columns}
-                dataSource={reportData}/>
-        </div>
+              loading={this.state.loading}
+              columns={columns}
+              dataSource={reportData}
+            />
+</div>
+)
     }
 }

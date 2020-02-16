@@ -4,7 +4,7 @@ import PaymentModes from "./PaymentModes";
 import TaxCatalog from "./TaxCatalog";
 import CancelledInvoice from "./CancelledInvoice";
 
-const TabPane = Tabs.TabPane;
+const {TabPane} = Tabs;
 
 
 class BillingSettings extends React.Component {
@@ -17,25 +17,27 @@ class BillingSettings extends React.Component {
 
 
     render() {
-        return <div>
+        return (
+<div>
             <Row>
                 <h2>Billing</h2>
                 <Card>
                     <Tabs defaultActiveKey={this.state.defaultActiveKey}>
-                        <TabPane tab={<span><Icon type="cluster"/>Tax Catalog</span>} key="#taxcatalog">
-                            <TaxCatalog {...this.state} {...this.props}/>
+                        <TabPane tab={<span><Icon type="cluster" />Tax Catalog</span>} key="#taxcatalog">
+                            <TaxCatalog {...this.state} {...this.props} />
                         </TabPane>
-                        <TabPane tab={<span><Icon type="dollar"/>Accepted Modes of payment </span>} key="#paymentmodes">
-                            <PaymentModes {...this.props}/>
+                        <TabPane tab={<span><Icon type="dollar" />Accepted Modes of payment </span>} key="#paymentmodes">
+                            <PaymentModes {...this.props} />
                         </TabPane>
-                        <TabPane tab={<span><Icon type="block"/>Cancelled Invoice</span>} key="cancelledinvoice">
-                            <CancelledInvoice {...this.state} {...this.props}/>
+                        <TabPane tab={<span><Icon type="block" />Cancelled Invoice</span>} key="cancelledinvoice">
+                            <CancelledInvoice {...this.state} {...this.props} />
                         </TabPane>
                     </Tabs>
 
                 </Card>
             </Row>
-        </div>
+</div>
+)
     }
 }
 

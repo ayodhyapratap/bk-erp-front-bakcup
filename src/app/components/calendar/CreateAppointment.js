@@ -1,7 +1,9 @@
 import React from "react";
 import {Route} from "react-router";
-import DynamicFieldsForm from "../common/DynamicFieldsForm";
 import {Button, Card, Form, Icon, Row} from "antd";
+import {Redirect} from 'react-router-dom'
+import moment from 'moment';
+import DynamicFieldsForm from "../common/DynamicFieldsForm";
 import {
     CHECKBOX_FIELD,
     SINGLE_CHECKBOX_FIELD,
@@ -21,8 +23,6 @@ import {
     PROCEDURE_CATEGORY, APPOINTMENT_API, SINGLE_PRACTICE_STAFF_API, SEARCH_PATIENT
 } from "../../constants/api";
 import {getAPI, interpolate, displayMessage} from "../../utils/common";
-import {Redirect} from 'react-router-dom'
-import moment from 'moment';
 import CreateAppointmentForm from "./CreateAppointmentForm";
 
 
@@ -33,24 +33,25 @@ class CreateAppointment extends React.Component {
 
         }
     }
+
     render() {
 
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success")
 
             },
-            errorFn: function () {
+            errorFn () {
 
             },
-            onFieldsDataChange: function (data) {
+            onFieldsDataChange (data) {
                 // console.log(data);
             },
             action: ALL_APPOINTMENT_API,
             method: "post",
         };
-        let defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
-        let that = this;
+        const defaultValues = [{"key": "practice", "value": this.props.active_practiceId}];
+        const that = this;
         let editformProp;
         // if (this.state.appointment) {
         //     editformProp = {
@@ -73,18 +74,39 @@ class CreateAppointment extends React.Component {
         //
         // }
         const TestFormLayout = Form.create()(CreateAppointmentForm);
-        return <Row>
-            <Route exact path='/calendar/:appointmentid/edit-appointment'
-                   render={(route) => (this.props.match.params.appointmentid ?
-                       <TestFormLayout {...route} {...this.props} defaultValues={defaultValues} title="Edit Appointment"
-                                       changeRedirect={this.changeRedirect}/> :
-                       <Redirect to={'/patients/appointments/'}/>)}/>
+        return (
+<Row>
+            <Route
+              exact
+              path='/calendar/:appointmentid/edit-appointment'
+              render={(route) => (this.props.match.params.appointmentid ? (
+                       <TestFormLayout
+                         {...route}
+                         {...this.props}
+                         defaultValues={defaultValues}
+                         title="Edit Appointment"
+                         changeRedirect={this.changeRedirect}
+                       />
+                     ) :
+                       <Redirect to="/patients/appointments/" />)}
+            />
 
-            <Route exact path='/calendar/create-appointment'
-                   render={(route) => <TestFormLayout {...this.props} defaultValues={defaultValues} changeRedirect={this.changeRedirect} {...route}
-                                                 title="ADD Appointment "/>}/>
+            <Route
+              exact
+              path='/calendar/create-appointment'
+              render={(route) => (
+<TestFormLayout
+  {...this.props}
+  defaultValues={defaultValues}
+  changeRedirect={this.changeRedirect}
+  {...route}
+  title="ADD Appointment "
+/>
+)}
+            />
 
-        </Row>
+</Row>
+)
     }
 
 

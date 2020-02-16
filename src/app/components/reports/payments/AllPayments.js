@@ -1,9 +1,9 @@
 import React from "react";
 import { Col, Divider, Row, Select, Tag, Table, Statistic } from "antd";
-import { PAYMENT_REPORTS } from "../../../constants/api";
-import { getAPI, interpolate } from "../../../utils/common";
 import moment from "moment";
 import * as _ from "lodash";
+import { PAYMENT_REPORTS } from "../../../constants/api";
+import { getAPI, interpolate } from "../../../utils/common";
 import { loadMailingUserListForReportsMail, sendReportMail } from "../../../utils/clinicUtils";
 
 export default class AllPayments extends React.Component {
@@ -25,7 +25,7 @@ export default class AllPayments extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate || this.props.patient_groups != newProps.patient_groups || this.props.taxes != newProps.taxes
             || this.props.doctors != newProps.doctors || this.props.payment_mode != newProps.payment_mode || this.props.discount != newProps.discount || this.props.treatments != newProps.treatments ||
             this.props.consume != newProps.consume || this.props.exclude_cancelled != newProps.exclude_cancelled)
@@ -39,27 +39,27 @@ export default class AllPayments extends React.Component {
     }
 
     loadPaymentsReport = () => {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report: data,
                 loading: false
             });
         };
-        let errorFn = function (data) {
+        const errorFn = function (data) {
             that.setState({
                 loading: false
             })
         };
-        let apiParams = {
+        const apiParams = {
             type: that.props.type,
             practice: that.props.active_practiceId,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            is_cancelled: this.props.exclude_cancelled ? true : false,
+            is_cancelled: !!this.props.exclude_cancelled,
         };
         if (this.props.taxes) {
             apiParams.taxes = this.props.taxes.toString();
@@ -84,6 +84,7 @@ export default class AllPayments extends React.Component {
         }
         getAPI(interpolate(PAYMENT_REPORTS, [that.props.active_practiceId]), successFn, errorFn, apiParams);
     };
+
     onPieEnter = (data, index) => {
         this.setState({
             activeIndex: index,
@@ -91,12 +92,12 @@ export default class AllPayments extends React.Component {
     };
 
     sendMail = (mailTo) => {
-        let that = this
-        let { startDate, endDate } = this.state;
-        let { active_practiceId, type } = this.props;
-        let apiParams = {
+        const that = this
+        const { startDate, endDate } = this.state;
+        const { active_practiceId, type } = this.props;
+        const apiParams = {
             practice: active_practiceId,
-            type: type,
+            type,
             start: startDate.format('YYYY-MM-DD'),
             end: endDate.format('YYYY-MM-DD'),
         };
@@ -138,18 +139,24 @@ export default class AllPayments extends React.Component {
             title: 'Invoice(s)',
             dataIndex: 'invoice_id',
             key: 'invoice_id',
-            render: (text, record) => <span>{record.invoices.map((item) =>
+            render: (text, record) => (
+<span>{record.invoices.map((item) =>
                 <Tag>{item.invoice}</Tag>
-            )}</span>,
-            export: (text, record) => (record.invoices.map((item) => (item.invoice + ",")))
+            )}
+</span>
+),
+            export: (text, record) => (record.invoices.map((item) => (`${item.invoice  },`)))
         }, {
             title: 'Treatments & Products',
             dataIndex: 'treatement',
             key: 'treatement',
-            render: (text, record) => <span>{record.invoices.map((item) =>
+            render: (text, record) => (
+<span>{record.invoices.map((item) =>
                 <Tag>{item.invoice_items}</Tag>
-            )}</span>,
-            export: (text, record) => (record.invoices.map((item) => (item.invoice_items + ",")))
+            )}
+</span>
+),
+            export: (text, record) => (record.invoices.map((item) => (`${item.invoice_items  },`)))
         }, {
             title: 'Amount Paid (INR)	',
             dataIndex: 'total',
@@ -169,29 +176,37 @@ export default class AllPayments extends React.Component {
         }, {
             title: 'Vendor Fees (INR)',
             key: 'vendor_fee',
-            render: (item, record) => <span>{record.total ?
+            render: (item, record) => (
+<span>{record.total ?
                 ((record.total / 100) * record.payment_mode_data.fee).toFixed(2)
-                : 0.00}</span>,
+                : 0.00}
+</span>
+),
             export: (text, record) => (record.total ?
                 ((record.total / 100) * record.payment_mode_data.fee).toFixed(2)
                 : 0.00)
         }];
 
-        var totalAmount = this.state.report.reduce(function (prev, cur) {
+        const totalAmount = this.state.report.reduce(function (prev, cur) {
             return prev + cur.total;
         }, 0);
 
-        var totalAdvanceAmount = this.state.report.reduce(function (prev, cur) {
+        const totalAdvanceAmount = this.state.report.reduce(function (prev, cur) {
             return prev + cur.advance_value;
         }, 0);
 
-        return <div>
+        return (
+<div>
             <h2>All Payments Report
                 <span style={{ float: 'right' }}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{ width: 200 }}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
@@ -202,17 +217,20 @@ export default class AllPayments extends React.Component {
                     <Statistic title="Total Payment (INR)" value={totalAmount.toFixed(2)} />
                 </Col>
 
-                <Col span={12}  style={{textAlign:"center"}}>
+                <Col span={12} style={{textAlign:"center"}}>
                     <Statistic title="Total Advance Payment (INR)" value={totalAdvanceAmount.toFixed(2)} />
                 </Col>
-                <Divider/>
+                <Divider />
             </Row>
-            <Table rowKey={(record) => record.id}
-                loading={this.state.loading}
-                columns={columns}
-                dataSource={this.state.report} />
+            <Table
+              rowKey={(record) => record.id}
+              loading={this.state.loading}
+              columns={columns}
+              dataSource={this.state.report}
+            />
 
 
-        </div>
+</div>
+)
     }
 }

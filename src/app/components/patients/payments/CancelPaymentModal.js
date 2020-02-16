@@ -1,5 +1,6 @@
 import React from "react";
 import {Button, Card, Form, Icon, Input, Modal} from "antd";
+import moment from "moment";
 import {
     CANCELINVOICE_RESENT_OTP,
     CANCELINVOICE_VERIFY_OTP,
@@ -8,7 +9,6 @@ import {
 import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {SUCCESS_MSG_TYPE, OTP_DELAY_TIME} from "../../../constants/dataKeys";
 import { REQUIRED_FIELD_MESSAGE } from "../../../constants/messages";
-import moment from "moment";
 
 const TextArea =Input;
 class CancelPaymentModal extends React.Component {
@@ -23,8 +23,8 @@ class CancelPaymentModal extends React.Component {
     }
 
     componentDidMount(){
-        let that =this;
-        let created_time = moment().diff(that.props.editPayment.created_at, 'minutes');
+        const that =this;
+        const created_time = moment().diff(that.props.editPayment.created_at, 'minutes');
         if (created_time > OTP_DELAY_TIME) {
             that.setState({
                 otpField:true,
@@ -35,22 +35,22 @@ class CancelPaymentModal extends React.Component {
 
 
     handleSubmitCancelPayment = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let reqData = {
+                const reqData = {
                     ...values,
                     practice: this.props.active_practiceId,
                 }
-                let successFn = function (data) {
+                const successFn = function (data) {
                     that.setState({
                         cancelPaymentVisible: false,
                     });
                     that.deletePayment(that.props.editPayment.patient_data , that.props.editPayment.id, values.cancel_note);
         
                 };
-                let errorFn = function () {
+                const errorFn = function () {
 
                 };
                 if(that.state.otpField){
@@ -66,19 +66,19 @@ class CancelPaymentModal extends React.Component {
 
 
     deletePayment(patient, payment , cancel_note) {
-        let that = this;
+        const that = this;
         console.log("log",patient ,payment, cancel_note)
-        let reqData = {
+        const reqData = {
             patient: patient.id, 
             is_cancelled: true,
-            cancel_note:cancel_note,
+            cancel_note,
         };
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.props.cancelPaymentClose();
             displayMessage(SUCCESS_MSG_TYPE, "Payment cancelled successfully")
             that.props.loadPayments();
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         putAPI(interpolate(SINGLE_PAYMENT_API, [payment]), reqData, successFn, errorFn);
 
@@ -86,27 +86,27 @@ class CancelPaymentModal extends React.Component {
 
 
     sendOTP() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
 
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
         getAPI(CANCELINVOICE_RESENT_OTP, successFn, errorFn);
     }
 
     render() {
-        let that = this;
-        let {otpField} = this.state;
+        const that = this;
+        const {otpField} = this.state;
         const {getFieldDecorator} = that.props.form;
         return(
             <Modal
-                visible={that.state.cancelPaymentVisible}
-                title="Cancel Payment"
-                footer={null}
-                onOk={that.handleSubmitCancelPayment}
-                onCancel={that.props.cancelPaymentClose}
+              visible={that.state.cancelPaymentVisible}
+              title="Cancel Payment"
+              footer={null}
+              onOk={that.handleSubmitCancelPayment}
+              onCancel={that.props.cancelPaymentClose}
 
             >
                 <Form>
@@ -114,26 +114,29 @@ class CancelPaymentModal extends React.Component {
                         {getFieldDecorator('cancel_note',{
                             rules:[{required:true, message:REQUIRED_FIELD_MESSAGE}],
                         })(
-                            <TextArea placeholder="cancel notes"/>
+                            <TextArea placeholder="cancel notes" />
                         )}
                     </Form.Item>
 
-                    {otpField ?
+                    {otpField ? (
                         <Form.Item key="otp">
                             {getFieldDecorator('otp', {
                                 rules: [{required: otpField, message: 'Please input Otp!'}],
                             })(
-                                <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                                    placeholder="Otp"
+                                <Input
+                                  prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}} />}
+                                  placeholder="Otp"
                                 />,
                             )}
-                        </Form.Item> :null
-                    }
+                        </Form.Item>
+                      ) :null}
 
                     <Form.Item key="btn">
-                        {that.state.otpSent ? <a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
+                        {that.state.otpSent ? (
+<a style={{float: 'right'}} type="primary" onClick={that.sendOTP}>
                             Resend Otp ?
-                        </a> : null}
+</a>
+) : null}
                         <Button size="small" type="primary" htmlType="submit" onClick={that.handleSubmitCancelPayment}>
                             Submit
                         </Button>&nbsp;

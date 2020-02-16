@@ -30,28 +30,30 @@ export default class MlmReportHome extends React.Component {
         };
         this.loadAgents = this.loadAgents.bind(this);
     }
+
     componentDidMount() {
         this.loadAgents();
     }
 
     loadAgents() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 agentsOption: data.results,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
-        let apiParams = {
+        const apiParams = {
             agent: true,
             practice: this.props.active_practiceId,
             type:this.props.type,
         };
         getAPI(PATIENTS_LIST, successFn, errorFn, apiParams);
     }
+
     onChangeHandle =(type,value)=>{
-        let that=this;
+        const that=this;
         this.setState({
             [type]:value.target.value,
         })
@@ -62,96 +64,135 @@ export default class MlmReportHome extends React.Component {
             advancedOptionShow:value,
         })
     }
+
     changeSidePanelSize = (sidePanel) => {
         this.setState({
             sidePanelColSpan: sidePanel ? 0 : 4
         })
     };
+
     handleChangeOption = (type,value) => {
-        let that = this;
+        const that = this;
         this.setState({
             [type]: value,
         })
     };
+
     render() {
-        return <div>
-            <h2>MLM Report <Button type="primary" shape="round"
-                                   icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
-                                   style={{float: "right"}}
-                                   onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
+        return (
+<div>
+            <h2>MLM Report <Button
+              type="primary"
+              shape="round"
+              icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
+              style={{float: "right"}}
+              onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}
+            >Panel
+                           </Button>
             </h2>
             <Card>
                 <Row gutter={16}>
 
                     <Col span={(24 - this.state.sidePanelColSpan)}>
                         {this.state.type==ALL?
-                            <TransferredAmountReport {...this.state} {...this.props}/>:null}
+                            <TransferredAmountReport {...this.state} {...this.props} />:null}
 
                         {this.state.type ==MARGIN_TYPE_WISE?
-                            <MarginTypewiseReport {...this.props} {...this.state}/>:null}
+                            <MarginTypewiseReport {...this.props} {...this.state} />:null}
 
                         {this.state.type ==AGENT_TREE_VIEW?
-                            <AgentTreeReport {...this.props} {...this.state}/>:null}
+                            <AgentTreeReport {...this.props} {...this.state} />:null}
 
-                        {/*{this.state.type ==PRODUCT_WISE?*/}
-                        {/*    <ProductWiseReport {...this.props} {...this.state}/>:null}*/}
+                        {/* {this.state.type ==PRODUCT_WISE? */}
+                        {/*    <ProductWiseReport {...this.props} {...this.state}/>:null} */}
 
                         {this.state.type == WALLET_BALANCE_AMOUNT?
-                            <WalletBalanceAmountReport {...this.props} {...this.state}/>:null}
+                            <WalletBalanceAmountReport {...this.props} {...this.state} />:null}
                     </Col>
 
                     <Col span={this.state.sidePanelColSpan}>
                         <Radio.Group buttonStyle="solid" defaultValue={ALL} onChange={(value)=>this.onChangeHandle('type',value)}>
                             <h2>MLM</h2>
-                            <Radio.Button style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
-                                          value={ALL}>
+                            <Radio.Button
+                              style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
+                              value={ALL}
+                            >
                                 All MLM
                             </Radio.Button>
-                            <p><br/></p>
+                            <p><br /></p>
                             <h2>Related Reports</h2>
-                            {MLM_RELATED_REPORT.map((item) => <Radio.Button
-                                style={{width: '100%', backgroundColor: 'transparent'}}
-                                value={item.value}>
+                            {MLM_RELATED_REPORT.map((item) => (
+<Radio.Button
+  style={{width: '100%', backgroundColor: 'transparent'}}
+  value={item.value}
+>
                                 {item.name}
-                            </Radio.Button>)}
+</Radio.Button>
+))}
                         </Radio.Group>
 
-                        <br/>
-                        <br/>
-                        {this.state.type == AGENT_TREE_VIEW ?<>
-                            {this.state.advancedOptionShow?<>
+                        <br />
+                        <br />
+                        {this.state.type == AGENT_TREE_VIEW ?(
+<>
+                            {this.state.advancedOptionShow?(
+<>
                                 <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
-                                <Col> <br/>
+                                <Col> <br />
                                     <h4>Agents</h4>
-                                    <Select style={{minWidth: '200px'}} placeholder="Select Agents" showSearch optionFilterProp="children"
-                                            onChange={(value)=>this.handleChangeOption('agent',value)} >
-                                        {this.state.agentsOption.map((item) => <Select.Option value={item.id}>
-                                            {item.user.first_name}</Select.Option>)}
+                                    <Select
+                                      style={{minWidth: '200px'}}
+                                      placeholder="Select Agents"
+                                      showSearch
+                                      optionFilterProp="children"
+                                      onChange={(value)=>this.handleChangeOption('agent',value)}
+                                    >
+                                        {this.state.agentsOption.map((item) => (
+<Select.Option value={item.id}>
+                                            {item.user.first_name}
+</Select.Option>
+))}
                                     </Select>
 
 
                                 </Col>
-                            </>: <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
-                        </>:<>
-                            {this.state.advancedOptionShow?<>
+</>
+): <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
+</>
+):(
+<>
+                            {this.state.advancedOptionShow?(
+<>
                                 <Button type="link" onClick={(value)=>this.advancedOption(false)}>Hide Advanced Options </Button>
-                                <Col> <br/>
+                                <Col> <br />
                                     <h4>Agents</h4>
-                                    <Select style={{minWidth: '200px'}} mode="multiple"  placeholder="Select Agents" showSearch optionFilterProp="children"
-                                            onChange={(value)=>this.handleChangeOption('agents',value)} >
-                                        {this.state.agentsOption.map((item) => <Select.Option value={item.id}>
-                                            {item.user.first_name}</Select.Option>)}
+                                    <Select
+                                      style={{minWidth: '200px'}}
+                                      mode="multiple"
+                                      placeholder="Select Agents"
+                                      showSearch
+                                      optionFilterProp="children"
+                                      onChange={(value)=>this.handleChangeOption('agents',value)}
+                                    >
+                                        {this.state.agentsOption.map((item) => (
+<Select.Option value={item.id}>
+                                            {item.user.first_name}
+</Select.Option>
+))}
                                     </Select>
 
 
                                 </Col>
-                            </>: <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
+</>
+): <Button type="link" onClick={(value)=>this.advancedOption(true)}>Show Advanced Options </Button>}
 
-                        </>}
+</>
+)}
 
                     </Col>
                 </Row>
             </Card>
-        </div>
+</div>
+)
     }
 }

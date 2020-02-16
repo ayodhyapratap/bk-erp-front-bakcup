@@ -18,15 +18,15 @@ import {
     Popconfirm,
     Tag
 } from 'antd';
-import {DRUG_CATALOG, INVENTORY_ITEM_API, LABTEST_API} from "../../../constants/api";
-import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {remove} from "lodash";
+import {Link, Route, Switch} from "react-router-dom";
+import {DRUG_CATALOG, INVENTORY_ITEM_API, LABTEST_API,PRESCRIPTIONS_API, PRESCRIPTION_TEMPLATE} from "../../../constants/api";
+import {displayMessage, getAPI, interpolate, postAPI, putAPI} from "../../../utils/common";
 import {DURATIONS_UNIT, DOSE_REQUIRED, DRUG} from "../../../constants/hardData";
 import {WARNING_MSG_TYPE} from "../../../constants/dataKeys";
-import {PRESCRIPTIONS_API, PRESCRIPTION_TEMPLATE} from "../../../constants/api";
-import {Link, Route, Switch} from "react-router-dom";
 
-const TabPane = Tabs.TabPane;
+
+const {TabPane} = Tabs;
 let id = 0;
 
 
@@ -60,13 +60,13 @@ class PrescriptionTemplate extends React.Component {
     }
 
     loadPrescriptionTemplate() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 prescriptionTemplate: data.results,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
         console.log("template", that.state.prescriptionTemplate);
@@ -74,36 +74,36 @@ class PrescriptionTemplate extends React.Component {
     }
 
     loadLabList() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 labList: data.results,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
         getAPI(interpolate(LABTEST_API, [that.props.active_practiceId]), successFn, errorFn);
     }
 
     loadDrugList(page = 1) {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState(function (prevState) {
-                let items = {...prevState.items}
+                const items = {...prevState.items}
                 return {
                     items: {...items, "Drugs": data.results},
                     filteredItems: {...prevState.filteredItems, "Drugs": data.results}
                 }
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
-        let params = {
+        const params = {
             practice: this.props.active_practiceId,
             item_type: DRUG,
-            page: page
+            page
         };
         if (that.state.searchStrings.Drugs) {
             params.item_name = that.state.searchStrings.Drugs
@@ -113,7 +113,7 @@ class PrescriptionTemplate extends React.Component {
 
     addDrug(item) {
         this.setState(function (prevState) {
-            let randId = Math.random().toFixed(7);
+            const randId = Math.random().toFixed(7);
             if (prevState.addedDrugs[item.id]) {
                 displayMessage(WARNING_MSG_TYPE, "Item Already Added");
                 return false;
@@ -134,11 +134,13 @@ class PrescriptionTemplate extends React.Component {
             return {addInstructions: {...prevState.addInstructions, [_id]: !!option}}
         })
     }
+
     changeDurationUnits = (_id, option) => {
         this.setState(function (prevState) {
             return {changeDurationUnits: {...prevState.changeDurationUnits, [_id]: !!option}}
         })
     }
+
     removeDrug = (_id) => {
         this.setState(function (prevState) {
             return {
@@ -148,6 +150,7 @@ class PrescriptionTemplate extends React.Component {
             }
         });
     }
+
     removeLabs = (_id, item) => {
         this.setState(function (prevState) {
             return {
@@ -158,9 +161,10 @@ class PrescriptionTemplate extends React.Component {
             }
         });
     }
+
     addLabs = (item) => {
         this.setState(function (prevState) {
-            let randId = Math.random().toFixed(7);
+            const randId = Math.random().toFixed(7);
             console.log("LAb state", prevState);
             if (prevState.addedLabs[item.id]) {
                 displayMessage(WARNING_MSG_TYPE, "Item Already Added");
@@ -180,16 +184,16 @@ class PrescriptionTemplate extends React.Component {
     addTemplate = (item) => {
         this.setState(function (prevState) {
             // console.log("templateData state",prevState);
-            let randId = Math.random().toFixed(7);
+            const randId = Math.random().toFixed(7);
             if (prevState.addTemplate[item.id]) {
                 displayMessage(WARNING_MSG_TYPE, "Item Already Added");
                 return false;
             }
-            let prevLabs = [...prevState.formLabList];
+            const prevLabs = [...prevState.formLabList];
             let prevAddedLabs = {...prevState.addedLabs};
             if (item.labs)
                 item.labs.forEach(function (lab) {
-                    let randId = Math.random().toFixed(7);
+                    const randId = Math.random().toFixed(7);
                     prevLabs.push({
                         ...lab,
                         _id: randId,
@@ -197,11 +201,11 @@ class PrescriptionTemplate extends React.Component {
                     prevAddedLabs = {...prevAddedLabs, [lab.id]: true}
                 });
 
-            let prevDrugs = [...prevState.formDrugList];
+            const prevDrugs = [...prevState.formDrugList];
             let prevAddedDrugs = {...prevState.addedDrugs};
             if (item.drugs)
                 item.drugs.forEach(function (drugs) {
-                    let randId = Math.random().toFixed(7);
+                    const randId = Math.random().toFixed(7);
                     prevDrugs.push({
                         ...drugs,
                         _id: randId,
@@ -221,6 +225,7 @@ class PrescriptionTemplate extends React.Component {
 
         });
     };
+
     removeTemplates = (_id, item) => {
         this.setState(function (prevState) {
             return {
@@ -231,15 +236,16 @@ class PrescriptionTemplate extends React.Component {
             }
         });
     }
+
     handleSubmit = (e) => {
-        let that = this;
+        const that = this;
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             console.log("value form", values);
 
             if (!err) {
 
-                let reqData = {
+                const reqData = {
                     ...values,
                     drug: [],
                     labs: [],
@@ -289,11 +295,11 @@ class PrescriptionTemplate extends React.Component {
                 that.state.formLabList.forEach(function (item) {
                     reqData.labs.push(item.id);
                 });
-                let successFn = function (data) {
+                const successFn = function (data) {
                     // let url = '/patient/' + that.props.match.params.id + '/emr/prescriptions';
                     that.props.history.goBack();
                 }
-                let errorFn = function () {
+                const errorFn = function () {
 
                 }
                 console.log("final", reqData);
@@ -303,12 +309,12 @@ class PrescriptionTemplate extends React.Component {
     }
 
     deletePrescriptionTemplate(id) {
-        var that = this;
-        let reqData = {id: id, is_active: false};
-        let successFn = function (data) {
+        const that = this;
+        const reqData = {id, is_active: false};
+        const successFn = function (data) {
             that.loadPrescriptionTemplate();
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         postAPI(interpolate(PRESCRIPTION_TEMPLATE, [that.props.active_practiceId]), reqData, successFn, errorFn);
 
@@ -322,6 +328,7 @@ class PrescriptionTemplate extends React.Component {
             keys: nextKeys
         });
     };
+
     remove = (k) => {
         const {form} = this.props;
         const keys = form.getFieldValue('keys');
@@ -332,13 +339,15 @@ class PrescriptionTemplate extends React.Component {
             keys: keys.filter(key => key !== k),
         });
     }
+
     onChange = e => {
         this.setState({});
     };
+
     searchValues = (type, value) => {
-        let that = this;
+        const that = this;
         this.setState(function (prevState) {
-            let searchValues = {...prevState.searchStrings};
+            const searchValues = {...prevState.searchStrings};
             searchValues[type] = value;
             return {searchStrings: searchValues}
         }, function () {
@@ -348,6 +357,7 @@ class PrescriptionTemplate extends React.Component {
                 that.filterValues(type);
         });
     }
+
     filterValues = (type) => {
         this.setState(function (prevState) {
             let filteredItemOfGivenType = [];
@@ -372,7 +382,7 @@ class PrescriptionTemplate extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         const formItemLayout = {
             labelCol: {
                 xs: {span: 24},
@@ -394,22 +404,23 @@ class PrescriptionTemplate extends React.Component {
         getFieldDecorator('keys', {initialValue: []});
         const keys = getFieldValue('keys');
         const formItems = keys.map((k, index) => (
-            <Form.Item  {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                        label={index === 0 ? 'Advice' : ''}
-                        required={false}
-                        key={k}
+            <Form.Item
+              {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+              label={index === 0 ? 'Advice' : ''}
+              required={false}
+              key={k}
             >
                 {getFieldDecorator(`advice_data[${k}]`, {
                     validateTrigger: ['onChange', 'onBlur'],
 
                 })(
-                    <Input style={{width: '60%', marginRight: 8}}/>
+                    <Input style={{width: '60%', marginRight: 8}} />
                 )}
                 {keys.length > 1 ? (
                     <Icon
-                        className="dynamic-delete-button"
-                        type="minus-circle-o"
-                        onClick={() => this.remove(k)}
+                      className="dynamic-delete-button"
+                      type="minus-circle-o"
+                      onClick={() => this.remove(k)}
                     />
                 ) : null}
             </Form.Item>
@@ -424,9 +435,11 @@ class PrescriptionTemplate extends React.Component {
             title: 'Dosage & Frequency',
             dataIndex: 'dosage',
             key: 'dosage',
-            render: (dosage, record) => <div><Form.Item
-                extra={<span>does(s)</span>}
-                key={`does[${record._id}]`}>
+            render: (dosage, record) => (
+<div><Form.Item
+  extra={<span>does(s)</span>}
+  key={`does[${record._id}]`}
+>
                 {getFieldDecorator(`does[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
 
@@ -434,12 +447,13 @@ class PrescriptionTemplate extends React.Component {
                     {
                         rules: [{message: "This field is required.",}],
                     })(
-                    <InputNumber min={0} size={"small"}/>
+                    <InputNumber min={0} size="small" />
                 )}
 
-            </Form.Item>
+     </Form.Item>
                 <Form.Item
-                    key={`does_frequency[${record._id}]`}>
+                  key={`does_frequency[${record._id}]`}
+                >
                     {getFieldDecorator(`does_frequency[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{
@@ -447,31 +461,39 @@ class PrescriptionTemplate extends React.Component {
                         }],
                         initialValue: 'twice daily'
                     })(
-                        <Select size={"small"} onChange={() => this.changeDurationUnits(record._id, false)}>
-                            {DOSE_REQUIRED.map(item => <Select.Option
-                                value={item.value}>{item.label}</Select.Option>)}
+                        <Select size="small" onChange={() => this.changeDurationUnits(record._id, false)}>
+                            {DOSE_REQUIRED.map(item => (
+<Select.Option
+  value={item.value}
+>{item.label}
+</Select.Option>
+))}
                         </Select>
                     )}
                 </Form.Item>
-            </div>
+</div>
+)
         }, {
             title: 'Duration',
             dataIndex: 'duration',
             key: 'duration',
-            render: (duration, record) => <div>
+            render: (duration, record) => (
+<div>
                 <Form.Item
-                    key={`duration[${record._id}]`}>
+                  key={`duration[${record._id}]`}
+                >
                     {getFieldDecorator(`duration[${record._id}]`, {
                             validateTrigger: ['onChange', 'onBlur']
                         },
                         {
                             rules: [{message: "This field is required.",}],
                         })(
-                        <InputNumber min={0} size={"small"}/>
+                        <InputNumber min={0} size="small" />
                     )}
                 </Form.Item>
                 <Form.Item
-                    key={`duration_unit[${record._id}]`}>
+                  key={`duration_unit[${record._id}]`}
+                >
                     {getFieldDecorator(`duration_unit[${record._id}]`, {
                         validateTrigger: ['onChange', 'onBlur'],
                         rules: [{
@@ -479,43 +501,54 @@ class PrescriptionTemplate extends React.Component {
                         }],
                         initialValue: 'day(s)'
                     })(
-                        <Select size={"small"} onChange={() => this.changeDurationUnits(record._id, false)}>
-                            {DURATIONS_UNIT.map(item => <Select.Option
-                                value={item.value}>{item.label}</Select.Option>)}
+                        <Select size="small" onChange={() => this.changeDurationUnits(record._id, false)}>
+                            {DURATIONS_UNIT.map(item => (
+<Select.Option
+  value={item.value}
+>{item.label}
+</Select.Option>
+))}
                         </Select>
                     )}
                 </Form.Item>
-            </div>
+</div>
+)
         },
             // {this.state.prescriptionTemplate.advice_data ? true:false},
             {
                 title: 'Instructions',
                 dataIndex: 'instruction',
                 key: 'instruction',
-                render: (instruction, record) =>
+                render: (instruction, record) => (
                     <div>
-                        {this.state.addInstructions[record._id] ?
+                        {this.state.addInstructions[record._id] ? (
                             <Form.Item
-                                extra={<a onClick={() => this.addInstructions(record._id, false)}>Remove
-                                    Instructions</a>}
-                                key={`instruction[${record._id}]`}>
+                              extra={(
+<a onClick={() => this.addInstructions(record._id, false)}>Remove
+                                    Instructions
+</a>
+)}
+                              key={`instruction[${record._id}]`}
+                            >
                                 {getFieldDecorator(`instruction[${record._id}]`, {
                                     validateTrigger: ['onChange', 'onBlur'],
                                     rules: [{
                                         message: "This field is required.",
                                     }],
                                 })(
-                                    <Input.TextArea min={0} placeholder={"Instructions..."} size={"small"}/>
+                                    <Input.TextArea min={0} placeholder="Instructions..." size="small" />
                                 )}
 
                             </Form.Item>
+                          )
                             : <a onClick={() => this.addInstructions(record._id, true)}>+ Add Instructions</a>}
                     </div>
-            }, {
+                  )}, {
                 title: "Timing",
                 dataIndex: "food_time",
                 key: 'food_time',
-                render: (timing, record) => <div>
+                render: (timing, record) => (
+<div>
                     <Form.Item key={`food_time[${record._id}]`}>
                         {getFieldDecorator(`food_time[${record._id}]`)(
                             <Radio.Group onChange={this.onChange}>
@@ -525,7 +558,8 @@ class PrescriptionTemplate extends React.Component {
                         )}
                     </Form.Item>
 
-                </div>
+</div>
+)
 
             },
 
@@ -533,18 +567,27 @@ class PrescriptionTemplate extends React.Component {
                 title: '',
                 dataIndex: 'action',
                 key: 'action',
-                render: (instructions, record) => <Form.Item>
-                    <Button icon={"close"} onClick={() => this.removeDrug(record._id)} type={"danger"} shape="circle"
-                            size="small"/>
-                </Form.Item>
+                render: (instructions, record) => (
+<Form.Item>
+                    <Button
+                      icon="close"
+                      onClick={() => this.removeDrug(record._id)}
+                      type="danger"
+                      shape="circle"
+                      size="small"
+                    />
+</Form.Item>
+)
             }];
         const labTablecolums = [{
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            render: (name, record) => <span>
+            render: (name, record) => (
+<span>
                 <b>{name}</b>
-                </span>
+</span>
+)
         }, {
             title: 'Cost',
             dataIndex: 'cost',
@@ -554,43 +597,58 @@ class PrescriptionTemplate extends React.Component {
             title: 'Total',
             dataIndex: 'total',
             key: 'total',
-            render: (total, record) => <span>
+            render: (total, record) => (
+<span>
                 {total}
-                <Button icon={"close"} onClick={() => this.removeLabs(record._id, record)} type={"danger"}
-                        shape="circle"
-                        size="small"/>
-            </span>
+                <Button
+                  icon="close"
+                  onClick={() => this.removeLabs(record._id, record)}
+                  type="danger"
+                  shape="circle"
+                  size="small"
+                />
+</span>
+)
         }];
 
-        return <Card title={"Prescriptions Template"}>
+        return (
+<Card title="Prescriptions Template">
             <Row>
                 <Col span={18}>
                     <Form onSubmit={this.handleSubmit}>
-                        <Form.Item {...formItemLayout} label={"Template Name"}>
+                        <Form.Item {...formItemLayout} label="Template Name">
                             {getFieldDecorator('name', {})(
-                                <Input/>
+                                <Input />
                             )}
                         </Form.Item>
 
-                        <Form.Item {...formItemLayout} label={"Schedule"}>
+                        <Form.Item {...formItemLayout} label="Schedule">
                             {getFieldDecorator('schedule', {})(
-                                <InputNumber min={1}/>
+                                <InputNumber min={1} />
                             )}
 
                         </Form.Item>
-                        <Table pagination={false} bordered={false} columns={drugTableColumns}
-                               dataSource={this.state.formDrugList}/>
+                        <Table
+                          pagination={false}
+                          bordered={false}
+                          columns={drugTableColumns}
+                          dataSource={this.state.formDrugList}
+                        />
 
                         <Divider> Lab Test</Divider>
-                        <Table pagination={false} bordered={false} columns={labTablecolums}
-                               dataSource={this.state.formLabList}/>
+                        <Table
+                          pagination={false}
+                          bordered={false}
+                          columns={labTablecolums}
+                          dataSource={this.state.formLabList}
+                        />
 
 
-                        <Divider/>
+                        <Divider />
                         {formItems}
                         <Form.Item {...formItemLayoutWithOutLabel}>
                             <Button type="dashed" onClick={this.handleAddFields} style={{width: '60%'}}>
-                                <Icon type="plus"/> Add advice field
+                                <Icon type="plus" /> Add advice field
                             </Button>
                         </Form.Item>
                         <Affix target={() => this.container}>
@@ -604,56 +662,76 @@ class PrescriptionTemplate extends React.Component {
                     <Tabs type="card">
                         <TabPane tab="Drugs" key="1">
                             <div style={{backgroundColor: '#ddd', padding: 8}}>
-                                <Input.Search key={"Drugs"}
-                                              placeholder={"Search in Medicine..."}
-                                              onChange={e => this.searchValues("Drugs", e.target.value)}
+                                <Input.Search
+                                  key="Drugs"
+                                  placeholder="Search in Medicine..."
+                                  onChange={e => this.searchValues("Drugs", e.target.value)}
                                 />
                             </div>
-                            <List size={"small"}
-                                  itemLayout="horizontal"
-                                  dataSource={this.state.filteredItems["Drugs"]}
-                                  renderItem={item => (
-                                      <List.Item onClick={() => this.addDrug(item)}
-                                                 actions={(item.maintain_inventory ? null : [<Tag>Not Sold</Tag>])}>
+                            <List
+                              size="small"
+                              itemLayout="horizontal"
+                              dataSource={this.state.filteredItems.Drugs}
+                              renderItem={item => (
+                                      <List.Item
+                                        onClick={() => this.addDrug(item)}
+                                        actions={(item.maintain_inventory ? null : [<Tag>Not Sold</Tag>])}
+                                      >
                                           <List.Item.Meta
-                                              title={item.name}
+                                            title={item.name}
                                           />
-                                      </List.Item>)}/>
+                                      </List.Item>
+)}
+                            />
                         </TabPane>
                         <TabPane tab="Labs" key="2">
-                            <List size={"small"}
-                                  itemLayout="horizontal"
-                                  dataSource={this.state.labList}
-                                  renderItem={item => (
+                            <List
+                              size="small"
+                              itemLayout="horizontal"
+                              dataSource={this.state.labList}
+                              renderItem={item => (
                                       <List.Item onClick={() => this.addLabs(item)}>
                                           <List.Item.Meta
-                                              title={item.name}/>
-                                      </List.Item>)}/>
+                                            title={item.name}
+                                          />
+                                      </List.Item>
+)}
+                            />
                         </TabPane>
                         <TabPane tab="Template" key="3">
 
-                            <List size={"small"}
-                                  itemLayout="horizontal"
-                                  dataSource={this.state.prescriptionTemplate}
+                            <List
+                              size="small"
+                              itemLayout="horizontal"
+                              dataSource={this.state.prescriptionTemplate}
 
-                                  renderItem={item => (
+                              renderItem={item => (
                                       <List.Item onConfirm={() => that.deletePrescriptionTemplate(item.id)}>
-                                          <List.Item.Meta onClick={() => this.addTemplate(item)} title={item.name}/>
-                                          <Popconfirm title="Are you sure delete this item?"
-                                                      onConfirm={() => that.deletePrescriptionTemplate(item.id)}
-                                                      okText="Yes" cancelText="No">
+                                          <List.Item.Meta onClick={() => this.addTemplate(item)} title={item.name} />
+                                          <Popconfirm
+                                            title="Are you sure delete this item?"
+                                            onConfirm={() => that.deletePrescriptionTemplate(item.id)}
+                                            okText="Yes"
+                                            cancelText="No"
+                                          >
                                               <a>Delete</a>
                                           </Popconfirm>
-                                      </List.Item>)}/>
+                                      </List.Item>
+)}
+                            />
                         </TabPane>
                     </Tabs>
                 </Col>
                 <Switch>
-                    <Route exact path='/patient/:id/prescriptions/template/add'
-                           renderRoute={(route) => <PrescriptionTemplate {...this.state} {...route}/>}/>
+                    <Route
+                      exact
+                      path='/patient/:id/prescriptions/template/add'
+                      renderRoute={(route) => <PrescriptionTemplate {...this.state} {...route} />}
+                    />
                 </Switch>
             </Row>
-        </Card>
+</Card>
+)
     }
 }
 

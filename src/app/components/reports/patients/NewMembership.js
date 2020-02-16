@@ -18,13 +18,14 @@ export default class NewMembership extends React.Component {
         }
         this.loadNewMembership = this.loadNewMembership.bind(this);
     }
+
     componentDidMount() {
         this.loadNewMembership();
         loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate)
             this.setState({
                 startDate: newProps.startDate,
@@ -35,30 +36,31 @@ export default class NewMembership extends React.Component {
     }
 
     loadNewMembership() {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report: data,
                 loading: false
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             from_date: this.props.startDate.format('YYYY-MM-DD'),
             to_date: this.props.endDate.format('YYYY-MM-DD'),
             type:this.props.type,
         };
         getAPI(MEMBERSHIP_REPORTS,  successFn, errorFn,apiParams);
     }
+
     sendMail = (mailTo) => {
-        let apiParams={
+        const apiParams={
             from_date: this.props.startDate.format('YYYY-MM-DD'),
             to_date: this.props.endDate.format('YYYY-MM-DD'),
             type:this.props.type,
@@ -66,8 +68,9 @@ export default class NewMembership extends React.Component {
         apiParams.mail_to = mailTo;
         sendReportMail(MEMBERSHIP_REPORTS, apiParams)
     }
+
     render() {
-        let that=this;
+        const that=this;
         const {report} =this.state;
         const reportData = [];
         for (let i = 1; i <= report.length; i++) {
@@ -113,23 +116,30 @@ export default class NewMembership extends React.Component {
             dataIndex:'medical_to'
         }];
 
-        return <div>
+        return (
+<div>
             <h2>New Membership <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                 <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                    {this.state.mailingUsersList.map(item => <Select.Option
-                        value={item.email}>{item.name}</Select.Option>)}
+                    {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                 </Select>
                     </p>
-            </span>
+                               </span>
             </h2>
             <CustomizedTable
-                hideReport={true}
-                loading={this.state.loading}
-                columns={columns}
-                dataSource={reportData}/>
+              hideReport
+              loading={this.state.loading}
+              columns={columns}
+              dataSource={reportData}
+            />
 
 
-        </div>
+</div>
+)
     }
 }

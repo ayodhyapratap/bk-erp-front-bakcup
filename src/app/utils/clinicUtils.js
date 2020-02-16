@@ -1,14 +1,15 @@
 import React from 'react';
+import {Link} from "react-router-dom";
+import {Form, Input, Menu, Modal} from 'antd';
 import {CONFIG_API, MAILING_USERS_LIST, PRACTICESTAFF} from "../constants/api";
 import {displayMessage, getAPI, interpolate} from "./common";
 import {DOCTORS_ROLE, ERROR_MSG_TYPE} from "../constants/dataKeys";
-import {Link} from "react-router-dom";
-import {Form, Input, Menu, Modal} from 'antd';
 import {MAIL_SEND_ERROR_MSG, MAIL_SEND_MSG, SUCCESS} from "../constants/messages";
+
 const { confirm } = Modal;
 export const loadDoctors = function (that) {
-    let successFn = function (data) {
-        let doctor = [];
+    const successFn = function (data) {
+        const doctor = [];
         let selectedDoctor = {};
         data.staff.forEach(function (usersdata) {
 
@@ -24,48 +25,49 @@ export const loadDoctors = function (that) {
             selectedDoctor: (doctor.length && !selectedDoctor.id ? doctor[0] : selectedDoctor)
         });
     };
-    let errorFn = function () {
+    const errorFn = function () {
     };
     getAPI(interpolate(PRACTICESTAFF, [that.props.active_practiceId]), successFn, errorFn);
 }
 
-export const patientSettingMenu = (<Menu>
+export const patientSettingMenu = (
+<Menu>
         <Menu.Item key="1">
-            <Link to={"/settings/prescriptions"}>
+            <Link to="/settings/prescriptions">
                 Add/Edit Drugs
             </Link>
         </Menu.Item>
         <Menu.Item key="2">
-            <Link to={"/settings/procedures"}>
+            <Link to="/settings/procedures">
                 Add/Edit Procedures
             </Link>
         </Menu.Item>
         <Menu.Item key="3">
-            <Link to={"/settings/emr#treatmentnotes"}>
+            <Link to="/settings/emr#treatmentnotes">
                 Add/Edit Clinical Notes
             </Link>
         </Menu.Item>
         <Menu.Item key="4">
-            <Link to={"/settings/printout"}>
+            <Link to="/settings/printout">
                 Modify EMR/Billing Printout
             </Link>
         </Menu.Item>
         <Menu.Item key="5">
-            <Link to={"/settings/billing#taxcatalog"}>
+            <Link to="/settings/billing#taxcatalog">
                 Add/Edit taxes
             </Link>
         </Menu.Item>
         <Menu.Item key="6">
-            <Link to={"/settings/billing#paymentmodes"}>
+            <Link to="/settings/billing#paymentmodes">
                 Add/Edit Payment Modes
             </Link>
         </Menu.Item>
-    </Menu>
+</Menu>
 );
 
 export const hashCode = function (str) { // java String#hashCode
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
         hash = str.charCodeAt(i) + ((hash << 6) - hash);
         hash = (hash >> 6) + hash
     }
@@ -73,7 +75,7 @@ export const hashCode = function (str) { // java String#hashCode
 }
 
 export const intToRGB = function (i) {
-    var c = (i & 0x00FFFFFF)
+    const c = (i & 0x00FFFFFF)
         .toString(16)
         .toUpperCase();
 
@@ -81,25 +83,25 @@ export const intToRGB = function (i) {
 }
 
 export const loadConfigParameters = function (that, params = []) {
-    let successFn = function (data) {
+    const successFn = function (data) {
         that.setState({
             ...data
         });
     };
-    let errorFn = function () {
+    const errorFn = function () {
 
     };
-    let parameters = params.join(',');
+    const parameters = params.join(',');
     getAPI(CONFIG_API, successFn, errorFn, {parameters});
 }
 
 export const loadMailingUserListForReportsMail = function (that) {
-    let successFn = function (data) {
+    const successFn = function (data) {
         that.setState({
             mailingUsersList: data
         })
     }
-    let errorFn = function () {
+    const errorFn = function () {
 
     }
     getAPI(MAILING_USERS_LIST, successFn, errorFn)
@@ -108,18 +110,18 @@ export const loadMailingUserListForReportsMail = function (that) {
 export const sendReportMail = function(url,params,successMsg, errorMsg){
     confirm({
         title: 'Are you sure send mail?',
-        content: 'Email Id :'+ params.mail_to,
+        content: `Email Id :${ params.mail_to}`,
         okText: 'Yes',
         okType: 'danger',
         cancelText: 'No',
         onOk() {
-            let successFn = function (data){
+            const successFn = function (data){
                 if (successMsg){
-                    displayMessage(SUCCESS,MAIL_SEND_MSG + "to" +params.mail_to)
+                    displayMessage(SUCCESS,`${MAIL_SEND_MSG  }to${ params.mail_to}`)
                 }
 
             }
-            let errorFn = function (){
+            const errorFn = function (){
                 if (errorMsg){
                     displayMessage(ERROR_MSG_TYPE,MAIL_SEND_ERROR_MSG)
                 }
@@ -136,10 +138,10 @@ export const sendReportMail = function(url,params,successMsg, errorMsg){
 
 export const sendMail= function (url, params) {
 
-    let successFn = function (data){
+    const successFn = function (data){
 
     };
-    let errorFn = function (){
+    const errorFn = function (){
 
     };
     getAPI(url,successFn,errorFn,params);

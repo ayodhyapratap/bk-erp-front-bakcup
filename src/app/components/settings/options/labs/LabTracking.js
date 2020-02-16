@@ -3,7 +3,7 @@ import {Card, Tabs} from 'antd';
 import LabTest from "./LabTest";
 import LabPanel from "./LabPanel";
 
-const TabPane = Tabs.TabPane;
+const {TabPane} = Tabs;
 export default class LabTracking extends React.Component {
     constructor(props) {
         super(props);
@@ -11,18 +11,20 @@ export default class LabTracking extends React.Component {
     }
 
     render() {
-        return <div>
+        return (
+<div>
             <h2>Lab Tracking</h2>
             <Card>
                 <Tabs>
-                    <TabPane key={"labTests"} tab={"Lab Tests"}>
-                        <LabTest {...this.props}/>
+                    <TabPane key="labTests" tab="Lab Tests">
+                        <LabTest {...this.props} />
                     </TabPane>
-                    <TabPane key={"labPanels"} tab={"Lab Panels"}>
-                        <LabPanel {...this.props}/>
+                    <TabPane key="labPanels" tab="Lab Panels">
+                        <LabPanel {...this.props} />
                     </TabPane>
                 </Tabs>
             </Card>
-        </div>
+</div>
+)
     }
 }

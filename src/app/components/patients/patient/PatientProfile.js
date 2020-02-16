@@ -1,7 +1,8 @@
 import React from "react";
-import PatientSelection from "../PatientSelection";
 import {Avatar, Button, Card, Col, Divider, Icon, List, Row, Popconfirm, Modal, Statistic, Tag} from "antd";
 import {Link, Redirect} from "react-router-dom";
+import moment from "moment";
+import PatientSelection from "../PatientSelection";
 import {getAPI, postAPI, interpolate, displayMessage, makeFileURL} from "../../../utils/common";
 import {MEDICAL_MEMBERSHIP_CANCEL_API, PATIENTS_MEMBERSHIP_API, PATIENT_PROFILE} from "../../../constants/api";
 import PatientNotes from "./PatientNotes";
@@ -10,7 +11,6 @@ import {SUCCESS_MSG_TYPE, ERROR_MSG_TYPE} from "../../../constants/dataKeys";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
 import AddOrEditAgent from "./AddOrEditAgent";
 import {hashCode, intToRGB} from "../../../utils/clinicUtils";
-import moment from "moment";
 
 class PatientProfile extends React.Component {
     constructor(props) {
@@ -43,7 +43,7 @@ class PatientProfile extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (newProps.currentPatient && newProps.currentPatient != this.state.currentPatient) {
 
             this.setState({
@@ -55,8 +55,8 @@ class PatientProfile extends React.Component {
     }
 
     loadProfile(refreshHeader = true) {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 patientProfile: data,
                 loading: false
@@ -65,7 +65,7 @@ class PatientProfile extends React.Component {
                 that.props.refreshWallet();
             }
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
@@ -75,14 +75,14 @@ class PatientProfile extends React.Component {
     }
 
     loadMedicalMembership() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 MedicalMembership: data[data.length - 1],
                 loading: false
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
@@ -92,7 +92,7 @@ class PatientProfile extends React.Component {
     }
 
     onClickHandler(value) {
-        let that = this;
+        const that = this;
         if (this.state.MedicalMembership) {
             displayMessage(ERROR_MSG_TYPE, "Membership !!");
             that.setState({
@@ -107,30 +107,31 @@ class PatientProfile extends React.Component {
     }
 
     deleteMembership(id) {
-        let that = this;
-        let reqData = {
-            id: id,
+        const that = this;
+        const reqData = {
+            id,
             is_active: false
         }
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadProfile();
             that.loadMedicalMembership();
             if (that.props.refreshWallet) {
                 that.props.refreshWallet();
             }
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
         postAPI(interpolate(MEDICAL_MEMBERSHIP_CANCEL_API, [that.props.currentPatient.id]), reqData, successFn, errorFn);
     }
 
     addAgent = () => {
-        let that = this;
+        const that = this;
         that.setState({
             agentModalVisible: true,
         });
     }
+
     addAgentModalClosed = () => {
         this.setState({
             agentModalVisible: false
@@ -138,134 +139,194 @@ class PatientProfile extends React.Component {
     }
 
     render() {
-        let that = this;
+        const that = this;
         if (this.props.currentPatient) {
-            let patient = this.state.patientProfile;
+            const patient = this.state.patientProfile;
             if (!patient)
-                return <Card loading={this.state.loading}/>;
-            return <Card loading={this.state.loading} title="Patient Profile">
+                return <Card loading={this.state.loading} />;
+            return (
+<Card loading={this.state.loading} title="Patient Profile">
                 <Row gutter={16}>
                     <Col span={6} style={{textAlign: 'center'}}>
-                        {(patient.image ? <img src={makeFileURL(patient.image)} style={{width: '100%'}}/> :
+                        {(patient.image ? <img src={makeFileURL(patient.image)} style={{width: '100%'}} /> : (
                             <Avatar size={200} shape="square" style={{backgroundColor: '#87d068'}}>
                                 {patient.user.first_name ? patient.user.first_name :
-                                    <Icon type="user"/>}
-                            </Avatar>)}
+                                    <Icon type="user" />}
+                            </Avatar>
+                          ))}
 
-                        {patient.is_agent && patient.is_approved ? <Statistic title={"Referral Code"}
-                                                                              value={patient.user.referer_code}/> : null}
-                        {that.props.activePracticePermissions.EditPatient ?
-                            <Link to={"/patient/" + this.state.currentPatient.id + "/profile/edit"}>
+                        {patient.is_agent && patient.is_approved ? (
+<Statistic
+  title="Referral Code"
+  value={patient.user.referer_code}
+/>
+) : null}
+                        {that.props.activePracticePermissions.EditPatient ? (
+                            <Link to={`/patient/${  this.state.currentPatient.id  }/profile/edit`}>
                                 <Button type="primary" style={{margin:10}} block>
-                                    <Icon type="edit"/>&nbsp;Edit Patient Profile</Button>
-                            </Link> : null}
+                                    <Icon type="edit" />&nbsp;Edit Patient Profile
+                                </Button>
+                            </Link>
+                          ) : null}
                         <Col>
-                            <Divider/>
+                            <Divider />
 
-                            {this.state.add ? <div><h1 style={{fontSize: '18px'}}>Medical Membership <a href="#"
-                                                                                                        onClick={() => this.onClickHandler(false)}>Cancel</a>
-                                </h1>
-                                    <MedicalMembership {...this.props} {...this.state} patientId={patient.id}
-                                                       loadMedicalMembership={that.loadMedicalMembership}
-                                                       formChange={that.formChange} loadProfile={that.loadProfile}/></div>
-                                : <div style={{padding: '0px'}}><h1
-                                    style={{fontSize: '18px', textAlign: 'center'}}>Medical Membership <a href="#"
-                                                                                                          onClick={() => this.onClickHandler(true)}>{this.state.MedicalMembership ? 'Renew' : 'Add'}</a>
-                                </h1>
-                                    {this.state.MedicalMembership ? <Card size="small" title={"Membership"}
-                                                                          extra={<Popconfirm
-                                                                              title="Are you sure delete this Membership?"
-                                                                              onConfirm={() => that.deleteMembership(this.state.MedicalMembership.id)}
-                                                                              okText="Yes" cancelText="No">
-                                                                              <Button icon={"close"} type={"danger"}
-                                                                                      shape="circle"
-                                                                                      size="small"/>
-                                                                          </Popconfirm>} style={{textAlign: "center"}}>
+                            {this.state.add ? (
+<div><h1 style={{fontSize: '18px'}}>Medical Membership <a
+  href="#"
+  onClick={() => this.onClickHandler(false)}
+>Cancel
+                                                       </a>
+     </h1>
+                                    <MedicalMembership
+                                      {...this.props}
+                                      {...this.state}
+                                      patientId={patient.id}
+                                      loadMedicalMembership={that.loadMedicalMembership}
+                                      formChange={that.formChange}
+                                      loadProfile={that.loadProfile}
+                                    />
+</div>
+)
+                                : (
+<div style={{padding: '0px'}}><h1
+  style={{fontSize: '18px', textAlign: 'center'}}
+>Medical Membership <a
+  href="#"
+  onClick={() => this.onClickHandler(true)}
+>{this.state.MedicalMembership ? 'Renew' : 'Add'}
+                    </a>
+                              </h1>
+                                    {this.state.MedicalMembership ? (
+<Card
+  size="small"
+  title="Membership"
+  extra={(
+<Popconfirm
+  title="Are you sure delete this Membership?"
+  onConfirm={() => that.deleteMembership(this.state.MedicalMembership.id)}
+  okText="Yes"
+  cancelText="No"
+>
+                                                                              <Button
+                                                                                icon="close"
+                                                                                type="danger"
+                                                                                shape="circle"
+                                                                                size="small"
+                                                                              />
+</Popconfirm>
+)}
+  style={{textAlign: "center"}}
+>
                                             <div style={{textAlign: "left"}}>
                                                 <p><strong>Membership Code : </strong>
-                                                    <span>{this.state.MedicalMembership.membership_code}</span></p>
+                                                    <span>{this.state.MedicalMembership.membership_code}</span>
+                                                </p>
                                                 <p><strong>Start Date : </strong>
-                                                    <span>{this.state.MedicalMembership.medical_from}</span></p>
+                                                    <span>{this.state.MedicalMembership.medical_from}</span>
+                                                </p>
                                                 <p><strong>Valid Till : </strong>
-                                                    <span>{this.state.MedicalMembership.medical_to}</span></p>
+                                                    <span>{this.state.MedicalMembership.medical_to}</span>
+                                                </p>
                                             </div>
-                                        </Card>
+</Card>
+)
                                         : null}
-                                </div>
-                            }
+</div>
+)}
                         </Col>
                     </Col>
 
                     <Col span={12}>
-                        <PatientRow label="Patient Name" value={patient.user.first_name}/>
-                        <PatientRow label="Patient ID" value={patient.custom_id ? patient.custom_id : patient.id}/>
+                        <PatientRow label="Patient Name" value={patient.user.first_name} />
+                        <PatientRow label="Patient ID" value={patient.custom_id ? patient.custom_id : patient.id} />
                         {patient && patient.role ?
-                            <PatientRow label={"Advisor Role"} value={patient.role_data.name}/> : null}
-                        <PatientRow label="Gender" value={patient.gender}/>
-                        {patient.is_age ?
-                            <PatientRow label="Age"
-                                        value={patient.dob ? moment().diff(this.props.currentPatient.dob, 'years') : null}/>
+                            <PatientRow label="Advisor Role" value={patient.role_data.name} /> : null}
+                        <PatientRow label="Gender" value={patient.gender} />
+                        {patient.is_age ? (
+                            <PatientRow
+                              label="Age"
+                              value={patient.dob ? moment().diff(this.props.currentPatient.dob, 'years') : null}
+                            />
+                          )
                             :
-                            <PatientRow label="Date of Birth" value={patient.dob}/>
-                        }
-                        <PatientRow label="On Dialysis?" value={patient.on_dialysis?"Yes":"No"}/>
-                        <PatientRow label="Referer"
-                                    value={patient.user.referer_data.referer ? <Link
-                                        to={"/patient/" + patient.user.referer_data.patient + "/profile"}>{patient.user.referer_data.referer.first_name}</Link> : "--"}/>
+                            <PatientRow label="Date of Birth" value={patient.dob} />}
+                        <PatientRow label="On Dialysis?" value={patient.on_dialysis?"Yes":"No"} />
+                        <PatientRow
+                          label="Referer"
+                          value={patient.user.referer_data.referer ? (
+<Link
+  to={`/patient/${  patient.user.referer_data.patient  }/profile`}
+>{patient.user.referer_data.referer.first_name}
+</Link>
+) : "--"}
+                        />
                         <Divider>Contact Details</Divider>
-                        <PatientRow label="Email"
-                                    value={that.props.activePracticePermissions.PatientEmailId ? patient.user.email : hideEmail(patient.user.email)}/>
-                        <PatientRow label="Primary Mobile"
-                                    value={that.props.activePracticePermissions.PatientPhoneNumber ? patient.user.mobile : hideMobile(patient.user.mobile)}/>
-                        <PatientRow label="Secondary Mobile"
-                                    value={that.props.activePracticePermissions.PatientPhoneNumber ? patient.secondary_mobile_no : hideMobile(patient.secondary_mobile_no)}/>
-                        <PatientRow label="Landline No" value={patient.landline_no}/>
-                        <PatientRow label="Address" value={patient.address}/>
-                        <PatientRow label="Locality" value={patient.locality}/>
-                        <PatientRow label="City" value={patient.city_data ? patient.city_data.name : null}/>
-                        <PatientRow label="State" value={patient.state_data ? patient.state_data.name : null}/>
-                        <PatientRow label="Country" value={patient.country_data ? patient.country_data.name : null}/>
-                        <PatientRow label="Pincode" value={patient.pincode}/>
+                        <PatientRow
+                          label="Email"
+                          value={that.props.activePracticePermissions.PatientEmailId ? patient.user.email : hideEmail(patient.user.email)}
+                        />
+                        <PatientRow
+                          label="Primary Mobile"
+                          value={that.props.activePracticePermissions.PatientPhoneNumber ? patient.user.mobile : hideMobile(patient.user.mobile)}
+                        />
+                        <PatientRow
+                          label="Secondary Mobile"
+                          value={that.props.activePracticePermissions.PatientPhoneNumber ? patient.secondary_mobile_no : hideMobile(patient.secondary_mobile_no)}
+                        />
+                        <PatientRow label="Landline No" value={patient.landline_no} />
+                        <PatientRow label="Address" value={patient.address} />
+                        <PatientRow label="Locality" value={patient.locality} />
+                        <PatientRow label="City" value={patient.city_data ? patient.city_data.name : null} />
+                        <PatientRow label="State" value={patient.state_data ? patient.state_data.name : null} />
+                        <PatientRow label="Country" value={patient.country_data ? patient.country_data.name : null} />
+                        <PatientRow label="Pincode" value={patient.pincode} />
                     </Col>
                     <Col span={6} style={{borderLeft: '1 px solid #ccc'}}>
-                        <PatientNotes {...this.props} patientId={patient.id}/>
+                        <PatientNotes {...this.props} patientId={patient.id} />
                         <Divider>Medical History</Divider>
                         {patient.medical_history_data ?
                             patient.medical_history_data.map((item, index) =>
-                                <Tag color={'#' + intToRGB(hashCode(item.name))}>{item.name}</Tag>) : null}
-                        {/*<List size="small" loading={this.state.loading} dataSource={patient.medical_history_data}*/}
-                        {/*      renderItem={(item) =>*/}
-                        {/*          <List.Item>{item.name}</List.Item>}/>}*/}
+                                <Tag color={`#${  intToRGB(hashCode(item.name))}`}>{item.name}</Tag>) : null}
+                        {/* <List size="small" loading={this.state.loading} dataSource={patient.medical_history_data} */}
+                        {/*      renderItem={(item) => */}
+                        {/*          <List.Item>{item.name}</List.Item>}/>} */}
 
                         <Divider>Groups</Divider>
-                        <List dataSource={patient.patient_group_data}
-                              renderItem={(item) => <List.Item>{item.name}</List.Item>}/>
+                        <List
+                          dataSource={patient.patient_group_data}
+                          renderItem={(item) => <List.Item>{item.name}</List.Item>}
+                        />
                         {/* <Divider>Medical Membership</Divider>
                         <List dataSource={patient.medical_membership}
                               renderItem={(item) => <List.Item>{item}</List.Item>}/> */}
                     </Col>
 
                     <Modal
-                        title="Add Agent"
-                        visible={this.state.agentModalVisible}
-                        onOk={null}
-                        footer={null}
-                        onCancel={this.addAgentModalClosed}>
-                        <AddOrEditAgent patientId={patient.id} {...this.state}/>
+                      title="Add Agent"
+                      visible={this.state.agentModalVisible}
+                      onOk={null}
+                      footer={null}
+                      onCancel={this.addAgentModalClosed}
+                    >
+                        <AddOrEditAgent patientId={patient.id} {...this.state} />
                     </Modal>
                 </Row>
 
-            </Card>;
+</Card>
+);
         }
-        return <PatientSelection {...this.props}/>
+        return <PatientSelection {...this.props} />
     }
 }
 
 export default PatientProfile;
 
 function PatientRow(props) {
-    return <Row gutter={16} style={{marginBottom: '5px'}}>
+    return (
+<Row gutter={16} style={{marginBottom: '5px'}}>
         <Col span={8} style={{textAlign: 'right'}}>{props.label}:</Col>
         <Col span={16}><strong>{props.value}</strong></Col>
-    </Row>
+</Row>
+)
 }

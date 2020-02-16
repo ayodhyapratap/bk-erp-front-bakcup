@@ -1,8 +1,8 @@
 import React from "react";
+import {Col, Row, Select, Statistic} from "antd";
 import {hideEmail, hideMobile} from "../../../utils/permissionUtils";
 import {getAPI} from "../../../utils/common";
 import {PATIENTS_REPORTS} from "../../../constants/api";
-import {Col, Row, Select, Statistic} from "antd";
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -18,12 +18,14 @@ export default class PatientMedicine extends React.Component {
         }
         this.loadPatientMedicine = this.loadPatientMedicine.bind(this);
     }
+
     componentDidMount() {
         this.loadPatientMedicine();
         loadMailingUserListForReportsMail(this);
     }
+
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.patient_groups !=newProps.patient_groups
             ||this.props.blood_group !=newProps.blood_group || this.props.blood_group !=newProps.blood_group)
             this.setState({
@@ -33,23 +35,24 @@ export default class PatientMedicine extends React.Component {
                 this.loadPatientMedicine();
             })
     }
+
     loadPatientMedicine() {
-        let that = this;
+        const that = this;
         that.setState({
             loading:true,
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 report:data,
                 loading:false
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
-        let apiParams={
+        const apiParams={
             follow_start: this.props.startDate.format('YYYY-MM-DD'),
             follow_end: this.props.endDate.format('YYYY-MM-DD'),
             type:this.props.type,
@@ -62,8 +65,9 @@ export default class PatientMedicine extends React.Component {
         }
         getAPI(PATIENTS_REPORTS,  successFn, errorFn,apiParams);
     }
+
     sendMail = (mailTo) => {
-        let apiParams={
+        const apiParams={
             from_date: this.props.startDate.format('YYYY-MM-DD'),
             to_date: this.props.endDate.format('YYYY-MM-DD'),
             type:this.props.type,
@@ -77,8 +81,9 @@ export default class PatientMedicine extends React.Component {
         apiParams.mail_to = mailTo;
         sendReportMail(PATIENTS_REPORTS, apiParams)
     }
+
     render() {
-        let that=this;
+        const that=this;
         const {report} =this.state;
         const reportData = [];
         for (let i = 1; i <= report.length; i++) {
@@ -116,30 +121,37 @@ export default class PatientMedicine extends React.Component {
             key: 'gender',
             dataIndex: 'gender',
         }];
-        return <div>
+        return (
+<div>
             <h2>Patient Medicine Report
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                 <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                    {this.state.mailingUsersList.map(item => <Select.Option
-                        value={item.email}>{item.name}</Select.Option>)}
+                    {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                 </Select>
                     </p>
-            </span>
+                </span>
             </h2>
             <Row>
                 <Col span={12} offset={6} style={{textAlign:"center"}}>
                     <Statistic title="Total Patients" value={reportData.length} />
-                    <br/>
+                    <br />
                 </Col>
             </Row>
 
             <CustomizedTable
-                loading={this.state.loading}
-                columns={columns}
-                hideReport={true}
-                dataSource={reportData}/>
+              loading={this.state.loading}
+              columns={columns}
+              hideReport
+              dataSource={reportData}
+            />
 
-        </div>
+</div>
+)
     }
 }

@@ -1,5 +1,7 @@
 import React from "react";
 import {Card, Form, Row} from "antd";
+import {Link, Redirect, Switch} from "react-router-dom";
+import {Route} from "react-router";
 import DynamicFieldsForm from "../../common/DynamicFieldsForm";
 import {
     CHECKBOX_FIELD,
@@ -19,8 +21,6 @@ import {
 } from "../../../constants/api";
 import {INVENTORY_ITEM_TYPE, DRUG, SUPPLIES, EQUIPMENT} from "../../../constants/hardData";
 import {getAPI, displayMessage, interpolate} from "../../../utils/common";
-import {Link, Redirect, Switch} from "react-router-dom";
-import {Route} from "react-router";
 
 
 export default class AddItemType extends React.Component {
@@ -34,7 +34,7 @@ export default class AddItemType extends React.Component {
     }
 
     changeRedirect() {
-        var redirectVar = this.state.redirect;
+        const redirectVar = this.state.redirect;
         this.setState({
             redirect: !redirectVar,
         });
@@ -50,27 +50,27 @@ export default class AddItemType extends React.Component {
 
 
     loadInventoryItemData=()=> {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 inventory_item: data,
                 item_type: data.item_type,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(SINGLE_INVENTORY_ITEM_API, [this.props.match.params.id]), successFn, errorFn);
     }
 
     loadDrugType=()=> {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 drug_type: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         // getAPI(interpolate(DRUG_TYPE_API,[this.props.match.params.id]), successFn, errorFn);
@@ -78,13 +78,13 @@ export default class AddItemType extends React.Component {
     }
 
     loadData=()=> {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 editInventoryItemType: data,
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(SINGLE_ITEM_TYPE_STOCK, [this.props.match.params.id]), successFn, errorFn);
@@ -106,13 +106,13 @@ export default class AddItemType extends React.Component {
         let editformProp;
         if (this.state.editInventoryItemType) {
             editformProp = {
-                successFn: function (data) {
+                successFn (data) {
                     displayMessage(SUCCESS_MSG_TYPE, "success");
                     if (this.props.history){
                         this.props.history.replace("/inventory");
                     }
                 },
-                errorFn: function () {
+                errorFn () {
 
                 },
                 action: interpolate(SINGLE_ITEM_TYPE_STOCK, [this.props.match.params.id]),
@@ -121,19 +121,19 @@ export default class AddItemType extends React.Component {
         }
 
         const formProp = {
-            successFn: function (data) {
+            successFn (data) {
                 displayMessage(SUCCESS_MSG_TYPE, "success");
                 if (that.props.history){
                     that.props.history.replace("/inventory");
                 }
             },
-            errorFn: function () {
+            errorFn () {
 
             },
             action: ITEM_TYPE_STOCK,
             method: "post",
         }
-        let defaultValues = [{"key": "inventory_item", "value": this.props.match.params.id}, {
+        const defaultValues = [{"key": "inventory_item", "value": this.props.match.params.id}, {
             "key": "item_type",
             "value": this.state.item_type
         }];
@@ -208,25 +208,38 @@ export default class AddItemType extends React.Component {
 
 
         if (this.state.editInventoryItemType != null) {
-            return <Row>
+            return (
+<Row>
                 <Card>
-                    <AddInventoryFormLayout defaultValues={defaultValues} title="Edit Inventory Item type"
-                                            {...this.props}
-                                            changeRedirect={this.changeRedirect} formProp={editformProp}
-                                            fields={fields}/>
+                    <AddInventoryFormLayout
+                      defaultValues={defaultValues}
+                      title="Edit Inventory Item type"
+                      {...this.props}
+                      changeRedirect={this.changeRedirect}
+                      formProp={editformProp}
+                      fields={fields}
+                    />
                 </Card>
-                {this.state.redirect && <Redirect to={'/inventory'}/>}
-            </Row>
-        } else {
-            return <Row>
+                {this.state.redirect && <Redirect to="/inventory" />}
+</Row>
+)
+        } 
+            return (
+<Row>
                 <Card>
-                    <AddInventoryFormLayout title="Add Inventory Item type" defaultValues={defaultValues}
-                                            {...this.props}
-                                            changeRedirect={this.changeRedirect} formProp={formProp} fields={fields}/>
+                    <AddInventoryFormLayout
+                      title="Add Inventory Item type"
+                      defaultValues={defaultValues}
+                      {...this.props}
+                      changeRedirect={this.changeRedirect}
+                      formProp={formProp}
+                      fields={fields}
+                    />
                 </Card>
-                {this.state.redirect && <Redirect to={'/inventory'}/>}
-            </Row>
-        }
+                {this.state.redirect && <Redirect to="/inventory" />}
+</Row>
+)
+        
 
 
     }

@@ -53,58 +53,59 @@ export default class PaymentsReportHome extends React.Component {
     }
 
     loadPatientGroup() {
-        let that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 patientGroup: data,
             });
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         }
         getAPI(interpolate(PATIENT_GROUPS, [this.props.active_practiceId]), successFn, errorFn)
     }
 
     loadPaymentMode() {
-        let that = this;
-        let successFun = function (data) {
+        const that = this;
+        const successFun = function (data) {
             that.setState({
                 paymentModeOption: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
 
         };
         getAPI(interpolate(PAYMENT_MODES, [this.props.active_practiceId]), successFun, errorFn);
     }
+
     loadTaxes() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 taxes_list: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(TAXES, [this.props.active_practiceId]), successFn, errorFn);
 
     }
 
     loadTreatments() {
-        var that = this;
-        let successFn = function (data) {
+        const that = this;
+        const successFn = function (data) {
             that.setState({
                 treatment_data: data,
             })
         };
-        let errorFn = function () {
+        const errorFn = function () {
         };
         getAPI(interpolate(PROCEDURE_CATEGORY, [this.props.active_practiceId]), successFn, errorFn, { pagination: false });
 
     }
 
     onChangeHandle = (type, value) => {
-        let that = this;
+        const that = this;
         this.setState({
             [type]: value.target.value,
         })
@@ -121,12 +122,14 @@ export default class PaymentsReportHome extends React.Component {
             sidePanelColSpan: sidePanel ? 0 : 4
         })
     };
+
     handleChangeOption = (type, value) => {
-        let that = this;
+        const that = this;
         this.setState({
             [type]: value,
         })
     };
+
     onChangeCheckbox = (e) => {
         this.setState({
             exclude_cancelled: !this.state.exclude_cancelled,
@@ -134,11 +137,16 @@ export default class PaymentsReportHome extends React.Component {
     };
 
     render() {
-        return <div>
-            <h2>Payments Report <Button type="primary" shape="round"
-                icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
-                style={{ float: "right" }}
-                onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}>Panel</Button>
+        return (
+<div>
+            <h2>Payments Report <Button
+              type="primary"
+              shape="round"
+              icon={this.state.sidePanelColSpan ? "double-right" : "double-left"}
+              style={{ float: "right" }}
+              onClick={() => this.changeSidePanelSize(this.state.sidePanelColSpan)}
+            >Panel
+                                </Button>
             </h2>
             <Card>
                 <Row gutter={16}>
@@ -183,102 +191,165 @@ export default class PaymentsReportHome extends React.Component {
 
 
                     <Col span={this.state.sidePanelColSpan}>
-                        <Radio.Group buttonStyle="solid" defaultValue={ALL_PAYMENTS}
-                            onChange={(value) => this.onChangeHandle('type', value)}>
+                        <Radio.Group
+                          buttonStyle="solid"
+                          defaultValue={ALL_PAYMENTS}
+                          onChange={(value) => this.onChangeHandle('type', value)}
+                        >
                             <h2>Payments</h2>
-                            <Radio.Button style={{ width: '100%', backgroundColor: 'transparent', border: '0px' }}
-                                value={ALL_PAYMENTS}>
+                            <Radio.Button
+                              style={{ width: '100%', backgroundColor: 'transparent', border: '0px' }}
+                              value={ALL_PAYMENTS}
+                            >
                                 All Payments
                             </Radio.Button>
                             <p><br /></p>
                             <h2>Related Reports</h2>
-                            {PAYMENT_RELATED_REPORT.map((item) => <Radio.Button
-                                style={{ width: '100%', backgroundColor: 'transparent' }}
-                                value={item.value}>
+                            {PAYMENT_RELATED_REPORT.map((item) => (
+<Radio.Button
+  style={{ width: '100%', backgroundColor: 'transparent' }}
+  value={item.value}
+>
                                 {item.name}
-                            </Radio.Button>)}
+</Radio.Button>
+))}
                         </Radio.Group>
 
                         <br />
                         <br />
-                        {this.state.advancedOptionShow ? <>
+                        {this.state.advancedOptionShow ? (
+<>
                             <Button type="link" onClick={(value) => this.advancedOption(false)}>Hide Advanced
-                                Options </Button>
+                                Options 
+                            </Button>
                             <Col>
-                                {this.state.type == PAYMENT_RECEIVED_PER_DOCTOR || this.state.type == PAYMENT_RECEIVED_PER_MONTH || this.state.type ==PAYMENT_RECEIVED_PER_DAY ?null: <>
+                                {this.state.type == PAYMENT_RECEIVED_PER_DOCTOR || this.state.type == PAYMENT_RECEIVED_PER_MONTH || this.state.type ==PAYMENT_RECEIVED_PER_DAY ?null: (
+<>
 
                                     <br />
                                     <h4>Show</h4>
-                                    <Checkbox.Group style={{ width: '100%', display: "inline-grid" }}
-                                        onChange={(value) => this.handleChangeOption('consume', value)}>
-                                        {/*<Row>*/}
-                                        {SCHEDULE_OF_PAYMENT.map((item) => <Checkbox
-                                            value={item.value}> {item.label}</Checkbox>)}
-                                        {/*</Row>*/}
+                                    <Checkbox.Group
+                                      style={{ width: '100%', display: "inline-grid" }}
+                                      onChange={(value) => this.handleChangeOption('consume', value)}
+                                    >
+                                        {/* <Row> */}
+                                        {SCHEDULE_OF_PAYMENT.map((item) => (
+<Checkbox
+  value={item.value}
+> {item.label}
+</Checkbox>
+))}
+                                        {/* </Row> */}
                                     </Checkbox.Group>
-                                </>
-                                }
+</>
+)}
 
                                 <br />
                                 <br />
                                 <h4>Doctors</h4>
-                                <Select style={{ minWidth: '200px' }} mode="multiple" placeholder="Select Doctors"
-                                    onChange={(value) => this.handleChangeOption('doctors', value)}>
-                                    {this.state.practiceDoctors.map((item) => <Select.Option value={item.id}>
-                                        {item.user.first_name}</Select.Option>)}
+                                <Select
+                                  style={{ minWidth: '200px' }}
+                                  mode="multiple"
+                                  placeholder="Select Doctors"
+                                  onChange={(value) => this.handleChangeOption('doctors', value)}
+                                >
+                                    {this.state.practiceDoctors.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.user.first_name}
+</Select.Option>
+))}
                                 </Select>
                                 <br />
                                 <br />
                                 <h4>Treatments</h4>
-                                <Select style={{ minWidth: '200px' }} mode={"multiple"} placeholder={"Select Treatments"}
-                                    onChange={(value) => this.handleChangeOption('treatments', value)}>
-                                    {this.state.treatment_data.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
+                                <Select
+                                  style={{ minWidth: '200px' }}
+                                  mode="multiple"
+                                  placeholder="Select Treatments"
+                                  onChange={(value) => this.handleChangeOption('treatments', value)}
+                                >
+                                    {this.state.treatment_data.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.name}
+</Select.Option>
+))}
                                 </Select>
                                 <br />
                                 <br />
                                 <h4>Patient Groups</h4>
-                                <Select style={{ minWidth: '200px' }} mode="multiple" placeholder="Select Patient Groups"
-                                    onChange={(value) => this.handleChangeOption('patient_groups', value)}>
-                                    {this.state.patientGroup.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
+                                <Select
+                                  style={{ minWidth: '200px' }}
+                                  mode="multiple"
+                                  placeholder="Select Patient Groups"
+                                  onChange={(value) => this.handleChangeOption('patient_groups', value)}
+                                >
+                                    {this.state.patientGroup.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.name}
+</Select.Option>
+))}
                                 </Select>
                                 <br />
                                 <br />
                                 <h4>Payment Modes</h4>
-                                <Select style={{ minWidth: '200px' }} mode="multiple" placeholder="Select Payment Modes"
-                                    onChange={(value) => this.handleChangeOption('payment_mode', value)}>
-                                    {this.state.paymentModeOption.map((item) => <Select.Option value={item.id}>
-                                        {item.mode}</Select.Option>)}
+                                <Select
+                                  style={{ minWidth: '200px' }}
+                                  mode="multiple"
+                                  placeholder="Select Payment Modes"
+                                  onChange={(value) => this.handleChangeOption('payment_mode', value)}
+                                >
+                                    {this.state.paymentModeOption.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.mode}
+</Select.Option>
+))}
                                 </Select>
                                 <br />
                                 <br />
                                 <h4>Discount</h4>
-                                <Select style={{ minWidth: '200px' }} placeholder="Select Discount"
-                                    onChange={(value) => this.handleChangeOption('discount', value)}>
-                                    {DISCOUNT.map((item) => <Select.Option value={item.value}>
-                                        {item.label}</Select.Option>)}
+                                <Select
+                                  style={{ minWidth: '200px' }}
+                                  placeholder="Select Discount"
+                                  onChange={(value) => this.handleChangeOption('discount', value)}
+                                >
+                                    {DISCOUNT.map((item) => (
+<Select.Option value={item.value}>
+                                        {item.label}
+</Select.Option>
+))}
                                 </Select>
                                 <br />
                                 <br />
                                 <h4>Taxes</h4>
-                                <Select style={{ minWidth: '200px' }} mode="multiple" placeholder="Select Taxes"
-                                    onChange={(value) => this.handleChangeOption('taxes', value)}>
-                                    {this.state.taxes_list.map((item) => <Select.Option value={item.id}>
-                                        {item.name}</Select.Option>)}
+                                <Select
+                                  style={{ minWidth: '200px' }}
+                                  mode="multiple"
+                                  placeholder="Select Taxes"
+                                  onChange={(value) => this.handleChangeOption('taxes', value)}
+                                >
+                                    {this.state.taxes_list.map((item) => (
+<Select.Option value={item.id}>
+                                        {item.name}
+</Select.Option>
+))}
                                 </Select>
                                 <br />
                                 <br />
                                 <Checkbox onChange={(e) => this.onChangeCheckbox(e)}> Exclude Cancelled</Checkbox>
 
                             </Col>
-                        </> : <Button type="link" onClick={(value) => this.advancedOption(true)}>Show Advanced
-                            Options </Button>}
+</>
+) : (
+<Button type="link" onClick={(value) => this.advancedOption(true)}>Show Advanced
+                            Options 
+</Button>
+)}
 
                     </Col>
 
                 </Row>
             </Card>
-        </div>
+</div>
+)
     }
 }

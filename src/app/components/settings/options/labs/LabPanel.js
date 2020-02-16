@@ -1,12 +1,13 @@
 import React from "react";
-import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
 import {Button, Card, Divider, Form, Icon, Popconfirm, Row, Table} from "antd";
-import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {Link, Route, Switch} from "react-router-dom";
+import DynamicFieldsForm from "../../../common/DynamicFieldsForm";
+import {CHECKBOX_FIELD, INPUT_FIELD, RADIO_FIELD, SELECT_FIELD} from "../../../../constants/dataKeys";
 import {LABPANEL_API} from "../../../../constants/api";
 import {getAPI, postAPI, interpolate,} from "../../../../utils/common";
 import AddorEditLabPanel from "./AddorEditLabPanel";
 import CustomizedTable from "../../../common/CustomizedTable";
+
 export default class LabPanel extends React.Component{
     constructor(props){
         super(props);
@@ -18,19 +19,20 @@ export default class LabPanel extends React.Component{
         this.loadLabPanel = this.loadLabPanel.bind(this);
         this.editPanels = this.editPanels.bind(this);
     }
+
     componentDidMount() {
         this.loadLabPanel();
     }
 
     loadLabPanel(){
-        let that =this;
-        let successFn=function(data){
+        const that =this;
+        const successFn=function(data){
             that.setState({
                 labPanel:data,
                 loading:false
             })
         };
-        let errorFn = function(){
+        const errorFn = function(){
             that.setState({
 
             })
@@ -39,7 +41,7 @@ export default class LabPanel extends React.Component{
     }
 
     editPanels(record) {
-        let that = this;
+        const that = this;
         this.setState({
             editTest: record,
             loading: false
@@ -49,21 +51,22 @@ export default class LabPanel extends React.Component{
 
 
     }
+
     deleteLabPanel(record) {
-        let that = this;
-        let reqData = {...record, is_active:false,
+        const that = this;
+        const reqData = {...record, is_active:false,
             tests:Object.keys(this.state.selectedTest)
         }
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.loadLabPanel();
         }
-        let errorFn = function () {
+        const errorFn = function () {
         }
         postAPI(interpolate(LABPANEL_API, [this.props.active_practiceId]), reqData, successFn, errorFn);
     }
 
     render() {
-        let that = this;
+        const that = this;
         const product_margin = {}
         if (this.state.productMargin) {
             this.state.productMargin.forEach(function (margin) {
@@ -83,13 +86,18 @@ export default class LabPanel extends React.Component{
             key: 'action',
             render: (text, record) => (
                 <span><a onClick={() => that.editPanels(record)}>
-                Edit</a>
-                <Divider type="vertical"/>
-                    <Popconfirm title="Are you sure delete this test?" onConfirm={() => that.deleteLabPanel(record)}
-                                okText="Yes" cancelText="No">
+                Edit
+                      </a>
+                <Divider type="vertical" />
+                    <Popconfirm
+                      title="Are you sure delete this test?"
+                      onConfirm={() => that.deleteLabPanel(record)}
+                      okText="Yes"
+                      cancelText="No"
+                    >
                         <a>Delete</a>
                     </Popconfirm>
-              </span>
+                </span>
             ),
         }];
 
@@ -106,29 +114,49 @@ export default class LabPanel extends React.Component{
             dataIndex: 'instruction',
             key: 'instruction',
         }];
-        return <Row>
-            <Route exact path={'/settings/labs/add'}
-                   render={(route) => <AddorEditLabPanel {...that.state}
-                                                    loadData={this.loadData}{...this.props} {...route}/>}/>
-            <Route exact path={'/settings/labs/edit'}
-                   render={(route) => <AddorEditLabPanel {...that.state}
-                                                    loadData={this.loadData} {...this.props} {...route}/>}/>
-            <Route exact path={'/settings/labs'}>
+        return (
+<Row>
+            <Route
+              exact
+              path="/settings/labs/add"
+              render={(route) => (
+<AddorEditLabPanel
+  {...that.state}
+  loadData={this.loadData}
+  {...this.props}
+  {...route}
+/>
+)}
+            />
+            <Route
+              exact
+              path="/settings/labs/edit"
+              render={(route) => (
+<AddorEditLabPanel
+  {...that.state}
+  loadData={this.loadData}
+  {...this.props}
+  {...route}
+/>
+)}
+            />
+            <Route exact path="/settings/labs">
                 <div>
                     <Row>
                         <h2>
                             <Link to="/settings/labs/add">
                                 <Button type="primary" style={{float: 'right'}}>
-                                    <Icon type="plus"/>&nbsp;Add
+                                    <Icon type="plus" />&nbsp;Add
                                 </Button>
                             </Link>
                         </h2>
                     </Row>
-                    <CustomizedTable loading={this.state.loading} columns={columns} expandedRowRender={record => <Card><Table pagination={false} columns={subColumns} dataSource={record.tests}/></Card>} dataSource={this.state.labPanel}/>
+                    <CustomizedTable loading={this.state.loading} columns={columns} expandedRowRender={record => <Card><Table pagination={false} columns={subColumns} dataSource={record.tests} /></Card>} dataSource={this.state.labPanel} />
                 </div>
             </Route>
 
-        </Row>
+</Row>
+)
     }
 }
 

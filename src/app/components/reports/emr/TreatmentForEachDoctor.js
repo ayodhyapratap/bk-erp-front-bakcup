@@ -1,8 +1,8 @@
 import React from "react";
-import {EMR_REPORTS} from "../../../constants/api";
-import {getAPI, interpolate} from "../../../utils/common";
 import {Col, Divider, Empty, Row, Select, Spin, Statistic, Table} from "antd";
 import {Pie, PieChart, Sector,Cell} from "recharts";
+import {EMR_REPORTS} from "../../../constants/api";
+import {getAPI, interpolate} from "../../../utils/common";
 import CustomizedTable from "../../common/CustomizedTable";
 import {loadMailingUserListForReportsMail, sendReportMail} from "../../../utils/clinicUtils";
 
@@ -21,13 +21,14 @@ export default class TreatmentForEachDoctor extends React.Component {
         this.loadTreatmentEachDoctor = this.loadTreatmentEachDoctor.bind(this);
 
     }
+
     componentDidMount() {
         this.loadTreatmentEachDoctor();
         loadMailingUserListForReportsMail(this);
     }
 
     componentWillReceiveProps(newProps) {
-        let that = this;
+        const that = this;
         if (this.props.startDate != newProps.startDate || this.props.endDate != newProps.endDate ||this.props.doctors!=newProps.doctors ||this.props.is_complete!=newProps.is_complete)
             this.setState({
                 startDate: newProps.startDate,
@@ -39,28 +40,28 @@ export default class TreatmentForEachDoctor extends React.Component {
     }
 
     loadTreatmentEachDoctor = () => {
-        let that = this;
+        const that = this;
         that.setState({
             loading:true,
         });
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 treatmentEachDoctor: data,
                 loading: false
             });
 
         };
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false
             })
         };
 
-        let apiParams={
+        const apiParams={
             type:that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
-            is_complete:this.props.is_complete?true:false,
+            is_complete:!!this.props.is_complete,
         };
         if(this.props.doctors){
             apiParams.doctors=this.props.doctors.toString();
@@ -75,8 +76,8 @@ export default class TreatmentForEachDoctor extends React.Component {
     };
 
     sendMail = (mailTo) => {
-        let that = this;
-        let apiParams = {
+        const that = this;
+        const apiParams = {
             type: that.props.type,
             start: this.state.startDate.format('YYYY-MM-DD'),
             end: this.state.endDate.format('YYYY-MM-DD'),
@@ -135,42 +136,47 @@ export default class TreatmentForEachDoctor extends React.Component {
                 <g>
 
                     <Sector
-                        cx={cx}
-                        cy={cy}
-                        innerRadius={innerRadius}
-                        outerRadius={outerRadius}
-                        startAngle={startAngle}
-                        endAngle={endAngle}
-                        fill={fill}
+                      cx={cx}
+                      cy={cy}
+                      innerRadius={innerRadius}
+                      outerRadius={outerRadius}
+                      startAngle={startAngle}
+                      endAngle={endAngle}
+                      fill={fill}
                     />
                     <Sector
-                        cx={cx}
-                        cy={cy}
-                        startAngle={startAngle}
-                        endAngle={endAngle}
-                        innerRadius={outerRadius + 6}
-                        outerRadius={outerRadius + 10}
-                        fill={fill}
+                      cx={cx}
+                      cy={cy}
+                      startAngle={startAngle}
+                      endAngle={endAngle}
+                      innerRadius={outerRadius + 6}
+                      outerRadius={outerRadius + 10}
+                      fill={fill}
                     />
-                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
-                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
-                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{payload.doctor+','+ payload.count}</text>
+                    <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
+                    <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+                    <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`${payload.doctor},${ payload.count}`}</text>
                     <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
                         {`(Rate ${(percent * 100).toFixed(2)}%)`}
                     </text>
                 </g>
             );
         };
-        var totalTreatment = this.state.treatmentEachDoctor.reduce(function(prev, cur) {
+        const totalTreatment = this.state.treatmentEachDoctor.reduce(function(prev, cur) {
             return prev + cur.count;
         }, 0);
-        return <div>
+        return (
+<div>
             <h2>Treatments For Each Patient Doctor
                 <span style={{float: 'right'}}>
                     <p><small>E-Mail To:&nbsp;</small>
                         <Select onChange={(e) => this.sendMail(e)} style={{width: 200}}>
-                            {this.state.mailingUsersList.map(item => <Select.Option
-                                value={item.email}>{item.name}</Select.Option>)}
+                            {this.state.mailingUsersList.map(item => (
+<Select.Option
+  value={item.email}
+>{item.name}
+</Select.Option>
+))}
                         </Select>
                     </p>
                 </span>
@@ -179,32 +185,35 @@ export default class TreatmentForEachDoctor extends React.Component {
             <Row>
                 <Col span={12} offset={6}>
                     <Spin size="large" spinning={this.state.loading}>
-                        {this.state.treatmentEachDoctor.length>0?
-                        <PieChart width={800} height={400} >
+                        {this.state.treatmentEachDoctor.length>0? (
+                        <PieChart width={800} height={400}>
                             <Pie
-                                activeIndex={this.state.activeIndex}
-                                activeShape={renderActiveShape}
-                                data={[...this.state.treatmentEachDoctor].reverse()}
-                                cx={300}
-                                dataKey="count"
-                                cy={200}
-                                innerRadius={60}
-                                outerRadius={80}
-                                fill="#8884d8"
-                                onMouseEnter={this.onPieEnter}>
+                              activeIndex={this.state.activeIndex}
+                              activeShape={renderActiveShape}
+                              data={[...this.state.treatmentEachDoctor].reverse()}
+                              cx={300}
+                              dataKey="count"
+                              cy={200}
+                              innerRadius={60}
+                              outerRadius={80}
+                              fill="#8884d8"
+                              onMouseEnter={this.onPieEnter}
+                            >
                                 {
-                                    this.state.treatmentEachDoctor.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+                                    this.state.treatmentEachDoctor.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} />)
                                 }
                             </Pie>
-                            {/*<Tooltip/>*/}
-                        </PieChart>:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show"/>}
+                            {/* <Tooltip/> */}
+                        </PieChart>
+                      ):<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Data to Show" />}
                     </Spin>
                 </Col>
             </Row>
             <Divider><Statistic title="Total" value={totalTreatment} /></Divider>
-            <CustomizedTable loading={this.state.loading} columns={columns}  dataSource={this.state.treatmentEachDoctor}/>
+            <CustomizedTable loading={this.state.loading} columns={columns} dataSource={this.state.treatmentEachDoctor} />
 
 
-        </div>
+</div>
+)
     }
 }

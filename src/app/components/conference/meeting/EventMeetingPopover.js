@@ -18,23 +18,24 @@ export default class EventMeetingPopover extends React.Component {
     }
 
     loadMeetingDetails = () => {
-        let that = this;
+        const that = this;
         that.setState({
             loading: true
         })
-        let successFn = function (data) {
+        const successFn = function (data) {
             that.setState({
                 loading: false,
                 meeting: data
             })
         }
-        let errorFn = function () {
+        const errorFn = function () {
             that.setState({
                 loading: false,
             })
         }
         getAPI(interpolate(SINGLE_MEETING, [that.props.meetingId]), successFn, errorFn);
     }
+
     openWindowLink = (link) => {
         window.open(link)
     }
@@ -47,32 +48,40 @@ export default class EventMeetingPopover extends React.Component {
 
     render() {
         if (!this.state.meeting) {
-            return <Result
-                status="warning"
-                title="Meeting Not Found"
-
-            />
+            return (
+<Result
+  status="warning"
+  title="Meeting Not Found"
+/>
+)
         }
-        let that = this;
-        return <div style={{width: '300px', minHeight: '200px', overflowY: 'scroll', overflowX: 'hidden'}}>
+        const that = this;
+        return (
+<div style={{width: '300px', minHeight: '200px', overflowY: 'scroll', overflowX: 'hidden'}}>
             <Spin spinning={this.state.loading}>
                 <div>
                     <h4>{this.state.meeting.name}</h4>
                     <Popconfirm
-                        title="Are you sure to start this meeting?"
-                        onConfirm={() => that.openWindowLink("https://clinic.bkarogyam.com/webcall/"+this.state.meeting.id)}
-                        okText="Yes"
-                        cancelText="No">
+                      title="Are you sure to start this meeting?"
+                      onConfirm={() => that.openWindowLink(`https://clinic.bkarogyam.com/webcall/${this.state.meeting.id}`)}
+                      okText="Yes"
+                      cancelText="No"
+                    >
                         <a>Meeting Link</a>
                     </Popconfirm>
-                    {/*<Divider style={{margin: 0}}>Invite Link</Divider>*/}
-                    {/*<p>{directMeetingLink}<br/>Password: {this.state.meeting.password}</p>*/}
-                    <Button size="small"
-                            onClick={() => this.copyToClipBoard("https://clinic.bkarogyam.com/webcall/"+this.state.meeting.id)}
-                            block shape={"round"}>Copy Link</Button>
+                    {/* <Divider style={{margin: 0}}>Invite Link</Divider> */}
+                    {/* <p>{directMeetingLink}<br/>Password: {this.state.meeting.password}</p> */}
+                    <Button
+                      size="small"
+                      onClick={() => this.copyToClipBoard(`https://clinic.bkarogyam.com/webcall/${this.state.meeting.id}`)}
+                      block
+                      shape="round"
+                    >Copy Link
+                    </Button>
                     <p>{this.state.meeting.purpose}</p>
                 </div>
             </Spin>
-        </div>
+</div>
+)
     }
 }

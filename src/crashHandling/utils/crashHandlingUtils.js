@@ -1,18 +1,18 @@
-import {postOuterAPI} from "../../app/utils/common";
-import CONFIG from "../../app.config";
 import moment from "moment";
 import lockr from "lockr";
+import {postOuterAPI} from "../../app/utils/common";
+import CONFIG from "../../app.config";
 import {loggedInUser} from "../../app/utils/auth";
 
 export const logErrorToSlackChannel = function (error, errorInfo) {
-    let crashData = {
+    const crashData = {
         "text": error.toString(),
         "attachments": [
             {
                 "color": "#36a64f",
                 "author_name": window.location.hostname,
                 "author_link": "http://flickr.com/bobby/",
-                "author_icon": window.location.hostname + "/favicon.ico",
+                "author_icon": `${window.location.hostname  }/favicon.ico`,
                 "title": "BK ERP Admin Application Crash Error",
                 text: errorInfo.componentStack,
                 "fields": [
@@ -38,10 +38,10 @@ export const logErrorToSlackChannel = function (error, errorInfo) {
             }
         ]
     }
-    let successFn = function () {
+    const successFn = function () {
         console.log("The above error has been notified to devs.");
     }
-    let errorFn = function () {
+    const errorFn = function () {
         console.log("The above error notifications failed");
     }
     if ((CONFIG.prodDomain && CONFIG.crashHandling.slack.sendOnProduction && CONFIG.prodDomain.indexOf(window.location.hostname) > -1) || CONFIG.crashHandling.slack.sendOnDevelopment) {
