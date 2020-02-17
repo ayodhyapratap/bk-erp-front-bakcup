@@ -96,6 +96,8 @@
         "react/jsx-filename-extension": ["off"],
         "react/prop-types": ["off"],
         "no-return-assign": ["off"],
+        "eqeqeq": ["error", "smart"],
+        "no-bitwise": ["error", { "allow": ["<<",">>","&"] }]
         "camelcase": ["error", {"properties": "never",
             "allow": ["UNSAFE_componentWillReceiveProps"]
         }]

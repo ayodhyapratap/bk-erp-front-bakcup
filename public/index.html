@@ -35,12 +35,15 @@
 
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
-    --></body>
+    -->
+    </body>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="/offline.js"></script>
     <link rel="stylesheet" href="/offline-lang.css" />
     <link rel="stylesheet" href="/offline.css" />
     <script type="text/javascript">
+        import {BACKEND_BASE_URL} from "../src/app/config/connect";
+
         window.isUpdateAvailable = new Promise(function(resolve, reject) {
             // lazy way of disabling service workers while developing
             if (
