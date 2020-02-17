@@ -6,7 +6,7 @@ import {
 import moment from "moment";
 import filter from "lodash/filter";
 import mapKeys from "lodash/mapKeys"
-import {getAPI, interpolate, makeFileURL, postAPI} from "../../utils/common";
+import {getAPI, interpolate, makeFileURL} from "../../utils/common";
 import {
     PATIENT_GROUPS,
     SEARCH_PATIENT,
@@ -25,7 +25,7 @@ import {
     HAS_EMAIL,
     HAS_GENDER, HAS_PINCODE, HAS_STREET, REFERED_BY_AGENT, GENDER_OPTION
 } from "../../constants/hardData";
-import {CHOOSE, GENDER} from "../../constants/dataKeys";
+import {CHOOSE} from "../../constants/dataKeys";
 import PermissionDenied from "../common/errors/PermissionDenied";
 
 const {Meta} = Card;
@@ -44,7 +44,6 @@ class PatientSelection extends React.Component {
             selectedPatientGroup: 'all',
             advanced_option: ADVANCED_SEARCH,
             selectedOption: {},
-            // keys:1,
             sourceList: [],
             custm_col: 8,
             advanceLoading: false,
@@ -335,14 +334,14 @@ class PatientSelection extends React.Component {
                         currentPage: data.current,
                         advanceLoading: false
                     }
-                } 
+                }
                     return {
                         patientListData: [...data.results],
                         morePatientList: data.next,
                         currentPage: data.current,
                         advanceLoading: false
                     }
-                
+
             });
         };
         const errorFn = function () {
@@ -795,7 +794,7 @@ function FormItems(index) {
                         {HAS_AADHAR_ID.map((option) => (
 <Select.Option
   value={option.value}
->{option.label} 
+>{option.label}
 </Select.Option>
 ))}
                      </Select>)}
@@ -834,7 +833,7 @@ function FormItems(index) {
                         {GENDER_OPTION.map((option) => (
 <Select.Option
   value={option.value}
->{option.label} 
+>{option.label}
 </Select.Option>
 ))}
                      </Select>)}
@@ -850,7 +849,7 @@ function FormItems(index) {
                         {HAS_GENDER.map((option) => (
 <Select.Option
   value={option.value}
->{option.label} 
+>{option.label}
 </Select.Option>
 ))}
                      </Select>)}
@@ -872,7 +871,7 @@ function FormItems(index) {
                         {HAS_PINCODE.map((option) => (
 <Select.Option
   value={option.value}
->{option.label} 
+>{option.label}
 </Select.Option>
 ))}
                      </Select>)}
@@ -887,7 +886,7 @@ function FormItems(index) {
                         {HAS_STREET.map((option) => (
 <Select.Option
   value={option.value}
->{option.label} 
+>{option.label}
 </Select.Option>
 ))}
                      </Select>)}
@@ -910,7 +909,7 @@ function FormItems(index) {
                         {BLOOD_GROUPS.map((option) => (
 <Select.Option
   value={option.value}
->{option.name} 
+>{option.name}
 </Select.Option>
 ))}
                      </Select>)}
@@ -925,7 +924,7 @@ function FormItems(index) {
                         {index.sourceList.map((option) => (
 <Select.Option
   value={option.id}
->{option.name} 
+>{option.name}
 </Select.Option>
 ))}
                      </Select>)}
@@ -940,7 +939,7 @@ function FormItems(index) {
                         {REFERED_BY_AGENT.map((option) => (
 <Select.Option
   value={option.value}
->{option.label} 
+>{option.label}
 </Select.Option>
 ))}
                      </Select>)}

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from "react-router-dom";
-import {Form, Input, Menu, Modal} from 'antd';
+import {Menu, Modal} from 'antd';
 import {CONFIG_API, MAILING_USERS_LIST, PRACTICESTAFF} from "../constants/api";
 import {displayMessage, getAPI, interpolate} from "./common";
 import {DOCTORS_ROLE, ERROR_MSG_TYPE} from "../constants/dataKeys";
@@ -115,7 +115,7 @@ export const sendReportMail = function(url,params,successMsg, errorMsg){
         okType: 'danger',
         cancelText: 'No',
         onOk() {
-            const successFn = function (data){
+            const successFn = function (){
                 if (successMsg){
                     displayMessage(SUCCESS,`${MAIL_SEND_MSG  }to${ params.mail_to}`)
                 }
@@ -138,7 +138,7 @@ export const sendReportMail = function(url,params,successMsg, errorMsg){
 
 export const sendMail= function (url, params) {
 
-    const successFn = function (data){
+    const successFn = function (){
 
     };
     const errorFn = function (){

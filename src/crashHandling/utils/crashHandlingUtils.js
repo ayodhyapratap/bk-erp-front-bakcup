@@ -1,5 +1,4 @@
 import moment from "moment";
-import lockr from "lockr";
 import {postOuterAPI} from "../../app/utils/common";
 import CONFIG from "../../app.config";
 import {loggedInUser} from "../../app/utils/auth";
@@ -34,14 +33,16 @@ export const logErrorToSlackChannel = function (error, errorInfo) {
                         "short": false
                     }
                 ],
-                "ts": new moment().format('X')
+                "ts": moment().format('X')
             }
         ]
     }
     const successFn = function () {
+        // eslint-disable-next-line
         console.log("The above error has been notified to devs.");
     }
     const errorFn = function () {
+        // eslint-disable-next-line
         console.log("The above error notifications failed");
     }
     if ((CONFIG.prodDomain && CONFIG.crashHandling.slack.sendOnProduction && CONFIG.prodDomain.indexOf(window.location.hostname) > -1) || CONFIG.crashHandling.slack.sendOnDevelopment) {

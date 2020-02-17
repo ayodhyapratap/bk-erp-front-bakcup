@@ -13,7 +13,6 @@ import {
     PASS_UPPER
 } from "../constants/messages";
 import {
-    CALENDAR_SETTINGS,
     ERROR_MSG_TYPE,
     INFO_MSG_TYPE,
     SUCCESS_MSG_TYPE,
@@ -26,94 +25,81 @@ export const makeURL = function (URL) {
 export const makeFileURL = function (URL) {
     return `${IMAGE_BASE_URL  }/${  URL}`;
 }
-export const putAPI = function (URL, data, successFn, errorFn, headerConfig = {}) {
-    // console.log("sending to " + makeURL(URL), data);
+export const putAPI = function (URL, dataToSend, successFn, errorFn, headerConfig = {}) {
     axios({
         method: 'put',
         url: makeURL(URL),
-        data,
+        dataToSend,
         headers: {
             Authorization: `Token ${  getAuthToken()}`,
             ...headerConfig
         }
     }).then(function (response) {
-        // console.log(response);
         const {data} = response;
         successFn(data);
         if (data.detail)
             displayMessage(SUCCESS_MSG_TYPE, data.detail)
     }).catch(function (error) {
         handleErrorResponse(error);
-        errorFn(data);
+        errorFn(error);
     });
 };
 
-export const postAPI = function (URL, data, successFn, errorFn, headerConfig = {}) {
-    // console.log("sending to " + makeURL(URL), data);
+export const postAPI = function (URL, dataToSend, successFn, errorFn, headerConfig = {}) {
     axios({
         method: 'post',
         url: makeURL(URL),
-        data,
+        dataToSend,
         headers: {
             Authorization: `Token ${  getAuthToken()}`,
             ...headerConfig
         }
     }).then(function (response) {
-
-        // console.log(response);
         const {data} = response;
         successFn(data);
         if (data.detail)
             displayMessage(SUCCESS_MSG_TYPE, data.detail)
     }).catch(function (error) {
-        console.log(error);
         handleErrorResponse(error);
         errorFn();
     });
 };
-export const postOuterAPI = function (URL, data, successFn, errorFn, headerConfig = {}) {
-    // console.log("sending to " + makeURL(URL), data);
+export const postOuterAPI = function (URL, dataToSend, successFn, errorFn, headerConfig = {}) {
     axios({
         method: 'post',
         url: URL,
-        data,
+        dataToSend,
         headers: {
             ...headerConfig
         }
     }).then(function (response) {
-        // console.log(response);
         const {data} = response;
         successFn(data);
         if (data.detail)
             displayMessage(SUCCESS_MSG_TYPE, data.detail)
     }).catch(function (error) {
-        console.log(error);
         handleErrorResponse(error);
         errorFn();
     });
 };
-export const patchAPI = function (URL, data, successFn, errorFn, headerConfig = {}) {
-    // console.log("sending to " + makeURL(URL), data);
+export const patchAPI = function (URL, dataToSend, successFn, errorFn, headerConfig = {}) {
     axios({
         method: 'patch',
         url: makeURL(URL),
-        data,
+        dataToSend,
         headers: {
             Authorization: `Token ${  getAuthToken()}`,
             ...headerConfig
         }
     }).then(function (response) {
-        // console.log(response);
         const {data} = response;
         successFn(data);
     }).catch(function (error) {
-        console.log(error);
         handleErrorResponse(error);
         errorFn();
     });
 };
 export const getAPI = function (URL, successFn, errorFn, params = {}) {
-    // console.log(getAuthToken());
     axios({
         method: 'get',
         url: makeURL(URL),
@@ -122,19 +108,16 @@ export const getAPI = function (URL, successFn, errorFn, params = {}) {
         },
         params
     }).then(function (response) {
-        // console.log(response);
         const {data} = response;
         successFn(data);
         if (data.detail)
             displayMessage(SUCCESS_MSG_TYPE, data.detail)
     }).catch(function (error) {
-        // console.log("Error aa rhi ", error);
         handleErrorResponse(error);
         errorFn();
     });
 };
 export const deleteAPI = function (URL, successFn, errorFn) {
-    // console.log(getAuthToken());
     axios({
         method: 'delete',
         url: makeURL(URL),
@@ -142,13 +125,11 @@ export const deleteAPI = function (URL, successFn, errorFn) {
             Authorization: `Token ${  getAuthToken()}`
         }
     }).then(function (response) {
-        // console.log(response);
         const {data} = response;
         successFn(data);
         if (data.detail)
             displayMessage(SUCCESS_MSG_TYPE, data.detail)
     }).catch(function (error) {
-        console.log("Error aa rhi ", error);
         handleErrorResponse(error);
         errorFn();
     });
@@ -157,6 +138,7 @@ export const deleteAPI = function (URL, successFn, errorFn) {
 export const handleErrorResponse = function (error) {
     const {response} = error;
     if (response) {
+        // eslint-disable-next-line
         console.info("Error Response Received", response);
         const {status} = response;
         if (status == 400) {
@@ -182,6 +164,7 @@ export const handleErrorResponse = function (error) {
         }
     } else {
         // message.error(ERROR_INTERNET_CONNECTIVITY);
+        // eslint-disable-next-line
         console.error(response);
     }
 };
@@ -218,13 +201,11 @@ export const stopLoadingMessage = function (msgFn, finishMsgType, finishMsg) {
 
 export const parseQueryString = function (query) {
     const obj = {};
-    // console.log(query, query.length);
     if (query.length) {
         if (query[0] == '?' || query[0] == '#') {
             query = query.substring(1, query.length)
         }
         const tempArr = query.split('&');
-        console.log(tempArr);
         tempArr.forEach(function (str) {
             const arr = str.split('=');
             if (arr.length == 2) {
@@ -234,12 +215,11 @@ export const parseQueryString = function (query) {
     }
     return obj;
 }
-export const validatePassword = function (rule, value, callback) {
+export const validatePassword = function (rule, value) {
 
     if (value.length < 6 && value.length != 0) {
         return (PASS_LEN);
-    }
-    if (value == value.toLowerCase() && value.length != 0) {
+    } if (value == value.toLowerCase() && value.length != 0) {
         return (PASS_UPPER);
     } if (value == value.toUpperCase() && value.length != 0) {
         return (PASS_LOWER);
@@ -249,7 +229,7 @@ export const validatePassword = function (rule, value, callback) {
     } else {
         return (PASS_SPEC);
     }
-    
+
 }
 
 export const saveCommonSettings = function (type, value) {
@@ -270,7 +250,7 @@ export const removeEmpty = (obj) => {
     return obj;
 };
 
-export const fildFileExtension = function (path) {
+export const findFileExtension = function (path) {
     if(!path)
         return null;
     const name = path.split('.');

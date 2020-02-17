@@ -4,7 +4,7 @@
 
 const CONFIG = {
     backendBaseUrl: 'https://bk-erp.plutonic.co.in',
-    imageBaseUrl: '/media',
+    imageBaseUrl: `/media`,
     prodDomain: ['clinic.bkarogyam.com', 'bk-erp.plutonic.co.in'],
     crashHandling: {
         slack: {
@@ -15,4 +15,5 @@ const CONFIG = {
         },
     },
 };
+
 export default CONFIG;

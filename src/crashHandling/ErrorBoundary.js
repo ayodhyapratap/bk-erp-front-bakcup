@@ -3,14 +3,14 @@ import {Button, Result} from "antd";
 import {logErrorToSlackChannel} from "./utils/crashHandlingUtils";
 
 export default class ErrorBoundary extends React.Component {
+    static getDerivedStateFromError() {
+        // Update state so the next render will show the fallback UI.
+        return {hasError: true};
+    }
+
     constructor(props) {
         super(props);
         this.state = {hasError: false};
-    }
-
-    static getDerivedStateFromError(error) {
-        // Update state so the next render will show the fallback UI.
-        return {hasError: true};
     }
 
     componentDidCatch(error, errorInfo) {
@@ -24,7 +24,6 @@ export default class ErrorBoundary extends React.Component {
     }
 
     render() {
-        const that = this;
         if (this.state.hasError) {
             return (
 <Result

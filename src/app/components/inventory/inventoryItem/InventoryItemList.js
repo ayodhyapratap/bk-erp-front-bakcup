@@ -429,10 +429,10 @@ export default class InventoryItemList extends React.Component {
                         <Divider type="vertical"/> */}
                             {item.total_quantity === 0 ? (
                                 <Popconfirm
-                                    title="Are you sure delete this item?"
-                                    onConfirm={() => that.deleteObject(item.id)}
-                                    okText="Yes"
-                                    cancelText="No"
+                                  title="Are you sure delete this item?"
+                                  onConfirm={() => that.deleteObject(item.id)}
+                                  okText="Yes"
+                                  cancelText="No"
                                 >
                                     <a>Delete</a>
                                 </Popconfirm>
@@ -480,20 +480,19 @@ export default class InventoryItemList extends React.Component {
             <div>
                 <Switch>
                     <Route
-                        path="/inventory/add"
-                        render={route =>
+                      path="/inventory/add"
+                      render={route =>
                             that.props.activePracticePermissions.AddInventoryItem ||
                             that.props.allowAllPermissions ? (
                                 <AddorEditInventoryItem
-                                    {...route}
-                                    {...this.props}
-                                    {...this.state}
-                                    loadData={this.loadData}
+                                  {...route}
+                                  {...this.props}
+                                  {...this.state}
+                                  loadData={this.loadData}
                                 />
                             ) : (
                                 <PermissionDenied />
-                            )
-                        }
+                            )}
                     />
 
                     {/* <Route path="/inventory/edit-item-type/:id"
@@ -503,71 +502,68 @@ export default class InventoryItemList extends React.Component {
                        {...this.state} {...route} {...this.props}/>}/> */}
 
                     <Route
-                        exact
-                        path="/inventory/edit/:id"
-                        render={route =>
+                      exact
+                      path="/inventory/edit/:id"
+                      render={route =>
                             that.props.activePracticePermissions.AddInventoryItem ||
                             that.props.allowAllPermissions ? (
                                 <AddorEditInventoryItem
-                                    {...this.state}
-                                    {...this.props}
-                                    {...route}
-                                    loadData={this.loadData}
+                                  {...this.state}
+                                  {...this.props}
+                                  {...route}
+                                  loadData={this.loadData}
                                 />
                             ) : (
                                 <PermissionDenied />
-                            )
-                        }
+                            )}
                     />
 
                     <Route
-                        exact
-                        path="/inventory/consume-stock"
-                        render={route =>
+                      exact
+                      path="/inventory/consume-stock"
+                      render={route =>
                             that.props.activePracticePermissions.AddInventoryStock ||
                             that.props.allowAllPermissions ? (
                                 <AddOrConsumeStock
-                                    key={CONSUME_STOCK}
-                                    type={CONSUME_STOCK}
-                                    loadData={this.loadData}
-                                    {...this.state}
-                                    {...route}
-                                    {...this.props}
+                                  key={CONSUME_STOCK}
+                                  type={CONSUME_STOCK}
+                                  loadData={this.loadData}
+                                  {...this.state}
+                                  {...route}
+                                  {...this.props}
                                 />
                             ) : (
                                 <PermissionDenied />
-                            )
-                        }
+                            )}
                     />
 
                     <Route
-                        exact
-                        path="/inventory/add-stock"
-                        render={route =>
+                      exact
+                      path="/inventory/add-stock"
+                      render={route =>
                             that.props.activePracticePermissions.ConsumeInventoryStock ||
                             that.props.allowAllPermissions ? (
                                 <AddOrConsumeStock
-                                    key={ADD_STOCK}
-                                    type={ADD_STOCK}
-                                    loadData={this.loadData}
-                                    {...this.state}
-                                    {...route}
-                                    {...this.props}
+                                  key={ADD_STOCK}
+                                  type={ADD_STOCK}
+                                  loadData={this.loadData}
+                                  {...this.state}
+                                  {...route}
+                                  {...this.props}
                                 />
                             ) : (
                                 <PermissionDenied />
-                            )
-                        }
+                            )}
                     />
                     <Route>
                         <Card
-                            title="Inventory List"
-                            extra={
+                          title="Inventory List"
+                          extra={(
                                 <Button.Group>
                                     <Link to="/inventory/add">
                                         <Button
-                                            type="primary"
-                                            disabled={
+                                          type="primary"
+                                          disabled={
                                                 !that.props.activePracticePermissions
                                                     .AddInventoryItem &&
                                                 !that.props.allowAllPermissions
@@ -579,40 +575,40 @@ export default class InventoryItemList extends React.Component {
 
                                     <Link to="/inventory/add-stock">
                                         <Button
-                                            disabled={
+                                          disabled={
                                                 !that.props.activePracticePermissions
                                                     .AddInventoryStock &&
                                                 !that.props.allowAllPermissions
                                             }
-                                            type="primary"
+                                          type="primary"
                                         >
                                             Add Stock
                                         </Button>
                                     </Link>
                                     <Link to="/inventory/consume-stock">
                                         <Button
-                                            disabled={
+                                          disabled={
                                                 !that.props.activePracticePermissions
                                                     .ConsumeInventoryStock &&
                                                 !that.props.allowAllPermissions
                                             }
-                                            type="primary"
+                                          type="primary"
                                         >
                                             Consume Stock
                                         </Button>
                                     </Link>
                                 </Button.Group>
-                            }
+                              )}
                         >
                             <Row style={{ marginBottom: 10 }}>
                                 <Col span={8}>
                                     <Radio.Group
-                                        name="itemTypeFilter"
-                                        size="small"
-                                        defaultValue="ALL"
-                                        buttonStyle="solid"
-                                        onChange={this.changeFilter}
-                                        style={{ margin: '10px' }}
+                                      name="itemTypeFilter"
+                                      size="small"
+                                      defaultValue="ALL"
+                                      buttonStyle="solid"
+                                      onChange={this.changeFilter}
+                                      style={{ margin: '10px' }}
                                     >
                                         <Radio.Button value="ALL">ALL</Radio.Button>
                                         {INVENTORY_ITEM_TYPE.map(item => (
@@ -624,19 +620,19 @@ export default class InventoryItemList extends React.Component {
                                 </Col>
                                 <Col span={8} style={{ textAlign: 'center' }}>
                                     <Statistic
-                                        title="Inventory Total Cost"
-                                        value={this.state.inventoryTotal}
-                                        prefix="Rs."
+                                      title="Inventory Total Cost"
+                                      value={this.state.inventoryTotal}
+                                      prefix="Rs."
                                     />
                                 </Col>
                                 <Col span={8}>
                                     <Radio.Group
-                                        name="itemStockFilter"
-                                        size="small"
-                                        defaultValue="ALL"
-                                        buttonStyle="solid"
-                                        style={{ margin: '10px', float: 'right' }}
-                                        onChange={this.changeFilter}
+                                      name="itemStockFilter"
+                                      size="small"
+                                      defaultValue="ALL"
+                                      buttonStyle="solid"
+                                      style={{ margin: '10px', float: 'right' }}
+                                      onChange={this.changeFilter}
                                     >
                                         <Radio.Button value="ALL">ALL</Radio.Button>
                                         <Radio.Button value="Low">Low</Radio.Button>
@@ -648,16 +644,16 @@ export default class InventoryItemList extends React.Component {
                                 <Col span={4}>
                                     <Button.Group size="small">
                                         <Button
-                                            disabled={this.state.loading}
-                                            type="primary"
-                                            onClick={this.excelExport}
+                                          disabled={this.state.loading}
+                                          type="primary"
+                                          onClick={this.excelExport}
                                         >
                                             <Icon type="file-excel" /> Excel
                                         </Button>
                                         <Button
-                                            disabled={this.state.loading}
-                                            type="primary"
-                                            onClick={this.pdfExport}
+                                          disabled={this.state.loading}
+                                          type="primary"
+                                          onClick={this.pdfExport}
                                         >
                                             <Icon type="file-pdf" /> PDF
                                         </Button>
@@ -669,17 +665,16 @@ export default class InventoryItemList extends React.Component {
                                 </Col>
                                 <Col span={4}>
                                     <Input
-                                        style={{ width: '100%' }}
-                                        value={this.state.filterItemName}
-                                        allowClear
+                                      style={{ width: '100%' }}
+                                      value={this.state.filterItemName}
+                                      allowClear
                                         // disabled={this.state.loading}
-                                        placeholder="Item Name"
-                                        onChange={e =>
+                                      placeholder="Item Name"
+                                      onChange={e =>
                                             this.changeInventoryFilters(
                                                 'filterItemName',
                                                 e.target.value,
-                                            )
-                                        }
+                                            )}
                                     />
                                 </Col>
                                 <Col span={2} style={{ textAlign: 'right' }}>
@@ -687,17 +682,16 @@ export default class InventoryItemList extends React.Component {
                                 </Col>
                                 <Col span={4}>
                                     <Input
-                                        style={{ width: '100%' }}
-                                        value={this.state.filterItemCode}
-                                        allowClear
+                                      style={{ width: '100%' }}
+                                      value={this.state.filterItemCode}
+                                      allowClear
                                         // disabled={this.state.loading}
-                                        placeholder="HSN Number"
-                                        onChange={e =>
+                                      placeholder="HSN Number"
+                                      onChange={e =>
                                             this.changeInventoryFilters(
                                                 'filterItemCode',
                                                 e.target.value,
-                                            )
-                                        }
+                                            )}
                                     />
                                 </Col>
                                 <Col span={2} style={{ textAlign: 'right' }}>
@@ -705,12 +699,12 @@ export default class InventoryItemList extends React.Component {
                                 </Col>
                                 <Col span={4}>
                                     <Select
-                                        style={{ width: '100%' }}
-                                        value={this.state.filterMLM}
-                                        allowClear
+                                      style={{ width: '100%' }}
+                                      value={this.state.filterMLM}
+                                      allowClear
                                         // disabled={this.state.loading}
-                                        placeholder="MLM Margin"
-                                        onChange={e => this.changeInventoryFilters('filterMLM', e)}
+                                      placeholder="MLM Margin"
+                                      onChange={e => this.changeInventoryFilters('filterMLM', e)}
                                     >
                                         {this.state.productMargin.map(item => (
                                             <Select.Option value={item.id}>
@@ -726,56 +720,56 @@ export default class InventoryItemList extends React.Component {
 
                             <Row>
                                 <Table
-                                    bordered
-                                    pagination={false}
-                                    hideReport
-                                    dataSource={this.state.inventoryItems.sort(
+                                  bordered
+                                  pagination={false}
+                                  hideReport
+                                  dataSource={this.state.inventoryItems.sort(
                                         (a, b) =>
                                             parseInt(b.total_quantity) - parseInt(a.total_quantity),
                                     )}
-                                    columns={columns}
+                                  columns={columns}
                                 />
                                 <Spin spinning={this.state.loading}>
                                     <Row />
                                 </Spin>
                                 <InfiniteFeedLoaderButton
-                                    loaderFunction={() => this.loadData(this.state.nextItemPage)}
-                                    loading={this.state.loading}
-                                    hidden={!this.state.nextItemPage}
+                                  loaderFunction={() => this.loadData(this.state.nextItemPage)}
+                                  loading={this.state.loading}
+                                  hidden={!this.state.nextItemPage}
                                 />
                             </Row>
                             <Modal
-                                visible={this.state.stockModalVisibility}
-                                title={`Stock${this.state.actionType}`}
-                                onOk={() => this.showAddOrConsumeModal(false)}
-                                onCancel={() => this.showAddOrConsumeModal(false)}
-                                footer={null}
+                              visible={this.state.stockModalVisibility}
+                              title={`Stock${this.state.actionType}`}
+                              onOk={() => this.showAddOrConsumeModal(false)}
+                              onCancel={() => this.showAddOrConsumeModal(false)}
+                              footer={null}
                             >
                                 <AddOrConsumeStock
-                                    showAddOrConsumeModal={this.showAddOrConsumeModal}
-                                    itemId={this.state.itemId}
-                                    actionType={this.state.actionType}
+                                  showAddOrConsumeModal={this.showAddOrConsumeModal}
+                                  itemId={this.state.itemId}
+                                  actionType={this.state.actionType}
                                 />
                             </Modal>
 
                             <Modal
-                                title={
+                              title={
                                     this.state.inventoryItemObj
                                         ? `${this.state.inventoryItemObj.name} Details`
                                         : ''
                                 }
-                                visible={this.state.inventoryModal}
-                                onCancel={this.inventoryItemModalClose}
-                                footer={null}
+                              visible={this.state.inventoryModal}
+                              onCancel={this.inventoryItemModalClose}
+                              footer={null}
                             >
                                 <Table
-                                    dataSource={
+                                  dataSource={
                                         this.state.inventoryItemObj
                                             ? this.state.inventoryItemObj.item_type_stock.item_stock
                                             : []
                                     }
-                                    columns={inventoryItemColumn}
-                                    pagination={false}
+                                  columns={inventoryItemColumn}
+                                  pagination={false}
                                 />
                             </Modal>
                         </Card>

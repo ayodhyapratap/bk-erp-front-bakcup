@@ -173,8 +173,8 @@ export default class WalletBalanceAmountReport extends React.Component {
                         <Row gutter={16}>
                             <Col span={12}>
                                 <Statistic
-                                    title="Total Refundable Amount(INR)"
-                                    value={
+                                  title="Total Refundable Amount(INR)"
+                                  value={
                                         totalRefundableAmount
                                             ? totalRefundableAmount.toFixed(2)
                                             : '0.00'
@@ -184,8 +184,8 @@ export default class WalletBalanceAmountReport extends React.Component {
 
                             <Col span={12}>
                                 <Statistic
-                                    title="Total Non Refundable Amount(INR)"
-                                    value={
+                                  title="Total Non Refundable Amount(INR)"
+                                  value={
                                         totalNonRefundableAmount
                                             ? totalNonRefundableAmount.toFixed(2)
                                             : '0.00'
@@ -197,9 +197,9 @@ export default class WalletBalanceAmountReport extends React.Component {
                 </Row>
 
                 <CustomizedTable
-                    loading={this.state.loading}
-                    columns={columns}
-                    dataSource={reportData}
+                  loading={this.state.loading}
+                  columns={columns}
+                  dataSource={reportData}
                 />
             </div>
         );

@@ -8,12 +8,12 @@ import {loadUserDetails, loggedInactivePractice, loggedInUserPractices, setCurre
 import Error404 from "../common/errors/Error404";
 import Profile from "../auth/Profile";
 import PrintPatientForm from "../patients/patient/PrintPatientForm";
-import CreateAppointment from "../calendar/CreateAppointment";
 import BlockCalendar from "../calendar/BlockCalendar";
 import PermissionDenied from "../common/errors/PermissionDenied";
 import SuggestionBox from "./SuggestionBox";
 import ErrorBoundary from "../../../crashHandling/ErrorBoundary";
 
+const WebCall = loadable(() => import('../conference/WebCall'));
 const Calendar = loadable(() => import('../calendar/Calendar'));
 const ReportsHome = loadable(() => import('../reports/ReportsHome'));
 const WebAdminHome = loadable(() => import('../webAdmin/WebAdminHome'));
@@ -159,6 +159,11 @@ class AppBase extends React.Component {
                           path="/patients/patientprintform"
                           render={(route) => <PrintPatientForm {...this.state} key={that.state.active_practiceId} />}
                         />
+                        <Route
+                          exact
+                          path="/webcall/:meetingId"
+                          render={(route) => <WebCall {...this.state} {...route} />}
+                        />
                         <Route>
                             <Layout>
                                 <AppSider
@@ -175,6 +180,7 @@ class AppBase extends React.Component {
                                       toggleSider={this.toggleSider}
                                     />
                                     <Switch>
+
                                         {this.state.activePracticePermissions.WebAdmin ? (
                                                 <Route
                                                   path="/web"
@@ -323,8 +329,7 @@ class AppBase extends React.Component {
                     <SuggestionBox {...this.state} close={this.onClose} />
                 </ErrorBoundary>
             </Layout>
-        )
-            ;
+        );
     }
 }
 

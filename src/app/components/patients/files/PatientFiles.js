@@ -27,7 +27,7 @@ import {
     interpolate,
     makeFileURL,
     displayMessage,
-    fildFileExtension
+    findFileExtension
 } from "../../../utils/common";
 import {
     ALL_PATIENT_FILES,
@@ -97,7 +97,7 @@ class PatientFiles extends React.Component {
                         loadMoreFiles: data.next,
                         loading: false,
                     }
-                } 
+                }
                     const newData = data.results.map(file => {
                         if (moment(file.created_at).format('YYYYMMDD') != moment(lastPatient).format('YYYYMMDD')) {
                             lastPatient = moment(file.created_at);
@@ -110,7 +110,7 @@ class PatientFiles extends React.Component {
                         loadMoreFiles: data.next,
                         loading: false
                     }
-                
+
 
             })
         }
@@ -215,13 +215,13 @@ class PatientFiles extends React.Component {
                         loadMoreFiles: data.next,
                         loading: false,
                     }
-                } 
+                }
                     return {
                         files: [...prevState.files, ...data.results],
                         loadMoreFiles: data.next,
                         loading: false
                     }
-                
+
 
             })
         }
@@ -403,7 +403,7 @@ class PatientFiles extends React.Component {
     handleVisibleChange =()=>{
         console.log("sdad")
         this.setState({
-            visibleTag: !this.state.visibleTag, 
+            visibleTag: !this.state.visibleTag,
         });
       };
 
@@ -450,7 +450,7 @@ class PatientFiles extends React.Component {
                                   value={tag.id}
                                   onChange={(e) => that.tagsCompleteToggle(tag.id, e.target.checked)}
                                   checked={that.state.selectedTags[tag.id]}
-                                >{tag.name} 
+                                >{tag.name}
                                 </Checkbox>
 </li>
 ))}
@@ -484,7 +484,7 @@ class PatientFiles extends React.Component {
                                type="primary"
                              >
                                  <Icon type="plus" />&nbsp;Add Medical Certificate
-                             </Button> 
+                             </Button>
                          </Link>
 
                          <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft" onVisibleChange={that.handleVisibleChange} visible={that.state.visibleTag}>
@@ -510,7 +510,7 @@ class PatientFiles extends React.Component {
                          </Button>
 
                          <Dropdown overlay={tagsMenu} trigger={['click']} placement="bottomLeft" onVisibleChange={that.handleVisibleChange} visible={that.state.visibleTag}>
-                
+
                              <Button><Icon type="plus" />Add/Remove File Tags</Button>
                          </Dropdown>
 
@@ -579,7 +579,7 @@ class PatientFiles extends React.Component {
                           style={{width: '100%', backgroundColor: 'transparent', border: '0px'}}
                           onClick={() => this.loadMedicalCertificate()}
                         >
-                            Medical Leave Certificate 
+                            Medical Leave Certificate
                         </Radio.Button>
                     </Radio.Group>
                 </Col>
@@ -628,7 +628,7 @@ class PatientFiles extends React.Component {
                                           checked={that.state.selectedFiles[item.id]}
                                         />
 
-                                        {fildFileExtension(item.file_type) == PDF_FILE_EXTENSION ? (
+                                        {findFileExtension(item.file_type) == PDF_FILE_EXTENSION ? (
                                             <div
                                               style={{textAlign: 'center', paddingTop: 30, height: '100%'}}
                                               onClick={() => this.togglePDFModal(item)}
@@ -821,7 +821,7 @@ class PatientFiles extends React.Component {
                           onClick={() => this.loadMedicalCertificate()}
                           value=''
                         >
-                            Medical Leave Certificate 
+                            Medical Leave Certificate
                         </Radio.Button>
                     </Radio.Group>
                 </Col>

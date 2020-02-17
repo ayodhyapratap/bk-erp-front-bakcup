@@ -161,9 +161,9 @@ export default class ProductWiseReport extends React.Component {
                 </Row>
 
                 <CustomizedTable
-                    loading={this.state.loading}
-                    columns={columns}
-                    dataSource={this.state.report}
+                  loading={this.state.loading}
+                  columns={columns}
+                  dataSource={this.state.report}
                 />
             </div>
         );

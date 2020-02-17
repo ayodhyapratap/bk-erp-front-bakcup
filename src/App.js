@@ -4,7 +4,6 @@ import {Affix, Alert, Layout} from "antd";
 import {Route, Switch} from "react-router-dom";
 import ReactGA from 'react-ga';
 import {loggedInUser, logInUser, logInUserWithOtp, logOutUser,} from "./app/utils/auth";
-import WebCall from "./app/components/conference/WebCall";
 
 
 const Auth = loadable(() => import('./app/components/auth/Auth'));
@@ -20,7 +19,7 @@ class App extends Component {
       redirect: false,
       production: (window.location.hostname == "clinic.bkarogyam.com")
     };
-    // momenttz.tz.setDefault('Asia/Kolkata');
+
 
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
@@ -69,7 +68,6 @@ class App extends Component {
           </Affix>
         )}
         <Switch>
-          <Route exact path="/webcall/:meetingId" render={(route) => <WebCall {...this.state} {...route} />} />
           <Route exact path="/login" render={() => <Auth {...this.state} login={this.login} />} />
           <Route
             exact
