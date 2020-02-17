@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "94cc8747e5f36322835b8c8ef14caa6c",
+    "revision": "25ce9a8160d3e8a8b9ffceda9336656d",
     "url": "https://bk-erp.plutonic.co.in/index.html"
   },
   {

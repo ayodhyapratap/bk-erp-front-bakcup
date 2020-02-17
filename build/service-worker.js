@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "https://bk-erp.plutonic.co.in/precache-manifest.93cdfc153f7c2584a1d6239aec6968e7.js"
+  "https://bk-erp.plutonic.co.in/precache-manifest.fb20712ba402b860d23895f157222995.js"
 );
 
 self.addEventListener('message', (event) => {
