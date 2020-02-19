@@ -12,7 +12,6 @@ import {
     Select,
     Radio,
     Upload,
-    Popconfirm,
     InputNumber,
     Popover, Row, Col,
 } from "antd";
@@ -41,7 +40,7 @@ import {
     removeEmpty
 } from "../../../utils/common";
 import WebCamField from "../../common/WebCamField";
-import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD, ALL, RELATION} from "../../../constants/dataKeys";
+import {SUCCESS_MSG_TYPE, INPUT_FIELD, SELECT_FIELD, RELATION} from "../../../constants/dataKeys";
 import {
     PATIENT_AGE,
     BLOOD_GROUP_CONFIG_PARAM,
@@ -82,7 +81,7 @@ class EditPatientDetails extends React.Component {
             [SMS_LANGUAGE_CONFIG_PARAM]: [],
             [FAMILY_RELATION_CONFIG_PARAM]: [],
             [GENDER_CONFIG_PARAM]: [],
-            number:{}
+            number: {}
 
         }
         this.changeRedirect = this.changeRedirect.bind(this);
@@ -300,7 +299,7 @@ class EditPatientDetails extends React.Component {
                     that.setState({
                         loading: false
                     });
-                    that.props.history.replace(`/patient/${  data.id  }/profile`)
+                    that.props.history.replace(`/patient/${data.id}/profile`)
                 }
                 const errorFn = function () {
                     that.setState({
@@ -373,7 +372,7 @@ class EditPatientDetails extends React.Component {
         })
     };
 
-    onChangeCheckbox = (e) => {
+    onChangeCheckbox = () => {
         this.setState({
             on_dialysis: !this.state.on_dialysis,
         });
@@ -417,7 +416,7 @@ class EditPatientDetails extends React.Component {
         const that = this;
         const {id} = that.state.patientDetails
         const reqData = {'id': id, is_active: false}
-        const successFn = function (data) {
+        const successFn = function () {
             that.setState({
                 loading: false,
             });
@@ -475,7 +474,7 @@ class EditPatientDetails extends React.Component {
             },
             onChange(info) {
                 if (info.file.status !== 'uploading') {
-                    console.log(info.file, info.fileList);
+
                 }
                 if (info.file.status === 'done') {
                     message.success(`${info.file.name} file uploaded successfully`);
@@ -489,62 +488,65 @@ class EditPatientDetails extends React.Component {
         return (
             <Form onSubmit={that.handleSubmit}>
                 <Card
-                  title={(
-<span>{that.props.currentPatient ? "Edit Profile" : "Add Patient"}&nbsp;&nbsp;<Link
-  to="/patients/patientprintform"
->Print Patient Form
-                                                                              </Link>
-</span>
-)}
-                  extra={(
-<div><Button style={{margin: 5}} type="primary" htmlType="submit">Save</Button>
-                          {that.props.history ? (
-                              <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
-                                  Cancel
-                              </Button>
+                    title={(
+                        <span>{that.props.currentPatient ? "Edit Profile" : "Add Patient"}&nbsp;&nbsp;
+                            <Link to="/patients/patientprintform">
+                                Print Patient Form
+                            </Link>
+                        </span>
+                    )}
+                    extra={(
+                        <div><Button style={{margin: 5}} type="primary" htmlType="submit">Save</Button>
+                            {that.props.history ? (
+                                <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
+                                    Cancel
+                                </Button>
                             ) : null}
 
-                          {that.props.currentPatient ? (
-<>
-                                  {this.state.patientDetails && this.state.patientDetails.is_approved ? (
-                                      <Popover
-                                        placement="leftBottom"
-                                        trigger="hover"
-                                        content="An Agent is associated. Patient can not be deleted."
-                                          // onConfirm={()=>that.patientDelete(this.state.patientDetails.id)}
-                                          // // onCancel={cancel}
-                                          // okText="Yes"
-                                          // cancelText="No"
-                                      >
-                                          <Button style={{margin: 5}} type="danger" disabled>
-                                              Delete
-                                          </Button>
-                                      </Popover>
-                                    ) : (
-                                      <Button style={{margin: 5}} onClick={() => that.onDeletePatient()} type="danger" disabled={!this.state.patientDetails}>
-                                          Delete
-                                      </Button>
-                                    )}
-</>
-)
-                              : null}
+                            {that.props.currentPatient ? (
+                                    <>
+                                        {this.state.patientDetails && this.state.patientDetails.is_approved ? (
+                                            <Popover
+                                                placement="leftBottom"
+                                                trigger="hover"
+                                                content="An Agent is associated. Patient can not be deleted."
+                                                // onConfirm={()=>that.patientDelete(this.state.patientDetails.id)}
+                                                // // onCancel={cancel}
+                                                // okText="Yes"
+                                                // cancelText="No"
+                                            >
+                                                <Button style={{margin: 5}} type="danger" disabled>
+                                                    Delete
+                                                </Button>
+                                            </Popover>
+                                        ) : (
+                                            that.props.activePracticePermissions.DeletePatient || that.props.allowAllPermissions ?
+                                                <Button style={{margin: 5}} onClick={() => that.onDeletePatient()}
+                                                        type="danger"
+                                                        disabled={!this.state.patientDetails}>
+                                                    Delete
+                                                </Button> : null
+                                        )}
+                                    </>
+                                )
+                                : null}
 
 
-</div>
-)}
+                        </div>
+                    )}
                 >
                     <Form.Item key="image" {...formItemLayout} label="Patient Image">
                         {getFieldDecorator('image', {valuePropName: 'image',})(
                             <Upload {...singleUploadprops}>
                                 <Button>
-                                    <Icon type="upload" /> Select File
+                                    <Icon type="upload"/> Select File
                                 </Button>
                                 {this.state.patientDetails && this.state.patientDetails.image ? (
                                     <img
-                                      src={makeFileURL(this.state.patientDetails ? this.state.patientDetails.image : null)}
-                                      style={{maxWidth: '100%'}}
+                                        src={makeFileURL(this.state.patientDetails ? this.state.patientDetails.image : null)}
+                                        style={{maxWidth: '100%'}}
                                     />
-                                  ) : null}
+                                ) : null}
                             </Upload>
                         )}
                         <span className="ant-form-text">
@@ -553,13 +555,13 @@ class EditPatientDetails extends React.Component {
                                     </a>
                         </span>
                         <Modal
-                          footer={null}
-                          onCancel={() => that.toggleWebCam('image', false)}
-                          visible={!!that.state.webCamState.image}
-                          width={680}
-                          key={that.state.webCamState.image}
+                            footer={null}
+                            onCancel={() => that.toggleWebCam('image', false)}
+                            visible={!!that.state.webCamState.image}
+                            width={680}
+                            key={that.state.webCamState.image}
                         >
-                            <WebCamField getScreenShot={(value) => that.getImageandUpload('image', value)} />
+                            <WebCamField getScreenShot={(value) => that.getImageandUpload('image', value)}/>
                         </Modal>
                     </Form.Item>
                     <Form.Item label="Patient Name" {...formItemLayout}>
@@ -567,14 +569,14 @@ class EditPatientDetails extends React.Component {
                             rules: [{required: true, message: 'Input Patient Name!'}],
                             initialValue: this.state.patientDetails ? this.state.patientDetails.user.first_name : ''
                         })
-                        (<Input placeholder="Patient Name" />)}
+                        (<Input placeholder="Patient Name"/>)}
                     </Form.Item>
                     <Row>
                         <Col span={8}>
                             <Form.Item
-                              label="Patient Id"
-                              labelCol={{span: 18}}
-                              wrapperCol={{span: 6}}
+                                label="Patient Id"
+                                labelCol={{span: 18}}
+                                wrapperCol={{span: 6}}
                             >
                                 {getFieldDecorator('custom_id_pre', {
                                     initialValue: this.state.patientDetails && this.state.patientDetails.is_agent ? 'AD' : 'BK'
@@ -582,119 +584,119 @@ class EditPatientDetails extends React.Component {
                                 (<Select>
                                     <Select.Option value="BK">BK</Select.Option>
                                     <Select.Option value="AD">AD</Select.Option>
-                                 </Select>)}
+                                </Select>)}
                             </Form.Item>
                         </Col>
                         <Col span={16}>
                             <Form.Item
-                              labelCol={{span: 0}}
-                              wrapperCol={{span: 18}}
-                              validateStatus={this.state.number.validateStatus}
-                              help={this.state.number.errorMsg || tips}
+                                labelCol={{span: 0}}
+                                wrapperCol={{span: 18}}
+                                validateStatus={this.state.number.validateStatus}
+                                help={this.state.number.errorMsg || tips}
                             >
                                 {getFieldDecorator('custom_id', {
                                     initialValue: this.state.patientDetails ? this.state.patientDetails.custom_id.replace(/\D/g, '') : ''
                                 })
                                 (<InputNumber
 
-                                  style={{width: '100%'}}
-                                  placeholder="Patient Id"
-                                  onChange={this.handleNumberChange}
+                                    style={{width: '100%'}}
+                                    placeholder="Patient Id"
+                                    onChange={this.handleNumberChange}
                                 />)}
                             </Form.Item>
                         </Col>
                     </Row>
 
                     {this.state.source && this.state.source == INPUT_FIELD ? (
-                        <Form.Item key="source_extra" label="Source" {...formItemLayout}>
-                            {getFieldDecorator("source_extra", {
-                                initialValue: '',
+                            <Form.Item key="source_extra" label="Source" {...formItemLayout}>
+                                {getFieldDecorator("source_extra", {
+                                    initialValue: '',
 
-                            })(
-                                <Input placeholder="Source" />
-                            )}
-                            <a onClick={() => that.setFormParams('source', SELECT_FIELD)}>Choose
-                                Source
-                            </a>
-                        </Form.Item>
-                      )
+                                })(
+                                    <Input placeholder="Source"/>
+                                )}
+                                <a onClick={() => that.setFormParams('source', SELECT_FIELD)}>Choose
+                                    Source
+                                </a>
+                            </Form.Item>
+                        )
                         : (
-<Form.Item label="Source" {...formItemLayout}>
-                            {getFieldDecorator('source', {initialValue: this.state.patientDetails ? this.state.patientDetails.source : null})
-                            (<Select placeholder="Select Source" showSearch optionFilterProp="children">
-                                {this.state.sourceList.map((option) => (
-<Select.Option value={option.id}>
-                                    {option.name}
-</Select.Option>
-))}
-                             </Select>)}
-                            {this.props.user.is_superuser ?   (
-<a onClick={() => that.setFormParams('source', INPUT_FIELD)}>Enter New
-                                Source
-</a>
-) :null}
-</Form.Item>
-)}
+                            <Form.Item label="Source" {...formItemLayout}>
+                                {getFieldDecorator('source', {initialValue: this.state.patientDetails ? this.state.patientDetails.source : null})
+                                (<Select placeholder="Select Source" showSearch optionFilterProp="children">
+                                    {this.state.sourceList.map((option) => (
+                                        <Select.Option value={option.id}>
+                                            {option.name}
+                                        </Select.Option>
+                                    ))}
+                                </Select>)}
+                                {this.props.user.is_superuser ? (
+                                    <a onClick={() => that.setFormParams('source', INPUT_FIELD)}>Enter New
+                                        Source
+                                    </a>
+                                ) : null}
+                            </Form.Item>
+                        )}
                     {/* {this.state.patientDetails ? null : */}
-                        <Form.Item label="Referral Code" {...formItemLayout}>
-                            {getFieldDecorator('referal', {initialValue: that.state.patientDetails && that.state.patientDetails.user.referer_data.referer ? that.state.patientDetails.user.referer_data.referer.referer_code : "",})
-                            (<Input placeholder="Referral Code" />)}
-                        </Form.Item>
+                    <Form.Item label="Referral Code" {...formItemLayout}>
+                        {getFieldDecorator('referal', {initialValue: that.state.patientDetails && that.state.patientDetails.user.referer_data.referer ? that.state.patientDetails.user.referer_data.referer.referer_code : "",})
+                        (<Input placeholder="Referral Code"/>)}
+                    </Form.Item>
                     {/* } */}
                     <Form.Item label="SMS Language" {...formItemLayout}>
                         {getFieldDecorator('language', {initialValue: this.state.patientDetails && this.state.patientDetails.language ? this.state.patientDetails.language : this.props.activePracticeData.language})
                         (<Select>
                             {this.state[SMS_LANGUAGE_CONFIG_PARAM].map((option) => (
-<Select.Option value={option}>
-                                {option}
-</Select.Option>
-))}
-                         </Select>)}
+                                <Select.Option value={option}>
+                                    {option}
+                                </Select.Option>
+                            ))}
+                        </Select>)}
                     </Form.Item>
                     <Form.Item label="Aadhar ID" {...formItemLayout}>
                         {getFieldDecorator('aadhar_id', {initialValue: this.state.patientDetails ? this.state.patientDetails.aadhar_id : ''})
-                        (<Input placeholder="Patient Aadhar Number" />)}
+                        (<Input placeholder="Patient Aadhar Number"/>)}
                     </Form.Item>
 
                     <Form.Item label="Gender" {...formItemLayout}>
                         {getFieldDecorator('gender', {initialValue: this.state.patientDetails ? this.state.patientDetails.gender : null})
                         (<Select placeholder="Select Gender">
                             {this.state[GENDER_CONFIG_PARAM].map((option) => (
-<Select.Option value={option.value}>
-                                {option.label}
-</Select.Option>
-))}
-                         </Select>)}
+                                <Select.Option value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>)}
                     </Form.Item>
 
 
                     <Form.Item label=' ' {...formItemLayout} colon={false}>
                         <Radio.Group
-                          buttonStyle="solid"
-                          size="small"
-                          onChange={this.changeFormType}
-                          defaultValue={this.state.selectedFormType}
+                            buttonStyle="solid"
+                            size="small"
+                            onChange={this.changeFormType}
+                            defaultValue={this.state.selectedFormType}
                         >
                             {PATIENT_AGE.map((item) => <Radio value={item.value}>{item.label}</Radio>)}
                         </Radio.Group>
                     </Form.Item>
                     {this.state.selectedFormType == 'DOB' ? (
-                        <Form.Item label="DOB" {...formItemLayout}>
-                            {getFieldDecorator('dob', {initialValue: this.state.patientDetails && this.state.patientDetails.dob ? moment(this.state.patientDetails.dob) : ''})
-                            (<DatePicker />)}
-                        </Form.Item>
-                      )
+                            <Form.Item label="DOB" {...formItemLayout}>
+                                {getFieldDecorator('dob', {initialValue: this.state.patientDetails && this.state.patientDetails.dob ? moment(this.state.patientDetails.dob) : ''})
+                                (<DatePicker/>)}
+                            </Form.Item>
+                        )
                         : (
-<Form.Item label="Age" {...formItemLayout}>
-                            {getFieldDecorator('age', {initialValue: this.state.patientDetails && this.state.patientDetails.dob ? moment().diff(this.state.patientDetails.dob, 'years') : null})
-                            (<InputNumber min={0} max={120} placeholder="00" />)}
-                            <span className="ant-form-text">Years</span>
-</Form.Item>
-)}
+                            <Form.Item label="Age" {...formItemLayout}>
+                                {getFieldDecorator('age', {initialValue: this.state.patientDetails && this.state.patientDetails.dob ? moment().diff(this.state.patientDetails.dob, 'years') : null})
+                                (<InputNumber min={0} max={120} placeholder="00"/>)}
+                                <span className="ant-form-text">Years</span>
+                            </Form.Item>
+                        )}
 
                     <Form.Item label="Anniversary" {...formItemLayout}>
                         {getFieldDecorator('anniversary', {initialValue: this.state.patientDetails && this.state.patientDetails.anniversary ? moment(this.state.patientDetails.anniversary) : null})
-                        (<DatePicker />)}
+                        (<DatePicker/>)}
                     </Form.Item>
 
                     {/* <Form.Item label="Blood Group" {...formItemLayout}> */}
@@ -706,12 +708,12 @@ class EditPatientDetails extends React.Component {
                         {getFieldDecorator("blood_group", {initialValue: this.state.patientDetails ? this.state.patientDetails.blood_group : ''})
                         (<Select placeholder="Blood Group">
                             {this.state[BLOOD_GROUP_CONFIG_PARAM].map((option) => (
-<Select.Option
-  value={option}
->{option}
-</Select.Option>
-))}
-                         </Select>)}
+                                <Select.Option
+                                    value={option}
+                                >{option}
+                                </Select.Option>
+                            ))}
+                        </Select>)}
                     </Form.Item>
 
                     {/* <Form.Item label="Family" {...formItemLayout}> */}
@@ -726,18 +728,18 @@ class EditPatientDetails extends React.Component {
                             (<Select onChange={(value) => this.handleRelation(value)}>
                                 <Select.Option value="">{RELATION}</Select.Option>
                                 {this.state[FAMILY_RELATION_CONFIG_PARAM].map((option) => (
-<Select.Option
-  value={option.value}
->{option.name}
-</Select.Option>
-))}
-                             </Select>)}
+                                    <Select.Option
+                                        value={option.value}
+                                    >{option.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>)}
                         </Form.Item>
-                        <span style={{display: 'inline-block', width: '14px', textAlign: 'center'}} />
+                        <span style={{display: 'inline-block', width: '14px', textAlign: 'center'}}/>
                         <Form.Item style={{display: 'inline-block', width: 'calc(50% - 12px)'}}>
                             {getFieldDecorator("attendee", {initialValue: this.state.patientDetails ? this.state.patientDetails.attendee : ''})
                             (<Input
-                              disabled={this.state.patientDetails && this.state.patientDetails.attendee ? false : this.state.relation_text}
+                                disabled={this.state.patientDetails && this.state.patientDetails.attendee ? false : this.state.relation_text}
                             />)}
                         </Form.Item>
                     </Form.Item>
@@ -748,145 +750,145 @@ class EditPatientDetails extends React.Component {
                             initialValue: this.state.patientDetails ? this.state.patientDetails.user.mobile : null,
                             rules: [{required: true, message: 'Input Mobile Number'}]
                         })
-                        (<Input placeholder="Patient Mobile Number (Primary)" />)}
+                        (<Input placeholder="Patient Mobile Number (Primary)"/>)}
                     </Form.Item>
 
                     <Form.Item label="Mobile (Secondary)" {...formItemLayout}>
                         {getFieldDecorator('secondary_mobile_no', {initialValue: this.state.patientDetails ? this.state.patientDetails.secondary_mobile_no : ''})
-                        (<Input placeholder="Patient Mobile Number (Secondary)" />)}
+                        (<Input placeholder="Patient Mobile Number (Secondary)"/>)}
                     </Form.Item>
 
                     <Form.Item label="Landline" {...formItemLayout}>
                         {getFieldDecorator('landline_no', {initialValue: this.state.patientDetails ? this.state.patientDetails.landline_no : ''})
-                        (<Input placeholder="Patient Landline Number" />)}
+                        (<Input placeholder="Patient Landline Number"/>)}
                     </Form.Item>
 
                     <Form.Item label="Address" {...formItemLayout}>
                         {getFieldDecorator('address', {initialValue: this.state.patientDetails ? this.state.patientDetails.address : ''})
-                        (<Input placeholder="Patient Address" />)}
+                        (<Input placeholder="Patient Address"/>)}
                     </Form.Item>
 
                     <Form.Item label="Locality" {...formItemLayout}>
                         {getFieldDecorator('locality', {initialValue: this.state.patientDetails ? this.state.patientDetails.locality : ''})
-                        (<Input placeholder="Patient Locality" />)}
+                        (<Input placeholder="Patient Locality"/>)}
                     </Form.Item>
 
                     {this.state.country && this.state.country == INPUT_FIELD ? (
-                        <Form.Item key="country_extra" label="Country" {...formItemLayout}>
-                            {getFieldDecorator("country_extra", {
-                                initialValue: '',
+                            <Form.Item key="country_extra" label="Country" {...formItemLayout}>
+                                {getFieldDecorator("country_extra", {
+                                    initialValue: '',
 
-                            })(
-                                <Input placeholder="Country" />
-                            )}
-                            {this.props.user.is_superuser ? (
-<a onClick={() => that.setFormParams('country', SELECT_FIELD)}>Choose
-                                      Country
-</a>
-):null}
-                        </Form.Item>
-                      )
+                                })(
+                                    <Input placeholder="Country"/>
+                                )}
+                                {this.props.user.is_superuser ? (
+                                    <a onClick={() => that.setFormParams('country', SELECT_FIELD)}>Choose
+                                        Country
+                                    </a>
+                                ) : null}
+                            </Form.Item>
+                        )
                         : (
-<Form.Item key="country" {...formItemLayout} label="Country">
-                            {getFieldDecorator("country", {
-                                initialValue: this.state.patientDetails && this.state.patientDetails.country_data ? this.state.patientDetails.country_data.id : '',
-                            })(
-                                <Select
-                                  placeholder="Select Country"
-                                  onChange={(value) => this.onChangeValue("country", value)}
-                                  showSearch
-                                  optionFilterProp="children"
-                                >
+                            <Form.Item key="country" {...formItemLayout} label="Country">
+                                {getFieldDecorator("country", {
+                                    initialValue: this.state.patientDetails && this.state.patientDetails.country_data ? this.state.patientDetails.country_data.id : '',
+                                })(
+                                    <Select
+                                        placeholder="Select Country"
+                                        onChange={(value) => this.onChangeValue("country", value)}
+                                        showSearch
+                                        optionFilterProp="children"
+                                    >
 
-                                    {this.state.countrylist.map((option) => (
-<Select.Option
-  value={option.id}
->{option.name}
-</Select.Option>
-))}
-                                </Select>
-                            )}
-                            {this.props.user.is_superuser ?    (
-<a onClick={() => that.setFormParams('country', INPUT_FIELD)}>Add New
-                                Country
-</a>
-) :null}
-</Form.Item>
-)}
+                                        {this.state.countrylist.map((option) => (
+                                            <Select.Option
+                                                value={option.id}
+                                            >{option.name}
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
+                                )}
+                                {this.props.user.is_superuser ? (
+                                    <a onClick={() => that.setFormParams('country', INPUT_FIELD)}>Add New
+                                        Country
+                                    </a>
+                                ) : null}
+                            </Form.Item>
+                        )}
 
 
                     {this.state.country == INPUT_FIELD || this.state.state && this.state.state == INPUT_FIELD ? (
-                        <Form.Item key="state_extra" label="State" {...formItemLayout}>
-                            {getFieldDecorator("state_extra", {
-                                initialValue: '',
+                            <Form.Item key="state_extra" label="State" {...formItemLayout}>
+                                {getFieldDecorator("state_extra", {
+                                    initialValue: '',
 
-                            })(
-                                <Input placeholder="State" />
-                            )}
-                            <a onClick={() => that.setFormParams('state', SELECT_FIELD)}>Choose
-                                State
-                            </a>
-                        </Form.Item>
-                      )
+                                })(
+                                    <Input placeholder="State"/>
+                                )}
+                                <a onClick={() => that.setFormParams('state', SELECT_FIELD)}>Choose
+                                    State
+                                </a>
+                            </Form.Item>
+                        )
                         : (
-<Form.Item key="state" {...formItemLayout} label="State">
-                            {getFieldDecorator("state", {
-                                initialValue: this.state.patientDetails && this.state.patientDetails.state_data ? this.state.patientDetails.state_data.id : '',
-                            })(
-                                <Select
-                                  placeholder="Select State"
-                                  onChange={(value) => this.onChangeValue("state", value)}
-                                  showSearch
-                                  optionFilterProp="children"
-                                >
-                                    {this.state.stateList.map((option) => (
-<Select.Option
-  value={option.id}
->{option.name}
-</Select.Option>
-))}
-                                </Select>
-                            )}
-                            {this.props.user.is_superuser ?  (
-<a onClick={() => that.setFormParams('state', INPUT_FIELD)}>Add New
-                                state
-</a>
-) :null}
-</Form.Item>
-)}
+                            <Form.Item key="state" {...formItemLayout} label="State">
+                                {getFieldDecorator("state", {
+                                    initialValue: this.state.patientDetails && this.state.patientDetails.state_data ? this.state.patientDetails.state_data.id : '',
+                                })(
+                                    <Select
+                                        placeholder="Select State"
+                                        onChange={(value) => this.onChangeValue("state", value)}
+                                        showSearch
+                                        optionFilterProp="children"
+                                    >
+                                        {this.state.stateList.map((option) => (
+                                            <Select.Option
+                                                value={option.id}
+                                            >{option.name}
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
+                                )}
+                                {this.props.user.is_superuser ? (
+                                    <a onClick={() => that.setFormParams('state', INPUT_FIELD)}>Add New
+                                        state
+                                    </a>
+                                ) : null}
+                            </Form.Item>
+                        )}
                     {this.state.country == INPUT_FIELD || this.state.state == INPUT_FIELD || this.state.city && this.state.city == INPUT_FIELD ? (
-                        <Form.Item key="city_extra" label="City" {...formItemLayout}>
-                            {getFieldDecorator("city_extra", {
-                                initialValue: '',
-                            })(
-                                <Input placeholder="City" />
-                            )}
-                            <a onClick={() => that.setFormParams('city', SELECT_FIELD)}>Choose
-                                City
-                            </a>
-                        </Form.Item>
-                      )
+                            <Form.Item key="city_extra" label="City" {...formItemLayout}>
+                                {getFieldDecorator("city_extra", {
+                                    initialValue: '',
+                                })(
+                                    <Input placeholder="City"/>
+                                )}
+                                <a onClick={() => that.setFormParams('city', SELECT_FIELD)}>Choose
+                                    City
+                                </a>
+                            </Form.Item>
+                        )
                         : (
-<Form.Item key="City" {...formItemLayout} label="City">
-                            {getFieldDecorator("city", {
-                                initialValue: this.state.patientDetails && this.state.patientDetails.city_data ? this.state.patientDetails.city_data.id : '',
-                            })(
-                                <Select showSearch optionFilterProp="children" placeholder="Select City">
-                                    {this.state.cityList.map((option) => (
-<Select.Option
-  value={option.id}
->{option.name}
-</Select.Option>
-))}
-                                </Select>
-                            )}
-                            {this.props.user.is_superuser ?  (
-<a onClick={() => that.setFormParams('city', INPUT_FIELD)}>Add New
-                                City
-</a>
-):null}
-</Form.Item>
-)}
+                            <Form.Item key="City" {...formItemLayout} label="City">
+                                {getFieldDecorator("city", {
+                                    initialValue: this.state.patientDetails && this.state.patientDetails.city_data ? this.state.patientDetails.city_data.id : '',
+                                })(
+                                    <Select showSearch optionFilterProp="children" placeholder="Select City">
+                                        {this.state.cityList.map((option) => (
+                                            <Select.Option
+                                                value={option.id}
+                                            >{option.name}
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
+                                )}
+                                {this.props.user.is_superuser ? (
+                                    <a onClick={() => that.setFormParams('city', INPUT_FIELD)}>Add New
+                                        City
+                                    </a>
+                                ) : null}
+                            </Form.Item>
+                        )}
 
 
                     {/* <Form.Item label="City" {...formItemLayout}>
@@ -897,49 +899,49 @@ class EditPatientDetails extends React.Component {
 
                     <Form.Item label="Pincode" {...formItemLayout}>
                         {getFieldDecorator('pincode', {initialValue: this.state.patientDetails ? this.state.patientDetails.pincode : ''})
-                        (<Input placeholder="Patient PINCODE" />)}
+                        (<Input placeholder="Patient PINCODE"/>)}
                     </Form.Item>
 
                     <Form.Item label="Email" {...formItemLayout}>
                         {getFieldDecorator('email', {
                             initialValue: this.state.patientDetails ? this.state.patientDetails.user.email : null,
                         })
-                        (<Input placeholder="Patient Email" />)}
+                        (<Input placeholder="Patient Email"/>)}
                     </Form.Item>
 
                     <Form.Item label="Medical History" {...formItemLayout}>
                         {getFieldDecorator("medical_history", {initialValue: this.state.patientDetails ? this.state.patientDetails.medical_history : []})
                         (<Select placeholder="Medical History" mode="multiple">
                             {historyOption.map((option) => (
-<Select.Option
-  value={option.value}
->{option.label}
-</Select.Option>
-))}
-                         </Select>)}
+                                <Select.Option
+                                    value={option.value}
+                                >{option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>)}
                     </Form.Item>
 
                     <Form.Item label="Patient Group" {...formItemLayout}>
                         {getFieldDecorator("patient_group", {initialValue: this.state.patientDetails ? this.state.patientDetails.patient_group : []})
                         (<Select placeholder="Patient Group" mode="multiple">
                             {patientGroupOption.map((option) => (
-<Select.Option
-  value={option.value}
->{option.label}
-</Select.Option>
-))}
-                         </Select>)}
+                                <Select.Option
+                                    value={option.value}
+                                >{option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>)}
                     </Form.Item>
 
                     <Form.Item label="On Dialysis" {...formItemLayout}>
                         {getFieldDecorator('on_dialysis', {initialValue: this.state.patientDetails ? this.state.patientDetails.on_dialysis : false})
-                        (<Checkbox onChange={(e) => this.onChangeCheckbox(e)} style={{paddingTop: '4px'}} />)}
+                        (<Checkbox onChange={(e) => this.onChangeCheckbox(e)} style={{paddingTop: '4px'}}/>)}
                     </Form.Item>
                     <Form.Item label="Allow File Upload" {...formItemLayout}>
                         {getFieldDecorator('file_enable', {initialValue: this.state.patientDetails ? this.state.patientDetails.file_enable : true})
                         (<Checkbox
-                          style={{paddingTop: '4px'}}
-                          defaultChecked
+                            style={{paddingTop: '4px'}}
+                            defaultChecked
                         />)}
                     </Form.Item>
 
@@ -951,14 +953,14 @@ class EditPatientDetails extends React.Component {
 
                     <Form.Item label="Max Uploads Allowed" {...formItemLayout}>
                         {getFieldDecorator('file_count', {initialValue: this.state.patientDetails ? this.state.patientDetails.file_count : 10})
-                        (<InputNumber min={0} />)}
+                        (<InputNumber min={0}/>)}
                     </Form.Item>
                     <Form.Item>
                         {that.props.history ? (
                             <Button style={{margin: 5}} onClick={() => that.props.history.goBack()}>
                                 Cancel
                             </Button>
-                          ) : null}
+                        ) : null}
                         <Button style={{margin: 5}} type="primary" htmlType="submit" loading={this.state.loading}>
                             Save
                         </Button>
@@ -966,7 +968,7 @@ class EditPatientDetails extends React.Component {
                     </Form.Item>
                 </Card>
             </Form>
-)
+        )
     }
 
 }
