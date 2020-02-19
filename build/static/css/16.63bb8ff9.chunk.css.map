@@ -1,1 +1,0 @@
-{"version":3,"sources":["auth.css"],"names":[],"mappings":"AAAA,aACE,0BACF,CACA,mBACE,UACF,CACA,mBACE,sBAEF,CACA,oBACE,SACF","file":"16.63bb8ff9.chunk.css","sourcesContent":[".loginLayout{\n  min-height:100vh !important;\n}\n.login-form-button{\n  width:100%;\n}\n.socialLoginButton{\n  background:transparent;\n\n}\n.submit-form-button{\n  width:50%;\n}\n"]}
