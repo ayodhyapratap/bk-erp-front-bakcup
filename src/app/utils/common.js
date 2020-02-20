@@ -29,7 +29,7 @@ export const putAPI = function (URL, dataToSend, successFn, errorFn, headerConfi
     axios({
         method: 'put',
         url: makeURL(URL),
-        dataToSend,
+        data:dataToSend,
         headers: {
             Authorization: `Token ${  getAuthToken()}`,
             ...headerConfig
@@ -49,7 +49,7 @@ export const postAPI = function (URL, dataToSend, successFn, errorFn, headerConf
     axios({
         method: 'post',
         url: makeURL(URL),
-        dataToSend,
+        data:dataToSend,
         headers: {
             Authorization: `Token ${  getAuthToken()}`,
             ...headerConfig
@@ -68,7 +68,7 @@ export const postOuterAPI = function (URL, dataToSend, successFn, errorFn, heade
     axios({
         method: 'post',
         url: URL,
-        dataToSend,
+        data:dataToSend,
         headers: {
             ...headerConfig
         }
@@ -86,7 +86,7 @@ export const patchAPI = function (URL, dataToSend, successFn, errorFn, headerCon
     axios({
         method: 'patch',
         url: makeURL(URL),
-        dataToSend,
+        data:dataToSend,
         headers: {
             Authorization: `Token ${  getAuthToken()}`,
             ...headerConfig
