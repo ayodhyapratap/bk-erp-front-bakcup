@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "1a756f786db4ab438d7da302f9a5f1d0",
+    "revision": "15d9c5c002f5202d5132860737231932",
     "url": "https://bk-erp.plutonic.co.in/index.html"
   },
   {
@@ -60,7 +60,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://bk-erp.plutonic.co.in/static/css/9.c0617a9b.chunk.css"
   },
   {
-    "revision": "f5c590b0103676dd37bf",
+    "revision": "def7e31d643de84dc0c4",
     "url": "https://bk-erp.plutonic.co.in/static/css/main.5ceb1a79.chunk.css"
   },
   {
@@ -188,8 +188,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://bk-erp.plutonic.co.in/static/js/9.15b6f2ec.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "f5c590b0103676dd37bf",
-    "url": "https://bk-erp.plutonic.co.in/static/js/main.622e73f1.chunk.js"
+    "revision": "def7e31d643de84dc0c4",
+    "url": "https://bk-erp.plutonic.co.in/static/js/main.ca2b3ed0.chunk.js"
   },
   {
     "revision": "7459e7390573cd382200",
