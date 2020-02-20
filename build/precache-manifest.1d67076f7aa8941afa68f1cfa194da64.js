@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "ab823789bf5ce719cc0b8e42aff58403",
+    "revision": "a9835537186d20f931a132ce795e779f",
     "url": "https://clinic.bkarogyam.com/index.html"
   },
   {
@@ -16,7 +16,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://clinic.bkarogyam.com/static/css/11.a14dcea1.chunk.css"
   },
   {
-    "revision": "bd53c806c389b0a561d8",
+    "revision": "393a9cdd1a1ed4ed207e",
     "url": "https://clinic.bkarogyam.com/static/css/14.141cc7ea.chunk.css"
   },
   {
@@ -60,7 +60,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://clinic.bkarogyam.com/static/css/9.c0617a9b.chunk.css"
   },
   {
-    "revision": "cc82065fb4d598aee36f",
+    "revision": "d867d40328c001db9622",
     "url": "https://clinic.bkarogyam.com/static/css/main.5ceb1a79.chunk.css"
   },
   {
@@ -100,8 +100,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://clinic.bkarogyam.com/static/js/13.eef9b05d.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "bd53c806c389b0a561d8",
-    "url": "https://clinic.bkarogyam.com/static/js/14.2483832a.chunk.js"
+    "revision": "393a9cdd1a1ed4ed207e",
+    "url": "https://clinic.bkarogyam.com/static/js/14.ee2b35e2.chunk.js"
   },
   {
     "revision": "bb21897ad6c5b79d25d5",
@@ -136,8 +136,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://clinic.bkarogyam.com/static/js/21.c64e65d5.chunk.js"
   },
   {
-    "revision": "f327a79210ce974b7858",
-    "url": "https://clinic.bkarogyam.com/static/js/22.e4de43d9.chunk.js"
+    "revision": "225de814fc03f551b1c5",
+    "url": "https://clinic.bkarogyam.com/static/js/22.8cda571f.chunk.js"
   },
   {
     "revision": "9eaee267d6e698ad3f16",
@@ -188,12 +188,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://clinic.bkarogyam.com/static/js/9.49f08b93.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "cc82065fb4d598aee36f",
-    "url": "https://clinic.bkarogyam.com/static/js/main.fa65b59d.chunk.js"
+    "revision": "d867d40328c001db9622",
+    "url": "https://clinic.bkarogyam.com/static/js/main.d1b9a3b5.chunk.js"
   },
   {
-    "revision": "1ddebc4a7a9ae1f4126b",
-    "url": "https://clinic.bkarogyam.com/static/js/runtime-main.77c6de49.js"
+    "revision": "612065be28f89a14b2d4",
+    "url": "https://clinic.bkarogyam.com/static/js/runtime-main.c5a5b427.js"
   },
   {
     "revision": "3378a129f4cbafecaf7e1cdc20d90edc",

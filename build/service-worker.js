@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "https://clinic.bkarogyam.com/precache-manifest.afd889b5cdde98ee0df75438ed9b1730.js"
+  "https://clinic.bkarogyam.com/precache-manifest.1d67076f7aa8941afa68f1cfa194da64.js"
 );
 
 self.addEventListener('message', (event) => {
