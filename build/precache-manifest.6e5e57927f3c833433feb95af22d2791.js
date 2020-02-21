@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "a9835537186d20f931a132ce795e779f",
+    "revision": "68aee25f7fa6b403dca924783ad71e52",
     "url": "https://clinic.bkarogyam.com/index.html"
   },
   {
@@ -60,7 +60,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://clinic.bkarogyam.com/static/css/9.c0617a9b.chunk.css"
   },
   {
-    "revision": "d867d40328c001db9622",
+    "revision": "d04eede5c2db9cb22d02",
     "url": "https://clinic.bkarogyam.com/static/css/main.5ceb1a79.chunk.css"
   },
   {
@@ -136,8 +136,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://clinic.bkarogyam.com/static/js/21.c64e65d5.chunk.js"
   },
   {
-    "revision": "225de814fc03f551b1c5",
-    "url": "https://clinic.bkarogyam.com/static/js/22.8cda571f.chunk.js"
+    "revision": "3754213a564fba93b4e5",
+    "url": "https://clinic.bkarogyam.com/static/js/22.fa480307.chunk.js"
   },
   {
     "revision": "9eaee267d6e698ad3f16",
@@ -188,12 +188,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://clinic.bkarogyam.com/static/js/9.49f08b93.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "d867d40328c001db9622",
-    "url": "https://clinic.bkarogyam.com/static/js/main.d1b9a3b5.chunk.js"
+    "revision": "d04eede5c2db9cb22d02",
+    "url": "https://clinic.bkarogyam.com/static/js/main.00d28d10.chunk.js"
   },
   {
-    "revision": "612065be28f89a14b2d4",
-    "url": "https://clinic.bkarogyam.com/static/js/runtime-main.c5a5b427.js"
+    "revision": "8f59d0113557846b021b",
+    "url": "https://clinic.bkarogyam.com/static/js/runtime-main.8902ac0d.js"
   },
   {
     "revision": "3378a129f4cbafecaf7e1cdc20d90edc",
