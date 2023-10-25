@@ -1,0 +1,11 @@
+{
+"config":{
+	"apiKey": "AIzaSyA8fWT9YKLrolg7J9xxfiQx6M7QCCWVSLw",
+	"authDomain": "bk-arogyam-d4192.firebaseapp.com",
+	"databaseURL": "https://bk-arogyam-d4192.firebaseio.com",
+	"projectId": "bk-arogyam-d4192",
+	"storageBucket": "bk-arogyam-d4192.appspot.com",
+	"messagingSenderId": "406071115075",
+	"appId": "1:406071115075:web:044a484e711c3d067e43f6"
+        }
+}
